@@ -1,0 +1,23 @@
+span.sense-number { font-weight: bold; }
+div.stdheader { border-bottom: none; }
+span.foreign { font-style: italic; }
+h3 { font-style: normal; }
+p { 
+    margin-top: 0em; 
+    margin-bottom: 0em;
+    text-indent: 1em;
+}
+p.xr {
+    margin-top: 0em; 
+    margin-bottom: 0em;
+    /* Hanging indent */
+    padding-left: 2em;
+    text-indent: -2em;
+}
+p.xr-cp {
+    margin-top: 0em; 
+    margin-bottom: 0em;
+    /* Hanging indent */
+    padding-left: 1em;
+    text-indent: 0em;
+}
