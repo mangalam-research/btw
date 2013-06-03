@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://lddubeau.com/ns/btw-storage">
+  <form>
+    <orth xml:lang="sa-Latn"></orth>
+  </form>
+  <div type="definition">
+    <p>
+    </p>
+  </div>
+  <div type="classical-examples">
+    <p>
+    </p>
+  </div>
+  <div type="semantic-fields">
+  </div>
+  <div type="etymology">
+    <p>
+    </p>
+  </div>
+  <btw:translations type="classical">
+  </btw:translations>
+  <btw:translations type="contemporary-translations">
+  </btw:translations>
+  <div type="other-sample-contexts">
+  </div>
+  <div type="discussions">
+    <p>
+    </p>
+  </div>
+  <div type="linguistic-considerations">
+    <p>
+    </p>
+  </div>
+</btw:entry>

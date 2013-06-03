@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block extrahead %}
+{{ form.media }}
+<style type="text/css" media="screen">
+    #django-ace-widget-data { 
+        width: 100%;
+        height: 50%;
+    }
+</style>
+{% endblock %}
+{% block head %}Lexicography{% endblock %}
+{% block content %}
+<form id="form" action="" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Save" />
+</form>
+<script>
+    var form = document.getElementById("form");
+    var widgets = form.getElementsByClassName('django-ace-widget');
+    for (var i = 0, widget; widget = widgets[i++];)
+	// The div actually used by Ace is the first child of our div.
+        widget.firstChild.style.fontSize = "16px";
+
+    form.onsubmit = function (e) {
+        for (var i = 0, widget; widget = widgets[i++];)
+            widget.ace_onsubmit(e);
+
+	return true;
+    };
+</script>
+{% endblock %}
