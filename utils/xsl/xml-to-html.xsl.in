@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet 
+    xmlns:tei="http://www.tei-c.org/ns/1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:btw="http://lddubeau.com/ns/btw-storage"
+    version="2.0">
+
+  <xsl:import href="@WED_XML_TO_HTML_PATH@"/>
+  <xsl:strip-space elements="*"/>
+  <xsl:preserve-space elements="tei:p tei:cit tei:lbl tei:quote btw:cit btw:tr"/>
+  
+</xsl:stylesheet>
