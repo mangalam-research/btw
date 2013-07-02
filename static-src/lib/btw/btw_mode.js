@@ -131,6 +131,16 @@ oop.inherit(BTWMode, Mode);
         return this._contextual_menu_items;
     };
 
+    this.nodesAroundEditableContents = function (parent) {
+        var ret = [null, null];
+        var start = parent.childNodes[0];
+        if ($(start).is("._gui"))
+            ret[0] = start;
+        var end = parent.childNodes[parent.childNodes.length - 1];
+        if ($(end).is("._gui"))
+            ret[1] = end;
+        return ret;
+    };
 }).call(BTWMode.prototype);
 
 exports.Mode = BTWMode;
