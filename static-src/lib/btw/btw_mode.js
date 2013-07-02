@@ -116,7 +116,10 @@ oop.inherit(BTWMode, Mode);
 
     this.makeDecorator = function () {
         var obj = Object.create(BTWDecorator.prototype);
-        BTWDecorator.apply(obj, arguments);
+        // Make arg an array and add our extra argument(s).
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(this);
+        BTWDecorator.apply(obj, args);
         return obj;
     };
 
