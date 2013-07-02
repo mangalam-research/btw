@@ -1,0 +1,578 @@
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  <btw:lemma>prasāda</btw:lemma>
+  <btw:overview><!-- UNIT 1: OVERVIEW -->
+    <btw:definition><!-- Definition -->
+      <p>Etymologically linked to the process of sedimentation (<term xml:lang="sa-Latn">pra√sad</term>, see below), <term xml:lang="sa-Latn">prasāda</term> denotes  the resulting state of <ptr target="#BTW.S.a1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="#BTW.S.a2"/> serenity, <ptr target="#BTW.S.b"/> confidence, and <ptr target="#BTW.S.c"/> favor or mercy.</p>
+      <p>In Buddhist literature, <term xml:lang="sa-Latn">prasāda</term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="#BTW.S.b"/> confidence or faith, and <ptr target="#BTW.S.d"/> reverential devotion. In the first case, <term xml:lang="sa-Latn">prasāda</term> denotes, depending on the context, either <ptr target="#BTW.S.b1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="#BTW.S.b2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="#BTW.S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
+    </btw:definition>
+  </btw:overview>
+  <btw:sense-discrimination><!-- UNIT 2: SENSE DISCRIMINATION -->
+    <btw:sense> <!-- [SENSE A] -->
+      <btw:english-renditions>
+        <btw:english-rendition>
+          <term>clarity</term>
+          <btw:semantic-fields>
+            <btw:sf>01.04.08.01|02.07</btw:sf>
+            <btw:sf>01.04.08.09</btw:sf>
+            <btw:sf>01.07.04.01.02|07</btw:sf>
+            <btw:sf>02.01.08.01.02|03</btw:sf>
+            <btw:sf>02.01.10.01</btw:sf>
+            <btw:sf>02.01.10.02.03|04</btw:sf>
+            <btw:sf>17.05.03|07</btw:sf>
+            <btw:sf>03.11.03.03.05.01</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+        <btw:english-rendition>
+          <term>serenity</term>
+          <btw:semantic-fields>
+            <btw:sf>01.02.11.02.01|08.01</btw:sf>
+            <btw:sf>01.05.05.09.01|00</btw:sf>
+            <btw:sf>02.02.18</btw:sf>
+            <btw:sf>02.02.19.06</btw:sf>
+            <btw:sf>03.01.06.01.03.03|09.06</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+      </btw:english-renditions>
+      <btw:subsense xml:id="BTW.S.a1"> <!-- a1 -->
+        <btw:explanation>often explicitely associated to the water metaphor</btw:explanation>
+        <btw:citations>
+          <btw:example><btw:cit><ref>AkośV, 128</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit><btw:tr>Faith is <btw:lemma-instance>serenity</btw:lemma-instance> of mind. The mind, polluted with major and minor defilements (<term xml:lang="sa-Latn">kleśopakleśa</term>) becomes clear when it exercises by means of faith; just like water by means of a water-clarifying gem.</btw:tr></btw:example>
+          <btw:example><btw:cit><ref>PSkVbh, 213a5-b1</ref><foreign xml:lang="bo-Latn">sems <btw:lemma-instance>dang ba</btw:lemma-instance> zhes bya ba la dad pa ni sems kyi rnyog pa dang mi mthun pa ste |  de’i phyir de dang mtshungs par ldan na nyon mongs pa dang |  nye ba’i nyon mongs pa’i rnyog pa mi ’byung ste |  dad pa la brten nas sems <btw:lemma-instance>dang bar</btw:lemma-instance> ’gyur bas sems <btw:lemma-instance>dang ba</btw:lemma-instance> zhes bya ste</foreign></btw:cit><btw:tr>As for what is called mental <btw:lemma-instance>clarity</btw:lemma-instance>, faith opposes mental turbidity. Hence, the turbidity derived from major and minor defilements does not prevail when [the mind] is conjoined with faith. Since the mind becomes <btw:lemma-instance>clear</btw:lemma-instance> when it relies on faith, [faith] is called <btw:lemma-instance>clarity</btw:lemma-instance> of mind.</btw:tr></btw:example>
+        </btw:citations>
+      </btw:subsense>
+      <btw:subsense xml:id="BTW.S.a1"> <!-- a2 -->
+        <btw:explanation>in the sense of pleasurable emotion, serenity.</btw:explanation>
+        <btw:citations>
+          <btw:example><btw:cit><ref>Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">sarvāvavādakaśreṣṭhaṁ śakrabrahmeśānayamavarūṇakuveravā[va]sava-somādityādibhir apyapratihataśāsanaṁ kandarpadarpāpamardanaśūraṁ mahātmānam atimaharddhikaṁ sthaviropaguptamārabhya kāñcideva vibudhajanamanaḥ<btw:lemma-instance>prasāda</btw:lemma-instance>kārīṁ dharmyāṁ kathāṁ samanusmariṣyāmaḥ|</foreign></btw:cit><btw:tr>We shall recall a docrinal tale capable of <btw:lemma-instance>brightnening</btw:lemma-instance> the mind of gods and men. It starts with Upagupta, the best of all preachers, whose teaching was irresistible (<term xml:lang="sa-Latn">apratihata</term>) even for Śākra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, the Ādityas and the other gods, an eminent person, a hero capable of crushing the Kandarpa’s pride, endowed with enourmous yogic powers.</btw:tr><btw:tr><btw:cit><ref>Strong, 173- 174</ref>[L]et us recall togeter a dharmic tale that <btw:lemma-instance>brightens</btw:lemma-instance> the mind of gods and men. It begins with the story of Upagupta, the foremost of all preachers, whose teaching was unmatched even by Śakra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, Aditi, and the other gods, a hero sweeping away the pride of Kandarpa [Kāma], a magnanimous beig with very great supernatural powers.</btw:cit></btw:tr></btw:example>
+          <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 149</ref><foreign xml:lang="sa-Latn">atha khalu tāścatasraḥ parṣadastaṃ mahāntaṃ ratnastūpaṃ dṛṣṭvā vaihāyasamantarīkṣe sthitaṃ saṃjātaharṣāḥ prītiprāmodya<btw:lemma-instance>prasāda</btw:lemma-instance>prāptāḥ tasyāṃ velāyāmutthāya āsanebhyo 'ñjaliṃ pragṛhyāvasthitāḥ ||</foreign></btw:cit><btw:tr>Then, the four assemblies saw that great stūpa studded with jewels suspended in mid-air and were taken by rapturous joy and filled with blissful pleasure, delight and <btw:lemma-instance>serenity</btw:lemma-instance>. At that [sight], they rose from their seats, salutated [it] reverently, and remained [respectfully] standing. </btw:tr><btw:tr><btw:cit><ref>Kern, 228</ref>At the sight of that great Stupa of precious substances, that meteoric phenomenon in the sky, the four classes of hearers were filled with gladness, delight, satisfaction and <btw:lemma-instance>joy</btw:lemma-instance>. Instantly they rose from their seats, stretched out their oined hands and remained standing in that position.</btw:cit></btw:tr></btw:example>
+        </btw:citations>
+      </btw:subsense>
+      <btw:other-citations> <!-- [other citations for sense a] -->
+        <btw:cit><ref>AkośV, 23</ref><foreign xml:lang="sa-Latn">iti. rūpāṇi ca tāni prasādāś ca ta iti rūpaprasādāḥ. anena viśeṣaṇena manaindriyaṃ nirastaṃ bhavati. mano 'pi hi tadvijñānāśrayaḥ.paṃcānāṃ sahajāś ca tair iti siddhāntāt. [anuśayitās te.] na tu mano rūpasvabhāvam ity ato nirastaṃ. rūpagrahaṇaṃ [Tib. 20b] tv iha śraddhāprasādanirāsārthaṃ. tadvijñānāśrayā ity anena viśeṣaṇena śraddhāyā aprasaṃga iti cet. na. bahuvrīhikalpanāyāṃ tatprasaṃgasaṃbhavāt. rūpagrahaṇe tu bahuvrīhikalpanā nivartate. na hi rūpamayo 'sti prasādo yasya tadvijñānāny āśrayatvena kalperan. prasādagrahaṇaṃ punar indriyagrāhyavastuvyatiriktarūpaprasādaviśeṣajñāpanārthaṃ. vaibhāṣikā hi bruvate. bhūtavikāraviśeṣā evendriyāṇīti. pravacane tu naivaṃ. kiṃ tarhi. rūpādiviṣayavyatiriktāni acchāni atīndriyāṇi svavijñānānumeyāni indriyāṇi yeṣāṃ cakṣurādīni adhiṣṭhānāni dṛśyante.</foreign></btw:cit>
+      </btw:other-citations>
+      <btw:semantic-fields>
+        <btw:sf>01.04.08</btw:sf>
+        <btw:sf>01.04.04</btw:sf>
+        <btw:sf>01.02.11</btw:sf>
+        <btw:sf>01.06.07.03</btw:sf>
+        <btw:sf>02.02.18</btw:sf>
+        <btw:sf>02.02.19</btw:sf>
+        <btw:sf>01.05.05.09.01</btw:sf>
+        <btw:sf>03.05.0</btw:sf><!-- error -->
+      </btw:semantic-fields>
+      <btw:contrastive-section> <!-- [contrastive section for sense a] -->
+        <btw:antonyms>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">aprasāda</term>
+            <btw:citations><!-- [selected citations of antonyms for sense a] -->
+              <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 225</ref><foreign xml:lang="sa-Latn">sarve 'sya yadbhūyastvena krudhyanti, vyāpādanti <btw:antonym-instance>aprasādam</btw:antonym-instance>utpādayanti ākrośanti paribhāṣante</foreign></btw:cit><btw:tr><btw:cit><ref>Kern, 356</ref><quote>But all were extremely irritated and angry at it, showed him their <btw:antonym-instance>displeasure</btw:antonym-instance>, abused and insulted him</quote></btw:cit></btw:tr></btw:example>
+            </btw:citations>
+            <!-- 
+            [other citations]
+            ø
+            -->
+          </btw:antonym>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">kāluṣya</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 10d-11a-c, p 76</ref><foreign xml:lang="sa-Latn">tatra śraddhā astitvaguṇavattvaśakyatveṣu karmaphalasatyaratneṣv abhisaṃpratyayaḥ prasādaś cetaso 'bhilāṣaḥ | śraddhā hi tridhā pravartate | sati vastuni guṇavaty aguṇavati vā saṃpratyayākārā | sati guṇavati ca prasādākārā | sati guṇavati ca prāptum utpādayituṃ vā śakye 'bhilāṣākārā | cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti | śraddhā hi citta<btw:antonym-instance>kāluṣya</btw:antonym-instance>vairodhikīty atas tatsaṃprayoge kleśopakleśamala<btw:antonym-instance>kāluṣya</btw:antonym-instance>vigamāc cittaṃ śraddhām āgamya prasīdatīti cetasaḥ prasāda ucyate | sā punaś chandasaṃniśrayadānakarmikā |</foreign></btw:cit><btw:tr><ref>Chatterjee 65-67</ref>Of these, <term xml:lang="sa-Latn">śraddhā</term> means the well-grounded belief in the law of moral causation (<term xml:lang="sa-Latn">karma</term>), truths (<term xml:lang="sa-Latn">āryasatya</term>s) and the <term xml:lang="sa-Latn">ratna</term>s (Buddha, dharma &amp; saṃgha – the <term xml:lang="sa-Latn">tri-ratna</term>); it is the clarity (of the mind) and the desire of the mind. <term xml:lang="sa-Latn">Śraddhā</term> proceeds in three ways – (one) in the form of belief in the things that are real, the virtuous (beneficial) and the non-virtuous. (The other ) in the form of the purity (clarity of the mind) in regards to the real and the virtuous. (The third) in the form of desire for what is possible to obtain or to cultivate in regard to the real and the virtuous. (To explain) the purity of the mind. <term xml:lang="sa-Latn">Śraddhā</term> by virtue of its being opposed to (or curative to) the <btw:antonym-instance>impurity (restlessness)</btw:antonym-instance> of the mind an as such by way of application (association) thereof, the mind having been free fom <term xml:lang="sa-Latn">kleśa</term> or the elements of moral defilement, <term xml:lang="sa-Latn">upakleśa</term> or the vicious elements of limited occurrence, lla or impurities, <term xml:lang="sa-Latn">kāluṣya</term> or <btw:antonym-instance>excitement (restlessness)</btw:antonym-instance><!-- the btw:lemma/antonym tags here are problematic: they don't match up--> realises śraddhā an thus gets purified and as such it is called purity of the mind. This functions in the form of providind the (necessary) basis for chanda or desire.</btw:tr></btw:example>
+            </btw:citations>
+            <!--
+            [other citations]
+            ø
+            -->
+          </btw:antonym>
+        </btw:antonyms>
+        <btw:cognates>
+          <btw:cognate>
+            <term xml:lang="sa-Latn">pra√sad</term>
+            <btw:semantic-fields>
+              <btw:sf>01.02.11</btw:sf>
+              <btw:sf>01.04.04</btw:sf>
+              <btw:sf>01.04.08</btw:sf>
+              <btw:sf>01.05.05</btw:sf>
+              <btw:sf>01.05.05.09.01</btw:sf>
+              <btw:sf>02.01.10</btw:sf>
+              <btw:sf>03.11.03</btw:sf>
+            </btw:semantic-fields>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Tathāgatācintyaguhya, 29v6-7</ref><foreign xml:lang="sa-Latn">tadyathā bhagavan udaka<btw:cognate-instance>prasādakaṃ</btw:cognate-instance> maṇiratnaṃ sarvaṃ kaluṣabhāvaṃ prasādayati | evam eva bhagavaṃ bodhisatvasya prajñāratnaṃ sarvakleśamalaṃ satvānāṃ <btw:cognate-instance>prasādayati</btw:cognate-instance> |</foreign></btw:cit><btw:tr>For example, Venerable One, the water-<btw:cognate-instance>clearing</btw:cognate-instance> mineral clears up all mud. Likewise, Venerable One, the jewel of bodhisatvas’ understanding <btw:cognate-instance>clears</btw:cognate-instance> all impurities and defilements of sentient beings</btw:tr></btw:example>
+            </btw:citations>
+            <!--
+                [other citations]
+                ø
+            -->
+          </btw:cognate>
+          <btw:cognate>
+            <term xml:lang="sa-Latn">saṃprasāda</term>
+            <btw:semantic-fields>
+              <btw:sf>01.02.11</btw:sf>
+              <btw:sf>01.04.04</btw:sf>
+              <btw:sf>01.04.08</btw:sf>
+              <btw:sf>01.05.05.09.01</btw:sf>
+              <btw:sf>01.06.07.03</btw:sf>
+              <btw:sf>02.02.11</btw:sf>
+              <btw:sf>02.02.18</btw:sf>
+              <btw:sf>02.02.19</btw:sf>
+            <btw:sf>03.05.0</btw:sf> <!-- error -->
+            </btw:semantic-fields>
+            <btw:citations>
+              <btw:example xml:id="BTW.E.1"><btw:cit><ref>AkośBh ad VIII,9, 440
+              4-12</ref><foreign
+              xml:lang="sa-Latn">adhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance>
+              nāma ka eṣa dharmaḥ |
+              vitarkavicārakṣobhavirahātpraśāntavāhitā
+              saṃtateradhyātma<btw:cognate-instance>saṃprasādaḥ</btw:cognate-instance>
+              | sormikeva hi nadī
+              vitarkavicārakṣobhitāsaṃtatiraprasannā vartate | na
+              tārhi dravyāntaramiti kathaṃ dravyata ekādaśāṅgāni
+              bhavanti | tasmāttarhi śraddhā
+              <btw:lemma-instance>prasādaḥ</btw:lemma-instance> tasya
+              hi dvitīyadhyāna lābhātsamāhitabhūminiḥsaraṇe
+              saṃpratyaya utpadyate |
+              so’trādhyātma<btw:cognate-instance>saṃprasāda</btw:cognate-instance>
+              iti naiva hi vitarkavicārasamādayo
+              nāpyādhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance>
+              dravyāntarāṇītyapare |</foreign></btw:cit><btw:tr>Which
+              constituent factor (<term
+              xml:lang="sa-Latn">dharma</term>) is called ‘inner
+              <btw:cognate-instance>tranquillity</btw:cognate-instance>’
+              (<term xml:lang="sa-Latn">adhyātmasaṃprasāda</term>)?
+              Inner tranquillity is the peaceful flowing of one’s
+              mental series that derives from the dissociation from
+              the agitation of gross and subtle reasoning (<term
+              xml:lang="sa-Latn">vitarka</term> and <term
+              xml:lang="sa-Latn">vicāra</term>). Just like a river is
+              agitated with waves, the mental series unfolds disturbed
+              (<term xml:lang="sa-Latn">aprasannā</term>) because it
+              is agitated with gross and subtle reasoning. But, if it
+              is so, it (i.e. inner tranquillity) is not a distinct
+              entity, so how can there be eleven entities? Because
+              [the entity] ‘faith’ coincides with
+              <btw:lemma-instance>confidence</btw:lemma-instance>
+              (<term xml:lang="sa-Latn">prasāda</term>): After
+              attaining the second meditative stage, the meditator
+              experiences the arising of the complete assurance that
+              he can leave (<term xml:lang="sa-Latn">niḥsaraṇa</term>)
+              the <term xml:lang="sa-Latn">samāhitabhūmi</term>. This
+              is inner
+              <btw:cognate-instance>tranquillity</btw:cognate-instance>;
+              according to others, neither inner
+              <btw:cognate-instance>tranquillity</btw:cognate-instance>
+              nor gross and suble reasoning and meditative
+              concentration (<term xml:lang="sa-Latn">samādhi</term>)
+              are distinct entities (<term
+              xml:lang="sa-Latn">dravyāntara</term>)</btw:tr><btw:tr><ref>T
+              xxix 1558 147b19</ref><foreign xml:lang="zh-Hant">應說何
+              法名內等淨。此定遠離尋伺鼓動相續清淨轉名為內等淨。若有尋
+              伺鼓動相續不清淨轉如河有浪。若爾此應無有別體。如何許有十
+              一實事。是故應說。此即信根。謂若證得第二靜慮則於定地亦可
+              離中有深信生名內等淨。信是淨相故立淨名。離外均流故名內等。
+              淨而內等故立內等淨名。有餘師言。此內等淨等持尋伺皆無別體。
+              </foreign></btw:tr><btw:tr><ref>T xxix 1559
+              298c25</ref><foreign xml:lang="zh-Hant">何法名內澄淨。覺
+              觀散動滅離故。相續清淨流。說名內澄淨。何以故。如江有浪。
+              由覺觀散動故。此相續生起。不得清淨。若爾此非別物。云何由
+              此實物定分有十一。是故偈曰。信根內淨。釋曰。有別物謂信根。
+              此人由得第二定地故。於出離寂靜地中。生起決信故。此中說信
+              根。為內澄淨。有餘師說。覺觀三摩提內澄淨。悉非別物。若彼
+              非實別物</foreign></btw:tr></btw:example>
+              <btw:example><btw:cit><ref>AkośBh ad VIII. 9b and c, 441</ref><foreign xml:lang="sa-Latn">dvitīye dhyane’ dhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance> nāsti | kleśāvilatvāt |</foreign></btw:cit><btw:tr>There is no inner <btw:cognate-instance>limpidity</btw:cognate-instance> (<term xml:lang="sa-Latn">adhyātmasaṃprasāda</term>) in the second meditative stage, because of the turbidity of defilements (<term xml:lang="sa-Latn">kleśa</term>). </btw:tr><btw:tr><ref>T xxix 1558 147c15</ref><foreign xml:lang="zh-Hant">第二染中無內等淨。彼為煩惱所擾濁故。</foreign></btw:tr><btw:tr><ref>T xxix 1559 299a19</ref><foreign xml:lang="zh-Hant">第二定無內澄淨。由惑所染濁故。</foreign></btw:tr></btw:example>
+              <btw:example><btw:cit><ref>AkośBhV, 376</ref><foreign xml:lang="sa-Latn">praśāntavāhitāvasthā cittasyādhyātma<btw:cognate-instance>saṃprasāda</btw:cognate-instance> iti</foreign></btw:cit><btw:tr>The inner <btw:cognate-instance>tranquillity</btw:cognate-instance> of thought (<term xml:lang="sa-Latn">citta</term>) is the state brought about by calm.</btw:tr></btw:example>
+              <!--
+                  [other citations]
+                  ø
+              -->
+            </btw:citations>
+          </btw:cognate>
+        </btw:cognates>
+        <btw:conceptual-proximates>
+          <btw:conceptual-proximate>
+            <term>saṃprasāda</term>
+            <btw:citations>
+              <ptr target="#BTW.E.1"/>
+            <!-- 
+          [selected citations contrasting near-synonyms for sense a]
+          See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
+            </btw:citations>
+          </btw:conceptual-proximate>
+        </btw:conceptual-proximates>
+      </btw:contrastive-section>
+    </btw:sense>
+    <btw:sense xml:id="BTW.S.b">
+      <btw:english-renditions>
+        <btw:english-rendition>
+          <term>confidence</term>
+          <btw:semantic-fields>
+            <btw:sf>2.01.12.10.04|02</btw:sf>
+            <btw:sf>2.01.12.10.04|02.01</btw:sf>
+            <btw:sf>2.01.13.02</btw:sf>
+            <btw:sf>02.01</btw:sf>
+            <btw:sf>2.01.13.08.11</btw:sf>
+            <btw:sf>2.01.14.05.05|00</btw:sf>
+            <btw:sf>02.02.22.15|11.01.01</btw:sf>
+            <btw:sf>02.02.28.05</btw:sf>
+            <btw:sf>02.02.31.02</btw:sf>
+            <btw:sf>02.02.31.08</btw:sf>
+            <btw:sf>03.04.13.18.05|13.04</btw:sf>
+            <btw:sf>03.05.01.03.01</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+        <btw:english-rendition>
+          <term>trust</term>
+          <btw:semantic-fields>
+            <btw:sf>01.02.08.03.08.14|01.04</btw:sf>
+            <btw:sf>01.05.05.15.01.05|15.03</btw:sf>
+            <btw:sf>01.05.05.15.01.05|15.05</btw:sf>
+            <btw:sf>02.01.13.02|00</btw:sf>
+            <btw:sf>15.05</btw:sf>
+            <btw:sf>02.01.13.02|02</btw:sf>
+            <btw:sf>02.01.14.05.05</btw:sf>
+            <btw:sf>03.04.13.18.05|13.03 </btw:sf>
+            <btw:sf>03.04.13.18.05|13.03.02</btw:sf>
+            <btw:sf>03.04.13.18.05|13.04</btw:sf>
+            <btw:sf>03.05.01.03.01</btw:sf>
+            <btw:sf>03.05.01|02</btw:sf>
+            <btw:sf>03.05.01|05.01</btw:sf>
+            <btw:sf>03.10.05.02|12</btw:sf>
+            <btw:sf>03.10.05.02|15</btw:sf>
+            <btw:sf>03.10.13.02|05.06</btw:sf>
+            <btw:sf>03.10.13.20.03|03</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+        <btw:english-rendition>
+          <term>faith</term>
+          <btw:semantic-fields>
+            <btw:sf>02.01.13|02</btw:sf>
+            <btw:sf>02.01.13.02</btw:sf>
+            <btw:sf>02.01.13.02.02</btw:sf>
+            <btw:sf>02.01.13.08.11.01.01</btw:sf>
+            <btw:sf>02.08.03.13.02|06</btw:sf>
+            <btw:sf>03.05.01.03.01</btw:sf>
+            <btw:sf>03.05.04.04</btw:sf>
+            <btw:sf>03.07.00</btw:sf>
+            <btw:sf>03.07.00.02|01</btw:sf>
+            <btw:sf>03.07.00.05.01</btw:sf>
+            <btw:sf>03.10.13.10.02|02</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+      </btw:english-renditions>
+      <btw:subsense xml:id="BTW.S.b1">
+        <btw:explanation>faith, a form of trust not necessarily related to intellectual understanding</btw:explanation>
+        <btw:citations>
+          <btw:example><btw:cit><ref>Aśokāvadāna, 81</ref><p><foreign xml:lang="sa-Latn">atha sthaviro rājñaḥ <btw:lemma-instance>prasāda</btw:lemma-instance>vṛddhyarthamuvāca| mahārāja kiṃ drakṣyasi tāṃ devatāṃ| yayā dṛṣṭaḥ prajāyan sa vane'smin vadatāṃ varaḥ|</foreign></p><p><foreign xml:lang="sa-Latn">kramamāṇaḥ padān sapta śrutvā vāco yayā muneḥ||</foreign></p><p><foreign xml:lang="sa-Latn">[…] naivāsikā ya ihāśokavṛkṣe sambuddhadarśinī yā devakanyā| sākṣādasau darśayatu svadehaṃ rājño hyaśokasya <btw:lemma-instance>prasāda</btw:lemma-instance>vṛddhyai||</foreign></p><p><foreign xml:lang="sa-Latn">[…] yāvadrājñā jātyāṃ śatasahasraṃ dattaṃ| caityaṃ ca pratiṣṭhāpya rājā prakrāntaḥ|</foreign></p></btw:cit><btw:tr><p>Then, for the sake of  increasing the [king’s] faith, the elder said to the king:</p><lg><l>‘Great King, would you like to see the goddess who,</l><l>in this forest, saw the birth of the best of teachers</l><l>and his seven steps and heard his speech?</l></lg><p>[…] May the divine maiden who lives in this aśoka tree and who has seen the Buddha, manifest herself in person, in her physical form, so that king Aśoka’s faith can increase.</p>
+          <p>[…] Then, after  offering hundred thousend pieces of pure gold and erecting a caitya, proceeded on his journey. </p></btw:tr><btw:tr><ref>Strong 245-246</ref><lg><l>now, for the sake of further increasing the king’s <btw:lemma-instance>faith</btw:lemma-instance>, the elder asked Aśoka whether he would like to see the deity who witnessed in this wood the birth of the most eloquent Sage,</l><l>saw him take the seven steps,</l><l>and heard the words he spoke.</l><l>[…]</l><l>let the divine maiden who resides in the aśoka tree</l><l>and who has witnessed the birth of the Buddha</l><l>make hersef manifest in her own body</l><l>so that King Aśoka’s <btw:lemma-instance>faith</btw:lemma-instance> will grow greater still.</l><l>[…] Hearing this Aśoka made an offering of one hundred thousend pieces of gold to the birthplace of the Buddha, built a caitya there and went on.</l></lg></btw:tr></btw:example>
+          <btw:example><btw:cit><ref>Vajracchedikā 116</ref><foreign xml:lang="sa-Latn">ye imeṣv evaṃrūpeṣu sūtrāṃtapadeṣu bhāṣyamāṇeṣv ekacitta<btw:lemma-instance>prasāda</btw:lemma-instance>mātram api pratilapsyaṃte | jñātās te subhūte tathāgatena dṛṣṭās te subhūte tathāgatena sarve te aprameyaṃ puṇyaskaṃdhaṃ prasaviṣyaṃti pratigṛhīṣyaṃti |</foreign></btw:cit><btw:tr>Subhūti, the tathāgata knows those [practitioners] who have even just a single thought of <btw:lemma-instance>faith</btw:lemma-instance>  when these doctrines are expounded; all of them will generate and gain immeasurable amounts of merit.</btw:tr><btw:tr><ref>Harrison, 144</ref>As for those who, when the words of such discourses as these are being spoken, will experience the <btw:lemma-instance>serenity of faith</btw:lemma-instance>, even if it is for no more than a single thought, the Realized One knows them, Subhūti, the Realized One sees them, Subhūti. They will all generate and come to be endowed with an immeasurable quantity of merit.</btw:tr><btw:tr><ref>122b5-6</ref><foreign xml:lang="bo-Latn">gaṅ dag ’di lta bu’i mdo sde’i tshig bśad pa ’di la sems dad pa gcig tsam rñed par ’gyur ba de dag ni rab ’byor de bźin gśegs pas mkhyen to | | rab ’byor de dag ni de bźin gśegs pas gzigs te | rab ’byor sems can de dag thams cad ni bsod nams kyi phuṅ po dpag tu med pa bskyed ciṅ rab tu sdud par ’gyur |</foreign></btw:tr></btw:example>
+        </btw:citations>
+      </btw:subsense>
+      <btw:subsense xml:id="BTW.S.b2"> <!-- b2 -->
+        <btw:explanation>1. absolute confidence derived from understanding, typically compounded with avetya or abhedya</btw:explanation>
+        <btw:citations>
+          <btw:example><btw:cit><ref>AkośBh ad VI, 75a (pradhan 387 3)</ref><foreign xml:lang="sa-Latn">ataś catvāry api satyāny abhisamayato dharmāvetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhaḥ [Y: dharme’vetya..]</foreign></btw:cit><btw:tr>Then, when [practitioners] comprehend the the four truths, they obtain absolute <btw:lemma-instance>confdence</btw:lemma-instance> in the doctrine (<term xml:lang="sa-Latn">dharma</term>).</btw:tr></btw:example>
+          <btw:example><btw:cit><ref>AkośBh ad VI, 75a (pradhan 387 9)</ref><foreign xml:lang="sa-Latn">avetya<btw:lemma-instance>prasādā</btw:lemma-instance> iti ko’rthaḥ | yathābhūtasatyāny avabudhya saṃpratyayo ’vetyaprasādaḥ</foreign></btw:cit><btw:tr>What is the meaning of absolute confidence? Absolute <btw:lemma-instance>confidence</btw:lemma-instance> is the conviction (<term xml:lang="sa-Latn">saṃpratyaya</term>) resulting from understanding the truth correctly (as it is).</btw:tr></btw:example>
+          <btw:example><btw:cit><ref>Prasannapadā, 487</ref><foreign xml:lang="sa-Latn">tatra adhigamadharmeṇa pratyakṣadharmatayā sarvamārairapi buddhe bhagavati abhedyatvādavetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhena saṃghaḥ, sa na syāt . na cet santi te'ṣṭau puruṣapudgalāḥ ||</foreign></btw:cit><btw:tr>If there were not the kinds of people, then the monastic community - that prevails by virtue of realization of the dharma, direct experence of dharmatā,  faithfulness (<term xml:lang="sa-Latn">abhedya</term>) to the lord Buddha despite all evils, and attainment of <btw:lemma-instance>absolute confidence</btw:lemma-instance> - would not be [either].</btw:tr><btw:tr><ref>Sprung, 226</ref>the community of monks, which exists by virtue of penetration to the truth, and by virtue of the immediate experience of the ultimate truth due to not being sundered from the illustrious Buddha even by all the demons, and by virtue of its enjoying <btw:lemma-instance>utterly clarified knowledge</btw:lemma-instance>, would not exist if the eight spiritual categories of person did not exist.</btw:tr></btw:example>
+        </btw:citations>
+      </btw:subsense>
+      <btw:other-citations>
+        <btw:cit><ref>AkośV, 650</ref><foreign xml:lang="sa-Latn">ye kecit prasādajātāḥ satpuruṣā buddhaṃ bhagavantam astāviṣuḥ stuvanti stoṣyaṃti vā. sarve te etayaiva trividhayā saṃpadeti.</foreign></btw:cit>
+        <btw:cit><ref>Aśokāvadāna, 31</ref><foreign xml:lang="sa-Latn"> dṛṣṭvā mahākāruṇikaṃ svayambhuvaṃ vyāmaprabhoddyotitasarvagātraṃ| dhīreṇa vaktreṇa kṛtaprasādaḥ pāṃśuṃ dadau jātijarāntakāya||</foreign></btw:cit>
+        <btw:cit><ref>Aśokāvadāna, 79</ref><foreign xml:lang="sa-Latn">tvaddarśanām me dviguṇaprasādaḥ saṃjāyate'smin varaśāsanāgre| tvaddarśanāccaiva paropi śuddho dṛṣṭo mayādya apratimaḥ svayambhūḥ||</foreign></btw:cit>
+        <btw:cit><ref>Aśokāvadāna, 93</ref><foreign xml:lang="sa-Latn">yāvad rājñā'śokena jātau bodhau dharkacakre parinirvāṇe ekaikaśatasahasraṃ dattaṃ| tasya bodhau viśeṣataḥ prasādo jāta iha bhagavatā'nuttarā samyaksambodhirabhisambuddheti| sa yāni viśeṣayuktāni ratnāni tāni bodhiṃ preṣayati|</foreign></btw:cit>
+        <btw:cit><ref>Aśokāvadāna, 97</ref><foreign xml:lang="sa-Latn">tvaddarśanād bhavati dṛṣṭo'dya tathāgataḥ| karuṇālābhāt tvaddarśanācca dviguṇaprasādo mamotpannaḥ|</foreign></btw:cit>
+        <btw:cit><ref>Prasannapadā, 337</ref><foreign xml:lang="sa-Latn">etāni kāśyapa pañca bhikṣuśatāni kāśyapasya tathāgatasya pravacane'nyatīrthikaśrāvakā abhūvan . taireva tasya kāśyapasya tathāgatasyāntikādupālambhābhiprāyaireṣā dharmadeśanā śrutā . śrutvā caikacittaprasādo labdhaḥ . evaṃ tairvāg bhāṣitā . āścaryaṃ yāvanmadhurapriyamāṇī kāśyapastathāgato'rhan samyaksaṃbuddha iti . ta etenaikacittaprasādena pratilabdhena kālagatāstrāyastriṃśeṣu deveṣūpapannāste tataścyutāḥ samānāḥ ihopapannāstenaiva ca hetuneha mama śāsane pravrajitāstānyetāni kāśyapa pañca bhikṣuśatāni dṛṣṭipraskandhānīmāṃ gambhīrāṃ dharma[en][338][/en]deśanāṃ nāvataranti</foreign></btw:cit>
+        <btw:cit><ref>Tathāgatācintyaguhya, 28v6-8</ref><foreign xml:lang="sa-Latn"> iti hi mārṣā apramattoyoni[28b7]śomanasikāraprayukto bodhisatvaḥ śrāddho bhavaty apramattaḥ śrāddha guhyakādhipate bhavata prasādabahulā sadāsamagrā dharmārthikā dharmakāmāḥ śrāddhasya hi guhyakādhipateḥ puruṣapudgalasya paralokadurgatibhayaṃ na bhavati na cāsya duśca[28b8]rite cittaṃ kāmati āryāṇāṃ ca praśasyo bhavati ||</foreign></btw:cit>
+        <btw:cit><ref>Vimalakīrti MS75b-76a</ref><foreign xml:lang="sa-Latn">bhaviṣyanti maitreya anāgate ’dhvani kulaputrāḥ kuladuhitaraś ca devanāgayakṣagandharvāś cāvaropitakuśalā anuttarāṃ samyakṣaṃbodhiṃ saṃprasthitāḥ | te ’śravaṇād asya dharmaparyāyasya mā parihāsyanta iti | imān evaṃrūpān sūtrāntāñ śrutvātīva prema ca prasādaṃ ca pratilapsyante, mūrdhnā ca pratigrahīṣyanti | teṣāṃ tvaṃ maitreya tathārūpāṇāṃ kulaputrāṇāṃ kuladuhitḥṇāṃ cānurakṣāyā imān evaṃrūpān sūtrāntāṃs tasmin kāle vaistārikān kuryāḥ | dve ime maitreya bodhisatvānāṃ mudre | katame dve | vicitrapadavyañjanaprasādamudrā ca gambhīradharmanayānuttrāsayathābhūtāvatārapraveśamudrā ca |  ime maitreya bodhisatvānāṃ dve mudre | tatra maitreya ye bodhisatvā vicitrapadavyañjanaprasādagurukāḥ, ta ādikarmikā bodhisatvā veditavyāḥ |  ye punar imaṃ maitreya gambhīraṃ sūtrāntam arūpalepaṃ yamakavyatyastanihārapadapuṭaprabhedaṃ pravartayiṣyanti śrosyanty adhimokṣyante vedayiṣyanti, ime bodhisatvāś ciracaritabrahmacaryā veditavyāḥ | </foreign></btw:cit>
+        <btw:cit><ref>Aśokāvadāna, 32</ref><foreign xml:lang="sa-Latn">teṣāmevaṃ bhavati| kiṃ nu bhavanto vayamitaścyutā āhosvidanyatropapannā iti| yenāsmākaṃ kāraṇaviśeṣāḥ pratiprasrabdhāḥ| teṣāṃ bhagavān prasādasaṃjananārthaṃ nirmitaṃ visarjayati| teṣāmevaṃ bhavati| na vayaṃ cyutā nāpyanyatropapannāḥ| api tu ayam apūrvadarśano'syānubhāvenāsmākaṃ kāraṇaviśeṣāḥ pratiprasrabdhā iti| te nirmite cittāni prasādayitvā narakavedanīyāni karmāṇi kṣapayitvā devamanuṣyeṣu pratisandhiṃ gṛhṇanti| yatra satyānāṃ bhājanabhūtā bhavanti|</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇa, 19-21</ref><foreign xml:lang="sa-Latn">āyur divā ca rātrau(2) ca carato vā sthitasya vā | sroto mahānadīnām vā yāty eva na nivartate |1| yeṣāṃ rā(3)trinivāsena āyur alpataram bhavet |alpodake ca matsyānāṃ kā nu teṣāṃ (4) rati bhavet |2| parijīrṇam idaṃ rūpaṃ roganīḍaṃ prabhaṅguraṃ | bhetsyati pūtisaṃghā(5)taṃ maraṇāntaṃ hi jīvitaṃ |3| na cirād vata kāyo ’yaṃ pṛthivīm adhiśeṣyate | śūnyo vyapeta (1)vijñāno nirastaṃ vā kaḍaṅgaraṃ |4| kim anena śarīreṇa pūtivisravatā sadā | nityaṃ rogābhi(2)bhūtena jarāmaraṇabhīruṇā |5| anena pūtikāyena bhaṅgureṇātureṇa ca | (3) mīmita paramāṃ śāntiṃ yogakṣemam anuttaram iti | athaitā gāthāḥ śrutvā su(4)varṇavarṇaḥ kumāraḥ samvignaḥ saṃsārān nirvāṇānuśaṃsadarśī | tasya bhi(5)kṣor vandanāṃ kṛtvā pṛcchati | ārya kim idam iti bhikṣuṇābhihitam āyuṣman buddhavacanam iti | (1) tasya śrutvā bhagavacchāsane mahān prasāda utpannaḥ pravrajyābhilāṣo mokṣābhilāś ca | (2) tatas tasya bhikṣoḥ satkṛtya pādayor nipatya kathayaty ārya pravrajitum icchāmi | (3) tadanukampām upādāya māṃ pravrājayitum arhasīti |</foreign></btw:cit>
+        <btw:cit><ref>Rāṣṭrapālaparipṛcchā, 120</ref><p><foreign xml:lang="sa-Latn">sa bhagavantaṃ siṃhāsanasthaṃ sūryasahasrātirekayā prabhayā sarvaparṣanmaṇḍalaṃ jihmīkurvantamatīva virocamānaṃ dṛṣṭvā hṛṣṭatuṣṭaḥ prasādāvarjirahṛdaya utthāyāsanātkṛtakarapuṭo bhagavantamābhirgāthābhirabhyaṣṭāvīt-</foreign></p><lg><l><foreign xml:lang="sa-Latn">abhibhūya jino jagadetān devagaṇāsurakinnaranāgān /</foreign></l><l><foreign xml:lang="sa-Latn">śrāvakabuddhasutān merutejā bhāsati hemagiriḥ sa yathaiva // 1 //</foreign></l></lg></btw:cit>
+        <btw:cit><ref>AkośV, 554</ref><foreign xml:lang="sa-Latn">tatra prayogaśuddhir āryakāṃtāni śīlāni. āśayaśuddhir buddhādiṣv avetyaprasāda iti. kṣāṃtim api notpādayed iti. kṣamaṇam api notpādayet. cittam api notpādayet.</foreign></btw:cit>
+        <btw:cit><ref>PSk 4.1.11</ref><foreign xml:lang="sa-Latn">śraddhā katamā | karmaphalasatyaratneṣv abhisaṃpratyayaś cetasaḥ prasādaḥ </foreign></btw:cit>
+        <btw:cit><ref>AkośV  Wogihara  605</ref><p><foreign xml:lang="sa-Latn">catvāro 'vetyaprasādāḥ buddhe 'vetyaprasādo dharme saṃghe cāryakāntāni ca śīlānīti. tatra duḥkhasatyādīnāṃ dharmatvād abuddhasaṃghasvabhāvatvāc ca. yathākramaṃ satyatrayam abhisamayan paśyan dharme cāvetyaprasādam āryakāntāni cāśīlāni anāsravāṇi pratilabhate. na buddhe na saṃghe vā avetyaprasādaṃ. [duḥkhasatyādīnāṃ dharmatvād. abuddhasaṃghasvabhāvatvāc ca. yathā] mārgasatyam abhisamayato buddhe tasya ca srāvakasaṃghe 'vetyaprasādaṃ pratilabhate. mārgasatyasya buddhasaṃghasvabhāvatvāt </foreign></p><p>[ ….]</p><p><foreign xml:lang="sa-Latn">tasmāc catvāry api satyāny abhisamayato dharme 'vetyaprasādalābha ity uktam iti. buddhasaṃghayor mārgo dharma iti nocyate. yasmāt tadabhisamayato buddhe saṃghe cāvetyaprasādalābha iti.</foreign></p><p>[…]</p><p><foreign xml:lang="sa-Latn">cittaprasādakṛtaḥ śīlaprasāda iti. trividhaś cittaprasādaḥ. samyaksaṃbuddho bata bhagavān. svākhyāto 'sya dharmavinayaḥ. supratipanno 'sya śrāvakasaṃgha iti. tena kṛtaḥ śīlaprasādaḥ. śīlam eva prasādaḥ. śīlasya vā prasādo 'nāsravatvaṃ śīlaprasādaḥ. ante trayāṇāṃ prasādānāṃ caturtha uktaḥ śīlaprasādaḥ. kasmād ity āha. evaṃ prasannasya samyaksaṃbuddho bata bhagavān iti vistareṇaiṣā pratipattiḥ. [Tib. 272b] āryakāntaśīlapratipattir ity arthaḥ. ārogyabhūtatvād vā. kim ante śīlaprasāda uktaḥ. vaiyabhaiṣajyopasthāyakārogyānukramataḥ. daiśikamārgasārthikayānavad vā. kim. ante caturtha ukta ity adhikṛtaṃ. daiśikabhūto bhagavān. mārgabhūto dharmaḥ. sārthikabhūtaḥ saṃghaḥ. yānabhūtāny āryakāntāni śīlānīti. āryāṇaṃ kāntāni prayāṇīty āryakāntānīti.</foreign></p></btw:cit>
+        <btw:cit><ref>Vimalakīrti MS2a</ref><foreign xml:lang="sa-Latn">dṛḍavajrādhyāśayābhedyabuddhadharmaprasādapratilabdhaiḥ dharmaratnavikaraṇāmṛtajalasaṃpravarṣakaiḥ</foreign></btw:cit>
+        <btw:cit><ref>Vimalakīrti MS24a</ref><foreign xml:lang="sa-Latn">’bhedyaprasādaratiḥ, dharme śuśrūṣaṇaratiḥ, saṃgha upasthānaratiḥ, guruṣu gauravopasthānaratiḥ, traidhātukān niḥsaraṇaratiḥ, viṣayeṣv aniśritaratiḥ, skandheṣu vadhakānityapratyavekṣaṇāratiḥ, dhātuṣv āśīviṣaparitulanāratiḥ, āyataneṣu śūnyagrāmavivekaratiḥ</foreign></btw:cit>
+      </btw:other-citations>
+      <btw:semantic-fields>
+        <btw:sf>02.01.13</btw:sf>
+        <btw:sf>02.01.13.02</btw:sf>
+        <btw:sf>02.01.13.02.02.</btw:sf>
+        <btw:sf>02.01.13.08.11</btw:sf>
+        <btw:sf>02.01.13.08.11.01.01</btw:sf>
+        <btw:sf>02.01.14</btw:sf>
+        <btw:sf>02.01.17</btw:sf>
+        <btw:sf>02.02.22</btw:sf>
+        <btw:sf>02.02.14</btw:sf>
+        <btw:sf>02.02.12</btw:sf>
+        <btw:sf>02.02.13</btw:sf>
+        <btw:sf>03.07</btw:sf>
+      </btw:semantic-fields>
+      <btw:contrastive-section>
+        <btw:antonyms>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">aprasāda</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 13, p 96</ref><foreign xml:lang="sa-Latn">āśraddhyāṃ karmaphalasatyaratneṣv anabhisaṃpratyayaḥ śraddhāvipakṣaḥ | śraddhā hy astitvaguṇavattvaśakyatveṣv abhisaṃpratyayaḥ prasādo 'bhilāṣaś ca yathākramam | aśraddhā tadviparyeṇāstitvaguṇavattvaśakyatveṣv anabhisaṃpratyayo <btw:antonym-instance>'prasādo</btw:antonym-instance> 'nabhilāṣaś ca | kausīdyasaṃniśrayadānakarmakam | aśraddadhānasya prayogacchandābhāvāt kausīdyasaṃniśrayadānakarmakatvam |</foreign></btw:cit><btw:tr><ref>Chatterjee 89-90</ref>āśraddya or the fculty of disturbed mind means the unsettles belied in the law of moral causation (karmaphala), the truth (the four noble truths) and in the ‘ratnas (the three fold ratnas – the Buddha, the dharma nad the samgha) as opposed to śraddhā or the faculty of settled mind. Śraddhā means the sttled belief in the reality (of moral causation ), the clarity of understanding (unstained attitude) in regard to the effectiveness (of the four Noble truths) and longing for the accessibility (of the three ratnas). ‘Āśraddhā’ being opposed to that means non-belief in the reality (of moral causation) <btw:antonym-instance>non-clarity</btw:antonym-instance> of attitude to the effectiveness of the truths and non-desire for the accessibility (of the ratnas). It functions in the form of of providing scope for langour (kausīdya). It is said to be providing scope  for langour in the sense that one lacking ‘śraddhā’ has no determination to employ oneself in action.</btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Sarvadharmāpravṛttinirdeśa, 126</ref><foreign xml:lang="sa-Latn">bo)dhisatvānāṃ <btw:antonym-instance>aprasāda</btw:antonym-instance>cittam utpādayati aprasannacittam …</foreign></btw:cit><btw:tr>He <btw:antonym-instance>mistrusted</btw:antonym-instance> the bodhisatva, and being mistrustful …</btw:tr></btw:example>
+            </btw:citations>
+            <!-- [other citations] -->
+            <!-- ø -->
+          </btw:antonym>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">aprasanna</term>
+            <btw:citations>
+              <ptr target="#BTW.E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
+            </btw:citations>
+            <!-- [other citations] -->
+            <!-- ø -->
+          </btw:antonym>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">pratigha</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Ratnāvalī IV.97-98 , 130</ref><lg><l><foreign xml:lang="sa-Latn">iti sadbhir mahāyāne kartavyaḥ <btw:antonym-instance>pratigha</btw:antonym-instance>kṣayaḥ |</foreign></l><l><foreign xml:lang="sa-Latn">prasādaś cādhikaḥ kāryaḥ saṃyaksaṃbodhisiddhaye ||97|</foreign></l><l><foreign xml:lang="sa-Latn">mahāyānaprasādena taduktācaraṇena ca |</foreign></l><l><foreign xml:lang="sa-Latn">prāpyate ’nuttarā bodhiḥ sarvasaukhyāni cāntarā ||98||</foreign></l></lg></btw:cit><btw:tr><lg><l>So, wise people should crush any <btw:antonym-instance>opposition</btw:antonym-instance> they might have against the mahāyāna</l><l>and generate abundant trust [in it] [so that they can attain perfect awakening.</l><l>By trusting the mahāyāna and practicing its teachings, </l><l>they will obtain the unexcelled awakening and enjoy all kinds of happiness in the meantime.</l></lg></btw:tr><btw:tr><ref>Tucci 434</ref>Therefore the good ones must destroy any feeling of opposition<btw:antonym-instance/> against the Great Vehicle and find their supreme spiritual peace in it if they want to attain to perfect illumination. By having faith in the Great Vehicle and by following the precepts enjoined in itone attains to the supreme illumination and midway to all happiness.</btw:tr><btw:tr><ref>Hahn 131</ref><foreign xml:lang="bo-Latn">| de ltar mkhas pas theg chen la | | khoṅ khro ba ni zad bya źiṅ | | rdzogs pa’i byaṅ chub ’grub bya’i phyir | | lhag par rab tu daṅ bar bya | | theg pa che la rab daṅ źiṅ | | de las bśad pa spyad pa yis | | bla med byaṅ chub thob ’gyur źiṅ | | bde ba kun kyaṅ źar la ’grub |</foreign></btw:tr></btw:example>
+              <!-- [other citations] -->
+              <!-- ø -->
+            </btw:citations>
+          </btw:antonym>
+        </btw:antonyms>
+        <btw:cognates>
+          <btw:cognate>
+            <term xml:lang="sa-Latn">abhipra√sad</term>
+            <btw:semantic-fields>
+              <btw:sf>02.01.13</btw:sf>
+              <btw:sf>03.07</btw:sf>
+              <btw:sf>03.07.01</btw:sf>
+            </btw:semantic-fields>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Aśokāvadāna, 5</ref><foreign xml:lang="sa-Latn">tena yāvadupāyena gupto gāndhiko bhagavacchāsane<btw:cognate-instance>'bhiprasāditaḥ</btw:cognate-instance>| sa yadā<btw:cognate-instance>'bhiprasannas</btw:cognate-instance>tadā sthaviraḥ saṃbahulairbhikṣubhiḥ sārdhamekadivasaṃ tasya gṛhaṃ praviṣṭaḥ aparasminnahani, ātmadvitīyaḥ| anyasminnahani, ekākī| yāvad gupto gāndhikaḥ sthaviraṃ śāṇakavāsinamekākinaṃ dṛṣṭvā kathayati| na khalvāryasya kaścit paścācchramaṇaṃ| sthavira uvāca| jarādharmāṇāṃ kuto'smākaṃ paścācchramaṇo bhavati| yadi kecicchraddhāpurogeṇa pravrajanti, te'smākaṃ paścācchramaṇā bhavanti| gupto gāndhika uvāca| āryāhaṃ tāvad gṛhavāse parigṛddho viṣayā'bhirataśca| na mayā śakyaṃ pravrajituṃ| api tu yo'smākaṃ putro bhavati taṃ vayamāryasya paścācchramaṇaṃ dāsyāmaḥ|</foreign></btw:cit><btw:tr>by virtue of skillful means, the perfumer Gupta had <btw:cognate-instance>converted</btw:cognate-instance>  (<term xml:lang="sa-Latn">abhiprasādita</term>) in the teaching of the Venerable One. when the [perfumer] had been <btw:cognate-instance>converted</btw:cognate-instance>, the elder [Śāṇakavāsin] went to his house, one day accompamied by many monks, on another day with another person only, and yet another day, he went alone. so, upon seeing that the elder Śāṇakavāsin was alone, the perfumer Gupta asks ‘Why, Your Reverence is not accompanied by an accolite?’ The elder said:  ‘Why should a decaying mortal have accolites? If [, though,] some people, driven by faith (<term xml:lang="sa-Latn">śraddhāpuruga</term>) were to renounce worldly life they would be my accolites.’ The perfumer said: ‘Your Reverence, all my life (tāvad) I have been coveting the householder’s life and have been attached to the pleasures of the sense; I cannot renounce worldly life. But I shall devote my son to be the accolite of Your Reverence.’</btw:tr><btw:tr><ref>Strong, 176-177</ref><p>Now eventually, through skillfull means, Gupta the perfumer came to be <btw:cognate-instance>favorably disposed</btw:cognate-instance> toward the Teaching of the Blessed One. One day, after this had happened, the elder Śāṇakavāsin went to his house along with many monks; then, on another day, he went there with only one other monk; and, on a third day, he went there all alone.</p><p>When Gupta saw that the elder Śāṇakavāsin  was all by himslef he asked:</p><p>“How is it the the Noble One has no attendant?”</p><p>“ Why,” replied the elder, “should we, who are subject to old age, have any attendants? If someone, moved by faith, should be initiated into monastic life, then he would truly be a attendant and a followers of ours.”</p><p>“ Noble One” said the perume merchant, “I have always been greedy for the householder’s life and taken delight in the field of the senses; it is not possible for me to be initiated into the monastic life. However, when I have a son, I will give him to your lordship as an attendant”.</p></btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Suvarṇavarṇa, 4</ref><foreign xml:lang="sa-Latn">sa kathayati kauśikaṃ aśrāddho ’sau sārthavāhas tasya buddhe prasādo nāstīti | śakraḥ kathayati | mārṣa gṛhāṇa tvaṃ ahan tathā kariṣyāmi yathāsau sārthavāho buddhaśāsane <btw:cognate-instance>’bhiprasīdatīt</btw:cognate-instance>i |</foreign></btw:cit><btw:tr>He says: ‘Kauśika, that caravan leader is an unbeliever, he has no faith in the Buddha.’ Śakra replies: ‘Sir, take [rebirth there] and I shall see to it that the caravan leader <btw:cognate-instance>converts to</btw:cognate-instance> the buddha’s teaching.’</btw:tr><btw:tr><ref>Rajapatirana ??</ref>He replied: "Kauśika, that caravan leader is an unbeliever; he has no faith in the teaching of the Buddha." Śakra said: "Dear friend, you obtain rebirth (as directed), and I will act in such a way that that caravan leader <btw:cognate-instance>will have faith in</btw:cognate-instance> the teaching of the Buddha."</btw:tr></btw:example>
+            </btw:citations>
+            <btw:other-citations>
+              <btw:cit><ref>Suvarṇavarṇāvadāna 204 – 205</ref><foreign xml:lang="sa-Latn">tatas tad atyadbhutaṃ sthavirānandasya mahātmyaṃ dṛṣṭvā sā parat sthavirānande ’tyartham abhiprasannā | tatas tāṃ parṣadaṃ tathābhiprasannmanaskām ālokya sthavirānandena tathā vidhā dharmadeśanā kṛtā yāṃ śrutvānekaiḥ prāṇiśatasahasrais mahān viśeṣo ’dhigataḥ |atha rājā’jātaśatrus tad atyadbhutaṃ devamanuṣyāvarjanakaraṃ prātihāryaṃ dṛṣṭvā paramaprasādāvarjitacittasantāna udānam udānayām āsa | aho āścaryam aho ’tyadbhutaṃ aho āryānandena svaguṇamāhātmyaṃ prakāśitaṃ aho tathāgataśāsanamāhātmyam udbhāvitaṃ.</foreign></btw:cit>
+              <btw:cit><ref>Aśokāvadāna, 56</ref><foreign xml:lang="sa-Latn">yadā rājñāśokena bhagavacchāsane śraddhā pratilabdhā tena caturaśītidharmarājikāsahasraṃ pratiṣṭhāpitaṃ / pañcavārṣikaṃ ca kṛtaṃ / trīṇī śatasahasrāṇi bhikṣūṇāṃ bhojitāni / yatraikam arhatāṃ dve śaikṣāṇāṃ pṛthagjanakalyāṇakānāṃ ca / āsamudrāyāṃ pṛthivyāṃ janakāyā yabhdūyasā bhagavacchāsane 'bhiprasannāḥ /</foreign></btw:cit>
+              <btw:cit><ref>Aśokāvadāna, 61</ref><p><foreign xml:lang="sa-Latn">yadā vītaśoko rājñā'śokenopāyena bhagavacchāsane'bhiprasāditaḥ sa kṛtakarapuṭa uvāca| deva eṣo'haṃ taṃ bhagavantaṃ tathāgatamarhantaṃ samyaksaṃbuddhaṃ śaraṇaṃ gacchāmi| dharmaṃ ca bhikṣusaṃṅghaṃ ceti| āha ca|</foreign></p>
+              <p><foreign xml:lang="sa-Latn">[..] atha rājā'śoko vītaśokaṃ kaṇṭhe pariṣvajyovāca| na tvaṃ mayā parityaktaḥ| api tu buddhaśāsanābhiprasādārthaṃ tava mayā eṣa upāyaḥ pradarśitaḥ|</foreign></p></btw:cit>
+              <btw:cit><ref>Aśokāvadāna, 112</ref><lg><l><foreign xml:lang="sa-Latn">yā devatā śāsturabhiprasannā dharme ca saṅghe ca gaṇapradhāne|</foreign></l><l><foreign xml:lang="sa-Latn">ye cāpi loke ṛṣayo variṣṭhā rakṣantu te'smattanayaṃ kunālaṃ ||</foreign></l></lg></btw:cit>
+              <btw:cit><ref>Suvarṇavarṇāvadāna 320 – 323</ref><foreign xml:lang="sa-Latn">yāvad apareṇa samayenājito nāma bhikṣuḥ dhārmakathiko yuktamuktapratibhānaś citrakatho madhurakatho | janapadacārikāñ caran taṃ vihāram āgataḥ sa catasṛṇāṃ parṣadāṃ dharma deśayaty ādau kalyāṇaṃ madhye kalyāṇaṃ paryavaśāne kalyāṇaṃ suvyañjanaṃ kevalaṃ paripūrṇaṃ pariśuddhaṃ paryavadātaṃ brahmacaryaṃ samprakāśayati | tena sarva evāsau karvaṭanivāsījanakāyo ’bhiprasāditaḥ |</foreign></btw:cit>
+            </btw:other-citations>
+          </btw:cognate>
+          <btw:cognate>
+            <term xml:lang="sa-Latn">prasanna</term>
+            <btw:semantic-fields>
+              <btw:sf>02.01.13</btw:sf>
+              <btw:sf>02.02.22</btw:sf>
+              <btw:sf>02.01.13.02</btw:sf>
+            </btw:semantic-fields>
+            <btw:citations>
+              <btw:example xml:id="BTW.E.2"><btw:cit><ref>Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit><btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr></btw:example>
+            </btw:citations>
+            <!-- [other citations]
+                 ø
+            -->
+          </btw:cognate>
+        </btw:cognates>
+        <btw:conceptual-proximates>
+          <btw:conceptual-proximate>
+            <term xml:lang="sa-Latn">śraddhā</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Aśokāvadāna, 71</ref><foreign xml:lang="sa-Latn">sa idānīm acirajāta<btw:lemma-instance>prasād</btw:lemma-instance>o buddhāśāsane yatra śākyaputrīyān dadarśa, ākīrṇe rahasi vā tatra śirasā pādayornipatya vandate sma| tasya ca yaśo nāmāmātyaḥ parama<btw:conceptual-proximate-instance>śrāddho</btw:conceptual-proximate-instance> bhagavati| / sa taṃ rājānamuvāca / deva nārhasi sarvarṇapravrajitānāṃ praṇipātaṃ kartuṃ / santi hi śākyaśrāmaṇerakāścaturbhyo varṇebhyaḥ pravrajitā iti /</foreign></btw:cit><btw:tr>As soon as the [King] had generated <btw:lemma-instance>faith</btw:lemma-instance> in the Buddha’s teachings, he started paying homage to the monastics (śākyaputrīya) falling at their feet whenever he saw them, be it in public or in private. His minister Yaśa had the greatest <btw:conceptual-proximate-instance>belief</btw:conceptual-proximate-instance> (<term xml:lang="sa-Latn">śraddhā</term>) in the Buddha, [yet] he said o the king: ‘Majesty,  you should not prostrate to religious mendicats of every caste! Indeed the mendicants in the buddhist order come from all the four castes’.</btw:tr><btw:tr><ref>Strong 234-235</ref>Not long after the king Aśoka had come to have <btw:lemma-instance>faith</btw:lemma-instance> in the Teaching of the Buddha, he started honoring Buddhist monks, throwing himself at their feet wherever he saw them, in a crowd, or in a desert plce. Now Aśoka had a minister named Yaśas, and although he had the utmost <btw:conceptual-proximate-instance>faith</btw:conceptual-proximate-instance> in the Blessed One, he said , one day, to the king: “Your Majesty, you ought not to prostrate yourself before wandering mendicants of every castes, and the Buddhist monks do come from al four castes.”</btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Tathāgatācintyaguhya, 26v8-27r1</ref><foreign xml:lang="sa-Latn">iha mārṣāḥ kulaputro vā kuladuhitā vā adhyāśayenānuttarāyāṃ samyaksaṃbodhau cittam utpādya <btw:conceptual-proximate-instance>śrāddho</btw:conceptual-proximate-instance> bhavati prasādabahulaḥ āryāṇāṃ saṃdarśanakāmaḥ saddharmaśrotukāmaḥ | […] sa karmavipākaṃ <btw:conceptual-proximate-instance>śraddadhāti</btw:conceptual-proximate-instance> ’vakalpayati | avagacchati niskā[ṃ]kṣā ni[r]vicikitsā nirvimatir bhavati |</foreign></btw:cit><btw:tr>Esteemed friends, a lady or gentleman who has generated the aspiration to unexcelled perfect awakening with earnest intention is a <btw:conceptual-proximate-instance>believer</btw:conceptual-proximate-instance>, one who has much faith and is eager to behold the noble and to listen to the true doctrine. […]. he <btw:conceptual-proximate-instance>believes</btw:conceptual-proximate-instance> in and is persuaded of the results of karma; he aknowledges it, entertains no doubt, or uncertainty or misgiving [about it].</btw:tr></btw:example>
+            </btw:citations>
+          </btw:conceptual-proximate>
+        </btw:conceptual-proximates>
+      </btw:contrastive-section>
+    </btw:sense>
+    <btw:sense xml:id="BTW.S.c">
+      <btw:english-renditions>
+        <btw:english-rendition>
+          <term>favor</term>
+          <btw:semantic-fields>
+            <btw:sf>01.03.07.10.03</btw:sf>
+            <btw:sf>01.05.05.12.01</btw:sf>
+            <btw:sf>01.05.05.12.01.03.02</btw:sf>
+            <btw:sf>02.01.17.01</btw:sf>
+            <btw:sf>02.02.22.01</btw:sf>
+            <btw:sf>02.04.06</btw:sf>
+            <btw:sf>03.08.13.03</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+      </btw:english-renditions>
+      <btw:explanation>In the sense of granting a favor:</btw:explanation>
+      <btw:citations>
+        <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna (Roy 1971, 71)</ref><foreign xml:lang="sa-Latn">anena pathā putrako me suvarṇavarṇaḥ kumāro nīyate yathā ca taṃ paśyāmi tathā me <btw:lemma-instance>prasādaṃ</btw:lemma-instance> kartum arhatheti</foreign></btw:cit><btw:tr>My son, the young Suvarṇavarṇa, is conducted [to execution] along this road; please grant me the <btw:lemma-instance>favor</btw:lemma-instance> of seeing him.</btw:tr><btw:tr><ref>Rajapatirana ??</ref>The lad, Suvarṇavarṇa, my son, is being taken along this road. Please do me the <btw:lemma-instance>favour</btw:lemma-instance> of allowing me to see him.</btw:tr></btw:example>
+      </btw:citations>
+      <btw:other-citations>
+        <btw:cit><ref>Suvarṇavarṇāvadāna, 86</ref><foreign xml:lang="sa-Latn">tathā prasādaḥ karaṇīyo yathā kumāraḥ pravicāryata iti | </foreign></btw:cit>
+        <btw:cit><ref>Vimalakīrti MS26a</ref><foreign xml:lang="sa-Latn">ahaṃ cāścaryaprasādapratilabdhas tasya satpuruṣasya caraṇau praṇamya śatasahasramūlyaṃ muktāhāraṃ kaṇṭhād avatārya dadāmi || sa taiḥ muktāhāraṃ na pratigṛhṇāti sma | tam aham etad avocam: pratigṛhyemam, yatra te prasādo bhavati tasmai prayaccheti | </foreign></btw:cit>
+        <btw:cit><ref>Saddharmapuṇḍarīka, 92</ref><foreign xml:lang="sa-Latn">atha sa puruṣastān ṛṣīnevaṃ vadet - ka upāyaḥ, kiṃ vā śubhaṃ karma kṛtvedṛśīṃ prajñāṃ pratilabheya, yuṣmākaṃ prasādāccaitān guṇān pratilabheya? atha khalu te ṛṣayastasya puruṣasyaivaṃ kathayeyuḥ - yadīcchasi, araṇye vasa | parvataguhāsu vā niṣaṇṇo dharmaṃ cintaya | kleśāśca te prahātavyāḥ | tathā dhūtaguṇasamanvāgato 'bhijñāḥ pratilapsyase |</foreign></btw:cit>
+        <btw:cit><ref>Saddharmapuṇḍarīka,258</ref><foreign xml:lang="sa-Latn">eṣa khalu kulaputrau yuvayoḥ pitā rājā śubhavyūho brāhmaṇeṣvabhiprasannaḥ tasmānna lapsyatha taṃ tathāgataṃ darśanāyābhigantum | […]: sādhu sādhu kulaputrau | yuvāṃ tasya svapitū rājñaḥ śubhavyūhasyānukampāyai kiṃcideva prātihāryaṃ saṃdarśayatam | apyeva nāma yuvayorantike prasādaṃ kuryāt | prasannacittaśca asmākamanujānīyāt tasya bhagavato jaladharagarjitaghoṣasusvaranakṣatrarājasaṃkusumitābhijñasya tathāgatasyārhataḥ samyaksaṃbuddhamabhigantum ||</foreign></btw:cit>
+      </btw:other-citations>
+      <btw:semantic-fields>
+        <btw:sf>01.05.05.12.01</btw:sf>
+      </btw:semantic-fields>
+      <btw:contrastive-section>
+        <!--
+        [antonyms]
+        ø   -->
+        <btw:cognates>
+          <btw:cognate>
+            <term xml:lang="sa-Latn">pra√sad</term>
+            <btw:semantic-fields>
+              <btw:sf>01.05.05.12.01</btw:sf>
+            </btw:semantic-fields>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Aśokāvadāna, 62</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>prasīda</btw:cognate-instance> nivartaya mānasaṃ|</foreign></btw:cit><btw:tr><btw:cognate-instance>Please</btw:cognate-instance>, change your mind</btw:tr></btw:example>
+            </btw:citations>
+            <!-- [other citations]
+            ø -->
+          </btw:cognate>
+        </btw:cognates>
+        <!-- [conceptual proximates]
+        ø -->
+      </btw:contrastive-section>
+    </btw:sense>
+    <btw:sense xml:id="BTW.S.d">
+      <btw:english-renditions>
+        <btw:english-rendition>
+          <term>devotion</term>
+          <btw:semantic-fields>
+            <btw:sf>01.05.05.14.01</btw:sf>
+            <btw:sf>03.05.01.03.01.01</btw:sf>
+            <btw:sf>03.07.00.22.02</btw:sf>
+            <btw:sf>03.07.03</btw:sf>
+            <btw:sf>03.07.00.23</btw:sf>
+          </btw:semantic-fields>
+        </btw:english-rendition>
+      </btw:english-renditions>
+      <btw:explanation>Powerful feeling of reverential devotion, often compounded with <term xml:lang="sa-Latn">saṃvega</term> or <term xml:lang="sa-Latn">tīvra</term></btw:explanation>
+      <btw:citations>
+        <btw:example><btw:cit><ref>AkośBh ad IV. 22 (pradhan 210 16ff)</ref><foreign xml:lang="sa-Latn">yena prasādavegenāsaṃvarasthasya kuśalā ’vijñāptir utpadyate stavavandanādikriyāṃ kurvataḥ yena ca kleśavegena saṃvarasthasyākuśalā 'vijñaptirutpadyate vadhabandhanatāḍanādikriyāṃ kurvataḥ tau yāvad anuvartete tāvat te apy avijñaptī /</foreign></btw:cit><btw:tr>If a person who is not restrained by the precepts possesses positive karma derived from un-manifested actions (<term xml:lang="sa-Latn">avijñapti</term>), because he is moved by the force of faith, he carries out acts of praise and worship [towards the Buddha]; and  if a person who is restrained by the precepts possesses negative <term xml:lang="sa-Latn">karma</term> derived from un-manifested actions (<term xml:lang="sa-Latn">avijñapti</term>), because he is moved by the force of the defilements (<term xml:lang="sa-Latn">kleśa</term>), he kills, imprisons or assaults [other sentient beings].</btw:tr></btw:example>
+        <btw:example><btw:cit><ref>Aśokāvadāna, 3</ref><foreign xml:lang="sa-Latn">tatra yo'sau pañcānāṃ markaṭaśatānāṃ yūthapatiḥ sa taṃ yūthamapahāya yatra pārśve pañca pratyekabuddhaśatāni prativasanti tatra gataḥ| tasya tān pratyekabuddhān dṛṣṭvā <btw:lemma-instance>prasādo</btw:lemma-instance> jātaḥ| sa teṣāṃ pratyekabuddhānāṃ śīrṇaparṇāni mūlaphalāni copanāmayati</foreign></btw:cit><btw:tr>Then the chief of the 500 monkeys, left his pack for the mountain where the 500 pratyekabuddhas lived. Upon beholding the pratyekabuddhas he <btw:lemma-instance>felt trusting devotion</btw:lemma-instance> [for them] (prasāda jata). He presented the pratyekabuddha with leaves, roots and fruits.</btw:tr><btw:tr><ref>Strong, 175</ref>One day, the leader of the five hundred monkeys left his band and went to the mountain side where the five hundred pratyekabuddhas were living. As soon as he saw thse pratyekabuddhas, his <btw:lemma-instance>faith</btw:lemma-instance> was engerendered. He made an offering of withered leaves, roots, ad fruits to them […].</btw:tr></btw:example>
+        <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna 150-151</ref><foreign xml:lang="sa-Latn">yāvat paśyati tām vibhūtiṃ suvarṇavarṇañ ca kumāraṃ candramaṇḍalapratisparddhinaṃ padmasyopari karṇikāyāṃ niṣaṇṇaṃ ghanapaṭalanirmuktam iva śaratakālapūrṇacandraṃ suvarṇayūpam iva śriyā jvalantam udvīkṣya paramavismayāvarttitacittasantatiḥ |samuddaṇḍaromakūpaḥ paramapraharṣormmitaraṅgāpūryamāṇavadanakamalaḥ parama<btw:lemma-instance>prasāda</btw:lemma-instance>vegāvarjitacittasantatiḥ | sarvaśarīreṇa sthavirānandasya pādayoḥ patitaḥ</foreign></btw:cit><btw:tr>[King Ajātaśatru] thus so that great display of might. He looked at the young Suvarṇavarṇa seated on the center of a lotus [that resplended] like the disc of the moon, magnificently radiant like the the full moon of autumn rising above (<term xml:lang="sa-Latn">nirmukta</term>) the veil of clouds o like a golden triumphal column (<term xml:lang="sa-Latn">yūpa</term>). [At this sight], extreme amazent took hold of [the king’s] mind. The hair of his body bristled, his face blushed (kamala) with waves of rapturous joy, extreme <btw:lemma-instance>feeling of devotion</btw:lemma-instance> took hold of his mind. He fell with his all body at the feet of the venerable (sthavira) Ānanda.</btw:tr><btw:tr><ref>Rajapatirana ??</ref>He saw that manifestation of might and the lad, Suvarṇavarṇa, seated upon the pericarp, above the lotus that rivaled the orb of the moon, like the full-moon in the autumn season set free from masses of clouds, and shining with glory like a sacrificial post of gold. Having observed (these), his mind overcome by extreme amazement, the hairs on his body bristling, his lotus face being filled with wave upon wave of extreme joy, and his mind overcome by the onset of extreme <btw:lemma-instance>faith</btw:lemma-instance>, he fell prostrate at the feet of the Elder Ānanda. Then, having lightly touched his feet with the pout of his mouth, he arose and placing his knees upon the ground, looking up with folded palms at the Elder Ānanda […]</btw:tr></btw:example>
+      </btw:citations>
+      <btw:other-citations>
+        <btw:cit><ref>Aśokāvadāna, 51</ref><foreign xml:lang="sa-Latn">tasmān narendra abhayaṃ prayaccha sattveṣu kāruṇyapurojaveṣu|
+nāthasya saṃpūrya manorathaṃ ca vaistārikān dharmadharān kuruṣva||
+atha sa rājā buddhe samupajātaprasādaḥ kṛtakarasaṃpuṭastaṃ bhikṣuṃ kṣamayannuvāca|
+daśabalasuta kṣantumarhasīmaṃ kukṛtamidaṃ ca tavādya deśayāmi| 
+śaraṇamṛṣimupaimi taṃ ca buddhaṃ gaṇavaramāryaniveditaṃ ca dharmaṃ||
+api ca| 
+karomi caiṣa vyavasāyam adya tadgauravāt tatpravaṇaprasādāt| 
+        gāṃ maṇḍayiṣyāmi jinendracaityairhaṃsāṃśuśaṅkhendubalākakalpaiḥ||</foreign></btw:cit>
+        <btw:cit><ref>Prasannapadā, 12</ref><foreign xml:lang="sa-Latn">yathopavarṇitapratītyasamutpādāvagamācca tathāgatasyaivaikasyāviparītārthavāditvaṃ paśyan sarvapara pravādāṃśca bālapralāpānivāvetya, atīva prasādānugata ācāryo bhūyo bhagavantaṃ viśeṣayati,vadatāṃ varamiti</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna, 162</ref><foreign xml:lang="sa-Latn">tac chrutvā kāśisundarī dārikā sthavi(4)rānande samupajātabahumānā paraṃ prasādaṃ pravedayitum ārabdhā | pādayor nipatya tīvrena prasādavegena sthavirānandaguṇānusmaraṇapūrvvakaṃ satyādhiṣṭhā(1)naṃ kartum ārabdhā</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna, 173</ref><foreign xml:lang="sa-Latn">yāvat paśyati suvarṇavarṇaṃ kumāraṃ rāhugrastavinirmuktaṃ śaratakālapūrṇacandraṃ sthavirānandasamīpe niṣaṇṇaṃ tāñ ca sthavirānandaguṇasāmarthyajanitāṃ vibhūtiṃ tatas tasya tad atyadbhutaṃ devamanuṣyāvarjanakaraṃ prātihāryaṃ dṛṣṭvā sthavirānande samupajātabahumānaḥ paramaprasādavegāvarjitacittasantānaḥ sarvaśarīreṇa sthavirānandasya pādayoḥ patitaḥ | utthāya cobhe jānumaṇḍale pṛthivyām upanikṣipya harṣād aśrūrmibhir āpūryamāṇavadanakamalaḥ | kṛtāñjalipuṭaḥ sthavirānandamabhiṣṭotum ārabdhaḥ | </foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna, 196</ref><foreign xml:lang="sa-Latn">tadatyadbhutam aparimitam acintyaṃ ca tasya sakāśāt puṇyamāhātmyaṃ śrutvānekaiḥ prāṇikoṭiniyutaśatasahastraiḥ paramaprasādavegāvarjitacittasantatibhir bhagavacchāsanasatkāraparāṅmikhair api yathecchaṃ dānāni dattvā puṇyāni kṛtvā praṇidhānāni kṛtāni |</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  208 – 211</ref><foreign xml:lang="sa-Latn">atha rājā sthavirānandena praśādavegāvarjitacittasantatiḥ | sthavirāna(1)ndasamīpam upagamya sarvaśarīreṇa sthavirānandasya pādayor nipatitaḥ | utthāya ubhe jānumaṇḍale pṛthivyām upanikṣipya prasādaromāñcakarkaśīkṛtamūrtiḥ kṛtakarapuṭaḥ sthavirānandam abhiṣṭotum ārabdhāḥ | […] idañ citrataraṃ manye śrāvakeṇa satā tvayā |
+        mahākāruṇikenaiva yat sattvārthaṃ mahat kṛtaṃ</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  267</ref><foreign xml:lang="sa-Latn">dṛṣṭvā ca punaḥ karṇasya sārthavāhasyātimahāprasādo jātaḥ ||</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna, 277</ref><foreign xml:lang="sa-Latn">sa mahatā prasādavegena vipaśyinaḥ samyaksambuddhasya pādayor nipatya mahatā svareṇa praṇidhānaṃ kartum ārabdhaḥ | anena dvipadāṃ śreṣṭha dāneneha virūpatāṃ | adya prabhṛti saṃtyajya labheyāhaṃ surūpatāṃ |1| suvarṇavarṇavāso ’ti haimavarṇair viguṇṭhitaḥ | candanotpalagandhaś ca kāyād vaktrāc ca me bhavet |2| suvarṇavarṇasaṃkālaḥ sarvalokamanoharaḥ | sarvāmayavinirmuktaḥ sarvaśāstrārthapāragaḥ |3| sarvavācāthasaṃyuktaḥ sarvānarthavivarjitaḥ |
+sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ sambuddho bhaveyaṃ sattvavatsalaḥ |
+        sarvāmalaguṇaḥ śrīmān sarvadravyānvitaḥ sukhī |5| </foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  287</ref><foreign xml:lang="sa-Latn">athaitad upaśrutya karṇaḥ sārthavāhaḥ sahasaiva sahasraiḥ prasādakaṇṭakitasarvaromakūpaḥ kṛtāñjalir vipaśyinaṃ tathāgataṃ muhur muhur namasyamānaḥ</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  291– 298</ref><foreign xml:lang="sa-Latn">atha karṇaḥ sārthavāho gṛham āgato bhāryayā cāsya hṛṣṭatuṣṭapramuditayā sauvarṇena bhṛṅgāreṇārgham anupradattaṃ | uktaś cāryaputra tvatpuṇyānubhāvād īdṛśaḥ kenāpi bhavanavaram abhinirmitam ity atha karṇaḥ sārthavāhas taṃ bhavanavaram abhivīkṣya paramaprītisaumanasya jātaḥ sutarāṃ buddhe bhagavati utpannaprasādopajanitaromāñcaḥ śirasi kṛtakarapuṭāñjalir namas tasmai bhagavate tathāgatāyārhate samyaksambuddhāyācintyācintāmaṇaye ’nuttarāya puṇyakṣetrāyety uktvā praharṣapūrṇavadanakamalaḥ prāha || </foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  298- 299</ref><foreign xml:lang="sa-Latn">atha karṇaḥ sārthavāhas tīvraprasādavegāvarjitacittasantatiḥ saṃlakṣayati | bhagavantam āgamya mayaivaṃ vibhūtir āsāditā yan nv ahaṃ prathamato bhagavantaṃ vipaśyinaṃ tathāgatam asmin gṛhe praveśya saśrāvakagaṇaṃ bhojayeyam iti viditvā mahatā satkāreṇa vipaśyinaṃ tathāgataṃ saśrāvakasaṃgham antargṛhe upanimantrya śatarasenāhāreṇa saptāhaṃ bhojayitvā pādayoḥ praṇipatya yāvajjīvaṃ sarvopakaraṇaiḥ pravāritavān | </foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  306</ref><foreign xml:lang="sa-Latn">surendrāsurendroragaiś ca bhaktyā prasādena nityavandyasya</foreign></btw:cit>
+        <btw:cit><ref>Suvarṇavarṇāvadāna,  309</ref><foreign xml:lang="sa-Latn">tac chrutvā bhṛtakapuruṣaḥ prasādakaṇṭakitaḥ sahasaivotpannātidurllabhapratibhānas tam uvāca ||</foreign></btw:cit>
+        <btw:cit><ref>Vimalakīrti MS26a</ref><foreign xml:lang="sa-Latn">ahaṃ cāścaryaprasādapratilabdhas tasya satpuruṣasya caraṇau praṇamya śatasahasramūlyaṃ muktāhāraṃ kaṇṭhād avatārya dadāmi || sa taiḥ muktāhāraṃ na pratigṛhṇāti sma | tam aham etad avocam: pratigṛhyemam, yatra te prasādo bhavati tasmai prayaccheti | </foreign></btw:cit>
+      </btw:other-citations>
+      <btw:semantic-fields>
+        <btw:sf>02.01.17</btw:sf>
+        <btw:sf>02.02.12</btw:sf>
+        <btw:sf>02.02.13</btw:sf>
+        <btw:sf>03.07.03</btw:sf>
+        <btw:sf>03.07.00.23</btw:sf>
+      </btw:semantic-fields>
+      <btw:contrastive-section>
+        <btw:antonyms>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">aprasāda</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Aśokāvadāna, 102-103</ref><p><foreign xml:lang="sa-Latn">tau dṛṣṭvā rājā hasitaḥ / imau śrāmaṇerau bālakrīḍayā krīḍataḥ yāvad rājñā bhikṣusaṅghaṃ pariveṣya vṛddhāntamārūḍhaḥ / sthavireṇa cānuyuktaḥ / mā devena kutracid <btw:antonym-instance>aprasāda</btw:antonym-instance> utpādita iti / rājāha / neti / api tu asti dvau śrāmaṇerau bālakrīḍayā krīḍayo yathā bāladārakāḥ pāṃśvāgāraiḥ krīḍantyevaṃ tau śrāmaṇerau saktukrīḍayā krīḍataḥ khādyakrīḍayā krīḍataḥ / sthavira uvāca / alaṃ mahārāja / ubhau hi tau ubhayato bhāgavimuktau arhantau / śrutvā ca rājñaḥ prītimanaso buddhirutpannā / tau śramaṇerāvāgamya bhikṣusaṅghaṃ paṭenācchādayiṣyāmi / tatastau śrāmaṇerau rājño 'bhiprāyamavagamya bhūyo 'nye 'smābhiḥ svaguṇā ubhdāvayitavyā iti [cintitau] / tayorekena kaṭāhakā upasthāpitā dvitīyena raṅgaḥ samudānītaḥ / rājñā pṛṣṭau śrāmaṇerakau / kimidamārabdhaṃ / tayorabhihitaṃ / devo 'smākamāgamya bhikṣusaṅghaṃ paṭenācchāditukāmaḥ / tān paṭān rañjayiṣyāmaḥ / śrutvā ca rājño buddhirutpannā| mayā kevalaṃ cintitaṃ na tu vāṅa niścāritā| paracittavidāvetau mahātmānau| tataḥ sarvaśarīreṇa pādayornipatyaṃ kṛtāñjaliruvāca|</foreign></p>
+              <lg>
+                <l><foreign xml:lang="sa-Latn">mauryaḥ sabhṛtyaḥ sajanaḥ sapauraḥ</foreign></l>
+                <l><foreign xml:lang="sa-Latn">sulabdhalābhārthasuyaṣṭayajñaḥ| </foreign></l>
+                <l><foreign xml:lang="sa-Latn">yasyedṛśaḥ sādhujana <btw:lemma-instance>prasādaḥ</btw:lemma-instance> </foreign></l>
+                <l><foreign xml:lang="sa-Latn">kāle tathotsāhi karoti dānaṃ||</foreign></l>
+              </lg>
+            </btw:cit><btw:tr><ref>Strong 267-268</ref><p>The king laughed. “ These two novices are playing the games of children”, he observed and having now finished serving the entire community, he returned to the elders’ end.  There, Yaśas asked him: “ did your majesty see anything at all that raised <btw:antonym-instance>doubts</btw:antonym-instance> in his mind about the community?” “ No” replied the king,” however, I did see two novices who were playing children’s games. Just as young boys play ar building houses in the dirt, so these two were playing at games of ground meal and cakes.” “Say no more, great king,” said the elder,” both of these novices are arhats who are free from both physical and mental defilements!” Upon hearing this, Aśoka rejoiced in his heart and resolved to present to these two novices his offering of cloth for the community. The novices immediately divined the king’s intention and said: “ Let us make his merit even more numerous.” One of them therefore set ip a cauldron and the other begin to prepare dye. “ What is your undertaking?” the king asked them. “ Your majesty”, they answered,” has approached us with the desire of presenting an offering of cloth to the community of monks; we will dye the cloth.”” I never said anything about this,” Aśoka reflected, “ but only thought it. These two can read other people’s mind!” And immediately he fell full length at their feet, made an ñjali and said:</p>
+            <lg>
+              <l>the Mauryan, who sacrificed</l>
+              <l>what it was good to sacrifice</l>
+              <l>in order to attain what it is good to attain</l>
+              <l>today has such <btw:lemma-instance>faith</btw:lemma-instance> in you, good people,</l>
+              <l>that he resolutely makes this offring</l>
+              <l>along with his servants, his court,</l>
+              <l>and the citizen of his capital.”</l>
+            </lg>
+              </btw:tr></btw:example>
+            </btw:citations>
+            <!-- [other citations]
+            ø -->
+          </btw:antonym>
+          <btw:antonym>
+            <term xml:lang="sa-Latn">pradūṣaṇā</term>
+            <btw:citations>
+              <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna 331-332</ref><foreign xml:lang="sa-Latn">puruṣasya hi jātasya kuṭhārī jāyate mukhe | cchinnatti hi yayātmānaṃ vācā durbhāṣitaṃ vadan |1| yo nindyajanaṃ praśaṃsati praśaṃsyañ ca janaṃ vinindati | sa cinoti mukhena taṃ kaliṃ kalīnāṃ yena sukhaṃ na vandati |2| alpamātro hy ayaṃ kalir ya ihākṣaiḥ svadhanaṃ parājayet | ayam atra mahattaraḥ kalir yaḥ sugateṣu manaḥ <btw:antonym-instance>pradūṣayet</btw:antonym-instance> |3| śataṃ sahasrāṇi  nirarbudānāṃ ṣaṭtriṅśataṃ pañca caivārbudāni | yān āryagarhī narakān upaiti vācaṃ manaś ca praṇidhāya pāpakaṃ |4| citta<btw:antonym-instance>pradūṣaṇā</btw:antonym-instance>hetoḥ satvā gacchanti durggatiṃ | citta<btw:lemma-instance>prasādanā</btw:lemma-instance>hetoḥ satvā gacchanti sadgatiṃ</foreign></btw:cit><btw:tr><ref>Rajapatirana ??</ref>"To every man that is born, an axe is born in his mouth, by which he cuts himself when speaking bad language. He who praises him who is to be blamed, and blames him who is to be praised, accumulates evil with his mouth, by which evil he finds no joy. Trifling is this evil that one should lose his wealth by dice; here, this is a greater evil that one should <btw:antonym-instance>corrupt</btw:antonym-instance> his mind against the Sugatas. For they are a hundred thousand Nirarbudas, and thirty-six and five Arbudas, to which hells he who blames an Ārya goes, having employed his speech and mind sinfully. Through <btw:antonym-instance>corruption</btw:antonym-instance> of the mind beings go to evil states of existence; by <btw:lemma-instance>serenity</btw:lemma-instance> of mind beings go to good ones."</btw:tr></btw:example>
+            </btw:citations>
+            <!-- [other citations]
+            ø -->
+          </btw:antonym>
+        </btw:antonyms>
+        <!-- [cognates]
+        ø
+        [conceptual proximates]
+        ø -->
+      </btw:contrastive-section>
+    </btw:sense>
+  </btw:sense-discrimination>
+  <btw:historico-semantical-data> <!-- UNIT 3: HISTORICO-SEMANTICAL DATA -->
+    <btw:etymology><!-- [etymology] -->
+      <p>synonymous Av. *had and PIE *ē̆s- (Pokorny)  / *sed (Rix). Conjoined with <term>pra</term>, the verb probably alludes to the process of sedimentation, by which particles in water sink down leaving the water clear, pure and translucent. The noun <term>prasāda</term>, too, signifies clarity and tranquility by metonymic contiguity; since clearness is the result of sedimentation and calm (in liquids). Metaphorically, it also denotes the tranquility derived from belief as well as a positive disposition towards others or towards an object or a religious teaching. By metonymical contiguity, it signifies the result of such a disposition: a favorable attitude, offerings and favors; by extension, it includes also devotion  and overpowering feelings of faith, which  perhaps do  not imply tranquility (by most Western preconceptions). Since the  meaning of clarity coexisted with that of faith, exegetes liked to explain <foreign xml:lang="sa-Latn">cetasaḥ prasāda</foreign> as mental clarity derived from confidence in the Buddhist doctrine.</p>
+      <p>Cp. Eng “settle down,” “to be set in one’s convictions;” also “sedate,” which goes back to Lat  <foreign xml:lang="la">sēdō –are</foreign>, “to settle, soothe, calm, allay,” and its partic. <term xml:lang="la">sēdātus</term>, “calm, composed,” adv. sedate. Consider also <term xml:lang="la">sedimentum</term>.</p>
+    </btw:etymology>
+  </btw:historico-semantical-data>
+  <btw:renditions-and-discussions> <!-- UNIT 4: RENDITIONS AND DISCUSSIONS -->
+    <btw:classical-renditions> <!-- [classical renditions] -->
+      <btw:lang xml:lang="pi-Latn">
+        <btw:occurrence><term>pasāda</term></btw:occurrence>
+      </btw:lang> 
+      <btw:lang xml:lang="bo-Latn">
+        <btw:occurrence><term>dang ba</term></btw:occurrence>
+      </btw:lang>
+      <btw:lang xml:lang="zh-Hant">
+        <btw:authority target="/authority/XZ">
+          <btw:occurrence><term>淨</term><ref>T xxix1558 2b12, 133b16ff</ref></btw:occurrence>
+          <btw:occurrence><term>淨心</term><ref>T xxix1558 82b5</ref></btw:occurrence>
+          <btw:occurrence><term>澄淨</term><ref>T xxix1558 19b3</ref></btw:occurrence>
+          <btw:occurrence><term>清淨</term><ref>T xxix155852a17</ref></btw:occurrence>
+        </btw:authority>
+        <btw:authority target="/authority/Param">
+          <btw:occurrence><term>淨</term><ref>T xxix1559162a7, 163a8</ref></btw:occurrence>
+          <btw:occurrence><term>淨心</term><ref>T xxix1559 238b25</ref></btw:occurrence>
+          <btw:occurrence><term>淨信</term><ref>T xxix1559 284c10</ref></btw:occurrence>
+          <btw:occurrence><term>清淨</term><ref>T xxix1559209a6</ref></btw:occurrence>
+          <btw:occurrence><term>澄淨</term><ref>T xxix1559 178b23</ref></btw:occurrence>
+        </btw:authority>
+      </btw:lang>
+    </btw:classical-renditions>
+    <btw:modern-renditions> <!-- [renditions, translations and paraphrases in contemporary scholarship] -->
+      <btw:lang xml:lang="en">
+        <btw:occurrence><term>serenity</term><ref>Anacker 1984</ref></btw:occurrence>
+        <btw:occurrence><term>clarity</term><ref>Buescher 2010 , Engle 2009</ref></btw:occurrence>
+        <btw:occurrence><term>faith</term><ref>Bayer 2010, Roy   1971</ref></btw:occurrence>
+        <btw:occurrence><term>favour</term><ref>Roy   1971</ref></btw:occurrence>
+        <btw:occurrence><term>confidence</term><ref>Ñanamoli, Thanissaro</ref></btw:occurrence>
+      </btw:lang>
+      <btw:lang xml:lang="fr">
+        <btw:occurrence><term>clarification (de la pensée)</term><ref>LVP 1980</ref></btw:occurrence>
+      </btw:lang>
+    </btw:modern-renditions>
+  </btw:renditions-and-discussions>
+</btw:entry>
+
+
+
+
+
+
+
+

@@ -10,7 +10,9 @@ Some design principles:
 
 -->
 
-<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xml:lang="en">
+<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+     xmlns:rng="http://relaxng.org/ns/structure/1.0"
+     xml:lang="en">
   <teiHeader>
     <fileDesc>
       <titleStmt>
@@ -29,7 +31,7 @@ to your modified text.</p>
         </availability>
       </publicationStmt>
       <notesStmt>
-        <note type="ns">http://lddubeau.com/ns/btw-storage</note>
+        <note type="ns">http://mangalamresearch.org/ns/btw-storage</note>
       </notesStmt>
       <sourceDesc>
         <p>No source; originally written in digital form.</p>
@@ -44,7 +46,6 @@ to your modified text.</p>
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="core"/>
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="tei"/>
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="textstructure"/>
-        <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="dictionaries"/>
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="linking"/>
         <elementSpec ident="teiCorpus" mode="delete" module="core"/>
         <!-- required to avoid Sanity Checker complaint -->
@@ -101,29 +102,22 @@ to your modified text.</p>
         <elementSpec ident="linkGrp" mode="delete" module="linking"/>
 	<elementSpec ident="anchor" mode="delete" module="linking"/>
 
-	<elementSpec ident="pRef" mode="delete" module="dictionaries"/>
-	<elementSpec ident="pVar" mode="delete" module="dictionaries"/>
-	<elementSpec ident="oRef" mode="delete" module="dictionaries"/>
-	<elementSpec ident="oVar" mode="delete" module="dictionaries"/>
-
 	<elementSpec ident="biblFull" mode="delete" module="header"/>
 
 	<elementSpec ident="floatingText" mode="delete" module="textstructure"/>
 
         <!-- New BTW elements. -->
-        <elementSpec ident="entry" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+
+        <elementSpec ident="entry"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>An entire lexicographical entry</desc>
           <content>
-	    <rng:ref name="form"/>
-	    <rng:oneOrMore>
-	      <rng:ref name="div"/>
-	    </rng:oneOrMore>
-            <rng:ref name="related"/>
-	    <rng:oneOrMore>
-	      <rng:ref name="translation"/>
-	    </rng:oneOrMore>
-	    <rng:oneOrMore>
-	      <rng:ref name="div"/>
-	    </rng:oneOrMore>
+	    <rng:ref name="btw_lemma"/>
+	    <rng:ref name="btw_overview"/>
+            <rng:ref name="btw_sense-discrimination"/>
+            <rng:ref name="btw_historico-semantical-data"/>
+            <rng:ref name="btw_renditions-and-discussions"/>
           </content>
           <attList>
             <attDef ident="authority" usage="req">
@@ -132,77 +126,365 @@ to your modified text.</p>
           </attList>
         </elementSpec>
 
-        <elementSpec ident="related" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="lemma"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>The lemma about which the entry is written.</desc>
           <content>
-            <rng:ref name="synonym"/>
-            <rng:ref name="cognate"/>
-            <rng:ref name="analogic"/>
-            <rng:ref name="contrastive"/>
-            <rng:ref name="cp"/>
+            <rng:text/>
           </content>
         </elementSpec>
 
-        <classSpec module="btw" type="model" ident="model.relatedContent"/>
+        <elementSpec ident="overview" ns="http://mangalamresearch.org/ns/btw-storage" prefix="btw_">
+          <desc>Overview unit of the entry.</desc>
+          <content>
+            <rng:ref name="btw_definition"/>
+          </content>
+        </elementSpec>
 
-        <elementSpec ident="synonym" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="definition"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>Definition of the lemma.</desc>
           <content>
             <rng:oneOrMore>
-              <rng:ref name="model.relatedContent"/>
+              <rng:ref name="p"/>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="cognate" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="sense-discrimination"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>Sense discrimination unit of the entry.</desc>
           <content>
             <rng:oneOrMore>
-              <rng:ref name="model.relatedContent"/>
-            </rng:oneOrMore>
-          </content>
-        </elementSpec>
-        <elementSpec ident="analogic" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
-          <content>
-            <rng:oneOrMore>
-              <rng:ref name="model.relatedContent"/>
-            </rng:oneOrMore>
-          </content>
-        </elementSpec>
-        <elementSpec ident="contrastive" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
-          <content>
-            <rng:oneOrMore>
-              <rng:ref name="model.relatedContent"/>
-            </rng:oneOrMore>
-          </content>
-        </elementSpec>
-        <elementSpec ident="cp" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
-          <content>
-            <rng:oneOrMore>
-              <rng:ref name="model.relatedContent"/>
+              <rng:ref name="btw_sense"/>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-
-        <elementSpec ident="translation" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="sense"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>One sense for a lemma.</desc>
           <content>
-	    <rng:oneOrMore>
-	      <rng:ref name="btw_lang"/>
-	    </rng:oneOrMore>
+            <rng:ref name="btw_english-renditions"/>
+            <rng:choice>
+              <rng:oneOrMore>
+                <rng:ref name="btw_subsense"/>
+              </rng:oneOrMore>
+              <rng:group>
+                <rng:ref name="btw_explanation"/>
+                <rng:ref name="btw_citations"/>
+              </rng:group>
+            </rng:choice>
+            <rng:optional>
+              <rng:ref name="btw_other-citations"/>
+            </rng:optional>
+            <rng:ref name="btw_semantic-fields"/>
+            <rng:ref name="btw_contrastive-section"/>
           </content>
           <attList>
-            <attDef ident="type" usage="req">
-	      <desc>Type of translations.</desc>
-	    </attDef>
+            <attRef name="att.global.attribute.xmlid"/>
           </attList>
         </elementSpec>
 
-        <elementSpec ident="lang" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="english-renditions"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_english-rendition"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+        
+        <elementSpec ident="english-rendition"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:ref name="term"/>
+            <rng:ref name="btw_semantic-fields"/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="subsense"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:ref name="btw_explanation"/>
+            <rng:ref name="btw_citations"/>
+          </content>
+          <attList>
+            <attRef name="att.global.attribute.xmlid"/>
+          </attList>
+        </elementSpec>
+        
+        <elementSpec ident="other-citations"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_cit"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="semantic-fields"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_sf"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="contrastive-section" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:optional>
+              <rng:ref name="btw_antonyms"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="btw_cognates"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="btw_conceptual-proximates"/>
+            </rng:optional>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="antonyms" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_antonym"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="antonym" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:group>
+              <rng:ref name="term"/>
+              <rng:ref name="btw_citations"/>
+              <rng:optional>
+                <rng:ref name="btw_other-citations"/>
+              </rng:optional>
+            </rng:group>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="cognates" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_cognate"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="cognate" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:group>
+              <rng:ref name="term"/>
+              <rng:ref name="btw_semantic-fields"/>
+              <rng:ref name="btw_citations"/>
+              <rng:optional>
+                <rng:ref name="btw_other-citations"/>
+              </rng:optional>
+            </rng:group>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="conceptual-proximates" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_conceptual-proximate"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="conceptual-proximate" 
+                     ns="http://mangalamresearch.org/ns/btw-storage" 
+                     prefix="btw_">
+          <content>
+            <rng:group>
+              <rng:ref name="term"/>
+              <rng:ref name="btw_citations"/>
+            </rng:group>
+          </content>
+        </elementSpec>
+
+
+        <elementSpec ident="sf"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:text/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="sense-translation"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>English translation of a sense.</desc>
+          <content>
+            <rng:text/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="explanation"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>Explanation of a sense.</desc>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="term"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="citations"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>A group of citations associated with a sense.</desc>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="btw_example"/>
+                <rng:ref name="ptr"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="example"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:ref name="btw_cit"/>
+            <rng:oneOrMore>
+              <rng:ref name="btw_tr"/>
+            </rng:oneOrMore>
+          </content>
+          <attList>
+            <attRef name="att.global.attribute.xmlid"/>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="cit"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>
+            This element encodes a citation. The actual text being
+            cited will be contained in a &lt;quote> element inside the
+            citation. The reference to the source is encoded using
+            &lt;ptr> or &lt;ref> for simple references or &lt;bibl>
+            containing the above two elements when a citation is more
+            complex.
+          </desc>
+          <content>
+            <rng:ref name="ref"/>
+            <rng:oneOrMore>
+              <rng:ref name="macro.specialPara"/>
+            </rng:oneOrMore>
+            <rng:text/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="tr"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>
+            Contains a translation.
+          </desc>
+          <content>
+            <rng:choice>
+              <rng:ref name="btw_cit"/>
+              <rng:oneOrMore>
+                <rng:ref name="macro.specialPara"/>
+              </rng:oneOrMore>
+            </rng:choice>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="historico-semantical-data"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:group>
+              <rng:ref name="btw_etymology"/>
+            </rng:group>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="etymology"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="p"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="renditions-and-discussions"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:group>
+              <rng:ref name="btw_classical-renditions"/>
+              <rng:ref name="btw_modern-renditions"/>
+            </rng:group>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="classical-renditions"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_lang"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="modern-renditions"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_lang"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+
+        <elementSpec ident="lang"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
           <content>
 	    <rng:oneOrMore>
-	      <rng:ref name="tei_cit"/>
+              <rng:choice>
+                <rng:ref name="btw_authority"/>
+	        <rng:ref name="btw_occurrence"/>
+              </rng:choice>
 	    </rng:oneOrMore>
-	    <rng:optional>
-	      <rng:ref name="seg"/>
-	    </rng:optional>
           </content>
           <attList>
             <attDef ident="xml:lang" usage="req">
@@ -211,61 +493,88 @@ to your modified text.</p>
           </attList>
         </elementSpec>
 
-        <elementSpec ident="example" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
+        <elementSpec ident="authority" 
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+	    <rng:oneOrMore>
+              <rng:ref name="occurrence"/>
+	    </rng:oneOrMore>
+          </content>
+          <attList>
+            <attDef ident="target" usage="req">
+              <datatype>
+                <rng:ref name="data.pointer"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="occurrence" 
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+	    <rng:group>
+	      <rng:ref name="term"/>
+              <rng:optional>
+                <rng:ref name="ref"/>
+              </rng:optional>
+	    </rng:group>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="lemma-instance"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
           <classes>
-            <memberOf key="model.quoteLike"/>
+            <memberOf key="model.emphLike"/>
           </classes>
           <content>
-            <rng:ref name="btw_cit"/>
-            <rng:optional>
-              <rng:ref name="tr"/>
-            </rng:optional>
+            <rng:text/>
           </content>
         </elementSpec>
 
-        <elementSpec ident="cit" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
-          <desc>
-            This element encodes a citation. The actual text being cited will be contained in a &lt;quote> element inside the citation. The reference to the source is encoded using &lt;ptr> or &lt;ref> for simple references or &lt;bibl> containing the above two elements when a citation is more complex.
-          </desc>
+        <elementSpec ident="antonym-instance"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <classes>
+            <memberOf key="model.emphLike"/>
+          </classes>
           <content>
-            <rng:oneOrMore>
-              <rng:choice>
-                <rng:ref name="quote"/>
-                <rng:ref name="bibl"/>
-                <rng:ref name="model.ptrLike"/>
-                <rng:ref name="span"/>
-                <rng:ref name="note"/>
-              </rng:choice>
-            </rng:oneOrMore>
+            <rng:text/>
           </content>
         </elementSpec>
 
-        <elementSpec ident="tr" ns="http://lddubeau.com/ns/btw-storage" prefix="btw_">
-          <desc>
-            Contains a translation. Its model is the same as &lt;quote and should be used in the same way. It translates to &lt;cit type="translation">&lt;quote>...&lt;/quote>&lt;/cit> in pure TEI.
-          </desc>
+        <elementSpec ident="cognate-instance"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <classes>
+            <memberOf key="model.emphLike"/>
+          </classes>
           <content>
-            <rng:ref name="macro.specialPara"/>
+            <rng:text/>
           </content>
         </elementSpec>
 
-        <!-- Overrides on TEI elements. -->
-        <elementSpec ident="sense" module="dictionaries" mode="change">
-          <classes mode="change">
-            <memberOf key="model.inter" mode="add"/>
+        <elementSpec ident="conceptual-proximate-instance"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <classes>
+            <memberOf key="model.emphLike"/>
           </classes>
-        </elementSpec>
-        <elementSpec ident="pron" module="dictionaries" mode="change">
-          <classes mode="change">
-            <memberOf key="model.inter" mode="add"/>
-          </classes>
-        </elementSpec>
-        <elementSpec ident="xr" module="dictionaries" mode="change">
-          <classes mode="change">
-            <memberOf key="model.relatedContent" mode="add"/>
-          </classes>
+          <content>
+            <rng:text/>
+          </content>
         </elementSpec>
       </schemaSpec>
+
+      <!-- Overrides to TEI elements. -->
+      <elementSpec ident="foreign" mode="change">
+        <attList>
+          <attDef ident="xml:lang" usage="req" mode="change"/>
+        </attList>
+      </elementSpec>
+
     </body>
   </text>
 </TEI>
