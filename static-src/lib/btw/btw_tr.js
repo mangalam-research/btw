@@ -2,6 +2,8 @@ define(function (require, exports, module) {
 'use strict';
 
 var domutil = require("wed/domutil");
+var splitTextNode = domutil.splitTextNode;
+
 var util = require("wed/util");
 var sense_refs = require("./btw_refmans").sense_refs;
 
@@ -9,7 +11,6 @@ var transformation = require("wed/transformation");
 var insertElement = transformation.insertElement;
 var isWellFormedRange = transformation.isWellFormedRange;
 var nodePairFromRange = transformation.nodePairFromRange;
-var splitTextNode = transformation.splitTextNode;
 var makeElement = transformation.makeElement;
 var insertIntoText = transformation.insertIntoText;
 var Transformation = transformation.Transformation;
