@@ -1,4 +1,14 @@
-TODO: determine how to use X-Zotero-Write-Token. What constitutes a *same* transaction?
+TODO
+====
+
+* A module to assign genres to texts.
+
+* When BTW has been used to produce articles for a bit, evaluate how to detect near-synonyms. See "Semantic fields for BTW2013_ldd_Reply".
+
+* Support for Paul Hackett's AIBS API. See email from Jack circa
+2013-06-09.
+
+* Determine how to use X-Zotero-Write-Token. What constitutes a *same* transaction?
 
 User Stories
 ============
