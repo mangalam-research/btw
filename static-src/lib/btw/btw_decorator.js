@@ -7,52 +7,54 @@ var $ = require("jquery");
 var util = require("wed/util");
 var sense_refs = require("./btw_refmans").sense_refs;
 
-function BTWDecorator() {
-    Decorator.apply(this, arguments);
-    domlistener.addHandler("included-element", 
-                           util.classFromOriginalName("sense"), 
-                           this.includedSenseHandler.bind(this, domlistener));
-    domlistener.addHandler("included-element",
+function BTWDecorator(mode) {
+    Decorator.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    this._mode = mode;
+    this._domlistener.addHandler("included-element",
+                           util.classFromOriginalName("sense"),
+                           this.includedSenseHandler.bind(this, this._domlistener));
+    this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("form"),
                            this.includeListHandler.bind(this, " / "));
-    domlistener.addHandler("included-element",
-                           util.classFromOriginalName("div") + ", " + 
+    this._domlistener.addHandler("included-element",
+                           util.classFromOriginalName("div") + ", " +
                            util.classFromOriginalName("btw:translation"),
                            headingDecorator);
-    domlistener.addHandler("included-element",
+    this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("btw:related"),
                            this.includedRelatedHandler.bind(this));
-    domlistener.addHandler(["added-element", "removed-element"], 
+    this._domlistener.addHandler(["added-element", "removed-element"],
                            util.classFromOriginalName("orth"),
                            this.addRemListElementHandler.bind(this, " / "));
-    domlistener.addHandler(["added-element", "removed-element"], 
+    this._domlistener.addHandler(["added-element", "removed-element"],
                            util.classFromOriginalName("xr"),
                            this.addRemListElementHandler.bind(this, ", "));
-    domlistener.addHandler("included-element", 
+    this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("term"),
                            languageDecorator);
-    domlistener.addHandler("included-element",
+    this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("ptr"),
                            ptrDecorator);
-    domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:translation") + 
+    this._domlistener.addHandler("included-element",
+                           util.classFromOriginalName("btw:translation") +
                            "[" + util.encodeAttrName("type") + "= 'classical']",
                            this.includeListHandler.bind(this, "; "));
-    domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:translation") + 
+    this._domlistener.addHandler("included-element",
+                           util.classFromOriginalName("btw:translation") +
                            "[" + util.encodeAttrName("type") + "= 'contemporary-translations']",
                            this.includeListHandler.bind(this, $('<br/>')));
 
-    domlistener.addHandler("included-element",
+    this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("btw:lang"),
                            includedBTWLangHandler);
 
-    domlistener.addHandler("included-element",
+    this._domlistener.addHandler("included-element",
                            "[" + util.encodeAttrName("xml\\:lang") + "]:not(" + util.classFromOriginalName("btw:lang") + ")",
                            languageDecorator);
 
-    domlistener.addHandler("included-element",
-                           [util.classFromOriginalName("cit"), 
+    this._domlistener.addHandler("included-element",
+                           [util.classFromOriginalName("cit"),
                             util.classFromOriginalName("quote"),
                             util.classFromOriginalName("btw:example"),
                             util.classFromOriginalName("btw:cit"),
@@ -61,11 +63,11 @@ function BTWDecorator() {
                             util.classFromOriginalName("lbl"),
                             util.classFromOriginalName("pron")].join(", "),
                            this.elementDecorator.bind(this));
-    domlistener.addHandler("added-element",
+    this._domlistener.addHandler("added-element",
                            "._id_decoration",
                            addedIdHandler);
 
-    domlistener.addHandler("trigger", 
+    this._domlistener.addHandler("trigger",
                            "ids",
                            idsTriggerHandler);
 }
@@ -84,17 +86,25 @@ oop.inherit(BTWDecorator, Decorator);
     this.includedSenseHandler = function (listener, $root, $element) {
         $element.remove("._button_and_id._phantom");
         this.elementDecorator($root, $element);
-        
+
         listener.trigger("ids");
     };
 
+    // Override
+    this.contentDecoratorInclusionHandler = function ($root,
+                                                      $element) {
+        var pair =
+            this._mode.nodesAroundEditableContents($element.get(0));
+
+        this._contentDecorator($root, $element, $(pair[0]), $(pair[1]));
+    };
 
 }).call(BTWDecorator.prototype);
 
 function jQuery_escapeID(id) {
     return id.replace(/\./g, '\\.');
 }
-    
+
 function idsTriggerHandler($root) {
     sense_refs.deallocateAll();
     $root.find("[" + util.encodeAttrName("xml:id") + "]").each(function (x, el) {
@@ -137,13 +147,13 @@ function headingDecorator($root, $el, head) {
         if (head === undefined)
             throw new Error("found an element with type: " + type + ", which is not handled");
     }
-    
+
     head = $('<div class="head _phantom">[' + head + "]</div>");
     head.attr('id', allocateHeadID());
-        
+
     $el.prepend(head);
 }
-    
+
 /**
  * This function adds a separator between each child element of the
  * element passed as <code>el</code>. The function only considers
@@ -153,9 +163,9 @@ function headingDecorator($root, $el, head) {
 function beforeListItemDecorator(el, child_name, sep) {
     // First drop all children that are separators
     $(el).children('[data-wed--separator-for]').remove();
-    
+
     // If sep is a string, create an appropriate div.
-    if (typeof sep === "string") 
+    if (typeof sep === "string")
         sep = $('<div class="_text">' + sep + "</div>");
 
     $(sep).addClass('_phantom');
@@ -163,7 +173,7 @@ function beforeListItemDecorator(el, child_name, sep) {
 
     var first = true;
     $(el).children('.' + child_name + '._real').each(function () {
-        if (!first) 
+        if (!first)
             $(this).before(sep.clone());
         else
             first = false;
@@ -179,16 +189,16 @@ function beforeListItemDecorator(el, child_name, sep) {
 function heterogeneousListItemDecorator(el, sep) {
     // First drop all children that are separators
     $(el).children('[data-wed--separator-for]').remove();
-    
+
     // If sep is a string, create an appropriate div.
-    if (typeof sep === "string") 
+    if (typeof sep === "string")
         sep = $('<div class="_text">' + sep + "</div>");
 
     $(sep).addClass('_phantom');
 
     var first = true;
     $(el).children('._real').each(function () {
-        if (!first) 
+        if (!first)
             $(this).before(sep.clone().attr('data-wed--separator-for', util.getOriginalName(el)));
         else
             first = false;
@@ -209,7 +219,7 @@ function idDecorator(el) {
         if (old_label.length === 0) {
             var last = el.firstChild;
             // Skip over start gui elements
-            while (last !== null && 
+            while (last !== null &&
                    $(last).hasClass("_gui") &&
                    $(last).hasClass("_start_button"))
                 last = last.nextSibling;
@@ -230,7 +240,7 @@ function idDecorator(el) {
 
 function linkingDecorator($el, is_ptr) {
     var orig_target = $.trim($el.attr(util.encodeAttrName("target")));
-    if (orig_target === undefined) 
+    if (orig_target === undefined)
         throw new Error("ptr element without target");
 
     var target = orig_target.replace(/#(.*)$/,'#BTW.$1');
@@ -250,7 +260,7 @@ function linkingDecorator($el, is_ptr) {
             // have been assigned by the time this code is
             // called. There is, however, a guarantee that once IDs
             // are assigned, this code will be called.
-            if (label === undefined) 
+            if (label === undefined)
                 return;
 
 
@@ -260,20 +270,20 @@ function linkingDecorator($el, is_ptr) {
             // A ptr contains only attributes, no text, so we can just append.
             $el.append($text);
 
-            // Find the referred element. 
+            // Find the referred element.
             var $target = $(jQuery_escapeID(target));
             $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
         }
         else
             throw new Error("unknown type of target: " + orig_target);
-        
+
     }
     else {
         $el.find("a").children().unwrap().unwrap();
         var inner_text = $('<div class="_real _text">');
         $a.append(inner_text);
         $el.contents().wrapAll($text);
-        
+
         // Wrap all essentially creates a new element out of
         // text, so we have to find it again.
         $text = $el.children("._text._phantom");
@@ -317,7 +327,7 @@ function languageDecorator($root, $el) {
             $el.css("font-style", "italic");
 
         var label = lang_to_label[lang];
-        if (label === undefined) 
+        if (label === undefined)
             throw new Error("unknown language: " + lang);
         label = label.split("; ")[0];
         $el.tooltip({"title": label, "container": "body"});
@@ -348,16 +358,16 @@ function relatedChildDecorator(child) {
     var header;
     if (orig_name === 'btw:cp') // special
         header = $('<div class="_text _phantom _head"><div class="abbr _phantom" data-wed-corresp="/abbr/Cp">Cp.</div> also </div>');
-    
-    else 
+
+    else
         header = $('<div class="_text _phantom _head">' + head + ': </div>');
     $child.prepend(header);
 }
-    
+
 function includedBTWLangHandler($root, $el) {
     var lang = $el.attr(util.encodeAttrName('xml:lang'));
     var label = lang_to_label[lang];
-    if (label === undefined) 
+    if (label === undefined)
         throw new Error("unknown language: " + lang);
     // We want the abbreviation
     label = label.split("; ", 2)[1] + " ";
@@ -366,5 +376,5 @@ function includedBTWLangHandler($root, $el) {
 }
 
 exports.BTWDecorator = BTWDecorator;
-    
+
 });
