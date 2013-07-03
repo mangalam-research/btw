@@ -2,36 +2,36 @@ define(function (require, exports, module) {
 'use strict';
 
 var util = require("wed/util");
-var Mode = require("wed/mode").Mode;
+var Mode = require("wed/modes/generic/generic").Mode;
 var oop = require("wed/oop");
 var BTWDecorator = require("./btw_decorator").BTWDecorator;
-var tr = require("./btw_tr").tr;
 var transformation = require("wed/transformation");
 var Toolbar = require("./btw_toolbar").Toolbar;
 var rangy = require("rangy");
+var btw_meta = require("./btw_meta");
 
 var prefix_to_uri = {
-    "btw": "http://lddubeau.com/ns/btw-storage",
+    "btw": "http://mangalamresearch.org/ns/btw-storage",
     "tei": "http://www.tei-c.org/ns/1.0",
     "xml": "http://www.w3.org/XML/1998/namespace",
     "": "http://www.tei-c.org/ns/1.0"
 };
 
 function BTWMode () {
-    Mode.call(this);
-    this._resolver = new util.NameResolver();
+    Mode.call(this, {meta: btw_meta});
     Object.keys(prefix_to_uri).forEach(function (k) {
         this._resolver.definePrefix(k, prefix_to_uri[k]);
     }.bind(this));
+    this._meta = new btw_meta.Meta();
     this._toolbar = new Toolbar();
-    // This happens to be constant for this mode
-    this._contextual_menu_items = [
-        ["Create abbreviation",
-         this._createAbbreviation.bind(this)]
-    ];
 }
 
 oop.inherit(BTWMode, Mode);
+
+BTWMode.optionResolver = function (options, callback) {
+    callback(options);
+};
+
 
 (function () {
     this.init = function (editor) {
@@ -40,7 +40,6 @@ oop.inherit(BTWMode, Mode);
         $(editor.widget).on(
             'keydown', 
             util.eventHandler(this._keyHandler.bind(this)));
-
     };
 
     this._keyHandler = function (e, jQthis) {
@@ -89,46 +88,25 @@ oop.inherit(BTWMode, Mode);
         return true;
     };
 
-    this._createAbbreviation = function () {
-        this._editor.dismissMenu();
-        var $hyperlink_modal = this._editor.$hyperlink_modal;
-        var $body = $hyperlink_modal.find('.modal-body');
-        $body.empty();
-
-        var $typeahead = $("<input type='text' autocomplete='off'>");
-        $typeahead.typeahead({
-            'source': ["fem. -- feminine", "nt. -- neuter"] 
-            });
-
-        $body.append($typeahead);
-        $hyperlink_modal.on('hide.wed', function () {
-            $hyperlink_modal.off('.wed');
-            /// XXX continue here.
-        });
-
-        $hyperlink_modal.modal();
-
-    };
-
-    this.getAbsoluteResolver = function () {
-        return this._resolver;
-    };
-
     this.makeDecorator = function () {
         var obj = Object.create(BTWDecorator.prototype);
         // Make arg an array and add our extra argument(s).
         var args = Array.prototype.slice.call(arguments);
-        args.unshift(this);
+        args = [this, this._meta].concat(args);
         BTWDecorator.apply(obj, args);
         return obj;
     };
 
     this.getTransformationRegistry = function () {
-        return tr;
+        return this._tr;
     };
 
     this.getContextualMenuItems = function () {
         return this._contextual_menu_items;
+    };
+
+    this.getStylesheets = function () {
+        return [require.toUrl("./btw.css")];
     };
 
     this.nodesAroundEditableContents = function (parent) {
