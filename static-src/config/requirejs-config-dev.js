@@ -33,7 +33,9 @@ require.config({
  config: {
      "wed/wed": {
          schema: "btw/btw-storage.js",
-         mode: "btw/btw_mode"
+         mode: {
+             path: "btw/btw_mode"
+         }
      }
  },
  enforceDefine: true
