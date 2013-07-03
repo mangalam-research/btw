@@ -1,2 +1,4 @@
-{ "multistr": true
+{ "multistr": true,
+  "globals":
+  { "define": false }
 }
