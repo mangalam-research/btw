@@ -2,79 +2,143 @@ define(function (require, exports, module) {
 'use strict';
 
 var Decorator = require("wed/decorator").Decorator;
+var refmans = require("./btw_refmans");
 var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
+var jqutil = require("wed/jqutil");
 
 function BTWDecorator(mode, meta) {
     Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
 
     this._mode = mode;
     this._meta = meta;
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("sense"),
-                           this.includedSenseHandler.bind(this, this._domlistener));
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("form"),
-                           this.includeListHandler.bind(this, " / "));
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("div") + ", " +
-                           util.classFromOriginalName("btw:translation"),
-                           headingDecorator);
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:related"),
-                           this.includedRelatedHandler.bind(this));
-    this._domlistener.addHandler(["added-element", "removed-element"],
-                           util.classFromOriginalName("orth"),
-                           this.addRemListElementHandler.bind(this, " / "));
-    this._domlistener.addHandler(["added-element", "removed-element"],
-                           util.classFromOriginalName("xr"),
-                           this.addRemListElementHandler.bind(this, ", "));
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("term"),
-                           languageDecorator);
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("ptr"),
-                           ptrDecorator);
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:translation") +
-                           "[" + util.encodeAttrName("type") + "= 'classical']",
-                           this.includeListHandler.bind(this, "; "));
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:translation") +
-                           "[" + util.encodeAttrName("type") + "= 'contemporary-translations']",
-                           this.includeListHandler.bind(this, $('<br/>')));
-
-    this._domlistener.addHandler("included-element",
-                           util.classFromOriginalName("btw:lang"),
-                           includedBTWLangHandler);
-
-    this._domlistener.addHandler("included-element",
-                           "[" + util.encodeAttrName("xml\\:lang") + "]:not(" + util.classFromOriginalName("btw:lang") + ")",
-                           languageDecorator);
-
-    this._domlistener.addHandler("included-element",
-                           [util.classFromOriginalName("cit"),
-                            util.classFromOriginalName("quote"),
-                            util.classFromOriginalName("btw:example"),
-                            util.classFromOriginalName("btw:cit"),
-                            util.classFromOriginalName("btw:tr"),
-                            util.classFromOriginalName("note"),
-                            util.classFromOriginalName("lbl"),
-                            util.classFromOriginalName("pron")].join(", "),
-                           this.elementDecorator.bind(this));
-    this._domlistener.addHandler("added-element",
-                           "._id_decoration",
-                           addedIdHandler);
-
-    this._domlistener.addHandler("trigger",
-                           "ids",
-                           idsTriggerHandler);
+    this._sense_refman = new refmans.SenseReferenceManager();
+    this._section_heading_map = {
+        "btw:definition": ["definition", null],
+        "btw:sense": ["SENSE", this._sense_refman],
+        "btw:english-renditions": ["English renditions", null],
+        "btw:english-rendition": ["English rendition", null],
+        "btw:semantic-fields": ["semantic categories", null]
+    };
 }
 
 oop.inherit(BTWDecorator, Decorator);
 
-BTWDecorator.prototype.includedRelatedHandler = function($root, $el) {
+BTWDecorator.prototype.init = function ($root) {
+    var no_default_decoration = [
+        util.classFromOriginalName("btw:entry"),
+        util.classFromOriginalName("btw:lemma"),
+        util.classFromOriginalName("btw:overview"),
+        util.classFromOriginalName("btw:definition"),
+        util.classFromOriginalName("btw:sense-discrimination"),
+        util.classFromOriginalName("btw:sense"),
+        util.classFromOriginalName("btw:english-renditions"),
+        util.classFromOriginalName("btw:english-rendition"),
+        util.classFromOriginalName("term"),
+        util.classFromOriginalName("btw:semantic-fields"),
+        util.classFromOriginalName("btw:sf")
+    ].join(", ");
+
+    this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("*"),
+        function ($root, $tree, $parent,
+                  $prev, $next, $el) {
+            var name = util.getOriginalName($el.get(0));
+            switch(name) {
+            case "btw:overview":
+            case "btw:sense-discrimination":
+                unitHeadingDecorator($root, $el);
+                break;
+            case "btw:definition":
+            case "btw:english-renditions":
+            case "btw:english-rendition":
+            case "btw:semantic-fields":
+                this.sectionHeadingDecorator($root, $el);
+                break;
+            default:
+                if ($el.is(no_default_decoration))
+                    return;
+                this.elementDecorator($root, $el);
+            }
+
+            if (name === "btw:semantic-fields")
+                this.listDecorator($el.get(0), "; ");
+        }.bind(this));
+
+    this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("*"),
+        function ($root, $tree, $parent, $prev, $next, $el) {
+            // Skip elements which would already have been removed from
+            // the tree. Unlikely but...
+            if ($el.closest($root).length === 0)
+                return;
+
+            var klass = this._meta.getAdditionalClasses($el.get(0));
+            if (klass.length > 0)
+                $el.addClass(klass);
+        }.bind(this));
+
+    this._domlistener.addHandler(
+        "children-changed",
+        util.classFromOriginalName("*"),
+        function ($root, $added, $removed, $prev, $next, $el) {
+            if ($el.is(no_default_decoration))
+                return;
+
+            if ($added.is("._real, ._phantom_wrap") ||
+                $removed.is("._real, ._phantom_wrap") ||
+                $added.filter(jqutil.textFilter).length +
+                $removed.filter(jqutil.textFilter).length > 0) {
+                this.elementDecorator($root, $el);
+                if (util.getOriginalName($el.get(0)) ===
+                    "btw:semantic-fields")
+                    this.listDecorator($el.get(0), "; ");
+            }
+
+        }.bind(this));
+
+    this._domlistener.addHandler(
+        "text-changed",
+        util.classFromOriginalName("*"),
+        function ($root, $el) {
+            if ($el.is(no_default_decoration))
+                return;
+
+            this.elementDecorator($root, $el.parent());
+
+            if (util.getOriginalName($el.get(0)) ===
+                "btw:semantic-fields")
+                this.listDecorator($el.get(0), "; ");
+        }.bind(this));
+
+    this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("btw:sense"),
+        this.includedSenseHandler.bind(this));
+
+    this._domlistener.addHandler(
+        "trigger",
+        "included-sense",
+        this.includedSenseTriggerHandler.bind(this));
+
+    Decorator.prototype.init.apply(this, arguments);
+};
+
+BTWDecorator.prototype.elementDecorator = function ($root, $el) {
+    Decorator.prototype.elementDecorator.call(
+        this, $root, $el,
+        util.eventHandler(this._contextMenuHandler.bind(this, true)),
+        util.eventHandler(this._contextMenuHandler.bind(this, false)));
+};
+
+BTWDecorator.prototype._contextMenuHandler = function (at_start, ev, jQthis) {
+    return false;
+};
+
+BTWDecorator.prototype.includedRelatedHandler = function ($root, $el) {
     headingDecorator($root, $el, "related terms");
     $el.children("._real").each(function (x, child) {
         relatedChildDecorator(child);
@@ -82,12 +146,37 @@ BTWDecorator.prototype.includedRelatedHandler = function($root, $el) {
     }.bind(this));
 };
 
+BTWDecorator.prototype.idDecorator = function (el) {
+    var $el = $(el);
+    var id = $el.attr(util.encodeAttrName("xml:id"));
+    var btw_id = "BTW." + id;
+    $el.attr("id", btw_id);
+    // Remove the old one before putting in the new one.
+    if (id.indexOf("S.") === 0)
+        this._sense_refman.allocateLabel(btw_id);
+    else
+        throw new Error("unknown type of id: " + id);
+};
+
+
 BTWDecorator.prototype.includedSenseHandler = function (
-    listener, $root, $element) {
-    $element.remove("._button_and_id._phantom");
-    this.elementDecorator($root, $element);
-    
-    listener.trigger("ids");
+    $root, $tree, $parent, $prev, $next, $el) {
+    var id = $el.attr(util.encodeAttrName("xml:id"));
+    if (id === undefined) {
+        // Give it an id.
+        id = this._sense_refman.nextNumber();
+        $el.attr(util.encodeAttrName("xml:id"), "S." + id);
+    }
+    this._domlistener.trigger("included-sense");
+};
+
+BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
+    var dec = this;
+    $root.find(util.classFromOriginalName("btw:sense")).each(function () {
+        var $this = $(this);
+        dec.idDecorator($this);
+        dec.sectionHeadingDecorator($root, $this);
+    });
 };
 
     // Override
@@ -97,6 +186,8 @@ BTWDecorator.prototype.contentDecoratorInclusionHandler = function ($root,
 
     this._contentDecorator($root, $element, $(pair[0]), $(pair[1]));
 };
+
+
 
 function jQuery_escapeID(id) {
     return id.replace(/\./g, '\\.');
@@ -123,33 +214,50 @@ function allocateHeadID() {
     return "BTW.H." + ++next_head;
 }
 
-var type_to_heading_map = {
-    "definition": "definition",
-    "classical-examples": "classical examples",
-    "semantic-fields": "semantic fields",
-    "etymology": "etymology",
-    "contemporary-translations": "equivalents, translation and paraphrases in contemporary scholarship",
-    "classical": "classical equivalents",
-    "other-sample-contexts": "other sample contexts",
-    "discussions": "discussions in dictionaries and secondary literature" ,
-    "linguistic-considerations": "linguistic considerations"
+var unit_heading_map = {
+    "btw:overview": "UNIT 1: OVERVIEW",
+    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION"
 };
 
-function headingDecorator($root, $el, head) {
+function unitHeadingDecorator($root, $el) {
+    var name = util.getOriginalName($el.get(0));
+    var head = unit_heading_map[name];
+    if (head === undefined)
+        throw new Error("found an element with name " + name +
+                        ", which is not handled");
+
+    head = $('<div class="head _phantom">' + head + "</div>");
+    head.attr('id', allocateHeadID());
+
+    $el.prepend(head);
+}
+
+BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el, head) {
     if (head === undefined) {
-        var type = $el.attr(util.encodeAttrName('type'));
-        if (type === undefined)
-            throw new Error("can't get type");
-        head = type_to_heading_map[type];
-        if (head === undefined)
-            throw new Error("found an element with type: " + type + ", which is not handled");
+        var name = util.getOriginalName($el.get(0));
+        var head_spec = this._section_heading_map[name];
+        if (head_spec === undefined)
+            throw new Error("found an element with name " + name +
+                            ", which is not handled");
+        var refman = head_spec[1];
+        if (refman) {
+            // Our object must have an assigned id and a label.
+            var id = $el.attr("id");
+            if (!id)
+                throw new Error("sectionHeadingDecorator called on element " +
+                                "that does not have an id: " + $el.get(0));
+            var label = refman.idToLabelForHead(id);
+            head = head_spec[0] + " " + label;
+        }
+        else
+            head = head_spec[0];
     }
 
     head = $('<div class="head _phantom">[' + head + "]</div>");
     head.attr('id', allocateHeadID());
 
     $el.prepend(head);
-}
+};
 
 /**
  * This function adds a separator between each child element of the
@@ -200,39 +308,6 @@ function heterogeneousListItemDecorator(el, sep) {
         else
             first = false;
     });
-}
-
-function idDecorator(el) {
-    var $el = $(el);
-    var id = $el.attr(util.encodeAttrName("xml:id"));
-    $el.attr("id", "BTW." + id);
-    // Remove the old one before putting in the new one.
-    if (id.indexOf("S.") === 0) {
-        var label = $('<div class="_text _phantom _id_decoration" data-wed--for="'+ id + '">');
-        label.append("(" + sense_refs.allocateLabel(id) + ") ");
-
-        var old_label = $el.find("[data-wed--for='" + id + "']");
-
-        if (old_label.length === 0) {
-            var last = el.firstChild;
-            // Skip over start gui elements
-            while (last !== null &&
-                   $(last).hasClass("_gui") &&
-                   $(last).hasClass("_start_button"))
-                last = last.nextSibling;
-            if (last !== null)
-                $(last).before(label);
-            else
-                $el.prepend(label);
-        }
-        else
-            old_label.replaceWith(label);
-    }
-    else if (id.indexOf("LBL.") === 0) {
-        // nothing required
-    }
-    else
-        throw new Error("unknown type of id: " + id);
 }
 
 function linkingDecorator($el, is_ptr) {

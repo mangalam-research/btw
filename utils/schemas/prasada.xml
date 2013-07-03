@@ -2,8 +2,8 @@
   <btw:lemma>prasāda</btw:lemma>
   <btw:overview><!-- UNIT 1: OVERVIEW -->
     <btw:definition><!-- Definition -->
-      <p>Etymologically linked to the process of sedimentation (<term xml:lang="sa-Latn">pra√sad</term>, see below), <term xml:lang="sa-Latn">prasāda</term> denotes  the resulting state of <ptr target="#BTW.S.a1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="#BTW.S.a2"/> serenity, <ptr target="#BTW.S.b"/> confidence, and <ptr target="#BTW.S.c"/> favor or mercy.</p>
-      <p>In Buddhist literature, <term xml:lang="sa-Latn">prasāda</term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="#BTW.S.b"/> confidence or faith, and <ptr target="#BTW.S.d"/> reverential devotion. In the first case, <term xml:lang="sa-Latn">prasāda</term> denotes, depending on the context, either <ptr target="#BTW.S.b1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="#BTW.S.b2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="#BTW.S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
+      <p>Etymologically linked to the process of sedimentation (<term xml:lang="sa-Latn">pra√sad</term>, see below), <term xml:lang="sa-Latn">prasāda</term> denotes  the resulting state of <ptr target="S.a1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="S.a2"/> serenity, <ptr target="S.b"/> confidence, and <ptr target="S.c"/> favor or mercy.</p>
+      <p>In Buddhist literature, <term xml:lang="sa-Latn">prasāda</term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="S.b"/> confidence or faith, and <ptr target="S.d"/> reverential devotion. In the first case, <term xml:lang="sa-Latn">prasāda</term> denotes, depending on the context, either <ptr target="S.b1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="S.b2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
     </btw:definition>
   </btw:overview>
   <btw:sense-discrimination><!-- UNIT 2: SENSE DISCRIMINATION -->
@@ -33,14 +33,14 @@
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
-      <btw:subsense xml:id="BTW.S.a1"> <!-- a1 -->
+      <btw:subsense xml:id="S.a1"> <!-- a1 -->
         <btw:explanation>often explicitely associated to the water metaphor</btw:explanation>
         <btw:citations>
           <btw:example><btw:cit><ref>AkośV, 128</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit><btw:tr>Faith is <btw:lemma-instance>serenity</btw:lemma-instance> of mind. The mind, polluted with major and minor defilements (<term xml:lang="sa-Latn">kleśopakleśa</term>) becomes clear when it exercises by means of faith; just like water by means of a water-clarifying gem.</btw:tr></btw:example>
           <btw:example><btw:cit><ref>PSkVbh, 213a5-b1</ref><foreign xml:lang="bo-Latn">sems <btw:lemma-instance>dang ba</btw:lemma-instance> zhes bya ba la dad pa ni sems kyi rnyog pa dang mi mthun pa ste |  de’i phyir de dang mtshungs par ldan na nyon mongs pa dang |  nye ba’i nyon mongs pa’i rnyog pa mi ’byung ste |  dad pa la brten nas sems <btw:lemma-instance>dang bar</btw:lemma-instance> ’gyur bas sems <btw:lemma-instance>dang ba</btw:lemma-instance> zhes bya ste</foreign></btw:cit><btw:tr>As for what is called mental <btw:lemma-instance>clarity</btw:lemma-instance>, faith opposes mental turbidity. Hence, the turbidity derived from major and minor defilements does not prevail when [the mind] is conjoined with faith. Since the mind becomes <btw:lemma-instance>clear</btw:lemma-instance> when it relies on faith, [faith] is called <btw:lemma-instance>clarity</btw:lemma-instance> of mind.</btw:tr></btw:example>
         </btw:citations>
       </btw:subsense>
-      <btw:subsense xml:id="BTW.S.a1"> <!-- a2 -->
+      <btw:subsense xml:id="S.a1"> <!-- a2 -->
         <btw:explanation>in the sense of pleasurable emotion, serenity.</btw:explanation>
         <btw:citations>
           <btw:example><btw:cit><ref>Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">sarvāvavādakaśreṣṭhaṁ śakrabrahmeśānayamavarūṇakuveravā[va]sava-somādityādibhir apyapratihataśāsanaṁ kandarpadarpāpamardanaśūraṁ mahātmānam atimaharddhikaṁ sthaviropaguptamārabhya kāñcideva vibudhajanamanaḥ<btw:lemma-instance>prasāda</btw:lemma-instance>kārīṁ dharmyāṁ kathāṁ samanusmariṣyāmaḥ|</foreign></btw:cit><btw:tr>We shall recall a docrinal tale capable of <btw:lemma-instance>brightnening</btw:lemma-instance> the mind of gods and men. It starts with Upagupta, the best of all preachers, whose teaching was irresistible (<term xml:lang="sa-Latn">apratihata</term>) even for Śākra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, the Ādityas and the other gods, an eminent person, a hero capable of crushing the Kandarpa’s pride, endowed with enourmous yogic powers.</btw:tr><btw:tr><btw:cit><ref>Strong, 173- 174</ref>[L]et us recall togeter a dharmic tale that <btw:lemma-instance>brightens</btw:lemma-instance> the mind of gods and men. It begins with the story of Upagupta, the foremost of all preachers, whose teaching was unmatched even by Śakra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, Aditi, and the other gods, a hero sweeping away the pride of Kandarpa [Kāma], a magnanimous beig with very great supernatural powers.</btw:cit></btw:tr></btw:example>
@@ -117,7 +117,7 @@
             <btw:sf>03.05.0</btw:sf> <!-- error -->
             </btw:semantic-fields>
             <btw:citations>
-              <btw:example xml:id="BTW.E.1"><btw:cit><ref>AkośBh ad VIII,9, 440
+              <btw:example xml:id="E.1"><btw:cit><ref>AkośBh ad VIII,9, 440
               4-12</ref><foreign
               xml:lang="sa-Latn">adhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance>
               nāma ka eṣa dharmaḥ |
@@ -190,7 +190,7 @@
           <btw:conceptual-proximate>
             <term>saṃprasāda</term>
             <btw:citations>
-              <ptr target="#BTW.E.1"/>
+              <ptr target="E.1"/>
             <!-- 
           [selected citations contrasting near-synonyms for sense a]
           See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
@@ -199,7 +199,7 @@
         </btw:conceptual-proximates>
       </btw:contrastive-section>
     </btw:sense>
-    <btw:sense xml:id="BTW.S.b">
+    <btw:sense xml:id="S.b">
       <btw:english-renditions>
         <btw:english-rendition>
           <term>confidence</term>
@@ -257,7 +257,7 @@
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
-      <btw:subsense xml:id="BTW.S.b1">
+      <btw:subsense xml:id="S.b1">
         <btw:explanation>faith, a form of trust not necessarily related to intellectual understanding</btw:explanation>
         <btw:citations>
           <btw:example><btw:cit><ref>Aśokāvadāna, 81</ref><p><foreign xml:lang="sa-Latn">atha sthaviro rājñaḥ <btw:lemma-instance>prasāda</btw:lemma-instance>vṛddhyarthamuvāca| mahārāja kiṃ drakṣyasi tāṃ devatāṃ| yayā dṛṣṭaḥ prajāyan sa vane'smin vadatāṃ varaḥ|</foreign></p><p><foreign xml:lang="sa-Latn">kramamāṇaḥ padān sapta śrutvā vāco yayā muneḥ||</foreign></p><p><foreign xml:lang="sa-Latn">[…] naivāsikā ya ihāśokavṛkṣe sambuddhadarśinī yā devakanyā| sākṣādasau darśayatu svadehaṃ rājño hyaśokasya <btw:lemma-instance>prasāda</btw:lemma-instance>vṛddhyai||</foreign></p><p><foreign xml:lang="sa-Latn">[…] yāvadrājñā jātyāṃ śatasahasraṃ dattaṃ| caityaṃ ca pratiṣṭhāpya rājā prakrāntaḥ|</foreign></p></btw:cit><btw:tr><p>Then, for the sake of  increasing the [king’s] faith, the elder said to the king:</p><lg><l>‘Great King, would you like to see the goddess who,</l><l>in this forest, saw the birth of the best of teachers</l><l>and his seven steps and heard his speech?</l></lg><p>[…] May the divine maiden who lives in this aśoka tree and who has seen the Buddha, manifest herself in person, in her physical form, so that king Aśoka’s faith can increase.</p>
@@ -265,7 +265,7 @@
           <btw:example><btw:cit><ref>Vajracchedikā 116</ref><foreign xml:lang="sa-Latn">ye imeṣv evaṃrūpeṣu sūtrāṃtapadeṣu bhāṣyamāṇeṣv ekacitta<btw:lemma-instance>prasāda</btw:lemma-instance>mātram api pratilapsyaṃte | jñātās te subhūte tathāgatena dṛṣṭās te subhūte tathāgatena sarve te aprameyaṃ puṇyaskaṃdhaṃ prasaviṣyaṃti pratigṛhīṣyaṃti |</foreign></btw:cit><btw:tr>Subhūti, the tathāgata knows those [practitioners] who have even just a single thought of <btw:lemma-instance>faith</btw:lemma-instance>  when these doctrines are expounded; all of them will generate and gain immeasurable amounts of merit.</btw:tr><btw:tr><ref>Harrison, 144</ref>As for those who, when the words of such discourses as these are being spoken, will experience the <btw:lemma-instance>serenity of faith</btw:lemma-instance>, even if it is for no more than a single thought, the Realized One knows them, Subhūti, the Realized One sees them, Subhūti. They will all generate and come to be endowed with an immeasurable quantity of merit.</btw:tr><btw:tr><ref>122b5-6</ref><foreign xml:lang="bo-Latn">gaṅ dag ’di lta bu’i mdo sde’i tshig bśad pa ’di la sems dad pa gcig tsam rñed par ’gyur ba de dag ni rab ’byor de bźin gśegs pas mkhyen to | | rab ’byor de dag ni de bźin gśegs pas gzigs te | rab ’byor sems can de dag thams cad ni bsod nams kyi phuṅ po dpag tu med pa bskyed ciṅ rab tu sdud par ’gyur |</foreign></btw:tr></btw:example>
         </btw:citations>
       </btw:subsense>
-      <btw:subsense xml:id="BTW.S.b2"> <!-- b2 -->
+      <btw:subsense xml:id="S.b2"> <!-- b2 -->
         <btw:explanation>1. absolute confidence derived from understanding, typically compounded with avetya or abhedya</btw:explanation>
         <btw:citations>
           <btw:example><btw:cit><ref>AkośBh ad VI, 75a (pradhan 387 3)</ref><foreign xml:lang="sa-Latn">ataś catvāry api satyāny abhisamayato dharmāvetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhaḥ [Y: dharme’vetya..]</foreign></btw:cit><btw:tr>Then, when [practitioners] comprehend the the four truths, they obtain absolute <btw:lemma-instance>confdence</btw:lemma-instance> in the doctrine (<term xml:lang="sa-Latn">dharma</term>).</btw:tr></btw:example>
@@ -319,7 +319,7 @@
           <btw:antonym>
             <term xml:lang="sa-Latn">aprasanna</term>
             <btw:citations>
-              <ptr target="#BTW.E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
+              <ptr target="E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
             </btw:citations>
             <!-- [other citations] -->
             <!-- ø -->
@@ -362,7 +362,7 @@
               <btw:sf>02.01.13.02</btw:sf>
             </btw:semantic-fields>
             <btw:citations>
-              <btw:example xml:id="BTW.E.2"><btw:cit><ref>Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit><btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr></btw:example>
+              <btw:example xml:id="E.2"><btw:cit><ref>Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit><btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr></btw:example>
             </btw:citations>
             <!-- [other citations]
                  ø
@@ -380,7 +380,7 @@
         </btw:conceptual-proximates>
       </btw:contrastive-section>
     </btw:sense>
-    <btw:sense xml:id="BTW.S.c">
+    <btw:sense xml:id="S.c">
       <btw:english-renditions>
         <btw:english-rendition>
           <term>favor</term>
@@ -429,7 +429,7 @@
         ø -->
       </btw:contrastive-section>
     </btw:sense>
-    <btw:sense xml:id="BTW.S.d">
+    <btw:sense xml:id="S.d">
       <btw:english-renditions>
         <btw:english-rendition>
           <term>devotion</term>

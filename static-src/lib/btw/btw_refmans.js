@@ -22,10 +22,14 @@ oop.inherit(SenseReferenceManager, ReferenceManager);
         return this._id_to_label[id] = sense_labels[this._next_sense_label_ix++];
     };
 
+    this.idToLabelForHead = function (id) {
+        return this.idToLabel(id).toUpperCase();
+    };
+
     this._deallocateAllLabels = function () {
         this._next_sense_label_ix = 0;
     };
 }).call(SenseReferenceManager.prototype);
 
-exports.sense_refs = new SenseReferenceManager();
+exports.SenseReferenceManager = SenseReferenceManager;
 });

@@ -9,6 +9,7 @@ var transformation = require("wed/transformation");
 var Toolbar = require("./btw_toolbar").Toolbar;
 var rangy = require("rangy");
 var btw_meta = require("./btw_meta");
+var domutil = require("wed/domutil");
 
 var prefix_to_uri = {
     "btw": "http://mangalamresearch.org/ns/btw-storage",
@@ -33,95 +34,108 @@ BTWMode.optionResolver = function (options, callback) {
 };
 
 
-(function () {
-    this.init = function (editor) {
-        Mode.prototype.init.call(this, editor);
-        $(editor.widget).prepend(this._toolbar.getTopElement());
-        $(editor.widget).on(
-            'keydown', 
-            util.eventHandler(this._keyHandler.bind(this)));
-    };
+BTWMode.prototype.init = function (editor) {
+    Mode.prototype.init.call(this, editor);
+    $(editor.widget).prepend(this._toolbar.getTopElement());
+    $(editor.widget).on('keydown',
+                        util.eventHandler(this._keyHandler.bind(this)));
+};
 
-    this._keyHandler = function (e, jQthis) {
-        if (!e.ctrlKey && !e.altKey && e.which === 32)
-            return this._assignLanguage(e);
-    };
+BTWMode.prototype._keyHandler = function (e, jQthis) {
+    if (!e.ctrlKey && !e.altKey && e.which === 32)
+        return this._assignLanguage(e);
+};
 
-    // XXX This function needs to be contextual: don't assign
-    // languages in locations where language are already
-    // assigned. e.g. citations of primary sources.
-    this._assignLanguage = function (e) {
-        var caret = this._editor.getCaret();
-        
-        if (caret === undefined)
-            return true;
-        
-        // XXX we do not work with anything else than text nodes.
-        if (caret[0].nodeType !== Node.TEXT_NODE)
-            return true;
+// XXX This function needs to be contextual: don't assign
+// languages in locations where language are already
+// assigned. e.g. citations of primary sources.
+BTWMode.prototype._assignLanguage = function (e) {
+    var caret = this._editor.getCaret();
 
-        // Find the previous word
-        var offset = caret[0].nodeValue.slice(0, caret[1]).search(/\w+$/);
-
-        // This could happen if the user enters spaces at the start of
-        // an element for instance.
-        if (offset === -1)
-            return true;
-
-        var word = caret[0].nodeValue.slice(offset, caret[1]);
-        
-        // XXX hardcoded
-        var $new_element;
-        if (word === "Abhidharma") {
-            $new_element = transformation.wrapTextInElement(caret[0], offset, caret[1], "term", {"xml:lang": "sa-Latn"});
-            // Simulate a link
-            if ($new_element !== undefined)
-                $new_element.contents().wrapAll("<a href='fake'>");
-        }
-
-        if ($new_element !== undefined) {
-            // Place the caret after the element we just wrapped.
-            rangy.getNativeSelection().collapse($new_element.get(0).nextSibling, 0);
-            this._editor._caretChangeEmitter(e);
-        }
-        
+    if (caret === undefined)
         return true;
-    };
 
-    this.makeDecorator = function () {
-        var obj = Object.create(BTWDecorator.prototype);
-        // Make arg an array and add our extra argument(s).
-        var args = Array.prototype.slice.call(arguments);
-        args = [this, this._meta].concat(args);
-        BTWDecorator.apply(obj, args);
-        return obj;
-    };
+    // XXX we do not work with anything else than text nodes.
+    if (caret[0].nodeType !== Node.TEXT_NODE)
+        return true;
 
-    this.getTransformationRegistry = function () {
-        return this._tr;
-    };
+    // Find the previous word
+    var offset = caret[0].nodeValue.slice(0, caret[1]).search(/\w+$/);
 
-    this.getContextualMenuItems = function () {
-        return this._contextual_menu_items;
-    };
+    // This could happen if the user enters spaces at the start of
+    // an element for instance.
+    if (offset === -1)
+        return true;
 
-    this.getStylesheets = function () {
-        return [require.toUrl("./btw.css")];
-    };
+    var word = caret[0].nodeValue.slice(offset, caret[1]);
 
-    this.nodesAroundEditableContents = function (parent) {
-        var ret = [null, null];
-        var start = parent.childNodes[0];
-        if ($(start).is("._gui"))
-            ret[0] = start;
-        var end = parent.childNodes[parent.childNodes.length - 1];
-        if ($(end).is("._gui"))
-            ret[1] = end;
-        return ret;
-    };
-}).call(BTWMode.prototype);
+    // XXX hardcoded
+    var $new_element;
+    if (word === "Abhidharma") {
+        $new_element = transformation.wrapTextInElement(
+            caret[0], offset, caret[1], "term", {"xml:lang": "sa-Latn"});
+        // Simulate a link
+        if ($new_element !== undefined)
+            $new_element.contents().wrapAll("<a href='fake'>");
+    }
+
+    if ($new_element !== undefined) {
+        // Place the caret after the element we just wrapped.
+        rangy.getNativeSelection().collapse(
+            $new_element.get(0).nextSibling, 0);
+        this._editor._caretChangeEmitter(e);
+    }
+
+    return true;
+};
+
+BTWMode.prototype.makeDecorator = function () {
+    var obj = Object.create(BTWDecorator.prototype);
+    // Make arg an array and add our extra argument(s).
+    var args = Array.prototype.slice.call(arguments);
+    args = [this, this._meta].concat(args);
+    BTWDecorator.apply(obj, args);
+    return obj;
+};
+
+BTWMode.prototype.getTransformationRegistry = function () {
+    return this._tr;
+};
+
+BTWMode.prototype.getContextualMenuItems = function () {
+    return this._contextual_menu_items;
+};
+
+BTWMode.prototype.getStylesheets = function () {
+    return [require.toUrl("./btw.css")];
+};
+
+BTWMode.prototype.nodesAroundEditableContents = function (parent) {
+    var ret = [null, null];
+    var start = parent.childNodes[0];
+    if ($(start).is("._gui"))
+        ret[0] = start;
+    var end = parent.childNodes[parent.childNodes.length - 1];
+    if ($(end).is("._gui"))
+        ret[1] = end;
+    return ret;
+};
+
+BTWMode.prototype.makePlaceholderFor = function (el) {
+    var name = util.getOriginalName(el);
+    var ret;
+
+    switch(name) {
+    case "term":
+        ret = domutil.makePlaceholder("term");
+        break;
+    default:
+        ret = Mode.prototype.makePlaceholderFor.call(this, el);
+    }
+
+    return ret;
+};
 
 exports.Mode = BTWMode;
 
 });
-
