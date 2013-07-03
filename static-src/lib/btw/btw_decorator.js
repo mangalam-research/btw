@@ -5,12 +5,12 @@ var Decorator = require("wed/decorator").Decorator;
 var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
-var sense_refs = require("./btw_refmans").sense_refs;
 
-function BTWDecorator(mode) {
-    Decorator.apply(this, Array.prototype.slice.call(arguments, 1));
+function BTWDecorator(mode, meta) {
+    Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
 
     this._mode = mode;
+    this._meta = meta;
     this._domlistener.addHandler("included-element",
                            util.classFromOriginalName("sense"),
                            this.includedSenseHandler.bind(this, this._domlistener));
@@ -74,32 +74,29 @@ function BTWDecorator(mode) {
 
 oop.inherit(BTWDecorator, Decorator);
 
-(function () {
-    this.includedRelatedHandler = function($root, $el) {
-        headingDecorator($root, $el, "related terms");
-        $el.children("._real").each(function (x, child) {
-            relatedChildDecorator(child);
-            this.listDecorator(child, ", ");
-        }.bind(this));
-    };
+BTWDecorator.prototype.includedRelatedHandler = function($root, $el) {
+    headingDecorator($root, $el, "related terms");
+    $el.children("._real").each(function (x, child) {
+        relatedChildDecorator(child);
+        this.listDecorator(child, ", ");
+    }.bind(this));
+};
 
-    this.includedSenseHandler = function (listener, $root, $element) {
-        $element.remove("._button_and_id._phantom");
-        this.elementDecorator($root, $element);
-
-        listener.trigger("ids");
-    };
+BTWDecorator.prototype.includedSenseHandler = function (
+    listener, $root, $element) {
+    $element.remove("._button_and_id._phantom");
+    this.elementDecorator($root, $element);
+    
+    listener.trigger("ids");
+};
 
     // Override
-    this.contentDecoratorInclusionHandler = function ($root,
-                                                      $element) {
-        var pair =
-            this._mode.nodesAroundEditableContents($element.get(0));
+BTWDecorator.prototype.contentDecoratorInclusionHandler = function ($root,
+                                                                    $element) {
+    var pair = this._mode.nodesAroundEditableContents($element.get(0));
 
-        this._contentDecorator($root, $element, $(pair[0]), $(pair[1]));
-    };
-
-}).call(BTWDecorator.prototype);
+    this._contentDecorator($root, $element, $(pair[0]), $(pair[1]));
+};
 
 function jQuery_escapeID(id) {
     return id.replace(/\./g, '\\.');
