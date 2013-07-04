@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Some design principles: 
+Some design principles:
 
  - Reuse TEI elements whenever possible.
 
  - Any section which is not structured more than just being a series of paragraphs is encoded using a <div> of the appropriate type.
 
- - 
+ -
 
 -->
 
-<TEI xmlns="http://www.tei-c.org/ns/1.0" 
+<TEI xmlns="http://www.tei-c.org/ns/1.0"
      xmlns:rng="http://relaxng.org/ns/structure/1.0"
      xml:lang="en">
   <teiHeader>
@@ -92,7 +92,7 @@ to your modified text.</p>
 	<elementSpec ident="said" mode="delete" module="core"/>
 	<elementSpec ident="q" mode="delete" module="core"/>
 	<elementSpec ident="media" mode="delete" module="core"/>
-	
+
         <elementSpec ident="alt" mode="delete" module="linking"/>
         <elementSpec ident="altGrp" mode="delete" module="linking"/>
         <elementSpec ident="join" mode="delete" module="linking"/>
@@ -199,7 +199,7 @@ to your modified text.</p>
             </rng:oneOrMore>
           </content>
         </elementSpec>
-        
+
         <elementSpec ident="english-rendition"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
@@ -220,7 +220,7 @@ to your modified text.</p>
             <attRef name="att.global.attribute.xmlid"/>
           </attList>
         </elementSpec>
-        
+
         <elementSpec ident="other-citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
@@ -241,8 +241,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="contrastive-section" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="contrastive-section"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:optional>
@@ -257,8 +257,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="antonyms" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="antonyms"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:oneOrMore>
@@ -267,8 +267,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="antonym" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="antonym"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:group>
@@ -281,8 +281,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="cognates" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="cognates"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:oneOrMore>
@@ -291,8 +291,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="cognate" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="cognate"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:group>
@@ -306,8 +306,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="conceptual-proximates" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="conceptual-proximates"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:oneOrMore>
@@ -316,8 +316,8 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="conceptual-proximate" 
-                     ns="http://mangalamresearch.org/ns/btw-storage" 
+        <elementSpec ident="conceptual-proximate"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
             <rng:group>
@@ -487,13 +487,21 @@ to your modified text.</p>
 	    </rng:oneOrMore>
           </content>
           <attList>
-            <attDef ident="xml:lang" usage="req">
-	      <desc>Language of the translations.</desc>
+            <attDef ns="http://mangalamresearch.org/ns/btw-storage"
+                    ident="lang" usage="req">
+	      <desc>Language of the translations. The meaning of this
+	      attribute is different from xml:lang and
+	      tei:lang. Whereas these two attributes mark the entire
+	      contents of their child nodes as being of a certain
+	      language, this attribute marks the contents of
+	      btw:lang//btw:occurrence/btw:term as being of the
+	      language specified in the attribute, except if otherwise
+	      specified in a narrower scope.</desc>
 	    </attDef>
           </attList>
         </elementSpec>
 
-        <elementSpec ident="authority" 
+        <elementSpec ident="authority"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
@@ -510,7 +518,7 @@ to your modified text.</p>
           </attList>
         </elementSpec>
 
-        <elementSpec ident="occurrence" 
+        <elementSpec ident="occurrence"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
