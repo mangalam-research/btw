@@ -13,7 +13,7 @@ div.p {
     text-indent: 1em;
 }
 
-div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense {
+div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example {
     margin-left: 0em;
 }
 
@@ -22,5 +22,9 @@ div.btw\:lemma, div.btw\:overview>.head, div.btw\:sense-discrimination>.head {
 }
 
 div.btw\:english-rendition>div.term {
+    font-weight: bold;
+}
+
+div.ptr a {
     font-weight: bold;
 }
