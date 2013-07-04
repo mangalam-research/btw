@@ -16,10 +16,12 @@ function BTWDecorator(mode, meta) {
     this._sense_refman = new refmans.SenseReferenceManager();
     this._section_heading_map = {
         "btw:definition": ["definition", null],
-        "btw:sense": ["SENSE", this._sense_refman],
+        "btw:sense": ["SENSE", this._getSenseLabel.bind(this)],
         "btw:english-renditions": ["English renditions", null],
         "btw:english-rendition": ["English rendition", null],
-        "btw:semantic-fields": ["semantic categories", null]
+        "btw:semantic-fields": ["semantic categories", null],
+        "btw:explanation": ["brief explanation of sense",
+                            this._getSubsenseLabel.bind(this)]
     };
 }
 
@@ -33,11 +35,13 @@ BTWDecorator.prototype.init = function ($root) {
         util.classFromOriginalName("btw:definition"),
         util.classFromOriginalName("btw:sense-discrimination"),
         util.classFromOriginalName("btw:sense"),
+        util.classFromOriginalName("btw:subsense"),
         util.classFromOriginalName("btw:english-renditions"),
         util.classFromOriginalName("btw:english-rendition"),
         util.classFromOriginalName("term"),
         util.classFromOriginalName("btw:semantic-fields"),
-        util.classFromOriginalName("btw:sf")
+        util.classFromOriginalName("btw:sf"),
+        util.classFromOriginalName("btw:explanation")
     ].join(", ");
 
     this._domlistener.addHandler(
@@ -120,9 +124,19 @@ BTWDecorator.prototype.init = function ($root) {
         this.includedSenseHandler.bind(this));
 
     this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("btw:subsense"),
+        this.includedSubsenseHandler.bind(this));
+
+    this._domlistener.addHandler(
         "trigger",
         "included-sense",
         this.includedSenseTriggerHandler.bind(this));
+
+    this._domlistener.addHandler(
+        "trigger",
+        "included-subsense",
+        this.includedSubsenseTriggerHandler.bind(this));
 
     Decorator.prototype.init.apply(this, arguments);
 };
@@ -138,24 +152,24 @@ BTWDecorator.prototype._contextMenuHandler = function (at_start, ev, jQthis) {
     return false;
 };
 
-BTWDecorator.prototype.includedRelatedHandler = function ($root, $el) {
-    headingDecorator($root, $el, "related terms");
-    $el.children("._real").each(function (x, child) {
-        relatedChildDecorator(child);
-        this.listDecorator(child, ", ");
-    }.bind(this));
-};
-
 BTWDecorator.prototype.idDecorator = function (el) {
     var $el = $(el);
+    var name = util.getOriginalName(el);
     var id = $el.attr(util.encodeAttrName("xml:id"));
-    var btw_id = "BTW." + id;
-    $el.attr("id", btw_id);
-    // Remove the old one before putting in the new one.
-    if (id.indexOf("S.") === 0)
-        this._sense_refman.allocateLabel(btw_id);
-    else
-        throw new Error("unknown type of id: " + id);
+    var wed_id = "BTW." + id;
+    $el.attr("id", wed_id);
+    var refman;
+    switch(name) {
+    case "btw:sense":
+        refman = this._sense_refman;
+        break;
+    case "btw:subsense":
+        refman = this._getSubsenseRefman(el);
+        break;
+    default:
+        throw new Error("unknown element: " + name);
+    }
+    refman.allocateLabel(wed_id);
 };
 
 
@@ -170,16 +184,76 @@ BTWDecorator.prototype.includedSenseHandler = function (
     this._domlistener.trigger("included-sense");
 };
 
+BTWDecorator.prototype.includedSubsenseHandler = function (
+    $root, $tree, $parent, $prev, $next, $el) {
+    var id = $el.attr(util.encodeAttrName("xml:id"));
+    if (id === undefined) {
+        // Give it an id.
+        var parent_wed_id = $parent.attr("id");
+        var subsense_refman =
+                this._sense_refman.idToSubsenseRefman(parent_wed_id);
+        id = subsense_refman.nextNumber();
+        $el.attr(util.encodeAttrName("xml:id"), parent_wed_id + "." + id);
+    }
+    this._domlistener.trigger("included-subsense");
+};
+
+
 BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
     var dec = this;
     $root.find(util.classFromOriginalName("btw:sense")).each(function () {
         var $this = $(this);
-        dec.idDecorator($this);
+        dec.idDecorator($this.get(0));
         dec.sectionHeadingDecorator($root, $this);
     });
 };
 
-    // Override
+BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
+    var dec = this;
+    $root.find(util.classFromOriginalName("btw:subsense")).each(function () {
+        var $this = $(this);
+        dec.idDecorator($this.get(0));
+        $this.find(util.classFromOriginalName("btw:explanation")).each(
+            function () {
+                var $this = $(this);
+                dec.sectionHeadingDecorator($root, $this);
+            });
+    });
+};
+
+BTWDecorator.prototype._getSenseLabel = function (el) {
+    var $el = $(el);
+    var id = $el.attr("id");
+    if (!id)
+        throw new Error("element does not have an id: " + $el.get(0));
+    return this._sense_refman.idToLabelForHead(id);
+};
+
+BTWDecorator.prototype._getSubsenseLabel = function (el) {
+    var $el = $(el);
+    var refman = this._getSubsenseRefman(el);
+
+    var id = $el.parents().addBack().filter(
+        util.classFromOriginalName("btw:subsense")).first().attr("id");
+    if (!id)
+        throw new Error("element that does not have subsense parent with "+
+                        "an id: " + $el.get(0));
+    var label = refman.idToLabelForHead(id);
+    return label;
+};
+
+BTWDecorator.prototype._getSubsenseRefman = function (el) {
+    var $el = $(el);
+    var $parent =
+            $el.parents(util.classFromOriginalName("btw:sense")).first();
+    var parent_wed_id = $parent.attr("id");
+
+    return this._sense_refman.idToSubsenseRefman(parent_wed_id);
+};
+
+
+
+// Override
 BTWDecorator.prototype.contentDecoratorInclusionHandler = function ($root,
                                                                     $element) {
     var pair = this._mode.nodesAroundEditableContents($element.get(0));
@@ -220,6 +294,7 @@ var unit_heading_map = {
 };
 
 function unitHeadingDecorator($root, $el) {
+    $el.children('.head').remove();
     var name = util.getOriginalName($el.get(0));
     var head = unit_heading_map[name];
     if (head === undefined)
@@ -233,24 +308,16 @@ function unitHeadingDecorator($root, $el) {
 }
 
 BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el, head) {
+    $el.children('.head').remove();
     if (head === undefined) {
         var name = util.getOriginalName($el.get(0));
         var head_spec = this._section_heading_map[name];
         if (head_spec === undefined)
             throw new Error("found an element with name " + name +
                             ", which is not handled");
-        var refman = head_spec[1];
-        if (refman) {
-            // Our object must have an assigned id and a label.
-            var id = $el.attr("id");
-            if (!id)
-                throw new Error("sectionHeadingDecorator called on element " +
-                                "that does not have an id: " + $el.get(0));
-            var label = refman.idToLabelForHead(id);
-            head = head_spec[0] + " " + label;
-        }
-        else
-            head = head_spec[0];
+        var label_f = head_spec[1];
+        head = (label_f) ? head_spec[0] + " " + label_f($el.get(0)) :
+            head_spec[0];
     }
 
     head = $('<div class="head _phantom">[' + head + "]</div>");
