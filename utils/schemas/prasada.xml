@@ -266,7 +266,7 @@
         </btw:citations>
       </btw:subsense>
       <btw:subsense xml:id="S.b2"> <!-- b2 -->
-        <btw:explanation>1. absolute confidence derived from understanding, typically compounded with avetya or abhedya</btw:explanation>
+        <btw:explanation>absolute confidence derived from understanding, typically compounded with avetya or abhedya</btw:explanation>
         <btw:citations>
           <btw:example><btw:cit><ref>AkośBh ad VI, 75a (pradhan 387 3)</ref><foreign xml:lang="sa-Latn">ataś catvāry api satyāny abhisamayato dharmāvetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhaḥ [Y: dharme’vetya..]</foreign></btw:cit><btw:tr>Then, when [practitioners] comprehend the the four truths, they obtain absolute <btw:lemma-instance>confdence</btw:lemma-instance> in the doctrine (<term xml:lang="sa-Latn">dharma</term>).</btw:tr></btw:example>
           <btw:example><btw:cit><ref>AkośBh ad VI, 75a (pradhan 387 9)</ref><foreign xml:lang="sa-Latn">avetya<btw:lemma-instance>prasādā</btw:lemma-instance> iti ko’rthaḥ | yathābhūtasatyāny avabudhya saṃpratyayo ’vetyaprasādaḥ</foreign></btw:cit><btw:tr>What is the meaning of absolute confidence? Absolute <btw:lemma-instance>confidence</btw:lemma-instance> is the conviction (<term xml:lang="sa-Latn">saṃpratyaya</term>) resulting from understanding the truth correctly (as it is).</btw:tr></btw:example>
