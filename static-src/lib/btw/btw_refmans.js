@@ -57,10 +57,12 @@ SubsenseReferenceManager.prototype.allocateLabel = function (id) {
     var label = this._id_to_label[id];
     if (label === undefined)
         label = this._id_to_label[id] = this._next_label++;
-    console.log(id, label);
     return label;
 };
 
+// This is organized so that idToLabel returns a complete label using
+// the sense's label + subsense's label. idToSublabel returns only the
+// child's label.
 SubsenseReferenceManager.prototype.idToLabel = function (id) {
     return this._parent_label +
         ReferenceManager.prototype.idToLabel.call(this, id);
@@ -69,6 +71,8 @@ SubsenseReferenceManager.prototype.idToLabel = function (id) {
 SubsenseReferenceManager.prototype.idToLabelForHead =
         SubsenseReferenceManager.prototype.idToLabel;
 
+SubsenseReferenceManager.prototype.idToSublabel =
+        ReferenceManager.prototype.idToLabel;
 
 SubsenseReferenceManager.prototype._deallocateAllLabels = function () {
     this._next_label = 1;
