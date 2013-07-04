@@ -3,8 +3,8 @@
   <btw:lemma>prasāda</btw:lemma>
   <btw:overview><!-- UNIT 1: OVERVIEW -->
     <btw:definition><!-- Definition -->
-      <p>Etymologically linked to the process of sedimentation (<term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>, see below), <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes  the resulting state of <ptr target="S.a1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="S.a2"/> serenity, <ptr target="S.b"/> confidence, and <ptr target="S.c"/> favor or mercy.</p>
-      <p>In Buddhist literature, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="S.b"/> confidence or faith, and <ptr target="S.d"/> reverential devotion. In the first case, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes, depending on the context, either <ptr target="S.b1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="S.b2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
+      <p>Etymologically linked to the process of sedimentation (<term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>, see below), <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes  the resulting state of <ptr target="#S.a1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="#S.a2"/> serenity, <ptr target="#S.b"/> confidence, and <ptr target="#S.c"/> favor or mercy.</p>
+      <p>In Buddhist literature, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="#S.b"/> confidence or faith, and <ptr target="#S.d"/> reverential devotion. In the first case, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes, depending on the context, either <ptr target="#S.b1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="#S.b2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="#S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
     </btw:definition>
   </btw:overview>
   <btw:sense-discrimination><!-- UNIT 2: SENSE DISCRIMINATION -->
@@ -186,7 +186,7 @@
           <btw:conceptual-proximate>
             <term>saṃprasāda</term>
             <btw:citations>
-              <ptr target="E.1"/>
+              <ptr target="#E.1"/>
             <!-- 
           [selected citations contrasting near-synonyms for sense a]
           See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
@@ -315,7 +315,7 @@
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">aprasanna</foreign></term>
             <btw:citations>
-              <ptr target="E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
+              <ptr target="#E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
             </btw:citations>
             <!-- [other citations] -->
             <!-- ø -->
