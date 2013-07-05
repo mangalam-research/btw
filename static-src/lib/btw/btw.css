@@ -5,19 +5,17 @@ div.head {
     margin-bottom: 1em;
 }
 
-.foreign { font-style: italic; }
-
 div.p { 
     margin-top: 0em; 
     margin-bottom: 0em;
     text-indent: 1em;
 }
 
-div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example {
+div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example, div.btw\:etymology, div.btw\:classical-renditions, div.btw\:modern-renditions {
     margin-left: 0em;
 }
 
-div.btw\:lemma, div.btw\:overview>.head, div.btw\:sense-discrimination>.head {
+div.btw\:lemma, div.btw\:overview>.head, div.btw\:sense-discrimination>.head, div.btw\:historico-semantical-data>.head, div.btw\:renditions-and-discussions>.head {
     text-align: center;
 }
 
@@ -25,6 +23,6 @@ div.btw\:english-rendition>div.term {
     font-weight: bold;
 }
 
-div.ptr a {
+div.ptr a,div.btw\:sense-emphasis {
     font-weight: bold;
 }
