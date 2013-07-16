@@ -35,6 +35,10 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:antonym-instance":
     case "btw:cognate-instance":
     case "btw:conceptual-proximate-instance":
+    case "btw:lang":
+    case "btw:occurrence":
+    case "btw:authority":
+    case "btw:sense-emphasis":
         return true;
     default:
         return TEIMeta.prototype.isInline.call(this, node);

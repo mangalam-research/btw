@@ -21,6 +21,9 @@ function BTWDecorator(mode, meta) {
         "btw:english-renditions": ["English renditions", null],
         "btw:english-rendition": ["English rendition", null],
         "btw:semantic-fields": ["semantic categories", null],
+        "btw:etymology": ["etymology", null],
+        "btw:classical-renditions": ["classical renditions", null],
+        "btw:modern-renditions": ["modern renditions", null],
         "btw:explanation": ["brief explanation of sense",
                             this._getSubsenseLabel.bind(this)],
         "btw:citations": ["selected citations for sense",
@@ -48,7 +51,17 @@ BTWDecorator.prototype.init = function ($root) {
         util.classFromOriginalName("btw:explanation"),
         util.classFromOriginalName("btw:citations"),
         util.classFromOriginalName("p"),
-        util.classFromOriginalName("ptr")
+        util.classFromOriginalName("ptr"),
+        util.classFromOriginalName("foreign"),
+        util.classFromOriginalName("btw:renditions-and-discussions"),
+        util.classFromOriginalName("btw:historico-semantical-data"),
+        util.classFromOriginalName("btw:etymology"),
+        util.classFromOriginalName("btw:classical-renditions"),
+        util.classFromOriginalName("btw:modern-renditions"),
+        util.classFromOriginalName("btw:lang"),
+        util.classFromOriginalName("btw:occurrence"),
+        util.classFromOriginalName("ref"),
+        util.classFromOriginalName("btw:sense-emphasis")
     ].join(", ");
 
     this._domlistener.addHandler(
@@ -56,17 +69,70 @@ BTWDecorator.prototype.init = function ($root) {
         util.classFromOriginalName("*"),
         function ($root, $tree, $parent,
                   $prev, $next, $el) {
+            // Skip elements which would already have been removed from
+            // the tree. Unlikely but...
+            if ($el.closest($root).length === 0)
+                return;
+
+            var klass = this._meta.getAdditionalClasses($el.get(0));
+            if (klass.length > 0)
+                $el.addClass(klass);
+
             var name = util.getOriginalName($el.get(0));
             switch(name) {
             case "btw:overview":
             case "btw:sense-discrimination":
+            case "btw:renditions-and-discussions":
+            case "btw:historico-semantical-data":
                 unitHeadingDecorator($root, $el);
                 break;
             case "btw:definition":
             case "btw:english-renditions":
             case "btw:english-rendition":
             case "btw:semantic-fields":
+            case "btw:etymology":
                 this.sectionHeadingDecorator($root, $el);
+                break;
+            case "btw:classical-renditions":
+            case "btw:modern-renditions":
+                this.sectionHeadingDecorator($root, $el);
+                this.listDecorator($el.get(0), "; ");
+                break;
+            case "btw:lang":
+                includedBTWLangHandler.apply(undefined, arguments);
+                break;
+            case "btw:sense":
+                this.includedSenseHandler.apply(this, arguments);
+                break;
+            case "btw:subsense":
+                this.includedSubsenseHandler.apply(this, arguments);
+                break;
+            case "ptr":
+                this.ptrDecorator.apply(this, arguments);
+                break;
+            case "foreign":
+                languageDecorator.apply(undefined, arguments);
+                break;
+            case "btw:authority":
+                this.listDecorator($el.get(0), ", ");
+                var target = $el.attr(util.encodeAttrName('target'));
+                var label = target.split("/").slice(-1)[0];
+                $el.prepend("<div class='_text _phantom'>" + label +
+                            " </div>");
+                break;
+            case "ref":
+                $el.children("._text._phantom._ref_paren").remove();
+                if ($el.closest(
+                    util.classFromOriginalName("btw:occurrence").length > 0)) {
+                    $el.prepend("<div class='_text _phantom _ref_paren'>(</div>");
+                    $el.append("<div class='_text _phantom _ref_paren'>)</div>");
+                }
+                break;
+            case "btw:occurrence":
+                $el.children("._text._phantom._occurrence_space").remove();
+                var $ref = $el.children(util.classFromOriginalName("ref"));
+                if ($ref.length > 0)
+                    $ref.before("<div class='_text _phantom _occurrence_space'> </div>");
                 break;
             default:
                 if ($el.is(no_default_decoration))
@@ -78,19 +144,6 @@ BTWDecorator.prototype.init = function ($root) {
                 this.listDecorator($el.get(0), "; ");
         }.bind(this));
 
-    this._domlistener.addHandler(
-        "included-element",
-        util.classFromOriginalName("*"),
-        function ($root, $tree, $parent, $prev, $next, $el) {
-            // Skip elements which would already have been removed from
-            // the tree. Unlikely but...
-            if ($el.closest($root).length === 0)
-                return;
-
-            var klass = this._meta.getAdditionalClasses($el.get(0));
-            if (klass.length > 0)
-                $el.addClass(klass);
-        }.bind(this));
 
     this._domlistener.addHandler(
         "children-changed",
@@ -124,21 +177,6 @@ BTWDecorator.prototype.init = function ($root) {
             if (util.getOriginalName($parent.get(0)) === "btw:semantic-fields")
                 this.listDecorator($parent.get(0), "; ");
         }.bind(this));
-
-    this._domlistener.addHandler(
-        "included-element",
-        util.classFromOriginalName("btw:sense"),
-        this.includedSenseHandler.bind(this));
-
-    this._domlistener.addHandler(
-        "included-element",
-        util.classFromOriginalName("btw:subsense"),
-        this.includedSubsenseHandler.bind(this));
-
-    this._domlistener.addHandler(
-        "included-element",
-        util.classFromOriginalName("ptr"),
-        this.ptrDecorator.bind(this));
 
 
     this._domlistener.addHandler(
@@ -335,7 +373,9 @@ function allocateHeadID() {
 
 var unit_heading_map = {
     "btw:overview": "UNIT 1: OVERVIEW",
-    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION"
+    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
+    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA",
+    "btw:renditions-and-discussions": "UNIT 4: RENDITIONS AND DISCUSSIONS"
 };
 
 function unitHeadingDecorator($root, $el) {
@@ -416,7 +456,8 @@ function heterogeneousListItemDecorator(el, sep) {
     var first = true;
     $(el).children('._real').each(function () {
         if (!first)
-            $(this).before(sep.clone().attr('data-wed--separator-for', util.getOriginalName(el)));
+            $(this).before(sep.clone().attr('data-wed--separator-for',
+                                            util.getOriginalName(el)));
         else
             first = false;
     });
@@ -427,12 +468,11 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
     if (orig_target === undefined)
         throw new Error("ptr element without target");
 
-    // Drop the hash, add BTW in front because we want the target used
-    // by wed.
-    var target = orig_target.replace(/#(.*)$/,'BTW.$1');
+    // Add BTW in front because we want the target used by wed.
+    var target = orig_target.replace(/#(.*)$/,'#BTW.$1');
 
     var $text = $('<div class="_text _phantom _linking_deco">');
-    var $a = $("<a>", {"class": "_phantom", "href": "#" + target});
+    var $a = $("<a>", {"class": "_phantom", "href": target});
     $text.append($a);
     if (is_ptr) {
         // _linking_deco is used locally to make this function idempotent
@@ -441,7 +481,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
 
         // An undefined or null refman can happen when first
         // decorating the document.
-        var label = refman && refman.idToLabel(target);
+        var label = refman && refman.idToLabel(target.slice(1));
 
         // Useful for debugging.
         if (label === undefined)
@@ -460,7 +500,17 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
 
         // Find the referred element.
         var $target = $(jQuery_escapeID(target));
-        $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
+        if ($target.length > 0) {
+            var target_name = util.getOriginalName($target.get(0));
+            if (target_name === "btw:sense" ||  target_name === "btw:subsense")
+                $target = $target.find(
+                    util.classFromOriginalName("btw:explanation"));
+
+            $target = $target.clone();
+            $target.find(".head").remove();
+            $target = $("<div/>").append($target);
+            $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
+        }
     }
     else {
         $el.find("a").children().unwrap().unwrap();
@@ -500,14 +550,14 @@ var lang_to_label = {
     // Additional languages
     "la": "Latin; Lat",
     "zh-Latn-pinyin": "Chinese Pinyin; Ch Pin",
-    "x-bhs-Latn": "Buddhist Hybrid Sanskrit; BHSkt",
+    "x-bhs-Latn": "Buddhist Hybrid Sanskrit; BHSkt"
 }
 
-function languageDecorator($root, $el) {
+function languageDecorator($root, $tree, $parent, $prev, $next, $el) {
     var lang = $el.attr(util.encodeAttrName("xml:lang"));
     var prefix = lang.slice(0, 2);
     if (prefix !== "en") {
-        $el.css("background-color", "#CCFF66")
+        $el.css("background-color", "#CCFF66");
         // Chinese is not commonly italicized.
         if (prefix !== "zh")
             $el.css("font-style", "italic");
@@ -529,29 +579,8 @@ function addedIdHandler($root, $parent, $previous_sibling, $next_sibling, $eleme
     }
 }
 
-function relatedChildDecorator(child) {
-    var name_to_text = {
-        "btw:synonym": "synonyms",
-        "btw:cognate": "cognates",
-        "btw:analogic": "analogic",
-        "btw:contrastive": "contrastive",
-        "btw:cp": undefined // Special
-    };
-    var $child = $(child);
-    $child.children().remove('._head');
-    var orig_name = util.getOriginalName(child);
-    var head = name_to_text[orig_name];
-    var header;
-    if (orig_name === 'btw:cp') // special
-        header = $('<div class="_text _phantom _head"><div class="abbr _phantom" data-wed-corresp="/abbr/Cp">Cp.</div> also </div>');
-
-    else
-        header = $('<div class="_text _phantom _head">' + head + ': </div>');
-    $child.prepend(header);
-}
-
-function includedBTWLangHandler($root, $el) {
-    var lang = $el.attr(util.encodeAttrName('xml:lang'));
+function includedBTWLangHandler($root, $tree, $parent, $prev, $next, $el) {
+    var lang = $el.attr(util.encodeAttrName('btw:lang'));
     var label = lang_to_label[lang];
     if (label === undefined)
         throw new Error("unknown language: " + lang);
