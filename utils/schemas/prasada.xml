@@ -3,8 +3,8 @@
   <btw:lemma>prasāda</btw:lemma>
   <btw:overview><!-- UNIT 1: OVERVIEW -->
     <btw:definition><!-- Definition -->
-      <p>Etymologically linked to the process of sedimentation (<term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>, see below), <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes  the resulting state of <ptr target="#S.a.1"/> clarity and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="#S.a.2"/> serenity, <ptr target="#S.b"/> confidence, and <ptr target="#S.c"/> favor or mercy.</p>
-      <p>In Buddhist literature, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="#S.b"/> confidence or faith, and <ptr target="#S.d"/> reverential devotion. In the first case, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes, depending on the context, either <ptr target="#S.b.1"/> an intuitive sense of trust, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="#S.b.2"/> the complete confidence that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="#S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
+      <p>Etymologically linked to the process of sedimentation (<term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>, see below), <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes  the resulting state of <ptr target="#S.a.1"/> <btw:sense-emphasis>clarity</btw:sense-emphasis> and translucency of liquids. This sense is extended metaphorically to human states of mind, emotion, and attitudes, thus lending to prasāda its most common meanings of <ptr target="#S.a.2"/> <btw:sense-emphasis>serenity</btw:sense-emphasis>, <ptr target="#S.b"/> <btw:sense-emphasis>confidence</btw:sense-emphasis>, and <ptr target="#S.c"/> <btw:sense-emphasis>favor</btw:sense-emphasis> or mercy.</p>
+      <p>In Buddhist literature, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> belongs mainly to the semantic field of faith. Within this field, two senses are discernible: <ptr target="#S.b"/> <btw:sense-emphasis>confidence</btw:sense-emphasis> or <btw:sense-emphasis>faith</btw:sense-emphasis>, and <ptr target="#S.d"/> reverential <btw:sense-emphasis>devotion</btw:sense-emphasis>. In the first case, <term><foreign xml:lang="sa-Latn">prasāda</foreign></term> denotes, depending on the context, either <ptr target="#S.b.1"/> an <btw:sense-emphasis>intuitive sense of trust</btw:sense-emphasis>, aroused by the sight of Buddha or a brief encounter with his teachings, or <ptr target="#S.b.2"/> the <btw:sense-emphasis>complete confidence</btw:sense-emphasis> that derives from deep understanding of the dharma. In both cases, it also conveys the sense of reassurance and serenity associated with profound conviction. In the sense of devotion, it denotes a <ptr target="#S.d"/> sudden and overpowering surge of faith towards the Buddha or his disciples, accompanied by strong emotion, and typically manifested as a devotional impulse to make offerings, receive precepts, or take vows.</p>
     </btw:definition>
   </btw:overview>
   <btw:sense-discrimination><!-- UNIT 2: SENSE DISCRIMINATION -->
@@ -68,7 +68,7 @@
             <btw:citations><!-- [selected citations of antonyms for sense a] -->
               <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 225</ref><foreign xml:lang="sa-Latn">sarve 'sya yadbhūyastvena krudhyanti, vyāpādanti <btw:antonym-instance>aprasādam</btw:antonym-instance>utpādayanti ākrośanti paribhāṣante</foreign></btw:cit><btw:tr><btw:cit><ref>Kern, 356</ref><quote>But all were extremely irritated and angry at it, showed him their <btw:antonym-instance>displeasure</btw:antonym-instance>, abused and insulted him</quote></btw:cit></btw:tr></btw:example>
             </btw:citations>
-            <!-- 
+            <!--
             [other citations]
             ø
             -->
@@ -187,7 +187,7 @@
             <term>saṃprasāda</term>
             <btw:citations>
               <ptr target="#E.1"/>
-            <!-- 
+            <!--
           [selected citations contrasting near-synonyms for sense a]
           See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
             </btw:citations>
@@ -448,10 +448,10 @@
         <btw:cit><ref>Aśokāvadāna, 51</ref><foreign xml:lang="sa-Latn">tasmān narendra abhayaṃ prayaccha sattveṣu kāruṇyapurojaveṣu|
 nāthasya saṃpūrya manorathaṃ ca vaistārikān dharmadharān kuruṣva||
 atha sa rājā buddhe samupajātaprasādaḥ kṛtakarasaṃpuṭastaṃ bhikṣuṃ kṣamayannuvāca|
-daśabalasuta kṣantumarhasīmaṃ kukṛtamidaṃ ca tavādya deśayāmi| 
+daśabalasuta kṣantumarhasīmaṃ kukṛtamidaṃ ca tavādya deśayāmi|
 śaraṇamṛṣimupaimi taṃ ca buddhaṃ gaṇavaramāryaniveditaṃ ca dharmaṃ||
-api ca| 
-karomi caiṣa vyavasāyam adya tadgauravāt tatpravaṇaprasādāt| 
+api ca|
+karomi caiṣa vyavasāyam adya tadgauravāt tatpravaṇaprasādāt|
         gāṃ maṇḍayiṣyāmi jinendracaityairhaṃsāṃśuśaṅkhendubalākakalpaiḥ||</foreign></btw:cit>
         <btw:cit><ref>Prasannapadā, 12</ref><foreign xml:lang="sa-Latn">yathopavarṇitapratītyasamutpādāvagamācca tathāgatasyaivaikasyāviparītārthavāditvaṃ paśyan sarvapara pravādāṃśca bālapralāpānivāvetya, atīva prasādānugata ācāryo bhūyo bhagavantaṃ viśeṣayati,vadatāṃ varamiti</foreign></btw:cit>
         <btw:cit><ref>Suvarṇavarṇāvadāna, 162</ref><foreign xml:lang="sa-Latn">tac chrutvā kāśisundarī dārikā sthavi(4)rānande samupajātabahumānā paraṃ prasādaṃ pravedayitum ārabdhā | pādayor nipatya tīvrena prasādavegena sthavirānandaguṇānusmaraṇapūrvvakaṃ satyādhiṣṭhā(1)naṃ kartum ārabdhā</foreign></btw:cit>
@@ -530,7 +530,7 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
     <btw:classical-renditions> <!-- [classical renditions] -->
       <btw:lang btw:lang="pi-Latn">
         <btw:occurrence><term>pasāda</term></btw:occurrence>
-      </btw:lang> 
+      </btw:lang>
       <btw:lang btw:lang="bo-Latn">
         <btw:occurrence><term>dang ba</term></btw:occurrence>
       </btw:lang>

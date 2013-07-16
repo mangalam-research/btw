@@ -574,15 +574,25 @@ to your modified text.</p>
             <rng:text/>
           </content>
         </elementSpec>
-      </schemaSpec>
 
-      <!-- Overrides to TEI elements. -->
-      <elementSpec ident="foreign" mode="change">
-        <attList>
-          <attDef ident="xml:lang" usage="req" mode="change"/>
+        <elementSpec ident="sense-emphasis"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <classes>
+          <memberOf key="model.emphLike"/>
+          </classes>
+          <content>
+          <rng:text/>
+          </content>
+        </elementSpec>
+
+        <!-- Overrides to TEI elements. -->
+        <elementSpec ident="foreign" mode="change">
+          <attList>
+            <attDef ident="xml:lang" usage="req" mode="change"/>
         </attList>
-      </elementSpec>
-
+        </elementSpec>
+      </schemaSpec>
     </body>
   </text>
 </TEI>
