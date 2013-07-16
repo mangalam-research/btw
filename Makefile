@@ -10,7 +10,7 @@ $(error Cannot find the wed build at $(WED_BUILD))
 endif 
 
 SOURCES:=$(shell find static-src -type f)
-FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst static-src/%,static/%,$f))
+FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,static/%,$f)))
 
 WED_FILES:=$(shell find $(WED_BUILD) -type f)
 FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,static/%,$f))
@@ -34,6 +34,9 @@ $(FINAL_WED_FILES): static/%: $(WED_BUILD)/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(FINAL_SOURCES): static/%: static-src/%
+$(filter-out %.css,$(FINAL_SOURCES)): static/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
+
+$(filter %.css,$(FINAL_SOURCES)): static/%.css: static-src/%.less
+	lessc $< $@
