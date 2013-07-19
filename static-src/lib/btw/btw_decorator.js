@@ -214,7 +214,7 @@ BTWDecorator.prototype.init = function ($root) {
     p_input_trigger.addKeyHandler(
         key_constants.BACKSPACE,
         function (type, $el, ev) {
-            var caret = this._editor.getTreeCaret();
+            var caret = this._editor.getDataCaret();
             // Fire it only if it the caret is at the start of the element
             // we are listening on and can't go back.
             if ((caret[1] === 0) &&
@@ -232,7 +232,7 @@ BTWDecorator.prototype.init = function ($root) {
     p_input_trigger.addKeyHandler(
         key_constants.DELETE,
         function (type, $el, ev) {
-            var caret = this._editor.getTreeCaret();
+            var caret = this._editor.getDataCaret();
             // Fire it only if it the caret is at the end of the element
             // we are listening on and can't actually delete text.
             if ((caret[0] === $el.get(0) &&
@@ -252,11 +252,11 @@ BTWDecorator.prototype.init = function ($root) {
 var split_paragraph = new Transformation(
     "Split paragraph",
     function (editor, node) {
-        var caret = editor.getTreeCaret();
+        var caret = editor.getDataCaret();
         var pair = domutil.splitAt(node, caret[0], caret[1]);
         // Find the deepest location at the start of the 2nd
         // element.
-        editor.setTreeCaret(domutil.firstDescendantOrSelf(pair[1]),
+        editor.setDataCaret(domutil.firstDescendantOrSelf(pair[1]),
                             0);
     });
 
@@ -280,10 +280,10 @@ var merge_paragraph_with_previous = new Transformation(
             $prev.get(0).normalize();
 
             if (was_text)
-                editor.setTreeCaret($prev.get(0).childNodes[caret_pos - 1],
+                editor.setDataCaret($prev.get(0).childNodes[caret_pos - 1],
                                     text_len);
             else
-                editor.setTreeCaret($prev.get(0), caret_pos);
+                editor.setDataCaret($prev.get(0), caret_pos);
             $node.detach();
         }
     });
