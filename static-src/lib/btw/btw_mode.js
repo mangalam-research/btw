@@ -25,6 +25,7 @@ function BTWMode () {
     }.bind(this));
     this._meta = new btw_meta.Meta();
     this._toolbar = new Toolbar();
+    this._contextual_menu_items = [];
 }
 
 oop.inherit(BTWMode, Mode);
