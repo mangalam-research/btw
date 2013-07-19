@@ -38,7 +38,7 @@ BTWMode.optionResolver = function (options, callback) {
 BTWMode.prototype.init = function (editor) {
     Mode.prototype.init.call(this, editor);
     $(editor.widget).prepend(this._toolbar.getTopElement());
-    $(editor.widget).on('keydown',
+    $(editor.widget).on('keydown.btw-mode',
                         util.eventHandler(this._keyHandler.bind(this)));
 };
 
