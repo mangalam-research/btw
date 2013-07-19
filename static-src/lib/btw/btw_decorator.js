@@ -7,6 +7,10 @@ var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
 var jqutil = require("wed/jqutil");
+var input_trigger = require("wed/input_trigger");
+var key_constants = require("wed/key_constants");
+var domutil = require("wed/domutil");
+var Transformation = require("wed/transformation").Transformation;
 
 function BTWDecorator(mode, meta) {
     Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
@@ -195,7 +199,106 @@ BTWDecorator.prototype.init = function ($root) {
         this.refreshSensePtrsHandler.bind(this));
 
     Decorator.prototype.init.apply(this, arguments);
+    var p_input_trigger =
+            new input_trigger.InputTrigger(this._editor,
+                                           util.classFromOriginalName("p"));
+    p_input_trigger.addKeyHandler(
+        key_constants.ENTER,
+        function (type, $el, ev) {
+            // Prevent all further processing.
+            if (ev)
+                ev.stopImmediatePropagation();
+            this._editor.fireTransformation(split_paragraph, $el.get(0));
+        }.bind(this));
+
+    p_input_trigger.addKeyHandler(
+        key_constants.BACKSPACE,
+        function (type, $el, ev) {
+            var caret = this._editor.getTreeCaret();
+            // Fire it only if it the caret is at the start of the element
+            // we are listening on and can't go back.
+            if ((caret[1] === 0) &&
+                (caret[0] === $el.get(0) ||
+                 (caret[0].nodeType === Node.TEXT_NODE &&
+                  caret[0] === $el.get(0).childNodes[0]))) {
+                // Prevent all further processing.
+                if (ev)
+                    ev.stopImmediatePropagation();
+                this._editor.fireTransformation(merge_paragraph_with_previous,
+                                                $el.get(0));
+            }
+        }.bind(this));
+
+    p_input_trigger.addKeyHandler(
+        key_constants.DELETE,
+        function (type, $el, ev) {
+            var caret = this._editor.getTreeCaret();
+            // Fire it only if it the caret is at the end of the element
+            // we are listening on and can't actually delete text.
+            if ((caret[0] === $el.get(0) &&
+                 caret[1] === $el.get(0).childNodes.length) ||
+                (caret[0].nodeType === Node.TEXT_NODE &&
+                 caret[0] === $el.get(0).lastChild &&
+                 caret[1] === $el.get(0).lastChild.nodeValue.length)) {
+                // Prevent all further processing.
+                if (ev)
+                    ev.stopImmediatePropagation();
+                this._editor.fireTransformation(merge_paragraph_with_next,
+                                                $el.get(0));
+            }
+        }.bind(this));
 };
+
+var split_paragraph = new Transformation(
+    "Split paragraph",
+    function (editor, node) {
+        var caret = editor.getTreeCaret();
+        var pair = domutil.splitAt(node, caret[0], caret[1]);
+        // Find the deepest location at the start of the 2nd
+        // element.
+        editor.setTreeCaret(domutil.firstDescendantOrSelf(pair[1]),
+                            0);
+    });
+
+var merge_paragraph_with_previous = new Transformation(
+    "Merge paragraph with previous",
+    function (editor, node) {
+
+        var $node = $(node);
+        var $prev = $node.prev();
+        if ($prev.is(util.classFromOriginalName("p"))) {
+            // We need to record these to set the caret to a good position.
+            var caret_pos = $prev.get(0).childNodes.length;
+            var was_text = $prev.get(0).lastChild.nodeType === Node.TEXT_NODE;
+            var text_len = (was_text) ?
+                    $prev.get(0).lastChild.nodeValue.length : 0;
+
+            $prev.append($node.contents());
+
+            // Normalize so that caret manipulations won't cause text
+            // nodes to merge.
+            $prev.get(0).normalize();
+
+            if (was_text)
+                editor.setTreeCaret($prev.get(0).childNodes[caret_pos - 1],
+                                    text_len);
+            else
+                editor.setTreeCaret($prev.get(0), caret_pos);
+            $node.detach();
+        }
+    });
+
+var merge_paragraph_with_next = new Transformation(
+    "Merge paragraph with next",
+    function (editor, node) {
+
+        var $node = $(node);
+        var $next = $node.next();
+        if ($next.is(util.classFromOriginalName("p")))
+            merge_paragraph_with_previous.handler(editor, $next.get(0));
+    });
+
+
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
     Decorator.prototype.elementDecorator.call(
