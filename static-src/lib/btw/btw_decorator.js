@@ -266,7 +266,8 @@ var merge_paragraph_with_previous = new Transformation(
 
         var $node = $(node);
         var $prev = $node.prev();
-        if ($prev.is(util.classFromOriginalName("p"))) {
+        var name = util.getOriginalName(node);
+        if ($prev.is(util.classFromOriginalName(name))) {
             // We need to record these to set the caret to a good position.
             var caret_pos = $prev.get(0).childNodes.length;
             var was_text = $prev.get(0).lastChild.nodeType === Node.TEXT_NODE;
@@ -294,7 +295,8 @@ var merge_paragraph_with_next = new Transformation(
 
         var $node = $(node);
         var $next = $node.next();
-        if ($next.is(util.classFromOriginalName("p")))
+        var name = util.getOriginalName(node);
+        if ($next.is(util.classFromOriginalName(name)))
             merge_paragraph_with_previous.handler(editor, $next.get(0));
     });
 
