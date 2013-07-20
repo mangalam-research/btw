@@ -10,7 +10,8 @@ var jqutil = require("wed/jqutil");
 var input_trigger = require("wed/input_trigger");
 var key_constants = require("wed/key_constants");
 var domutil = require("wed/domutil");
-var Transformation = require("wed/transformation").Transformation;
+var transformation = require("wed/transformation");
+var Transformation = transformation.Transformation;
 
 function BTWDecorator(mode, meta) {
     Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
@@ -249,57 +250,16 @@ BTWDecorator.prototype.init = function ($root) {
         }.bind(this));
 };
 
-var split_paragraph = new Transformation(
-    "Split paragraph",
-    function (editor, node) {
-        var caret = editor.getDataCaret();
-        var pair = domutil.splitAt(node, caret[0], caret[1]);
-        // Find the deepest location at the start of the 2nd
-        // element.
-        editor.setDataCaret(domutil.firstDescendantOrSelf(pair[1]),
-                            0);
-    });
+var split_paragraph = new Transformation("Split paragraph",
+                                         transformation.splitNode);
 
 var merge_paragraph_with_previous = new Transformation(
     "Merge paragraph with previous",
-    function (editor, node) {
-
-        var $node = $(node);
-        var $prev = $node.prev();
-        var name = util.getOriginalName(node);
-        if ($prev.is(util.classFromOriginalName(name))) {
-            // We need to record these to set the caret to a good position.
-            var caret_pos = $prev.get(0).childNodes.length;
-            var was_text = $prev.get(0).lastChild.nodeType === Node.TEXT_NODE;
-            var text_len = (was_text) ?
-                    $prev.get(0).lastChild.nodeValue.length : 0;
-
-            $prev.append($node.contents());
-
-            // Normalize so that caret manipulations won't cause text
-            // nodes to merge.
-            $prev.get(0).normalize();
-
-            if (was_text)
-                editor.setDataCaret($prev.get(0).childNodes[caret_pos - 1],
-                                    text_len);
-            else
-                editor.setDataCaret($prev.get(0), caret_pos);
-            $node.detach();
-        }
-    });
+    transformation.mergeWithPreviousHomogeneousSibling);
 
 var merge_paragraph_with_next = new Transformation(
     "Merge paragraph with next",
-    function (editor, node) {
-
-        var $node = $(node);
-        var $next = $node.next();
-        var name = util.getOriginalName(node);
-        if ($next.is(util.classFromOriginalName(name)))
-            merge_paragraph_with_previous.handler(editor, $next.get(0));
-    });
-
+    transformation.mergeWithNextHomogeneousSibling);
 
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
