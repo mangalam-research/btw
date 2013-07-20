@@ -7,7 +7,7 @@ var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
 var jqutil = require("wed/jqutil");
-var input_trigger = require("wed/input_trigger");
+var input_trigger_factory = require("wed/input_trigger_factory");
 var key_constants = require("wed/key_constants");
 var domutil = require("wed/domutil");
 var transformation = require("wed/transformation");
@@ -201,66 +201,13 @@ BTWDecorator.prototype.init = function ($root) {
 
     Decorator.prototype.init.apply(this, arguments);
     var p_input_trigger =
-            new input_trigger.InputTrigger(this._editor,
-                                           util.classFromOriginalName("p"));
-    p_input_trigger.addKeyHandler(
-        key_constants.ENTER,
-        function (type, $el, ev) {
-            // Prevent all further processing.
-            if (ev)
-                ev.stopImmediatePropagation();
-            this._editor.fireTransformation(split_paragraph, $el.get(0));
-        }.bind(this));
-
-    p_input_trigger.addKeyHandler(
-        key_constants.BACKSPACE,
-        function (type, $el, ev) {
-            var caret = this._editor.getDataCaret();
-            // Fire it only if it the caret is at the start of the element
-            // we are listening on and can't go back.
-            if ((caret[1] === 0) &&
-                (caret[0] === $el.get(0) ||
-                 (caret[0].nodeType === Node.TEXT_NODE &&
-                  caret[0] === $el.get(0).childNodes[0]))) {
-                // Prevent all further processing.
-                if (ev)
-                    ev.stopImmediatePropagation();
-                this._editor.fireTransformation(merge_paragraph_with_previous,
-                                                $el.get(0));
-            }
-        }.bind(this));
-
-    p_input_trigger.addKeyHandler(
-        key_constants.DELETE,
-        function (type, $el, ev) {
-            var caret = this._editor.getDataCaret();
-            // Fire it only if it the caret is at the end of the element
-            // we are listening on and can't actually delete text.
-            if ((caret[0] === $el.get(0) &&
-                 caret[1] === $el.get(0).childNodes.length) ||
-                (caret[0].nodeType === Node.TEXT_NODE &&
-                 caret[0] === $el.get(0).lastChild &&
-                 caret[1] === $el.get(0).lastChild.nodeValue.length)) {
-                // Prevent all further processing.
-                if (ev)
-                    ev.stopImmediatePropagation();
-                this._editor.fireTransformation(merge_paragraph_with_next,
-                                                $el.get(0));
-            }
-        }.bind(this));
+            input_trigger_factory.makeSplitMergeInputTrigger(
+                this._editor,
+                util.classFromOriginalName("p"),
+                key_constants.ENTER,
+                key_constants.BACKSPACE,
+                key_constants.DELETE);
 };
-
-var split_paragraph = new Transformation("Split paragraph",
-                                         transformation.splitNode);
-
-var merge_paragraph_with_previous = new Transformation(
-    "Merge paragraph with previous",
-    transformation.mergeWithPreviousHomogeneousSibling);
-
-var merge_paragraph_with_next = new Transformation(
-    "Merge paragraph with next",
-    transformation.mergeWithNextHomogeneousSibling);
-
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
     Decorator.prototype.elementDecorator.call(
