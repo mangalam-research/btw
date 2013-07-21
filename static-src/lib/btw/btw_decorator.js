@@ -154,17 +154,19 @@ BTWDecorator.prototype.init = function ($root) {
         "children-changed",
         util.classFromOriginalName("*"),
         function ($root, $added, $removed, $prev, $next, $el) {
-            if ($el.is(no_default_decoration))
-                return;
 
             if ($added.is("._real, ._phantom_wrap") ||
                 $removed.is("._real, ._phantom_wrap") ||
                 $added.filter(jqutil.textFilter).length +
                 $removed.filter(jqutil.textFilter).length > 0) {
-                this.elementDecorator($root, $el);
                 if (util.getOriginalName($el.get(0)) ===
                     "btw:semantic-fields")
                     this.listDecorator($el.get(0), "; ");
+
+                if ($el.is(no_default_decoration))
+                    return;
+
+                this.elementDecorator($root, $el);
             }
 
         }.bind(this));
