@@ -29,7 +29,7 @@ class WedWidget(forms.Widget):
         attrs = attrs or self.attrs
 
         wed_attrs = {
-            "class": "wed-widget loading",
+            "class": "wed-widget loading container",
             "id": attrs['id']
         }
         return mark_safe('<div%s>%s</div>' % (flatatt(wed_attrs), value))
