@@ -9,6 +9,7 @@ var util = require("wed/util");
 var jqutil = require("wed/jqutil");
 var input_trigger_factory = require("wed/input_trigger_factory");
 var key_constants = require("wed/key_constants");
+var key = require("wed/key");
 var domutil = require("wed/domutil");
 var transformation = require("wed/transformation");
 var Transformation = transformation.Transformation;
@@ -202,13 +203,19 @@ BTWDecorator.prototype.init = function ($root) {
         this.refreshSensePtrsHandler.bind(this));
 
     Decorator.prototype.init.apply(this, arguments);
-    var p_input_trigger =
-            input_trigger_factory.makeSplitMergeInputTrigger(
-                this._editor,
-                util.classFromOriginalName("p"),
-                key_constants.ENTER,
-                key_constants.BACKSPACE,
-                key_constants.DELETE);
+    input_trigger_factory.makeSplitMergeInputTrigger(
+        this._editor,
+        util.classFromOriginalName("p"),
+        key_constants.ENTER,
+        key_constants.BACKSPACE,
+        key_constants.DELETE);
+
+    input_trigger_factory.makeSplitMergeInputTrigger(
+        this._editor,
+        util.classFromOriginalName("btw:sf"),
+        key.makeKey(";"),
+        key_constants.BACKSPACE,
+        key_constants.DELETE);
 };
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
