@@ -7,10 +7,12 @@ WED_XML_TO_HTML_PATH=$(WED_BUILD)/lib/wed/xml-to-html.xsl
 
 ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
-endif 
+endif
 
 SOURCES:=$(shell find static-src -type f)
 FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,static/%,$f)))
+
+DERIVED_SOURCES:=static/lib/btw/btw-storage.js
 
 WED_FILES:=$(shell find $(WED_BUILD) -type f)
 FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,static/%,$f))
@@ -27,11 +29,14 @@ include $(shell find . -name "include.mk")
 .PHONY: _all
 _all: $(TARGETS)
 
-.PHONY: javascript 
-javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES)
+.PHONY: javascript
+javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
 
 $(FINAL_WED_FILES): static/%: $(WED_BUILD)/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
+	cp $< $@
+
+static/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
 	cp $< $@
 
 $(filter-out %.css,$(FINAL_SOURCES)): static/%: static-src/%
