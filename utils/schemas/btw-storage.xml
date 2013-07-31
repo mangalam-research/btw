@@ -54,6 +54,8 @@ to your modified text.</p>
 	<!-- The following deletions are to pare down the schema to
 	     what we intend to use, and only that. -->
 
+
+        <elementSpec ident="seg" mode="delete" module="core"/>
         <elementSpec ident="pb" mode="delete" module="core"/>
         <elementSpec ident="cb" mode="delete" module="core"/>
         <elementSpec ident="milestone" mode="delete" module="core"/>
@@ -92,6 +94,8 @@ to your modified text.</p>
 	<elementSpec ident="said" mode="delete" module="core"/>
 	<elementSpec ident="q" mode="delete" module="core"/>
 	<elementSpec ident="media" mode="delete" module="core"/>
+	<elementSpec ident="note" mode="delete" module="core"/>
+	<elementSpec ident="list" mode="delete" module="core"/>
 
         <elementSpec ident="alt" mode="delete" module="linking"/>
         <elementSpec ident="altGrp" mode="delete" module="linking"/>
