@@ -1,6 +1,7 @@
 define(function (require, exports, module) {
 'use strict';
 
+var $ = require("jquery");
 var util = require("wed/util");
 var Mode = require("wed/modes/generic/generic").Mode;
 var oop = require("wed/oop");
