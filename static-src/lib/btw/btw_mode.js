@@ -11,6 +11,8 @@ var Toolbar = require("./btw_toolbar").Toolbar;
 var rangy = require("rangy");
 var btw_meta = require("./btw_meta");
 var domutil = require("wed/domutil");
+var btw_tr = require("./btw_tr");
+var btw_actions = require("./btw_actions");
 
 var prefix_to_uri = {
     "btw": "http://mangalamresearch.org/ns/btw-storage",
@@ -25,7 +27,6 @@ function BTWMode () {
         this._resolver.definePrefix(k, prefix_to_uri[k]);
     }.bind(this));
     this._meta = new btw_meta.Meta();
-    this._toolbar = new Toolbar();
     this._contextual_menu_items = [];
 }
 
@@ -38,9 +39,29 @@ BTWMode.optionResolver = function (options, callback) {
 
 BTWMode.prototype.init = function (editor) {
     Mode.prototype.init.call(this, editor);
+    this._hyperlink_modal = editor.makeModal();
+    this._hyperlink_modal.setTitle("Insert hyperlink to sense");
+    this._hyperlink_modal.addButton("Insert", true);
+    this._hyperlink_modal.addButton("Cancel");
+    this._toolbar = new Toolbar(editor);
     $(editor.widget).prepend(this._toolbar.getTopElement());
-    $(editor.widget).on('keydown.btw-mode',
+    $(editor.widget).on('wed-global-keydown.btw-mode',
                         util.eventHandler(this._keyHandler.bind(this)));
+
+    this.insert_sense_ptr_tr = new transformation.Transformation(
+        editor, "Insert a hyperlink", btw_tr.insert_ptr);
+
+    this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
+        editor, "Insert a new hyperlink to a sense");
+
+    this.transformation_filters = [
+        { selector: util.classFromOriginalName("btw:definition") + ">" +
+          util.classFromOriginalName("p"), // paragraph in a definition
+          pass: ["term", "btw:sense-emphasis", "ptr"],
+          // filter: [...],
+          substitute: [ {tag: "ptr", action: this.insert_sense_ptr_action} ]
+        }
+    ];
 };
 
 BTWMode.prototype._keyHandler = function (e, jQthis) {
@@ -75,6 +96,7 @@ BTWMode.prototype._assignLanguage = function (e) {
     var $new_element;
     if (word === "Abhidharma") {
         $new_element = transformation.wrapTextInElement(
+            this._editor.data_updater,
             caret[0], offset, caret[1], "term", {"xml:lang": "sa-Latn"});
         // Simulate a link
         if ($new_element !== undefined)
@@ -100,8 +122,34 @@ BTWMode.prototype.makeDecorator = function () {
     return obj;
 };
 
-BTWMode.prototype.getTransformationRegistry = function () {
-    return this._tr;
+
+BTWMode.prototype.getContextualActions = function (type, tag) {
+    var caret = this._editor.getDataCaret();
+
+    // We want the first *element* container, selecting div accomplishes this.
+    var $container = $(caret[0]).closest("div");
+    for(var i = 0; i < this.transformation_filters.length; ++i) {
+        var filter = this.transformation_filters[i];
+        if ($container.is(filter.selector)) {
+
+            if (filter.pass && filter.pass.indexOf(tag) === -1)
+                return [];
+
+            if (filter.filter && filter.filter.indexOf(tag) > -1)
+                return [];
+
+            if (filter.substitute) {
+                for (var j = 0; j < filter.substitute.length; ++j) {
+                    var substitute = filter.substitute[j];
+                    if (substitute.tag === tag) {
+                        return [substitute.action];
+                    }
+                }
+            }
+        }
+    }
+
+    return this._tr.getTagTransformations(type, tag);
 };
 
 BTWMode.prototype.getContextualMenuItems = function () {

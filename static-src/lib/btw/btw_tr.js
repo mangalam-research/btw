@@ -1,231 +1,179 @@
 define(function (require, exports, module) {
 'use strict';
 
+var oop = require("wed/oop");
 var domutil = require("wed/domutil");
-var splitTextNode = domutil.splitTextNode;
+var $ = require("jquery");
+var jqutil = require("wed/jqutil");
 
 var util = require("wed/util");
 var sense_refs = require("./btw_refmans").sense_refs;
+var btw_util = require("./btw_util");
+var action = require("wed/action");
+var AbortTransformationException =
+        require("wed/exceptions").AbortTransformationException;
 
 var transformation = require("wed/transformation");
 var insertElement = transformation.insertElement;
-var isWellFormedRange = transformation.isWellFormedRange;
-var nodePairFromRange = transformation.nodePairFromRange;
 var makeElement = transformation.makeElement;
 var insertIntoText = transformation.insertIntoText;
 var Transformation = transformation.Transformation;
 
-var tr = new transformation.TransformationRegistry();
+function insert_ptr(editor, node, element_name, data) {
+    var caret = editor.getDataCaret();
+    var parent = caret[0];
+    var index = caret[1];
 
-function insertSense(editor, parent, index, contents) {
-    return insertElement(editor, parent, index, "sense", {"xml:id": "S." + sense_refs.nextNumber()}, contents);
+    var id = data.id;
+    var $ptr = transformation.makeElement('ptr', {'target': "#" + id});
+    editor.data_updater.insertAt(parent, index, $ptr.get(0));
+
+    // The original parent and index information are no necessarily
+    // representative because insertAt can do quite a lot of things to
+    // insert the node.
+    parent = $ptr.parent().get(0);
+    var new_caret = [parent, Array.prototype.indexOf.call(parent.childNodes,
+                                                          $ptr.get(0))];
+    editor.setDataCaret(new_caret);
 }
 
-tr.addTagTransformations(
-    "insert",
-    "sense", 
-    new Transformation(
-        "Create new sense",
-        function (editor, node) {
-            var caret = editor.getCaret();
-            insertSense(editor, caret[0], caret[1]);
-        }
-    )
-);
+var NESTING_MODAL_KEY = "btw_mode.btw_tr.nesting_modal";
+function getNestingModal(editor) {
+    var nesting_modal = editor.getModeData(NESTING_MODAL_KEY);
+    if (nesting_modal)
+        return nesting_modal;
 
+    nesting_modal = editor.makeModal();
+    nesting_modal.setTitle("Invalid nesting");
+    nesting_modal.setBody(
+        "<p>In this part of the article, you cannot embed one "+
+            "language into another.</p>");
+    nesting_modal.addButton("Ok", true);
+    editor.setModeData(NESTING_MODAL_KEY, nesting_modal);
 
-tr.addTagTransformations(
-    "wrap",
-    "sense", 
-    new Transformation(
-        "Wrap in sense",
-        function (editor, node) {
-            var range = domutil.getSelectionRange().cloneRange();
-            if (!isWellFormedRange(range))
-                throw new Error("invalid range.");
+    return nesting_modal;
+};
 
-            // We capture this information because splitting text nodes
-            // will trash our range object;
-            var saved = domutil.getSelectionRange();
-
-            var pair = nodePairFromRange(range);
-            if (saved.startContainer.nodeType === Node.TEXT_NODE) {
-                // We need to split the start and end Text nodes and
-                // grab the stuff between them...
-                pair[0] = splitTextNode(saved.startContainer, 
-                                        saved.startOffset)[1];
-                
-                // The end container must change because we've just
-                // split it!
-                if (saved.endContainer === saved.startContainer) {
-                    saved.endContainer = pair[0];
-                    saved.endOffset = saved.endOffset - saved.startOffset;
-                }
-            }
-            
-
-            if (saved.endContainer.nodeType === Node.TEXT_NODE) {
-                pair[1] = splitTextNode(saved.endContainer, 
-                                        saved.endOffset)[0];
-
-                // The start container must change because we've just split it!
-                if (pair[0] === saved.endContainer)
-                    pair[0] = pair[1];
-            }
-
-            var parent = pair[0].parentNode;
-            var index = Array.prototype.indexOf.call(parent.childNodes, pair[0]);
-            var end_index = Array.prototype.indexOf.call(parent.childNodes, pair[1]);
-            var contents = Array.prototype.slice.call(parent.childNodes, index, end_index + 1);
-            insertSense(editor, parent, index, contents);
-        }
-    )
-);
-
-tr.addTagTransformations(
-    "insert",
-    "ptr", 
-    [new Transformation(
-        "Create new sense hyperlink",
-        function (editor, node) {
-            var caret = editor.getCaret();
-            var parent = caret[0];
-            var index = caret[1];
-            var $senses =  $(editor.widget).find('.sense').clone();
-
-            $senses.find('._gui').remove();
-
-            var $hyperlink_modal = editor.$hyperlink_modal;
-            $hyperlink_modal.find('h3').text("Insert hyperlink");
-            $hyperlink_modal.find('.modal-body').empty();
-            $hyperlink_modal.find('.modal-body').append($('<div class="btn-group" data-toggle="buttons-radio">').append($senses));
-            $senses.wrap('<label class="radio">');
-            $senses.before('<input type="radio" name="sense-radio"/>');
-            $hyperlink_modal.find(":radio").on('click.wed', function () {
-                $hyperlink_modal.find('.btn-primary').prop('disabled', false).removeClass('disabled');
-            });
-            $hyperlink_modal.find('.btn-primary').prop("disabled", true).addClass("disabled");
-            $hyperlink_modal.on('click.wed', '.btn', function () {
-                $(this).addClass('modal-clicked');
-                return true;
-            });
-            $hyperlink_modal.on('hide.wed', function () {
-                $hyperlink_modal.off('.wed');
-                var $clicked = $hyperlink_modal.find('.modal-clicked');
-                var id = $hyperlink_modal.find(':radio:checked').next('.sense').attr(util.encodeAttrName('xml:id'));
-                $hyperlink_modal.find('.modal-body').empty();
-                if ($clicked.length > 0 && $clicked.hasClass('btn-primary')) {
-                    $clicked.removeClass('modal-clicked');
-                    // Find which radio is selected
-                    var $ptr = makeElement('ptr', 
-                                           {'target': "#" + id},
-                                          true);
-                    switch(parent.nodeType) {
-                    case Node.TEXT_NODE:
-                        insertIntoText(parent, index, $ptr.get(0));
-                        break;
-                    case Node.ELEMENT_NODE:
-                        $(parent.childNodes[index]).before($ptr);
-                        break;
-                    default:
-                        throw new Error("unexpected node type: " + parent.nodeType);
-                    }
-                    
-                }
-            });
-            $hyperlink_modal.modal();
-        }
-    )]
-);
-
-tr.addTagTransformations(
-    "delete",
-    "orth", 
-    [new Transformation(
-        "Delete orthography",
-        function (editor, node) {
-            var element = editor.getCaret()[0];
-            var $element = $((element.nodeType === Node.ELEMENT_NODE)? element: element.parentNode);
-            if ($element.hasClass("orth"))
-                $element.remove();
-        }
-    )]
-);
-
-tr.addTagTransformations(
-    "merge-with-next",
-    "orth", 
-    [new Transformation(
-        "Merge orthography with next",
-        function (editor, node) {
-            var element = editor.getCaret()[0];
-            var $element = $((element.nodeType === Node.ELEMENT_NODE)? element: element.parentNode);
-            var $after = $element.nextAll("._real").first();
-            if ((util.getOriginalName($element.get(0)) === "orth") &&
-                (util.getOriginalName($after.get(0)) === "orth"))
-            {
-                $element.append($after.contents());
-                $after.remove();
-            }
-        }
-    )]
-);
-
-tr.addTagTransformations(
-    "merge-with-previous",
-    "orth", 
-    [new Transformation(
-        "Merge orthography with previous",
-        function (editor, node) {
-            var element = editor.getCaret()[0];
-            var $element = $((element.nodeType === Node.ELEMENT_NODE)? element: element.parentNode);
-            var $before = $element.prevAll("._real").first();
-            if ((util.getOriginalName($element.get(0)) === "orth") &&
-                (util.getOriginalName($before.get(0)) === "orth"))
-            {
-                $before.append($element.contents());
-                $element.remove();
-            }
-        }
-    )]
-);
-
-function insertXr(editor, parent, index) {
-    var $new = insertElement(editor, parent, index, "xr", undefined, undefined);
-    // Our new element has no contents so it contains only the placeholder.
-    var $ph = $new.children('._placeholder');
-    $ph.replaceWith(makeElement("term", {"xml:lang": "sa-Latn"}, false));
-
-    return $new;
+function SetTextLanguageTr(editor, language) {
+    this._language = language;
+    this._nesting_modal = getNestingModal(editor);
+    var desc = "Set language to " + language;
+    Transformation.call(this, editor, desc, language, set_language_handler);
 }
 
-tr.addTagTransformations(
-    "append",
-    "xr", 
-    new Transformation(
-        "Add new related term after this one",
-        function (editor, node) {
-            var parent = node.parentNode;
-            var index = Array.prototype.indexOf.call(parent.childNodes, node) + 1;
-            insertXr(editor, parent, index);
-        }
-    )
-);
+oop.inherit(SetTextLanguageTr, Transformation);
 
-tr.addTagTransformations(
-    "prepend",
-    "xr", 
-    new Transformation(
-        "Add new related term before this one",
-        function (editor, node) {
-            var parent = node.parentNode;
-            var index = Array.prototype.indexOf.call(parent.childNodes, node);
-            insertXr(editor, parent, index);
-        }
-    )
-);
+SetTextLanguageTr.prototype.execute = function(data) {
+    data = data || {};
+    data.language = this._language;
+    Transformation.prototype.execute.call(this, data);
+};
 
-exports.tr = tr;
+function set_language_handler(editor, node, element_name, data) {
+    var range = editor.getDataSelectionRange();
+    if (!domutil.isWellFormedRange(range)) {
+        editor.straddling_modal.modal();
+        throw new AbortTransformationException(
+            "range is not well-formed");
+    }
 
+    var lang_code = btw_util.languageToLanguageCode(data.language);
+    var selector = "term > foreign";
+    var data_selector = jqutil.toDataSelector(selector);
+
+    var container = range.startContainer;
+    var $closest = $(container).closest(data_selector);
+    if ($closest.length > 0) {
+        this._nesting_modal.modal();
+        throw new AbortTransformationException(
+            "the range does not wholly contain the contents of a parent " +
+                "foreign language element");
+    }
+
+    var $realization = jqutil.selectorToElements(selector);
+    var $foreign = $realization.find(
+        util.classFromOriginalName("foreign"));
+    $foreign.attr(util.encodeAttrName("xml:lang"), lang_code);
+    var cut_ret = editor.data_updater.cut([range.startContainer,
+                                           range.startOffset],
+                                          [range.endContainer,
+                                           range.endOffset]);
+    $foreign.append(cut_ret[1]);
+    editor.data_updater.insertAt(cut_ret[0][0], cut_ret[0][1],
+                                 $realization.get(0));
+    range.selectNodeContents($foreign.get(0));
+    editor.setDataSelectionRange(range);
+}
+
+function RemoveMixedTr(editor, language) {
+    this._language = language;
+    this._nesting_modal = getNestingModal(editor);
+    Transformation.call(this, editor, "Remove mixed-content markup",
+                        "Remove mixed-content markup",
+                        '<i class="icon-eraser"></i>',
+                        remove_mixed_handler);
+}
+
+oop.inherit(RemoveMixedTr, Transformation);
+
+var REMOVE_MIXED_MODAL_KEY = "btw_mode.btw_tr.remove_mixed_modal";
+function getRemoveMixedModal(editor) {
+    var remove_mixed_modal = editor.getModeData(REMOVE_MIXED_MODAL_KEY);
+    if (remove_mixed_modal)
+        return remove_mixed_modal;
+
+    remove_mixed_modal = editor.makeModal();
+    remove_mixed_modal.setTitle("Invalid");
+    remove_mixed_modal.setBody(
+        "<p>You cannot removed mixed-content markup from this selection "+
+            "because the resulting document would be invalid.</p>");
+    remove_mixed_modal.addButton("Ok", true);
+    editor.setModeData(REMOVE_MIXED_MODAL_KEY, remove_mixed_modal);
+
+    return remove_mixed_modal;
+};
+
+function remove_mixed_handler(editor, node, element_name, data) {
+    var range = editor.getDataSelectionRange();
+    if (!domutil.isWellFormedRange(range)) {
+        editor.straddling_modal.modal();
+        throw new AbortTransformationException(
+            "range is not well-formed");
+    }
+
+    var cut_ret = editor.data_updater.cut([range.startContainer,
+                                           range.startOffset],
+                                          [range.endContainer,
+                                           range.endOffset]);
+    var $div = $("<div>");
+    var new_text = $(cut_ret[1]).text();
+    var text_node = range.startContainer.ownerDocument.createTextNode(new_text);
+
+    if (editor.validator.speculativelyValidate(range.startContainer,
+                                               range.startOffset,
+                                               text_node)) {
+        getRemoveMixedModal().modal();
+        throw new AbortTransformationException(
+            "result would be invalid");
+    }
+
+    var insert_ret = editor.data_updater.insertText(cut_ret[0][0],
+                                                    cut_ret[0][1],
+                                                    new_text);
+    if (insert_ret[0]) {
+        range.setStart(insert_ret[0], cut_ret[0][1]);
+        range.setEnd(insert_ret[0], range.startOffset + new_text.length);
+    }
+    else {
+        range.setStart(insert_ret[1], 0);
+        range.setEnd(insert_ret[1], new_text.length);
+    }
+
+    editor.setDataSelectionRange(range);
+}
+
+exports.insert_ptr = insert_ptr;
+exports.SetTextLanguageTr = SetTextLanguageTr;
+exports.RemoveMixedTr = RemoveMixedTr;
 
 });
