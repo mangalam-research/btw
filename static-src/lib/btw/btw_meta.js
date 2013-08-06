@@ -4,6 +4,7 @@ define(function (require, exports, module) {
 var $ = require("jquery");
 var oop = require("wed/oop");
 var util = require("wed/util");
+var jqutil = require("wed/jqutil");
 var TEIMeta = require("wed/modes/generic/metas/tei_meta").Meta;
 
 /**
@@ -40,6 +41,11 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:authority":
     case "btw:sense-emphasis":
         return true;
+    case "tei:term":
+        if ($(node.parentNode).is(jqutil.toDataSelector(
+            "btw:english-rendition, btw:antonym, btw:cognate, btw:conceptual-proximate")))
+            return false;
+        /* falls through */
     default:
         return TEIMeta.prototype.isInline.call(this, node);
     }
