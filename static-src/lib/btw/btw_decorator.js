@@ -13,6 +13,7 @@ var key = require("wed/key");
 var domutil = require("wed/domutil");
 var transformation = require("wed/transformation");
 var Transformation = transformation.Transformation;
+var btw_util = require("./btw_util");
 
 function BTWDecorator(mode, meta) {
     Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
@@ -314,12 +315,20 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
     });
 };
 
-BTWDecorator.prototype._getSenseLabel = function (el) {
+BTWDecorator.prototype._getSenseLabelForHead = function (el) {
     var $el = $(el);
     var id = $el.attr("id");
     if (!id)
         throw new Error("element does not have an id: " + $el.get(0));
     return this._sense_refman.idToLabelForHead(id);
+};
+
+BTWDecorator.prototype._getSenseLabel = function (el) {
+    var $el = $(el);
+    var id = $el.attr("id");
+    if (!id)
+        throw new Error("element does not have an id: " + $el.get(0));
+    return this._sense_refman.idToLabel(id);
 };
 
 BTWDecorator.prototype._getSubsenseLabel = function (el) {
@@ -523,9 +532,11 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
         var $target = $(jQuery_escapeID(target));
         if ($target.length > 0) {
             var target_name = util.getOriginalName($target.get(0));
-            if (target_name === "btw:sense" ||  target_name === "btw:subsense")
-                $target = $target.find(
-                    util.classFromOriginalName("btw:explanation"));
+            if (target_name === "btw:sense")
+                $target =
+                $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("term"));
+            else if (target_name === "btw:subsense")
+                $target = $target.find(util.classFromOriginalName("btw:explanation"));
 
             $target = $target.clone();
             $target.find(".head").remove();
@@ -557,23 +568,6 @@ BTWDecorator.prototype.refDecorator = function ($root, $tree, $parent,
     this.linkingDecorator($root, $el, false);
 };
 
-var lang_to_label = {
-    "sa-Latn": "Sanskrit; Skt",
-    "pi-Latn": "Pāli; Pāli",
-    "bo-Latn": "Tibetan; Tib",
-    "zh-Hant": "Chinese; Ch",
-    "x-gandhari-Latn": "Gāndhārī; Gāndh",
-    "en": "English; Eng",
-    "fr": "French; Fr",
-    "de": "German; Ger",
-    "it": "Italian; It",
-    "es": "Spanish; Sp",
-    // Additional languages
-    "la": "Latin; Lat",
-    "zh-Latn-pinyin": "Chinese Pinyin; Ch Pin",
-    "x-bhs-Latn": "Buddhist Hybrid Sanskrit; BHSkt"
-}
-
 function languageDecorator($root, $tree, $parent, $prev, $next, $el) {
     var lang = $el.attr(util.encodeAttrName("xml:lang"));
     var prefix = lang.slice(0, 2);
@@ -583,7 +577,7 @@ function languageDecorator($root, $tree, $parent, $prev, $next, $el) {
         if (prefix !== "zh")
             $el.css("font-style", "italic");
 
-        var label = lang_to_label[lang];
+        var label = btw_util.languageCodeToLabel(lang);
         if (label === undefined)
             throw new Error("unknown language: " + lang);
         label = label.split("; ")[0];
@@ -602,7 +596,7 @@ function addedIdHandler($root, $parent, $previous_sibling, $next_sibling, $eleme
 
 function includedBTWLangHandler($root, $tree, $parent, $prev, $next, $el) {
     var lang = $el.attr(util.encodeAttrName('btw:lang'));
-    var label = lang_to_label[lang];
+    var label = btw_util.languageCodeToLabel(lang);
     if (label === undefined)
         throw new Error("unknown language: " + lang);
     // We want the abbreviation
