@@ -29,6 +29,9 @@ require.config({
    'mocha/mocha': {
      exports: "mocha",
      init: function () { this.mocha.setup('bdd'); return this.mocha; }
+   },
+   'log4javascript': {
+       exports: "log4javascript"
    }
  },
  config: {

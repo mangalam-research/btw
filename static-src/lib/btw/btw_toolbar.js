@@ -5,6 +5,7 @@ var $ = require("jquery");
 var domutil = require("wed/domutil");
 var action = require("wed/action");
 var btw_tr = require("./btw_tr");
+var log = require("wed/log");
 
 function Toolbar(editor) {
     this._editor = editor;
@@ -13,9 +14,9 @@ function Toolbar(editor) {
         $("<button class='btn btn-default'><i class='icon-repeat'></i> Redo</button>"),
         new btw_tr.RemoveMixedTr(editor),
         new btw_tr.SetTextLanguageTr(editor, "Sanskrit"),
-        'pālī',
-        'tibetan',
-        'chinese',
+        new btw_tr.SetTextLanguageTr(editor, "Pāli"),
+        new btw_tr.SetTextLanguageTr(editor, 'Tibetan'),
+        new btw_tr.SetTextLanguageTr(editor, 'Chinese'),
         'foreign'
     ];
 
@@ -52,7 +53,7 @@ function Toolbar(editor) {
 	return this.$top.get(0);
     };
 
-    this._click = function (ev) {
+    this._click = log.wrap(function (ev) {
         ev.stopImmediatePropagation();
         ev.preventDefault();
         var range = this._editor.getSelectionRange();
@@ -63,7 +64,7 @@ function Toolbar(editor) {
         else
             throw new Error("XXX broken toolbar");
         return false;
-    };
+    });
 
 }).call(Toolbar.prototype);
 
