@@ -23,9 +23,9 @@
                 wed_editor.init(widget, options);
                 wed_editor.whenCondition("first-validation-complete",
                                          function () {
-                    $(widget).removeClass("loading");
-                    $(widget).prev().remove();
-                    $(widget).css("display", "block");
+                    $widget.removeClass("loading");
+                    $widget.prev().remove();
+                    $widget.css("display", "block");
 
                     // Allow CSS to reflow
                     window.setTimeout(function () {
