@@ -37,23 +37,6 @@ class SaveForm(forms.ModelForm):
     data = forms.CharField(label="", widget=WedWidget(source=settings.BTW_WED_PATH, 
                                                       css=settings.BTW_WED_CSS))
 
-class SaveForm(forms.ModelForm):
-    class Media:
-        js = (settings.BTW_REQUIREJS_PATH, ) \
-            if not settings.BTW_WED_USE_REQUIREJS else ()
-
-    class Meta:
-        model = Entry
-        exclude = ('headword', )
-
-        widgets = {
-            'data': WedWidget(source=settings.BTW_WED_PATH, 
-                              css=settings.BTW_WED_CSS)
-            }
-
-    data = forms.CharField(label="", widget=WedWidget(source=settings.BTW_WED_PATH, 
-                                                      css=settings.BTW_WED_CSS))
-
 class RawSaveForm(forms.ModelForm):
     class Meta:
         model = Entry
