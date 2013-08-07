@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, Http404
+from django.views.decorators.http import require_POST
 from django.template import RequestContext
 from django import forms
 from django.views.generic.edit import UpdateView
@@ -11,6 +13,7 @@ import os
 import subprocess
 import tempfile
 import btw.settings as settings
+from lib.generic import LoginRequiredUpdateView
 
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
@@ -50,7 +53,7 @@ def storage_to_editable(data):
 
     return os.fdopen(tmpoutput_file, 'r').read().decode('utf-8')
 
-class UpdateEntryView(UpdateView):
+class UpdateEntryView(LoginRequiredUpdateView):
     def get_form_kwargs(self):
         ret = UpdateView.get_form_kwargs(self)
         instance = ret["instance"]
@@ -109,6 +112,7 @@ def details(request, entry_id):
                               {'data': data},
                               context_instance=RequestContext(request))
 
+@login_required
 def editing_data(request):
     found_entries = None
     query_string = request.GET.get('q', None)
