@@ -11,13 +11,41 @@
 
     function init() {
         require(["wed/wed", "jquery"], function (wed, $) {
+
+            function getCookie(name) {
+                if (!document.cookie)
+                    return undefined;
+
+                var ret;
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = $.trim(cookies[i]);
+                    if (cookie[name.length] === '=' &&
+                        cookie.lastIndexOf(name, 0) === 0) {
+                        ret = decodeURIComponent(
+                            cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+                return ret;
+            }
+
             var widgets = document.getElementsByClassName('wed-widget');
 
             for (var i = 0; i < widgets.length; i++) {
                 var widget = widgets[i];
+                var $widget = $(widget);
 
                 var options = (typeof wed_config === 'object') ?
-                    wed_config : undefined;
+                    wed_config : {};
+
+                var $parentform = $widget.parents("form").first();
+                options.ajaxlog = {
+                    url: $parentform.children("#id_logurl").val(),
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                };
 
                 var wed_editor = new wed.Editor();
                 wed_editor.init(widget, options);

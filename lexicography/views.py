@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
@@ -29,13 +30,10 @@ class SaveForm(forms.ModelForm):
         model = Entry
         exclude = ('headword', )
 
-        widgets = {
-            'data': WedWidget(source=settings.BTW_WED_PATH, 
-                              css=settings.BTW_WED_CSS)
-            }
-
-    data = forms.CharField(label="", widget=WedWidget(source=settings.BTW_WED_PATH, 
-                                                      css=settings.BTW_WED_CSS))
+    logurl = forms.CharField(widget=forms.HiddenInput());
+    data = forms.CharField(label="",
+                           widget=WedWidget(source=settings.BTW_WED_PATH,
+                                            css=settings.BTW_WED_CSS))
 
 class RawSaveForm(forms.ModelForm):
     class Meta:
@@ -61,6 +59,15 @@ class UpdateEntryView(UpdateView):
 
         return ret
 
+    def get(self, request, *args, **kwargs):
+        if not self.initial:
+            self.initial = {}
+
+        self.initial['logurl'] = reverse('lexicography-log',
+                                         args=(kwargs['pk'],))
+
+        return super(UpdateEntryView, self).get(request, *args, **kwargs)
+
 
 def main(request):
     return render(request, 'lexicography/main.html', {'form': SearchForm()})
@@ -70,18 +77,18 @@ def search(request):
     query_string = request.GET.get('q', None)
     if query_string is not None and query_string.strip():
         entry_query = util.get_query(query_string, ['data'])
-        
+
         found_entries = Entry.objects.filter(entry_query)
 
     return render_to_response('lexicography/main.html',
-                              { 'form': SearchForm(request.GET), 
-                                'query_string': query_string, 
+                              { 'form': SearchForm(request.GET),
+                                'query_string': query_string,
                                 'found_entries': found_entries },
                               context_instance=RequestContext(request))
 
 def details(request, entry_id):
     data = Entry.objects.get(id=entry_id).data
-    
+
     (tmpdata_file, tmpdata_path) = tempfile.mkstemp(prefix='btwtmp')
     with os.fdopen(tmpdata_file, 'w') as f:
         f.write(data.encode("utf-8"))
@@ -93,11 +100,11 @@ def details(request, entry_id):
 
     (tmphtml_file, tmphtml_path) = tempfile.mkstemp(prefix="btwtmp")
     os.close(tmphtml_file)
-    
+
     subprocess.check_call(["teitohtml", "--profiledir=" + os.path.join(dirname, "btw-profiles"), "--profile=html-render", tmptei_path, tmphtml_path])
 
     data = open(tmphtml_path).read()
-    
+
     return render_to_response('lexicography/details.html',
                               {'data': data},
                               context_instance=RequestContext(request))
@@ -107,12 +114,12 @@ def editing_data(request):
     query_string = request.GET.get('q', None)
     if query_string is not None and query_string.strip():
         entry_query = util.get_query(query_string, ['data'])
-        
+
         found_entries = Entry.objects.filter(entry_query)
-    
+
     if found_entries is None or len(found_entries) == 0:
         raise Http404
-    
+
     # We return only data for the first hit.
-    return HttpResponse(storage_to_editable(found_entries[0].data), 
+    return HttpResponse(storage_to_editable(found_entries[0].data),
                         content_type="text/plain")

@@ -11,6 +11,7 @@ urlpatterns = patterns(
     url(r'^search$', 'search'),
     url(r'^(?P<entry_id>\d+)/$', 'details', 
         name='lexicography-details'),
+    url(r'^(?P<entry_id>\d+)/log$', 'log', name='lexicography-log'),
     )
 
 if settings.DEBUG:
