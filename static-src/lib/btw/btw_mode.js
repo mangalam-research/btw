@@ -60,6 +60,9 @@ BTWMode.prototype.init = function (editor) {
           pass: ["term", "btw:sense-emphasis", "ptr"],
           // filter: [...],
           substitute: [ {tag: "ptr", action: this.insert_sense_ptr_action} ]
+        },
+        { selector: util.classFromOriginalName("ptr"),
+          pass: []
         }
     ];
 };
@@ -124,7 +127,9 @@ BTWMode.prototype.makeDecorator = function () {
 
 
 BTWMode.prototype.getContextualActions = function (type, tag) {
-    var caret = this._editor.getDataCaret();
+    var caret = this._editor.getCaret();
+    if (!caret)
+        return;
 
     // We want the first *element* container, selecting div accomplishes this.
     var $container = $(caret[0]).closest("div");
@@ -153,7 +158,16 @@ BTWMode.prototype.getContextualActions = function (type, tag) {
 };
 
 BTWMode.prototype.getContextualMenuItems = function () {
-    return this._contextual_menu_items;
+    var items = [];
+    var caret = this._editor.getCaret();
+    var ptr = $(caret[0]).closest(util.classFromOriginalName("ptr")).get(0);
+    if (ptr)
+        this._tr.getTagTransformations("delete-element", "ptr").forEach(
+            function (x) {
+                var data = {node: ptr, element_name: "ptr"};
+                items.push([x.getDescriptionFor(data), data, x.bound_handler]);
+            });
+    return items.concat(this._contextual_menu_items);
 };
 
 BTWMode.prototype.getStylesheets = function () {
