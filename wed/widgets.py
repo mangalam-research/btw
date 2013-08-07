@@ -15,7 +15,7 @@ class WedWidget(forms.Widget):
             else [source] if source is not None else []
 
         js.append("wed/widget.js")
-        
+
         css = { "screen": css }
 
         self._media = forms.Media(js=js, css=css)
@@ -28,11 +28,16 @@ class WedWidget(forms.Widget):
     def render(self, name, value, attrs=None):
         attrs = attrs or self.attrs
 
+        parent_attrs = {
+            "class": "wed-widget-parent",
+            }
         wed_attrs = {
             "class": "wed-widget loading container",
+            "style": "display: none",
             "id": attrs['id']
-        }
-        return mark_safe('<div%s>%s</div>' % (flatatt(wed_attrs), value))
+            }
+        return mark_safe('<div%s><div>Loading...</div><div%s>%s</div></div>' %
+                         (flatatt(parent_attrs), flatatt(wed_attrs), value))
 
     def __unicode__(self):
         return self.render()

@@ -10,17 +10,28 @@
     }
 
     function init() {
-        require(["wed/wed"], function (wed) {
+        require(["wed/wed", "jquery"], function (wed, $) {
             var widgets = document.getElementsByClassName('wed-widget');
 
             for (var i = 0; i < widgets.length; i++) {
                 var widget = widgets[i];
-                widget.className = "wed-widget container"; // remove `loading` class
+
                 var options = (typeof wed_config === 'object') ?
                     wed_config : undefined;
 
                 var wed_editor = new wed.Editor();
                 wed_editor.init(widget, options);
+                wed_editor.whenCondition("first-validation-complete",
+                                         function () {
+                    $(widget).removeClass("loading");
+                    $(widget).prev().remove();
+                    $(widget).css("display", "block");
+
+                    // Allow CSS to reflow
+                    window.setTimeout(function () {
+                        wed_editor.resize();
+                    }, 0);
+                });
             }
 	});
     }
