@@ -139,8 +139,8 @@ name from the following sources:
 
 * /etc/btw/env
 
-This environment value can is then used by _env.find_config(name) to
-find configuration files:
+This environment value is then used by _env.find_config(name) to find
+configuration files:
 
 * ~/.config/btw/<name>.<env>.py
 
