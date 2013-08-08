@@ -1,4 +1,6 @@
-cache
+/cache
+/logs
 /static
-btw.sqlite3
+/btw.sqlite3
 *.pyc
+*_flymake.*
