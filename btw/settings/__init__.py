@@ -17,6 +17,10 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+# Introduced in 1.5. This is the default value for 1.5 but we define
+# it here so that we can work with 1.4 seamlessly.
+AUTH_USER_MODEL = 'auth.User'
+
 MANAGERS = ADMINS
 
 LOGIN_URL='/login/'
