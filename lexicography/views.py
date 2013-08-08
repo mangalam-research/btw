@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, Http404
@@ -19,7 +20,7 @@ dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
-from models import Entry
+from models import Entry, Chunk
 
 class SearchForm(forms.Form):
     q = forms.CharField(max_length=100, label="Search")
@@ -30,17 +31,18 @@ class SaveForm(forms.ModelForm):
             if not settings.BTW_WED_USE_REQUIREJS else ()
 
     class Meta:
-        model = Entry
-        exclude = ('headword', )
+        model = Chunk
+        exclude = ('c_hash', )
 
-    logurl = forms.CharField(widget=forms.HiddenInput());
+    logurl = forms.CharField(widget=forms.HiddenInput(),
+                             initial=reverse_lazy('lexicography-log'));
     data = forms.CharField(label="",
                            widget=WedWidget(source=settings.BTW_WED_PATH,
                                             css=settings.BTW_WED_CSS))
 
 class RawSaveForm(forms.ModelForm):
     class Meta:
-        model = Entry
+        model = Chunk
 
 def storage_to_editable(data):
     (tmpinput_file, tmpinput_path) = tempfile.mkstemp(prefix='btwtmp')
@@ -62,15 +64,21 @@ class UpdateEntryView(LoginRequiredUpdateView):
 
         return ret
 
-    def get(self, request, *args, **kwargs):
-        if not self.initial:
-            self.initial = {}
+@login_required
+def update(request, entry_id):
+    entry = Entry.objects.get(id=entry_id)
+    return UpdateEntryView.as_view(
+        model=Chunk,
+        form_class=SaveForm,
+        template_name='lexicography/new.html')(request, pk=entry.c_hash)
 
-        self.initial['logurl'] = reverse('lexicography-log',
-                                         args=(kwargs['pk'],))
-
-        return super(UpdateEntryView, self).get(request, *args, **kwargs)
-
+@login_required
+def raw_update(request, entry_id):
+    entry = Entry.objects.get(id=entry_id)
+    return LoginRequiredUpdateView.as_view(
+        model=Entry,
+        form_class=RawSaveForm,
+        template_name='lexicography/new.html')(request, pk=entry.c_hash)
 
 def main(request):
     return render(request, 'lexicography/main.html', {'form': SearchForm()})
@@ -79,9 +87,16 @@ def search(request):
     found_entries = None
     query_string = request.GET.get('q', None)
     if query_string is not None and query_string.strip():
-        entry_query = util.get_query(query_string, ['data'])
+        entry_query = util.get_query(query_string, ['headword'])
 
-        found_entries = Entry.objects.filter(entry_query)
+        active_entries = Entry.objects.exclude(ctype='D')
+
+        found_entries = active_entries.filter(entry_query)
+
+        chunk_query = util.get_query(query_string, ['data'])
+        chunks = Chunk.objects.filter(chunk_query)
+
+        found_entries |= active_entries.filter(c_hash=chunks)
 
     return render_to_response('lexicography/main.html',
                               { 'form': SearchForm(request.GET),
@@ -127,3 +142,21 @@ def editing_data(request):
     # We return only data for the first hit.
     return HttpResponse(storage_to_editable(found_entries[0].data),
                         content_type="text/plain")
+
+if not hasattr(settings, "BTW_WED_LOGGING_PATH"):
+    raise ImproperlyConfigured("BTW_WED_LOGGING_PATH must be set to where "
+                               "you want wed's logs to be stored.")
+else:
+    if not os.path.exists(settings.BTW_WED_LOGGING_PATH):
+        os.mkdir(settings.BTW_WED_LOGGING_PATH)
+
+@login_required
+@require_POST
+def log(request):
+    data = request.POST.get('data')
+    username = request.user.username;
+    session_key = request.session.session_key
+    logfile = open(os.path.join(settings.BTW_WED_LOGGING_PATH,
+                                username + "_" + session_key + ".log"), 'a+')
+    logfile.write(data);
+    return HttpResponse()
