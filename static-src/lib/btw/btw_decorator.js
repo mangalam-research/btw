@@ -222,8 +222,8 @@ BTWDecorator.prototype.init = function ($root) {
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
     Decorator.prototype.elementDecorator.call(
         this, $root, $el,
-        util.eventHandler(this._contextMenuHandler.bind(this, true)),
-        util.eventHandler(this._contextMenuHandler.bind(this, false)));
+        jqutil.eventHandler(this._contextMenuHandler.bind(this, true)),
+        jqutil.eventHandler(this._contextMenuHandler.bind(this, false)));
 };
 
 BTWDecorator.prototype._contextMenuHandler = function (at_start, ev, jQthis) {
