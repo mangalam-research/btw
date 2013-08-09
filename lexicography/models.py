@@ -47,7 +47,7 @@ class Entry(ChangeInfo):
         return self.headword
 
     def get_absolute_url(self):
-        return reverse('lexicography-details', args=[str(self.id)])
+        return reverse('details', args=[str(self.id)])
 
 class ChangeRecord(ChangeInfo):
     entry = models.ForeignKey(Entry)
