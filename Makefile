@@ -4,6 +4,7 @@ WED_PATH=$(HOME)/src/git-repos/wed
 # Which wed build to use
 WED_BUILD:=$(WED_PATH)/build/standalone
 WED_XML_TO_HTML_PATH=$(WED_BUILD)/lib/wed/xml-to-html.xsl
+WED_HTML_TO_XML_PATH=$(WED_BUILD)/lib/wed/html-to-xml.xsl
 
 ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
