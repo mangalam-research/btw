@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, Http404
 from django.views.decorators.http import require_POST
@@ -160,3 +160,12 @@ def log(request):
                                 username + "_" + session_key + ".log"), 'a+')
     logfile.write(data);
     return HttpResponse()
+
+@login_required
+@permission_required('lexicography.garbage_collect')
+def collect(request):
+    # Find all chunks which are no longer referenced
+    chunks = Chunk.objects.filter(entry__isnull=True, changerecord__isnull=True)
+    resp = "<br>".join(str(c) for c in chunks)
+    chunks.delete()
+    return HttpResponse(resp + "<br>collected.")
