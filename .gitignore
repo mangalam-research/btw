@@ -4,3 +4,5 @@
 /btw.sqlite3
 *.pyc
 *_flymake.*
+doc/_build
+doc/_apidoc

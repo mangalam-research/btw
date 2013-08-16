@@ -1,6 +1,9 @@
 DEV=0
 WED_PATH=$(HOME)/src/git-repos/wed
 
+# rst2html command.
+RST2HTML?=rst2html
+
 # Which wed build to use
 WED_BUILD:=$(WED_PATH)/build/standalone
 WED_XML_TO_HTML_PATH=$(WED_BUILD)/lib/wed/xml-to-html.xsl
@@ -46,3 +49,9 @@ $(filter-out %.css,$(FINAL_SOURCES)): static/%: static-src/%
 
 $(filter %.css,$(FINAL_SOURCES)): static/%.css: static-src/%.less
 	lessc $< $@
+
+doc: README.html
+	(cd doc; make html)
+
+README.html: README.rst
+	$(RST2HTML) $< $@
