@@ -6,7 +6,7 @@ require.config({
  },
  shim: {
    'bootstrap': {
-     deps: ["jquery"], 
+     deps: ["jquery"],
      exports: "jQuery.fn.popover",
      init: function () { jQuery.noConflict() }
    },
@@ -23,8 +23,12 @@ require.config({
      exports: "rangy.modules.SaveRestore"
    },
    'wed/jquery.findandself': {
-     deps: ["jquery"], 
+     deps: ["jquery"],
      exports: "jQuery.fn.findAndSelf"
+   },
+   'jquery.bootstrap-growl': {
+     deps: ["jquery", "bootstrap"],
+     exports: "jQuery.bootstrapGrowl"
    },
    'mocha/mocha': {
      exports: "mocha",
