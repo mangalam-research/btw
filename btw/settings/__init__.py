@@ -211,6 +211,12 @@ LOGGING = {
     }
 }
 
+BTW_REQUIREJS_PATH=None
+BTW_WED_USE_REQUIREJS=None
+BTW_WED_PATH=None
+BTW_WED_CSS=None
+BTW_WED_LOGGING_PATH=None
+
 # Execute the env specific overrides
 exec _env.find_config("btw") in globals()
 
