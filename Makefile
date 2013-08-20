@@ -1,4 +1,3 @@
-DEV=0
 WED_PATH=$(HOME)/src/git-repos/wed
 
 # rst2html command.
