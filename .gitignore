@@ -2,6 +2,7 @@
 /logs
 /static
 /btw.sqlite3
+/README.html
 *.pyc
 *_flymake.*
 doc/_build
