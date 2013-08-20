@@ -203,6 +203,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'lexicography': {
+            'handlers': [ 'console' ],
+            'level': 'ERROR',
+            'propagate': True,
+        },
         'zotero': {
             'handlers': [ 'console' ],
             'level': 'DEBUG',
