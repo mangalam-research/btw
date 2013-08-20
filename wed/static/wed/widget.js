@@ -49,11 +49,9 @@
 
                 var wed_editor = new wed.Editor();
                 wed_editor.init(widget, options);
-                wed_editor.whenCondition("first-validation-complete",
+                wed_editor.whenCondition("initialized",
                                          function () {
-                    $widget.removeClass("loading");
                     $widget.prev().remove();
-                    $widget.css("display", "block");
 
                     // Allow CSS to reflow
                     window.setTimeout(function () {
