@@ -12,9 +12,12 @@ urlpatterns = patterns(
     url(r'^collect$', 'collect'),
     url(r'^(?P<entry_id>\d+)/$', 'details', name='details'),
     url(r'^(?P<entry_id>\d+)/update$', 'update', name="update"),
+    url(r'^(?P<handle>.+)/save$', 'save', name='save'),
     url(r'^(?P<entry_id>\d+)/raw_update$', 'raw_update',
         name="rawupdate"),
-
+    url(r'^new$', 'new', name='new'),
+    #LoginRequiredCreateView.as_view(form_class=SaveForm,
+    # template_name="lexicography/new.html"),
     url(r'^log$', 'log', name='log'),
     )
 
@@ -23,12 +26,3 @@ if settings.DEBUG:
         'lexicography.views',
         url(r'^editing_data$', 'editing_data'),
         )
-
-urlpatterns += patterns(
-    '',
-    url(r'^new$',
-        LoginRequiredCreateView.as_view(form_class=SaveForm,
-                                        template_name="lexicography/new.html"),
-        name="new"),
-
-    )

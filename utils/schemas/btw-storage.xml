@@ -135,7 +135,10 @@ to your modified text.</p>
                      prefix="btw_">
           <desc>The lemma about which the entry is written.</desc>
           <content>
-            <rng:text/>
+            <rng:choice>
+              <rng:ref name="btw_todo"/>
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -336,7 +339,10 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
-            <rng:text/>
+            <rng:choice>
+              <rng:ref name="btw_todo"/>
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -345,7 +351,10 @@ to your modified text.</p>
                      prefix="btw_">
           <desc>English translation of a sense.</desc>
           <content>
-            <rng:text/>
+            <rng:choice>
+              <rng:ref name="btw_todo"/>
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -356,6 +365,7 @@ to your modified text.</p>
           <content>
             <rng:oneOrMore>
               <rng:choice>
+                <rng:ref name="btw_todo"/>
                 <rng:text/>
                 <rng:ref name="term"/>
               </rng:choice>
@@ -431,9 +441,7 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
-            <rng:group>
-              <rng:ref name="btw_etymology"/>
-            </rng:group>
+            <rng:ref name="btw_etymology"/>
           </content>
         </elementSpec>
 
@@ -583,10 +591,21 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <classes>
-          <memberOf key="model.emphLike"/>
+            <memberOf key="model.emphLike"/>
           </classes>
           <content>
-          <rng:text/>
+            <rng:text/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="todo"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <classes>
+            <memberOf key="model.phrase"/>
+          </classes>
+          <content>
+            <rng:text/>
           </content>
         </elementSpec>
 

@@ -46,6 +46,12 @@
                         'X-CSRFToken': getCookie('csrftoken')
                     }
                 };
+                options.save = {
+                    url: $parentform.children("#id_saveurl").val(),
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                };
 
                 var wed_editor = new wed.Editor();
                 wed_editor.init(widget, options);

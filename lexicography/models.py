@@ -25,7 +25,7 @@ class ChangeInfo(models.Model):
     ctype = models.CharField(max_length=1, choices=CHANGE_TYPE)
     csubtype = models.CharField(max_length=1, choices=CHANGE_SUBTYPE)
     c_hash = models.ForeignKey('Chunk')
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def copy_to(self, to):
@@ -35,7 +35,7 @@ class ChangeInfo(models.Model):
             setattr(to, i, getattr(self, i))
 
 class Entry(ChangeInfo):
-    class Meta:
+    class Meta(object):
         verbose_name_plural = "Entries"
         unique_together = (("headword"), )
         # This is really application-wide but Django insists that permissions
@@ -52,7 +52,7 @@ class Entry(ChangeInfo):
 class ChangeRecord(ChangeInfo):
     entry = models.ForeignKey(Entry)
 
-    class Meta:
+    class Meta(object):
         unique_together = (("entry", "datetime", "ctype"), )
 
     def __unicode__(self):
@@ -61,6 +61,7 @@ class ChangeRecord(ChangeInfo):
 
 class Chunk(models.Model):
     c_hash = models.CharField(max_length=40, primary_key=True)
+    is_normal = models.BooleanField(default=True)
     data = models.TextField()
 
     def __unicode__(self):
@@ -70,3 +71,21 @@ class Chunk(models.Model):
         sha1 = hashlib.sha1()
         sha1.update(self.data.encode('utf-8'))
         self.c_hash = sha1.hexdigest()
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(Chunk, self).save(*args, **kwargs)
+
+class Authority(models.Model):
+    class Meta(object):
+        verbose_name_plural = "Authorities"
+
+class UserAuthority(Authority):
+    class Meta(object):
+        verbose_name_plural = "UserAuthorities"
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+class OtherAuthority(Authority):
+    class Meta(object):
+        verbose_name_plural = "OtherAuthorities"
+    name = models.CharField(max_length=1024)

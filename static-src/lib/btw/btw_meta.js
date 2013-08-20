@@ -40,6 +40,7 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:occurrence":
     case "btw:authority":
     case "btw:sense-emphasis":
+    case "btw:todo":
         return true;
     case "tei:term":
         if ($(node.parentNode).is(jqutil.toDataSelector(
