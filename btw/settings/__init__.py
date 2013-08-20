@@ -161,10 +161,13 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_ace',
     'south',
+    'django_nose',
     'wed',
     'lexicography',
     'zotero',
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 LOGGING = {
     'version': 1,
