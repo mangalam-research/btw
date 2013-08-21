@@ -3,7 +3,7 @@ define(function (require, exports, module) {
 
 var $ = require("jquery");
 var util = require("wed/util");
-var jqutil = require("wed/jqutil");
+var log = require("wed/log");
 var Mode = require("wed/modes/generic/generic").Mode;
 var oop = require("wed/oop");
 var BTWDecorator = require("./btw_decorator").BTWDecorator;
@@ -47,7 +47,7 @@ BTWMode.prototype.init = function (editor) {
     this._toolbar = new Toolbar(editor);
     $(editor.widget).prepend(this._toolbar.getTopElement());
     $(editor.widget).on('wed-global-keydown.btw-mode',
-                        jqutil.eventHandler(this._keyHandler.bind(this)));
+                        this._keyHandler.bind(this));
 
     this.insert_sense_ptr_tr = new transformation.Transformation(
         editor, "Insert a hyperlink", btw_tr.insert_ptr);
@@ -68,10 +68,10 @@ BTWMode.prototype.init = function (editor) {
     ];
 };
 
-BTWMode.prototype._keyHandler = function (e, jQthis) {
+BTWMode.prototype._keyHandler = log.wrap(function (e) {
     if (!e.ctrlKey && !e.altKey && e.which === 32)
         return this._assignLanguage(e);
-};
+}.bind(this));
 
 // XXX This function needs to be contextual: don't assign
 // languages in locations where language are already

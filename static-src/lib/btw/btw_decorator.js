@@ -7,6 +7,7 @@ var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
 var jqutil = require("wed/jqutil");
+var log = require("wed/log");
 var input_trigger_factory = require("wed/input_trigger_factory");
 var key_constants = require("wed/key_constants");
 var key = require("wed/key");
@@ -222,12 +223,8 @@ BTWDecorator.prototype.init = function ($root) {
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
     Decorator.prototype.elementDecorator.call(
         this, $root, $el,
-        jqutil.eventHandler(this._contextMenuHandler.bind(this, true)),
-        jqutil.eventHandler(this._contextMenuHandler.bind(this, false)));
-};
-
-BTWDecorator.prototype._contextMenuHandler = function (at_start, ev, jQthis) {
-    return false;
+        log.wrap(this._contextMenuHandler.bind(this, true)),
+        log.wrap(this._contextMenuHandler.bind(this, false)));
 };
 
 BTWDecorator.prototype.idDecorator = function (el) {
