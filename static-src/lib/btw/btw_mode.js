@@ -127,13 +127,10 @@ BTWMode.prototype.makeDecorator = function () {
 };
 
 
-BTWMode.prototype.getContextualActions = function (type, tag) {
-    var caret = this._editor.getCaret();
-    if (!caret)
-        return;
-
+BTWMode.prototype.getContextualActions = function (type, tag,
+                                                   container, offset) {
     // We want the first *element* container, selecting div accomplishes this.
-    var $container = $(caret[0]).closest("div");
+    var $container = $(container).closest("div");
     for(var i = 0; i < this.transformation_filters.length; ++i) {
         var filter = this.transformation_filters[i];
         if ($container.is(filter.selector)) {
