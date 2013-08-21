@@ -321,7 +321,7 @@ def set_authority(data, new_authority):
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')
 
-def update_entry(request, entry, chunk, xmltree):
+def update_entry(request, entry, chunk, xmltree, subtype):
     cr = ChangeRecord()
     cr.entry = entry
     entry.copy_to(cr)
@@ -329,13 +329,13 @@ def update_entry(request, entry, chunk, xmltree):
     entry.user = request.user
     entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
     entry.session = request.session.session_key
-    entry.ctype = 'U'
-    entry.csubtype = 'M'
+    entry.ctype = Entry.UPDATE
+    entry.csubtype = subtype
     entry.c_hash = chunk
     cr.save()
     entry.save()
 
-def try_updating_entry(request, entry, chunk, xmltree):
+def try_updating_entry(request, entry, chunk, xmltree, subtype):
     # A garbage collection occurring between now and the time
     # we are done could result in a failure for us.
     tries = 3
@@ -347,12 +347,12 @@ def try_updating_entry(request, entry, chunk, xmltree):
                 entry.user = request.user
                 entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
                 entry.session = request.session.session_key
-                entry.ctype = 'C'
-                entry.csubtype = 'M'
+                entry.ctype = Entry.CREATION
+                entry.csubtype = subtype
                 entry.c_hash = chunk
                 entry.save()
             else:
-                update_entry(request, entry, chunk, xmltree)
+                update_entry(request, entry, chunk, xmltree, subtype)
 
             transaction.commit()
             tries = 0
@@ -382,7 +382,7 @@ def raw_update(request, entry_id):
             chunk = form.save(commit=False)
             chunk.data = storage_to_editable(chunk.data)
             xmltree = XMLTree(chunk.data)
-            try_updating_entry(request, entry, chunk, xmltree)
+            try_updating_entry(request, entry, chunk, xmltree, Entry.MANUAL)
     else:
         instance = entry.c_hash
         tmp = Chunk()
@@ -470,7 +470,7 @@ def save(request, handle):
         messages += version_check(request.POST.get("version"))
         if command == "check":
             transaction.commit()
-        elif command == "save":
+        elif command == "save" or command == "recover":
             hm = get_handle_manager(request.session)
             data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
             xmltree = XMLTree(data)
@@ -500,7 +500,10 @@ def save(request, handle):
                                      'msg': 'Please specify a lemma.'})
                     transaction.rollback()
                 else:
-                    try_updating_entry(request, entry, chunk, xmltree)
+                    subtype = Entry.MANUAL if command == "save" \
+                        else Entry.RECOVERY
+                    try_updating_entry(request, entry, chunk, xmltree,
+                                       subtype)
                     if entry_id is None:
                         hm.associate(handle, entry.id)
                     messages.append({'type': 'save_successful'})
