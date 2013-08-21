@@ -234,7 +234,7 @@ BTWDecorator.prototype.idDecorator = function (el) {
     var $el = $(el);
     var name = util.getOriginalName(el);
     var id = $el.attr(util.encodeAttrName("xml:id"));
-    var wed_id = "BTW." + id;
+    var wed_id = "BTW-" + id;
     $el.attr("id", wed_id);
     var refman;
     switch(name) {
@@ -398,7 +398,7 @@ function jQuery_escapeID(id) {
 
 var next_head = 0;
 function allocateHeadID() {
-    return "BTW.H." + ++next_head;
+    return "BTW-H-" + ++next_head;
 }
 
 var unit_heading_map = {
@@ -499,7 +499,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
         throw new Error("ptr element without target");
 
     // Add BTW in front because we want the target used by wed.
-    var target = orig_target.replace(/#(.*)$/,'#BTW.$1');
+    var target = orig_target.replace(/#(.*)$/,'#BTW-$1');
 
     var $text = $('<div class="_text _phantom _linking_deco">');
     var $a = $("<a>", {"class": "_phantom", "href": target});
