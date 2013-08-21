@@ -42,9 +42,11 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:sense-emphasis":
     case "btw:todo":
         return true;
+    case "btw:english-term":
+        return false;
     case "tei:term":
         if ($(node.parentNode).is(jqutil.toDataSelector(
-            "btw:english-rendition, btw:antonym, btw:cognate, btw:conceptual-proximate")))
+            "btw:antonym, btw:cognate, btw:conceptual-proximate")))
             return false;
         /* falls through */
     default:

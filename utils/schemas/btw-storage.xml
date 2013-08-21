@@ -211,8 +211,19 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <content>
-            <rng:ref name="term"/>
+            <rng:ref name="btw_english-term"/>
             <rng:ref name="btw_semantic-fields"/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="english-term"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <content>
+            <rng:choice>
+              <rng:ref name="btw_todo"/>
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 

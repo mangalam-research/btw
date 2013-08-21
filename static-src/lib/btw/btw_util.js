@@ -6,7 +6,7 @@ var util = require("wed/util");
 
 function termsForSense($sense) {
     return $sense.find(util.classFromOriginalName("btw:english-rendition") +
-                       ">" + util.classFromOriginalName("term"));
+                       ">" + util.classFromOriginalName("btw:english-term"));
 }
 
 var lang_to_label = {

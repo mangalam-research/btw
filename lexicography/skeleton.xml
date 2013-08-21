@@ -10,7 +10,7 @@
     <btw:sense>
       <btw:english-renditions>
         <btw:english-rendition>
-          <term><btw:todo>Fill term.</btw:todo></term>
+          <btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term>
           <btw:semantic-fields>
             <btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf>
           </btw:semantic-fields>

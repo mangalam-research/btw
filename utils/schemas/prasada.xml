@@ -11,7 +11,7 @@
     <btw:sense> <!-- [SENSE A] -->
       <btw:english-renditions>
         <btw:english-rendition>
-          <term>clarity</term>
+          <btw:english-term>clarity</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>01.04.08.01|02.07</btw:sf>
             <btw:sf>01.04.08.09</btw:sf>
@@ -24,7 +24,7 @@
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
-          <term>serenity</term>
+          <btw:english-term>serenity</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>01.02.11.02.01|08.01</btw:sf>
             <btw:sf>01.05.05.09.01|00</btw:sf>
@@ -198,7 +198,7 @@
     <btw:sense xml:id="S.b">
       <btw:english-renditions>
         <btw:english-rendition>
-          <term>confidence</term>
+          <btw:english-term>confidence</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>2.01.12.10.04|02</btw:sf>
             <btw:sf>2.01.12.10.04|02.01</btw:sf>
@@ -215,7 +215,7 @@
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
-          <term>trust</term>
+          <btw:english-term>trust</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>01.02.08.03.08.14|01.04</btw:sf>
             <btw:sf>01.05.05.15.01.05|15.03</btw:sf>
@@ -237,7 +237,7 @@
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
-          <term>faith</term>
+          <btw:english-term>faith</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>02.01.13|02</btw:sf>
             <btw:sf>02.01.13.02</btw:sf>
@@ -379,7 +379,7 @@
     <btw:sense xml:id="S.c">
       <btw:english-renditions>
         <btw:english-rendition>
-          <term>favor</term>
+          <btw:english-term>favor</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>01.03.07.10.03</btw:sf>
             <btw:sf>01.05.05.12.01</btw:sf>
@@ -428,7 +428,7 @@
     <btw:sense xml:id="S.d">
       <btw:english-renditions>
         <btw:english-rendition>
-          <term>devotion</term>
+          <btw:english-term>devotion</btw:english-term>
           <btw:semantic-fields>
             <btw:sf>01.05.05.14.01</btw:sf>
             <btw:sf>03.05.01.03.01.01</btw:sf>

@@ -54,6 +54,7 @@ BTWDecorator.prototype.init = function ($root) {
         util.classFromOriginalName("btw:english-renditions"),
         util.classFromOriginalName("btw:english-rendition"),
         util.classFromOriginalName("term"),
+        util.classFromOriginalName("btw:english-term"),
         util.classFromOriginalName("btw:semantic-fields"),
         util.classFromOriginalName("btw:sf"),
         util.classFromOriginalName("btw:explanation"),
@@ -97,10 +98,10 @@ BTWDecorator.prototype.init = function ($root) {
             case "btw:definition":
             case "btw:english-renditions":
             case "btw:english-rendition":
-            case "btw:semantic-fields":
             case "btw:etymology":
                 this.sectionHeadingDecorator($root, $el);
                 break;
+            case "btw:semantic-fields":
             case "btw:classical-renditions":
             case "btw:modern-renditions":
                 this.sectionHeadingDecorator($root, $el);
@@ -147,9 +148,6 @@ BTWDecorator.prototype.init = function ($root) {
                     return;
                 this.elementDecorator($root, $el);
             }
-
-            if (name === "btw:semantic-fields")
-                this.listDecorator($el.get(0), "; ");
         }.bind(this));
 
 
@@ -163,8 +161,10 @@ BTWDecorator.prototype.init = function ($root) {
                 $added.filter(jqutil.textFilter).length +
                 $removed.filter(jqutil.textFilter).length > 0) {
                 if (util.getOriginalName($el.get(0)) ===
-                    "btw:semantic-fields")
+                    "btw:semantic-fields") {
+                    this.sectionHeadingDecorator($root, $el);
                     this.listDecorator($el.get(0), "; ");
+                }
 
                 if ($el.is(no_default_decoration))
                     return;
@@ -173,21 +173,6 @@ BTWDecorator.prototype.init = function ($root) {
             }
 
         }.bind(this));
-
-    this._domlistener.addHandler(
-        "text-changed",
-        util.classFromOriginalName("*"),
-        function ($root, $el) {
-            var $parent = $el.parent();
-            if ($parent.is(no_default_decoration))
-                return;
-
-            this.elementDecorator($root, $parent);
-
-            if (util.getOriginalName($parent.get(0)) === "btw:semantic-fields")
-                this.listDecorator($parent.get(0), "; ");
-        }.bind(this));
-
 
     this._domlistener.addHandler(
         "trigger",
@@ -531,7 +516,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             var target_name = util.getOriginalName($target.get(0));
             if (target_name === "btw:sense")
                 $target =
-                $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("term"));
+                $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("btw:english-term"));
             else if (target_name === "btw:subsense")
                 $target = $target.find(util.classFromOriginalName("btw:explanation"));
 
