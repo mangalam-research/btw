@@ -3,27 +3,33 @@ from django.core.urlresolvers import reverse
 import hashlib
 import btw.settings as settings
 
-CHANGE_TYPE = (
-    ('C', "Creation"),
-    ('U', "Update"),
-    ('D', "Deletion")
-)
-
-CHANGE_SUBTYPE = (
-    ('A', "Automatic"),
-    ('M', "Manual"),
-    ('R', "Recovery")
-)
-
 class ChangeInfo(models.Model):
+    CREATION = 'C'
+    UPDATE = 'U'
+    DELETE = 'D'
+    TYPE_CHOICES = (
+        (CREATION, "Creation"),
+        (UPDATE, "Update"),
+        (DELETE, "Deletion")
+        )
+
+    AUTOMATIC = 'A'
+    MANUAL = 'M'
+    RECOVERY = 'R'
+    SUBTYPE_CHOICES = (
+        (AUTOMATIC, "Automatic"),
+        (MANUAL, "Manual"),
+        (RECOVERY, "Recovery")
+        )
+
     # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
     # could use TextField() but the flexibility there comes at a cost.
     headword = models.CharField(max_length=1024)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     datetime = models.DateTimeField()
     session = models.CharField(max_length=100, null=True)
-    ctype = models.CharField(max_length=1, choices=CHANGE_TYPE)
-    csubtype = models.CharField(max_length=1, choices=CHANGE_SUBTYPE)
+    ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
     c_hash = models.ForeignKey('Chunk')
     class Meta(object):
         abstract = True
