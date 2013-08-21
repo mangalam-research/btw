@@ -13,16 +13,21 @@ def make_link_method(field_name, display_name=None):
         return mark_safe(u'<a href="%s">%s</a>' %
                          (urlresolvers.reverse("admin:lexicography_" +
                                                model_name + "_change",
-                                               args=(field.c_hash, )),
+                                               args=(field, )),
                           escape(str(field))))
     method.allow_tags=True
     method.short_description=display_name
     return method
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('headword', 'user', 'datetime', 'session', 'ctype', 'csubtype', 'chunk_link')
+    list_display = ('headword', 'user', 'datetime', 'session', 'ctype', 'csubtype', 'raw_edit', 'chunk_link')
 
     chunk_link = make_link_method('c_hash', "Chunk")
+
+    def raw_edit(self, obj):
+        return mark_safe('<a href="%s">Edit raw XML</a>' %
+                         (urlresolvers.reverse('rawupdate',
+                                               args=(obj.id, ))))
 
 class ChangeRecordAdmin(admin.ModelAdmin):
     list_display = ('entry', 'headword', 'user', 'datetime', 'session', 'ctype', 'csubtype', 'chunk_link')
