@@ -175,11 +175,15 @@ BTWMode.prototype.getStylesheets = function () {
 BTWMode.prototype.nodesAroundEditableContents = function (parent) {
     var ret = [null, null];
     var start = parent.childNodes[0];
-    if ($(start).is("._gui"))
+    while ($(start).is("._gui, .head")) {
         ret[0] = start;
+        start = start.nextSibling;
+    }
     var end = parent.childNodes[parent.childNodes.length - 1];
-    if ($(end).is("._gui"))
+    while ($(end).is("._gui")) {
         ret[1] = end;
+        end = end.previousSibling;
+    }
     return ret;
 };
 
