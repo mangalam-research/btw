@@ -27,7 +27,6 @@ function BTWMode () {
     Object.keys(prefix_to_uri).forEach(function (k) {
         this._resolver.definePrefix(k, prefix_to_uri[k]);
     }.bind(this));
-    this._meta = new btw_meta.Meta();
     this._contextual_menu_items = [];
 }
 
