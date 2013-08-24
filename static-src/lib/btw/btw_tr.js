@@ -52,7 +52,7 @@ function getNestingModal(editor) {
     editor.setModeData(NESTING_MODAL_KEY, nesting_modal);
 
     return nesting_modal;
-};
+}
 
 function SetTextLanguageTr(editor, language) {
     this._language = language;
