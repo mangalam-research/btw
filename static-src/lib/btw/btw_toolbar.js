@@ -6,12 +6,13 @@ var domutil = require("wed/domutil");
 var action = require("wed/action");
 var btw_tr = require("./btw_tr");
 var log = require("wed/log");
+var oop = require("wed/oop");
 
 function Toolbar(editor) {
     this._editor = editor;
     this._buttons = [
-        $("<button class='btn btn-default'><i class='icon-undo'></i> Undo</button>"),
-        $("<button class='btn btn-default'><i class='icon-repeat'></i> Redo</button>"),
+        new UndoAction(editor),
+        new RedoAction(editor),
         new btw_tr.RemoveMixedTr(editor),
         new btw_tr.SetTextLanguageTr(editor, "Sanskrit"),
         new btw_tr.SetTextLanguageTr(editor, "Pāli"),
@@ -46,27 +47,46 @@ function Toolbar(editor) {
     }
 }
 
-(function () {
+Toolbar.prototype.getTopElement = function () {
+    // There's no point in hiding this value.
+    return this.$top.get(0);
+};
 
-    this.getTopElement = function () {
-	// There's no point in hiding this value.
-	return this.$top.get(0);
-    };
+Toolbar.prototype._click = log.wrap(function (ev) {
+    ev.stopImmediatePropagation();
+    ev.preventDefault();
+    var range = this._editor.getSelectionRange();
+    var button_ix = $(ev.delegateTarget).attr("id");
+    var button = this._buttons[button_ix];
+    if (button instanceof action.Action)
+        button.execute();
+    else
+        throw new Error("XXX broken toolbar");
+    return false;
+});
 
-    this._click = log.wrap(function (ev) {
-        ev.stopImmediatePropagation();
-        ev.preventDefault();
-        var range = this._editor.getSelectionRange();
-        var button_ix = $(ev.delegateTarget).attr("id");
-        var button = this._buttons[button_ix];
-        if (button instanceof action.Action)
-            button.execute();
-        else
-            throw new Error("XXX broken toolbar");
-        return false;
-    });
+function UndoAction(editor) {
+    action.Action.call(this, editor, "Undo", "Undo",
+                       "<i class='icon-undo'></i>");
+}
 
-}).call(Toolbar.prototype);
+oop.inherit(UndoAction, action.Action);
+
+UndoAction.prototype.execute = function (data) {
+    this._editor.undo();
+};
+
+function RedoAction(editor) {
+    action.Action.call(this, editor, "Redo", "Redo",
+                       "<i class='icon-repeat'></i>");
+}
+
+oop.inherit(RedoAction, action.Action);
+
+RedoAction.prototype.execute = function (data) {
+    this._editor.redo();
+};
+
 
 exports.Toolbar = Toolbar;
 
