@@ -2,7 +2,9 @@ require.config({
  baseUrl: '/static/lib/',
  paths: {
    'jquery': 'jquery-1.9.1',
-   'bootstrap': 'bootstrap/js/bootstrap.min'
+   'bootstrap': 'bootstrap/js/bootstrap.min',
+     // For bibsearch
+   'modules': '/static/scripts/modules'
  },
  shim: {
    'bootstrap': {

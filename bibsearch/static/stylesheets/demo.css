@@ -1,0 +1,35 @@
+.searchForm {
+    text-align: left;
+    font-family: sans-serif;
+    font-size: 12pt;
+}
+
+div#result_list table th{
+    border-bottom: 1px solid grey;
+    padding: 8px;
+}
+div#result_list table{
+    font-size: 11pt;
+    padding: 3px;
+    border: 1px solid grey;
+}
+div#result_list td{
+    border-right: 1px solid grey;
+    text-align: center;
+}
+div#result_list td.LFT{
+    text-align: left;
+    width:400px;}
+
+div#result_list td.BL{
+    border:0px;
+}
+h3 {text-decoration: underline;}
+
+div#loadingDiv{
+    position:absolute;
+    left:500px;
+    top:50px;
+    z-index:2000;
+    display: none;
+}

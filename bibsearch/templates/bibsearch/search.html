@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Zotero Search</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link type="text/css" href="{% static "stylesheets/lib/bootstrap.min.css" %}" rel="stylesheet" media="screen"></style>
+      <link type="text/css" href="{% static "stylesheets/demo.css" %}" rel="stylesheet"></style>
+      <script src="{{ btw_globals.requirejs_path }}"></script>
+      <script src="{{ btw_globals.requirejs_config_path }}"></script>
+      <script src="{% static "scripts/main.js" %}"></script>
+   </head>
+   <body>
+      <div class="container">
+         <h3 class="row-fluid">Search Zotero:</h3>
+         <form action="" class="searchForm">
+            <table>
+               <tr>
+                  <td>{{ form.library.label_tag }}{{ form.library }}</td>
+                  <td> {{ form.keyword.label_tag }}{{ form.keyword }} </td>
+               </tr>
+            </table>
+         </form>
+         <div id="result_list">
+         </div>
+         <div id="loadingDiv"><img src=" {% static "images/spinner.gif" %}"></div>
+      </div>
+   </body>
+</html>

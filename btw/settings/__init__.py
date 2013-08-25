@@ -164,6 +164,7 @@ INSTALLED_APPS = (
     'django_nose',
     'wed',
     'lexicography',
+    'bibsearch',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -228,8 +229,3 @@ exec _env.find_config("btw") in globals()
 for app in INSTALLED_APPS:
     if app.find(".") < 0 and os.path.exists(os.path.join(CURDIR, app + ".py")):
         exec open(os.path.join(CURDIR, app + ".py")) in globals()
-
-# One of the overrides set DEBUG, drop staticfiles from the
-# INSTALLED_APPS so that we avoid caching these.
-if DEBUG:
-    INSTALLED_APPS = tuple(x for x in INSTALLED_APPS if x != 'django.contrib.staticfiles')
