@@ -164,7 +164,6 @@ INSTALLED_APPS = (
     'django_nose',
     'wed',
     'lexicography',
-    'zotero',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
