@@ -3,6 +3,8 @@ WED_PATH=$(HOME)/src/git-repos/wed
 # rst2html command.
 RST2HTML?=rst2html
 
+QUNIT_VERSION=1.12.0
+
 # Which wed build to use
 WED_BUILD:=$(WED_PATH)/build/standalone
 WED_XML_TO_HTML_PATH=$(WED_BUILD)/lib/wed/xml-to-html.xsl
@@ -12,9 +14,12 @@ ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
 endif
 
+
 SOURCES:=$(shell find static-src -type f)
 BUILD_DEST:=static-build
-FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
+LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
+
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/qunit-$(QUNIT_VERSION).css
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js
 
@@ -44,11 +49,11 @@ $(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
 $(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
 	cp $< $@
 
-$(filter-out %.css,$(FINAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
+$(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(filter %.css,$(FINAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
+$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
 	lessc $< $@
 
 doc: README.html
@@ -56,3 +61,15 @@ doc: README.html
 
 README.html: README.rst
 	$(RST2HTML) $< $@
+
+node_modules:
+	-mkdir $@
+
+node_modules/qunitjs: | node_modules
+	npm install qunitjs@1.12.0
+
+$(BUILD_DEST)/lib/qunit-$(QUNIT_VERSION).js: node_modules/qunitjs/qunit/qunit.js | node_modules/qunitjs
+	cp $< $@
+
+$(BUILD_DEST)/lib/qunit-$(QUNIT_VERSION).css: node_modules/qunitjs/qunit/qunit.css | node_modules/qunitjs
+	cp $< $@

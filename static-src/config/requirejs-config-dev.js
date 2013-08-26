@@ -2,6 +2,7 @@ require.config({
  baseUrl: '/static/lib/',
  paths: {
    'jquery': 'jquery-1.9.1',
+   'qunit': 'qunit-1.12.0',
    'bootstrap': 'bootstrap/js/bootstrap.min',
      // For bibsearch
    'modules': '/static/scripts/modules'
@@ -38,6 +39,11 @@ require.config({
    },
    'log4javascript': {
        exports: "log4javascript"
+   },
+   'qunit': {
+       exports: 'QUnit',
+       init: function () { this.QUnit.config.autostart = false;
+                           return this.QUnit; }
    }
  },
  config: {
