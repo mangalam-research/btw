@@ -4,6 +4,7 @@
 /static-build
 /btw.sqlite3
 /README.html
+/node_modules
 *.pyc
 *_flymake.*
 doc/_build
