@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'django_ace',
     'south',
     'django_nose',
+    'core',
     'wed',
     'lexicography',
     'bibsearch',
