@@ -1,8 +1,4 @@
-from django.conf.urls.defaults import *
-from lib.generic import LoginRequiredCreateView, LoginRequiredUpdateView
-
-from views import SaveForm
-from models import Entry
+from django.conf.urls import patterns, url
 from btw import settings
 
 urlpatterns = patterns(
