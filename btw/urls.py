@@ -9,7 +9,6 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^lexicography/', include('lexicography.urls')),
-    url(r'^zotero/', include('zotero.urls')),
     url(r'^search/', include('bibsearch.urls'))
 )
 
