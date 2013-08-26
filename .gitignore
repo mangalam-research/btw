@@ -1,6 +1,7 @@
 /cache
 /logs
-/static
+/sitestatic
+/static-build
 /btw.sqlite3
 /README.html
 *.pyc

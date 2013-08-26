@@ -13,12 +13,13 @@ $(error Cannot find the wed build at $(WED_BUILD))
 endif
 
 SOURCES:=$(shell find static-src -type f)
-FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,static/%,$f)))
+BUILD_DEST:=static-build
+FINAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 
-DERIVED_SOURCES:=static/lib/btw/btw-storage.js
+DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js
 
 WED_FILES:=$(shell find $(WED_BUILD) -type f)
-FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,static/%,$f))
+FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST)/%,$f))
 
 .DELETE_ON_ERROR:
 
@@ -26,6 +27,7 @@ FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,static/%,$f)
 TARGETS:= javascript
 .PHONY: all
 all: _all
+	./manage.py collectstatic --noinput
 
 include $(shell find . -name "include.mk")
 
@@ -35,18 +37,18 @@ _all: $(TARGETS)
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
 
-$(FINAL_WED_FILES): static/%: $(WED_BUILD)/%
+$(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-static/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
+$(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
 	cp $< $@
 
-$(filter-out %.css,$(FINAL_SOURCES)): static/%: static-src/%
+$(filter-out %.css,$(FINAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(filter %.css,$(FINAL_SOURCES)): static/%.css: static-src/%.less
+$(filter %.css,$(FINAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
 	lessc $< $@
 
 doc: README.html
