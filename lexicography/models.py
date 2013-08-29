@@ -4,13 +4,15 @@ import hashlib
 import btw.settings as settings
 
 class ChangeInfo(models.Model):
-    CREATION = 'C'
+    CREATE = 'C'
     UPDATE = 'U'
     DELETE = 'D'
+    REVERT = 'R'
     TYPE_CHOICES = (
-        (CREATION, "Creation"),
+        (CREATE, "Create"),
         (UPDATE, "Update"),
-        (DELETE, "Deletion")
+        (DELETE, "Delete"),
+        (REVERT, "Revert"),
         )
 
     AUTOMATIC = 'A'
