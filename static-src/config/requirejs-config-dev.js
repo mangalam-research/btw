@@ -33,6 +33,10 @@ require.config({
      deps: ["jquery", "bootstrap"],
      exports: "jQuery.bootstrapGrowl"
    },
+   'jquery.cookie': {
+     deps: ["jquery"],
+     exports: "jQuery.cookie"
+   },
    'mocha/mocha': {
      exports: "mocha",
      init: function () { this.mocha.setup('bdd'); return this.mocha; }

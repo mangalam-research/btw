@@ -10,26 +10,7 @@
     }
 
     function init() {
-        require(["wed/wed", "jquery"], function (wed, $) {
-
-            function getCookie(name) {
-                if (!document.cookie)
-                    return undefined;
-
-                var ret;
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = $.trim(cookies[i]);
-                    if (cookie[name.length] === '=' &&
-                        cookie.lastIndexOf(name, 0) === 0) {
-                        ret = decodeURIComponent(
-                            cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-                return ret;
-            }
-
+        require(["wed/wed", "jquery", "jquery.cookie"], function (wed, $) {
             var widgets = document.getElementsByClassName('wed-widget');
 
             for (var i = 0; i < widgets.length; i++) {
@@ -39,17 +20,18 @@
                 var options = (typeof wed_config === 'object') ?
                     wed_config : {};
 
+                var csrftoken = $.cookie('csrftoken');
                 var $parentform = $widget.parents("form").first();
                 options.ajaxlog = {
                     url: $parentform.children("#id_logurl").val(),
                     headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
+                        'X-CSRFToken': csrftoken
                     }
                 };
                 options.save = {
                     url: $parentform.children("#id_saveurl").val(),
                     headers: {
-                        'X-CSRFToken': getCookie('csrftoken')
+                        'X-CSRFToken': csrftoken
                     }
                 };
 

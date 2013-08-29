@@ -5,6 +5,7 @@
 /btw.sqlite3
 /README.html
 /node_modules
+/downloads
 *.pyc
 *_flymake.*
 doc/_build
