@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, \
     HttpResponseBadRequest, Http404
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET, \
+    require_http_methods
 from django.template import RequestContext
 from django.utils.timezone import utc
 from django.db import transaction
@@ -157,19 +158,21 @@ create one, associate it with the session and return it.
 
 
 
+@require_GET
 def main(request):
     return render(request, 'lexicography/main.html', {'form': SearchForm()})
 
 class SearchForm(forms.Form):
     q = forms.CharField(max_length=100, label="Search")
 
+@require_GET
 def search(request):
     found_entries = None
     query_string = request.GET.get('q', None)
     if query_string is not None and query_string.strip():
         entry_query = util.get_query(query_string, ['headword'])
 
-        active_entries = Entry.objects.exclude(ctype='D')
+        active_entries = Entry.objects.exclude(ctype=Entry.DELETE)
 
         found_entries = active_entries.filter(entry_query)
 
@@ -184,6 +187,7 @@ def search(request):
                                 'found_entries': found_entries },
                               context_instance=RequestContext(request))
 
+@require_GET
 def details(request, entry_id):
     data = Entry.objects.get(id=entry_id).data
 
@@ -321,7 +325,7 @@ def set_authority(data, new_authority):
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')
 
-def update_entry(request, entry, chunk, xmltree, subtype):
+def update_entry(request, entry, chunk, xmltree, ctype, subtype):
     cr = ChangeRecord()
     cr.entry = entry
     entry.copy_to(cr)
@@ -329,13 +333,13 @@ def update_entry(request, entry, chunk, xmltree, subtype):
     entry.user = request.user
     entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
     entry.session = request.session.session_key
-    entry.ctype = Entry.UPDATE
+    entry.ctype = ctype
     entry.csubtype = subtype
     entry.c_hash = chunk
     cr.save()
     entry.save()
 
-def try_updating_entry(request, entry, chunk, xmltree, subtype):
+def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     # A garbage collection occurring between now and the time
     # we are done could result in a failure for us.
     tries = 3
@@ -347,12 +351,12 @@ def try_updating_entry(request, entry, chunk, xmltree, subtype):
                 entry.user = request.user
                 entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
                 entry.session = request.session.session_key
-                entry.ctype = Entry.CREATION
+                entry.ctype = Entry.CREATE
                 entry.csubtype = subtype
                 entry.c_hash = chunk
                 entry.save()
             else:
-                update_entry(request, entry, chunk, xmltree, subtype)
+                update_entry(request, entry, chunk, xmltree, ctype, subtype)
 
             transaction.commit()
             tries = 0
@@ -373,6 +377,7 @@ class _RawSaveForm(forms.ModelForm):
         exclude = ('c_hash', 'is_normal')
 
 @login_required
+@require_http_methods(["GET", "POST"])
 @transaction.commit_manually
 def raw_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
@@ -382,7 +387,8 @@ def raw_update(request, entry_id):
             chunk = form.save(commit=False)
             chunk.data = storage_to_editable(chunk.data)
             xmltree = XMLTree(chunk.data)
-            try_updating_entry(request, entry, chunk, xmltree, Entry.MANUAL)
+            try_updating_entry(request, entry, chunk, xmltree, Entry.UPDATE,
+                               Entry.MANUAL)
     else:
         instance = entry.c_hash
         tmp = Chunk()
@@ -412,6 +418,7 @@ class SaveForm(forms.ModelForm):
                                             css=settings.BTW_WED_CSS))
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def new(request):
     if request.method == 'POST':
         # We don't actually save anything here because saves are done
@@ -434,6 +441,7 @@ def new(request):
     })
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
@@ -503,7 +511,7 @@ def save(request, handle):
                     subtype = Entry.MANUAL if command == "save" \
                         else Entry.RECOVERY
                     try_updating_entry(request, entry, chunk, xmltree,
-                                       subtype)
+                                       Entry.UPDATE, subtype)
                     if entry_id is None:
                         hm.associate(handle, entry.id)
                     messages.append({'type': 'save_successful'})
@@ -519,6 +527,7 @@ def save(request, handle):
     return HttpResponse(resp, content_type="application/json")
 
 @login_required
+@require_GET
 def editing_data(request):
     found_entries = None
     query_string = request.GET.get('q', None)
@@ -553,6 +562,17 @@ def log(request):
     return HttpResponse()
 
 @login_required
+@require_POST
+def revert(request, change_id):
+    change = ChangeRecord.objects.get(id=change_id)
+    chunk = change.c_hash
+    xmltree = XMLTree(chunk.data)
+    try_updating_entry(request, change.entry, chunk, xmltree, Entry.REVERT,
+                       Entry.MANUAL)
+    return HttpResponse("<br>reverted.")
+
+@login_required
+@require_POST
 @permission_required('lexicography.garbage_collect')
 def collect(request):
     # Find all chunks which are no longer referenced

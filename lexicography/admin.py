@@ -3,6 +3,8 @@ from django.core import urlresolvers
 from django.contrib import admin
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, OtherAuthority, Authority
 
+from btw import settings
+
 def make_link_method(field_name, display_name=None):
     if display_name is None:
         display_name = field_name
@@ -30,9 +32,19 @@ class EntryAdmin(admin.ModelAdmin):
                                                args=(obj.id, ))))
 
 class ChangeRecordAdmin(admin.ModelAdmin):
-    list_display = ('entry', 'headword', 'user', 'datetime', 'session', 'ctype', 'csubtype', 'chunk_link')
+    class Media(object):
+        js = (settings.BTW_REQUIREJS_PATH,
+              settings.BTW_REQUIREJS_CONFIG_PATH,
+              '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
+
+    list_display = ('entry', 'headword', 'user', 'datetime', 'session', 'ctype', 'csubtype', 'revert', 'chunk_link')
 
     chunk_link = make_link_method('c_hash', "Chunk")
+
+    def revert(self, obj):
+        return mark_safe('<a class="lexicography-revert" href="%s">Revert entry to this version</a>' %
+                         (urlresolvers.reverse('revert',
+                                               args=(obj.id, ))))
 
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Chunk)
