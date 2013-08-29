@@ -1,47 +1,47 @@
 {% load extra_filters %}
 <span>
-   <p>Showing results: {{results.start_index}} to {{results.end_index}} of total
-      {{results.paginator.count}}
-   </p>
+  <p>Showing results: {{results.start_index}} to {{results.end_index}} of total
+    {{results.paginator.count}}
+  </p>
 </span>
 <table>
-   <tr>
-      <th>Title</th>
-      <th>Item Type</th>
-      <th>Date</th>
-      <th>Author</th>
-      <th>Project Source</th>
-      <th>Action</th>
-   </tr>
-   {% for result in results %}
-   <tr>
-      <td class="LFT">{{ result.title }}</td>
-      <td>{{ result.itemType }}</td>
-      <td>{{ result.date }}</td>
-      <td>{{ result.creators|authorToString }}</td>
-      <td>
-         {{ extras|toLibrary:result.itemKey }}
-      </td>
-      <td class="BL">
-         {% if extras|toLibrary:result.itemKey == "User Library" and extras|toCopyStatus:result.itemKey == -1 %}
-         <input type="button" value="Copy to BTW" name='{{result.itemKey}}'>
-         {% else %}
-         NA
-         {% endif %}
-      </td>
-   </tr>
-   {% endfor %}
+  <tr>
+    <th></th>
+    <th>Title</th>
+    <th>Type</th>
+    <th>Date</th>
+    <th>Author</th>
+    <th>Source</th>
+    <th>Action</th>
+  </tr>
+  {% for result in results %}
+  <tr>
+    <td>{% if extras|library:result.itemKey == "BTW Library" %}<input type="radio" name="selected_for_insertion" value="{{ result.itemKey }}"></input>{% endif %}</td>
+    <td class="LFT">{{ result.title }}</td>
+    <td>{{ result.itemType }}</td>
+    <td>{{ result.date }}</td>
+    <td>{{ result.creators|authors }}</td>
+    <td>
+      {{ extras|library:result.itemKey }}
+    </td>
+    <td>
+      {% if extras|library:result.itemKey == "User Library" and extras|copy_status:result.itemKey == -1 %}
+      <input class="bibsearch-copy" type="button" value="Copy to BTW" name='{{result.itemKey}}'>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
 </table>
 <div class="pagination">
-   <span class="step-links">
-   {% if results.has_previous %}
-   <a href="#" name='{{ results.previous_page_number }}'>previous</a>
-   {% endif %}
-   <span class="current">
-   Page {{ results.number }} of {{ results.paginator.num_pages }}.
-   </span>
-   {% if results.has_next %}
-   <a href="#" name='{{ results.next_page_number }}'>next</a>
-   {% endif %}
-   </span>
+  <span class="step-links">
+    {% if results.has_previous %}
+    <a href="#" name='{{ results.previous_page_number }}'>previous</a>
+    {% endif %}
+    <span class="current">
+      Page {{ results.number }} of {{ results.paginator.num_pages }}.
+    </span>
+    {% if results.has_next %}
+    <a href="#" name='{{ results.next_page_number }}'>next</a>
+    {% endif %}
+  </span>
 </div>
