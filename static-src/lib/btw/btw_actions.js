@@ -59,7 +59,6 @@ SensePtrDialogAction.prototype.execute = function (data) {
     $body.find(":radio").on('click.wed', function () {
         $primary.prop('disabled', false).removeClass('disabled');
     });
-    $body.button();
     $primary.prop("disabled", true).addClass("disabled");
     hyperlink_modal.setBody($body);
     hyperlink_modal.modal(function () {
@@ -67,12 +66,52 @@ SensePtrDialogAction.prototype.execute = function (data) {
         if (clicked === "Insert") {
             var id = $body.find(':radio:checked').next()
                     .attr(util.encodeAttrName('xml:id'));
-            data.id = id;
-            editor.mode.insert_sense_ptr_tr.execute(data);
+            data.target = "#" + id;
+            editor.mode.insert_ptr_tr.execute(data);
         }
     });
 };
 
 exports.SensePtrDialogAction = SensePtrDialogAction;
+
+function InsertBiblPtrDialogAction() {
+    Action.apply(this, arguments);
+}
+
+oop.inherit(InsertBiblPtrDialogAction, Action);
+
+InsertBiblPtrDialogAction.prototype.execute = function (data) {
+    var editor = this._editor;
+
+    var modal = editor.mode._bibliography_modal;
+    var $primary = modal.getPrimary();
+    var $body = $('<div>');
+    $body.load('/search/', function() {
+        // The element won't exist until the load is performed so we
+        // have to put this in the callback. (Or we could use
+        // delegation but delegation is not strictly speaking
+        // necessary here.)
+        $body.find("#result_list").on('bibsearch-refresh-results',
+                                       function () {
+            $primary.prop('disabled', true).addClass('disabled');
+        });
+    });
+    $primary.prop("disabled", true).addClass("disabled");
+    $body.on('click.wed', ':radio', function () {
+        $primary.prop('disabled', false).removeClass('disabled');
+    });
+
+    modal.setBody($body);
+    modal.modal(function () {
+        var clicked = modal.getClickedAsText();
+        if (clicked === "Insert") {
+            var item_key = $body.find(':radio:checked').val();
+            data.target = "/bibl/" + item_key;
+            editor.mode.insert_ref_tr.execute(data);
+        }
+    });
+};
+
+exports.InsertBiblPtrDialogAction = InsertBiblPtrDialogAction;
 
 });

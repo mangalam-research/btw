@@ -24,8 +24,7 @@ function insert_ptr(editor, node, element_name, data) {
     var parent = caret[0];
     var index = caret[1];
 
-    var id = data.id;
-    var $ptr = transformation.makeElement('ptr', {'target': "#" + id});
+    var $ptr = transformation.makeElement('ptr', {'target': data.target});
     editor.data_updater.insertAt(parent, index, $ptr.get(0));
 
     // The original parent and index information are no necessarily
@@ -36,6 +35,24 @@ function insert_ptr(editor, node, element_name, data) {
                                                           $ptr.get(0))];
     editor.setDataCaret(new_caret);
 }
+
+function insert_ref(editor, node, element_name, data) {
+    var caret = editor.getDataCaret();
+    var parent = caret[0];
+    var index = caret[1];
+
+    var $ptr = transformation.makeElement('ref', {'target': data.target});
+    editor.data_updater.insertAt(parent, index, $ptr.get(0));
+
+    // The original parent and index information are no necessarily
+    // representative because insertAt can do quite a lot of things to
+    // insert the node.
+    parent = $ptr.parent().get(0);
+    var new_caret = [parent, Array.prototype.indexOf.call(parent.childNodes,
+                                                          $ptr.get(0))];
+    editor.setDataCaret(new_caret);
+}
+
 
 var NESTING_MODAL_KEY = "btw_mode.btw_tr.nesting_modal";
 function getNestingModal(editor) {
@@ -173,6 +190,7 @@ function remove_mixed_handler(editor, node, element_name, data) {
 }
 
 exports.insert_ptr = insert_ptr;
+exports.insert_ref = insert_ref;
 exports.SetTextLanguageTr = SetTextLanguageTr;
 exports.RemoveMixedTr = RemoveMixedTr;
 

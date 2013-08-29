@@ -207,12 +207,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
                     " </div>");
         break;
     case "ref":
-        $el.children("._text._phantom._ref_paren").remove();
-        if ($el.closest(
-            util.classFromOriginalName("btw:occurrence").length > 0)) {
-            $el.prepend("<div class='_text _phantom _ref_paren'>(</div>");
-            $el.append("<div class='_text _phantom _ref_paren'>)</div>");
-        }
+        this.refDecorator($root, $el);
         break;
     case "btw:occurrence":
         $el.children("._text._phantom._occurrence_space").remove();
@@ -503,67 +498,93 @@ function heterogeneousListItemDecorator(el, sep) {
 }
 
 BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
+    var dec = this;
     var orig_target = $.trim($el.attr(util.encodeAttrName("target")));
     if (orig_target === undefined)
         throw new Error("ptr element without target");
 
-    // Add BTW in front because we want the target used by wed.
-    var target = orig_target.replace(/#(.*)$/,'#BTW-$1');
+    var target;
+    if (orig_target.lastIndexOf("#", 0) === 0) {
+        // Internal target
 
-    var $text = $('<div class="_text _phantom _linking_deco">');
-    var $a = $("<a>", {"class": "_phantom", "href": target});
-    $text.append($a);
-    if (is_ptr) {
-        // _linking_deco is used locally to make this function idempotent
-        $el.children().remove("._linking_deco");
-        var refman = this._getRefmanForElement($root, $el);
+        // Add BTW in front because we want the target used by wed.
+        target = orig_target.replace(/#(.*)$/,'#BTW-$1');
 
-        // An undefined or null refman can happen when first
-        // decorating the document.
-        var label = refman && refman.idToLabel(target.slice(1));
+        var $text = $('<div class="_text _phantom _linking_deco">');
+        var $a = $("<a>", {"class": "_phantom", "href": target});
+        $text.append($a);
+        if (is_ptr) {
+            // _linking_deco is used locally to make this function idempotent
 
-        // Useful for debugging.
-        if (label === undefined)
-            label = target;
+            $el.children('._linking_deco').each(function () {
+                dec._gui_updater.removeNode(this);
+            });
+            var refman = this._getRefmanForElement($root, $el);
 
-        if (refman) {
-            if (refman.name === "sense" || refman.name === "subsense")
-                $a.text("[" + label + "]");
-            // XXX we need to deal with example references here.
+            // An undefined or null refman can happen when first
+            // decorating the document.
+            var label = refman && refman.idToLabel(target.slice(1));
+
+            // Useful for debugging.
+            if (label === undefined)
+                label = target;
+
+            if (refman) {
+                if (refman.name === "sense" || refman.name === "subsense")
+                    $a.text("[" + label + "]");
+                // XXX we need to deal with example references here.
+            }
+            else
+                $a.text(label);
+
+            // A ptr contains only attributes, no text, so we can just append.
+            this._gui_updater.insertBefore($el.get(0), $text.get(0), null);
+
+            // Find the referred element.
+            var $target = $(jQuery_escapeID(target));
+            if ($target.length > 0) {
+                var target_name = util.getOriginalName($target.get(0));
+                if (target_name === "btw:sense")
+                    $target =
+                    $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("btw:english-term"));
+                else if (target_name === "btw:subsense")
+                    $target = $target.find(util.classFromOriginalName("btw:explanation"));
+
+                $target = $target.clone();
+                $target.find(".head").remove();
+                $target = $("<div/>").append($target);
+                $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
+            }
         }
         else
-            $a.text(label);
-
-        // A ptr contains only attributes, no text, so we can just append.
-        $el.append($text);
-
-        // Find the referred element.
-        var $target = $(jQuery_escapeID(target));
-        if ($target.length > 0) {
-            var target_name = util.getOriginalName($target.get(0));
-            if (target_name === "btw:sense")
-                $target =
-                $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("btw:english-term"));
-            else if (target_name === "btw:subsense")
-                $target = $target.find(util.classFromOriginalName("btw:explanation"));
-
-            $target = $target.clone();
-            $target.find(".head").remove();
-            $target = $("<div/>").append($target);
-            $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
-        }
+            throw new Error("internal error: ref with unexpected target");
     }
     else {
-        $el.find("a").children().unwrap().unwrap();
-        var inner_text = $('<div class="_real _text">');
-        $a.append(inner_text);
-        $el.contents().wrapAll($text);
+        // External target
+        var bibl_prefix = "/bibl/";
+        if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
+            // Bibliographical reference...
+            if (is_ptr)
+                throw new Error("internal error: bibliographic "+
+                                "reference recorded as ptr");
 
-        // Wrap all essentially creates a new element out of
-        // text, so we have to find it again.
-        $text = $el.children("._text._phantom");
-        $text.tooltip({"title": "*** Place holder. Function not implemented yet. TODO.***",
-                   "html": true, "container": "body"});
+            target = orig_target.slice(bibl_prefix.length);
+            $el.children("._text._phantom._ref_abbr").remove();
+            $.ajax({url: this._mode._bibl_abbrev_url.replace(/<itemKey>/,
+                                                             target)
+                   }).done(function (data) {
+                       dec._gui_updater.insertAt(
+                           $el.get(0), 1,
+                           $('<div class="_text _phantom _ref_abbr">' +
+                             data + '</div>').get(0));
+                   });
+        }
+    }
+
+    if (!is_ptr) {
+        $el.children("._text._phantom._ref_paren").remove();
+        $el.prepend("<div class='_text _phantom _ref_paren'>(</div>");
+        $el.append("<div class='_text _phantom _ref_paren'>)</div>");
     }
 };
 
@@ -571,8 +592,7 @@ BTWDecorator.prototype.ptrDecorator = function ($root, $el) {
     this.linkingDecorator($root, $el, true);
 };
 
-BTWDecorator.prototype.refDecorator = function ($root, $tree, $parent,
-                                                $prev, $next, $el) {
+BTWDecorator.prototype.refDecorator = function ($root, $el) {
     this.linkingDecorator($root, $el, false);
 };
 
