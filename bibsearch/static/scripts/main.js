@@ -1,12 +1,16 @@
-require(["jquery", "modules/bibSearch"], function (jQuery, BS) {
+require(["jquery", "modules/bibSearch"], function ($, BS) {
     // instantiate the bibliography search class
     var bibSearch = new BS();
 
-    jQuery(document).ready(function () {
+    $(document).ready(function () {
+        $(".bibsearch-form").submit(function (ev) {
+            ev.preventDefault();
+            return false;
+        });
 
         // when the list selection changes fire ajax search event
-        jQuery("#id_library").change(function () {
-            var keywordField = jQuery("#id_keyword").val();
+        $("#id_library").change(function () {
+            var keywordField = $("#id_keyword").val();
             if (keywordField.length > 0) {
                 // fire the ajax submit
                 bibSearch.ajaxSearch();
@@ -18,7 +22,7 @@ require(["jquery", "modules/bibSearch"], function (jQuery, BS) {
         var keywordHistory = "";
 
         // when the search keyword changes fire ajax search event
-        jQuery("#id_keyword").bind('keyup change input propertychange',
+        $("#id_keyword").bind('keyup change input propertychange',
         function (evnt) {
 
             var code = evnt.which;
@@ -28,11 +32,11 @@ require(["jquery", "modules/bibSearch"], function (jQuery, BS) {
 
             if (keytimer) {
                 //if new key comes before timeout clear it
-                clearTimeout(keytimer);
+                window.clearTimeout(keytimer);
             }
 
-            keytimer = setTimeout(function () {
-                var keydata = jQuery("#id_keyword").val()
+            keytimer = window.setTimeout(function () {
+                var keydata = $("#id_keyword").val()
 
                 if ((keydata.length > 0) && (keywordHistory != keydata))
                 // as timerdelay is reached timeout occurs, now
