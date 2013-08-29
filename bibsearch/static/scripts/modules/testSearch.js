@@ -1,79 +1,92 @@
-define(["jquery"], function (jQuery) {
+define(["jquery", "jquery.cookie"], function ($) {
     return {
         SearchTests: function () {
             // tests follow the following testing procedure
             // http://benalman.com/talks/unit-testing-qunit.html#42
             // Ajax are mocked here.
-            function callAjx(url, data, callback) {
-                jQuery.ajax({
+
+            var csrftoken = $.cookie('csrftoken');
+
+            var headers =  {
+                'X-CSRFToken': csrftoken
+            };
+
+            function callAjx(type, url, data, callback) {
+                $.ajax({
+                    type: type,
                     url: url,
-                    context: document.body,
                     data: data,
-                }).always(function (a, b, c) {
-                    // return the response
-                    // jqXHR.always(function(data|jqXHR, textStatus, jqXHR|errorThrown) { });
-                    callback(a, b, c);
-                });
+                    headers: headers
+                }).always(callback);
             }
 
-            test("Search Ajax with no data[URL:/search/, response: 500:INTERNAL SERVER ERROR]", function () {
+            test("Search Ajax with no data[URL:/search/exec, "+
+                 "response: 500:INTERNAL SERVER ERROR]", function () {
                 expect(3);
                 QUnit.stop();
                 var dataString = "";
-                callAjx('/search/', dataString, function (a, b, c) {
+                callAjx("POST", '/search/exec/', dataString,
+                        function (jqXHR, textStatus, errorThrown) {
                     // we assert the result coming from ajax here
                     QUnit.start();
                     // server error assertion.
-                    equal(a.status, 500, "500 response code");
-                    equal(a.responseText, "Form data empty.", "search view response text");
-                    equal(c, "INTERNAL SERVER ERROR", "HTTP response text");
+                    equal(jqXHR.status, 500, "500 response code");
+                    equal(jqXHR.responseText, "cannot interpret form data.",
+                          "search view response text");
+                    equal(errorThrown, "INTERNAL SERVER ERROR",
+                          "HTTP response text");
                 });
             });
 
-            test("Search Ajax with invalid data[URL:/search/, response: 500:INTERNAL SERVER ERROR]", function () {
+            test("Search Ajax with invalid data[URL:/search/exec, "+
+                 "response: 500:INTERNAL SERVER ERROR]", function () {
                 expect(3);
                 QUnit.stop();
                 var dataString = "library=&keyword=";
-                callAjx('/search/', dataString, function (a, b, c) {
+                callAjx("POST", '/search/exec/', dataString,
+                        function (jqXHR, textStatus, errorThrown) {
                     // server error assertion.
                     QUnit.start();
-                    equal(a.status, 500, "500 response code");
-                    equal(a.responseText, "Malformed form data.", "search view response text");
-                    equal(c, "INTERNAL SERVER ERROR", "HTTP response text");
+                    equal(jqXHR.status, 500, "500 response code");
+                    equal(jqXHR.responseText, "Malformed form data.",
+                          "search view response text");
+                    equal(errorThrown, "INTERNAL SERVER ERROR",
+                          "HTTP response text");
                 });
             });
 
-            test("Search Ajax with out-of-bound data[URL:/search/, response: 200:OK(Zero results)]", function () {
+            test("Search Ajax with out-of-bound data[URL:/search/exec, "+
+                 "response: 200:OK(Zero results)]", function () {
                 expect(4);
                 QUnit.stop();
                 var dataString = "library=6&keyword=";
-                callAjx('/search/', dataString, function (a, b, c) {
+                callAjx("POST", '/search/exec/', dataString,
+                        function (data, textStatus, jqXHR) {
                     // server success assertion.
                     QUnit.start();
-                    equal(c.status, 200, "200 response code");
-                    equal(c.statusText, "OK", "search view response text");
-                    equal(b, "success", "HTTP status text");
+                    equal(jqXHR.status, 200, "200 response code");
+                    equal(jqXHR.statusText, "OK", "search view response text");
+                    equal(textStatus, "success", "HTTP status text");
                     // last assertion for checking no results returned
-                    var results = true;
                     var regex = /Showing results: 0 to 0 of/g;
-                    if (regex.exec(a)) {
-                        results = false;
-                    }
+                    var results = !regex.exec(data);
                     equal(results, false, "Zero results returned");
                 });
             });
 
-            test("Search Ajax with regular data[URL:/search/, response: 200:OK]", function () {
+            test("Search Ajax with regular data[URL:/search/, "+
+                 "response: 200:OK]", function () {
                 expect(3);
                 QUnit.stop();
                 // search everything in user library
                 var dataString = "library=2&keyword=";
-                callAjx('/search/', dataString, function (a, b, c) {
+                callAjx("GET", '/search/', dataString,
+                        function (data, textStatus, jqXHR) {
                     // server success assertion.
                     QUnit.start();
-                    equal(c.status, 200, "200 response code");
-                    equal(c.statusText, "OK", "search view response text");
-                    equal(b, "success", "HTTP status text");
+                    equal(jqXHR.status, 200, "200 response code");
+                    equal(jqXHR.statusText, "OK", "search view response text");
+                    equal(textStatus, "success", "HTTP status text");
                 });
             });
 
