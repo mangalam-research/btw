@@ -156,6 +156,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    # Add this app only for the static tag that can be used in
+    # templates. We must NOT ever use it even in testing because it
+    # caches responses.
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
