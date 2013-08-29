@@ -28,8 +28,7 @@ class TestSearchView(object):
         # the user is not logged in.
         response = self.client.get('http://testserver/search/')
 
-        noz.assert_equal(response.status_code, 500)
-        noz.assert_equal(response.content, 'Please Login to your account.')
+        noz.assert_equal(response.status_code, 403)
 
     def testAuthGET(self):
         """Authenticated response without zotero profile (url: /search/)"""
@@ -62,20 +61,27 @@ class TestSearchView(object):
         response = self.client.get('http://testserver/search/',
                                    {},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        # noz.set_trace()
-        noz.assert_equal(response.status_code, 500)
-        noz.assert_equal(response.content, 'Form data empty.')
+        noz.assert_equal(response.status_code, 200)
+        zo.delete()
+
+    def testAuthGET3(self):
+        zo = ZoteroUser(btw_user=self.user, uid="123456", api_key="abcdef")
+        zo.save()
+        response = self.client.login(username=u'test', password=u'test')
+
+        noz.assert_equal(response, True)
 
         # test ajax get call with dummy data
-        response = self.client.get('http://testserver/search/',
-                                   {'library': 5, 'keyword': 'testtest'},
-                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post('http://testserver/search/exec/',
+                                    {'library': 5, 'keyword': 'testtest'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # should get redirected to the pagination view
         noz.assert_equal(response.status_code, 302)
         noz.assert_equal(response.has_header('Location'), True)
         noz.assert_equal(response['Location'],
                          "http://testserver/search/results/")
+        zo.delete()
 
     def tearDown(self):
         user = User.objects.get(username='test')
@@ -93,7 +99,7 @@ class TestResultsView(object):
         """ Unauthenticated, empty session (url: /search/results/) """
 
         response = self.client.get("http://testserver/search/results/")
-        noz.assert_equal(response.status_code, 500)
+        noz.assert_equal(response.status_code, 403)
 
     def testValidSession(self):
         """Authenticated, without/with session data (url: /search/results/)"""
@@ -131,7 +137,7 @@ class TestSyncView(object):
         """ Unauthenticated response (url: /search/sync/) """
 
         response = self.client.get("http://testserver/search/sync/")
-        noz.assert_equal(response.status_code, 500)
+        noz.assert_equal(response.status_code, 403)
 
     def testValidSession(self):
         """ Authenticated without/with sync data(url: /search/sync/) """
@@ -141,11 +147,11 @@ class TestSyncView(object):
         noz.assert_equal(response, True)
 
         # test the authenticated response object without sync data
-        response = self.client.get("http://testserver/search/sync/")
+        response = self.client.post("http://testserver/search/sync/")
         noz.assert_equal(response.status_code, 500)
 
         # populate the sync requirements ('enc' should be in query dict).
-        response = self.client.get("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/search/sync/", {
             'enc': u''})  # empty upload without session variable for results.
         noz.assert_equal(response.status_code, 500)
         noz.assert_equal(
@@ -157,7 +163,7 @@ class TestSyncView(object):
         session_obj.save()
 
         # rerun the assertion to test for a different error string.
-        response = self.client.get("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/search/sync/", {
             'enc': u''})  # empty upload with a session variable for results.
         noz.assert_equal(response.status_code, 500)
         noz.assert_equal(
@@ -165,7 +171,7 @@ class TestSyncView(object):
 
 
         # populate the sync requirements ('enc' should be in query dict).
-        response = self.client.get("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/search/sync/", {
             'enc': u'nilakhyaNILAKHYA'})
         noz.assert_equal(response.status_code, 200)
         noz.assert_equal(

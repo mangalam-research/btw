@@ -54,7 +54,11 @@ require.config({
      "wed/wed": {
          schema: "btw/btw-storage.js",
          mode: {
-             path: "btw/btw_mode"
+             path: "btw/btw_mode",
+             options: {
+                 bibl_info_url: "/search/<itemKey>/info",
+                 bibl_abbrev_url: "/search/<itemKey>/abbrev"
+             }
          }
      }
  },

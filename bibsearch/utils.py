@@ -1,19 +1,24 @@
+# django imports
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.core.cache import get_cache
+
 # python core imports
 from base64 import urlsafe_b64encode
 import json
 import re
 import urllib
 import urllib2
+import logging
 from datetime import datetime
 from json.encoder import JSONEncoder
 from xml.dom import minidom
 
+logger = logging.getLogger(__name__)
 
-# django imports
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.core.cache import get_cache
+CACHED_DATA_VERSION = 1
 
+cache = get_cache('bibsearch')
 
 # Check if BTW project settings are available
 # if not raise exception.
@@ -23,16 +28,15 @@ def btwZoteroDetails():
         btw_zotero_details = getattr(settings, "ZOTERO_SETTINGS")
         if btw_zotero_details and type(btw_zotero_details) != dict:
             raise ImproperlyConfigured(
-                "BTW project zotero details improperly defined in settings.")
+                "ZOTERO_SETTINGS is incorrectly defined")
         elif 'uid' not in btw_zotero_details or 'api_key' not in \
                                                 btw_zotero_details:
             raise ImproperlyConfigured(
-                "BTW project zotero details not complete.")
+                "ZOTERO_SETTINGS does not have all fields required")
         else:
             return btw_zotero_details
     except AttributeError:
-        raise ImproperlyConfigured(
-            "BTW project zotero details not defined in settings.")
+        raise ImproperlyConfigured("ZOTERO_SETTINGS not set")
 
 
 class Zotero(object):
@@ -40,76 +44,96 @@ class Zotero(object):
 
     def __init__(self, api_dict, object_type='local'):
         """ initialize api details from the api_dict """
-        self.search_field = None
-        self.title_field = None
-        self.item_type = None
-
         try:
-            if re.search("^u:", api_dict['uid']):
-                # create the user prefix
-                self.prefix = "https://api.zotero.org/users/"
-            elif re.search("^g:", api_dict['uid']):
-                # create the group prefix
-                self.prefix = "https://api.zotero.org/groups/"
-            else:
-                raise ImproperlyConfigured("Zotero details uid prefix \
-                                           error: check settings.py")
-            # use regular expression to strip the uid prefix u:, g:
-            self.userid = re.sub("^u:|^g:", "", api_dict['uid'])
+            self.full_uid = api_dict['uid']
             self.apikey = api_dict['api_key']
-            self.object_type = object_type
         except KeyError:
-            raise ImproperlyConfigured("Zotero details defination error: \
-                                       check settings.py")
+            raise ImproperlyConfigured("ZOTERO_SETTINGS improperly set")
+
+        if re.search("^u:", self.full_uid):
+            # create the user prefix
+            self.prefix = "https://api.zotero.org/users/"
+        elif re.search("^g:", self.full_uid):
+            # create the group prefix
+            self.prefix = "https://api.zotero.org/groups/"
+        else:
+            raise ImproperlyConfigured("ZOTERO_SETTINGS['uid'] is of "
+                                       "the wrong format")
+        # use regular expression to strip the uid prefix u:, g:
+        self.userid = re.sub("^u:|^g:", "", self.full_uid)
+        self.object_type = object_type
+
+    def getItem(self, itemKey):
+        # As of 2013/08/28 the server at api.zotero.org does not
+        # handle If-Modified-Since-Version at all for individual
+        # items, but it does for collections. (When requesting
+        # individual items, the field is ignored and the request
+        # always returns 200, never 304.)
+        #
+        # So here, instead of asking for an individual item, we ask
+        # for a collection of one item, so that we can use
+        # If-Modified-Since-Version.
+        #
+        # This is less optimal than what the documentation suggests
+        # but more optimal than the alternative of never being able to
+        # benefit from 304.
+        #
+
+        search_url = self.prefix + \
+            "%s/items?key=%s&format=atom&content=json&itemKey=%s" % \
+            (self.userid, self.apikey, itemKey)
+        logger.debug("getting item %s", search_url)
+
+        results_list, extra_data_dict = self.getSearchResults(search_url)
+        assert len(results_list) <= 1
+        return results_list[0] if len(results_list) > 0 else None
 
     def getSearchUrl(self, field):
         """ Creates the search api url"""
-        self.search_field = urllib.quote(field.lower().strip())
+        search_field = urllib.quote(field.lower().strip())
         search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
             "atom&content=json&q=%s"
         search_url = search_url_template % (self.userid, self.apikey,
-                                            self.search_field)
+                                            search_field)
         return search_url
 
     def dupSearchUrl(self, title, item_type):
         """ Creates the search url for identifying duplicates"""
-        self.title_field = title
-        self.item_type = item_type
         search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
             "atom&content=json&itemType=%s&q=%s"
         search_url = search_url_template % (self.userid, self.apikey,
-                                            self.item_type, self.title_field)
+                                            item_type, title)
         return search_url
 
     def getSearchResults(self, url_string):
         """Gets all json objects from the given search url"""
         # 2. perform search
-        # a. if result doesnot exist in cache forcefully fetch from zotero.
+        # a. if result does not exist in cache forcefully fetch from zotero.
         # b. if available in cache, check if got modified for the field.
         # b. if not modified display from cache.
         # c. if modified fetch from zotero, reset key in cache.
-        cache = get_cache('bibsearch')
 
-        try:
-            cache_key = urlsafe_b64encode(self.userid + self.search_field)
-        except AttributeError:
-            cache_key = urlsafe_b64encode(self.userid + self.title_field)
+        cache_key = urlsafe_b64encode(url_string)
 
-        # Alternatively,
-        # as urls themselves are unique we can use them as cache keys
-        #    cache_key = urlsafe_b64encode(url_string)
-        #except AttributeError:
-        #    cache_key = urlsafe_b64encode(url_string)
-
-        results_list = version = None
+        results_list = version = extras = None
 
         if cache.has_key(cache_key):
-            #print " cache hit ...", "[Key:", cache_key, "]"
+            logger.debug("cache hit for key: %s", cache_key)
             cached_data = cache.get(cache_key)
 
             if type(cached_data) == tuple:
-                # this means we have proper cache fetch.
-                results_list, version, extras = cached_data
+                cached_data_version, results_list, version, extras = cached_data
+                if cached_data_version != CACHED_DATA_VERSION:
+                    logger.debug("old data format for key: %s", cache_key)
+                    logger.debug("deleting key: %s", cache_key)
+                    cache.delete(cache_key)
+                    results_list = None
+                    version = None
+                    extras = None
+            else:
+                logger.debug("cache corrupted for key: %s", cache_key)
+                logger.debug("deleting key: %s", cache_key)
+                cache.delete(cache_key)
 
         # alway search the modification status.
         headers = {'If-Modified-Since-Version': version}
@@ -117,27 +141,28 @@ class Zotero(object):
         err, res = self.__createRequest(url=url_string, headers=headers)
 
         if err == 1:
-            #print 'search url not working ...'
+            logger.debug('search url not working')
             # return a empty search result for error in fetching url.
             if results_list:
-                #print 'serving cached ...'
+                logger.debug('serving cached')
                 return results_list, extras
-            #print 'serving empty'
+            logger.debug('serving empty')
             return [], {}
 
         elif res.code == 304:
-            #print "not modified ...", "[Key:", cache_key, "]"
+            logger.debug("got 'not modified' for key: %s", cache_key)
             if results_list:
-                print 'serving cached ...'
+                logger.debug('serving cached')
                 return results_list, extras
-            #print 'serving empty ..'
+            logger.debug('serving empty')
             return [], {}
 
         elif res.code != 200:
             # return a empty search result for error in fetching url.
             return []
 
-        #print 'serving latest(cache stale/not hit)...', "[Key:", cache_key, "]"
+        logger.debug('serving latest (cache stale or cache miss) for key: %s',
+                      cache_key)
         data = res.read()
         dom_object = minidom.parseString(data)
         json_list = []
@@ -151,10 +176,10 @@ class Zotero(object):
 
         for entry in dom_object.getElementsByTagName('entry'):
             content_node = entry.getElementsByTagName('content')[0]
-            published_node = entry.getElementsByTagName('published')[0]
+            updated_node = entry.getElementsByTagName('updated')[0]
 
             json_string_tuple = (content_node.childNodes[0].data,
-                                 published_node.childNodes[0].data,)
+                                 updated_node.childNodes[0].data,)
 
             json_list.append(json_string_tuple)
 
@@ -162,8 +187,9 @@ class Zotero(object):
         results_list, extra_data_dict = self.__processData(json_list)
         if version_key:
             # cache the results before returning.
-            cache.set(cache_key, (results_list, version_key, extra_data_dict))
-            #print "cache set", "[Key:", cache_key, "]"
+            cache.set(cache_key,
+                      (CACHED_DATA_VERSION, results_list, version_key, extra_data_dict))
+            logger.debug("cache set for key: %s", cache_key)
 
         return results_list, extra_data_dict
 
@@ -183,25 +209,21 @@ class Zotero(object):
 
             json_dict = json.loads(list_item[0])
 
-            # add extra data:
-            # 1. the scope of the search result ( global/ local)
-
-            # 2. bibsearch_sync_status
-            # by default make sync status = -1
-            # -1 means no operation performed
-            # 0 means copy successful
-            # 1 means duplicate
-
-            # 3. published date is not available in default JSON
-            # populate data from published date in 'bibsearch_pub_ate' key.
-
-            valid_date = datetime.strptime(list_item[1], "%Y-%m-%dT%H:%M:%SZ")
-
+            # REMEMBER TO INCREMENT CACHED_DATA_VERSION WHENEVER YOU
+            # CHANGE THIS DICTIONARY.
+            #
+            # extra_data_dict contains additional data missing from
+            # the JSON object: 1. object_type: the scope of the search
+            # result ( global/ local)
+            #
+            # 2. sync_status: the sync status:
+            #  -1 means no operation performed (default),
+            #  0 means copy successful
+            #  1 means duplicate
             extra_data_dict[json_dict['itemKey']] = {
                 'object_type': self.object_type,
                 'sync_status': -1,
-                'pub_date': datetime.strftime(valid_date,
-                                              "%Y-%m-%d %H:%M:%S")}
+                }
 
             processed_json_list.append(json_dict)
 
