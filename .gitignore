@@ -1,7 +1,6 @@
 /cache
 /logs
 /sitestatic
-/static-build
 /btw.sqlite3
 /README.html
 /node_modules
@@ -10,3 +9,4 @@
 *_flymake.*
 doc/_build
 doc/_apidoc
+build
