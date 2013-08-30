@@ -1,4 +1,11 @@
-define(function (require, exports, module) {
+/**
+ * @module wed/modes/btw/btw_mode
+ * @desc Mode for BTW editing.
+ * @author Louis-Dominique Dubeau
+ */
+
+define(/** @lends module:wed/modes/btw/btw_mode */
+    function (require, exports, module) {
 'use strict';
 
 var $ = require("jquery");
@@ -23,6 +30,10 @@ var prefix_to_uri = {
     "": "http://www.tei-c.org/ns/1.0"
 };
 
+/**
+ * @class
+ * @extends module:wed/modes/generic/generic~Mode
+ */
 function BTWMode (options) {
     options.meta = btw_meta;
     this._bibl_abbrev_url = options.bibl_abbrev_url;
@@ -76,17 +87,61 @@ BTWMode.prototype.init = function (editor) {
     this.insert_bibl_ptr_action = new btw_actions.InsertBiblPtrDialogAction(
         editor, "Insert a new bibliographical reference.");
 
+    /**
+     * @private
+     * @typedef Substitution
+     * @type {Object}
+     * @property {String} tag The tag name for which to perform the
+     * substitution.
+     * @property {Array.<module:action~Action>} actions The actions to
+     * substitute for this tag.
+     */
+
+    /**
+     * This is an object whose keys are the name of tags.
+     * @private
+     * @typedef Pass
+     * @type {Object}
+     *
+     */
+
+    /**
+     * @private
+     * @typedef TransformationFilter
+     * @type {Object}
+     * @property {String} selector A jQuery selector.
+     * @property {Pass} pass
+     * @property {Array.<String>} filter A list of element names.
+     * @property {Array.<Substitution>} substitute A list of substitutions.
+     */
+
+    /**
+     * @private
+     * @property {Array.<TransformationFilter>} transformation_filters
+     * A list of transformation filters to apply whenever the
+     * getContextualActions method is called.
+     */
     this.transformation_filters = [
         { selector: util.classFromOriginalName("btw:definition") + ">" +
           util.classFromOriginalName("p"), // paragraph in a definition
-          pass: ["term", "btw:sense-emphasis", "ptr"],
+          pass: {
+              "term": true,
+              "btw:sense-emphasis": true,
+              "ptr": true
+          },
           // filter: [...],
           substitute: [ {tag: "ptr", actions: [this.insert_sense_ptr_action,
                                               this.insert_bibl_ptr_action]} ]
         },
         { selector: util.classFromOriginalName("ptr"),
-          pass: []
+          pass: {}
+        },
+        { selector: util.classFromOriginalName("foreign"),
+          pass: {
+              "foreign": ["delete-parent"]
+          }
         }
+
     ];
 };
 
@@ -149,6 +204,51 @@ BTWMode.prototype.makeDecorator = function () {
 };
 
 
+/**
+ *
+ * <p>{@link
+ * module:wed/modes/btw/btw_mode~BTWMode#transformation_filters
+ * transformation_filters} are used as follows:</p>
+ *
+ * <ul>
+ *
+ *  <li>for each <code>filter</code>, if <code>filter.selector</code>
+ *  matches <code>container</code>:
+ *
+ *    <ul>
+ *
+ *      <li>if <code>filter.pass</code> is defined and the
+ *      <code>filter.pass[tag]</code> is:
+ *
+ *        <ul>
+ *
+ *          <li><strong>undefined</strong>, then return an empty list.</li>
+ *
+ *          <li>is <code>true</code>, then continue.</li>
+ *
+ *          <li>is defined, a list and <code>type</code> is absent
+ *          from it, then return an empty list.</li>
+ *
+ *        </ul>
+ *
+ *      <li>if <code>filter.filter</code> is defined and the
+ *      <code>tag</code> <strong>is</strong> in it, then return an
+ *      empty list.</li>
+ *
+ *      <li>if <code>filter.substitute</code> is defined and the
+ *      <code>tag</code> equals the <code>tag</code> property of any
+ *      of the substitutions in the list, then return the
+ *      <code>actions</code> property of the substitution.</li>
+ *
+ *    </ul>
+ *
+ *  </li>
+ *
+ *  <li>if the method has not returned earlier return the transformations from the transformation
+ *  registry.</li>
+ *
+ * </ul>
+ */
 BTWMode.prototype.getContextualActions = function (type, tag,
                                                    container, offset) {
     // We want the first *element* container, selecting div accomplishes this.
@@ -157,8 +257,13 @@ BTWMode.prototype.getContextualActions = function (type, tag,
         var filter = this.transformation_filters[i];
         if ($container.is(filter.selector)) {
 
-            if (filter.pass && filter.pass.indexOf(tag) === -1)
-                return [];
+            if (filter.pass) {
+                var tr_types = filter.pass[tag];
+                if (!tr_types || // not among those to pass
+                    (tr_types !== true && // true means pass
+                    tr_types.indexOf(type) === -1))
+                    return [];
+            }
 
             if (filter.filter && filter.filter.indexOf(tag) > -1)
                 return [];
