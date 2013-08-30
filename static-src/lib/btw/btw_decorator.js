@@ -600,10 +600,12 @@ function languageDecorator($el) {
     var lang = $el.attr(util.encodeAttrName("xml:lang"));
     var prefix = lang.slice(0, 2);
     if (prefix !== "en") {
-        $el.css("background-color", "#CCFF66");
-        // Chinese is not commonly italicized.
+        $el.addClass("_btw_foreign");
+        // $el.css("background-color", "#DFCFAF");
+        // // Chinese is not commonly italicized.
         if (prefix !== "zh")
-            $el.css("font-style", "italic");
+            //$el.css("font-style", "italic");
+            $el.addClass("_btw_foreign_italics");
 
         var label = btw_util.languageCodeToLabel(lang);
         if (label === undefined)
