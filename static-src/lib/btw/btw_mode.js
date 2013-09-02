@@ -9,6 +9,7 @@ define(/** @lends module:wed/modes/btw/btw_mode */
 'use strict';
 
 var $ = require("jquery");
+var jqutil = require("wed/jqutil");
 var util = require("wed/util");
 var log = require("wed/log");
 var Mode = require("wed/modes/generic/generic").Mode;
@@ -136,12 +137,25 @@ BTWMode.prototype.init = function (editor) {
         { selector: util.classFromOriginalName("ptr"),
           pass: {}
         },
+        { selector: jqutil.toDataSelector("btw:subsense>btw:citations foreign"),
+          pass: {
+              "foreign": ["delete-parent"],
+              "btw:lemma-instance": true
+          }
+        },
+        { selector: jqutil.toDataSelector("btw:subsense>btw:citations btw:tr"),
+          pass: {
+              "btw:tr": ["delete-parent"],
+              "btw:lemma-instance": true,
+              "p": true,
+              "lg": true
+          }
+        },
         { selector: util.classFromOriginalName("foreign"),
           pass: {
               "foreign": ["delete-parent"]
           }
         }
-
     ];
 };
 
@@ -276,6 +290,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
                     }
                 }
             }
+            break;
         }
     }
 
@@ -315,8 +330,8 @@ BTWMode.prototype.getContextualMenuItems = function () {
             function (editor, node, element_name, data) {
             var gui_node =
                 this._editor.pathToNode(this._editor.data_updater.nodeToPath(node));
-            this._editor.insertPlaceholderAt(gui_node,
-                                             gui_node.childNodes.length - 1);
+            this._editor.insertTransientPlaceholderAt(
+                gui_node, gui_node.childNodes.length - 1);
             this._editor.setCaret(gui_node.lastChild.previousSibling, 0);
         }.bind(this));
         items.push([tr.getDescriptionFor(data), data,

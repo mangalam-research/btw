@@ -152,7 +152,11 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         util.classFromOriginalName("btw:lang"),
         util.classFromOriginalName("btw:occurrence"),
         util.classFromOriginalName("ref"),
-        util.classFromOriginalName("btw:sense-emphasis")
+        util.classFromOriginalName("btw:sense-emphasis"),
+        util.classFromOriginalName("btw:lemma-instance"),
+        util.classFromOriginalName("btw:antonym-instance"),
+        util.classFromOriginalName("btw:cognate-instance"),
+        util.classFromOriginalName("btw:conceptual-proximate-instance")
     ].join(", ");
 
     // Skip elements which would already have been removed from
