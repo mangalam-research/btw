@@ -33,7 +33,7 @@ function BTWDecorator(mode, meta) {
     this._example_refman = new refmans.SenseReferenceManager();
     this._section_heading_map = {
         "btw:definition": ["definition", null],
-        "btw:sense": ["SENSE", this._getSenseLabel.bind(this)],
+        "btw:sense": ["SENSE", this._getSenseLabelForHead.bind(this)],
         "btw:english-renditions": ["English renditions", null],
         "btw:english-rendition": ["English rendition", null],
         "btw:semantic-fields": ["semantic categories", null],
@@ -43,7 +43,14 @@ function BTWDecorator(mode, meta) {
         "btw:explanation": ["brief explanation of sense",
                             this._getSubsenseLabel.bind(this)],
         "btw:citations": ["selected citations for sense",
-                            this._getSubsenseLabel.bind(this)]
+                            this._getSubsenseLabel.bind(this)],
+        "btw:contrastive-section": ["contrastive section for sense",
+                                    this._getSenseLabel.bind(this)],
+        "btw:antonyms": ["antonyms", null],
+        "btw:cognates": ["cognates related to sense",
+                         this._getSenseLabel.bind(this)],
+        "btw:conceptual-proximates": ["conceptual proximates", null]
+
 
     };
 }
@@ -51,6 +58,22 @@ function BTWDecorator(mode, meta) {
 oop.inherit(BTWDecorator, Decorator);
 
 BTWDecorator.prototype.init = function ($root) {
+    this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("btw:sense"),
+        function ($root, $tree, $parent,
+                  $prev, $next, $el) {
+        this.includedSenseHandler($el);
+    }.bind(this));
+
+    this._domlistener.addHandler(
+        "included-element",
+        util.classFromOriginalName("btw:subsense"),
+        function ($root, $tree, $parent,
+                  $prev, $next, $el) {
+        this.includedSubsenseHandler($el);
+    }.bind(this));
+
     this._domlistener.addHandler(
         "included-element",
         util.classFromOriginalName("*"),
@@ -156,7 +179,11 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         util.classFromOriginalName("btw:lemma-instance"),
         util.classFromOriginalName("btw:antonym-instance"),
         util.classFromOriginalName("btw:cognate-instance"),
-        util.classFromOriginalName("btw:conceptual-proximate-instance")
+        util.classFromOriginalName("btw:conceptual-proximate-instance"),
+        util.classFromOriginalName("btw:contrastive-section"),
+        util.classFromOriginalName("btw:antonyms"),
+        util.classFromOriginalName("btw:cognates"),
+        util.classFromOriginalName("btw:conceptual-proximates")
     ].join(", ");
 
     // Skip elements which would already have been removed from
@@ -180,6 +207,10 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:english-renditions":
     case "btw:english-rendition":
     case "btw:etymology":
+    case "btw:contrastive-section":
+    case "btw:antonyms":
+    case "btw:cognates":
+    case "btw:conceptual-proximates":
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
         break;
     case "btw:semantic-fields":
@@ -190,12 +221,6 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         break;
     case "btw:lang":
         includedBTWLangHandler($el);
-        break;
-    case "btw:sense":
-        this.includedSenseHandler($el);
-        break;
-    case "btw:subsense":
-        this.includedSubsenseHandler($el);
         break;
     case "ptr":
         this.ptrDecorator($root, $el);
@@ -269,6 +294,7 @@ BTWDecorator.prototype.includedSenseHandler = function ($el) {
         id = this._sense_refman.nextNumber();
         $el.attr(util.encodeAttrName("xml:id"), "S." + id);
     }
+    this.idDecorator($el[0]);
     this._domlistener.trigger("included-sense");
 };
 
@@ -282,6 +308,7 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
         id = subsense_refman.nextNumber();
         $el.attr(util.encodeAttrName("xml:id"), parent_wed_id + "." + id);
     }
+    this.idDecorator($el[0]);
     this._domlistener.trigger("included-subsense");
 };
 
@@ -332,9 +359,11 @@ BTWDecorator.prototype._getSenseLabelForHead = function (el) {
 
 BTWDecorator.prototype._getSenseLabel = function (el) {
     var $el = $(el);
-    var id = $el.attr("id");
+    var id = $el.closest(util.classFromOriginalName("btw:sense")).attr("id");
+
     if (!id)
-        throw new Error("element does not have an id: " + $el.get(0));
+        throw new Error("element does not have sense parent with an id: " +
+                        $el.get(0));
     return this._sense_refman.idToLabel(id);
 };
 
@@ -342,11 +371,10 @@ BTWDecorator.prototype._getSubsenseLabel = function (el) {
     var $el = $(el);
     var refman = this._getSubsenseRefman(el);
 
-    var id = $el.parents().addBack().filter(
-        util.classFromOriginalName("btw:subsense")).first().attr("id");
+    var id = $el.closest(util.classFromOriginalName("btw:subsense")).attr("id");
     if (!id)
-        throw new Error("element that does not have subsense parent with "+
-                        "an id: " + $el.get(0));
+        throw new Error("element does not have subsense parent with an id: "
+                        + $el.get(0));
     var label = refman.idToLabelForHead(id);
     return label;
 };
@@ -659,6 +687,8 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
     var $heads = this._$gui_root.find(".head");
     $heads.each(function (x, el) {
         var $el = $(el);
+        // This is the list of DOM parents that do have a head
+        // child, i.e. which participate in navigation.
         var $parents =
             $el.parentsUntil(this._$gui_root).filter(":has(> .head)");
 
@@ -666,62 +696,89 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
         // element's parent satisfies the selectors above.
         var my_depth = $parents.length;
 
-        var $li = $("<li><a class='navbar-link' href='#" + el.id +
+        var $parent = $el.parent();
+        var orig_name = util.getOriginalName($parent.get(0));
+
+        var $li = $("<li class='btw-navbar-item'>"+
+                    "<a class='navbar-link' href='#" + el.id +
                     "'>" + $(el).text() +
                     "</a></li>");
 
-        getParent(my_depth - 1).append($li);
-        prev_at_depth[my_depth] = $li;
-
         // Add contextmenu handlers depending on the type of parent
         // we are dealing with.
-        var $parent = $el.parent();
-        var orig_name = util.getOriginalName($parent.get(0));
         var $a = $li.children("a");
+        $li.attr('data-wed-for', orig_name);
 
         // getContextualActions needs to operate on the data tree.
         var data_parent = $parent.data("wed_mirror_node");
 
-        switch(orig_name) {
-        case "btw:sense":
-            $a.on("contextmenu", log.wrap(function (ev) {
-                var items = [];
-                var container = data_parent.parentNode;
-                var offset = _indexOf.call(container.childNodes, data_parent);
-                var actions = this._mode.getContextualActions(
-                    "insert", "btw:sense",
-                    container, offset);
-
-                if (actions === undefined)
-                    return false;
-
-                for(var act_ix = 0, act; (act = actions[act_ix]) !== undefined;
-                    ++act_ix) {
-                    var data = {element_name: "btw:sense" };
-                    var $a = $("<a tabindex='0' href='#'>" +
-                               act.getDescriptionFor(data) + "</a>");
-                    $a.click(data,
-                             transformation.moveDataCaretFirst(
-                                 this._editor,
-                                 [container, offset],
-                                 act));
-                    items.push($("<li></li>").append($a).get(0));
-                }
-
-                new context_menu.ContextMenu(
-                    this._editor.my_window.document,
-                    ev.pageX, ev.pageY, "none",
-                    items);
-
-                return false;
-            }.bind(this)));
-            break;
+        if (orig_name === "btw:sense" ||
+            orig_name === "btw:english-rendition") {
+            $a.on("contextmenu", {node: data_parent},
+                  this._navigationContextMenuHandler.bind(this));
         }
 
+        getParent(my_depth - 1).append($li);
+        prev_at_depth[my_depth] = $li;
+
     }.bind(this));
+
     this._editor.$navigation_list.empty();
     this._editor.$navigation_list.append(prev_at_depth[0].children());
 };
+
+BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
+    var node = ev.data.node;
+    var orig_name = util.getOriginalName(node);
+    var items = [];
+    var container = node.parentNode;
+    var offset = _indexOf.call(container.childNodes, node);
+    var actions = this._mode.getContextualActions("insert", orig_name,
+                                                  container, offset);
+
+    var data = {element_name: orig_name};
+    var triples = [];
+    for(var act_ix = 0, act; (act = actions[act_ix]) !== undefined;
+        ++act_ix)
+        triples.push([act, data, act.getLabelFor(data) +
+                      " before this one</a>"]);
+
+    var $this_li = $(ev.currentTarget).closest("li");
+    var $sense_links = $this_li.parent().find('li[data-wed-for="' + orig_name +
+                                              '"]');
+
+    if ($sense_links.length > 1) {
+        // Don't add swap with prev if we are the link for the first
+        // sense.
+        data = {element_name: orig_name, node: node};
+        if ($sense_links.first().findAndSelf(ev.currentTarget).length === 0)
+            triples.push(
+                [this._mode.swap_with_prev_tr, data,
+                 this._mode.swap_with_prev_tr.getLabelFor(data)]);
+
+        // Don't add swap with next if we are the link for the next
+        // sense.
+        if ($sense_links.last().findAndSelf(ev.currentTarget).length === 0)
+            triples.push(
+                [this._mode.swap_with_next_tr, data,
+                 this._mode.swap_with_next_tr.getLabelFor(data)]);
+    }
+
+    for(var tix = 0, triple; (triple = triples[tix]) !== undefined; ++tix) {
+        var $a = $("<a tabindex='0' href='#'>" + triple[2] + "</a>");
+        $a.click(triple[1],
+                 transformation.moveDataCaretFirst(this._editor,
+                                                   [container, offset],
+                                                   triple[0]));
+        items.push($("<li></li>").append($a).get(0));
+    }
+
+    new context_menu.ContextMenu(this._editor.my_window.document,
+                                 ev.pageX, ev.pageY, "none", items);
+
+    return false;
+});
+
 
 exports.BTWDecorator = BTWDecorator;
 

@@ -85,6 +85,16 @@ BTWMode.prototype.init = function (editor) {
     this.insert_ref_tr = new transformation.Transformation(
         editor, "Insert a reference", btw_tr.insert_ref);
 
+    this.swap_with_prev_tr = new transformation.Transformation(
+        editor, "Swap with previous sibling", undefined,
+        "<i class='icon-long-arrow-up'></i>",
+        transformation.swapWithPreviousHomogeneousSibling);
+
+    this.swap_with_next_tr = new transformation.Transformation(
+        editor, "Swap with next sibling", undefined,
+        "<i class='icon-long-arrow-down'></i>",
+        transformation.swapWithNextHomogeneousSibling);
+
     this.insert_bibl_ptr_action = new btw_actions.InsertBiblPtrDialogAction(
         editor, "Insert a new bibliographical reference.");
 
