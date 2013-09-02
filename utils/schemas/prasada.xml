@@ -184,7 +184,7 @@
         </btw:cognates>
         <btw:conceptual-proximates>
           <btw:conceptual-proximate>
-            <term>saṃprasāda</term>
+            <term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></term>
             <btw:citations>
               <ptr target="#E-1"/>
             <!--
