@@ -3,6 +3,9 @@ define(function (require, exports, module) {
 
 var oop = require("wed/oop");
 var ReferenceManager = require("wed/refman").ReferenceManager;
+var jqutil = require("wed/jqutil");
+var $ = require("jquery");
+var util = require("wed/util");
 
 var sense_labels = 'abcdefghijklmnopqrstuvwxyz';
 function SenseReferenceManager() {
@@ -77,5 +80,55 @@ SubsenseReferenceManager.prototype.idToSublabel =
 SubsenseReferenceManager.prototype._deallocateAllLabels = function () {
     this._next_label = 1;
 };
+
+// This one does not inherit from the ReferenceManager class.
+function ExampleReferenceManager() {
+    this.name = "example";
+}
+
+ExampleReferenceManager.prototype.idToLabel = function () {
+    return undefined;
+};
+
+ExampleReferenceManager.prototype.getPositionalLabel = function ($ptr, $target,
+                                                                 id) {
+    var ret = "See ";
+    var $ref = $target.find(jqutil.toDataSelector("btw:cit>ref")).first();
+    ret += $ref.text();
+    ret += " quoted ";
+    var order = $ptr[0].compareDocumentPosition($target[0]);
+    if (order & Node.DOCUMENT_POSITION_DISCONNECTED)
+        throw new Error("disconnected nodes");
+
+    if (order & Node.DOCUMENT_POSITION_CONTAINS)
+        throw new Error("ptr contains example!");
+
+    // order & Node.DOCUMENT_POSITION_IS_CONTAINED
+    // This could happen and we don't care...
+
+    if (order & Node.DOCUMENT_POSITION_PRECEDING)
+        ret += "above";
+    else
+        ret += "below";
+
+    var gui_target = $target.data("wed_mirror_node");
+    if (gui_target) {
+        var $gui_target = $(gui_target);
+        ret += " in " + $gui_target.closest(":has(> .head)").children(".head").first().text();
+
+        var term = $ptr.closest(":has(>" +
+                                util.classFromOriginalName("term") +
+                                ")").children(util.classFromOriginalName("term")).first().text();
+
+        if (term)
+            ret += ", " + term;
+    }
+
+    ret += ".";
+
+    return ret;
+};
+
+exports.ExampleReferenceManager = ExampleReferenceManager;
 
 });

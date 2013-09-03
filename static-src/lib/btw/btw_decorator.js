@@ -30,7 +30,7 @@ function BTWDecorator(mode, meta) {
     this._mode = mode;
     this._meta = meta;
     this._sense_refman = new refmans.SenseReferenceManager();
-    this._example_refman = new refmans.SenseReferenceManager();
+    this._example_refman = new refmans.ExampleReferenceManager();
     this._section_heading_map = {
         "btw:definition": ["definition", null],
         "btw:sense": ["SENSE", this._getSenseLabelForHead.bind(this)],
@@ -244,6 +244,10 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         if ($ref.length > 0)
             $ref.before("<div class='_text _phantom _occurrence_space'> </div>");
         break;
+    case "btw:example":
+        this.idDecorator($el[0]);
+        this.elementDecorator($root, $el);
+        break;
     default:
         if ($el.is(no_default_decoration))
             return;
@@ -262,6 +266,12 @@ BTWDecorator.prototype.idDecorator = function (el) {
     var $el = $(el);
     var name = util.getOriginalName(el);
     var id = $el.attr(util.encodeAttrName("xml:id"));
+
+    // The idDecorator is not responsible for assigning ids to
+    // elements that don't have them.
+    if (id === undefined)
+        return;
+
     var wed_id = "BTW-" + id;
     $el.attr("id", wed_id);
     var refman;
@@ -272,10 +282,15 @@ BTWDecorator.prototype.idDecorator = function (el) {
     case "btw:subsense":
         refman = this._getSubsenseRefman(el);
         break;
+    case "btw:example":
+        break;
     default:
         throw new Error("unknown element: " + name);
     }
-    refman.allocateLabel(wed_id);
+
+    if (refman)
+        refman.allocateLabel(wed_id);
+
     this._domlistener.trigger("refresh-sense-ptrs");
 };
 
@@ -538,7 +553,6 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
     var target;
     if (orig_target.lastIndexOf("#", 0) === 0) {
         // Internal target
-
         // Add BTW in front because we want the target used by wed.
         target = orig_target.replace(/#(.*)$/,'#BTW-$1');
 
@@ -553,39 +567,57 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             });
             var refman = this._getRefmanForElement($root, $el);
 
+            // Find the referred element.
+            var $target = $(jQuery_escapeID(target));
+
             // An undefined or null refman can happen when first
             // decorating the document.
-            var label = refman && refman.idToLabel(target.slice(1));
+            var label;
+            if (refman) {
+                if (refman.name === "sense" || refman.name === "subsense") {
+                    label = refman.idToLabel(target.slice(1));
+                    label = label && "[" + label + "]";
+                }
+                else {
+                    // An empty target can happen when first
+                    // decorating the document.
+                    if ($target.length) {
+                        var data_el = this._editor.toDataNode($el[0]);
+                        var data_target = this._editor.toDataNode($target[0]);
+                        label = refman.getPositionalLabel($(data_el),
+                                                          $(data_target),
+                                                          target.slice(1));
+                    }
+                }
+            }
 
-            // Useful for debugging.
             if (label === undefined)
                 label = target;
 
-            if (refman) {
-                if (refman.name === "sense" || refman.name === "subsense")
-                    $a.text("[" + label + "]");
-                // XXX we need to deal with example references here.
-            }
-            else
-                $a.text(label);
+            $a.text(label);
 
             // A ptr contains only attributes, no text, so we can just append.
             this._gui_updater.insertBefore($el.get(0), $text.get(0), null);
 
-            // Find the referred element.
-            var $target = $(jQuery_escapeID(target));
             if ($target.length > 0) {
                 var target_name = util.getOriginalName($target.get(0));
+
+                // Reduce the target to something sensible for tooltip text.
                 if (target_name === "btw:sense")
                     $target =
-                    $target.find(util.classFromOriginalName("btw:english-rendition") + ">" + util.classFromOriginalName("btw:english-term"));
+                    $target.find(jqutil.toDataSelector(
+                        "btw:english-rendition>btw:english-term"));
                 else if (target_name === "btw:subsense")
                     $target = $target.find(util.classFromOriginalName("btw:explanation"));
+                else if (target_name === "btw:example")
+                    $target = $target.find(util.classFromOriginalName("ref")).first();
+
 
                 $target = $target.clone();
                 $target.find(".head").remove();
                 $target = $("<div/>").append($target);
-                $text.tooltip({"title": $target.html(), "html": true, "container": "body"});
+                $text.tooltip({"title": $target.html(), "html":
+                               true, "container": "body"});
             }
         }
         else
