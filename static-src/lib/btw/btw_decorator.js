@@ -31,28 +31,66 @@ function BTWDecorator(mode, meta) {
     this._meta = meta;
     this._sense_refman = new refmans.SenseReferenceManager();
     this._example_refman = new refmans.ExampleReferenceManager();
-    this._section_heading_map = {
-        "btw:definition": ["definition", null],
-        "btw:sense": ["SENSE", this._getSenseLabelForHead.bind(this)],
-        "btw:english-renditions": ["English renditions", null],
-        "btw:english-rendition": ["English rendition", null],
-        "btw:semantic-fields": ["semantic categories", null],
-        "btw:etymology": ["etymology", null],
-        "btw:classical-renditions": ["classical renditions", null],
-        "btw:modern-renditions": ["modern renditions", null],
-        "btw:explanation": ["brief explanation of sense",
-                            this._getSubsenseLabel.bind(this)],
-        "btw:citations": ["selected citations for sense",
-                            this._getSubsenseLabel.bind(this)],
-        "btw:contrastive-section": ["contrastive section for sense",
-                                    this._getSenseLabel.bind(this)],
-        "btw:antonyms": ["antonyms", null],
-        "btw:cognates": ["cognates related to sense",
-                         this._getSenseLabel.bind(this)],
-        "btw:conceptual-proximates": ["conceptual proximates", null]
+    this._section_heading_specs = [ {
+        selector: "btw:definition",
+        heading: "definition"
+    }, {
+        selector: "btw:sense",
+        heading: "SENSE",
+        label_f: this._getSenseLabelForHead.bind(this)
+    }, {
+        selector: "btw:english-renditions",
+        heading: "English renditions"
+    }, {
+        selector: "btw:english-rendition",
+        heading: "English rendition"
+    }, {
+        selector: "btw:semantic-fields",
+        heading: "semantic categories"
+    }, {
+        selector: "btw:etymology",
+        heading: "etymology"
+    }, {
+        selector: "btw:classical-renditions",
+        heading: "classical renditions"
+    }, {
+        selector: "btw:modern-renditions",
+        heading: "modern renditions"
+    }, {
+        selector: "btw:explanation",
+        heading: "brief explanation of sense",
+        label_f: this._getSubsenseLabel.bind(this)
+    }, {
+        selector: "btw:citations",
+        heading: "selected citations for sense",
+        label_f: this._getSubsenseLabel.bind(this)
+    }, {
+        selector: "btw:contrastive-section",
+        heading: "contrastive section for sense",
+        label_f: this._getSenseLabel.bind(this)
+    }, {
+        selector: "btw:antonyms",
+        heading: "antonyms"
+    }, {
+        selector: "btw:cognates",
+        heading: "cognates related to sense",
+        label_f: this._getSenseLabel.bind(this)
+    }, {
+        selector: "btw:conceptual-proximates",
+        heading: "conceptual proximates"
+    }, {
+        selector: "btw:sense>btw:other-citations",
+        heading: "other citations for sense ",
+        label_f: this._getSenseLabel.bind(this)
+    }, {
+        selector: "btw:other-citations",
+        heading: "other citations"
+    }];
 
-
-    };
+    // Convert the selectors to actual selectors.
+    for (var s_ix = 0, spec;
+         (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
+        spec.selector = jqutil.toDataSelector(spec.selector);
 }
 
 oop.inherit(BTWDecorator, Decorator);
@@ -183,7 +221,8 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         util.classFromOriginalName("btw:contrastive-section"),
         util.classFromOriginalName("btw:antonyms"),
         util.classFromOriginalName("btw:cognates"),
-        util.classFromOriginalName("btw:conceptual-proximates")
+        util.classFromOriginalName("btw:conceptual-proximates"),
+        util.classFromOriginalName("btw:other-citations")
     ].join(", ");
 
     // Skip elements which would already have been removed from
@@ -211,6 +250,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:antonyms":
     case "btw:cognates":
     case "btw:conceptual-proximates":
+    case "btw:other-citations":
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
         break;
     case "btw:semantic-fields":
@@ -477,13 +517,17 @@ BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el,
     $el.children('.head').remove();
     if (head === undefined) {
         var name = util.getOriginalName($el.get(0));
-        var head_spec = this._section_heading_map[name];
-        if (head_spec === undefined)
+        for(var s_ix = 0, spec;
+            (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix) {
+            if ($el.is(spec.selector))
+                break;
+        }
+        if (spec === undefined)
             throw new Error("found an element with name " + name +
                             ", which is not handled");
-        var label_f = head_spec[1];
-        head = (label_f) ? head_spec[0] + " " + label_f($el.get(0)) :
-            head_spec[0];
+        var label_f = spec.label_f;
+        head = (label_f) ? spec.heading + " " + label_f($el.get(0)) :
+            spec.heading;
     }
 
     var $head = $('<div class="head _phantom">[' + head + "]</div>");
