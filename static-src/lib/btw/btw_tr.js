@@ -95,7 +95,7 @@ function set_language_handler(editor, node, element_name, data) {
     }
 
     var lang_code = btw_util.languageToLanguageCode(data.language);
-    var selector = "term > foreign";
+    var selector = "foreign";
     var data_selector = jqutil.toDataSelector(selector);
 
     var container = range.startContainer;
@@ -108,7 +108,7 @@ function set_language_handler(editor, node, element_name, data) {
     }
 
     var $realization = jqutil.selectorToElements(selector);
-    var $foreign = $realization.find(
+    var $foreign = $realization.findAndSelf(
         util.classFromOriginalName("foreign"));
     $foreign.attr(util.encodeAttrName("xml:lang"), lang_code);
     var cut_ret = editor.data_updater.cut([range.startContainer,
