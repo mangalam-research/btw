@@ -188,7 +188,7 @@ def search(request):
                               context_instance=RequestContext(request))
 
 @require_GET
-def details(request, entry_id):
+def entry_details(request, entry_id):
     data = Entry.objects.get(id=entry_id).data
 
     (tmpdata_file, tmpdata_path) = tempfile.mkstemp(prefix='btwtmp')
@@ -379,7 +379,7 @@ class _RawSaveForm(forms.ModelForm):
 @login_required
 @require_http_methods(["GET", "POST"])
 @transaction.commit_manually
-def raw_update(request, entry_id):
+def entry_raw_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
         form = _RawSaveForm(request.POST)
@@ -432,7 +432,7 @@ def new(request):
         chunk.save()
         form = SaveForm(instance=chunk,
                         initial = {"saveurl":
-                                   reverse('save',
+                                   reverse('handle_save',
                                            args=(hm.make_unassociated(),))
                                    })
 
@@ -442,7 +442,7 @@ def new(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def update(request, entry_id):
+def entry_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
         # We don't actually save anything here because saves are done
@@ -452,7 +452,7 @@ def update(request, entry_id):
         hm = get_handle_manager(request.session)
         form = SaveForm(instance=entry.c_hash,
                         initial = {"saveurl":
-                                   reverse('save',
+                                   reverse('handle_save',
                                            args=(hm.make_associated(entry_id),))
                                    })
 
@@ -468,7 +468,7 @@ def version_check(version):
 @login_required
 @require_POST
 @transaction.commit_manually
-def save(request, handle):
+def handle_save(request, handle):
     if not request.is_ajax():
         return HttpResponseBadRequest()
 
@@ -563,7 +563,7 @@ def log(request):
 
 @login_required
 @require_POST
-def revert(request, change_id):
+def change_revert(request, change_id):
     change = ChangeRecord.objects.get(id=change_id)
     chunk = change.c_hash
     xmltree = XMLTree(chunk.data)

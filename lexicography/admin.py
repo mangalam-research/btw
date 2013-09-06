@@ -28,7 +28,7 @@ class EntryAdmin(admin.ModelAdmin):
 
     def raw_edit(self, obj):
         return mark_safe('<a href="%s">Edit raw XML</a>' %
-                         (urlresolvers.reverse('rawupdate',
+                         (urlresolvers.reverse('entry_rawupdate',
                                                args=(obj.id, ))))
 
 class ChangeRecordAdmin(admin.ModelAdmin):
@@ -43,7 +43,7 @@ class ChangeRecordAdmin(admin.ModelAdmin):
 
     def revert(self, obj):
         return mark_safe('<a class="lexicography-revert" href="%s">Revert entry to this version</a>' %
-                         (urlresolvers.reverse('revert',
+                         (urlresolvers.reverse('change_revert',
                                                args=(obj.id, ))))
 
 admin.site.register(Entry, EntryAdmin)

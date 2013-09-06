@@ -2,7 +2,7 @@
 {% load url from future %}
 {% block head %}Lexicography{% endblock %}
 {% block content %}
-<a href="{% url 'new' %}"/>New</a>
+<a href="{% url 'entry_new' %}"/>New</a>
 <form action="search" method="get">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Search" />
@@ -14,7 +14,7 @@ Query: {{ query_string }}
 {% if found_entries %}
   <ul>
   {% for entry in found_entries %}
-  <li><a href="{{ entry.id }}">{{ entry.headword }}</a> <a href="{% url 'update' entry.id %}">edit</a></li>
+  <li><a href="{% url 'entry_details' entry.id %}">{{ entry.headword }}</a> <a href="{% url 'entry_update' entry.id %}">edit</a></li>
   {% endfor %}
   </ul>
 {% else %}
