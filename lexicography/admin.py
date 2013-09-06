@@ -1,7 +1,7 @@
 from django.utils.html import escape, mark_safe
 from django.core import urlresolvers
 from django.contrib import admin
-from .models import Entry, Chunk, ChangeRecord, UserAuthority, OtherAuthority, Authority
+from .models import Entry, Chunk, ChangeRecord, UserAuthority, OtherAuthority, Authority, EntryLock
 
 from btw import settings
 
@@ -46,9 +46,13 @@ class ChangeRecordAdmin(admin.ModelAdmin):
                          (urlresolvers.reverse('change_revert',
                                                args=(obj.id, ))))
 
+class EntryLockAdmin(admin.ModelAdmin):
+    list_display = ('entry', 'owner', 'datetime')
+
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Chunk)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
 admin.site.register(UserAuthority)
 admin.site.register(OtherAuthority)
 admin.site.register(Authority)
+admin.site.register(EntryLock, EntryLockAdmin)

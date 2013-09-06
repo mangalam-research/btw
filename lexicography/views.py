@@ -31,16 +31,19 @@ import logging
 import itertools
 import re
 
+from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
+from .locking import release_entry_lock, entry_lock_required, \
+    try_acquiring_lock
+
 logger = logging.getLogger("lexicography")
 
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
-from .models import Entry, ChangeRecord, Chunk, UserAuthority
 
 class HandleManager(object):
-    """This classes manages the mapping between entry ids and handles
+    """This class manages the mapping between entry ids and handles
 used for saving data. The handles provided by this class are passed to
 the editor instance embedded in pages that edit lexicographic
 entries. These handles are then used when saving the data back onto
@@ -340,36 +343,27 @@ def update_entry(request, entry, chunk, xmltree, ctype, subtype):
     entry.save()
 
 def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
-    # A garbage collection occurring between now and the time
-    # we are done could result in a failure for us.
-    tries = 3
-    while tries:
-        try:
-            chunk.save()
-            if entry.id is None:
-                entry.headword = xmltree.extract_headword()
-                entry.user = request.user
-                entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
-                entry.session = request.session.session_key
-                entry.ctype = Entry.CREATE
-                entry.csubtype = subtype
-                entry.c_hash = chunk
-                entry.save()
-            else:
-                update_entry(request, entry, chunk, xmltree, ctype, subtype)
-
-            transaction.commit()
-            tries = 0
-        # Yes we're casting a wide net here with this
-        # except. However, it is not clear exactly how a failure
-        # at the DB level would manifest itself.
-        except Exception as ex: # pylint: disable-msg=W0703
-            transaction.rollback()
-            tries -= 1
-            if not tries:
-                raise ex
-
-
+    if not transaction.is_managed():
+        raise Exception("try_updating_entry requires transactions to be "
+                        "managed")
+    chunk.save()
+    if entry.id is None:
+        entry.headword = xmltree.extract_headword()
+        entry.user = request.user
+        entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
+        entry.session = request.session.session_key
+        entry.ctype = Entry.CREATE
+        entry.csubtype = subtype
+        entry.c_hash = chunk
+        entry.save()
+        if try_acquiring_lock(entry, entry.user) is None:
+            raise Exception("unable to acquire the lock of an entry "
+                            "that was just created but not committed!")
+    else:
+        if try_acquiring_lock(entry, entry.user) is None:
+            return False
+        update_entry(request, entry, chunk, xmltree, ctype, subtype)
+    return True
 
 class _RawSaveForm(forms.ModelForm):
     class Meta(object):
@@ -378,7 +372,7 @@ class _RawSaveForm(forms.ModelForm):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-@transaction.commit_manually
+@entry_lock_required
 def entry_raw_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
@@ -389,6 +383,7 @@ def entry_raw_update(request, entry_id):
             xmltree = XMLTree(chunk.data)
             try_updating_entry(request, entry, chunk, xmltree, Entry.UPDATE,
                                Entry.MANUAL)
+            release_entry_lock(entry, request.user)
     else:
         instance = entry.c_hash
         tmp = Chunk()
@@ -398,7 +393,6 @@ def entry_raw_update(request, entry_id):
     ret = render(request, 'lexicography/new.html', {
         'form': form,
     })
-    transaction.commit()
     return ret
 
 class SaveForm(forms.ModelForm):
@@ -419,7 +413,7 @@ class SaveForm(forms.ModelForm):
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def new(request):
+def entry_new(request):
     if request.method == 'POST':
         # We don't actually save anything here because saves are done
         # through AJAX.
@@ -442,19 +436,21 @@ def new(request):
 
 @login_required
 @require_http_methods(["GET", "POST"])
+@entry_lock_required
 def entry_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
         # We don't actually save anything here because saves are done
-        # through AJAX.
+        # through AJAX. We get here if the user decided to quit editing.
+        release_entry_lock(entry, request.user)
         return HttpResponseRedirect(reverse("main"))
-    else:
-        hm = get_handle_manager(request.session)
-        form = SaveForm(instance=entry.c_hash,
-                        initial = {"saveurl":
+
+    hm = get_handle_manager(request.session)
+    form = SaveForm(instance=entry.c_hash,
+                    initial = {"saveurl":
                                    reverse('handle_save',
                                            args=(hm.make_associated(entry_id),))
-                                   })
+                               })
 
     return render(request, 'lexicography/new.html', {
         'form': form,
@@ -470,6 +466,7 @@ def version_check(version):
 @transaction.commit_manually
 def handle_save(request, handle):
     if not request.is_ajax():
+        transaction.rollback()
         return HttpResponseBadRequest()
 
     command = request.POST.get("command")
@@ -499,7 +496,7 @@ def handle_save(request, handle):
                 chunk.save()
                 entry_id = hm.id(handle)
                 if entry_id is not None:
-                    entry = Entry.objects.get(id=entry_id)
+                    entry = Entry.objects.select_for_update().get(id=entry_id)
                 else:
                     entry = Entry()
 
@@ -510,11 +507,20 @@ def handle_save(request, handle):
                 else:
                     subtype = Entry.MANUAL if command == "save" \
                         else Entry.RECOVERY
-                    try_updating_entry(request, entry, chunk, xmltree,
-                                       Entry.UPDATE, subtype)
-                    if entry_id is None:
-                        hm.associate(handle, entry.id)
-                    messages.append({'type': 'save_successful'})
+                    if not try_updating_entry(request, entry, chunk, xmltree,
+                                              Entry.UPDATE, subtype):
+                        # Update failed due to locking
+                        lock = EntryLock.objects.get(entry=entry.id)
+                        messages.append(
+                            {'type': 'locked',
+                             'msg': 'The entry is locked by user %s'
+                             % str(lock.owner)})
+                        transaction.rollback()
+                    else:
+                        if entry_id is None:
+                            hm.associate(handle, entry.id)
+                        messages.append({'type': 'save_successful'})
+                        transaction.commit()
             else:
                 chunk = Chunk(data=data, is_normal=False)
                 chunk.save()
@@ -522,6 +528,7 @@ def handle_save(request, handle):
                 transaction.commit()
                 messages.append({'type': 'save_corrupted'})
         else:
+            transaction.rollback()
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
     return HttpResponse(resp, content_type="application/json")
@@ -562,6 +569,7 @@ def log(request):
     return HttpResponse()
 
 @login_required
+@entry_lock_required
 @require_POST
 def change_revert(request, change_id):
     change = ChangeRecord.objects.get(id=change_id)
@@ -576,9 +584,10 @@ def change_revert(request, change_id):
 @permission_required('lexicography.garbage_collect')
 def collect(request):
     # Find all chunks which are no longer referenced
-    chunks = Chunk.objects.filter(entry__isnull=True, changerecord__isnull=True)
-    resp = "<br>".join(str(c) for c in chunks)
+    chunks = Chunk.objects.select_for_update().filter(
+        entry__isnull=True, changerecord__isnull=True)
     chunks.delete()
+    resp = "<br>".join(str(c) for c in chunks)
     return HttpResponse(resp + "<br>collected.")
 
 #  LocalWords:  html btwtmp utf saxon xsl btw tei teitohtml xml xhtml

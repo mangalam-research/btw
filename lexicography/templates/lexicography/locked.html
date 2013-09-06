@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% block head %}Locked{% endblock %}
+{% block content %}
+<p>The {{ lock.entry.headword }} article appears to be locked by user {{ lock.user }}.</p>
+{% endblock %}

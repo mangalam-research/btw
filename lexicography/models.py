@@ -4,6 +4,9 @@ import hashlib
 import btw.settings as settings
 
 class ChangeInfo(models.Model):
+    class Meta(object):
+        abstract = True
+
     CREATE = 'C'
     UPDATE = 'U'
     DELETE = 'D'
@@ -33,8 +36,6 @@ class ChangeInfo(models.Model):
     ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
     csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
     c_hash = models.ForeignKey('Chunk')
-    class Meta(object):
-        abstract = True
 
     def copy_to(self, to):
         if not isinstance(to, ChangeInfo):
@@ -83,6 +84,18 @@ class Chunk(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super(Chunk, self).save(*args, **kwargs)
+
+class EntryLock(models.Model):
+    class Meta(object):
+        verbose_name = "Entry lock"
+        verbose_name_plural = "Entry locks"
+        unique_together = (("entry"), )
+
+    entry = models.ForeignKey(Entry)
+    # The owner is who benefits from this lock.
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    datetime = models.DateTimeField()
+
 
 class Authority(models.Model):
     class Meta(object):

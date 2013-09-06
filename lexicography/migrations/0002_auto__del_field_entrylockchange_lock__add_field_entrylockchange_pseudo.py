@@ -8,129 +8,51 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Entry'
-        db.create_table(u'lexicography_entry', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('headword', self.gf('django.db.models.fields.CharField')(max_length=1024)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('session', self.gf('django.db.models.fields.CharField')(max_length=100, null=True)),
-            ('ctype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('csubtype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('c_hash', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.Chunk'])),
-        ))
-        db.send_create_signal(u'lexicography', ['Entry'])
+        # Deleting field 'EntryLockChange.lock'
+        db.delete_column(u'lexicography_entrylockchange', 'lock_id')
 
-        # Adding unique constraint on 'Entry', fields ['headword']
-        db.create_unique(u'lexicography_entry', ['headword'])
+        # Adding field 'EntryLockChange.pseudo_id'
+        db.add_column(u'lexicography_entrylockchange', 'pseudo_id',
+                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1'),
+                      keep_default=False)
 
-        # Adding model 'ChangeRecord'
-        db.create_table(u'lexicography_changerecord', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('headword', self.gf('django.db.models.fields.CharField')(max_length=1024)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('session', self.gf('django.db.models.fields.CharField')(max_length=100, null=True)),
-            ('ctype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('csubtype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('c_hash', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.Chunk'])),
-            ('entry', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.Entry'])),
-        ))
-        db.send_create_signal(u'lexicography', ['ChangeRecord'])
+        # Adding field 'EntryLockChange.csubtype'
+        db.add_column(u'lexicography_entrylockchange', 'csubtype',
+                      self.gf('django.db.models.fields.CharField')(default='O', max_length=1),
+                      keep_default=False)
 
-        # Adding unique constraint on 'ChangeRecord', fields ['entry', 'datetime', 'ctype']
-        db.create_unique(u'lexicography_changerecord', ['entry_id', 'datetime', 'ctype'])
+        # Adding field 'EntryLock.pseudo_id'
+        db.add_column(u'lexicography_entrylock', 'pseudo_id',
+                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1'),
+                      keep_default=False)
 
-        # Adding model 'Chunk'
-        db.create_table(u'lexicography_chunk', (
-            ('c_hash', self.gf('django.db.models.fields.CharField')(max_length=40, primary_key=True)),
-            ('is_normal', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('data', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal(u'lexicography', ['Chunk'])
-
-        # Adding model 'EntryLock'
-        db.create_table(u'lexicography_entrylock', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('entry', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.Entry'])),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lexicography_entrylock_entrylocks_owned', to=orm['auth.User'])),
-            ('initiator', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lexicography_entrylock_entrylocks_initiated', to=orm['auth.User'])),
-            ('datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('session', self.gf('django.db.models.fields.CharField')(max_length=100, null=True)),
-            ('ctype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal(u'lexicography', ['EntryLock'])
-
-        # Adding unique constraint on 'EntryLock', fields ['entry']
-        db.create_unique(u'lexicography_entrylock', ['entry_id'])
-
-        # Adding model 'EntryLockChange'
-        db.create_table(u'lexicography_entrylockchange', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('entry', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.Entry'])),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lexicography_entrylockchange_entrylocks_owned', to=orm['auth.User'])),
-            ('initiator', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lexicography_entrylockchange_entrylocks_initiated', to=orm['auth.User'])),
-            ('datetime', self.gf('django.db.models.fields.DateTimeField')()),
-            ('session', self.gf('django.db.models.fields.CharField')(max_length=100, null=True)),
-            ('ctype', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('lock', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.EntryLock'])),
-        ))
-        db.send_create_signal(u'lexicography', ['EntryLockChange'])
-
-        # Adding model 'Authority'
-        db.create_table(u'lexicography_authority', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal(u'lexicography', ['Authority'])
-
-        # Adding model 'UserAuthority'
-        db.create_table(u'lexicography_userauthority', (
-            (u'authority_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['lexicography.Authority'], unique=True, primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-        ))
-        db.send_create_signal(u'lexicography', ['UserAuthority'])
-
-        # Adding model 'OtherAuthority'
-        db.create_table(u'lexicography_otherauthority', (
-            (u'authority_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['lexicography.Authority'], unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=1024)),
-        ))
-        db.send_create_signal(u'lexicography', ['OtherAuthority'])
+        # Adding field 'EntryLock.csubtype'
+        db.add_column(u'lexicography_entrylock', 'csubtype',
+                      self.gf('django.db.models.fields.CharField')(default='O', max_length=1),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'EntryLock', fields ['entry']
-        db.delete_unique(u'lexicography_entrylock', ['entry_id'])
 
-        # Removing unique constraint on 'ChangeRecord', fields ['entry', 'datetime', 'ctype']
-        db.delete_unique(u'lexicography_changerecord', ['entry_id', 'datetime', 'ctype'])
+        # User chose to not deal with backwards NULL issues for 'EntryLockChange.lock'
+        raise RuntimeError("Cannot reverse this migration. 'EntryLockChange.lock' and its values cannot be restored.")
 
-        # Removing unique constraint on 'Entry', fields ['headword']
-        db.delete_unique(u'lexicography_entry', ['headword'])
+        # The following code is provided here to aid in writing a correct migration        # Adding field 'EntryLockChange.lock'
+        db.add_column(u'lexicography_entrylockchange', 'lock',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['lexicography.EntryLock']),
+                      keep_default=False)
 
-        # Deleting model 'Entry'
-        db.delete_table(u'lexicography_entry')
+        # Deleting field 'EntryLockChange.pseudo_id'
+        db.delete_column(u'lexicography_entrylockchange', 'pseudo_id')
 
-        # Deleting model 'ChangeRecord'
-        db.delete_table(u'lexicography_changerecord')
+        # Deleting field 'EntryLockChange.csubtype'
+        db.delete_column(u'lexicography_entrylockchange', 'csubtype')
 
-        # Deleting model 'Chunk'
-        db.delete_table(u'lexicography_chunk')
+        # Deleting field 'EntryLock.pseudo_id'
+        db.delete_column(u'lexicography_entrylock', 'pseudo_id')
 
-        # Deleting model 'EntryLock'
-        db.delete_table(u'lexicography_entrylock')
-
-        # Deleting model 'EntryLockChange'
-        db.delete_table(u'lexicography_entrylockchange')
-
-        # Deleting model 'Authority'
-        db.delete_table(u'lexicography_authority')
-
-        # Deleting model 'UserAuthority'
-        db.delete_table(u'lexicography_userauthority')
-
-        # Deleting model 'OtherAuthority'
-        db.delete_table(u'lexicography_otherauthority')
+        # Deleting field 'EntryLock.csubtype'
+        db.delete_column(u'lexicography_entrylock', 'csubtype')
 
 
     models = {
@@ -205,23 +127,26 @@ class Migration(SchemaMigration):
         },
         u'lexicography.entrylock': {
             'Meta': {'unique_together': "(('entry',),)", 'object_name': 'EntryLock'},
+            'csubtype': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'ctype': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['lexicography.Entry']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'initiator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lexicography_entrylock_entrylocks_initiated'", 'to': u"orm['auth.User']"}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lexicography_entrylock_entrylocks_owned'", 'to': u"orm['auth.User']"}),
+            'pseudo_id': ('django.db.models.fields.DateTimeField', [], {}),
             'session': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True'})
         },
         u'lexicography.entrylockchange': {
             'Meta': {'object_name': 'EntryLockChange'},
+            'csubtype': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'ctype': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'entry': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['lexicography.Entry']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'initiator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lexicography_entrylockchange_entrylocks_initiated'", 'to': u"orm['auth.User']"}),
-            'lock': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['lexicography.EntryLock']"}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lexicography_entrylockchange_entrylocks_owned'", 'to': u"orm['auth.User']"}),
+            'pseudo_id': ('django.db.models.fields.DateTimeField', [], {}),
             'session': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True'})
         },
         u'lexicography.otherauthority': {
