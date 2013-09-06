@@ -288,6 +288,12 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         this.idDecorator($el[0]);
         this.elementDecorator($root, $el);
         break;
+    case "btw:cit":
+        this.citDecorator($root, $el);
+        break;
+    case "btw:tr":
+        this.trDecorator($root, $el);
+        break;
     default:
         if ($el.is(no_default_decoration))
             return;
@@ -300,6 +306,18 @@ BTWDecorator.prototype.elementDecorator = function ($root, $el) {
         this, $root, $el,
         log.wrap(this._contextMenuHandler.bind(this, true)),
         log.wrap(this._contextMenuHandler.bind(this, false)));
+};
+
+BTWDecorator.prototype.citDecorator = function ($root, $el) {
+    this.elementDecorator($root, $el);
+    var $ref = $el.children(util.classFromOriginalName("ref"));
+    $ref.after('<div class="_phantom _text"> </div>');
+};
+
+BTWDecorator.prototype.trDecorator = function ($root, $el) {
+    this.elementDecorator($root, $el);
+    var $ref = $el.children(util.classFromOriginalName("ref"));
+    $ref.after('<div class="_phantom _text"> </div>');
 };
 
 BTWDecorator.prototype.idDecorator = function (el) {
