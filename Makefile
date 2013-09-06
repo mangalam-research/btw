@@ -74,7 +74,11 @@ $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
 	lessc $< $@
 
+APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
+
+.PHONY: doc
 doc: build/doc README.html
+	sphinx-apidoc -o doc/_apidoc . $(APIDOC_EXCLUDE)
 	(cd doc; make html)
 
 build/doc: build $(filter %.js, $(SOURCES))
