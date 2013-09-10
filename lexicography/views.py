@@ -22,144 +22,23 @@ import os
 import subprocess
 import tempfile
 import btw.settings as settings
-import lxml.etree
 import datetime
 import semver
 import json
 import urllib
 import logging
-import itertools
-import re
 
+from . import handles
 from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
+from .xml import storage_to_editable, editable_to_storage, XMLTree, \
+    set_authority, xhtml_to_xml
 
 logger = logging.getLogger("lexicography")
 
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
-xsl_dirname = os.path.join(dirname, "../utils/xsl/")
-
-
-class HandleManager(object):
-    """This class manages the mapping between entry ids and handles
-used for saving data. The handles provided by this class are passed to
-the editor instance embedded in pages that edit lexicographic
-entries. These handles are then used when saving the data back onto
-the server to refer to specific entries.
-
-The main advantage of using system is that it is possible to have
-unassociated handles representing new articles that have not yet been
-saved. The alternative would be to create a fake article whenever a
-user asks to create a new article. If the user then aborted the
-edition by reloading, or turning off the browser or some similar
-non-excplicit action, these preemptively created articles would then
-be left over on the system. The handle->id mapping allows the system
-to give a handle that is not associated **yet** with an article. Upon
-first save the server can then associate an id with it.
-
-One object of this class must be created per session. The handles
-provided by this class are guaranteed to be unique within a session.
-
-:param session_key: The session key of the session associated with this object.
-:type session_key: str
-
-.. warning:: This class is not designed to provide security.
-"""
-    def __init__(self, session_key):
-        self.session_key = session_key
-        self.handle_to_entry_id = {}
-        self.entry_id_to_handle = {}
-        self.__count = itertools.count()
-
-    @property
-    def _next_name(self):
-        return self.session_key + "." + str(self.__count.next())
-
-    def make_associated(self, entry_id):
-        """
-Create a new handle if there is no handle associated with the id. Otherwise, return the handle already associated with it.
-
-:param entry_id: The id to associate.
-:type entry_id: int
-:returns: The handle.
-:rtype: str
-"""
-        handle = self.entry_id_to_handle.get(entry_id, None)
-        if handle is not None:
-            return handle
-
-        handle = self._next_name
-        while handle in self.handle_to_entry_id:
-            handle = self._next_name
-
-        self.entry_id_to_handle[entry_id] = handle
-        self.handle_to_entry_id[handle] = entry_id
-        return handle
-
-    def make_unassociated(self):
-        """
-Create an unassociated handle.
-
-:returns: The handle.
-:rtype: str
-"""
-        handle = self._next_name
-        while handle in self.handle_to_entry_id:
-            handle = self._next_name
-
-        self.handle_to_entry_id[handle] = None
-        return handle
-
-    def associate(self, handle, entry_id):
-        """
-Associate an unassociated handle with an id.
-
-:param handle: The handle.
-:type handle: str
-:param entry_id: The id.
-:type entry_id: int
-"""
-        if self.handle_to_entry_id[handle] is not None:
-            raise ValueError("handle {0} already associated".format(handle))
-
-        if self.entry_id_to_handle.get(entry_id, None) is not None:
-            raise ValueError("id {0} already associated".format(entry_id))
-
-        self.handle_to_entry_id[handle] = entry_id
-        self.entry_id_to_handle[entry_id] = handle
-
-    def id(self, handle):
-        """
-Return the id associated with a handle.
-
-:param handle: The handle.
-:type handle: str
-:returns: The id.
-:rtype: int or None
-"""
-        return self.handle_to_entry_id[handle]
-
-hms = {}
-def get_handle_manager(session):
-    """
-If the session already has a HandleManager, return it. Otherwise,
-create one, associate it with the session and return it.
-
-:param session: The session.
-:type session: :py:class:`django.contrib.sessions.backends.base.SessionBase`
-:returns: The handle manager.
-:rtype: :py:class:`HandleManager`
-"""
-    # Check whether we have a HandleManager or need to create one
-    hm = hms.get(session.session_key, None)
-    if hm is None:
-        hm = HandleManager(session.session_key)
-        hms[session.session_key] = hm
-    return hm
-
-
 
 @require_GET
 def main(request):
@@ -213,120 +92,6 @@ def entry_details(request, entry_id):
     return render_to_response('lexicography/details.html',
                               {'data': data},
                               context_instance=RequestContext(request))
-
-def storage_to_editable(data):
-    return util.run_saxon(os.path.join(xsl_dirname, "out/xml-to-html.xsl"),
-                          data)
-
-def editable_to_storage(data):
-    return util.run_saxon(os.path.join(xsl_dirname, "out/html-to-xml.xsl"),
-                          data)
-
-class XMLTree(object):
-    def __init__(self, data):
-        """
-The XML tree represetation of the data. Allows performing operations
-on this tree or querying it.
-
-:param data: The data to parse.
-:type data: str
-"""
-        self.parsing_error = None
-        self.tree = None
-        try:
-            self.tree = lxml.etree.fromstring(data)
-        except lxml.etree.XMLSyntaxError as ex:
-            self.parsing_error = "Parsing error: " + str(ex)
-
-    def is_data_unclean(self):
-        """
-Ensure that the tree parses as XML and that it contains only div
-elements in the ``http://www.w3.org/1999/xhtml`` namespace, no
-processing instructions, no attributes in any namespace and no
-attribute other than ``class`` or ``data-wed-*``.
-
-:returns: Evaluates to False if the tree is clean, True if not. When unclean the value returned is a diagnosis message.
-
-.. warning:: This method is security-critical. In theory it would be
-    possible for one user of the system to include JavaScript in the
-    data they send to BTW. This JavaScript could then be loaded in
-    someone else's browser and executed there.
-    """
-        if self.parsing_error:
-            return self.parsing_error
-
-        for node in self.tree.iter():
-            # pylint: disable-msg=W0212
-            if isinstance(node, lxml.etree._ProcessingInstruction):
-                return "Processing instruction found."
-            elif isinstance(node, lxml.etree._Element):
-                if node.tag != "{http://www.w3.org/1999/xhtml}div":
-                    return "Element outside the xhtml namespace: " + node.tag
-                for attr in node.attrib.keys():
-                    if attr == "xmlns":
-                        if node.attrib[attr] != "http://www.w3.org/1999/xhtml":
-                            return ("Attribute xmlns with invalid value: " +
-                                    node.attrib[attr] + ".")
-                    elif attr != "class" and not attr.startswith("data-wed-"):
-                        return "Invalid attribute: " + attr + "."
-
-        return False
-
-    def extract_headword(self):
-        """
-Extracts the headword from the XML tree. This is the contents of the
-btw:lemma element.
-
-:returns: The headword.
-:rtype: str
-"""
-        class_sought = 'btw:lemma'
-        lemma = self.tree.xpath(
-            "xhtml:div[contains(@class, '" + class_sought + "')]",
-            namespaces={
-                'xhtml':
-                'http://www.w3.org/1999/xhtml'})
-
-        # Check that it is really what we want. Unfortunately writing the
-        # XPath 1.0 (what lxml supports) required to do a good job at
-        # tokenizing @class would be hairier than just doing it in python.
-        if len(lemma):
-            classes = lemma[0].get("class").strip().split()
-            if not any(x == class_sought for x in classes):
-                lemma = [] # Not what we wanted after all
-
-        if not len(lemma):
-            raise ValueError("can't find a headword in the data passed")
-
-        return lemma[0].text
-
-    def extract_authority(self):
-        """
-Extracts the authority from the XML tree. This is the contents of the
-authority attribute on the top element.
-
-:returns: The authority
-:rtype: str
-"""
-        authority = self.tree.get('data-wed-authority')
-
-        if authority is None:
-            raise ValueError("can't find the authority in the data passed")
-
-        return authority.strip()
-
-auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
-new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")
-def set_authority(data, new_authority):
-    # We don't use lxml for this because we don't want to introduce
-    # another serialization in the pipe which may change things in
-    # unexpected ways.
-    if not new_auth_re.match(new_authority):
-        raise ValueError("the new authority contains invalid data")
-    return auth_re.sub('authority="{0}"'.format(new_authority), data, count=1)
-
-def xhtml_to_xml(data):
-    return data.replace(u"&nbsp;", u'\u00a0')
 
 def update_entry(request, entry, chunk, xmltree, ctype, subtype):
     cr = ChangeRecord()
@@ -419,7 +184,7 @@ def entry_new(request):
         # through AJAX.
         return HttpResponseRedirect(reverse("main"))
     else:
-        hm = get_handle_manager(request.session)
+        hm = handles.get_handle_manager(request.session)
         chunk = Chunk()
         chunk.data = storage_to_editable(
             open(os.path.join(dirname, "skeleton.xml"), 'r').read())
@@ -445,7 +210,7 @@ def entry_update(request, entry_id):
         release_entry_lock(entry, request.user)
         return HttpResponseRedirect(reverse("main"))
 
-    hm = get_handle_manager(request.session)
+    hm = handles.get_handle_manager(request.session)
     form = SaveForm(instance=entry.c_hash,
                     initial = {"saveurl":
                                    reverse('handle_save',
@@ -476,7 +241,7 @@ def handle_save(request, handle):
         if command == "check":
             transaction.commit()
         elif command == "save" or command == "recover":
-            hm = get_handle_manager(request.session)
+            hm = handles.get_handle_manager(request.session)
             data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
             xmltree = XMLTree(data)
             unclean = xmltree.is_data_unclean()
