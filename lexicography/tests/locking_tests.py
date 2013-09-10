@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.test.utils import override_settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
@@ -16,7 +15,7 @@ dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
                       for x in ("users.json", "locking.json"))
 
-@override_settings(LOGGING={})
+
 class LockingTestCase(TestCase):
     fixtures = ["initial_data.json"] + local_fixtures
 
@@ -57,7 +56,8 @@ class LockingTestCase(TestCase):
             lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
-            r"^foo2 failed to expire lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo2 failed to expire lock \d+ on entry \d+ "
+            r"\(headword: abcd\)$")
 
     def test_try_acquiring_lock_on_two_entries(self):
         # Same user acquires lock on two different entries.
@@ -110,7 +110,8 @@ class LockingTestCase(TestCase):
             lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
-            r"^foo2 failed to expire lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo2 failed to expire lock \d+ on entry \d+ "
+            r"\(headword: abcd\)$")
 
         locking.release_entry_lock(acquired_lock, self.foo)
         self.assertLogRegexp(

@@ -6,6 +6,8 @@ import util
 from .. import xml
 
 as_editable_table = {}
+
+
 def as_editable(filepath):
     editable = as_editable_table.get(filepath, None)
     if editable is not None:
@@ -46,6 +48,7 @@ class DataTestCase(unittest.TestCase):
 
         self.assertFalse(failed)
 
+
 class XMLTreeTestCase(unittest.TestCase):
     def test_is_data_unclean_passes(self):
         editable = as_editable(os.path.join(xml.schemas_dirname,
@@ -53,11 +56,11 @@ class XMLTreeTestCase(unittest.TestCase):
         self.assertFalse(xml.XMLTree(editable).is_data_unclean())
 
     def test_is_data_unclean_fails_on_unparseable(self):
-        data ='<div'
+        data = '<div'
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_is_data_unclean_fails_on_processing_instruction(self):
-        data ='''
+        data = '''
 <div xmlns="http://www.w3.org/1999/xhtml"
      data-wed-xmlns="uri:q" data-wed-xmlns---a="uri:a" class="a:html _real"
      data-wed-a---data-blah--blah----blah="toto" data-wed-z="flex">
@@ -73,28 +76,28 @@ gh<div class="em _real"></div></div>
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_is_data_unclean_fails_on_non_div(self):
-        data ='''
+        data = '''
 <div xmlns="http://www.w3.org/1999/xhtml">
   <div class="head _real"><b></b></div>
 </div>'''
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_is_data_unclean_fails_on_foreign_element(self):
-        data ='''
+        data = '''
 <div xmlns="http://www.w3.org/1999/xhtml">
   <div class="head _real"><div xmlns="q"></div></div>
 </div>'''
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_is_data_unclean_fails_on_bad_attribute(self):
-        data ='''
+        data = '''
 <div xmlns="http://www.w3.org/1999/xhtml">
   <div gaga="q" class="head _real"></div>
 </div>'''
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_is_data_unclean_fails_on_foreign_attribute(self):
-        data ='''
+        data = '''
 <div xmlns="http://www.w3.org/1999/xhtml">
   <div xmlns:z="z" z:class="k" class="head _real"></div>
 </div>'''

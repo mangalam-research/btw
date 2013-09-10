@@ -6,6 +6,7 @@
 import logging
 from StringIO import StringIO
 
+
 def setup_logger_for_StringIO(logger):
     """
 Add a :class:`logging.StreamHandler` to he logger so that it outputs

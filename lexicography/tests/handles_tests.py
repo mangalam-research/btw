@@ -2,6 +2,7 @@ from django.utils import unittest
 
 from .. import handles
 
+
 class HandleManagerTestCase(unittest.TestCase):
     def setUp(self):
         self.manager = handles.HandleManager("q")
@@ -45,7 +46,6 @@ class HandleManagerTestCase(unittest.TestCase):
         self.assertRaisesRegexp(ValueError,
                                 "id 1 already associated",
                                 self.manager.associate, handle2, 1)
-
 
     def test_id_works_with_associated_handle(self):
         handle1 = self.manager.make_associated(1)
