@@ -1,0 +1,106 @@
+[
+{
+  "pk": 1,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "ctype": "U",
+    "datetime": "2013-09-06T19:57:52.120Z",
+    "csubtype": "M",
+    "user": 1,
+    "headword": "abcd"
+  }
+},
+{
+  "pk": 2,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
+    "c_hash": "62a0a7946ecff97649b85019fcc02b10f287c95f",
+    "ctype": "C",
+    "datetime": "2013-09-09T20:41:01.291Z",
+    "csubtype": "M",
+    "user": 1,
+    "headword": "foo"
+  }
+},
+{
+  "pk": 1,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "ctype": "C",
+    "datetime": "2013-09-06T15:04:57.032Z",
+    "csubtype": "M",
+    "user": 1,
+    "entry": 1,
+    "headword": "abcd"
+  }
+},
+{
+  "pk": 2,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "ctype": "U",
+    "datetime": "2013-09-06T15:09:43.913Z",
+    "csubtype": "M",
+    "user": 1,
+    "entry": 1,
+    "headword": "abcd"
+  }
+},
+{
+  "pk": 3,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "ctype": "U",
+    "datetime": "2013-09-06T15:09:45.344Z",
+    "csubtype": "M",
+    "user": 1,
+    "entry": 1,
+    "headword": "abcd"
+  }
+},
+{
+  "pk": "6236c198eab95d43cbea8f472eda7daec90ed571",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/\"><div class=\"btw:lemma _real\"><div class=\"btw:todo _real\">Fill lemma.</div></div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "62a0a7946ecff97649b85019fcc02b10f287c95f",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">foo</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">abcd</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": 1,
+  "model": "lexicography.authority",
+  "fields": {}
+},
+{
+  "pk": 1,
+  "model": "lexicography.userauthority",
+  "fields": {
+    "user": 1
+  }
+}
+]

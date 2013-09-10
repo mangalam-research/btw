@@ -31,9 +31,14 @@ import btw.settings as settings
 
 logger = logging.getLogger(__name__)
 
-def _report(lock, action):
-    logger.info(("{0.owner} {1} lock {0.id} on entry {0.entry.id} "
-                 "(headword: {0.entry.headword})").format(lock, action))
+def _report(lock, action, user=None, lock_id=None):
+    if user is None:
+        user = lock.owner
+    if lock_id is None:
+        lock_id = lock.id
+    logger.debug(("{2} {1} lock {3} on entry {0.entry.id} "
+                  "(headword: {0.entry.headword})").format(lock, action, user,
+                                                           lock_id))
 
 def _acquire_entry_lock(entry, user):
     """
@@ -82,8 +87,9 @@ be enabled.
         raise ValueError("the user releasing the lock is not the one who owns "
                          "it")
 
+    lock_id = lock.id
     lock.delete()
-    _report(lock, "released")
+    _report(lock, "released", lock_id=lock_id)
 
 def _refresh_entry_lock(lock):
     """
@@ -122,10 +128,11 @@ enabled.
 
     if datetime.datetime.utcnow().replace(tzinfo=utc) - lock.datetime > \
             LEXICOGRAPHY_LOCK_EXPIRY:
+        lock_id = lock.id
         lock.delete()
-        _report(lock, "expired")
+        _report(lock, "expired", user, lock_id)
         return True
-    _report(lock, "failed to expire")
+    _report(lock, "failed to expire", user)
     return False
 
 def try_acquiring_lock(entry, user):
