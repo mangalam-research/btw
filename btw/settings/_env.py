@@ -1,6 +1,5 @@
-from __future__ import print_function
 import os
-import StringIO
+import sys
 
 HOME_CONFIG=os.path.join(os.environ["HOME"], ".config/btw")
 ETC_CONFIG="/etc/btw"
@@ -21,7 +20,7 @@ if env is None:
 if env is None:
     raise ValueError("can't get running environment value!")
 
-print("Environment is set to:", env)
+sys.stderr.write("Environment is set to: " + env + "\n")
 
 def find_config(name):
     for path in (HOME_CONFIG, ETC_CONFIG):
