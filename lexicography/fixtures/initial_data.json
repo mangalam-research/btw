@@ -1,0 +1,125 @@
+[
+{
+  "pk": 1,
+  "model": "auth.group",
+  "fields": {
+    "name": "author",
+    "permissions": [
+      [
+        "add_authority",
+        "lexicography",
+        "authority"
+      ],
+      [
+        "add_changerecord",
+        "lexicography",
+        "changerecord"
+      ],
+      [
+        "add_chunk",
+        "lexicography",
+        "chunk"
+      ],
+      [
+        "add_entry",
+        "lexicography",
+        "entry"
+      ],
+      [
+        "change_entry",
+        "lexicography",
+        "entry"
+      ],
+      [
+        "add_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "change_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "delete_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "add_otherauthority",
+        "lexicography",
+        "otherauthority"
+      ],
+      [
+        "add_userauthority",
+        "lexicography",
+        "userauthority"
+      ]
+    ]
+  }
+},
+{
+  "pk": 2,
+  "model": "auth.group",
+  "fields": {
+    "name": "editor",
+    "permissions": [
+      [
+        "add_authority",
+        "lexicography",
+        "authority"
+      ],
+      [
+        "add_changerecord",
+        "lexicography",
+        "changerecord"
+      ],
+      [
+        "add_chunk",
+        "lexicography",
+        "chunk"
+      ],
+      [
+        "add_entry",
+        "lexicography",
+        "entry"
+      ],
+      [
+        "change_entry",
+        "lexicography",
+        "entry"
+      ],
+      [
+        "delete_entry",
+        "lexicography",
+        "entry"
+      ],
+      [
+        "add_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "change_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "delete_entrylock",
+        "lexicography",
+        "entrylock"
+      ],
+      [
+        "add_otherauthority",
+        "lexicography",
+        "otherauthority"
+      ],
+      [
+        "add_userauthority",
+        "lexicography",
+        "userauthority"
+      ]
+    ]
+  }
+}
+]
