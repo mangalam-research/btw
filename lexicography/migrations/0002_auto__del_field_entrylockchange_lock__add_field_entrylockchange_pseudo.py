@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'EntryLockChange.pseudo_id'
         db.add_column(u'lexicography_entrylockchange', 'pseudo_id',
-                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1'),
+                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1 00:00+00:00'),
                       keep_default=False)
 
         # Adding field 'EntryLockChange.csubtype'
@@ -23,7 +23,7 @@ class Migration(SchemaMigration):
 
         # Adding field 'EntryLock.pseudo_id'
         db.add_column(u'lexicography_entrylock', 'pseudo_id',
-                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1'),
+                      self.gf('django.db.models.fields.DateTimeField')(default='1900-1-1 00:00+00:00'),
                       keep_default=False)
 
         # Adding field 'EntryLock.csubtype'
