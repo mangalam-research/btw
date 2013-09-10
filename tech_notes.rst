@@ -10,6 +10,20 @@ TODO
 
 * Determine how to use X-Zotero-Write-Token. What constitutes a *same* transaction?
 
+Installation
+============
+
+.. warning:: If you use uwsgi, use a version later than 1.2.6. See the
+             warning on this page for the reason why:
+             https://docs.djangoproject.com/en/1.5/howto/deployment/wsgi/uwsgi/
+
+.. warning:: Using the sqlite3 backend with Django 1.5 and earlier can
+             result in database problems because Django does not issue
+             "BEGIN" commands to the database to explicitly begin
+             transactions. BTW relies on transactions to ensure data
+             integrity. Use Django 1.6 or use a backend other than
+             sqlite3.
+
 User Stories
 ============
 
@@ -17,7 +31,7 @@ US1 As an author, when I want to insert a reference to a secondary
 source, I want to be :
 
 * US1.1 able to select a secondary source I've already referred to in
-  my article, either by the abbreviation I've assgined to it or by
+  my article, either by the abbreviation I've assigned to it or by
   bibliographical data.
 
 * US1.2 able to search among the secondary sources that BTW already
@@ -32,7 +46,7 @@ US2 As an author, when I want to insert a reference to a primary
 source, I want to be:
 
 * US2.1 able to select a primary source I've already referred to in my
-  article, either by the abbrevitation I've assigned to it or by
+  article, either by the abbreviation I've assigned to it or by
   bibliographical data.
 
 * US2.2 able to search among the primary sources that BTW already uses
@@ -85,7 +99,7 @@ US10 As an author, when editing I want to:
 
 * US10.5 be able to go back and forth among versions of the article.
 
-* US10.6 be able to know who is responsible for comitting a version of an article.
+* US10.6 be able to know who is responsible for committing a version of an article.
 
 * US10.7 be able to see differences between versions of an article.
 
@@ -188,15 +202,6 @@ Roles
 create new users. Later version should have an interface to streamline
 this.
 
-Dump of current permissions:
-
-> select g.name, p.name, t.app_label, p.codename from auth_group g, auth_group_permissions r, auth_permission p, django_content_type t where r.group_id = g.id and r.permission_id = p.id and p.content_type_id = t.id;
-
-author|Can add entry|lexicography|add_entry
-author|Can change entry|lexicography|change_entry
-editor|Can add entry|lexicography|add_entry
-editor|Can change entry|lexicography|change_entry
-editor|Can delete entry|lexicography|delete_entry
 
 Zotero
 ======
@@ -253,3 +258,6 @@ auth_user
 
 abbreviations
 -------------
+
+..  LocalWords:  uwsgi sqlite backend Django init py env config btw
+..  LocalWords:  Zotero Zotero's zotero BTW's auth
