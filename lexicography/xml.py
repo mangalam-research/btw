@@ -8,24 +8,27 @@ import lxml.etree
 import os
 import re
 
-import util
+import lib.util as util
 
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
+
 def storage_to_editable(data):
     return util.run_saxon(os.path.join(xsl_dirname, "out/xml-to-html.xsl"),
                           data)
+
 
 def editable_to_storage(data):
     return util.run_saxon(os.path.join(xsl_dirname, "out/html-to-xml.xsl"),
                           data)
 
+
 class XMLTree(object):
     def __init__(self, data):
         """
-The XML tree represetation of the data. Allows performing operations
+The XML tree representation of the data. Allows performing operations
 on this tree or querying it.
 
 :param data: The data to parse.
@@ -45,7 +48,8 @@ elements in the ``http://www.w3.org/1999/xhtml`` namespace, no
 processing instructions, no attributes in any namespace and no
 attribute other than ``class`` or ``data-wed-*``.
 
-:returns: Evaluates to False if the tree is clean, True if not. When unclean the value returned is a diagnosis message.
+:returns: Evaluates to False if the tree is clean, True if not. When
+          unclean the value returned is a diagnosis message.
 
 .. warning:: This method is security-critical. In theory it would be
     possible for one user of the system to include JavaScript in the
@@ -93,12 +97,22 @@ btw:lemma element.
         if len(lemma):
             classes = lemma[0].get("class").strip().split()
             if not any(x == class_sought for x in classes):
-                lemma = [] # Not what we wanted after all
+                lemma = []  # Not what we wanted after all
 
         if not len(lemma):
-            raise ValueError("can't find a headword in the data passed")
+            return None
 
-        return lemma[0].text
+        lemma = lemma[0].text
+
+        if lemma is None:
+            return None
+
+        lemma = lemma.strip()
+
+        if len(lemma) == 0:
+            return None
+
+        return lemma
 
     def extract_authority(self):
         """
@@ -115,15 +129,20 @@ authority attribute on the top element.
 
         return authority.strip()
 
-auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
-new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")
+_auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
+_new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")
+
+
 def set_authority(data, new_authority):
     # We don't use lxml for this because we don't want to introduce
     # another serialization in the pipe which may change things in
     # unexpected ways.
-    if not new_auth_re.match(new_authority):
+    if not _new_auth_re.match(new_authority):
         raise ValueError("the new authority contains invalid data")
-    return auth_re.sub('authority="{0}"'.format(new_authority), data, count=1)
+    return _auth_re.sub('authority="{0}"'.format(new_authority), data, count=1)
+
 
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')
+
+#  LocalWords:  xml html xsl xhtml xmlns btw lxml r'authority Za nbsp

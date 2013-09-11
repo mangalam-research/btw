@@ -2,7 +2,7 @@
 from django.utils import unittest
 import os
 import difflib
-import util
+import lib.util as util
 from .. import xml
 
 as_editable_table = {}
@@ -109,13 +109,42 @@ gh<div class="em _real"></div></div>
         self.assertEqual(xml.XMLTree(editable).extract_headword(),
                          u"prasāda")
 
-    def test_extract_headword_fails_when_no_headword(self):
+    def test_extract_headword_returns_none_when_no_headword(self):
         data = '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
-        self.assertRaisesRegexp(ValueError,
-                                "can't find a headword in the data passed",
-                                xmltree.extract_headword)
+        self.assertIsNone(xmltree.extract_headword())
+
+    def test_extract_headword_returns_none_when_incorrect_class(self):
+        # This tests an internal condition in extract_headword
+        data = """
+<div xmlns="http://www.w3.org/1999/xhtml">
+<div class="btw:lemmagaga"></div>
+</div>
+        """
+        xmltree = xml.XMLTree(data)
+        self.assertFalse(xmltree.is_data_unclean())
+        self.assertIsNone(xmltree.extract_headword())
+
+    def test_extract_headword_returns_none_when_empty_lemma(self):
+        data = """
+<div xmlns="http://www.w3.org/1999/xhtml">
+<div class="btw:lemma"></div>
+</div>
+        """
+        xmltree = xml.XMLTree(data)
+        self.assertFalse(xmltree.is_data_unclean())
+        self.assertIsNone(xmltree.extract_headword())
+
+    def test_extract_headword_returns_none_when_whitespace_lemma(self):
+        data = """
+<div xmlns="http://www.w3.org/1999/xhtml">
+<div class="btw:lemma">   </div>
+</div>
+        """
+        xmltree = xml.XMLTree(data)
+        self.assertFalse(xmltree.is_data_unclean())
+        self.assertIsNone(xmltree.extract_headword())
 
     def test_extract_authority_passes(self):
         editable = as_editable(os.path.join(xml.schemas_dirname,
