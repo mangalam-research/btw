@@ -19,6 +19,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.template.response import TemplateResponse
 from django.db import transaction
 from django.http import HttpResponse
+from django.conf import settings
 
 import datetime
 import json
@@ -27,7 +28,6 @@ import lib.util as util
 from functools import wraps
 
 from .models import Entry, EntryLock
-import btw.settings as settings
 
 logger = logging.getLogger(__name__)
 

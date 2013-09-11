@@ -10,7 +10,6 @@ import re
 import urllib
 import urllib2
 import logging
-from datetime import datetime
 from json.encoder import JSONEncoder
 from xml.dom import minidom
 
@@ -20,23 +19,33 @@ CACHED_DATA_VERSION = 1
 
 cache = get_cache('bibsearch')
 
+_cached_details = None
+
+
 # Check if BTW project settings are available
 # if not raise exception.
-def btwZoteroDetails():
-    """ function to retrieve organisation wide zotero account details"""
-    try:
-        btw_zotero_details = getattr(settings, "ZOTERO_SETTINGS")
-        if btw_zotero_details and type(btw_zotero_details) != dict:
-            raise ImproperlyConfigured(
-                "ZOTERO_SETTINGS is incorrectly defined")
-        elif 'uid' not in btw_zotero_details or 'api_key' not in \
-                                                btw_zotero_details:
-            raise ImproperlyConfigured(
-                "ZOTERO_SETTINGS does not have all fields required")
-        else:
-            return btw_zotero_details
-    except AttributeError:
-        raise ImproperlyConfigured("ZOTERO_SETTINGS not set")
+def zotero_settings():
+    """Function for retrieving organization-wide zotero account details."""
+    # pylint: disable=W0603
+    global _cached_details
+
+    if _cached_details is not None:
+        return _cached_details
+
+    details = getattr(settings, "ZOTERO_SETTINGS")
+
+    if details is None:
+        raise ImproperlyConfigured("ZOTERO_SETTINGS is undefined")
+
+    if type(details) != dict:
+        raise ImproperlyConfigured("ZOTERO_SETTINGS is must be a dictionary")
+
+    if 'uid' not in details or 'api_key' not in details:
+        raise ImproperlyConfigured(
+            "ZOTERO_SETTINGS does not have all fields required")
+
+    _cached_details = details
+    return _cached_details
 
 
 class Zotero(object):
@@ -117,12 +126,13 @@ class Zotero(object):
 
         results_list = version = extras = None
 
-        if cache.has_key(cache_key):
+        if cache_key in cache:
             logger.debug("cache hit for key: %s", cache_key)
             cached_data = cache.get(cache_key)
 
             if type(cached_data) == tuple:
-                cached_data_version, results_list, version, extras = cached_data
+                cached_data_version, results_list, version, extras = \
+                    cached_data
                 if cached_data_version != CACHED_DATA_VERSION:
                     logger.debug("old data format for key: %s", cache_key)
                     logger.debug("deleting key: %s", cache_key)
@@ -162,7 +172,7 @@ class Zotero(object):
             return []
 
         logger.debug('serving latest (cache stale or cache miss) for key: %s',
-                      cache_key)
+                     cache_key)
         data = res.read()
         dom_object = minidom.parseString(data)
         json_list = []
@@ -188,7 +198,8 @@ class Zotero(object):
         if version_key:
             # cache the results before returning.
             cache.set(cache_key,
-                      (CACHED_DATA_VERSION, results_list, version_key, extra_data_dict))
+                      (CACHED_DATA_VERSION, results_list, version_key,
+                       extra_data_dict))
             logger.debug("cache set for key: %s", cache_key)
 
         return results_list, extra_data_dict
@@ -223,7 +234,7 @@ class Zotero(object):
             extra_data_dict[json_dict['itemKey']] = {
                 'object_type': self.object_type,
                 'sync_status': -1,
-                }
+            }
 
             processed_json_list.append(json_dict)
 

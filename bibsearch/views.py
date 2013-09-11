@@ -14,15 +14,12 @@ from functools import wraps
 
 
 # module imports
-from .utils import Zotero, btwZoteroDetails
+from .utils import Zotero, zotero_settings
 from .models import ZoteroUser
 from .forms import SearchForm
 
 logger = logging.getLogger(__name__)
 
-PAGINATION_SIZE = getattr(settings, "BIBSEARCH_PAGINATION_SIZE")
-
-btw_api_dict = btwZoteroDetails()
 
 def ajax_login_required(view):
     @wraps(view)
@@ -47,6 +44,7 @@ def search(request):
     context = RequestContext(request, {'form': form})
     return HttpResponse(template.render(context))
 
+
 @ajax_login_required
 @require_POST
 def exec_(request):
@@ -55,7 +53,8 @@ def exec_(request):
     try:
         local_profile_object = ZoteroUser.objects.get(btw_user=request.user)
     except ObjectDoesNotExist:
-        return HttpResponseServerError("the user does not have a bibsearch profile.")
+        return HttpResponseServerError(
+            "the user does not have a bibsearch profile.")
 
     # 1. from POST dictionary prepare:
     # a. the zotero library to search info from.
@@ -92,7 +91,7 @@ def exec_(request):
 
         if int(query_dict['library']) in (1, 3):
             # evaluate the results from the global account
-            g_obj = Zotero(btw_api_dict, 'BTW Library')
+            g_obj = Zotero(zotero_settings(), 'BTW Library')
 
             search_url = g_obj.getSearchUrl(query_dict['keyword'])
             logger.debug("searching url: %s", search_url)
@@ -116,6 +115,7 @@ def exec_(request):
     # redirect to pagination url for returning the results first time.
     return HttpResponseRedirect('/search/results/')
 
+
 @ajax_login_required
 @require_GET
 def results(request):
@@ -126,7 +126,7 @@ def results(request):
 
     if type(results_list) is list:
         logger.debug("start paginating the results")
-        paginator = Paginator(results_list, PAGINATION_SIZE)
+        paginator = Paginator(results_list, settings.BIBSEARCH_PAGINATION_SIZE)
         page = request.GET.get('page')
         try:
             results = paginator.page(page)
@@ -146,10 +146,11 @@ def results(request):
 
     return HttpResponseServerError('Search error.')
 
+
 @ajax_login_required
 @require_GET
 def abbrev(request, itemKey):
-    zotero = Zotero(btw_api_dict, "BTW Library")
+    zotero = Zotero(zotero_settings(), "BTW Library")
     item = zotero.getItem(itemKey)
     ret = None
 
@@ -162,10 +163,12 @@ def abbrev(request, itemKey):
         ret = "***ITEM HAS NO AUTHORS***"
     return HttpResponse(ret)
 
+
 @ajax_login_required
 @require_GET
 def info(request, itemKey):
     pass
+
 
 @ajax_login_required
 @require_POST
@@ -198,7 +201,7 @@ def sync(request):
         item_type = data_dict.get('itemType')
 
         # search for duplicate
-        sync_obj = Zotero(btw_api_dict, "BTW Library")
+        sync_obj = Zotero(zotero_settings(), "BTW Library")
         search_url = sync_obj.dupSearchUrl(urllib.quote(title.lower()
                                                         ), item_type)
 
@@ -241,6 +244,7 @@ def sync(request):
             return HttpResponse("DUP")
 
     return HttpResponseServerError("ERROR: sync data i/o error.")
+
 
 @require_GET
 def testjs(request):

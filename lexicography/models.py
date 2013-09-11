@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.conf import settings
 import hashlib
-import btw.settings as settings
+
 
 class ChangeInfo(models.Model):
     class Meta(object):
@@ -16,7 +17,7 @@ class ChangeInfo(models.Model):
         (UPDATE, "Update"),
         (DELETE, "Delete"),
         (REVERT, "Revert"),
-        )
+    )
 
     AUTOMATIC = 'A'
     MANUAL = 'M'
@@ -25,7 +26,7 @@ class ChangeInfo(models.Model):
         (AUTOMATIC, "Automatic"),
         (MANUAL, "Manual"),
         (RECOVERY, "Recovery")
-        )
+    )
 
     # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
     # could use TextField() but the flexibility there comes at a cost.
@@ -43,6 +44,7 @@ class ChangeInfo(models.Model):
         for i in ChangeInfo._meta.get_all_field_names():
             setattr(to, i, getattr(self, i))
 
+
 class Entry(ChangeInfo):
     class Meta(object):
         verbose_name_plural = "Entries"
@@ -58,6 +60,7 @@ class Entry(ChangeInfo):
     def get_absolute_url(self):
         return reverse('entry_details', args=[str(self.id)])
 
+
 class ChangeRecord(ChangeInfo):
     entry = models.ForeignKey(Entry)
 
@@ -67,6 +70,7 @@ class ChangeRecord(ChangeInfo):
     def __unicode__(self):
         return self.entry.headword + " " + self.user.username + " " + \
             str(self.datetime) + " " + (self.session or "")
+
 
 class Chunk(models.Model):
     c_hash = models.CharField(max_length=40, primary_key=True)
@@ -85,6 +89,7 @@ class Chunk(models.Model):
         self.clean()
         super(Chunk, self).save(*args, **kwargs)
 
+
 class EntryLock(models.Model):
     class Meta(object):
         verbose_name = "Entry lock"
@@ -101,10 +106,12 @@ class Authority(models.Model):
     class Meta(object):
         verbose_name_plural = "Authorities"
 
+
 class UserAuthority(Authority):
     class Meta(object):
         verbose_name_plural = "UserAuthorities"
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
+
 
 class OtherAuthority(Authority):
     class Meta(object):

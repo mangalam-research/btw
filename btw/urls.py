@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
 
 from django.contrib import admin
 admin.autodiscover()
@@ -13,7 +14,6 @@ urlpatterns = patterns(
     url(r'^search/', include('bibsearch.urls'))
 )
 
-from . import settings
 
 if settings.DEBUG:
     # In debug mode we do not want any static files to be cached

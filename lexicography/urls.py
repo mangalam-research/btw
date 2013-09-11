@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from btw import settings
+from django.conf import settings
 
 urlpatterns = patterns(
     'lexicography.views',

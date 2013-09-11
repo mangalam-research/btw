@@ -1,6 +1,7 @@
 # Django imports
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from south.modelsinspector import add_introspection_rules
 
@@ -9,7 +10,6 @@ import re
 
 # module imports
 from .utils import Zotero
-import btw.settings as settings
 
 # This is an arbitrary limit on the size of a Zotero URL fragment that
 # uniquely identifies a Zotero entry.
@@ -38,8 +38,11 @@ import btw.settings as settings
 # We double the values below to build some slack into the system.
 
 add_introspection_rules([], [r"^bibsearch\.models\.ZoteroUIDField"])
+
+
 class ZoteroUIDField(models.CharField):
     description = "A Zotero user id or group id."
+
     def __init__(self, *args, **kwargs):
         # The length of the uid takes into account the 2-character
         # prefix we add to distinguish user ids from group ids.
@@ -47,11 +50,15 @@ class ZoteroUIDField(models.CharField):
         super(ZoteroUIDField, self).__init__(*args, **kwargs)
 
 add_introspection_rules([], [r"^bibsearch\.models\.ZoteroAPIKeyField"])
+
+
 class ZoteroAPIKeyField(models.CharField):
     description = "A Zotero API key."
+
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 48
         super(ZoteroAPIKeyField, self).__init__(*args, **kwargs)
+
 
 class ZoteroUser(models.Model):
     btw_user = models.OneToOneField(settings.AUTH_USER_MODEL)

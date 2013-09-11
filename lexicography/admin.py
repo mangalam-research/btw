@@ -1,10 +1,9 @@
+from django.conf import settings
 from django.utils.html import escape, mark_safe
 from django.core import urlresolvers
 from django.contrib import admin
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
     OtherAuthority, Authority, EntryLock
-
-from btw import settings
 
 
 def make_link_method(field_name, display_name=None):
