@@ -5,6 +5,7 @@
 """
 import itertools
 
+
 class HandleManager(object):
     """This class manages the mapping between entry ids and handles
 used for saving data. The handles provided by this class are passed to
@@ -42,7 +43,8 @@ provided by this class are guaranteed to be unique within a session.
 
     def make_associated(self, entry_id):
         """
-Create a new handle if there is no handle associated with the id. Otherwise, return the handle already associated with it.
+Create a new handle if there is no handle associated with the
+id. Otherwise, return the handle already associated with it.
 
 :param entry_id: The id to associate.
 :type entry_id: int
@@ -104,7 +106,9 @@ Return the id associated with a handle.
 """
         return self.handle_to_entry_id[handle]
 
-hms = {}
+_hms = {}
+
+
 def get_handle_manager(session):
     """
 If the session already has a HandleManager, return it. Otherwise,
@@ -115,8 +119,8 @@ create one, associate it with the session and return it.
 :returns: The handle manager.
 :rtype: :py:class:`HandleManager`
 """
-    hm = hms.get(session.session_key, None)
+    hm = _hms.get(session.session_key, None)
     if hm is None:
         hm = HandleManager(session.session_key)
-        hms[session.session_key] = hm
+        _hms[session.session_key] = hm
     return hm
