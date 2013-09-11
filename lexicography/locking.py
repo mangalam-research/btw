@@ -16,7 +16,6 @@ The possible state transitions are:
 
 
 from django.core.exceptions import ImproperlyConfigured
-from django.utils.timezone import utc
 from django.template.response import TemplateResponse
 from django.db import transaction
 from django.http import HttpResponse
@@ -24,12 +23,14 @@ from django.http import HttpResponse
 import datetime
 import json
 import logging
+import lib.util as util
 from functools import wraps
 
 from .models import Entry, EntryLock
 import btw.settings as settings
 
 logger = logging.getLogger(__name__)
+
 
 def _report(lock, action, user=None, lock_id=None):
     if user is None:
@@ -39,6 +40,7 @@ def _report(lock, action, user=None, lock_id=None):
     logger.debug(("{2} {1} lock {3} on entry {0.entry.id} "
                   "(headword: {0.entry.headword})").format(lock, action, user,
                                                            lock_id))
+
 
 def _acquire_entry_lock(entry, user):
     """
@@ -58,13 +60,14 @@ on the entry before calling this function.
 
     lock = EntryLock()
     lock.entry = entry
-    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    now = util.utcnow()
     lock.owner = user
     lock.datetime = now
     lock.save()
 
     _report(lock, "acquired")
     return lock
+
 
 def release_entry_lock(entry, user):
     """
@@ -82,7 +85,7 @@ be enabled.
         raise Exception("release_entry_lock requires transactions to be "
                         "managed")
 
-    lock = EntryLock.objects.select_for_update().get(entry = entry)
+    lock = EntryLock.objects.select_for_update().get(entry=entry)
     if lock.owner != user:
         raise ValueError("the user releasing the lock is not the one who owns "
                          "it")
@@ -90,6 +93,7 @@ be enabled.
     lock_id = lock.id
     lock.delete()
     _report(lock, "released", lock_id=lock_id)
+
 
 def _refresh_entry_lock(lock):
     """
@@ -102,7 +106,7 @@ be enabled.
     if not transaction.is_managed():
         raise Exception("refresh_entry_lock requires transactions to be "
                         "managed")
-    lock.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
+    lock.datetime = util.utcnow()
     lock.save()
     _report(lock, "refreshed")
 
@@ -111,6 +115,7 @@ if getattr(settings, 'LEXICOGRAPHY_LOCK_EXPIRY') is None:
 
 LEXICOGRAPHY_LOCK_EXPIRY = \
     datetime.timedelta(hours=settings.LEXICOGRAPHY_LOCK_EXPIRY)
+
 
 def _expire_entry_lock(lock, user):
     """
@@ -126,14 +131,14 @@ enabled.
         raise Exception("expire_entry_lock requires transactions to be "
                         "managed")
 
-    if datetime.datetime.utcnow().replace(tzinfo=utc) - lock.datetime > \
-            LEXICOGRAPHY_LOCK_EXPIRY:
+    if util.utcnow() - lock.datetime > LEXICOGRAPHY_LOCK_EXPIRY:
         lock_id = lock.id
         lock.delete()
         _report(lock, "expired", user, lock_id)
         return True
     _report(lock, "failed to expire", user)
     return False
+
 
 def try_acquiring_lock(entry, user):
     """
@@ -152,7 +157,7 @@ to be enabled.
                         "managed")
     lock = None
     try:
-        lock = EntryLock.objects.select_for_update().get(entry = entry)
+        lock = EntryLock.objects.select_for_update().get(entry=entry)
     except EntryLock.DoesNotExist:
         pass
 
@@ -172,6 +177,7 @@ to be enabled.
             lock = None
 
     return lock
+
 
 def entry_lock_required(view):
     """
@@ -200,12 +206,13 @@ back.
                 messages = [
                     {'type': 'locked',
                      'msg': 'The entry is locked by user %s' % str(lock.owner)}
-                    ]
+                ]
                 resp = json.dumps({'messages': messages}, ensure_ascii=False)
                 transaction.rollback()
                 return HttpResponse(resp, content_type="application/json")
             else:
                 transaction.rollback()
-                return TemplateResponse(request, 'locked.html', {'lock': lock })
+                return TemplateResponse(request, 'lexicography/locked.html',
+                                        {'lock': lock})
         return view(request, *args, **kwargs)
     return wrapper
