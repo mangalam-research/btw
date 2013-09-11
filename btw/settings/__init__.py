@@ -23,16 +23,13 @@ AUTH_USER_MODEL = 'auth.User'
 
 MANAGERS = ADMINS
 
-LOGIN_URL='/login/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'lexicography_main'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(TOPDIR, 'btw.sqlite3'),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(TOPDIR, 'btw.sqlite3'),
     }
 }
 
@@ -104,7 +101,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 #
@@ -117,7 +114,7 @@ STATICFILES_FINDERS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -139,7 +136,7 @@ TEMPLATE_DIRS = (
     os.path.join(TOPDIR, "templates"),
 )
 
-TEMPLATE_CONTEXT_PROCESSORS= (
+TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
@@ -148,7 +145,7 @@ TEMPLATE_CONTEXT_PROCESSORS= (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "btw.context_processors.global_context_processor",
-    )
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -183,7 +180,8 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': ('%(levelname)s %(asctime)s %(module)s '
+                       '%(process)d %(thread)d %(message)s')
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -208,24 +206,24 @@ LOGGING = {
             'propagate': True,
         },
         'lexicography': {
-            'handlers': [ 'console' ],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'zotero': {
-            'handlers': [ 'console' ],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
     }
 }
 
-BTW_REQUIREJS_PATH=None
-BTW_WED_USE_REQUIREJS=None
-BTW_WED_PATH=None
-BTW_WED_CSS=None
-BTW_WED_LOGGING_PATH=None
-BTW_QUNIT_CSS_PATH=None
+BTW_REQUIREJS_PATH = None
+BTW_WED_USE_REQUIREJS = None
+BTW_WED_PATH = None
+BTW_WED_CSS = None
+BTW_WED_LOGGING_PATH = None
+BTW_QUNIT_CSS_PATH = None
 
 # Execute the env specific overrides
 exec _env.find_config("btw") in globals()
