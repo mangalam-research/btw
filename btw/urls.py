@@ -7,7 +7,8 @@ urlpatterns = patterns(
     '',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'django.contrib.auth.views.login'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
+    url(r'^logout/$', 'core.views.logout', name="logout"),
     url(r'^lexicography/', include('lexicography.urls')),
     url(r'^search/', include('bibsearch.urls'))
 )
