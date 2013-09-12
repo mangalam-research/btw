@@ -100,3 +100,36 @@ given search fields.
                           )
                    for term in terms]
                   )
+
+
+def nice_name(user):
+    """
+    Formats a user's username nicely so that someone can determine who
+    the user is. If the user has both a first name and last name, the
+    return value will be "username (first name last name)". If the
+    user has only a first name or a last name, then the return value
+    will be the same as above except that the parentheses will contain
+    only whichever of the first name or last name is set. If the user
+    has neither a first nor last name then just returns "username".
+
+    A first name or last name is considered to be set when it is set to
+    something else than an empty string.
+
+    :param user:
+    :type user: The value of :attr:`settings.AUTH_USER_MODEL`
+                determines the class.
+    :returns: A nicely formatted user name.
+    :rtype: :class:`str`
+    """
+    first_name = user.first_name.strip()
+    last_name = user.last_name.strip()
+
+    if len(first_name) and len(last_name):
+        return "{0} ({1} {2})".format(user.username, first_name,
+                                      last_name)
+
+    if len(first_name) or len(last_name):
+        return "{0} ({1})".format(user.username,
+                                  first_name if len(first_name) else last_name)
+
+    return user.username
