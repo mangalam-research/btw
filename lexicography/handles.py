@@ -7,30 +7,39 @@ import itertools
 
 
 class HandleManager(object):
-    """This class manages the mapping between entry ids and handles
-used for saving data. The handles provided by this class are passed to
-the editor instance embedded in pages that edit lexicographic
-entries. These handles are then used when saving the data back onto
-the server to refer to specific entries.
+    """
+    This class manages the mapping between entry ids and handles used
+    for saving data. The handles provided by this class are passed to
+    the editor instance embedded in pages that edit lexicographic
+    entries. These handles are then used when saving the data back
+    onto the server to refer to specific entries.
 
-The main advantage of using system is that it is possible to have
-unassociated handles representing new articles that have not yet been
-saved. The alternative would be to create a fake article whenever a
-user asks to create a new article. If the user then aborted the
-edition by reloading, or turning off the browser or some similar
-non-excplicit action, these preemptively created articles would then
-be left over on the system. The handle->id mapping allows the system
-to give a handle that is not associated **yet** with an article. Upon
-first save the server can then associate an id with it.
+    The main advantage of using system is that it is possible to have
+    unassociated handles representing new articles that have not yet
+    been saved. The alternative would be to create a fake article
+    whenever a user asks to create a new article. If the user then
+    aborted the edition by reloading, or turning off the browser or
+    some similar non-explicit action, these preemptively created
+    articles would then be left over on the system. Entry validation
+    would also be problematic because the Entry objects for these
+    prospective articles would have a headword which is NULL or would
+    have a placeholder headword which would be duplicated or some
+    nonsense string. Or we'd have to ask the user for a headword ahead
+    of time. None of these solutions are pain-free.
 
-One object of this class must be created per session. The handles
-provided by this class are guaranteed to be unique within a session.
+    The handle->id mapping allows the system to give a handle that is not
+    associated **yet** with an article. Upon first save the server can
+    then associate an id with it.
 
-:param session_key: The session key of the session associated with this object.
-:type session_key: str
+    One object of this class must be created per session. The handles
+    provided by this class are guaranteed to be unique within a session.
 
-.. warning:: This class is not designed to provide security.
-"""
+    :param session_key: The session key of the session associated with
+                        this object.
+    :type session_key: str
+
+    .. warning:: This class is not designed to provide security.
+    """
     def __init__(self, session_key):
         self.session_key = session_key
         self.handle_to_entry_id = {}
@@ -39,7 +48,7 @@ provided by this class are guaranteed to be unique within a session.
 
     @property
     def _next_name(self):
-        return self.session_key + "." + str(self.__count.next())
+        return str(self.__count.next())
 
     def make_associated(self, entry_id):
         """

@@ -130,7 +130,7 @@ class LockingTestCase(TestCase):
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
-        lock.datetime = lock.datetime - locking.LEXICOGRAPHY_LOCK_EXPIRY - \
+        lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
             datetime.timedelta(seconds=1)
         lock.save()
 

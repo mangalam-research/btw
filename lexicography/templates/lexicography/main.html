@@ -1,25 +1,38 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load libcore %}
+{% load liblex %}
 {% block head %}Lexicography{% endblock %}
 {% block content %}
 <a href="{% url 'lexicography_entry_new' %}"/>New</a>
 <form action="search" method="get">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Search" />
+  {{ form.as_p }}
+  <input type="submit" value="Search" />
 </form>
 {% if query_string %}
-<p>
-Query: {{ query_string }}
-</p>
-{% if found_entries %}
-  <ul>
-  {% for entry in found_entries %}
-  <li><a href="{% url 'lexicography_entry_details' entry.id %}">{{ entry.headword }}</a> <a href="{% url 'lexicography_entry_update' entry.id %}">edit</a></li>
-  {% endfor %}
-  </ul>
-{% else %}
-  <p>No hits.</p>
-{% endif %}
-</ul>
-{% endif %}
+<div>
+  <p><label>Query</label>: {{ query_string }}</p>
+  <p>
+    {% if found_entries %}
+    Results:
+    <ul>
+      {% for entry in found_entries %}
+      <li>
+        <a href="{% url 'lexicography_entry_details' entry.id %}">{{ entry.headword }}</a>
+        {% if not entry|is_editable_by:user %}
+          {% if entry.is_locked %}
+            Locked by {{ entry.is_locked|nice_name }}.
+          {% endif %}
+        {% else %}
+        <a href="{% url 'lexicography_entry_update' entry.id %}">edit</a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    No hits.
+    {% endif %}
+  </p>
+  {% endif %}
+</div>
 {% endblock %}

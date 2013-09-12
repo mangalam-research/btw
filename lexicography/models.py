@@ -1,7 +1,12 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.contrib.auth.models import Group
+from lib import util
+
 import hashlib
+import datetime
 
 
 class ChangeInfo(models.Model):
@@ -60,6 +65,55 @@ class Entry(ChangeInfo):
     def get_absolute_url(self):
         return reverse('entry_details', args=[str(self.id)])
 
+    def is_locked(self):
+        """
+        :returns: The user who has a lock on this entry.
+        :rtype: If the entry is locked, returns the user. The value of
+                :attr:`settings.AUTH_USER_MODEL` determines the
+                class. Otherwise, returns ``None``.
+        """
+        if self.entrylock_set.exists():
+            lock = self.entrylock_set.all()[0]
+            if not lock.is_expirable():
+                return lock.owner
+
+        return None
+
+    def is_editable_by(self, user):
+        """
+        Determines whether the entry is editable by the specified
+        user. This method considers both Django permissions **and**
+        locking. That is, if the user lacks the permissions or cannot
+        lock the entry, then the user cannot edit the entry. The user
+        must have the same permissions as those in the group named
+        "author", either because the user belongs to that group or
+        because the user has all the permissions of that
+        group.
+
+        :param user: The user for whom we want to check whether the entry
+                     is editable.
+        :type user: The value of :attr:`settings.AUTH_USER_MODEL`
+                    determines the class.
+        :returns: True if editable. False if not.
+        :rtype: :class:`bool`
+                """
+
+        # Superusers have all permissions so we don't check them.
+        if not user.is_superuser:
+            # To be able to edit, the user must have the permissions
+            # given to authors.
+            author = Group.objects.get(name='author')
+            for perm in author.permissions.all():
+                if not user.has_perm("{0.content_type.app_label}.{0.codename}"
+                                     .format(perm)):
+                    return False
+
+        owner = self.is_locked()
+        if owner is None:
+            return True
+
+        return owner.pk == user.pk
+
 
 class ChangeRecord(ChangeInfo):
     entry = models.ForeignKey(Entry)
@@ -90,6 +144,13 @@ class Chunk(models.Model):
         super(Chunk, self).save(*args, **kwargs)
 
 
+if getattr(settings, 'LEXICOGRAPHY_LOCK_EXPIRY') is None:
+    raise ImproperlyConfigured('LEXICOGRAPHY_LOCK_EXPIRY not set')
+
+LEXICOGRAPHY_LOCK_EXPIRY = \
+    datetime.timedelta(hours=settings.LEXICOGRAPHY_LOCK_EXPIRY)
+
+
 class EntryLock(models.Model):
     class Meta(object):
         verbose_name = "Entry lock"
@@ -100,6 +161,21 @@ class EntryLock(models.Model):
     # The owner is who benefits from this lock.
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     datetime = models.DateTimeField()
+
+    def is_expirable(self):
+        """
+        :returns: ``True`` if the lock is expirable, ``False`` if not.
+        :rtype: :class:`bool`
+        """
+        return util.utcnow() - self.datetime > LEXICOGRAPHY_LOCK_EXPIRY
+
+    def _force_expiry(self):
+        """
+        Forces the lock to expire. This is meant to be used for testing.
+        """
+        self.datetime = self.datetime - LEXICOGRAPHY_LOCK_EXPIRY - \
+            datetime.timedelta(seconds=1)
+        self.save()
 
 
 class Authority(models.Model):

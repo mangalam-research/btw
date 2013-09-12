@@ -15,13 +15,10 @@ The possible state transitions are:
 """
 
 
-from django.core.exceptions import ImproperlyConfigured
 from django.template.response import TemplateResponse
 from django.db import transaction
 from django.http import HttpResponse
-from django.conf import settings
 
-import datetime
 import json
 import logging
 import lib.util as util
@@ -110,12 +107,6 @@ be enabled.
     lock.save()
     _report(lock, "refreshed")
 
-if getattr(settings, 'LEXICOGRAPHY_LOCK_EXPIRY') is None:
-    raise ImproperlyConfigured('LEXICOGRAPHY_LOCK_EXPIRY not set')
-
-LEXICOGRAPHY_LOCK_EXPIRY = \
-    datetime.timedelta(hours=settings.LEXICOGRAPHY_LOCK_EXPIRY)
-
 
 def _expire_entry_lock(lock, user):
     """
@@ -131,7 +122,7 @@ enabled.
         raise Exception("expire_entry_lock requires transactions to be "
                         "managed")
 
-    if util.utcnow() - lock.datetime > LEXICOGRAPHY_LOCK_EXPIRY:
+    if lock.is_expirable():
         lock_id = lock.id
         lock.delete()
         _report(lock, "expired", user, lock_id)
@@ -157,8 +148,8 @@ to be enabled.
                         "managed")
     lock = None
     try:
-        lock = EntryLock.objects.select_for_update().get(entry=entry)
-    except EntryLock.DoesNotExist:
+        lock = entry.entrylock_set.all().select_for_update()[0]
+    except IndexError:
         pass
 
     if lock is None:

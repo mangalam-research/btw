@@ -1,11 +1,29 @@
 [
 {
+  "pk": 1,
+  "model": "auth.user",
+  "fields": {
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2013-09-09T19:51:11Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "",
+    "email": "",
+    "date_joined": "2013-09-09T19:51:11Z"
+  }
+},
+{
   "pk": 2,
   "model": "auth.user",
   "fields": {
     "username": "foo",
-    "first_name": "",
-    "last_name": "",
+    "first_name": "Foo",
+    "last_name": "Bwip",
     "is_active": true,
     "is_superuser": false,
     "is_staff": false,
@@ -26,8 +44,8 @@
   "model": "auth.user",
   "fields": {
     "username": "foo2",
-    "first_name": "",
-    "last_name": "",
+    "first_name": "Foo",
+    "last_name": "Glerbl",
     "is_active": true,
     "is_superuser": false,
     "is_staff": false,

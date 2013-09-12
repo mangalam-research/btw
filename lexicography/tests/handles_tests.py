@@ -9,11 +9,11 @@ class HandleManagerTestCase(unittest.TestCase):
 
     def test_next_name(self):
         # pylint: disable-msg=W0212
-        self.assertEqual(self.manager._next_name, "q.0")
-        self.assertEqual(self.manager._next_name, "q.1")
+        self.assertEqual(self.manager._next_name, "0")
+        self.assertEqual(self.manager._next_name, "1")
 
     def test_make_associated(self):
-        self.assertEqual(self.manager.make_associated(1), "q.0")
+        self.assertEqual(self.manager.make_associated(1), "0")
 
     def test_make_associated_returns_constant_values(self):
         self.assertEqual(self.manager.make_associated(1),
@@ -37,7 +37,7 @@ class HandleManagerTestCase(unittest.TestCase):
     def test_associate_fails_on_already_associated_handle(self):
         handle1 = self.manager.make_associated(1)
         self.assertRaisesRegexp(ValueError,
-                                "handle q.0 already associated",
+                                "handle 0 already associated",
                                 self.manager.associate, handle1, 1)
 
     def test_associate_fails_on_already_associated_id(self):

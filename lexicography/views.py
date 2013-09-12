@@ -4,7 +4,7 @@
 .. moduleauthor:: Louis-Dominique Dubeau <ldd@lddubeau.com>
 
 """
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
@@ -13,39 +13,35 @@ from django.http import HttpResponse, HttpResponseRedirect, \
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods
 from django.template import RequestContext
-from django.utils.timezone import utc
-from django.db import transaction
-from django import forms
-from wed import WedWidget
-import util
+from django.db import transaction, IntegrityError
+from django.conf import settings
 import os
 import subprocess
 import tempfile
-import btw.settings as settings
-import datetime
 import semver
 import json
 import urllib
 import logging
 
+import lib.util as util
 from . import handles
 from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
 from .xml import storage_to_editable, editable_to_storage, XMLTree, \
     set_authority, xhtml_to_xml
+from .forms import SearchForm, RawSaveForm, SaveForm
 
 logger = logging.getLogger("lexicography")
 
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 
+
 @require_GET
 def main(request):
     return render(request, 'lexicography/main.html', {'form': SearchForm()})
 
-class SearchForm(forms.Form):
-    q = forms.CharField(max_length=100, label="Search")
 
 @require_GET
 def search(request):
@@ -64,10 +60,12 @@ def search(request):
         found_entries |= active_entries.filter(c_hash=chunks)
 
     return render_to_response('lexicography/main.html',
-                              { 'form': SearchForm(request.GET),
-                                'query_string': query_string,
-                                'found_entries': found_entries },
+                              {'form': SearchForm(request.GET),
+                               'query_string': query_string,
+                               'user': request.user,
+                               'found_entries': found_entries},
                               context_instance=RequestContext(request))
+
 
 @require_GET
 def entry_details(request, entry_id):
@@ -80,12 +78,17 @@ def entry_details(request, entry_id):
     (tmptei_file, tmptei_path) = tempfile.mkstemp(prefix='btwtmp')
     os.close(tmptei_file)
 
-    subprocess.check_call(["saxon", "-s:" + tmpdata_path, "-xsl:" + os.path.join(schemas_dirname, "btw-storage-to-tei.xsl"), "-o:" + tmptei_path])
+    subprocess.check_call(["saxon", "-s:" + tmpdata_path, "-xsl:" +
+                           os.path.join(schemas_dirname,
+                                        "btw-storage-to-tei.xsl"), "-o:" +
+                           tmptei_path])
 
     (tmphtml_file, tmphtml_path) = tempfile.mkstemp(prefix="btwtmp")
     os.close(tmphtml_file)
 
-    subprocess.check_call(["teitohtml", "--profiledir=" + os.path.join(dirname, "btw-profiles"), "--profile=html-render", tmptei_path, tmphtml_path])
+    subprocess.check_call(["teitohtml", "--profiledir=" +
+                           os.path.join(dirname, "btw-profiles"),
+                           "--profile=html-render", tmptei_path, tmphtml_path])
 
     data = open(tmphtml_path).read()
 
@@ -93,19 +96,21 @@ def entry_details(request, entry_id):
                               {'data': data},
                               context_instance=RequestContext(request))
 
+
 def update_entry(request, entry, chunk, xmltree, ctype, subtype):
     cr = ChangeRecord()
     cr.entry = entry
     entry.copy_to(cr)
     entry.headword = xmltree.extract_headword()
     entry.user = request.user
-    entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
+    entry.datetime = util.utcnow()
     entry.session = request.session.session_key
     entry.ctype = ctype
     entry.csubtype = subtype
     entry.c_hash = chunk
     cr.save()
     entry.save()
+
 
 def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     if not transaction.is_managed():
@@ -115,25 +120,21 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     if entry.id is None:
         entry.headword = xmltree.extract_headword()
         entry.user = request.user
-        entry.datetime = datetime.datetime.utcnow().replace(tzinfo=utc)
+        entry.datetime = util.utcnow()
         entry.session = request.session.session_key
         entry.ctype = Entry.CREATE
         entry.csubtype = subtype
         entry.c_hash = chunk
         entry.save()
-        if try_acquiring_lock(entry, entry.user) is None:
+        if try_acquiring_lock(entry, request.user) is None:
             raise Exception("unable to acquire the lock of an entry "
                             "that was just created but not committed!")
     else:
-        if try_acquiring_lock(entry, entry.user) is None:
+        if try_acquiring_lock(entry, request.user) is None:
             return False
         update_entry(request, entry, chunk, xmltree, ctype, subtype)
     return True
 
-class _RawSaveForm(forms.ModelForm):
-    class Meta(object):
-        model = Chunk
-        exclude = ('c_hash', 'is_normal')
 
 @login_required
 @require_http_methods(["GET", "POST"])
@@ -141,7 +142,7 @@ class _RawSaveForm(forms.ModelForm):
 def entry_raw_update(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method == 'POST':
-        form = _RawSaveForm(request.POST)
+        form = RawSaveForm(request.POST)
         if form.is_valid():
             chunk = form.save(commit=False)
             chunk.data = storage_to_editable(chunk.data)
@@ -153,78 +154,71 @@ def entry_raw_update(request, entry_id):
         instance = entry.c_hash
         tmp = Chunk()
         tmp.data = editable_to_storage(instance.data)
-        form = _RawSaveForm(instance=tmp)
+        form = RawSaveForm(instance=tmp)
 
     ret = render(request, 'lexicography/new.html', {
         'form': form,
     })
     return ret
 
-class SaveForm(forms.ModelForm):
-    class Media(object):
-        js = (settings.BTW_REQUIREJS_PATH, ) \
-            if not settings.BTW_WED_USE_REQUIREJS else ()
 
-    class Meta(object):
-        model = Chunk
-        exclude = ('c_hash', 'is_normal')
+@login_required
+@require_GET
+def entry_new(request):
+    hm = handles.get_handle_manager(request.session)
+    return HttpResponseRedirect(reverse('lexicography_handle_update',
+                                        args=(hm.make_unassociated(),)))
 
-    logurl = forms.CharField(widget=forms.HiddenInput(),
-                             initial=reverse_lazy('log'))
-    saveurl = forms.CharField(widget=forms.HiddenInput())
-    data = forms.CharField(label="",
-                           widget=WedWidget(source=settings.BTW_WED_PATH,
-                                            css=settings.BTW_WED_CSS))
+@login_required
+@require_GET
+@entry_lock_required
+def entry_update(request, entry_id):
+    hm = handles.get_handle_manager(request.session)
+    return HttpResponseRedirect(reverse('lexicography_handle_update',
+                                        args=(hm.make_associated(entry_id),)))
+
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def entry_new(request):
+def handle_update(request, handle):
+    hm = handles.get_handle_manager(request.session)
+    entry_id = hm.id(handle)
+
+    entry = None
+    if entry_id is not None:
+        entry = Entry.objects.get(id=entry_id)
+
     if request.method == 'POST':
         # We don't actually save anything here because saves are done
-        # through AJAX.
-        return HttpResponseRedirect(reverse("main"))
+        # through AJAX. We get here if the user decided to quit editing.
+        if entry is not None:
+            release_entry_lock(entry, request.user)
+        return HttpResponseRedirect(reverse("lexicography_main"))
+
+    if entry is not None:
+        chunk = entry.c_hash
     else:
-        hm = handles.get_handle_manager(request.session)
         chunk = Chunk()
         chunk.data = storage_to_editable(
             open(os.path.join(dirname, "skeleton.xml"), 'r').read())
         chunk.save()
-        form = SaveForm(instance=chunk,
-                        initial = {"saveurl":
-                                   reverse('handle_save',
-                                           args=(hm.make_unassociated(),))
-                                   })
+
+    form = SaveForm(instance=chunk,
+                    initial={"saveurl":
+                             reverse('lexicography_handle_save',
+                                     args=(handle,))})
 
     return render(request, 'lexicography/new.html', {
         'form': form,
     })
 
-@login_required
-@require_http_methods(["GET", "POST"])
-@entry_lock_required
-def entry_update(request, entry_id):
-    entry = Entry.objects.get(id=entry_id)
-    if request.method == 'POST':
-        # We don't actually save anything here because saves are done
-        # through AJAX. We get here if the user decided to quit editing.
-        release_entry_lock(entry, request.user)
-        return HttpResponseRedirect(reverse("main"))
 
-    hm = handles.get_handle_manager(request.session)
-    form = SaveForm(instance=entry.c_hash,
-                    initial = {"saveurl":
-                                   reverse('handle_save',
-                                           args=(hm.make_associated(entry_id),))
-                               })
-
-    return render(request, 'lexicography/new.html', {
-        'form': form,
-    })
 
 def version_check(version):
-    if not semver.match(version, ">=0.6.0"):
-        return [{'type': "version_failure" }]
+    if not semver.match(version, ">=0.10.0"):
+        return [{'type': "version_too_old_error"}]
     return []
+
 
 @login_required
 @require_POST
@@ -240,63 +234,98 @@ def handle_save(request, handle):
         messages += version_check(request.POST.get("version"))
         if command == "check":
             transaction.commit()
-        elif command == "save" or command == "recover":
-            hm = handles.get_handle_manager(request.session)
-            data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
-            xmltree = XMLTree(data)
-            unclean = xmltree.is_data_unclean()
-            if not unclean:
-                authority =  xmltree.extract_authority()
-                if authority == "/":
-                    # We must replace the temp value with something real
-                    try:
-                        authority = UserAuthority.objects.get(user=request.user)
-                    except UserAuthority.DoesNotExist:
-                        authority = UserAuthority()
-                        authority.user = request.user
-                        authority.save()
-                    data = set_authority(data,
-                                         "/authority/" + str(authority.id))
-                chunk = Chunk(data=data)
-                chunk.save()
-                entry_id = hm.id(handle)
-                if entry_id is not None:
-                    entry = Entry.objects.select_for_update().get(id=entry_id)
-                else:
-                    entry = Entry()
-
-                if xmltree.extract_headword() is None:
-                    messages.append({'type': 'save_validation_error',
-                                     'msg': 'Please specify a lemma.'})
-                    transaction.rollback()
-                else:
-                    subtype = Entry.MANUAL if command == "save" \
-                        else Entry.RECOVERY
-                    if not try_updating_entry(request, entry, chunk, xmltree,
-                                              Entry.UPDATE, subtype):
-                        # Update failed due to locking
-                        lock = EntryLock.objects.get(entry=entry.id)
-                        messages.append(
-                            {'type': 'locked',
-                             'msg': 'The entry is locked by user %s'
-                             % str(lock.owner)})
-                        transaction.rollback()
-                    else:
-                        if entry_id is None:
-                            hm.associate(handle, entry.id)
-                        messages.append({'type': 'save_successful'})
-                        transaction.commit()
-            else:
-                chunk = Chunk(data=data, is_normal=False)
-                chunk.save()
-                logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
-                transaction.commit()
-                messages.append({'type': 'save_corrupted'})
+        elif command in ("save", "recover"):
+            _save_command(request, handle, command, messages)
         else:
             transaction.rollback()
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
     return HttpResponse(resp, content_type="application/json")
+
+def _save_command(request, handle, command, messages):
+    hm = handles.get_handle_manager(request.session)
+
+    try:
+        entry_id = hm.id(handle)
+    except KeyError:
+        logger.error(("user {0} tried accessing handle {1} which did not exist"
+                     " in the handle manager associated with sesssion {2}")
+                     .format(request.user.username, handle,
+                             request.session.session_key))
+        messages.append({'type': 'save_fatal_error'})
+        return
+
+    data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
+    xmltree = XMLTree(data)
+
+    unclean = xmltree.is_data_unclean()
+    if unclean:
+        chunk = Chunk(data=data, is_normal=False)
+        chunk.save()
+        logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
+        # Yes, we want to commit...
+        transaction.commit()
+        messages.append({'type': 'save_fatal_error'})
+        return
+
+    if xmltree.extract_headword() is None:
+        messages.append(
+            {'type': 'save_transient_error',
+             'msg': 'Please specify a lemma for your entry.'})
+        transaction.rollback()
+        return
+
+    authority = xmltree.extract_authority()
+    if authority == "/":
+        # We must replace the temp value with something real
+        try:
+            authority = UserAuthority.objects.get(user=request.user)
+        except UserAuthority.DoesNotExist:
+            authority = UserAuthority()
+            authority.user = request.user
+            authority.save()
+        data = set_authority(data, "/authority/" + str(authority.id))
+
+    chunk = Chunk(data=data)
+    chunk.save()
+
+    if entry_id is not None:
+        entry = Entry.objects.select_for_update().get(id=entry_id)
+    else:
+        entry = Entry()
+
+    subtype = Entry.MANUAL if command == "save" else Entry.RECOVERY
+
+    try:
+        if not try_updating_entry(request, entry, chunk, xmltree,
+                                  Entry.UPDATE, subtype):
+            # Update failed due to locking
+            lock = EntryLock.objects.get(entry=entry)
+            messages.append(
+                {'type': 'save_transient_error',
+                 'msg': 'The entry is locked by user %s.'
+                 % lock.owner.username})
+            transaction.rollback()
+            return
+    except IntegrityError as e:
+        # Try to determine what the problem is.
+        if Entry.objects.get(headword=entry.headword):
+            # Duplicate headword
+            messages.append(
+                {'type': 'save_transient_error',
+                 'msg': 'There is another entry with the lemma "{0}".'
+                 .format( entry.headword)})
+            transaction.rollback()
+            return
+
+        # Can't figure it out.
+        raise
+
+    if entry_id is None:
+        hm.associate(handle, entry.id)
+    messages.append({'type': 'save_successful'})
+    transaction.commit()
+
 
 @login_required
 @require_GET
@@ -315,12 +344,32 @@ def editing_data(request):
     return HttpResponse(storage_to_editable(found_entries[0].data),
                         content_type="text/plain")
 
-if settings.BTW_WED_LOGGING_PATH is None:
-    raise ImproperlyConfigured("BTW_WED_LOGGING_PATH must be set to where "
-                               "you want wed's logs to be stored.")
-else:
+_cached_BTW_WED_LOGGING_PATH = None
+
+
+def _get_and_check_logging_path():
+    # We can't just cache the logging path in by executing code at the
+    # top level of our module due to Django limitations. (It might
+    # cause unforeseen problems. So the first time this is called, it
+    # will do the sanity checks on BTW_WED_LOGGING_PATH and cache the
+    # value. On future calls, it won't do the checks again.
+
+    # pylint: disable=W0603
+    global _cached_BTW_WED_LOGGING_PATH
+
+    if _cached_BTW_WED_LOGGING_PATH is not None:
+        return _cached_BTW_WED_LOGGING_PATH
+
+    if settings.BTW_WED_LOGGING_PATH is None:
+        raise ImproperlyConfigured("BTW_WED_LOGGING_PATH must be set to where "
+                                   "you want wed's logs to be stored.")
+
     if not os.path.exists(settings.BTW_WED_LOGGING_PATH):
         os.mkdir(settings.BTW_WED_LOGGING_PATH)
+
+    _cached_BTW_WED_LOGGING_PATH = settings.BTW_WED_LOGGING_PATH
+    return _cached_BTW_WED_LOGGING_PATH
+
 
 @login_required
 @require_POST
@@ -328,10 +377,12 @@ def log(request):
     data = request.POST.get('data')
     username = request.user.username
     session_key = request.session.session_key
-    logfile = open(os.path.join(settings.BTW_WED_LOGGING_PATH,
+    logging_path = _get_and_check_logging_path()
+    logfile = open(os.path.join(logging_path,
                                 username + "_" + session_key + ".log"), 'a+')
     logfile.write(data)
     return HttpResponse()
+
 
 @login_required
 @entry_lock_required
@@ -343,6 +394,7 @@ def change_revert(request, change_id):
     try_updating_entry(request, change.entry, chunk, xmltree, Entry.REVERT,
                        Entry.MANUAL)
     return HttpResponse("<br>reverted.")
+
 
 @login_required
 @require_POST
