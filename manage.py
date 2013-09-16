@@ -4,11 +4,13 @@ import sys
 
 if __name__ == "__main__":
     # We always disable static serving.
-    if sys.argv[1] == "runserver" and "--nostatic" not in sys.argv[2:]:
+    if (len(sys.argv) > 1 and sys.argv[1] == "runserver"
+            and (len(sys.argv) < 3 or "--nostatic" not in sys.argv[2:])):
         sys.argv.append("--nostatic")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                          "btw.test_settings" if sys.argv[1] == "test"
+                          "btw.test_settings" if len(sys.argv) > 1 and
+                          sys.argv[1] == "test"
                           else "btw.settings")
 
     from django.core.management import execute_from_command_line
