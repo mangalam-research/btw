@@ -38,11 +38,6 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'default'
     },
-    'zotero': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(TOPDIR, 'cache/btw/zotero_cache'),
-        'TIMEOUT': 365 * 24 * 60 * 60
-    }
 }
 
 
