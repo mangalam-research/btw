@@ -193,3 +193,11 @@ class OtherAuthority(Authority):
     class Meta(object):
         verbose_name_plural = "OtherAuthorities"
     name = models.CharField(max_length=1024)
+
+class Handle(models.Model):
+    class Meta(object):
+        unique_together = (("session", "handle"), ("session", "entry"))
+
+    session = models.CharField(max_length=100)
+    handle = models.IntegerField()
+    entry = models.ForeignKey(Entry, null=True)

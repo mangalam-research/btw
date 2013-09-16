@@ -1,58 +1,101 @@
-from django.utils import unittest
+import os
+
+from django.test import TransactionTestCase
+from django.db import transaction
 
 from .. import handles
+from ..models import Entry
 
 
-class HandleManagerTestCase(unittest.TestCase):
+dirname = os.path.dirname(__file__)
+local_fixtures = list(os.path.join(dirname, "fixtures", x)
+                      for x in ("views.json", ))
+
+class HandleManagerTestCase(TransactionTestCase):
+    fixtures = ["initial_data.json"] + local_fixtures
+
     def setUp(self):
-        self.manager = handles.HandleManager("q")
-
-    def test_next_name(self):
-        # pylint: disable-msg=W0212
-        self.assertEqual(self.manager._next_name, "0")
-        self.assertEqual(self.manager._next_name, "1")
-
-    def test_make_associated(self):
-        self.assertEqual(self.manager.make_associated(1), "0")
-
-    def test_make_associated_returns_constant_values(self):
-        self.assertEqual(self.manager.make_associated(1),
-                         self.manager.make_associated(1))
-        self.assertEqual(self.manager.make_associated(2),
-                         self.manager.make_associated(2))
-
-    def test_make_associated_returns_diff_values_for_diff_ids(self):
-        self.assertNotEqual(self.manager.make_associated(1),
-                            self.manager.make_associated(2))
+        self.a = handles.HandleManager("a")
+        self.b = handles.HandleManager("b")
 
     def test_make_unassociated_returns_unique_values(self):
-        self.assertNotEqual(self.manager.make_unassociated(),
-                            self.manager.make_unassociated())
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 0, "first")
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 1, "second")
+
+    def test_make_unassociated_is_per_session(self):
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 0, "first")
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 1, "second")
+
+        with transaction.commit_on_success():
+            self.assertEqual(self.b.make_unassociated(), 0, "first")
+        with transaction.commit_on_success():
+            self.assertEqual(self.b.make_unassociated(), 1, "second")
 
     def test_associate_associates(self):
-        handle = self.manager.make_unassociated()
-        self.manager.associate(handle, 1)
-        self.assertEqual(self.manager.make_associated(1), handle)
+        with transaction.commit_on_success():
+            handle = self.a.make_unassociated()
+        with transaction.commit_on_success():
+            self.a.associate(handle, 1)
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.id(handle), 1)
 
-    def test_associate_fails_on_already_associated_handle(self):
-        handle1 = self.manager.make_associated(1)
-        self.assertRaisesRegexp(ValueError,
-                                "handle 0 already associated",
-                                self.manager.associate, handle1, 1)
+    def test_associate_is_per_session(self):
+        with transaction.commit_on_success():
+            handle_a = self.a.make_unassociated()
+            handle_b = self.b.make_unassociated()
+        self.assertEqual(handle_a, handle_b)
 
-    def test_associate_fails_on_already_associated_id(self):
-        self.manager.make_associated(1)
-        handle2 = self.manager.make_unassociated()
-        self.assertRaisesRegexp(ValueError,
-                                "id 1 already associated",
-                                self.manager.associate, handle2, 1)
-
-    def test_id_works_with_associated_handle(self):
-        handle1 = self.manager.make_associated(1)
-        self.assertEqual(self.manager.id(handle1), 1)
-        handle2 = self.manager.make_associated(2)
-        self.assertEqual(self.manager.id(handle2), 2)
+        with transaction.commit_on_success():
+            self.a.associate(handle_a, 1)
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.id(handle_a), 1)
+            self.assertIsNone(self.b.id(handle_b))
 
     def test_id_works_with_unassociated_handle(self):
-        handle1 = self.manager.make_unassociated()
-        self.assertIsNone(self.manager.id(handle1))
+        with transaction.commit_on_success():
+            handle1 = self.a.make_unassociated()
+        with transaction.commit_on_success():
+            self.assertIsNone(self.a.id(handle1))
+
+    def test_id_fails_on_unknown_handle(self):
+        with transaction.commit_on_success():
+            self.assertRaisesRegexp(
+                ValueError,
+                "handle 0 does not exist",
+                self.a.id, 0)
+
+    def test_make_unassociated_remembers(self):
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 0, "first")
+        with transaction.commit_on_success():
+            self.assertEqual(self.a.make_unassociated(), 1, "second")
+
+        # This creates an object which will have to read from the DB.
+        new_a = handles.HandleManager("a")
+
+        with transaction.commit_on_success():
+            self.assertEqual(new_a.make_unassociated(), 2, "third")
+
+    def test_associate_remembers(self):
+        with transaction.commit_on_success():
+            handle_0 = self.a.make_unassociated()
+            handle_1 = self.a.make_unassociated()
+
+        with transaction.commit_on_success():
+            self.assertIsNone(self.a.id(handle_0))
+            self.assertIsNone(self.a.id(handle_1))
+
+        with transaction.commit_on_success():
+            self.a.associate(handle_0, Entry.objects.get(id=1))
+
+        # This creates an object which will have to read from the DB
+        # to recall what was associated
+        new_a = handles.HandleManager("a")
+
+        with transaction.commit_on_success():
+            self.assertEqual(new_a.id(handle_0), 1)
+            self.assertIsNone(new_a.id(handle_1))

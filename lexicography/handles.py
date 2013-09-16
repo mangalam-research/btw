@@ -3,8 +3,10 @@
 .. moduleauthor:: Louis-Dominique Dubeau <ldd@lddubeau.com>
 
 """
-import itertools
+from django.db.models import Max
+from django.db import transaction
 
+from .models import Handle
 
 class HandleManager(object):
     """
@@ -42,64 +44,56 @@ class HandleManager(object):
     """
     def __init__(self, session_key):
         self.session_key = session_key
+        self.handle_to_handle_obj_id = {}
         self.handle_to_entry_id = {}
         self.entry_id_to_handle = {}
-        self.__count = itertools.count()
-
-    @property
-    def _next_name(self):
-        return str(self.__count.next())
-
-    def make_associated(self, entry_id):
-        """
-Create a new handle if there is no handle associated with the
-id. Otherwise, return the handle already associated with it.
-
-:param entry_id: The id to associate.
-:type entry_id: int
-:returns: The handle.
-:rtype: str
-"""
-        handle = self.entry_id_to_handle.get(entry_id, None)
-        if handle is not None:
-            return handle
-
-        handle = self._next_name
-        while handle in self.handle_to_entry_id:
-            handle = self._next_name
-
-        self.entry_id_to_handle[entry_id] = handle
-        self.handle_to_entry_id[handle] = entry_id
-        return handle
 
     def make_unassociated(self):
         """
-Create an unassociated handle.
+        Create an unassociated handle.
 
-:returns: The handle.
-:rtype: str
-"""
-        handle = self._next_name
-        while handle in self.handle_to_entry_id:
-            handle = self._next_name
+        :returns: The handle. Guaranteed to be unique for this session.
+        :rtype: str
+        """
+        if not transaction.is_managed():
+            raise Exception("transactions must be managed")
 
+        max_handle = Handle.objects.select_for_update(). \
+                     filter(session=self.session_key). \
+                     aggregate(Max('handle'))['handle__max']
+
+        handle = 0 if max_handle is None else max_handle + 1
+        handle_obj = Handle(handle=handle, session=self.session_key)
+        handle_obj.save()
+
+        self.handle_to_handle_obj_id[handle] = handle_obj.id
         self.handle_to_entry_id[handle] = None
         return handle
 
     def associate(self, handle, entry_id):
         """
-Associate an unassociated handle with an id.
+        Associate an unassociated handle with an id. It is illegal to
+        associate a handle with more than one entry. It is also
+        illegal to have two handles point to the same entry.
 
-:param handle: The handle.
-:type handle: str
-:param entry_id: The id.
-:type entry_id: int
-"""
-        if self.handle_to_entry_id[handle] is not None:
+        :param handle: The handle.
+        :type handle: str
+        :param entry_id: The entry id.
+        :type entry_id: int
+        """
+        if not transaction.is_managed():
+            raise Exception("transactions must be managed")
+
+        if self.id(handle) is not None:
             raise ValueError("handle {0} already associated".format(handle))
 
         if self.entry_id_to_handle.get(entry_id, None) is not None:
             raise ValueError("id {0} already associated".format(entry_id))
+
+        handle_obj = Handle.objects.select_for_update().get(
+            id=self.handle_to_handle_obj_id[handle])
+        handle_obj.entry_id = entry_id
+        handle_obj.save()
 
         self.handle_to_entry_id[handle] = entry_id
         self.entry_id_to_handle[entry_id] = handle
@@ -113,10 +107,30 @@ Return the id associated with a handle.
 :returns: The id.
 :rtype: int or None
 """
-        return self.handle_to_entry_id[handle]
+        if not transaction.is_managed():
+            raise Exception("transactions must be managed")
+
+        # If it is there and not none, it can't have changed, so we
+        # don't have to read the database.
+        if handle in self.handle_to_entry_id and \
+           self.handle_to_entry_id[handle] is not None:
+            return self.handle_to_entry_id[handle]
+
+        # Otherwise, check whether it has been associated.
+        try:
+            handle_obj = Handle.objects.get(session=self.session_key,
+                                            handle=handle)
+        except Handle.DoesNotExist:
+            raise ValueError("handle {0} does not exist".format(handle))
+
+        entry_id = handle_obj.entry.id if handle_obj.entry is not None else None
+        self.handle_to_entry_id[handle] = entry_id
+        self.handle_to_handle_obj_id[handle] = handle_obj.id
+        if entry_id is not None:
+            self.entry_id_to_handle[entry_id] = handle
+        return entry_id
 
 _hms = {}
-
 
 def get_handle_manager(session):
     """
@@ -132,4 +146,5 @@ create one, associate it with the session and return it.
     if hm is None:
         hm = HandleManager(session.session_key)
         _hms[session.session_key] = hm
+
     return hm

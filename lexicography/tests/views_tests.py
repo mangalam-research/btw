@@ -377,6 +377,31 @@ class ViewsTestCase(TransactionWebTest):
         response = self.app.get(url, user='foo2')
         self.assertIn("The abcd entry is locked by foo (Foo Bwip).", response)
 
+    def test_save_with_stale_link(self):
+        """
+        Tests an unlikely situation if somehow someone has a stale link
+        id. This could also happen due to hacking. In this case, the entry is
+        locked already.
+        """
+        response, entry = self.open_abcd('foo')
+
+        nr_changes = ChangeRecord.objects.filter(entry=entry).count()
+        nr_chunks = Chunk.objects.all().count()
+
+        messages, _ = self.save(response, "foo2")
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_transient_error", messages)
+        self.assertEqual(len(messages["save_transient_error"]), 1)
+        self.assertEqual(messages["save_transient_error"][0]["msg"],
+                         "The entry is locked by user foo.")
+        # Check that no new data was recorded
+        self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
+                         nr_changes,
+                         "no change to the entry")
+
+        self.assertEqual(nr_chunks, Chunk.objects.all().count())
+
     def test_save_with_invalid_handle(self):
         """
         Tests an unlikely situation if somehow someone has a stale handle
@@ -388,11 +413,12 @@ class ViewsTestCase(TransactionWebTest):
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
+        response.form["saveurl"].value = reverse("lexicography_handle_save",
+                                                 args=("h:9999", ))
         messages, _ = self.save(response, "foo2")
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_fatal_error", messages)
-
         # Check that no new data was recorded
         self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
                          nr_changes,

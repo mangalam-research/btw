@@ -166,23 +166,27 @@ def entry_raw_update(request, entry_id):
 @require_GET
 def entry_new(request):
     hm = handles.get_handle_manager(request.session)
-    return HttpResponseRedirect(reverse('lexicography_handle_update',
-                                        args=(hm.make_unassociated(),)))
+    return HttpResponseRedirect(
+        reverse('lexicography_handle_update',
+                args=("h:" + str(hm.make_unassociated()),)))
 
 @login_required
 @require_GET
 @entry_lock_required
 def entry_update(request, entry_id):
-    hm = handles.get_handle_manager(request.session)
     return HttpResponseRedirect(reverse('lexicography_handle_update',
-                                        args=(hm.make_associated(entry_id),)))
+                                        args=(entry_id,)))
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
-def handle_update(request, handle):
-    hm = handles.get_handle_manager(request.session)
-    entry_id = hm.id(handle)
+def handle_update(request, handle_or_entry_id):
+    if handle_or_entry_id.startswith("h:"):
+        hm = handles.get_handle_manager(request.session)
+        handle = handle_or_entry_id[2:]
+        entry_id = hm.id(handle)
+    else:
+        entry_id = handle_or_entry_id
 
     entry = None
     if entry_id is not None:
@@ -206,7 +210,7 @@ def handle_update(request, handle):
     form = SaveForm(instance=chunk,
                     initial={"saveurl":
                              reverse('lexicography_handle_save',
-                                     args=(handle,))})
+                                     args=(handle_or_entry_id,))})
 
     return render(request, 'lexicography/new.html', {
         'form': form,
@@ -223,7 +227,7 @@ def version_check(version):
 @login_required
 @require_POST
 @transaction.commit_manually
-def handle_save(request, handle):
+def handle_save(request, handle_or_entry_id):
     if not request.is_ajax():
         transaction.rollback()
         return HttpResponseBadRequest()
@@ -235,25 +239,29 @@ def handle_save(request, handle):
         if command == "check":
             transaction.commit()
         elif command in ("save", "recover"):
-            _save_command(request, handle, command, messages)
+            _save_command(request, handle_or_entry_id, command, messages)
         else:
             transaction.rollback()
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
     return HttpResponse(resp, content_type="application/json")
 
-def _save_command(request, handle, command, messages):
-    hm = handles.get_handle_manager(request.session)
-
-    try:
-        entry_id = hm.id(handle)
-    except KeyError:
-        logger.error(("user {0} tried accessing handle {1} which did not exist"
-                     " in the handle manager associated with sesssion {2}")
-                     .format(request.user.username, handle,
-                             request.session.session_key))
-        messages.append({'type': 'save_fatal_error'})
-        return
+def _save_command(request, handle_or_entry_id, command, messages):
+    if handle_or_entry_id.startswith("h:"):
+        hm = handles.get_handle_manager(request.session)
+        handle = handle_or_entry_id[2:]
+        try:
+            entry_id = hm.id(handle)
+        except ValueError:
+            logger.error(("user {0} tried accessing handle {1} which did not exist"
+                         " in the handle manager associated with sesssion {2}")
+                         .format(request.user.username, handle,
+                                 request.session.session_key))
+            messages.append({'type': 'save_fatal_error'})
+            transaction.rollback()
+            return
+    else:
+        entry_id = handle_or_entry_id
 
     data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
     xmltree = XMLTree(data)
@@ -307,7 +315,7 @@ def _save_command(request, handle, command, messages):
                  % lock.owner.username})
             transaction.rollback()
             return
-    except IntegrityError as e:
+    except IntegrityError:
         # Try to determine what the problem is.
         if Entry.objects.get(headword=entry.headword):
             # Duplicate headword
@@ -322,7 +330,7 @@ def _save_command(request, handle, command, messages):
         raise
 
     if entry_id is None:
-        hm.associate(handle, entry.id)
+        hm.associate(handle, entry_id)
     messages.append({'type': 'save_successful'})
     transaction.commit()
 
