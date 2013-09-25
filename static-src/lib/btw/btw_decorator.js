@@ -95,7 +95,7 @@ function BTWDecorator(mode, meta) {
 
 oop.inherit(BTWDecorator, Decorator);
 
-BTWDecorator.prototype.init = function ($root) {
+BTWDecorator.prototype.addHandlers = function () {
     this._domlistener.addHandler(
         "included-element",
         util.classFromOriginalName("btw:sense"),
@@ -167,7 +167,7 @@ BTWDecorator.prototype.init = function ($root) {
                                      this._refreshNavigationHandler.bind(this));
     this._gui_domlistener.startListening();
 
-    Decorator.prototype.init.apply(this, arguments);
+    Decorator.prototype.addHandlers.apply(this, arguments);
     input_trigger_factory.makeSplitMergeInputTrigger(
         this._editor,
         util.classFromOriginalName("p"),
@@ -181,8 +181,6 @@ BTWDecorator.prototype.init = function ($root) {
         key.makeKey(";"),
         key_constants.BACKSPACE,
         key_constants.DELETE);
-
-
 };
 
 BTWDecorator.prototype.refreshElement = function ($root, $el) {
