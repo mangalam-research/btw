@@ -47,6 +47,10 @@ Requirements for testing
 * mocha
 * chai
 * sax
+If you want to contribute to salve, your code will have to pass the
+checks listed in `<.glerbl/repo_conf.py>`_. So you either have to
+install glerbl to get those checks done for you or run the checks
+through other means. See Contributing_.
 
 Testing
 =======
@@ -78,3 +82,14 @@ Tests performed with Chrome's memory profiler by doing:
 Show that the whole Walker tree created before the first profile is
 created still exists at the time of the second profile. I do not know
 of a good explanation for this.
+
+============
+Contributing
+============
+
+Contributions must pass the commit checks turned on in
+`<.glerbl/repo_conf.py>`. Use ``glerbl install`` to install the
+hooks. Glerbl itself can be found at
+https://github.com/lddubeau/glerbl. It will eventually make its way to
+the Python package repository so that ``pip install glerbl`` will
+work.

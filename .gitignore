@@ -10,3 +10,4 @@
 doc/_build
 doc/_apidoc
 build
+.glerbl/local_conf.py
