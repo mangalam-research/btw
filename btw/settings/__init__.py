@@ -219,6 +219,7 @@ BTW_WED_PATH = None
 BTW_WED_CSS = None
 BTW_WED_LOGGING_PATH = None
 BTW_QUNIT_CSS_PATH = None
+BTW_SITE_NAME = "BTW"
 
 # Execute the env specific overrides
 exec _env.find_config("btw") in globals()

@@ -40,7 +40,9 @@ schemas_dirname = os.path.join(dirname, "../utils/schemas")
 
 @require_GET
 def main(request):
-    return render(request, 'lexicography/main.html', {'form': SearchForm()})
+    return render(request, 'lexicography/main.html',
+                  {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
+                   'form': SearchForm()})
 
 
 @require_GET
@@ -59,12 +61,14 @@ def search(request):
 
         found_entries |= active_entries.filter(c_hash=chunks)
 
-    return render_to_response('lexicography/main.html',
-                              {'form': SearchForm(request.GET),
-                               'query_string': query_string,
-                               'user': request.user,
-                               'found_entries': found_entries},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'lexicography/main.html',
+        {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
+         'form': SearchForm(request.GET),
+         'query_string': query_string,
+         'user': request.user,
+         'found_entries': found_entries},
+        context_instance=RequestContext(request))
 
 
 @require_GET
@@ -157,6 +161,7 @@ def entry_raw_update(request, entry_id):
         form = RawSaveForm(instance=tmp)
 
     ret = render(request, 'lexicography/new.html', {
+        'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
         'form': form,
     })
     return ret
@@ -169,6 +174,7 @@ def entry_new(request):
     return HttpResponseRedirect(
         reverse('lexicography_handle_update',
                 args=("h:" + str(hm.make_unassociated()),)))
+
 
 @login_required
 @require_GET
@@ -213,9 +219,9 @@ def handle_update(request, handle_or_entry_id):
                                      args=(handle_or_entry_id,))})
 
     return render(request, 'lexicography/new.html', {
+        'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
         'form': form,
     })
-
 
 
 def version_check(version):
@@ -246,6 +252,7 @@ def handle_save(request, handle_or_entry_id):
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
     return HttpResponse(resp, content_type="application/json")
 
+
 def _save_command(request, handle_or_entry_id, command, messages):
     if handle_or_entry_id.startswith("h:"):
         hm = handles.get_handle_manager(request.session)
@@ -253,10 +260,11 @@ def _save_command(request, handle_or_entry_id, command, messages):
         try:
             entry_id = hm.id(handle)
         except ValueError:
-            logger.error(("user {0} tried accessing handle {1} which did not exist"
-                         " in the handle manager associated with sesssion {2}")
-                         .format(request.user.username, handle,
-                                 request.session.session_key))
+            logger.error(
+                ("user {0} tried accessing handle {1} which did not exist"
+                 " in the handle manager associated with sesssion {2}")
+                .format(request.user.username, handle,
+                        request.session.session_key))
             messages.append({'type': 'save_fatal_error'})
             transaction.rollback()
             return
@@ -322,7 +330,7 @@ def _save_command(request, handle_or_entry_id, command, messages):
             messages.append(
                 {'type': 'save_transient_error',
                  'msg': 'There is another entry with the lemma "{0}".'
-                 .format( entry.headword)})
+                 .format(entry.headword)})
             transaction.rollback()
             return
 

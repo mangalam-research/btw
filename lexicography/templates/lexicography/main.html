@@ -1,8 +1,7 @@
-{% extends "base.html" %}
+{% extends "base_site.html" %}
 {% load url from future %}
 {% load libcore %}
 {% load liblex %}
-{% block head %}Lexicography{% endblock %}
 {% block content %}
 <a href="{% url 'lexicography_entry_new' %}"/>New</a>
 <form action="search" method="get">{% csrf_token %}

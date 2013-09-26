@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
     <head>
 	<meta http-equiv="Content-Type" content="text/xhtml; charset=utf-8">
-        <title>{% block page_title %}BTW{% endblock %} </title>
+        <title>{% block page_title %}BTW{% endblock %}</title>
 	<script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
 	<script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
 	<script type="text/javascript">
@@ -15,7 +15,9 @@
     </head>
 
     <body>
-        <h1>{% block head %}{% endblock %}</h1>
+        <div id="branding">
+        {% block branding %}{% endblock %}
+        </div>
         {% block content %}{% endblock %}
         <div class="footer">
           <a href="/">Main page</a>

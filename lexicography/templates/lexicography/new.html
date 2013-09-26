@@ -1,8 +1,9 @@
-{% extends "base.html" %}
+{% extends "base_site.html" %}
 {% block extrahead %}
 {{ form.media }}
 {% endblock %}
-{% block head %}Lexicography{% endblock %}
+{% block branding %}
+{% endblock %}
 {% block content %}
 <form id="form" action="" method="post">{% csrf_token %}
 {{ form }}

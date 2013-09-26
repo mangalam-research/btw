@@ -18,6 +18,7 @@ The possible state transitions are:
 from django.template.response import TemplateResponse
 from django.db import transaction
 from django.http import HttpResponse
+from django.conf import settings
 
 import json
 import logging
@@ -203,7 +204,9 @@ back.
                 return HttpResponse(resp, content_type="application/json")
             else:
                 transaction.rollback()
-                return TemplateResponse(request, 'lexicography/locked.html',
-                                        {'lock': lock})
+                return TemplateResponse(
+                    request, 'lexicography/locked.html',
+                    {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
+                     'lock': lock})
         return view(request, *args, **kwargs)
     return wrapper
