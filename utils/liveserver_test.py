@@ -1,9 +1,17 @@
 import threading
+import os
 
 from django.test import LiveServerTestCase
 
+dirname = os.path.dirname(__file__)
+fixtures = list(os.path.join(os.path.dirname(dirname), "lexicography",
+                             "tests", "fixtures", x)
+                for x in ("users.json", "views.json"))
+
 
 class SeleniumTest(LiveServerTestCase):
+    fixtures = ["initial_data.json"] + fixtures
+
     def test_run(self):
         # This effectively causes the test to stop and wait for the
         # server to die.
