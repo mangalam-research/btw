@@ -95,13 +95,13 @@ like ``selenium-server-standalone-<version>.jar``. Chromedriver is
 documentation for its use is `here
 <http://code.google.com/p/selenium/wiki/ChromeDriver>`__.
 
-Everything that follows is specific to BTW. The first thing you need
-to do is copy `<config/selenium_local_config.py>`_ to
-`<local_config/selenium_local_config.py>`_ and edit it. If you want to
-use SauceLab's servers, set ``SAUCELABS_CREDENTIALS`` to your
-credentials on SauceLab. (Of course, you must have a SauceLab
-account.) If you use chromedriver you want to set
-``CHROMEDRIVER_PATH`` to the path where it resides.
+Everything that follows is specific to BTW. You need to have `selenic
+<http://github.com/mangalam-research/selenic>`_ installed and
+available on your ``PYTHONPATH``. Read its documentation. Then you
+need to create a `<config/selenium_local_config.py>`_ file. Use one of
+the example files provided with selenic. You also need to have
+`wedutil <http://github.com/mangalam-research/wedutil>`_ installed and
+available on your ``PYTHONPATH``.
 
 To run the Selenium-based tests, you must use a Django live server set
 up for testing. This server can work in standalone mode *or* behind an
