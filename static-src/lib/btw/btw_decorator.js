@@ -866,7 +866,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
     }
 
     new context_menu.ContextMenu(this._editor.my_window.document,
-                                 ev.pageX, ev.pageY, "none", items);
+                                 ev.clientX, ev.clientY, "none", items);
 
     return false;
 });
