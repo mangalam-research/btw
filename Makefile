@@ -16,10 +16,6 @@ RST2HTML?=rst2html
 # jsdoc3 command
 JSDOC3?=jsdoc
 
-# Where wedutil.py is located. You typically do not need to set it if
-# you set WED_PATH properly.
-WEDUTIL_PATH=$(WED_PATH)/selenium_test/lib/
-
 # Parameters to pass to behave
 BEHAVE_PARAMS?=
 
@@ -108,7 +104,7 @@ README.html: README.rst
 
 .PHONY: selenium-test
 selenium-test: _all
-	PYTHONPATH=$(WEDUTIL_PATH) behave $(BEHAVE_PARAMS) selenium_test
+	behave $(BEHAVE_PARAMS) selenium_test
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
