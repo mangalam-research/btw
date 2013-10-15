@@ -234,23 +234,26 @@ def version_check(version):
 @require_POST
 @transaction.commit_manually
 def handle_save(request, handle_or_entry_id):
-    if not request.is_ajax():
-        transaction.rollback()
-        return HttpResponseBadRequest()
-
-    command = request.POST.get("command")
-    messages = []
-    if command:
-        messages += version_check(request.POST.get("version"))
-        if command == "check":
-            transaction.commit()
-        elif command in ("save", "recover"):
-            _save_command(request, handle_or_entry_id, command, messages)
-        else:
+    try:
+        if not request.is_ajax():
             transaction.rollback()
-            return HttpResponseBadRequest("unrecognized command")
-    resp = json.dumps({'messages': messages}, ensure_ascii=False)
-    return HttpResponse(resp, content_type="application/json")
+            return HttpResponseBadRequest()
+
+        command = request.POST.get("command")
+        messages = []
+        if command:
+            messages += version_check(request.POST.get("version"))
+            if command == "check":
+                transaction.commit()
+            elif command in ("save", "recover"):
+                _save_command(request, handle_or_entry_id, command, messages)
+            else:
+                transaction.rollback()
+                return HttpResponseBadRequest("unrecognized command")
+        resp = json.dumps({'messages': messages}, ensure_ascii=False)
+        return HttpResponse(resp, content_type="application/json")
+    finally:
+        transaction.rollback()
 
 
 def _save_command(request, handle_or_entry_id, command, messages):
@@ -335,6 +338,7 @@ def _save_command(request, handle_or_entry_id, command, messages):
             return
 
         # Can't figure it out.
+        logger.error("undetermined integrity error")
         raise
 
     if entry_id is None:
