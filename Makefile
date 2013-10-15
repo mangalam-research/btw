@@ -1,5 +1,10 @@
 -include local.mk
 
+#
+# Customizable variables. Set them in a local.mk file rather than
+# modify this file. What follows are the default values.
+#
+
 # No default value for wed path
 ifndef WED_PATH
 $(error WED_PATH must point to the top level directory of wed\'s file tree.)
@@ -10,6 +15,17 @@ RST2HTML?=rst2html
 
 # jsdoc3 command
 JSDOC3?=jsdoc
+
+# Where wedutil.py is located. You typically do not need to set it if
+# you set WED_PATH properly.
+WEDUTIL_PATH=$(WED_PATH)/selenium_test/lib/
+
+# Parameters to pass to behave
+BEHAVE_PARAMS?=
+
+#
+# End of customizable variables.
+#
 
 BUILD_DIR:=build
 
@@ -92,7 +108,7 @@ README.html: README.rst
 
 .PHONY: selenium-test
 selenium-test: _all
-	behave selenium_test
+	PYTHONPATH=$(WEDUTIL_PATH) behave $(BEHAVE_PARAMS) selenium_test
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
