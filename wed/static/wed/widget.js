@@ -37,6 +37,8 @@
 
                 var wed_editor = new wed.Editor();
                 wed_editor.init(widget, options);
+                // Yep, this means only one wed editor per window.
+                window.wed_editor = wed_editor;
                 wed_editor.whenCondition("initialized",
                                          function () {
                     $widget.prev().remove();
