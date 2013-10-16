@@ -103,7 +103,7 @@ README.html: README.rst
 	$(RST2HTML) $< $@
 
 .PHONY: selenium-test
-selenium-test: _all
+selenium-test: all
 	behave $(BEHAVE_PARAMS) selenium_test
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
