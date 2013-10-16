@@ -98,9 +98,15 @@ documentation for its use is `here
 Everything that follows is specific to BTW. You need to have `selenic
 <http://github.com/mangalam-research/selenic>`_ installed and
 available on your ``PYTHONPATH``. Read its documentation. Then you
-need to create a `<config/selenium_local_config.py>`_ file. Use one of
-the example files provided with selenic. You also need to have
-`wedutil <http://github.com/mangalam-research/wedutil>`_ installed and
+need to create a `<local_config/selenium_local_config.py>`_ file. Use
+one of the example files provided with selenic. Add the following
+variable to your `<local_config/selenium_local_config.py>`_ file::
+
+    # Location of the BTW server.
+    SERVER = "http://localhost:8080"
+
+You also need to have `wedutil
+<http://github.com/mangalam-research/wedutil>`_ installed and
 available on your ``PYTHONPATH``.
 
 To run the Selenium-based tests, you must use a Django live server set
@@ -119,6 +125,9 @@ BTW.
           compress contents, understands caching on the basis of
           modification times, etc.
 
+The configuration environment used for the seleinum tests is named
+``selenium``. See `Environment and Settings`_.
+
 Standalone
 ----------
 
@@ -126,7 +135,7 @@ Running ``./manage.py runserver`` would run the tests on the database
 which you use for development. Not a good deal. So instead you should
 run::
 
-    $ ./manage.py test utils/liveserver_test.py
+    $ BTW_ENV=selenium ./manage.py test utils/liveserver_test.py
 
 This will create a live server and wait until it dies. Yes, that's a
 quick and dirty hack. At any rate the server will be ready to handle
