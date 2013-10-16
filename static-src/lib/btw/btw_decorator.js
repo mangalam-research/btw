@@ -31,6 +31,11 @@ function BTWDecorator(mode, meta) {
     this._meta = meta;
     this._sense_refman = new refmans.SenseReferenceManager();
     this._example_refman = new refmans.ExampleReferenceManager();
+
+    // We bind them here so that we have a unique function to use.
+    this._bound_getSenseLabel = this._getSenseLabel.bind(this);
+    this._bound_getSubsenseLabel = this._getSubsenseLabel.bind(this);
+
     this._section_heading_specs = [ {
         selector: "btw:definition",
         heading: "definition"
@@ -59,29 +64,29 @@ function BTWDecorator(mode, meta) {
     }, {
         selector: "btw:explanation",
         heading: "brief explanation of sense",
-        label_f: this._getSubsenseLabel.bind(this)
+        label_f: this._bound_getSubsenseLabel
     }, {
         selector: "btw:citations",
         heading: "selected citations for sense",
-        label_f: this._getSubsenseLabel.bind(this)
+        label_f: this._bound_getSubsenseLabel
     }, {
         selector: "btw:contrastive-section",
         heading: "contrastive section for sense",
-        label_f: this._getSenseLabel.bind(this)
+        label_f: this._bound_getSenseLabel
     }, {
         selector: "btw:antonyms",
         heading: "antonyms"
     }, {
         selector: "btw:cognates",
         heading: "cognates related to sense",
-        label_f: this._getSenseLabel.bind(this)
+        label_f: this._bound_getSenseLabel
     }, {
         selector: "btw:conceptual-proximates",
         heading: "conceptual proximates"
     }, {
         selector: "btw:sense>btw:other-citations",
         heading: "other citations for sense ",
-        label_f: this._getSenseLabel.bind(this)
+        label_f: this._bound_getSenseLabel
     }, {
         selector: "btw:other-citations",
         heading: "other citations"
@@ -386,17 +391,35 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
 
 BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
     var dec = this;
+    function decorateSubheader () {
+        /* jshint validthis: true */
+        dec.sectionHeadingDecorator($root, $(this),
+                                    dec._gui_updater);
+    }
+
     this._sense_refman.deallocateAll();
     $root.find(util.classFromOriginalName("btw:sense")).each(function () {
-        var $this = $(this);
-        dec.idDecorator($this.get(0));
-        dec.sectionHeadingDecorator($root, $this, dec._gui_updater);
+        var $sense = $(this);
+        dec.idDecorator($sense.get(0));
+        dec.sectionHeadingDecorator($root, $sense, dec._gui_updater);
+        // Refresh the headings that use the sense label.
+        for (var s_ix = 0, spec;
+             (spec = dec._section_heading_specs[s_ix]) !== undefined; ++s_ix)
+        {
+            if (spec.label_f === dec._bound_getSenseLabel)
+                $sense.find(spec.selector).each(decorateSubheader);
+        }
     });
     this._domlistener.trigger("included-subsense");
 };
 
 BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
     var dec = this;
+    function decorateSubheader () {
+        /* jshint validthis: true */
+        dec.sectionHeadingDecorator($root, $(this), dec._gui_updater);
+    }
+
     $root.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
         dec.idDecorator($subsense.get(0));
@@ -413,10 +436,14 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
 
             dec.sectionHeadingDecorator($root, $this, dec._gui_updater);
         });
-        $subsense.children(util.classFromOriginalName("btw:citations")).each(
-            function () {
-            dec.sectionHeadingDecorator($root, $(this), dec._gui_updater);
-        });
+
+        // Refresh the headings that use the subsense label.
+        for (var s_ix = 0, spec;
+             (spec = dec._section_heading_specs[s_ix]) !== undefined; ++s_ix)
+        {
+            if (spec.label_f === dec._bound_getSubsenseLabel)
+                $subsense.find(spec.selector).each(decorateSubheader);
+        }
     });
 };
 
@@ -822,18 +849,24 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
 BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
     var node = ev.data.node;
     var orig_name = util.getOriginalName(node);
-    var items = [];
     var container = node.parentNode;
     var offset = _indexOf.call(container.childNodes, node);
+    var data = {element_name: orig_name};
+    var tuples = [];
+
+    // Each "insert" action is conveted to an "Insert ... before.." action.
     var actions = this._mode.getContextualActions("insert", orig_name,
                                                   container, offset);
+    var act_ix, act;
+    for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
+        tuples.push([act, data, [container, offset], act.getLabelFor(data) +
+                     " before this one</a>"]);
 
-    var data = {element_name: orig_name};
-    var triples = [];
-    for(var act_ix = 0, act; (act = actions[act_ix]) !== undefined;
-        ++act_ix)
-        triples.push([act, data, act.getLabelFor(data) +
-                      " before this one</a>"]);
+    actions = this._mode.getContextualActions("insert", orig_name,
+                                              container, offset + 1);
+    for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
+        tuples.push([act, data, [container, offset + 1],
+                      act.getLabelFor(data) + " after this one</a>"]);
 
     var $this_li = $(ev.currentTarget).closest("li");
     var $sense_links = $this_li.parent().find('li[data-wed-for="' + orig_name +
@@ -844,24 +877,24 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
         // sense.
         data = {element_name: orig_name, node: node};
         if ($sense_links.first().findAndSelf(ev.currentTarget).length === 0)
-            triples.push(
-                [this._mode.swap_with_prev_tr, data,
+            tuples.push(
+                [this._mode.swap_with_prev_tr, data, [container, offset],
                  this._mode.swap_with_prev_tr.getLabelFor(data)]);
 
         // Don't add swap with next if we are the link for the next
         // sense.
         if ($sense_links.last().findAndSelf(ev.currentTarget).length === 0)
-            triples.push(
-                [this._mode.swap_with_next_tr, data,
+            tuples.push(
+                [this._mode.swap_with_next_tr, data, [container, offset],
                  this._mode.swap_with_next_tr.getLabelFor(data)]);
     }
 
-    for(var tix = 0, triple; (triple = triples[tix]) !== undefined; ++tix) {
-        var $a = $("<a tabindex='0' href='#'>" + triple[2] + "</a>");
-        $a.click(triple[1],
-                 transformation.moveDataCaretFirst(this._editor,
-                                                   [container, offset],
-                                                   triple[0]));
+    var items = [];
+    for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
+        var $a = $("<a tabindex='0' href='#'>" + tup[3] + "</a>");
+        $a.click(tup[1],
+                 transformation.moveDataCaretFirst(this._editor, tup[2],
+                                                   tup[0]));
         items.push($("<li></li>").append($a).get(0));
     }
 
