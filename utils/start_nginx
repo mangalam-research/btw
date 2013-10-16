@@ -21,7 +21,8 @@ trap cleanup ERR
 mkdir -p var/run || true
 mkdir -p var/log || true
 mkdir -p var/lib/nginx || true
+mkdir -p var/log/btw || true
 
-./manage.py test utils/liveserver_test.py --liveserver=localhost:7777 & nginx -c `pwd`/build/config/nginx.conf
+BTW_ENV=selenium ./manage.py test utils/liveserver_test.py --liveserver=localhost:7777 & nginx -c `pwd`/build/config/nginx.conf
 
 wait
