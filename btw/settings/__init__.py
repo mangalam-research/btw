@@ -226,5 +226,7 @@ exec _env.find_config("btw") in globals()
 
 # Execute per-app overrides.
 for app in INSTALLED_APPS:
-    if app.find(".") < 0 and os.path.exists(os.path.join(CURDIR, app + ".py")):
-        exec open(os.path.join(CURDIR, app + ".py")) in globals()
+    if app.find(".") < 0:
+        if os.path.exists(os.path.join(CURDIR, app + ".py")):
+            exec open(os.path.join(CURDIR, app + ".py")) in globals()
+        exec _env.find_config(app) in globals()

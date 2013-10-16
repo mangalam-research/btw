@@ -285,9 +285,10 @@ settings/_env.py      environment management
 settings/<app>.py     settings specific to the application named <app>
 
 The __init__.py file inspects INSTALLED_APPS searching for local
-applications and **exec**s all the corresponding <app>.py files it
-finds. Note that because these files are execed in __init__.py's
-context, they can read and set variable that __init__.py sets.
+applications and passes to **exec** all the corresponding <app>.py
+files it finds. Note that because these files are executed in
+__init__.py's context, they can read and set variable that __init__.py
+sets.
 
 To allow for changing configurations easily BTW gets an environment
 name from the following sources:
@@ -301,9 +302,9 @@ name from the following sources:
 This environment value is then used by _env.find_config(name) to find
 configuration files:
 
-* ~/.config/btw/<name>.<env>.py
+* ~/.config/btw/<name>_<env>.py
 
-* /etc/btw/<name>.<env>.py
+* /etc/btw/<name>_<env>.py
 
 The **first** file found among the ones in the previous list is the
 one used. By convention _env.find_config should be used by the files
@@ -316,11 +317,11 @@ find_config **after** having done its local processing.
 The order of execution of the various files is:
 
 settings/__init__.py
-<conf>/btw.<env>.py
+<conf>/btw_<env>.py
 settings/<app1>.py
-<conf>/<app1>.<env>.py
+<conf>/<app1>_<env>.py
 settings/<app2>.py
-<conf>/<app2>.<env>.py
+<conf>/<app2>_<env>.py
 
 where <env> is the value of the environment set as described earlier,
 and <conf> is whatever path happens to contain the configuration file.
