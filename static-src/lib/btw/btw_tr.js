@@ -148,7 +148,7 @@ function getRemoveMixedModal(editor) {
     editor.setModeData(REMOVE_MIXED_MODAL_KEY, remove_mixed_modal);
 
     return remove_mixed_modal;
-};
+}
 
 function remove_mixed_handler(editor, node, element_name, data) {
     var range = editor.getDataSelectionRange();
