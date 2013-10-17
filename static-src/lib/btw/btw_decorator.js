@@ -109,12 +109,26 @@ BTWDecorator.prototype.addHandlers = function () {
         this.includedSenseHandler($el);
     }.bind(this));
 
+    this._gui_domlistener.addHandler(
+        "excluded-element",
+        util.classFromOriginalName("btw:sense"),
+        function () {
+        this._domlistener.trigger("included-sense");
+    }.bind(this));
+
     this._domlistener.addHandler(
         "included-element",
         util.classFromOriginalName("btw:subsense"),
         function ($root, $tree, $parent,
                   $prev, $next, $el) {
         this.includedSubsenseHandler($el);
+    }.bind(this));
+
+    this._gui_domlistener.addHandler(
+        "excluded-element",
+        util.classFromOriginalName("btw:subsense"),
+        function () {
+        this._domlistener.trigger("included-subsense");
     }.bind(this));
 
     this._domlistener.addHandler(
