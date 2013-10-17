@@ -109,7 +109,10 @@ BTWMode.prototype.init = function (editor) {
      */
 
     /**
-     * This is an object whose keys are the name of tags.
+     * This is an object whose keys are the name of tags. The values
+     * can be <code>true</code> if we pass all types of
+     * transformations, or a list of transformation types.
+     *
      * @private
      * @typedef Pass
      * @type {Object}
