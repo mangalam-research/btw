@@ -46,6 +46,14 @@ def step_impl(context, first, second):
 
 
 @record_senses
+@then(u'sense {label} remains the same')
+def step_impl(context, label):
+    context.execute_steps(u"""
+    Then sense {0} becomes sense {0}
+    """.format(label))
+
+
+@record_senses
 @then(u'a new sense {label} is created')
 def step_impl(context, label):
     util = context.util

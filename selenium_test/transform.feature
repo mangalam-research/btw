@@ -11,6 +11,12 @@ Scenario: using the navigation context menu to insert a sense before another sen
   Then sense A becomes sense B
   And a new sense A is created
 
+Scenario: using the navigation context menu to insert a sense after another sense
+  When the user brings up a context menu on navigation item "[SENSE A]"
+  And the user clicks the context menu option "Create new btw:sense after this one"
+  Then sense A remains the same
+  And a new sense B is created
+
 Scenario: undoing a sense insertion
   When the user brings up a context menu on navigation item "[SENSE A]"
   And the user clicks the context menu option "Create new btw:sense before this one"
