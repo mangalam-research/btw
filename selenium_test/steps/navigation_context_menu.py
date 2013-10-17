@@ -3,6 +3,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import selenium.webdriver.support.expected_conditions as EC
 
 from nose.tools import assert_equal  # pylint: disable=E0611
+from behave import then, when, given, step_matcher  # pylint: disable=E0611
 
 import selenic
 
@@ -15,21 +16,34 @@ def step_impl(context):
     """)
 
 
-@when('the user brings up a context menu on navigation item "{item}"')
-def step_impl(context, item):
+step_matcher("re")
+
+
+@when(ur'the user brings up a context menu on navigation item '
+      ur'"(?P<item>.*?)"(?:under "(?P<under>.*?)")?')
+def step_impl(context, item, under):
     driver = context.driver
     util = context.util
-    sidebar = util.find_element((By.ID, "sidebar"))
+    search_point = util.find_element((By.ID, "sidebar"))
+
+    if under:
+        search_point = util.wait(
+            lambda: search_point.find_element_by_partial_link_text(under)).\
+            find_element_by_xpath("..")
 
     def cond(*_):
-        return sidebar.find_element_by_partial_link_text(item)
+        return search_point.find_element_by_partial_link_text(item)
 
     link = util.wait(cond)
     context.context_menu_trigger = link
 
     ActionChains(driver) \
-        .context_click(link) \
+        .move_to_element_with_offset(link, 10, 10) \
+        .context_click() \
         .perform()
+
+
+step_matcher("parse")
 
 
 @then("a context menu is visible close to where the user clicked")

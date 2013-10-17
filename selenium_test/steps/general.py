@@ -2,8 +2,10 @@ from nose.tools import assert_equal  # pylint: disable=E0611
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from behave import then, when, given  # pylint: disable=E0611
 
 import wedutil
+from selenium_test import btw_util
 
 
 @given("the user has logged in")
@@ -56,7 +58,16 @@ def step_impl(context):
     # transformations are applied, so record it.
     if context.require_sense_recording:
         # We gather the btw:english-term text associated with each btw:sense.
-        context.initial_sense_terms = wedutil.get_sense_terms(util)
+        context.initial_sense_terms = btw_util.get_sense_terms(util)
+
+    if context.require_rendition_recording:
+        sense_els = btw_util.get_senses(util)
+        context.initial_renditions_by_sense = {}
+        for sense in context.require_rendition_recording:
+            sense_el = sense_els[btw_util.sense_label_to_index(sense)]
+            renditions = btw_util.get_rendition_terms_for_sense(sense_el)
+
+            context.initial_renditions_by_sense[sense] = renditions
 
 
 @given("a context menu is not visible")
