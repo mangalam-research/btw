@@ -35,7 +35,10 @@ def step_impl(context, item, under):
         return search_point.find_element_by_partial_link_text(item)
 
     link = util.wait(cond)
-    context.context_menu_trigger = link
+    target = link.location
+    target["x"] += 10
+    target["y"] += 10
+    context.context_menu_location = target
 
     ActionChains(driver) \
         .move_to_element_with_offset(link, 10, 10) \
@@ -52,10 +55,7 @@ def step_impl(context):
 
     menu = util.find_element((By.CLASS_NAME, "wed-context-menu"))
     # The click was in the middle of the trigger.
-    trigger = context.context_menu_trigger
-    target = trigger.location
-    target["x"] += trigger.size["width"] / 2
-    target["y"] += trigger.size["height"] / 2
+    target = context.context_menu_location
     assert_equal(selenic.util.locations_within(menu.location, target, 10), '')
 
 
