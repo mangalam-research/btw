@@ -54,6 +54,22 @@ BTWMeta.prototype.isInline = function (node) {
     }
 };
 
+var cached_mapping;
+
+BTWMeta.prototype.getNamespaceMappings = function () {
+    // BTW's mapping is identical to TEI's but with the addition of
+    // the "btw" prefix.
+    if (cached_mapping)
+        return cached_mapping;
+
+    var ret = TEIMeta.prototype.getNamespaceMappings.call(this);
+    $.extend({}, ret, {
+        "btw": "http://mangalamresearch.org/ns/btw-storage"
+    });
+    cached_mapping = ret;
+    return ret;
+};
+
 exports.Meta = BTWMeta;
 
 });

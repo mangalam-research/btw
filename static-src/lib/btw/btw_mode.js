@@ -24,13 +24,6 @@ var btw_tr = require("./btw_tr");
 var btw_actions = require("./btw_actions");
 require("jquery.cookie");
 
-var prefix_to_uri = {
-    "btw": "http://mangalamresearch.org/ns/btw-storage",
-    "tei": "http://www.tei-c.org/ns/1.0",
-    "xml": "http://www.w3.org/XML/1998/namespace",
-    "": "http://www.tei-c.org/ns/1.0"
-};
-
 /**
  * @class
  * @extends module:wed/modes/generic/generic~Mode
@@ -42,9 +35,6 @@ function BTWMode (options) {
     delete options.bibl_info_url;
     delete options.bibl_abbrev_url;
     Mode.call(this, options);
-    Object.keys(prefix_to_uri).forEach(function (k) {
-        this._resolver.definePrefix(k, prefix_to_uri[k]);
-    }.bind(this));
     this._contextual_menu_items = [];
     this._headers = {
         "X-CSRFToken": $.cookie("csrftoken")
