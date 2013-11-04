@@ -1,9 +1,13 @@
 require.config({
  baseUrl: '/static/lib/',
  paths: {
-   'jquery': 'jquery-1.9.1',
-   'qunit': 'qunit-1.12.0',
-   'bootstrap': 'bootstrap/js/bootstrap.min',
+   'jquery': 'external/jquery-1.9.1',
+   'bootstrap': 'external/bootstrap/js/bootstrap.min',
+   'log4javascript': 'external/log4javascript',
+   'jquery.bootstrap-growl': 'external/jquery.bootstrap-growl',
+   'font-awesome': 'external/font-awesome',
+   'jquery.cookie': 'external/jquery.cookie',
+   'qunit': 'external/qunit-1.12.0',
      // For bibsearch
    'modules': '/static/scripts/modules'
  },
@@ -13,21 +17,13 @@ require.config({
      exports: "jQuery.fn.popover",
      init: function () { jQuery.noConflict() }
    },
-   'bootstrap-contextmenu': {
-     deps: ["bootstrap"],
-     exports: "jQuery.fn.contextmenu"
-   },
-   'rangy/rangy-core': {
+   'external/rangy/rangy-core': {
      exports: "rangy",
      init: function() { return this.rangy; }
    },
-   'rangy/rangy-selectionsaverestore': {
-     deps: ["rangy/rangy-core"],
+   'external/rangy/rangy-selectionsaverestore': {
+     deps: ["external/rangy/rangy-core"],
      exports: "rangy.modules.SaveRestore"
-   },
-   'wed/jquery.findandself': {
-     deps: ["jquery"],
-     exports: "jQuery.fn.findAndSelf"
    },
    'jquery.bootstrap-growl': {
      deps: ["jquery", "bootstrap"],
@@ -36,10 +32,6 @@ require.config({
    'jquery.cookie': {
      deps: ["jquery"],
      exports: "jQuery.cookie"
-   },
-   'mocha/mocha': {
-     exports: "mocha",
-     init: function () { this.mocha.setup('bdd'); return this.mocha; }
    },
    'log4javascript': {
        exports: "log4javascript"
