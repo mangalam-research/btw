@@ -29,7 +29,6 @@ Scenario: using the navigation context menu to insert an english rendition befor
   Then the first english rendition becomes second
   And a new first english rendition is created
 
-@wip
 Scenario: using the navigation context menu to insert an english rendition after another english rendition
   When the user brings up a context menu on navigation item "[English rendition]" under "[SENSE A]"
   And the user clicks the context menu option "Create new btw:english-rendition after this one"
