@@ -378,7 +378,7 @@ to your modified text.</p>
               <rng:choice>
                 <rng:ref name="btw_todo"/>
                 <rng:text/>
-                <rng:ref name="term"/>
+                <rng:ref name="foreign"/>
               </rng:choice>
             </rng:oneOrMore>
           </content>
