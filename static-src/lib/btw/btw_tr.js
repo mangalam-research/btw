@@ -19,7 +19,7 @@ var makeElement = transformation.makeElement;
 var insertIntoText = transformation.insertIntoText;
 var Transformation = transformation.Transformation;
 
-function insert_ptr(editor, node, element_name, data) {
+function insert_ptr(editor, data) {
     var caret = editor.getDataCaret();
     var parent = caret[0];
     var index = caret[1];
@@ -36,7 +36,7 @@ function insert_ptr(editor, node, element_name, data) {
     editor.setDataCaret(new_caret);
 }
 
-function insert_ref(editor, node, element_name, data) {
+function insert_ref(editor, data) {
     var caret = editor.getDataCaret();
     var parent = caret[0];
     var index = caret[1];
@@ -86,7 +86,7 @@ SetTextLanguageTr.prototype.execute = function(data) {
     Transformation.prototype.execute.call(this, data);
 };
 
-function set_language_handler(editor, node, element_name, data) {
+function set_language_handler(editor, data) {
     var range = editor.getDataSelectionRange();
     if (!domutil.isWellFormedRange(range)) {
         editor.straddling_modal.modal();
@@ -150,7 +150,7 @@ function getRemoveMixedModal(editor) {
     return remove_mixed_modal;
 }
 
-function remove_mixed_handler(editor, node, element_name, data) {
+function remove_mixed_handler(editor, data) {
     var range = editor.getDataSelectionRange();
     if (!domutil.isWellFormedRange(range)) {
         editor.straddling_modal.modal();

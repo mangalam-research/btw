@@ -78,12 +78,18 @@ BTWMode.prototype.init = function (editor) {
     this.swap_with_prev_tr = new transformation.Transformation(
         editor, "Swap with previous sibling", undefined,
         "<i class='icon-long-arrow-up'></i>",
-        transformation.swapWithPreviousHomogeneousSibling);
+        function (editor, data) {
+        return transformation.swapWithPreviousHomogeneousSibling(
+            editor, data.node);
+        });
 
     this.swap_with_next_tr = new transformation.Transformation(
         editor, "Swap with next sibling", undefined,
         "<i class='icon-long-arrow-down'></i>",
-        transformation.swapWithNextHomogeneousSibling);
+        function (editor, data) {
+        return transformation.swapWithNextHomogeneousSibling(
+            editor, data.node);
+    });
 
     this.insert_bibl_ptr_action = new btw_actions.InsertBiblPtrDialogAction(
         editor, "Insert a new bibliographical reference.");
@@ -305,28 +311,24 @@ BTWMode.prototype.getContextualMenuItems = function () {
     var caret = this._editor.getCaret();
     var $container = $(caret[0]);
     var ptr = $container.closest(util.classFromOriginalName("ptr")).get(0);
-    if (ptr)
+    if (ptr) {
+        var data = {node: this._editor.toDataNode(ptr),
+                    element_name: "ptr",
+                    move_caret_to: this._editor.toDataCaret(ptr, 0)};
         this._tr.getTagTransformations("delete-element", "ptr").forEach(
             function (x) {
-            var data = {node: this._editor.toDataNode(ptr),
-                        element_name: "ptr"};
-            items.push([x.getDescriptionFor(data), data,
-                        transformation.moveDataCaretFirst(
-                            this._editor,
-                            this._editor.toDataCaret(ptr, 0),
-                            x)]);
+            items.push([x.getDescriptionFor(data), data, x]);
         }.bind(this));
+    }
 
     var ref = $container.closest(util.classFromOriginalName("ref")).get(0);
     if (ref) {
-        var data = {node: this._editor.toDataNode(ref), element_name: "ref" };
+        var data = {node: this._editor.toDataNode(ref), element_name: "ref",
+                    move_caret_to: this._editor.toDataCaret(ref, 0)
+                   };
         this._tr.getTagTransformations("delete-element", "ref").forEach(
             function (x) {
-            items.push([x.getDescriptionFor(data), data,
-                        transformation.moveDataCaretFirst(
-                            this._editor,
-                            this._editor.toDataCaret(ref, 0),
-                            x)]);
+            items.push([x.getDescriptionFor(data), data, x]);
         }.bind(this));
         var tr = new transformation.Transformation(
             this._editor, "Insert reference text",
@@ -337,11 +339,7 @@ BTWMode.prototype.getContextualMenuItems = function () {
                 gui_node, gui_node.childNodes.length - 1);
             this._editor.setCaret(gui_node.lastChild.previousSibling, 0);
         }.bind(this));
-        items.push([tr.getDescriptionFor(data), data,
-                    transformation.moveDataCaretFirst(
-                        this._editor,
-                        this._editor.toDataCaret(ref, 0),
-                        tr)]);
+        items.push([tr.getDescriptionFor(data), data, tr]);
     }
 
     return items.concat(this._contextual_menu_items);

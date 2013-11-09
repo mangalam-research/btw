@@ -17,6 +17,7 @@ var Transformation = transformation.Transformation;
 var updater_domlistener = require("wed/updater_domlistener");
 var btw_util = require("./btw_util");
 var context_menu = require("wed/gui/context_menu");
+var validate = require("salve/validate");
 
 var _indexOf = Array.prototype.indexOf;
 
@@ -398,6 +399,16 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
         id = subsense_refman.nextNumber();
         $el.attr(util.encodeAttrName("xml:id"), parent_wed_id + "." + id);
     }
+
+    if (!$el[0].firstChild) {
+        var saved = this._editor.getCaret();
+        this._editor.setDataCaret([$el.data("wed_mirror_node"), 0]);
+        this._mode.getContextualActions("insert", "btw:explanation",
+                                        $el[0], 0)[0]
+            .execute({element_name: "btw:explanation"});
+        this._editor.setCaret(saved);
+    }
+
     this.idDecorator($el[0]);
     this._domlistener.trigger("included-subsense");
 };
@@ -846,9 +857,15 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
         var data_parent = $parent.data("wed_mirror_node");
 
         if (orig_name === "btw:sense" ||
-            orig_name === "btw:english-rendition") {
+            orig_name === "btw:english-rendition" ||
+            orig_name === "btw:explanation") {
+            if (orig_name === "btw:explanation")
+                data_parent = $(data_parent).parent(
+                    util.classFromOriginalName("btw:subsense"))[0];
             $a.on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
+            $el.on("contextmenu", {node: data_parent},
+                   this._navigationContextMenuHandler.bind(this));
         }
 
         getParent(my_depth - 1).append($li);
@@ -861,54 +878,102 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
 };
 
 BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
+    // node is the node in the data tree which corresponds to the
+    // navigation item that for which a context menu handler was
+    // required by the user.
     var node = ev.data.node;
     var orig_name = util.getOriginalName(node);
+
+    // container, offset: location of the node in its parent.
     var container = node.parentNode;
     var offset = _indexOf.call(container.childNodes, node);
-    var data = {element_name: orig_name};
+
+    // List of items to put in the contextual menu.
     var tuples = [];
 
-    // Each "insert" action is conveted to an "Insert ... before.." action.
+    //
+    // Create "insert" transformations for siblings that could be
+    // inserted before this node.
+    //
     var actions = this._mode.getContextualActions("insert", orig_name,
                                                   container, offset);
+    // data to pass to transformations
+    var data = {element_name: orig_name,
+                move_caret_to: [container, offset]};
     var act_ix, act;
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
-        tuples.push([act, data, [container, offset], act.getLabelFor(data) +
+        tuples.push([act, data, act.getLabelFor(data) +
                      " before this one</a>"]);
 
+    //
+    // Create "insert" transformations for siblings that could be
+    // inserted after this node.
+    //
     actions = this._mode.getContextualActions("insert", orig_name,
                                               container, offset + 1);
+
+    data = {element_name: orig_name, move_caret_to: [container, offset + 1]};
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
-        tuples.push([act, data, [container, offset + 1],
-                      act.getLabelFor(data) + " after this one</a>"]);
+        tuples.push([act, data,
+                     act.getLabelFor(data) + " after this one</a>"]);
 
     var $this_li = $(ev.currentTarget).closest("li");
-    var $sense_links = $this_li.parent().find('li[data-wed-for="' + orig_name +
-                                              '"]');
+    var $sibling_links = $this_li.parent().find('li[data-wed-for="' +
+                                                orig_name + '"]');
 
-    if ($sense_links.length > 1) {
-        // Don't add swap with prev if we are the link for the first
-        // sense.
-        data = {element_name: orig_name, node: node};
-        if ($sense_links.first().findAndSelf(ev.currentTarget).length === 0)
+    // If the node has siblings we potentially add swap with previous
+    // and swap with next.
+    if ($sibling_links.length > 1) {
+        // However, don't add swap with prev if we are first.
+        data = {element_name: orig_name, node: node,
+                move_caret_to: [container, offset]};
+        if ($sibling_links.first().findAndSelf(ev.currentTarget).length === 0)
             tuples.push(
-                [this._mode.swap_with_prev_tr, data, [container, offset],
+                [this._mode.swap_with_prev_tr, data,
                  this._mode.swap_with_prev_tr.getLabelFor(data)]);
 
-        // Don't add swap with next if we are the link for the next
-        // sense.
-        if ($sense_links.last().findAndSelf(ev.currentTarget).length === 0)
+        // Don't add swap with next if we are last.
+        if ($sibling_links.last().findAndSelf(ev.currentTarget).length === 0)
             tuples.push(
-                [this._mode.swap_with_next_tr, data, [container, offset],
+                [this._mode.swap_with_next_tr, data,
                  this._mode.swap_with_next_tr.getLabelFor(data)]);
     }
 
+    // Delete the node
+    if (orig_name === "btw:subsense") {
+        data = {node: node, element_name: orig_name,
+                move_caret_to: [node, 0]};
+        this._mode._tr.getTagTransformations(
+            "delete-element", "btw:subsense").forEach(function (act) {
+                tuples.push([act, data, act.getLabelFor(data)]);
+            });
+    }
+
+    // Senses get an additional menu item to insert a subsense.
+    if (orig_name === "btw:sense" &&
+        $(node).children(util.classFromOriginalName("btw:subsense")).length ===
+        0) {
+        // We want to know where "btw:subsense" is valid.
+        var ename = this._mode._resolver.resolveName("btw:subsense");
+        var locations = this._editor.validator.possibleWhere(
+            node,
+            new validate.Event("enterStartTag", ename.ns, ename.name));
+
+        data = {element_name: "btw:subsense",
+                move_caret_to: [node, locations[0]]};
+        // We purposely don't use getContextualActions.
+        this._mode._tr.getTagTransformations(
+            "insert", "btw:subsense").forEach(
+                function (act) {
+                tuples.push([act, data, act.getLabelFor(data)]);
+            });
+    }
+
+    // Convert the tuples to actual menu items.
     var items = [];
     for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
-        var $a = $("<a tabindex='0' href='#'>" + tup[3] + "</a>");
-        $a.click(tup[1],
-                 transformation.moveDataCaretFirst(this._editor, tup[2],
-                                                   tup[0]));
+        var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
+        $a.click(tup[1], tup[0].bound_handler);
         items.push($("<li></li>").append($a).get(0));
     }
 
