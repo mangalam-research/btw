@@ -17,88 +17,90 @@
 
 }
 
-div.wed-document {
-    div {
-        &.head {
-            display: block;
+div.wed-frame {
+    div.wed-document {
+        div {
+            &.head {
+                display: block;
+                font-weight: bold;
+                margin-top: 1em;
+                margin-bottom: 1em;
+            }
+
+            &.p {
+                margin-top: 0em;
+                margin-bottom: 0em;
+                text-indent: 1em;
+            }
+        }
+
+        div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example, div.btw\:etymology, div.btw\:classical-renditions, div.btw\:modern-renditions {
+            margin-left: 0em;
+        }
+
+        div.btw\:subsense {
+            margin-left: 2em;
+
+            // It acts as the heading for the subsense.
+            >div.btw\:explanation>div.head {
+                margin-left: -1em;
+            }
+        }
+
+        div.btw\:lemma, div.btw\:overview>.head, div.btw\:sense-discrimination>.head, div.btw\:historico-semantical-data>.head, div.btw\:renditions-and-discussions>.head {
+            text-align: center;
+        }
+
+        div.btw\:english-rendition>div.btw\:english-term {
             font-weight: bold;
-            margin-top: 1em;
-            margin-bottom: 1em;
         }
 
-        &.p {
-            margin-top: 0em;
-            margin-bottom: 0em;
-            text-indent: 1em;
+        div.ptr a,div.btw\:sense-emphasis {
+            font-weight: bold;
         }
-    }
 
-    div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example, div.btw\:etymology, div.btw\:classical-renditions, div.btw\:modern-renditions {
-        margin-left: 0em;
-    }
-
-    div.btw\:subsense {
-        margin-left: 2em;
-
-        // It acts as the heading for the subsense.
-        >div.btw\:explanation>div.head {
-            margin-left: -1em;
+        div.btw\:lemma-instance {
+            color: green;
         }
-    }
 
-    div.btw\:lemma, div.btw\:overview>.head, div.btw\:sense-discrimination>.head, div.btw\:historico-semantical-data>.head, div.btw\:renditions-and-discussions>.head {
-        text-align: center;
-    }
-
-    div.btw\:english-rendition>div.btw\:english-term {
-        font-weight: bold;
-    }
-
-    div.ptr a,div.btw\:sense-emphasis {
-        font-weight: bold;
-    }
-
-    div.btw\:lemma-instance {
-        color: green;
-    }
-
-    div.btw\:antonym-instance {
-        color: #1D7074;
-    }
-
-    div.btw\:cognate-instance {
-        color: #FF7400;
-    }
-
-    div.btw\:conceptual-proximate-instance {
-        color: #FB000D;
-    }
-
-
-    div._btw_foreign {
-        background-color: #DFCFAF;
-        &._btw_foreign_italics {
-            font-style: italics;
+        div.btw\:antonym-instance {
+            color: #1D7074;
         }
-        * {
+
+        div.btw\:cognate-instance {
+            color: #FF7400;
+        }
+
+        div.btw\:conceptual-proximate-instance {
+            color: #FB000D;
+        }
+
+
+        div.foreign {
+            background-color: #DFCFAF;
+            font-style: italic;
+            &[data-wed-xml---lang|="zh"] {
+                font-syle: normal;
+            }
+            * {
             background-color: inherit;
+            }
         }
+
     }
 
-}
+    .bibsearch {
+        #result_list {
+            table th{
+                border: 1px solid grey;
+                padding: 8px;
+            }
 
-.bibsearch {
-    #result_list {
-        table th{
-            border: 1px solid grey;
-            padding: 8px;
-        }
-
-        table{
-            font-size: 11pt;
+            table{
+                font-size: 11pt;
             padding: 3px;
             border: 1px solid grey;
-        }
+            }
 
         td{
             border: 1px solid grey;
@@ -106,13 +108,14 @@ div.wed-document {
         }
         td.LFT{
             text-align: left;
-            }
+        }
 
-    }
+        }
 
-    h3 {text-decoration: underline;}
+        h3 {text-decoration: underline;}
 
-    #loading {
-        display: none;
+        #loading {
+            display: none;
+        }
     }
 }
