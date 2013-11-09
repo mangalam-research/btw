@@ -1,6 +1,9 @@
 import os
 import itertools
 
+# pylint: disable=E0611
+from nose.tools import assert_true
+
 _dirname = os.path.dirname(__file__)
 
 local_conf_path = os.path.join(os.path.dirname(_dirname),
@@ -27,15 +30,25 @@ from selenium_test import btw_util
 
 
 def before_all(context):
-    context.driver = config.get_driver()
+    driver = config.get_driver()
+    context.driver = driver
+    context.util = selenic.util.Util(driver)
     context.selenic_config = config
-    context.util = selenic.util.Util(context.driver)
+    # Without this, window sizes vary depending on the actual browser
+    # used.
+    driver.set_window_size(1020, 560)
+    assert_true(driver.desired_capabilities["nativeEvents"],
+                "BTW's test suite require that native events be available; "
+                "you may have to use a different version of your browser, "
+                "one for which Selenium supports native events.")
 
 
 def after_all(context):
     driver = context.driver
     config.set_test_status(driver.session_id, not context.failed)
-    if not context.failed and "BEHAVE_NO_QUIT" not in os.environ:
+    selenium_quit = os.environ.get("SELENIUM_QUIT")
+    if not ((selenium_quit == "never") or
+            (context.failed and selenium_quit == "on-success")):
         driver.quit()
 
 
