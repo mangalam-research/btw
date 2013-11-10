@@ -312,6 +312,9 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:tr":
         this.trDecorator($root, $el);
         break;
+    case "btw:explanation":
+        this.explanationDecorator($root, $el);
+        break;
     default:
         if ($el.is(no_default_decoration))
             return;
@@ -448,19 +451,10 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
     $root.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
         dec.idDecorator($subsense.get(0));
-        $subsense.children(util.classFromOriginalName("btw:explanation")).each(
-            function () {
-            var $this = $(this);
-            $this.children("._phantom._text._explanation_number").remove();
-            var refman = dec._getSubsenseRefman(this);
-            var sublabel = refman.idToSublabel($subsense.attr("id"));
-            dec._gui_updater.insertNodeAt(
-                $this.get(0), 0,
-                $("<div class='_phantom _text _explanation_number'>" +
-                  sublabel + ". </div>").get(0));
-
-            dec.sectionHeadingDecorator($root, $this, dec._gui_updater);
-        });
+        $subsense.children(util.classFromOriginalName("btw:explanation"))
+            .each(function () {
+                dec.explanationDecorator($root, $(this));
+            });
 
         // Refresh the headings that use the subsense label.
         for (var s_ix = 0, spec;
@@ -470,6 +464,19 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
                 $subsense.find(spec.selector).each(decorateSubheader);
         }
     });
+};
+
+BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
+    var $subsense = $el.parent(util.classFromOriginalName("btw:subsense"));
+    $el.children("._phantom._text._explanation_number").remove();
+    var refman = this._getSubsenseRefman($el[0]);
+    var sublabel = refman.idToSublabel($subsense.attr("id"));
+    this._gui_updater.insertNodeAt(
+        $el.get(0), 0,
+        $("<div class='_phantom _text _explanation_number'>" +
+          sublabel + ". </div>").get(0));
+
+    this.sectionHeadingDecorator($root, $el, this._gui_updater);
 };
 
 BTWDecorator.prototype._getSenseLabelForHead = function (el) {
