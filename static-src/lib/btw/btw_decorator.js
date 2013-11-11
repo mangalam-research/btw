@@ -269,6 +269,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:cognates":
     case "btw:conceptual-proximates":
     case "btw:other-citations":
+    case "btw:citations":
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
         break;
     case "btw:semantic-fields":
