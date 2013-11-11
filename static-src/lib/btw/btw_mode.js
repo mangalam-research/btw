@@ -324,22 +324,22 @@ BTWMode.prototype.getContextualMenuItems = function () {
     var ref = $container.closest(util.classFromOriginalName("ref")).get(0);
     if (ref) {
         var data = {node: this._editor.toDataNode(ref), element_name: "ref",
-                    move_caret_to: this._editor.toDataCaret(ref, 0)
-                   };
+                    move_caret_to: this._editor.toDataCaret(ref, 0)};
         this._tr.getTagTransformations("delete-element", "ref").forEach(
             function (x) {
-            items.push([x.getDescriptionFor(data), data, x]);
+            items.push([x.getDescriptionFor(data), data, x.bound_handler]);
         }.bind(this));
         var tr = new transformation.Transformation(
             this._editor, "Insert reference text",
-            function (editor, node, element_name, data) {
+            function (editor, data) {
             var gui_node =
-                this._editor.pathToNode(this._editor.data_updater.nodeToPath(node));
+                this._editor.pathToNode(
+                    this._editor.data_updater.nodeToPath(data.node));
             this._editor.insertTransientPlaceholderAt(
                 gui_node, gui_node.childNodes.length - 1);
             this._editor.setCaret(gui_node.lastChild.previousSibling, 0);
         }.bind(this));
-        items.push([tr.getDescriptionFor(data), data, tr]);
+        items.push([tr.getDescriptionFor(data), data, tr.bound_handler]);
     }
 
     return items.concat(this._contextual_menu_items);
