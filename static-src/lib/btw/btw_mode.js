@@ -94,12 +94,22 @@ BTWMode.prototype.init = function (editor) {
     this.insert_bibl_ptr_action = new btw_actions.InsertBiblPtrDialogAction(
         editor, "Insert a new bibliographical reference.");
 
+    this.insert_ref_text = new transformation.Transformation(
+        this._editor, "Insert reference text",
+        function (editor, data) {
+        var caret = editor.getCaret();
+        var ph = editor.insertTransientPlaceholderAt(caret[0], caret[1]);
+        editor.setCaret(ph, 0);
+    }.bind(this));
+
     /**
      * @private
      * @typedef Substitution
      * @type {Object}
      * @property {String} tag The tag name for which to perform the
      * substitution.
+     * @property {String} type The type of transformations for which
+     * to perform the substitution.
      * @property {Array.<module:action~Action>} actions The actions to
      * substitute for this tag.
      */
@@ -123,6 +133,8 @@ BTWMode.prototype.init = function (editor) {
      * @property {Pass} pass
      * @property {Array.<String>} filter A list of element names.
      * @property {Array.<Substitution>} substitute A list of substitutions.
+     * @property {Array.<module:wed/transformation~Transformation>} An
+     * array of transformations to add.
      */
 
     /**
@@ -140,11 +152,20 @@ BTWMode.prototype.init = function (editor) {
               "ptr": true
           },
           // filter: [...],
-          substitute: [ {tag: "ptr", actions: [this.insert_sense_ptr_action,
-                                              this.insert_bibl_ptr_action]} ]
+          substitute: [ {tag: "ptr",
+                         type: "insert", actions: [this.insert_sense_ptr_action,
+                                                   this.insert_bibl_ptr_action]} ]
         },
         { selector: util.classFromOriginalName("ptr"),
-          pass: {}
+          pass: { "ptr": ["delete-parent"] }
+        },
+        { selector: util.classFromOriginalName("ref"),
+          pass: {
+              "ref": ["delete-parent", "insert"]
+          },
+          substitute: [
+              {tag: "ref", type: "insert", actions: [this.insert_ref_text]}
+          ]
         },
         { selector: jqutil.toDataSelector("btw:subsense>btw:citations foreign"),
           pass: {
@@ -229,48 +250,39 @@ BTWMode.prototype.makeDecorator = function () {
 
 /**
  *
- * <p>{@link
- * module:wed/modes/btw/btw_mode~BTWMode#transformation_filters
- * transformation_filters} are used as follows:</p>
+ * {@link module:wed/modes/btw/btw_mode~BTWMode#transformation_filters
+ * transformation_filters} are used as follows:
  *
- * <ul>
+ * - for each ``filter``, if ``filter.selector`` matches ``container``:
  *
- *  <li>for each <code>filter</code>, if <code>filter.selector</code>
- *  matches <code>container</code>:
+ *    + if ``filter.pass`` is defined and ``filter.pass[tag]`` is:
  *
- *    <ul>
+ *      * ``undefined``, then return an empty list.
  *
- *      <li>if <code>filter.pass</code> is defined and the
- *      <code>filter.pass[tag]</code> is:
+ *      * is ``true``, then continue.
  *
- *        <ul>
+ *      * is defined, a list and ``type`` is absent from it, then return an
+ *        empty list.
  *
- *          <li><strong>undefined</strong>, then return an empty list.</li>
+ *    + if ``filter.filter`` is defined and the ``tag`` **is** in it,
+ *    then return an empty list.
  *
- *          <li>is <code>true</code>, then continue.</li>
+ *    + if ``filter.substitute`` is defined and the ``tag`` and
+ *      ``type`` parameters equal the ``tag`` and ``type`` properties
+ *      of any of the substitutions in the list, then return the
+ *      ``actions`` property of the substitution.
  *
- *          <li>is defined, a list and <code>type</code> is absent
- *          from it, then return an empty list.</li>
+ *  - if the method has not returned earlier return the
+ *  transformations from the transformation registry.
  *
- *        </ul>
- *
- *      <li>if <code>filter.filter</code> is defined and the
- *      <code>tag</code> <strong>is</strong> in it, then return an
- *      empty list.</li>
- *
- *      <li>if <code>filter.substitute</code> is defined and the
- *      <code>tag</code> equals the <code>tag</code> property of any
- *      of the substitutions in the list, then return the
- *      <code>actions</code> property of the substitution.</li>
- *
- *    </ul>
- *
- *  </li>
- *
- *  <li>if the method has not returned earlier return the transformations from the transformation
- *  registry.</li>
- *
- * </ul>
+ * <!-- This is copied from the method in the parent class. -->
+ * @param {Array.<String>|String} type The type or types of
+ * transformations to return.
+ * @param {String} tag The tag name we are interested in.
+ * @param {Node} container The position in the data tree.
+ * @param {Integer} offset The position in the data tree.
+ * @returns {Array.<module:action~Action>} An array
+ * of actions.
  */
 BTWMode.prototype.getContextualActions = function (type, tag,
                                                    container, offset) {
@@ -294,7 +306,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
             if (filter.substitute) {
                 for (var j = 0; j < filter.substitute.length; ++j) {
                     var substitute = filter.substitute[j];
-                    if (substitute.tag === tag) {
+                    if (substitute.tag === tag && substitute.type === type) {
                         return substitute.actions;
                     }
                 }
@@ -304,45 +316,6 @@ BTWMode.prototype.getContextualActions = function (type, tag,
     }
 
     return this._tr.getTagTransformations(type, tag);
-};
-
-BTWMode.prototype.getContextualMenuItems = function () {
-    var items = [];
-    var caret = this._editor.getCaret();
-    var $container = $(caret[0]);
-    var ptr = $container.closest(util.classFromOriginalName("ptr")).get(0);
-    if (ptr) {
-        var data = {node: this._editor.toDataNode(ptr),
-                    element_name: "ptr",
-                    move_caret_to: this._editor.toDataCaret(ptr, 0)};
-        this._tr.getTagTransformations("delete-element", "ptr").forEach(
-            function (x) {
-            items.push([x.getDescriptionFor(data), data, x]);
-        }.bind(this));
-    }
-
-    var ref = $container.closest(util.classFromOriginalName("ref")).get(0);
-    if (ref) {
-        var data = {node: this._editor.toDataNode(ref), element_name: "ref",
-                    move_caret_to: this._editor.toDataCaret(ref, 0)};
-        this._tr.getTagTransformations("delete-element", "ref").forEach(
-            function (x) {
-            items.push([x.getDescriptionFor(data), data, x.bound_handler]);
-        }.bind(this));
-        var tr = new transformation.Transformation(
-            this._editor, "Insert reference text",
-            function (editor, data) {
-            var gui_node =
-                this._editor.pathToNode(
-                    this._editor.data_updater.nodeToPath(data.node));
-            this._editor.insertTransientPlaceholderAt(
-                gui_node, gui_node.childNodes.length - 1);
-            this._editor.setCaret(gui_node.lastChild.previousSibling, 0);
-        }.bind(this));
-        items.push([tr.getDescriptionFor(data), data, tr.bound_handler]);
-    }
-
-    return items.concat(this._contextual_menu_items);
 };
 
 BTWMode.prototype.getStylesheets = function () {

@@ -63,14 +63,28 @@ function BTWDecorator(mode, meta) {
         selector: "btw:modern-renditions",
         heading: "modern renditions"
     }, {
-        selector: "btw:explanation",
+        selector: "btw:sense>btw:explanation",
+        heading: "brief explanation of sense",
+        label_f: this._bound_getSenseLabel
+    }, {
+        selector: "btw:subsense>btw:explanation",
         heading: "brief explanation of sense",
         label_f: this._bound_getSubsenseLabel
     }, {
-        selector: "btw:citations",
+        selector: "btw:sense>btw:citations",
+        heading: "selected citations for sense",
+        label_f: this._bound_getSenseLabel
+    }, {
+        selector: "btw:subsense>btw:citations",
         heading: "selected citations for sense",
         label_f: this._bound_getSubsenseLabel
     }, {
+        selector:
+        "btw:antonym>btw:citations," +
+            "btw:cognate>btw:citations," +
+            "btw:conceptual-proximate>btw:citations",
+        heading: "selected citations"
+    },{
         selector: "btw:contrastive-section",
         heading: "contrastive section for sense",
         label_f: this._bound_getSenseLabel
@@ -469,13 +483,20 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
 
 BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
     var $subsense = $el.parent(util.classFromOriginalName("btw:subsense"));
+    var label
+    if ($subsense.length) {
+        var refman = this._getSubsenseRefman($el[0]);
+        label = refman.idToSublabel($subsense.attr("id"));
+    }
+    else {
+        var $sense = $el.parent(util.classFromOriginalName("btw:sense"));
+        label = this._sense_refman.idToLabel($sense.attr("id"));
+    }
     $el.children("._phantom._text._explanation_number").remove();
-    var refman = this._getSubsenseRefman($el[0]);
-    var sublabel = refman.idToSublabel($subsense.attr("id"));
     this._gui_updater.insertNodeAt(
-        $el.get(0), 0,
-        $("<div class='_phantom _text _explanation_number'>" +
-          sublabel + ". </div>").get(0));
+        $el[0], 0,
+        $("<div class='_phantom _text _explanation_number'>" + label +
+          ". </div>")[0]);
 
     this.sectionHeadingDecorator($root, $el, this._gui_updater);
 };
@@ -504,8 +525,8 @@ BTWDecorator.prototype._getSubsenseLabel = function (el) {
 
     var id = $el.closest(util.classFromOriginalName("btw:subsense")).attr("id");
     if (!id)
-        throw new Error("element does not have subsense parent with an id: "
-                        + $el.get(0));
+        throw new Error("element does not have subsense parent with an id: " +
+                        $el.get(0));
     var label = refman.idToLabelForHead(id);
     return label;
 };
@@ -872,8 +893,9 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
                     util.classFromOriginalName("btw:subsense"))[0];
             $a.on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
-            $el.on("contextmenu", {node: data_parent},
+            $el.on("wed-context-menu", {node: data_parent},
                    this._navigationContextMenuHandler.bind(this));
+            $el.data("wed-custom-context-menu", true);
         }
 
         getParent(my_depth - 1).append($li);
@@ -911,7 +933,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
     var act_ix, act;
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
         tuples.push([act, data, act.getLabelFor(data) +
-                     " before this one</a>"]);
+                     " before this one"]);
 
     //
     // Create "insert" transformations for siblings that could be
@@ -923,7 +945,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
     data = {element_name: orig_name, move_caret_to: [container, offset + 1]};
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
         tuples.push([act, data,
-                     act.getLabelFor(data) + " after this one</a>"]);
+                     act.getLabelFor(data) + " after this one"]);
 
     var $this_li = $(ev.currentTarget).closest("li");
     var $sibling_links = $this_li.parent().find('li[data-wed-for="' +
