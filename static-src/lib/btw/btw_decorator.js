@@ -907,11 +907,16 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
     this._editor.$navigation_list.append(prev_at_depth[0].children());
 };
 
-BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(function (ev) {
+BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
+    function (wed_ev, ev) {
+    // ev is undefined if called from the context menu. In this case,
+    // wed_ev contains all that we want.
+    if (!ev)
+        ev = wed_ev;
     // node is the node in the data tree which corresponds to the
-    // navigation item that for which a context menu handler was
-    // required by the user.
-    var node = ev.data.node;
+    // navigation item for which a context menu handler was required
+    // by the user.
+    var node = wed_ev.data.node;
     var orig_name = util.getOriginalName(node);
 
     // container, offset: location of the node in its parent.
