@@ -411,11 +411,13 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
     var id = $el.attr(util.encodeAttrName("xml:id"));
     if (id === undefined) {
         // Give it an id.
-        var parent_wed_id = $el.parent().attr("id");
+        var $parent = $el.parent();
+        var parent_wed_id = $parent.attr("id");
         var subsense_refman =
                 this._sense_refman.idToSubsenseRefman(parent_wed_id);
         id = subsense_refman.nextNumber();
-        $el.attr(util.encodeAttrName("xml:id"), parent_wed_id + "." + id);
+        var parent_id = $parent.attr(util.encodeAttrName("xml:id"));
+        $el.attr(util.encodeAttrName("xml:id"), parent_id + "." + id);
     }
 
     if (!$el[0].firstChild) {
@@ -483,7 +485,7 @@ BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
 
 BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
     var $subsense = $el.parent(util.classFromOriginalName("btw:subsense"));
-    var label
+    var label;
     if ($subsense.length) {
         var refman = this._getSubsenseRefman($el[0]);
         label = refman.idToSublabel($subsense.attr("id"));
@@ -525,8 +527,11 @@ BTWDecorator.prototype._getSubsenseLabel = function (el) {
 
     var id = $el.closest(util.classFromOriginalName("btw:subsense")).attr("id");
     if (!id)
-        throw new Error("element does not have subsense parent with an id: " +
-                        $el.get(0));
+        // This can happen during the decoration of the tree because
+        // there is in general no guarantee about the order in which
+        // elements are decorated. A second pass will ensure that the
+        // label is not undefined.
+        return undefined;
     var label = refman.idToLabelForHead(id);
     return label;
 };
