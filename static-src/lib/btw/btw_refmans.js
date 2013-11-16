@@ -17,6 +17,10 @@ function SenseReferenceManager() {
 oop.inherit(SenseReferenceManager, ReferenceManager);
 
 SenseReferenceManager.prototype.allocateLabel = function (id) {
+    if (!(id in this._subsense_reference_managers))
+        this._subsense_reference_managers[id] =
+        new SubsenseReferenceManager(this, id);
+
     var label = this._id_to_label[id];
     if (label === undefined) {
         // More than 26 senses in a single article seems much.
@@ -26,8 +30,6 @@ SenseReferenceManager.prototype.allocateLabel = function (id) {
 
         label = this._id_to_label[id] =
             sense_labels[this._next_sense_label_ix++];
-
-        this._subsense_reference_managers[id] = new SubsenseReferenceManager(label);
     }
 
     return label;
@@ -43,15 +45,18 @@ SenseReferenceManager.prototype.idToSubsenseRefman = function (id) {
 
 SenseReferenceManager.prototype._deallocateAllLabels = function () {
     this._next_sense_label_ix = 0;
-    this._subsense_reference_managers = {};
+    for(var id in this._subsense_reference_managers) {
+        this._subsense_reference_managers[id].deallocateAll();
+    }
 };
 
 exports.SenseReferenceManager = SenseReferenceManager;
 
-function SubsenseReferenceManager(parent_label) {
+function SubsenseReferenceManager(parent_refman, parent_id) {
     ReferenceManager.call(this, "subsense");
     this._next_label = 1;
-    this._parent_label = parent_label;
+    this._parent_refman = parent_refman;
+    this._parent_id = parent_id;
 }
 
 oop.inherit(SubsenseReferenceManager, ReferenceManager);
@@ -67,7 +72,8 @@ SubsenseReferenceManager.prototype.allocateLabel = function (id) {
 // the sense's label + subsense's label. idToSublabel returns only the
 // child's label.
 SubsenseReferenceManager.prototype.idToLabel = function (id) {
-    return this._parent_label +
+    var parent_label = this._parent_refman.idToLabel(this._parent_id);
+    return parent_label +
         ReferenceManager.prototype.idToLabel.call(this, id);
 };
 
