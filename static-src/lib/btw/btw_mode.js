@@ -144,17 +144,28 @@ BTWMode.prototype.init = function (editor) {
      * getContextualActions method is called.
      */
     this.transformation_filters = [
-        { selector: util.classFromOriginalName("btw:definition") + ">" +
-          util.classFromOriginalName("p"), // paragraph in a definition
-          pass: {
-              "term": true,
-              "btw:sense-emphasis": true,
-              "ptr": true
-          },
-          // filter: [...],
-          substitute: [ {tag: "ptr",
-                         type: "insert", actions: [this.insert_sense_ptr_action,
-                                                   this.insert_bibl_ptr_action]} ]
+        { selector: jqutil.toDataSelector(
+            ["btw:overview",
+             "btw:definition"].join(",")),
+          pass: {}
+        },
+        {
+            selector: jqutil.toDataSelector("btw:sense-discrimination"),
+            pass: {
+                "btw:sense": true
+            }
+        },
+        { // paragraph in a definition
+            selector: jqutil.toDataSelector("btw:definition>p"),
+            pass: {
+                "term": true,
+                "btw:sense-emphasis": true,
+                "ptr": true
+            },
+            // filter: [...],
+            substitute: [ {tag: "ptr",
+                           type: "insert", actions: [this.insert_sense_ptr_action,
+                                                     this.insert_bibl_ptr_action]} ]
         },
         { selector: util.classFromOriginalName("ptr"),
           pass: { "ptr": ["delete-parent"] }
