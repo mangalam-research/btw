@@ -148,3 +148,16 @@ def step_impl(context):
     renditions = btw_util.get_rendition_terms_for_sense(sense)
     assert_equal(len(renditions), len(initial_renditions) + 1, "length")
     assert_is_none(renditions[1], "second rendition is new")
+
+
+@then("the single sense contains a single subsense")
+def step_impl(context):
+    util = context.util
+
+    sense = util.find_element((By.CLASS_NAME, r"btw\:sense"))
+    subsenses = sense.find_elements_by_class_name(r"btw\:subsense")
+
+    assert_equal(len(subsenses), 1, "there is one subsense")
+    head = subsenses[0].find_element_by_class_name("head")
+    assert_equal(head.text, "[brief explanation of sense a1]",
+                 "correct heading")

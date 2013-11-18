@@ -1,8 +1,10 @@
-from nose.tools import assert_equal  # pylint: disable=E0611
+from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
+
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from behave import then, when, given  # pylint: disable=E0611
+from selenium.common.exceptions import NoSuchElementException
 
 import wedutil
 from selenium_test import btw_util
@@ -105,3 +107,15 @@ def step_impl(context):
 
     context.window_scroll_top = util.window_scroll_top()
     context.window_scroll_left = util.window_scroll_left()
+
+
+@Given("a document with a single sense that does not have a subsense")
+def step_impl(context):
+    util = context.util
+
+    sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
+    with util.local_timeout(1):
+        assert_raises(
+            NoSuchElementException,
+            sense.find_element,
+            (By.CSS_SELECTOR, r".btw\:subsense"))
