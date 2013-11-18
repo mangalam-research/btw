@@ -285,7 +285,7 @@ class ViewsTestCase(TransactionWebTest):
 
         for lemma in lemma_hits:
             del lemma[:]
-            lemma.text = "foo" # There is a foo entry already.
+            lemma.text = "foo"  # There is a foo entry already.
 
         messages, _ = self.save(response, "foo",
                                 lxml.etree.tostring(data_tree))
@@ -302,6 +302,64 @@ class ViewsTestCase(TransactionWebTest):
                          "no change to the entry")
 
         self.assertEqual(nr_chunks, Chunk.objects.all().count())
+
+    def test_subsequent_save_is_not_duplicate(self):
+        """
+        Tests that the server has no problem with saving a new entry
+        twice. Namely that it does not issue a duplicate lemma error.
+        """
+
+        nr_entries = Entry.objects.count()
+        response = self.open_new('foo')
+
+        # Does not create a new entry until we save.
+        self.assertEqual(nr_entries, Entry.objects.count())
+
+        #
+        # Set a lemma.
+        #
+
+        # The data is xhtml so convert it to xml before manipulating the tree.
+        data = lxml.etree.tostring(
+            response.lxml.xpath("//*[@id='id_data']")[0][0])
+        data = xml.xhtml_to_xml(data)
+
+        data_tree = lxml.etree.fromstring(data)
+
+        # This casts a wider net than strictly necessary but it does not
+        # matter.
+        lemma_hits = data_tree.xpath(
+            "xhtml:div[contains(@class, 'btw:lemma')]",
+            namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
+
+        for lemma in lemma_hits:
+            del lemma[:]
+            lemma.text = "Glerbl"
+
+        messages, _ = self.save(response, "foo",
+                                lxml.etree.tostring(data_tree))
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_successful", messages)
+
+        # The new entry now exists.
+        self.assertEqual(nr_entries + 1, Entry.objects.count(),
+                         "number of entries after save")
+        self.assertEqual(Entry.objects.get(headword='Glerbl').is_locked(),
+                         self.foo, "new entry locked by correct user")
+        self.assertEqual(len(Entry.objects.filter(headword='Glerbl')),
+                         1,
+                         "number of entries with this headword after save")
+
+        # Save a second time.
+        messages, _ = self.save(response, "foo",
+                                lxml.etree.tostring(data_tree))
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_successful", messages)
+
+        self.assertEqual(len(Entry.objects.filter(headword='Glerbl')),
+                         1, "same number of entries with this headword")
 
     def test_new(self):
         """
@@ -332,7 +390,7 @@ class ViewsTestCase(TransactionWebTest):
 
         for lemma in lemma_hits:
             del lemma[:]
-            lemma.text="Glerbl"
+            lemma.text = "Glerbl"
 
         messages, _ = self.save(response, "foo",
                                 lxml.etree.tostring(data_tree))

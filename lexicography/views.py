@@ -327,14 +327,17 @@ def _save_command(request, handle_or_entry_id, command, messages):
             transaction.rollback()
             return
     except IntegrityError:
-        # Try to determine what the problem is.
-        if Entry.objects.get(headword=entry.headword):
+        transaction.rollback()
+        # Try to determine what the problem is. If there is an
+        # IntegrityError it is possible that it is *not* due to a
+        # duplicate headword.
+        others = Entry.objects.filter(headword=entry.headword)
+        if len(others) > 1 or (others and others[0].id != entry.id):
             # Duplicate headword
             messages.append(
                 {'type': 'save_transient_error',
                  'msg': 'There is another entry with the lemma "{0}".'
                  .format(entry.headword)})
-            transaction.rollback()
             return
 
         # Can't figure it out.
@@ -342,7 +345,7 @@ def _save_command(request, handle_or_entry_id, command, messages):
         raise
 
     if entry_id is None:
-        hm.associate(handle, entry_id)
+        hm.associate(handle, entry.id)
     messages.append({'type': 'save_successful'})
     transaction.commit()
 
