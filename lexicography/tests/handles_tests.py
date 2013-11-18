@@ -11,6 +11,7 @@ dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
                       for x in ("views.json", ))
 
+
 class HandleManagerTestCase(TransactionTestCase):
     fixtures = ["initial_data.json"] + local_fixtures
 
