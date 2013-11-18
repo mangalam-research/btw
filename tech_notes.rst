@@ -176,6 +176,42 @@ To run the suite while using the SauceLab servers, run::
 Behind the scenes, this will launch behave. See `<Makefile>`_ to see
 how behave is run.
 
+How to Modify Fixtures
+----------------------
+
+There is no direct way to modify the fixtures used by the Django tests
+(this includes the live server tests which is used to run the Selenium
+tests). The procedure to follow is::
+
+    $ mv btw.sqlite3 btw.sqlite3.real
+
+    $ ./manage.py syncdb
+
+    $ ./manage.py migrate
+
+    $ ./manage.py runserver
+
+Repeat the following command for all fixtures you want to load or pass all fixtures together on the same command line::
+
+    $ ./manage.py loaddata [fixture]
+
+At this point you can edit your database. When you are done kill the
+server, and dump the data as needed::
+
+    $ ./manage.py dumpdata --indent=2 --natural [application] > [file]
+
+Use git to make sure that the changes you wanted are there. Among
+other things, you might want to prevent locking records and handles
+from being added to the new fixture.  When this is done, you can
+restore your database::
+
+    $ mv btw.sqlite3.real btw.sqlite3
+
+Before doing anything more, it is wise to run the Django tests and the
+Selenium tests to make sure that the new fixture does not break
+anything. It is also wise to immediately commit the new fixture to
+git once the tests are passing.
+
 ==============
  User Stories
 ==============
