@@ -45,6 +45,14 @@ def step_impl(context):
     assert_equal(driver.title, "BTW | Lexicography")
 
 
+@given("that the user has loaded the top page of the lexicography app")
+def step_impl(context):
+    context.execute_steps(u"""
+    When the user loads the top page of the lexicography app
+    Then the user gets the top page of the lexicography app
+    """)
+
+
 @given("a new document")
 def step_impl(context):
     util = context.util
