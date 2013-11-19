@@ -33,6 +33,8 @@ function BTWDecorator(mode, meta) {
     this._sense_refman = new refmans.SenseReferenceManager();
     this._example_refman = new refmans.ExampleReferenceManager();
 
+    this._senses_for_refresh_subsenses = [];
+
     // We bind them here so that we have a unique function to use.
     this._bound_getSenseLabel = this._getSenseLabel.bind(this);
     this._bound_getSubsenseLabel = this._getSubsenseLabel.bind(this);
@@ -136,14 +138,14 @@ BTWDecorator.prototype.addHandlers = function () {
         util.classFromOriginalName("btw:subsense"),
         function ($root, $tree, $parent,
                   $prev, $next, $el) {
-        this.includedSubsenseHandler($el);
+        this.includedSubsenseHandler($root, $el);
     }.bind(this));
 
     this._gui_domlistener.addHandler(
         "excluded-element",
         util.classFromOriginalName("btw:subsense"),
-        function () {
-        this._domlistener.trigger("included-subsense");
+        function ($root, $tree, $parent, $prev, $next, $el) {
+        this.excludedSubsenseHandler($root, $el);
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -174,8 +176,8 @@ BTWDecorator.prototype.addHandlers = function () {
 
     this._domlistener.addHandler(
         "trigger",
-        "included-subsense",
-        this.includedSubsenseTriggerHandler.bind(this));
+        "refresh-subsenses",
+        this.refreshSubsensesTriggerHandler.bind(this));
 
     this._domlistener.addHandler(
         "trigger",
@@ -407,11 +409,11 @@ BTWDecorator.prototype.includedSenseHandler = function ($el) {
     this._domlistener.trigger("included-sense");
 };
 
-BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
+BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
     var id = $el.attr(util.encodeAttrName("xml:id"));
+    var $parent = $el.parent();
     if (id === undefined) {
         // Give it an id.
-        var $parent = $el.parent();
         var parent_wed_id = $parent.attr("id");
         var subsense_refman =
                 this._sense_refman.idToSubsenseRefman(parent_wed_id);
@@ -429,10 +431,16 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($el) {
         this._editor.setCaret(saved);
     }
 
+
     this.idDecorator($el[0]);
-    this._domlistener.trigger("included-subsense");
+    this.refreshSubsensesForSense($root, $parent);
 };
 
+
+BTWDecorator.prototype.excludedSubsenseHandler = function ($root, $el) {
+    var $parent = $el.parent();
+    this.refreshSubsensesForSense($root, $parent);
+};
 
 BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
     var dec = this;
@@ -454,18 +462,39 @@ BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
             if (spec.label_f === dec._bound_getSenseLabel)
                 $sense.find(spec.selector).each(decorateSubheader);
         }
+        dec.refreshSubsensesForSense($root, $sense);
     });
-    this._domlistener.trigger("included-subsense");
 };
 
-BTWDecorator.prototype.includedSubsenseTriggerHandler = function ($root) {
+BTWDecorator.prototype.refreshSubsensesForSense = function ($root, $sense) {
+    var sense = $sense[0];
+    // The indexOf search ensures we don't put duplicates in the list.
+    if (this._senses_for_refresh_subsenses.indexOf(sense) === -1) {
+        this._senses_for_refresh_subsenses.push(sense);
+        this._domlistener.trigger("refresh-subsenses");
+    }
+};
+
+BTWDecorator.prototype.refreshSubsensesTriggerHandler = function ($root,
+                                                                  $sense) {
+    // Grab the list before we try to do anything.
+    var senses = this._senses_for_refresh_subsenses;
+    this._senses_for_refresh_subsenses = [];
+    senses.forEach(function (sense) {
+        this._refreshSubsensesForSense($root, $(sense));
+    }.bind(this));
+};
+
+BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
     var dec = this;
     function decorateSubheader () {
         /* jshint validthis: true */
         dec.sectionHeadingDecorator($root, $(this), dec._gui_updater);
     }
 
-    $root.find(util.classFromOriginalName("btw:subsense")).each(function () {
+    var refman = this._getSubsenseRefman($sense[0]);
+    refman.deallocateAll();
+    $sense.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
         dec.idDecorator($subsense.get(0));
         $subsense.children(util.classFromOriginalName("btw:explanation"))
@@ -536,11 +565,20 @@ BTWDecorator.prototype._getSubsenseLabel = function (el) {
     return label;
 };
 
+
+/**
+ * @param {Node} el The element for which we want the subsense
+ * reference manager. This element must be a child of a btw:sense
+ * element or a btw:sense element.
+ * @returns {module:btw_refmans~SubsenseReferenceManager} The subsense
+ * reference manager.
+ */
 BTWDecorator.prototype._getSubsenseRefman = function (el) {
     var $el = $(el);
-    var $parent =
+    var $sense = $el.is(util.classFromOriginalName("btw:sense")) ?
+            $el :
             $el.parents(util.classFromOriginalName("btw:sense")).first();
-    var parent_wed_id = $parent.attr("id");
+    var parent_wed_id = $sense.attr("id");
 
     return this._sense_refman.idToSubsenseRefman(parent_wed_id);
 };

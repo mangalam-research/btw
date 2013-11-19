@@ -5,7 +5,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium_test.btw_util import record_senses, record_renditions_for, \
     record_subsenses_for
 from nose.tools import assert_equal, assert_is_none  # pylint: disable=E0611
-from behave import then, when  # pylint: disable=E0611
+from behave import then, when, step_matcher  # pylint: disable=E0611
 
 from selenium_test import btw_util
 
@@ -163,11 +163,13 @@ def step_impl(context):
     assert_equal(head.text, "[brief explanation of sense a1]",
                  "correct heading")
 
+step_matcher('re')
+
 
 @record_subsenses_for("A")
-@then("the single sense contains an additional subsense after the one that "
-      "was already there")
-def step_impl(context):
+@then(ur"^the single sense contains an additional subsense "
+      ur"(?P<where>after|before) the one that was already there\.?$")
+def step_impl(context, where):
     util = context.util
 
     sense = util.find_element((By.CLASS_NAME, r"btw\:sense"))
@@ -178,7 +180,20 @@ def step_impl(context):
     subsenses = btw_util.get_subsenses_for_sense(util, sense)
     assert_equal(len(subsenses), len(initial_subsenses) + 1,
                  "one new subsense")
-    assert_equal(subsenses[0], {"explanation": u"sense a1",
-                                "head": u"[brief explanation of sense a1]"})
-    assert_equal(subsenses[1], {"explanation": u'',
-                                "head": u"[brief explanation of sense a2]"})
+
+    if where == "after":
+        assert_equal(subsenses[0],
+                     {"explanation": u"sense a1",
+                      "head": u"[brief explanation of sense a1]"})
+        assert_equal(subsenses[1],
+                     {"explanation": u'',
+                      "head": u"[brief explanation of sense a2]"})
+    elif where == "before":
+        assert_equal(subsenses[0],
+                     {"explanation": u'',
+                      "head": u"[brief explanation of sense a1]"})
+        assert_equal(subsenses[1],
+                     {"explanation": u"sense a1",
+                      "head": u"[brief explanation of sense a2]"})
+    else:
+        raise ValueError("unexpected value for where: " + where)
