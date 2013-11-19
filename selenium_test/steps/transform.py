@@ -2,7 +2,8 @@ import re
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium_test.btw_util import record_senses, record_renditions_for
+from selenium_test.btw_util import record_senses, record_renditions_for, \
+    record_subsenses_for
 from nose.tools import assert_equal, assert_is_none  # pylint: disable=E0611
 from behave import then, when  # pylint: disable=E0611
 
@@ -161,3 +162,23 @@ def step_impl(context):
     head = subsenses[0].find_element_by_class_name("head")
     assert_equal(head.text, "[brief explanation of sense a1]",
                  "correct heading")
+
+
+@record_subsenses_for("A")
+@then("the single sense contains an additional subsense after the one that "
+      "was already there")
+def step_impl(context):
+    util = context.util
+
+    sense = util.find_element((By.CLASS_NAME, r"btw\:sense"))
+    subsenses = sense.find_elements_by_class_name(r"btw\:subsense")
+
+    initial_subsenses = context.initial_subsenses_by_sense["A"]
+    sense = btw_util.get_sense_by_label(util, "A")
+    subsenses = btw_util.get_subsenses_for_sense(util, sense)
+    assert_equal(len(subsenses), len(initial_subsenses) + 1,
+                 "one new subsense")
+    assert_equal(subsenses[0], {"explanation": u"sense a1",
+                                "head": u"[brief explanation of sense a1]"})
+    assert_equal(subsenses[1], {"explanation": u'',
+                                "head": u"[brief explanation of sense a2]"})

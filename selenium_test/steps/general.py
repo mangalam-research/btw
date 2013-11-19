@@ -3,7 +3,8 @@ from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from behave import then, when, given, step_matcher  # pylint: disable=E0611
+from behave import then, when, given, Given, \
+    step_matcher  # pylint: disable=E0611
 from selenium.common.exceptions import NoSuchElementException
 
 import wedutil
@@ -64,20 +65,7 @@ def step_impl(context):
     new.click()
     wedutil.wait_for_editor(util)
 
-    # Some steps must know what the state of the document was before
-    # transformations are applied, so record it.
-    if context.require_sense_recording:
-        # We gather the btw:english-term text associated with each btw:sense.
-        context.initial_sense_terms = btw_util.get_sense_terms(util)
-
-    if context.require_rendition_recording:
-        sense_els = btw_util.get_senses(util)
-        context.initial_renditions_by_sense = {}
-        for sense in context.require_rendition_recording:
-            sense_el = sense_els[btw_util.sense_label_to_index(sense)]
-            renditions = btw_util.get_rendition_terms_for_sense(sense_el)
-
-            context.initial_renditions_by_sense[sense] = renditions
+    btw_util.record_document_features(context)
 
 
 @given("a context menu is not visible")
@@ -119,7 +107,7 @@ def step_impl(context):
 step_matcher('re')
 
 
-@Given("a document with a single sense(:? that does not have a subsense)")
+@Given("^a document with a single sense(?: that does not have a subsense)?$")
 def step_impl(context):
     context.execute_steps(u"""
     Given the user has logged in
@@ -134,3 +122,22 @@ def step_impl(context):
             NoSuchElementException,
             sense.find_element,
             (By.CSS_SELECTOR, r".btw\:subsense"))
+
+
+@Given("^a document with a single sense that has a subsense$")
+def step_impl(context):
+    util = context.util
+    context.execute_steps(u"""
+    Given the user has logged in
+    And that the user has loaded the top page of the lexicography app
+    When the user searches for "one sense, one subsense"
+    Then the search results show one entry for "one sense, one subsense"
+    """)
+
+    view_link = util.find_element((By.LINK_TEXT, "one sense, one subsense"))
+    edit_link = view_link.find_element_by_xpath("../a[2]")
+
+    edit_link.click()
+    wedutil.wait_for_editor(util)
+
+    btw_util.record_document_features(context)

@@ -40,3 +40,9 @@ Scenario: using the navigation context menu to insert a subsense in a sense that
   When the user brings up a context menu on navigation item "[SENSE A]"
   And the user clicks the context menu option "Create new btw:subsense"
   Then the single sense contains a single subsense
+
+Scenario: using the navigation context menu to insert a subsense after a subsense
+  Given a document with a single sense that has a subsense
+  When the user brings up a context menu on navigation item "[brief explanation of sense a1]"
+  And the user clicks the context menu option "Create new btw:subsense after this one"
+  Then the single sense contains an additional subsense after the one that was already there
