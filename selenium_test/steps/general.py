@@ -3,7 +3,7 @@ from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from behave import then, when, given  # pylint: disable=E0611
+from behave import then, when, given, step_matcher  # pylint: disable=E0611
 from selenium.common.exceptions import NoSuchElementException
 
 import wedutil
@@ -116,9 +116,16 @@ def step_impl(context):
     context.window_scroll_top = util.window_scroll_top()
     context.window_scroll_left = util.window_scroll_left()
 
+step_matcher('re')
 
-@Given("a document with a single sense that does not have a subsense")
+
+@Given("a document with a single sense(:? that does not have a subsense)")
 def step_impl(context):
+    context.execute_steps(u"""
+    Given the user has logged in
+    And a new document
+    """)
+
     util = context.util
 
     sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
