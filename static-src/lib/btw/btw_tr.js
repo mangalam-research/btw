@@ -12,6 +12,7 @@ var btw_util = require("./btw_util");
 var action = require("wed/action");
 var AbortTransformationException =
         require("wed/exceptions").AbortTransformationException;
+var makeDLoc = require("wed/dloc").makeDLoc;
 
 var transformation = require("wed/transformation");
 var insertElement = transformation.insertElement;
@@ -20,8 +21,8 @@ var Transformation = transformation.Transformation;
 
 function insert_ptr(editor, data) {
     var caret = editor.getDataCaret();
-    var parent = caret[0];
-    var index = caret[1];
+    var parent = caret.node;
+    var index = caret.offset;
 
     var $ptr = transformation.makeElement('ptr', {'target': data.target});
     editor.data_updater.insertAt(parent, index, $ptr.get(0));
@@ -30,15 +31,14 @@ function insert_ptr(editor, data) {
     // representative because insertAt can do quite a lot of things to
     // insert the node.
     parent = $ptr.parent().get(0);
-    var new_caret = [parent, Array.prototype.indexOf.call(parent.childNodes,
-                                                          $ptr.get(0))];
-    editor.setDataCaret(new_caret);
+    editor.setDataCaret(parent, Array.prototype.indexOf.call(parent.childNodes,
+                                                             $ptr.get(0)));
 }
 
 function insert_ref(editor, data) {
     var caret = editor.getDataCaret();
-    var parent = caret[0];
-    var index = caret[1];
+    var parent = caret.node;
+    var index = caret.offset;
 
     var $ptr = transformation.makeElement('ref', {'target': data.target});
     editor.data_updater.insertAt(parent, index, $ptr.get(0));
@@ -47,9 +47,8 @@ function insert_ref(editor, data) {
     // representative because insertAt can do quite a lot of things to
     // insert the node.
     parent = $ptr.parent().get(0);
-    var new_caret = [parent, Array.prototype.indexOf.call(parent.childNodes,
-                                                          $ptr.get(0))];
-    editor.setDataCaret(new_caret);
+    editor.setDataCaret(parent, Array.prototype.indexOf.call(parent.childNodes,
+                                                             $ptr.get(0)));
 }
 
 
@@ -110,13 +109,11 @@ function set_language_handler(editor, data) {
     var $foreign = $realization.findAndSelf(
         util.classFromOriginalName("foreign"));
     $foreign.attr(util.encodeAttrName("xml:lang"), lang_code);
-    var cut_ret = editor.data_updater.cut([range.startContainer,
-                                           range.startOffset],
-                                          [range.endContainer,
-                                           range.endOffset]);
+    var cut_ret = editor.data_updater.cut(
+        makeDLoc(editor.data_tree, range.startContainer, range.startOffset),
+        makeDLoc(editor.data_tree, range.endContainer, range.endOffset));
     $foreign.append(cut_ret[1]);
-    editor.data_updater.insertAt(cut_ret[0][0], cut_ret[0][1],
-                                 $realization.get(0));
+    editor.data_updater.insertAt(cut_ret[0], $realization.get(0));
     range.selectNodeContents($foreign.get(0));
     editor.setDataSelectionRange(range);
 }
@@ -157,10 +154,9 @@ function remove_mixed_handler(editor, data) {
             "range is not well-formed");
     }
 
-    var cut_ret = editor.data_updater.cut([range.startContainer,
-                                           range.startOffset],
-                                          [range.endContainer,
-                                           range.endOffset]);
+    var cut_ret = editor.data_updater.cut(
+        makeDLoc(editor.data_tree, range.startContainer, range.startOffset),
+        makeDLoc(editor.data_tree, range.endContainer, range.endOffset));
     var $div = $("<div>");
     var new_text = $(cut_ret[1]).text();
     var text_node = range.startContainer.ownerDocument.createTextNode(new_text);
@@ -173,11 +169,9 @@ function remove_mixed_handler(editor, data) {
             "result would be invalid");
     }
 
-    var insert_ret = editor.data_updater.insertText(cut_ret[0][0],
-                                                    cut_ret[0][1],
-                                                    new_text);
+    var insert_ret = editor.data_updater.insertText(cut_ret[0], new_text);
     if (insert_ret[0]) {
-        range.setStart(insert_ret[0], cut_ret[0][1]);
+        range.setStart(insert_ret[0], cut_ret[0].offset);
         range.setEnd(insert_ret[0], range.startOffset + new_text.length);
     }
     else {

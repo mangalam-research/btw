@@ -18,6 +18,7 @@ var updater_domlistener = require("wed/updater_domlistener");
 var btw_util = require("./btw_util");
 var context_menu = require("wed/gui/context_menu");
 var validate = require("salve/validate");
+var makeDLoc = require("wed/dloc").makeDLoc;
 
 var _indexOf = Array.prototype.indexOf;
 
@@ -423,12 +424,12 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
     }
 
     if (!$el[0].firstChild) {
-        var saved = this._editor.getCaret();
-        this._editor.setDataCaret([$el.data("wed_mirror_node"), 0]);
+        var saved = this._editor.getGUICaret();
+        this._editor.setDataCaret($el.data("wed_mirror_node"), 0);
         this._mode.getContextualActions("insert", "btw:explanation",
                                         $el[0], 0)[0]
             .execute({element_name: "btw:explanation"});
-        this._editor.setCaret(saved);
+        this._editor.setGUICaret(saved);
     }
 
 
@@ -977,7 +978,8 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
                                                   container, offset);
     // data to pass to transformations
     var data = {element_name: orig_name,
-                move_caret_to: [container, offset]};
+                move_caret_to: makeDLoc(this._editor.data_root,
+                                        container, offset)};
     var act_ix, act;
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
         tuples.push([act, data, act.getLabelFor(data) +
@@ -990,7 +992,8 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     actions = this._mode.getContextualActions("insert", orig_name,
                                               container, offset + 1);
 
-    data = {element_name: orig_name, move_caret_to: [container, offset + 1]};
+    data = {element_name: orig_name, move_caret_to: makeDLoc(
+        this._editor.data_root, container, offset + 1)};
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
         tuples.push([act, data,
                      act.getLabelFor(data) + " after this one"]);
@@ -1004,7 +1007,8 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     if ($sibling_links.length > 1) {
         // However, don't add swap with prev if we are first.
         data = {element_name: orig_name, node: node,
-                move_caret_to: [container, offset]};
+                move_caret_to: makeDLoc(this._editor.data_root,
+                                        container, offset)};
         if ($sibling_links.first().findAndSelf(ev.currentTarget).length === 0)
             tuples.push(
                 [this._mode.swap_with_prev_tr, data,
@@ -1020,7 +1024,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     // Delete the node
     if (orig_name === "btw:subsense") {
         data = {node: node, element_name: orig_name,
-                move_caret_to: [node, 0]};
+                move_caret_to: makeDLoc(this._editor.data_root, node, 0)};
         this._mode._tr.getTagTransformations(
             "delete-element", "btw:subsense").forEach(function (act) {
                 tuples.push([act, data, act.getLabelFor(data)]);
@@ -1038,7 +1042,8 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
             new validate.Event("enterStartTag", ename.ns, ename.name));
 
         data = {element_name: "btw:subsense",
-                move_caret_to: [node, locations[0]]};
+                move_caret_to: makeDLoc(this._editor.data_root, node,
+                                        locations[0])};
         // We purposely don't use getContextualActions.
         this._mode._tr.getTagTransformations(
             "insert", "btw:subsense").forEach(

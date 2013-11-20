@@ -97,9 +97,9 @@ BTWMode.prototype.init = function (editor) {
     this.insert_ref_text = new transformation.Transformation(
         this._editor, "Insert reference text",
         function (editor, data) {
-        var caret = editor.getCaret();
-        var ph = editor.insertTransientPlaceholderAt(caret[0], caret[1]);
-        editor.setCaret(ph, 0);
+        var caret = editor.getGUICaret();
+        var ph = editor.insertTransientPlaceholderAt(caret);
+        editor.setGUICaret(ph, 0);
     }.bind(this));
 
     /**
@@ -209,31 +209,31 @@ BTWMode.prototype._keyHandler = log.wrap(function (e) {
 // languages in locations where language are already
 // assigned. e.g. citations of primary sources.
 BTWMode.prototype._assignLanguage = function (e) {
-    var caret = this._editor.getCaret();
+    var caret = this._editor.getGUICaret();
 
     if (caret === undefined)
         return true;
 
     // XXX we do not work with anything else than text nodes.
-    if (caret[0].nodeType !== Node.TEXT_NODE)
+    if (caret.node.nodeType !== Node.TEXT_NODE)
         return true;
 
     // Find the previous word
-    var offset = caret[0].nodeValue.slice(0, caret[1]).search(/\w+$/);
+    var offset = caret.node.nodeValue.slice(0, caret.offset).search(/\w+$/);
 
     // This could happen if the user enters spaces at the start of
     // an element for instance.
     if (offset === -1)
         return true;
 
-    var word = caret[0].nodeValue.slice(offset, caret[1]);
+    var word = caret.node.nodeValue.slice(offset, caret.offset);
 
     // XXX hardcoded
     var $new_element;
     if (word === "Abhidharma") {
         $new_element = transformation.wrapTextInElement(
             this._editor.data_updater,
-            caret[0], offset, caret[1], "term", {"xml:lang": "sa-Latn"});
+            caret.node, offset, caret.offset, "term", {"xml:lang": "sa-Latn"});
         // Simulate a link
         if ($new_element !== undefined)
             $new_element.contents().wrapAll("<a href='fake'>");
