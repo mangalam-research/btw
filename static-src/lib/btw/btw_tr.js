@@ -16,7 +16,6 @@ var AbortTransformationException =
 var transformation = require("wed/transformation");
 var insertElement = transformation.insertElement;
 var makeElement = transformation.makeElement;
-var insertIntoText = transformation.insertIntoText;
 var Transformation = transformation.Transformation;
 
 function insert_ptr(editor, data) {
