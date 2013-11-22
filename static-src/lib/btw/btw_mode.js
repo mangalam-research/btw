@@ -189,7 +189,8 @@ BTWMode.prototype.init = function (editor) {
               "btw:tr": ["delete-parent"],
               "btw:lemma-instance": true,
               "p": true,
-              "lg": true
+              "lg": true,
+              "btw:cit": true
           }
         },
         { selector: util.classFromOriginalName("foreign"),
