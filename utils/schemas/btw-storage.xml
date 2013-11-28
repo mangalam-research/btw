@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-Some design principles:
-
- - Reuse TEI elements whenever possible.
-
- - Any section which is not structured more than just being a series of paragraphs is encoded using a <div> of the appropriate type.
-
- -
-
--->
-
 <TEI xmlns="http://www.tei-c.org/ns/1.0"
      xmlns:rng="http://relaxng.org/ns/structure/1.0"
      xml:lang="en">
