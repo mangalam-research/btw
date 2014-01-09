@@ -114,6 +114,49 @@ function BTWDecorator(mode, meta) {
     for (var s_ix = 0, spec;
          (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
         spec.selector = jqutil.toDataSelector(spec.selector);
+
+    this._label_levels = {};
+    [
+        "btw:entry",
+        "btw:lemma",
+        "btw:overview",
+        "btw:definition",
+        "btw:sense-discrimination",
+        "btw:sense",
+        "btw:subsense",
+        "btw:english-renditions",
+        "btw:english-rendition",
+        "term",
+        "btw:english-term",
+        "btw:semantic-fields",
+        "btw:sf",
+        "btw:explanation",
+        "btw:citations",
+        "p",
+        "ptr",
+        "foreign",
+        "btw:renditions-and-discussions",
+        "btw:historico-semantical-data",
+        "btw:etymology",
+        "btw:classical-renditions",
+        "btw:modern-renditions",
+        "btw:lang",
+        "btw:occurrence",
+        "ref",
+        "btw:sense-emphasis",
+        "btw:lemma-instance",
+        "btw:antonym-instance",
+        "btw:cognate-instance",
+        "btw:conceptual-proximate-instance",
+        "btw:contrastive-section",
+        "btw:antonyms",
+        "btw:cognates",
+        "btw:conceptual-proximates",
+        "btw:other-citations"
+    ].forEach(function (x) {
+        this._label_levels[x] = 2;
+    }.bind(this));
+
 }
 
 oop.inherit(BTWDecorator, Decorator);
@@ -221,45 +264,6 @@ BTWDecorator.prototype.addHandlers = function () {
 };
 
 BTWDecorator.prototype.refreshElement = function ($root, $el) {
-    var no_default_decoration = [
-        util.classFromOriginalName("btw:entry"),
-        util.classFromOriginalName("btw:lemma"),
-        util.classFromOriginalName("btw:overview"),
-        util.classFromOriginalName("btw:definition"),
-        util.classFromOriginalName("btw:sense-discrimination"),
-        util.classFromOriginalName("btw:sense"),
-        util.classFromOriginalName("btw:subsense"),
-        util.classFromOriginalName("btw:english-renditions"),
-        util.classFromOriginalName("btw:english-rendition"),
-        util.classFromOriginalName("term"),
-        util.classFromOriginalName("btw:english-term"),
-        util.classFromOriginalName("btw:semantic-fields"),
-        util.classFromOriginalName("btw:sf"),
-        util.classFromOriginalName("btw:explanation"),
-        util.classFromOriginalName("btw:citations"),
-        util.classFromOriginalName("p"),
-        util.classFromOriginalName("ptr"),
-        util.classFromOriginalName("foreign"),
-        util.classFromOriginalName("btw:renditions-and-discussions"),
-        util.classFromOriginalName("btw:historico-semantical-data"),
-        util.classFromOriginalName("btw:etymology"),
-        util.classFromOriginalName("btw:classical-renditions"),
-        util.classFromOriginalName("btw:modern-renditions"),
-        util.classFromOriginalName("btw:lang"),
-        util.classFromOriginalName("btw:occurrence"),
-        util.classFromOriginalName("ref"),
-        util.classFromOriginalName("btw:sense-emphasis"),
-        util.classFromOriginalName("btw:lemma-instance"),
-        util.classFromOriginalName("btw:antonym-instance"),
-        util.classFromOriginalName("btw:cognate-instance"),
-        util.classFromOriginalName("btw:conceptual-proximate-instance"),
-        util.classFromOriginalName("btw:contrastive-section"),
-        util.classFromOriginalName("btw:antonyms"),
-        util.classFromOriginalName("btw:cognates"),
-        util.classFromOriginalName("btw:conceptual-proximates"),
-        util.classFromOriginalName("btw:other-citations")
-    ].join(", ");
-
     // Skip elements which would already have been removed from
     // the tree. Unlikely but...
     if ($el.closest($root).length === 0)
@@ -322,7 +326,6 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         break;
     case "btw:example":
         this.idDecorator($el[0]);
-        this.elementDecorator($root, $el);
         break;
     case "btw:cit":
         this.citDecorator($root, $el);
@@ -333,16 +336,15 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:explanation":
         this.explanationDecorator($root, $el);
         break;
-    default:
-        if ($el.is(no_default_decoration))
-            return;
-        this.elementDecorator($root, $el);
     }
+
+    this.elementDecorator($root, $el);
 };
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
+    var orig_name = util.getOriginalName($el[0]);
     Decorator.prototype.elementDecorator.call(
-        this, $root, $el,
+        this, $root, $el, this._label_levels[orig_name] || 1,
         log.wrap(this._contextMenuHandler.bind(this, true)),
         log.wrap(this._contextMenuHandler.bind(this, false)));
 };
@@ -869,8 +871,8 @@ function addedIdHandler($root, $parent, $previous_sibling, $next_sibling,
                         $element) {
     var $parent = $element.parent();
     if ($parent.is(util.classFromOriginalName("sense"))) {
-        var $start = $parent.children("._gui._start_button");
-        $start.nextUntil($element).addBack().add($element).wrapAll("<span class='_gui _button_and_id _phantom'>");
+        var $start = $parent.children("._gui.__start_label");
+        $start.nextUntil($element).addBack().add($element).wrapAll("<span class='_gui _label_and_id _phantom'>");
     }
 }
 

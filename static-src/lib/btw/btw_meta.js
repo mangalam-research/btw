@@ -8,10 +8,15 @@ var jqutil = require("wed/jqutil");
 var TEIMeta = require("wed/modes/generic/metas/tei_meta").Meta;
 
 /**
- * @class
+ * @classdesc Meta-information for BTW's schema.
+ *
+ * @extends module:modes/generic/metas/tei_meta~Meta
+ *
+ * @constructor
+ * @param {Object} options The options to pass to the Meta.
  */
 function BTWMeta() {
-    TEIMeta.call(this);
+    TEIMeta.apply(this, arguments);
 }
 
 oop.inherit(BTWMeta, TEIMeta);

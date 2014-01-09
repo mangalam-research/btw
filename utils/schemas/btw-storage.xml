@@ -5,18 +5,16 @@
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>TEI for BTW Entries</title>
+        <title>Schema for BTW Entries</title>
         <author>Louis-Dominique Dubeau</author>
       </titleStmt>
       <publicationStmt>
-        <availability status="free">
-          <p>This template file is freely available and you are
-hereby authorised to copy, modify, and redistribute it in
-any way without further reference or permissions.</p>
-          <p>When making such modifications, you are strongly
-recommended to change the present text to include an
-accurate statement of the licencing conditions applicable
-to your modified text.</p>
+        <availability>
+          <license target="https://www.mozilla.org/MPL/2.0/">
+            <p>Licensed under MPL 2.0</p>
+
+            <p>Copyright 2013 Mangalam Research Center for Buddhist Languages.</p>
+          </license>
         </availability>
       </publicationStmt>
       <notesStmt>
@@ -29,7 +27,7 @@ to your modified text.</p>
   </teiHeader>
   <text>
     <body>
-      <p>TEI for BTW Entries.</p>
+      <p>Schema for BTW Entries.</p>
       <schemaSpec ident="btw-storage" prefix="tei_" start="btw_entry">
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="header"/>
         <moduleRef xmlns="http://www.tei-c.org/ns/1.0" key="core"/>
@@ -104,7 +102,9 @@ to your modified text.</p>
         <elementSpec ident="entry"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>An entire lexicographical entry</desc>
+          <desc>An entire lexicographical entry. This is the top
+          element of the document. It is created automatically by
+          BTW.</desc>
           <content>
 	    <rng:ref name="btw_lemma"/>
 	    <rng:ref name="btw_overview"/>
@@ -132,7 +132,8 @@ to your modified text.</p>
         </elementSpec>
 
         <elementSpec ident="overview" ns="http://mangalamresearch.org/ns/btw-storage" prefix="btw_">
-          <desc>Overview unit of the entry.</desc>
+          <desc>The unit of the entry which gives an overview of the
+          entry.</desc>
           <content>
             <rng:ref name="btw_definition"/>
           </content>
@@ -141,7 +142,8 @@ to your modified text.</p>
         <elementSpec ident="definition"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>Definition of the lemma.</desc>
+          <desc>The definition consists of a few paragraphs that
+          define the lemma.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="p"/>
@@ -149,10 +151,11 @@ to your modified text.</p>
           </content>
         </elementSpec>
 
-        <elementSpec ident="sense-discrimination"
+        <elementSpec xml:id="sense-discrimination" ident="sense-discrimination"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>Sense discrimination unit of the entry.</desc>
+          <desc>The unit of the entry that contains the multiple
+          senses of the lemma.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_sense"/>
@@ -163,7 +166,8 @@ to your modified text.</p>
         <elementSpec ident="sense"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>One sense for a lemma.</desc>
+          <desc>One sense for a lemma. A sense may contain multiple
+          subsenses.</desc>
           <content>
             <rng:ref name="btw_english-renditions"/>
             <rng:choice>
@@ -182,13 +186,16 @@ to your modified text.</p>
             <rng:ref name="btw_contrastive-section"/>
           </content>
           <attList>
-            <attRef name="att.global.attribute.xmlid"/>
+            <attRef name="tei_att.global.attribute.xmlid"/>
           </attList>
         </elementSpec>
 
         <elementSpec ident="english-renditions"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>The collection of english renditions of a specific
+          sense. This element is a container for all the
+          <gi>btw:english-rendition</gi> of a specific sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_english-rendition"/>
@@ -199,6 +206,12 @@ to your modified text.</p>
         <elementSpec ident="english-rendition"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records one English rendition for a
+          specific sense. Use multiple <gi>btw:english-rendition</gi>
+          elements if you need to record more than one rendition. The
+          English word that renders the term in English is recorded in
+          <gi>btw:english-term</gi> and its semantic fields in
+          <gi>btw:semantic-fields</gi>.</desc>
           <content>
             <rng:ref name="btw_english-term"/>
             <rng:ref name="btw_semantic-fields"/>
@@ -208,6 +221,8 @@ to your modified text.</p>
         <elementSpec ident="english-term"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records the English term used in an
+          Eglish rendition for a specific sense.</desc>
           <content>
             <rng:choice>
               <rng:ref name="btw_todo"/>
@@ -219,18 +234,22 @@ to your modified text.</p>
         <elementSpec ident="subsense"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records a subsense.</desc>
           <content>
             <rng:ref name="btw_explanation"/>
             <rng:ref name="btw_citations"/>
           </content>
           <attList>
-            <attRef name="att.global.attribute.xmlid"/>
+            <attRef name="tei_att.global.attribute.xmlid"/>
           </attList>
         </elementSpec>
 
         <elementSpec ident="other-citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records the "other citations", those
+          citations that of secondary importance and are not
+          translated.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_cit"/>
@@ -241,6 +260,7 @@ to your modified text.</p>
         <elementSpec ident="semantic-fields"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups semantic fields together.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_sf"/>
@@ -251,6 +271,8 @@ to your modified text.</p>
         <elementSpec ident="contrastive-section"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups the terms that are cited to
+          contrast the meaning of a sense.</desc>
           <content>
             <rng:optional>
               <rng:ref name="btw_antonyms"/>
@@ -267,6 +289,7 @@ to your modified text.</p>
         <elementSpec ident="antonyms"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups the antonyms of a sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_antonym"/>
@@ -277,6 +300,10 @@ to your modified text.</p>
         <elementSpec ident="antonym"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records an antonym of a sense. The
+          antonym itself is recorded in <gi>term</gi>. Supporting
+          citations are recorded in <gi>btw:citations</gi> and
+          <gi>btw:other-citations</gi>, as appropriate.</desc>
           <content>
             <rng:group>
               <rng:ref name="term"/>
@@ -291,6 +318,7 @@ to your modified text.</p>
         <elementSpec ident="cognates"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups the cognates of a sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_cognate"/>
@@ -301,6 +329,10 @@ to your modified text.</p>
         <elementSpec ident="cognate"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records a cognate of a sense. The cognate
+          itself is recorded in <gi>term</gi>. Supporting citations
+          are recorded in <gi>btw:citations</gi> and
+          <gi>btw:other-citations</gi>, as appropriate.</desc>
           <content>
             <rng:group>
               <rng:ref name="term"/>
@@ -316,6 +348,8 @@ to your modified text.</p>
         <elementSpec ident="conceptual-proximates"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups the conceptual proximates of a
+          sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_conceptual-proximate"/>
@@ -326,6 +360,10 @@ to your modified text.</p>
         <elementSpec ident="conceptual-proximate"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element records a conceptual proximate of a
+          sense. The cognate itself is recorded in
+          <gi>term</gi>. Supporting citations are recorded in
+          <gi>btw:citations</gi>.</desc>
           <content>
             <rng:group>
               <rng:ref name="term"/>
@@ -338,18 +376,7 @@ to your modified text.</p>
         <elementSpec ident="sf"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <content>
-            <rng:choice>
-              <rng:ref name="btw_todo"/>
-              <rng:text/>
-            </rng:choice>
-          </content>
-        </elementSpec>
-
-        <elementSpec ident="sense-translation"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>English translation of a sense.</desc>
+          <desc>This element records a semantic field.</desc>
           <content>
             <rng:choice>
               <rng:ref name="btw_todo"/>
@@ -361,7 +388,7 @@ to your modified text.</p>
         <elementSpec ident="explanation"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>Explanation of a sense.</desc>
+          <desc>This element records the explanation of a sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:choice>
@@ -376,7 +403,10 @@ to your modified text.</p>
         <elementSpec ident="citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>A group of citations associated with a sense.</desc>
+          <desc>This element groups citations. Citations recorded in
+          this element must have an accompanying translation. If they
+          do not, they should be recorded in
+          <gi>btw:other-citations</gi>.</desc>
           <content>
             <rng:oneOrMore>
               <rng:choice>
@@ -390,6 +420,8 @@ to your modified text.</p>
         <elementSpec ident="example"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>This element groups a citation together with its
+          associated translations.</desc>
           <content>
             <rng:ref name="btw_cit"/>
             <rng:oneOrMore>
@@ -397,7 +429,7 @@ to your modified text.</p>
             </rng:oneOrMore>
           </content>
           <attList>
-            <attRef name="att.global.attribute.xmlid"/>
+            <attRef name="tei_att.global.attribute.xmlid"/>
           </attList>
         </elementSpec>
 
@@ -405,12 +437,10 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>
-            This element encodes a citation. The actual text being
-            cited will be contained in a &lt;quote> element inside the
-            citation. The reference to the source is encoded using
-            &lt;ptr> or &lt;ref> for simple references or &lt;bibl>
-            containing the above two elements when a citation is more
-            complex.
+            This element encodes a citation. The reference to the
+            source is encoded using a <gi>ref</gi> at the very start
+            of the <gi>btw:cit</gi> element. Then the text of the
+            citation follows.
           </desc>
           <content>
             <rng:ref name="ref"/>
@@ -425,7 +455,12 @@ to your modified text.</p>
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>
-            Contains a translation.
+            This element encodes the translation of a citation. If the
+            translation is from a scholarly source, use
+            <gi>btw:cit</gi> inside this element to record the
+            translation. If the translation is original to this
+            lexicographical article, you can just put the text
+            directly inside <gi>btw:tr</gi>.
           </desc>
           <content>
             <rng:choice>
@@ -440,6 +475,10 @@ to your modified text.</p>
         <elementSpec ident="historico-semantical-data"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records the historico-semantical unit of the
+            article.
+          </desc>
           <content>
             <rng:ref name="btw_etymology"/>
           </content>
@@ -448,6 +487,10 @@ to your modified text.</p>
         <elementSpec ident="etymology"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records the etymology of the lemma. It may
+            contain one or more paragraphs.
+          </desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="p"/>
@@ -458,6 +501,13 @@ to your modified text.</p>
         <elementSpec ident="renditions-and-discussions"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records the renditions and discussions unit
+            of the article. It may contain one or more
+            paragraphs. This unit contains information about
+            renditions in classical languages other than Sanskrit and
+            modern renditions in modern languages.
+          </desc>
           <content>
             <rng:group>
               <rng:ref name="btw_classical-renditions"/>
@@ -469,6 +519,10 @@ to your modified text.</p>
         <elementSpec ident="classical-renditions"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element groups the renditions in classical languages
+            other than Sanskrit.
+          </desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_lang"/>
@@ -479,6 +533,9 @@ to your modified text.</p>
         <elementSpec ident="modern-renditions"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element groups the renditions in modern languages.
+          </desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_lang"/>
@@ -490,6 +547,11 @@ to your modified text.</p>
         <elementSpec ident="lang"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records the rendition of a lemma in a
+            language other than Sanskrit. The language can be
+            classical or modern.
+          </desc>
           <content>
 	    <rng:oneOrMore>
               <rng:choice>
@@ -516,6 +578,15 @@ to your modified text.</p>
         <elementSpec ident="authority"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records the authority of a classical
+            rendition. Its main usage is with Chinese sources where
+            authors are often authoritative for a series of synonyms
+            for a single Sanskrit term. In such cases, all
+            <gi>btw:occurrence</gi> elements recording these synonyms
+            are grouped under one <gi>btw:authority</gi> element that
+            mentions the author.
+          </desc>
           <content>
 	    <rng:oneOrMore>
               <rng:ref name="occurrence"/>
@@ -533,6 +604,13 @@ to your modified text.</p>
         <elementSpec ident="occurrence"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element records a single term occurring as a
+            rendition of a Sanskrit term in a classical language or a
+            modern language. The term itself is recorded in
+            <gi>term</gi>. A reference to a source is recorded in an
+            optional <gi>ref</gi>.
+          </desc>
           <content>
 	    <rng:group>
 	      <rng:ref name="term"/>
@@ -546,6 +624,11 @@ to your modified text.</p>
         <elementSpec ident="lemma-instance"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element marks the appearance of the lemma being
+            discussed. This element is meant to appear only in
+            citations or in translations of a citation.
+          </desc>
           <classes>
             <memberOf key="model.emphLike"/>
           </classes>
@@ -557,6 +640,11 @@ to your modified text.</p>
         <elementSpec ident="antonym-instance"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element marks the appearance of an antonym. This
+            element is meant to appear only in citations of the
+            antonym or in translations of such citation.
+          </desc>
           <classes>
             <memberOf key="model.emphLike"/>
           </classes>
@@ -568,6 +656,11 @@ to your modified text.</p>
         <elementSpec ident="cognate-instance"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element marks the appearance of a cognate. This
+            element is meant to appear only in citations of the
+            cognate or in translations of such citation.
+          </desc>
           <classes>
             <memberOf key="model.emphLike"/>
           </classes>
@@ -579,6 +672,12 @@ to your modified text.</p>
         <elementSpec ident="conceptual-proximate-instance"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element marks the appearance of a conceptual
+            proximate. This element is meant to appear only in
+            citations of the conceptual proximate or in translations
+            of such citation.
+          </desc>
           <classes>
             <memberOf key="model.emphLike"/>
           </classes>
@@ -590,6 +689,10 @@ to your modified text.</p>
         <elementSpec ident="sense-emphasis"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element is used to emphasize the sense of a lemma in
+            the definition section of a lexicographical article.
+          </desc>
           <classes>
             <memberOf key="model.emphLike"/>
           </classes>
@@ -601,6 +704,11 @@ to your modified text.</p>
         <elementSpec ident="todo"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
+          <desc>
+            This element is used to remind an author or editor that
+            some editing action still needs to be performed on the
+            article.
+          </desc>
           <classes>
             <memberOf key="model.phrase"/>
           </classes>

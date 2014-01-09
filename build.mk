@@ -19,6 +19,10 @@ JSDOC3?=jsdoc
 # Parameters to pass to behave
 BEHAVE_PARAMS?=
 
+# The TEI hierarchy to use. This is the default location on
+# Debian-type systems.
+TEI?=/usr/share/xml/tei/stylesheet
+
 #
 # End of customizable variables.
 #
@@ -53,7 +57,7 @@ LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-
 
 FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js
 
-DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js
+DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
 WED_FILES:=$(shell find $(WED_BUILD) -type f)
 FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST)/%,$f))
@@ -79,6 +83,14 @@ $(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
 
 $(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
 	cp $< $@
+
+$(BUILD_DEST)/lib/btw/btw-storage-metadata.json: utils/schemas/out/btw-storage-metadata.json
+	cp $< $@
+
+$(BUILD_DEST)/lib/btw/btw-storage-doc: utils/schemas/out/btw-storage-doc
+	rm -rf $@
+	cp -rp $< $@
+
 
 $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)

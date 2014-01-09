@@ -29,7 +29,12 @@ require("jquery.cookie");
  * @extends module:wed/modes/generic/generic~Mode
  */
 function BTWMode (options) {
-    options.meta = btw_meta;
+    options.meta = {
+        path: btw_meta,
+        options: {
+            metadata: require.toUrl('./btw-storage-metadata.json')
+        }
+    };
     this._bibl_abbrev_url = options.bibl_abbrev_url;
     this._bibl_info_url = options.bibl_info_url;
     delete options.bibl_info_url;
@@ -39,14 +44,19 @@ function BTWMode (options) {
     this._headers = {
         "X-CSRFToken": $.cookie("csrftoken")
     };
+
+    this._wed_options.metadata = {
+        name: "BTW Mode",
+        authors: ["Louis-Dominique Dubeau"],
+        description: "This is a mode for use with BTW.",
+        license: "MPL 2.0",
+        copyright: "2013 Mangalam Research Center for Buddhist Languages"
+    };
+
+    this._wed_options.label_levels.max = 2;
 }
 
 oop.inherit(BTWMode, Mode);
-
-BTWMode.optionResolver = function (options, callback) {
-    callback(options);
-};
-
 
 BTWMode.prototype.init = function (editor) {
     Mode.prototype.init.call(this, editor);
@@ -337,12 +347,12 @@ BTWMode.prototype.getStylesheets = function () {
 BTWMode.prototype.nodesAroundEditableContents = function (parent) {
     var ret = [null, null];
     var start = parent.childNodes[0];
-    while ($(start).is("._gui._start_button, .head")) {
+    while ($(start).is("._gui.__start_label, .head")) {
         ret[0] = start;
         start = start.nextSibling;
     }
     var end = parent.childNodes[parent.childNodes.length - 1];
-    if ($(end).is("._gui._end_button"))
+    if ($(end).is("._gui.__end_label"))
         ret[1] = end;
     return ret;
 };

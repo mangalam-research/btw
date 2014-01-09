@@ -8,10 +8,22 @@ require.config({
    'font-awesome': 'external/font-awesome',
    'jquery.cookie': 'external/jquery.cookie',
    'qunit': 'external/qunit-1.12.0',
+   'pubsub-js': 'external/pubsub',
+   xregexp: 'external/xregexp',
      // For bibsearch
    'modules': '/static/scripts/modules'
  },
+ packages: [
+     {
+         name: "lodash",
+         location: "external/lodash"
+     }
+ ],
  shim: {
+   xregexp: {
+     exports: "XRegExp",
+     init: function () { return {XRegExp: XRegExp}; }
+   },
    'bootstrap': {
      deps: ["jquery"],
      exports: "jQuery.fn.popover",
