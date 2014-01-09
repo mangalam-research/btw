@@ -54,6 +54,21 @@ def step_impl(context):
     """)
 
 
+def setup_editor(context):
+    util = context.util
+    driver = context.driver
+
+    wedutil.wait_for_editor(util)
+    # ... and that tooltips are not displayed. Otherwise, a tooltip
+    # may still be visible after we set the preference to ``false``.
+    wedutil.wait_until_no_tooltip(util)
+
+    # Turning off tooltips makes the tests much easier to handle.
+    driver.execute_script("""
+    wed_editor.preferences.set("tooltips", false);
+    """)
+
+
 @given("a new document")
 def step_impl(context):
     util = context.util
@@ -63,7 +78,7 @@ def step_impl(context):
     """)
     new = util.find_clickable_element((By.PARTIAL_LINK_TEXT, "New"))
     new.click()
-    wedutil.wait_for_editor(util)
+    setup_editor(context)
 
     btw_util.record_document_features(context)
 
@@ -138,6 +153,6 @@ def step_impl(context):
     edit_link = view_link.find_element_by_xpath("../a[2]")
 
     edit_link.click()
-    wedutil.wait_for_editor(util)
+    setup_editor(context)
 
     btw_util.record_document_features(context)
