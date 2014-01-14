@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0"
      xmlns:rng="http://relaxng.org/ns/structure/1.0"
+     xmlns:btw="http://mangalamresearch.org/ns/btw-storage"
      xml:lang="en">
   <teiHeader>
     <fileDesc>
@@ -114,7 +115,7 @@
           </content>
           <attList>
             <attDef ident="authority" usage="req">
-	      <desc>Who is responsible for this entry.</desc>
+	      <desc>The person responsible for this entry.</desc>
 	    </attDef>
           </attList>
         </elementSpec>
@@ -122,18 +123,25 @@
         <elementSpec ident="lemma"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>The lemma about which the entry is written.</desc>
+          <desc>The lemma about which the entry is written. This
+          element should contain a single term in stem form.</desc>
           <content>
             <rng:choice>
               <rng:ref name="btw_todo"/>
               <rng:text/>
             </rng:choice>
           </content>
+          <exemplum xml:lang="en">
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <btw:lemma>prasāda</btw:lemma>
+            </egXML>
+          </exemplum>
         </elementSpec>
 
         <elementSpec ident="overview" ns="http://mangalamresearch.org/ns/btw-storage" prefix="btw_">
           <desc>The unit of the entry which gives an overview of the
-          entry.</desc>
+          whole entry. This unit contains a definition of the
+          lemma.</desc>
           <content>
             <rng:ref name="btw_definition"/>
           </content>
@@ -143,7 +151,9 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>The definition consists of a few paragraphs that
-          define the lemma.</desc>
+          define the lemma. These paragraphs should cover the senses
+          to be discussed in the next unit and include hyperlinks to
+          these senses.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="p"/>
@@ -195,7 +205,8 @@
                      prefix="btw_">
           <desc>The collection of english renditions of a specific
           sense. This element is a container for all the
-          <gi>btw:english-rendition</gi> of a specific sense.</desc>
+          <gi>btw:english-rendition</gi> elements of a specific
+          sense.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_english-rendition"/>
@@ -248,7 +259,7 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>This element records the "other citations", those
-          citations that of secondary importance and are not
+          citations that are of secondary importance and are not
           translated.</desc>
           <content>
             <rng:oneOrMore>
@@ -260,11 +271,24 @@
         <elementSpec ident="semantic-fields"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>This element groups semantic fields together.</desc>
+          <desc>This element groups semantic fields for a single
+          element together.</desc>
           <content>
             <rng:oneOrMore>
               <rng:ref name="btw_sf"/>
             </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="sf"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>This element records a semantic field.</desc>
+          <content>
+            <rng:choice>
+              <rng:ref name="btw_todo"/>
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -372,18 +396,6 @@
           </content>
         </elementSpec>
 
-
-        <elementSpec ident="sf"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>This element records a semantic field.</desc>
-          <content>
-            <rng:choice>
-              <rng:ref name="btw_todo"/>
-              <rng:text/>
-            </rng:choice>
-          </content>
-        </elementSpec>
 
         <elementSpec ident="explanation"
                      ns="http://mangalamresearch.org/ns/btw-storage"
@@ -707,7 +719,8 @@
           <desc>
             This element is used to remind an author or editor that
             some editing action still needs to be performed on the
-            article.
+            article. This element should not appear in published
+            articles.
           </desc>
           <classes>
             <memberOf key="model.phrase"/>
