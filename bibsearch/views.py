@@ -157,7 +157,8 @@ def abbrev(request, itemKey):
     creators = item.get("creators", None)
     if creators is not None:
         first = creators[0]
-        ret = first.get("lastName", first.get("firstName", None))
+        ret = first.get("lastName", first.get("firstName", first.get("name",
+                                                                     None)))
 
     if ret is None:
         ret = "***ITEM HAS NO AUTHORS***"
