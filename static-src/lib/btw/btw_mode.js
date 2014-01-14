@@ -101,14 +101,13 @@ BTWMode.prototype.init = function (editor) {
             editor, data.node);
     });
 
-    this.insert_bibl_ptr_action = new btw_actions.InsertBiblPtrDialogAction(
-        editor, "Insert a new bibliographical reference.");
-
     this.insert_ref_text = new transformation.Transformation(
-        this._editor, "Insert reference text",
+        this._editor, "Add custom text to reference",
         function (editor, data) {
         var caret = editor.getGUICaret();
-        var ph = editor.insertTransientPlaceholderAt(caret);
+        var $ref = $(caret.node).closest(util.classFromOriginalName("ref"));
+        var ph = editor.insertTransientPlaceholderAt(caret.make(
+            $ref[0], $ref[0].childNodes.length));
         editor.setGUICaret(ph, 0);
     }.bind(this));
 
@@ -174,8 +173,7 @@ BTWMode.prototype.init = function (editor) {
             },
             // filter: [...],
             substitute: [ {tag: "ptr",
-                           type: "insert", actions: [this.insert_sense_ptr_action,
-                                                     this.insert_bibl_ptr_action]} ]
+                           type: "insert", actions: [this.insert_sense_ptr_action]} ]
         },
         { selector: util.classFromOriginalName("ptr"),
           pass: { "ptr": ["delete-parent"] }
@@ -269,6 +267,15 @@ BTWMode.prototype.makeDecorator = function () {
     return obj;
 };
 
+BTWMode.prototype._getTransformationRegistry = function () {
+    var ret = Mode.prototype._getTransformationRegistry.call(this);
+    ret.addTagTransformations("insert", "ref",
+                              new btw_actions.InsertBiblPtrDialogAction(
+                                  this._editor,
+                                  "Insert a new bibliographical reference."));
+    return ret;
+};
+
 
 /**
  *
@@ -347,13 +354,19 @@ BTWMode.prototype.getStylesheets = function () {
 BTWMode.prototype.nodesAroundEditableContents = function (parent) {
     var ret = [null, null];
     var start = parent.childNodes[0];
-    while ($(start).is("._gui.__start_label, .head")) {
+    var $start = $(start);
+    // Otherwise, we want to search because a start label may be
+    // followed by a .head or ._open_ref_paren.
+    while ($(start).is("._gui.__start_label, .head, ._open_ref_paren")) {
         ret[0] = start;
         start = start.nextSibling;
     }
+
     var end = parent.childNodes[parent.childNodes.length - 1];
-    if ($(end).is("._gui.__end_label"))
+    while ($(end).is("._gui.__end_label, ._close_ref_paren")) {
         ret[1] = end;
+        end = end.previousSibling;
+    }
     return ret;
 };
 
