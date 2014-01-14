@@ -824,18 +824,21 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             $.ajax({url: this._mode._bibl_abbrev_url.replace(/<itemKey>/,
                                                              target)
                    }).done(function (data) {
-                       dec._gui_updater.insertAt(
-                           $el.get(0), 1,
+                       var after = $el.children("._close_ref_paren")[0];
+                       dec._gui_updater.insertBefore(
+                           $el[0],
                            $('<div class="_text _phantom _ref_abbr">' +
-                             data + '</div>').get(0));
+                             data + '</div>')[0], after);
                    });
         }
     }
 
     if (!is_ptr) {
-        $el.children("._text._phantom._ref_paren").remove();
-        $el.prepend("<div class='_text _phantom _ref_paren'>(</div>");
-        $el.append("<div class='_text _phantom _ref_paren'>)</div>");
+        $el.children("._ref_paren").remove();
+        $el.prepend("<div class='_phantom _decoration_text _ref_paren " +
+                    "_open_ref_paren'>(</div>");
+        $el.append("<div class='_phantom _decoration_text " +
+                   "_ref_paren _close_ref_paren'>)</div>");
     }
 };
 
