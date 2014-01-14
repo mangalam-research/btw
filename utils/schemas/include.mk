@@ -3,11 +3,11 @@ $(1)_include_mk_DIR=$(2)
 $(1)_outdir=$$($(1)_include_mk_DIR)/out
 
 # Top of tei hierarchy
-$(1)_TEI:=$(TEI)
-$(1)_CONVERT:=$(WED_PATH)/node_modules/.bin/salve-convert
-$(1)_ODD2HTML:=$$($(1)_TEI)/odds/odd2html.xsl
-$(1)_SAXON:=saxon
-$(1)_ROMA:=roma
+$(1)_TEI?=$(TEI)
+$(1)_CONVERT?=$(WED_PATH)/node_modules/.bin/salve-convert
+$(1)_ODD2HTML?=$$($(1)_TEI)/odds/odd2html.xsl
+$(1)_SAXON?=saxon
+$(1)_ROMA?=roma
 
 #
 # This funky path:
