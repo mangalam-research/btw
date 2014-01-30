@@ -601,7 +601,7 @@
           </desc>
           <content>
 	    <rng:oneOrMore>
-              <rng:ref name="occurrence"/>
+              <rng:ref name="btw_occurrence"/>
 	    </rng:oneOrMore>
           </content>
           <attList>
