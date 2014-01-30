@@ -527,29 +527,6 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
     </btw:etymology>
   </btw:historico-semantical-data>
   <btw:renditions-and-discussions> <!-- UNIT 4: RENDITIONS AND DISCUSSIONS -->
-    <btw:classical-renditions> <!-- [classical renditions] -->
-      <btw:lang btw:lang="pi-Latn">
-        <btw:occurrence><term>pasāda</term></btw:occurrence>
-      </btw:lang>
-      <btw:lang btw:lang="bo-Latn">
-        <btw:occurrence><term>dang ba</term></btw:occurrence>
-      </btw:lang>
-      <btw:lang btw:lang="zh-Hant">
-        <btw:authority target="/authority/XZ">
-          <btw:occurrence><term>淨</term><ref>T xxix1558 2b12, 133b16ff</ref></btw:occurrence>
-          <btw:occurrence><term>淨心</term><ref>T xxix1558 82b5</ref></btw:occurrence>
-          <btw:occurrence><term>澄淨</term><ref>T xxix1558 19b3</ref></btw:occurrence>
-          <btw:occurrence><term>清淨</term><ref>T xxix155852a17</ref></btw:occurrence>
-        </btw:authority>
-        <btw:authority target="/authority/Param">
-          <btw:occurrence><term>淨</term><ref>T xxix1559162a7, 163a8</ref></btw:occurrence>
-          <btw:occurrence><term>淨心</term><ref>T xxix1559 238b25</ref></btw:occurrence>
-          <btw:occurrence><term>淨信</term><ref>T xxix1559 284c10</ref></btw:occurrence>
-          <btw:occurrence><term>清淨</term><ref>T xxix1559209a6</ref></btw:occurrence>
-          <btw:occurrence><term>澄淨</term><ref>T xxix1559 178b23</ref></btw:occurrence>
-        </btw:authority>
-      </btw:lang>
-    </btw:classical-renditions>
     <btw:modern-renditions> <!-- [renditions, translations and paraphrases in contemporary scholarship] -->
       <btw:lang btw:lang="en">
         <btw:occurrence><term>serenity</term><ref>Anacker 1984</ref></btw:occurrence>
@@ -557,9 +534,6 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
         <btw:occurrence><term>faith</term><ref>Bayer 2010, Roy   1971</ref></btw:occurrence>
         <btw:occurrence><term>favour</term><ref>Roy   1971</ref></btw:occurrence>
         <btw:occurrence><term>confidence</term><ref>Ñanamoli, Thanissaro</ref></btw:occurrence>
-      </btw:lang>
-      <btw:lang btw:lang="fr">
-        <btw:occurrence><term>clarification (de la pensée)</term><ref>LVP 1980</ref></btw:occurrence>
       </btw:lang>
     </btw:modern-renditions>
   </btw:renditions-and-discussions>

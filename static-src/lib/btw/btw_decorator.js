@@ -64,7 +64,7 @@ function BTWDecorator(mode, meta) {
         heading: "classical renditions"
     }, {
         selector: "btw:modern-renditions",
-        heading: "modern renditions"
+        heading: "renditions, translations and paraphrases in contemporary scholarship"
     }, {
         selector: "btw:sense>btw:explanation",
         heading: "brief explanation of sense",

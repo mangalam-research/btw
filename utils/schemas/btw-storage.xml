@@ -510,6 +510,20 @@
           </content>
         </elementSpec>
 
+        <!-- The structure of rendition-and-discussions is more
+             complex than strictly necessary. An other version had a
+             classical-renditions element for classical renditions and
+             also dealt with more than one modern language. When these
+             were removed, the structure was kept in such a shape that
+             we can easily reintroduce them in the future without
+             having to make major changes to the structure of this
+             element.
+
+             Seek commit 3c3f1bbb54bad1a2fce09ad0a33a914d5c0de509 to
+             see the last version of this file that contains the more
+             complex structure. (Or seek a version prior to
+             2014-01-30.)
+        -->
         <elementSpec ident="renditions-and-discussions"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
@@ -522,23 +536,8 @@
           </desc>
           <content>
             <rng:group>
-              <rng:ref name="btw_classical-renditions"/>
               <rng:ref name="btw_modern-renditions"/>
             </rng:group>
-          </content>
-        </elementSpec>
-
-        <elementSpec ident="classical-renditions"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element groups the renditions in classical languages
-            other than Sanskrit.
-          </desc>
-          <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_lang"/>
-            </rng:oneOrMore>
           </content>
         </elementSpec>
 
@@ -549,9 +548,7 @@
             This element groups the renditions in modern languages.
           </desc>
           <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_lang"/>
-            </rng:oneOrMore>
+            <rng:ref name="btw_lang"/>
           </content>
         </elementSpec>
 
@@ -566,10 +563,7 @@
           </desc>
           <content>
 	    <rng:oneOrMore>
-              <rng:choice>
-                <rng:ref name="btw_authority"/>
-	        <rng:ref name="btw_occurrence"/>
-              </rng:choice>
+	      <rng:ref name="btw_occurrence"/>
 	    </rng:oneOrMore>
           </content>
           <attList>
@@ -583,33 +577,12 @@
 	      btw:lang//btw:occurrence/btw:term as being of the
 	      language specified in the attribute, except if otherwise
 	      specified in a narrower scope.</desc>
+              <valList type="closed">
+                <valItem ident="en">
+                  <gloss>English</gloss>
+                </valItem>
+              </valList>
 	    </attDef>
-          </attList>
-        </elementSpec>
-
-        <elementSpec ident="authority"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element records the authority of a classical
-            rendition. Its main usage is with Chinese sources where
-            authors are often authoritative for a series of synonyms
-            for a single Sanskrit term. In such cases, all
-            <gi>btw:occurrence</gi> elements recording these synonyms
-            are grouped under one <gi>btw:authority</gi> element that
-            mentions the author.
-          </desc>
-          <content>
-	    <rng:oneOrMore>
-              <rng:ref name="btw_occurrence"/>
-	    </rng:oneOrMore>
-          </content>
-          <attList>
-            <attDef ident="target" usage="req">
-              <datatype>
-                <rng:ref name="data.pointer"/>
-              </datatype>
-            </attDef>
           </attList>
         </elementSpec>
 
