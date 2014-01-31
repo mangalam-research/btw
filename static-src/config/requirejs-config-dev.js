@@ -10,7 +10,7 @@ require.config({
    'qunit': 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
-     // For bibsearch
+     // For bibliography
    'modules': '/static/scripts/modules'
  },
  packages: [
@@ -60,8 +60,8 @@ require.config({
          mode: {
              path: "btw/btw_mode",
              options: {
-                 bibl_info_url: "/search/<itemKey>/info",
-                 bibl_abbrev_url: "/search/<itemKey>/abbrev"
+                 bibl_info_url: "/bibliography/<itemKey>/info",
+                 bibl_abbrev_url: "/bibliography/<itemKey>/abbrev"
              }
          }
      }

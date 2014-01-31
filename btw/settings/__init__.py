@@ -160,7 +160,7 @@ INSTALLED_APPS = (
     'core',
     'wed',
     'lexicography',
-    'bibsearch',
+    'bibliography',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

@@ -1,16 +1,15 @@
 from django.test import Client
 from django.contrib.auth import get_user_model
-#from django.contrib.auth.models import User
 from .models import ZoteroUser
 
-# import nose for tests.
 import nose.tools as noz
 
 User = get_user_model()
 
-# code to test the bibsearch views
+
+# Code to test the views.
 class TestSearchView(object):
-    """ tests the search view at /search/ for functionality """
+    """ tests the search view at /bibliography/ for functionality """
 
     def __init__(self, *args, **kwargs):
         self.client = None
@@ -23,27 +22,31 @@ class TestSearchView(object):
         self.user = User.objects.create_user(username='test', password='test')
 
     def testGet(self):
-        """Unauthenticated response(url: /search/)"""
+        """Unauthenticated response(url: /bibliography/)"""
         #self.client.logout()
         # the user is not logged in.
-        response = self.client.get('http://testserver/search/')
+        response = self.client.get('http://testserver/bibliography/')
 
         noz.assert_equal(response.status_code, 403)
 
     def testAuthGET(self):
-        """Authenticated response without zotero profile (url: /search/)"""
+        """
+        Authenticated response without zotero profile (url: /bibliography/)
+        """
 
         # login the test user
         response = self.client.login(username=u'test', password=u'test')
 
         noz.assert_equal(response, True)
 
-        response = self.client.get('http://testserver/search/')
+        response = self.client.get('http://testserver/bibliography/')
 
         noz.assert_equal(response.status_code, 500)
 
     def testAuthGET2(self):
-        """Authenticated AJAX or GET with zotero profile (url: /search/)"""
+        """
+        Authenticated AJAX or GET with zotero profile (url: /bibliography/)
+        """
         # create a dummy profile
         zo = ZoteroUser(btw_user=self.user, uid="123456", api_key="abcdef")
         zo.save()
@@ -53,12 +56,12 @@ class TestSearchView(object):
 
         noz.assert_equal(response, True)
 
-        response = self.client.get('http://testserver/search/')
+        response = self.client.get('http://testserver/bibliography/')
 
         noz.assert_equal(response.status_code, 200)
 
         # test ajax get call without any data
-        response = self.client.get('http://testserver/search/',
+        response = self.client.get('http://testserver/bibliography/',
                                    {},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         noz.assert_equal(response.status_code, 200)
@@ -72,7 +75,7 @@ class TestSearchView(object):
         noz.assert_equal(response, True)
 
         # test ajax get call with dummy data
-        response = self.client.post('http://testserver/search/exec/',
+        response = self.client.post('http://testserver/bibliography/exec/',
                                     {'library': 5, 'keyword': 'testtest'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
@@ -80,7 +83,7 @@ class TestSearchView(object):
         noz.assert_equal(response.status_code, 302)
         noz.assert_equal(response.has_header('Location'), True)
         noz.assert_equal(response['Location'],
-                         "http://testserver/search/results/")
+                         "http://testserver/bibliography/results/")
         zo.delete()
 
     def tearDown(self):
@@ -96,20 +99,22 @@ class TestResultsView(object):
         self.user = User.objects.create_user(username='test', password='test')
 
     def testEmptySession(self):
-        """ Unauthenticated, empty session (url: /search/results/) """
+        """ Unauthenticated, empty session (url: /bibliography/results/) """
 
-        response = self.client.get("http://testserver/search/results/")
+        response = self.client.get("http://testserver/bibliography/results/")
         noz.assert_equal(response.status_code, 403)
 
     def testValidSession(self):
-        """Authenticated, without/with session data (url: /search/results/)"""
+        """
+        Authenticated, without/with session data (url: /bibliography/results1/)
+        """
 
         # test authentication
         response = self.client.login(username=u'test', password=u'test')
         noz.assert_equal(response, True)
 
         # test the authenticated session object without results list
-        response = self.client.get("http://testserver/search/results/")
+        response = self.client.get("http://testserver/bibliography/results/")
         noz.assert_equal(response.status_code, 500)
 
         # populate the session requirements.
@@ -118,7 +123,7 @@ class TestResultsView(object):
         session_obj.save()
 
         # test authenticated session with results list
-        response = self.client.get("http://testserver/search/results/")
+        response = self.client.get("http://testserver/bibliography/results/")
         noz.assert_equal(response.status_code, 200)
 
     def tearDown(self):
@@ -134,24 +139,24 @@ class TestSyncView(object):
         self.user = User.objects.create_user(username='test', password='test')
 
     def testEmptySession(self):
-        """ Unauthenticated response (url: /search/sync/) """
+        """ Unauthenticated response (url: /bibliography/sync/) """
 
-        response = self.client.get("http://testserver/search/sync/")
+        response = self.client.get("http://testserver/bibliography/sync/")
         noz.assert_equal(response.status_code, 403)
 
     def testValidSession(self):
-        """ Authenticated without/with sync data(url: /search/sync/) """
+        """ Authenticated without/with sync data(url: /bibliography/sync/) """
 
         # test authentication
         response = self.client.login(username=u'test', password=u'test')
         noz.assert_equal(response, True)
 
         # test the authenticated response object without sync data
-        response = self.client.post("http://testserver/search/sync/")
+        response = self.client.post("http://testserver/bibliography/sync/")
         noz.assert_equal(response.status_code, 500)
 
         # populate the sync requirements ('enc' should be in query dict).
-        response = self.client.post("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/bibliography/sync/", {
             'enc': u''})  # empty upload without session variable for results.
         noz.assert_equal(response.status_code, 500)
         noz.assert_equal(
@@ -163,15 +168,14 @@ class TestSyncView(object):
         session_obj.save()
 
         # rerun the assertion to test for a different error string.
-        response = self.client.post("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/bibliography/sync/", {
             'enc': u''})  # empty upload with a session variable for results.
         noz.assert_equal(response.status_code, 500)
         noz.assert_equal(
             response.content, 'Error: malformed data cannot be copied.')
 
-
         # populate the sync requirements ('enc' should be in query dict).
-        response = self.client.post("http://testserver/search/sync/", {
+        response = self.client.post("http://testserver/bibliography/sync/", {
             'enc': u'nilakhyaNILAKHYA'})
         noz.assert_equal(response.status_code, 200)
         noz.assert_equal(

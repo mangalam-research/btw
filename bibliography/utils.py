@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 CACHED_DATA_VERSION = 1
 
-cache = get_cache('bibsearch')
+cache = get_cache('bibliography')
 
 _cached_details = None
 

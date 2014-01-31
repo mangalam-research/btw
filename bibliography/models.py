@@ -37,7 +37,7 @@ from .utils import Zotero
 #
 # We double the values below to build some slack into the system.
 
-add_introspection_rules([], [r"^bibsearch\.models\.ZoteroUIDField"])
+add_introspection_rules([], [r"^bibliography\.models\.ZoteroUIDField"])
 
 
 class ZoteroUIDField(models.CharField):
@@ -49,7 +49,7 @@ class ZoteroUIDField(models.CharField):
         kwargs['max_length'] = 22
         super(ZoteroUIDField, self).__init__(*args, **kwargs)
 
-add_introspection_rules([], [r"^bibsearch\.models\.ZoteroAPIKeyField"])
+add_introspection_rules([], [r"^bibliography\.models\.ZoteroAPIKeyField"])
 
 
 class ZoteroAPIKeyField(models.CharField):

@@ -29,6 +29,7 @@ def parsedict(dict_obj, key_string, attribute_string):
     except TypeError:
         return ""
 
+
 @register.filter
 def library(dict_obj, key_string):
     """Returns the object_type from extra data dictionary."""

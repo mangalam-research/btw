@@ -11,7 +11,7 @@ urlpatterns = patterns(
     url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
     url(r'^logout/$', 'core.views.logout', name="logout"),
     url(r'^lexicography/', include('lexicography.urls')),
-    url(r'^search/', include('bibsearch.urls'))
+    url(r'^bibliography/', include('bibliography.urls'))
 )
 
 

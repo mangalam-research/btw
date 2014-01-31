@@ -40,7 +40,7 @@ def search(request):
 
     # present a unbound form.
     form = SearchForm()
-    template = loader.get_template('bibsearch/search.html')
+    template = loader.get_template('bibliography/search.html')
     context = RequestContext(request, {'form': form})
     return HttpResponse(template.render(context))
 
@@ -54,7 +54,7 @@ def exec_(request):
         local_profile_object = ZoteroUser.objects.get(btw_user=request.user)
     except ObjectDoesNotExist:
         return HttpResponseServerError(
-            "the user does not have a bibsearch profile.")
+            "the user does not have a bibliography profile.")
 
     # 1. from POST dictionary prepare:
     # a. the zotero library to search info from.
@@ -113,7 +113,7 @@ def exec_(request):
     logger.debug("ajax update fired")
 
     # redirect to pagination url for returning the results first time.
-    return HttpResponseRedirect('/search/results/')
+    return HttpResponseRedirect('/bibliography/results/')
 
 
 @ajax_login_required
@@ -126,7 +126,8 @@ def results(request):
 
     if type(results_list) is list:
         logger.debug("start paginating the results")
-        paginator = Paginator(results_list, settings.BIBSEARCH_PAGINATION_SIZE)
+        paginator = Paginator(results_list,
+                              settings.BIBLIOGRAPHY_PAGINATION_SIZE)
         page = request.GET.get('page')
         try:
             results = paginator.page(page)
@@ -137,7 +138,7 @@ def results(request):
             # If page is out of range (e.g. 999), deliver last page of results.
             results = paginator.page(paginator.num_pages)
 
-        template = loader.get_template('bibsearch/results.html')
+        template = loader.get_template('bibliography/results.html')
         context = Context({
             'results': results,
             'extras': extra_data,
@@ -246,7 +247,7 @@ def sync(request):
                 # call setItem
                 res = sync_obj.setItem(data_dict)
 
-            # do additional steps to manipulate bibsearch_sync_status to 0
+            # do additional steps to manipulate bibliography_sync_status to 0
             if res == "OK":
                 extra_dict = request.session.pop('extra_data')
                 if enc_string in extra_dict:
@@ -271,6 +272,6 @@ def sync(request):
 @require_GET
 def testjs(request):
     """ Qunit tests view """
-    template = loader.get_template('bibsearch/Qtests.html')
+    template = loader.get_template('bibliography/Qtests.html')
     context = RequestContext(request)
     return HttpResponse(template.render(context))
