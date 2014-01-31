@@ -433,12 +433,10 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>This element groups a citation together with its
-          associated translations.</desc>
+          associated translation.</desc>
           <content>
             <rng:ref name="btw_cit"/>
-            <rng:oneOrMore>
-              <rng:ref name="btw_tr"/>
-            </rng:oneOrMore>
+            <rng:ref name="btw_tr"/>
           </content>
           <attList>
             <attRef name="tei_att.global.attribute.xmlid"/>
@@ -467,20 +465,12 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>
-            This element encodes the translation of a citation. If the
-            translation is from a scholarly source, use
-            <gi>btw:cit</gi> inside this element to record the
-            translation. If the translation is original to this
-            lexicographical article, you can just put the text
-            directly inside <gi>btw:tr</gi>.
+            This element encodes the translation of a citation.
           </desc>
           <content>
-            <rng:choice>
-              <rng:ref name="btw_cit"/>
-              <rng:oneOrMore>
-                <rng:ref name="macro.specialPara"/>
-              </rng:oneOrMore>
-            </rng:choice>
+            <rng:oneOrMore>
+              <rng:ref name="macro.specialPara"/>
+            </rng:oneOrMore>
           </content>
         </elementSpec>
 
