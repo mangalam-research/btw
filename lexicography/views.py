@@ -408,14 +408,14 @@ def log(request):
 
 
 @login_required
-@entry_lock_required
 @require_POST
 def change_revert(request, change_id):
     change = ChangeRecord.objects.get(id=change_id)
     chunk = change.c_hash
     xmltree = XMLTree(chunk.data)
-    try_updating_entry(request, change.entry, chunk, xmltree, Entry.REVERT,
-                       Entry.MANUAL)
+    if not try_updating_entry(request, change.entry, chunk, xmltree,
+                              Entry.REVERT, Entry.MANUAL):
+        return HttpResponse("<br>entry locked!")
     return HttpResponse("<br>reverted.")
 
 
