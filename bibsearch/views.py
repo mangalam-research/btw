@@ -168,7 +168,28 @@ def abbrev(request, itemKey):
 @ajax_login_required
 @require_GET
 def info(request, itemKey):
-    pass
+    zotero = Zotero(zotero_settings(), "BTW Library")
+    item = zotero.getItem(itemKey)
+    ret = ""
+
+    creators = item.get("creators", None)
+    if creators is not None:
+        names = [creator.get("lastName", creator.get("firstName",
+                                                     creator.get("name",
+                                                                 "")))
+                 for creator in creators]
+        ret = ", ".join(names)
+
+    title = item.get("title", None)
+    if title:
+        ret += ", " + title
+
+    print item
+    year = item.get("date", None)
+    if year:
+        ret += ", " + year
+
+    return HttpResponse(ret)
 
 
 @ajax_login_required

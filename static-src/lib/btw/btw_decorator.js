@@ -824,11 +824,16 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             $.ajax({url: this._mode._bibl_abbrev_url.replace(/<itemKey>/,
                                                              target)
                    }).done(function (data) {
-                       var after = $el.children("._close_ref_paren")[0];
+                       var before = $el.children("._open_ref_paren")[0];
                        dec._gui_updater.insertBefore(
                            $el[0],
                            $('<div class="_text _phantom _ref_abbr">' +
-                             data + '</div>')[0], after);
+                             data + '</div>')[0], before.nextSibling);
+                   });
+            $.ajax({url: this._mode._bibl_info_url.replace(/<itemKey>/,
+                                                           target)
+                   }).done(function (data) {
+                       $el.tooltip({"title": data, container: "body"});
                    });
         }
     }
