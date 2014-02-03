@@ -10,6 +10,6 @@
 # - W0142: Used * or ** magic
 
 
-disable=W0613,W0232,E1101,E1103,W0142
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring
 [REPORTS]
 include-ids=y

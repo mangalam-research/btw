@@ -86,7 +86,7 @@ InsertBiblPtrDialogAction.prototype.execute = function (data) {
     var modal = editor.mode._bibliography_modal;
     var $primary = modal.getPrimary();
     var $body = $('<div>');
-    $body.load('/search/', function() {
+    $body.load(editor.mode._bibl_search_url, function() {
         // The element won't exist until the load is performed so we
         // have to put this in the callback. (Or we could use
         // delegation but delegation is not strictly speaking

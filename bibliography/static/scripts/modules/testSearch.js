@@ -1,4 +1,5 @@
 define(["jquery", "jquery.cookie"], function ($) {
+    var root = '/bibliography/';
     return {
         SearchTests: function () {
             // tests follow the following testing procedure
@@ -20,12 +21,12 @@ define(["jquery", "jquery.cookie"], function ($) {
                 }).always(callback);
             }
 
-            test("Search Ajax with no data[URL:/search/exec, "+
+            test("Search Ajax with no data[URL:/bibliography/exec, "+
                  "response: 500:INTERNAL SERVER ERROR]", function () {
                 expect(3);
                 QUnit.stop();
                 var dataString = "";
-                callAjx("POST", '/search/exec/', dataString,
+                callAjx("POST", root + 'exec/', dataString,
                         function (jqXHR, textStatus, errorThrown) {
                     // we assert the result coming from ajax here
                     QUnit.start();
@@ -38,12 +39,12 @@ define(["jquery", "jquery.cookie"], function ($) {
                 });
             });
 
-            test("Search Ajax with invalid data[URL:/search/exec, "+
+            test("Search Ajax with invalid data[URL:/bibliography/exec, "+
                  "response: 500:INTERNAL SERVER ERROR]", function () {
                 expect(3);
                 QUnit.stop();
                 var dataString = "library=&keyword=";
-                callAjx("POST", '/search/exec/', dataString,
+                callAjx("POST", root + 'exec/', dataString,
                         function (jqXHR, textStatus, errorThrown) {
                     // server error assertion.
                     QUnit.start();
@@ -55,12 +56,12 @@ define(["jquery", "jquery.cookie"], function ($) {
                 });
             });
 
-            test("Search Ajax with out-of-bound data[URL:/search/exec, "+
+            test("Search Ajax with out-of-bound data[URL:<root>exec, "+
                  "response: 200:OK(Zero results)]", function () {
                 expect(4);
                 QUnit.stop();
                 var dataString = "library=6&keyword=";
-                callAjx("POST", '/search/exec/', dataString,
+                callAjx("POST", root + 'exec/', dataString,
                         function (data, textStatus, jqXHR) {
                     // server success assertion.
                     QUnit.start();
@@ -74,13 +75,13 @@ define(["jquery", "jquery.cookie"], function ($) {
                 });
             });
 
-            test("Search Ajax with regular data[URL:/search/, "+
+            test("Search Ajax with regular data[URL:/bibliography/search/, "+
                  "response: 200:OK]", function () {
                 expect(3);
                 QUnit.stop();
                 // search everything in user library
                 var dataString = "library=2&keyword=";
-                callAjx("GET", '/search/', dataString,
+                callAjx("GET", '/bibliography/search/', dataString,
                         function (data, textStatus, jqXHR) {
                     // server success assertion.
                     QUnit.start();

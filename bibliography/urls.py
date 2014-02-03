@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from django.conf import settings
 
 urlpatterns = patterns('bibliography.views',
-                       url(r'^$', 'search', name='search'),
+                       url(r'^search/$', 'search', name='search'),
                        url(r'^exec/$', 'exec_', name='exec'),
                        url(r'^results/$', 'results', name='results'),
                        url(r'^(?P<itemKey>.+?)/abbrev/$', 'abbrev',

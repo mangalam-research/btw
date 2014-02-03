@@ -27,7 +27,7 @@ var bibSearch = function () {
     function ajaxResult(pageNumber) {
         var dataString = "page=" + pageNumber;
         $.ajax({
-            url: '/search/results/',
+            url: '/bibliography/results/',
             data: dataString,
             headers: headers
         }).done(refreshResults);
@@ -37,7 +37,7 @@ var bibSearch = function () {
         var dataString = "enc=" + encString;
         $.ajax({
             type: "POST",
-            url: '/search/sync/',
+            url: '/bibliography/sync/',
             data: dataString,
             headers: headers,
             beforeSend: function () {
@@ -68,7 +68,7 @@ var bibSearch = function () {
                 $('#id_keyword').val();
         $.ajax({
             type: "POST",
-            url: '/search/exec/',
+            url: '/bibliography/exec/',
             data: dataString,
             headers: headers,
             beforeSend: function () {

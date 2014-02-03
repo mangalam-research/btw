@@ -1,4 +1,5 @@
 define(["jquery", "jquery.cookie"], function ($) {
+var root = '/bibliography/';
 return {
     SyncTests: function () {
         // tests follow the following testing procedure
@@ -20,12 +21,12 @@ return {
             }).always(callback);
         }
 
-        test("Sync Ajax with no data[URL:/search/sync/, "+
+        test("Sync Ajax with no data[URL:<root>sync/, "+
              "response: 500:INTERNAL SERVER ERROR]", function () {
             expect(3);
             QUnit.stop();
             var dataString = "";
-            callAjx('/search/sync/', dataString,
+            callAjx(root + 'sync/', dataString,
                     function (jqXHR, textStatus, errorThrown) {
                 // we assert the result coming from ajax here
                 QUnit.start();
@@ -39,12 +40,12 @@ return {
             });
         });
 
-        test("Sync Ajax with invalid data[URL:/search/sync/, "+
+        test("Sync Ajax with invalid data[URL:<root>sync/, "+
              "response: 500:INTERNAL SERVER ERROR]", function () {
             expect(3);
             QUnit.stop();
             var dataString = "enc=";
-            callAjx('/search/sync/', dataString,
+            callAjx(root + 'sync/', dataString,
                     function (jqXHR, textStatus, errorThrown) {
                 // server error assertion.
                 QUnit.start();
@@ -57,12 +58,12 @@ return {
             });
         });
 
-        test("Sync Ajax with out-of-bound data[URL:/search/sync/, "+
+        test("Sync Ajax with out-of-bound data[URL:<root>sync/, "+
              "response: 200:'OK'(item not found)]", function () {
             expect(3);
             QUnit.stop();
             var dataString = "enc=AAJJAAXX9900";
-            callAjx('/search/sync/', dataString,
+            callAjx(root + 'sync/', dataString,
                     function (data, textStatus, jqXHR) {
                 // server success assertion.
                 QUnit.start();

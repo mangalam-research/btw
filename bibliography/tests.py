@@ -9,8 +9,6 @@ User = get_user_model()
 
 # Code to test the views.
 class TestSearchView(object):
-    """ tests the search view at /bibliography/ for functionality """
-
     def __init__(self, *args, **kwargs):
         self.client = None
         self.user = None
@@ -21,17 +19,18 @@ class TestSearchView(object):
         # create test user with zotero profile setup.
         self.user = User.objects.create_user(username='test', password='test')
 
-    def testGet(self):
-        """Unauthenticated response(url: /bibliography/)"""
-        #self.client.logout()
+    def test_get(self):
+        """Unauthenticated response(url: /bibliography/search/)."""
         # the user is not logged in.
-        response = self.client.get('http://testserver/bibliography/')
+        response = self.client.get('http://testserver/bibliography/search/',
+                                   {},
+                                   HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         noz.assert_equal(response.status_code, 403)
 
-    def testAuthGET(self):
+    def test_auth_search_no_profile(self):
         """
-        Authenticated response without zotero profile (url: /bibliography/)
+        Authenticated response without zotero profile.
         """
 
         # login the test user
@@ -39,13 +38,13 @@ class TestSearchView(object):
 
         noz.assert_equal(response, True)
 
-        response = self.client.get('http://testserver/bibliography/')
+        response = self.client.get('http://testserver/bibliography/search/')
 
         noz.assert_equal(response.status_code, 500)
 
-    def testAuthGET2(self):
+    def test_auth_search(self):
         """
-        Authenticated AJAX or GET with zotero profile (url: /bibliography/)
+        Authenticated AJAX or GET with zotero profile.
         """
         # create a dummy profile
         zo = ZoteroUser(btw_user=self.user, uid="123456", api_key="abcdef")
@@ -56,18 +55,18 @@ class TestSearchView(object):
 
         noz.assert_equal(response, True)
 
-        response = self.client.get('http://testserver/bibliography/')
+        response = self.client.get('http://testserver/bibliography/search/')
 
         noz.assert_equal(response.status_code, 200)
 
         # test ajax get call without any data
-        response = self.client.get('http://testserver/bibliography/',
+        response = self.client.get('http://testserver/bibliography/search/',
                                    {},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         noz.assert_equal(response.status_code, 200)
         zo.delete()
 
-    def testAuthGET3(self):
+    def test_auth_exec(self):
         zo = ZoteroUser(btw_user=self.user, uid="123456", api_key="abcdef")
         zo.save()
         response = self.client.login(username=u'test', password=u'test')
