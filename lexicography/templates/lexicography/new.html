@@ -1,8 +1,7 @@
-{% extends "base_site.html" %}
+{% extends "lexicography/base.html" %}
 {% block extrahead %}
 {{ form.media }}
-{% endblock %}
-{% block branding %}
+{{ block.super }}
 {% endblock %}
 {% block content %}
 <form id="form" action="" method="post">{% csrf_token %}

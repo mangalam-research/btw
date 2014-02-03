@@ -2,7 +2,28 @@
 {% block page_title %}{{ page_title }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{{ page_title }}</h1>
+<ul id="btw-site-navigation" class="nav nav-pills">
+  <li><a href="/">Home</a></li>
+  <li id="btw-lexicography-menu"><a href="{% url 'lexicography_main' %}">Lexicography</a></li>
+  <li id="btw-bibliography-menu" class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+      Bibliography <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li id="btw-bibliography-general-sub"><a href="{% url 'bibliography_search' %}">General Search</a></li>
+      <li id="btw-bibliography-title-sub"><a href="{% url 'bibliography_title' %}">Title Assignments</a></li>
+    </ul>
+  </li>
+</ul>
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
+{% block end %}
+<script>
+  require(["jquery"], function ($) {
+      if (typeof django_active_menu !== 'undefined')
+          $("#" + django_active_menu).addClass("active");
+      if (typeof django_active_submenu !== 'undefined')
+          $("#" + django_active_submenu).addClass("active");
+  });
+</script>
+{% endblock %}

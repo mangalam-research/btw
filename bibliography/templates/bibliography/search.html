@@ -1,10 +1,14 @@
-{% extends "base_site.html" %}
+{% extends "bibliography/base.html" %}
 {% load url from future %}
 {% load libcore %}
 {% load liblex %}
 {% load less %}
 {% block extrahead %}
+{{ block.super }}
 <link href="{{ STATIC_URL }}{% less "stylesheets/bibsearch.less" %}" type="text/css" media="screen" rel="stylesheet" />
+<script>
+  var django_active_submenu = "btw-bibliography-general-sub";
+</script>
 {% endblock %}
 {% block content %}
 {% include "bibliography/search_form.html" %}

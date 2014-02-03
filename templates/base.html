@@ -6,6 +6,10 @@
         <title>{% block page_title %}BTW{% endblock %}</title>
 	<script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
 	<script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
+        <script>
+          require(["bootstrap"]);
+        </script>
+        <link href="{{ btw_globals.btw_bootstrap_css_path }}" type="text/css" media="screen" rel="stylesheet" />
 	<script type="text/javascript">
 	{% autoescape off %}
 	{{ btw_globals.wed_config }}
@@ -27,5 +31,6 @@
               <a href="{% url 'login' %}">Log in</a>
           {% endif %}
         </div>
+        {% block end %}{% endblock %}
     </body>
 </html>
