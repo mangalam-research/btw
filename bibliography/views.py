@@ -38,11 +38,6 @@ def search(request):
 @ajax_login_required
 @require_GET
 def _ajax_search(request):
-    try:
-        ZoteroUser.objects.get(btw_user=request.user)
-    except ObjectDoesNotExist:
-        return HttpResponseServerError("users local profile not created.")
-
     # present a unbound form.
     form = SearchForm()
     template = loader.get_template('bibliography/search_form.html')
@@ -53,11 +48,6 @@ def _ajax_search(request):
 @login_required
 @require_GET
 def _search(request):
-    try:
-        ZoteroUser.objects.get(btw_user=request.user)
-    except ObjectDoesNotExist:
-        return HttpResponseServerError("users local profile not created.")
-
     # present a unbound form.
     form = SearchForm()
     template = loader.get_template('bibliography/search.html')
@@ -70,11 +60,6 @@ def _search(request):
 def exec_(request):
     if not request.is_ajax():
         return HttpResponseBadRequest()
-    try:
-        local_profile_object = ZoteroUser.objects.get(btw_user=request.user)
-    except ObjectDoesNotExist:
-        return HttpResponseServerError(
-            "the user does not have a bibliography profile.")
 
     # 1. from POST dictionary prepare:
     # a. the zotero library to search info from.
@@ -88,39 +73,22 @@ def exec_(request):
 
     query_dict = request.POST
 
-    if 'library' not in query_dict or 'keyword' not in query_dict:
+    if 'keyword' not in query_dict:
         return HttpResponseServerError("cannot interpret form data.")
-
-    local_api_dict = {'uid': local_profile_object.uid, 'api_key':
-                      local_profile_object.api_key}
 
     results_list = []
     extra_data = {}
     try:
-        if int(query_dict['library']) in (2, 3):
-            # evaluate the results from local account
-            l_obj = Zotero(local_api_dict, "User Library")
+        # evaluate the results from the global account
+        g_obj = Zotero(zotero_settings(), 'BTW Library')
 
-            search_url = l_obj.getSearchUrl(query_dict['keyword'])
-            logger.debug("searching url: %s", search_url)
-            search_results, extra_vars = l_obj.getSearchResults(
-                search_url)
-            # update data
-            results_list.extend(search_results)
-            extra_data.update(extra_vars)
+        search_url = g_obj.getSearchUrl(query_dict['keyword'])
+        logger.debug("searching url: %s", search_url)
+        search_results, extra_vars = g_obj.getSearchResults(search_url)
 
-        if int(query_dict['library']) in (1, 3):
-            # evaluate the results from the global account
-            g_obj = Zotero(zotero_settings(), 'BTW Library')
-
-            search_url = g_obj.getSearchUrl(query_dict['keyword'])
-            logger.debug("searching url: %s", search_url)
-            search_results, extra_vars = g_obj.getSearchResults(
-                search_url)
-
-            # update data
-            results_list.extend(search_results)
-            extra_data.update(extra_vars)
+        # update data
+        results_list.extend(search_results)
+        extra_data.update(extra_vars)
 
     except ValueError:
         return HttpResponseServerError("Malformed form data.")

@@ -39,28 +39,11 @@ define(["jquery", "jquery.cookie"], function ($) {
                 });
             });
 
-            test("Search Ajax with invalid data[URL:/bibliography/exec, "+
-                 "response: 500:INTERNAL SERVER ERROR]", function () {
-                expect(3);
-                QUnit.stop();
-                var dataString = "library=&keyword=";
-                callAjx("POST", root + 'exec/', dataString,
-                        function (jqXHR, textStatus, errorThrown) {
-                    // server error assertion.
-                    QUnit.start();
-                    equal(jqXHR.status, 500, "500 response code");
-                    equal(jqXHR.responseText, "Malformed form data.",
-                          "search view response text");
-                    equal(errorThrown, "INTERNAL SERVER ERROR",
-                          "HTTP response text");
-                });
-            });
-
             test("Search Ajax with out-of-bound data[URL:<root>exec, "+
                  "response: 200:OK(Zero results)]", function () {
                 expect(4);
                 QUnit.stop();
-                var dataString = "library=6&keyword=";
+                var dataString = "library=6&keyword=flerbl";
                 callAjx("POST", root + 'exec/', dataString,
                         function (data, textStatus, jqXHR) {
                     // server success assertion.

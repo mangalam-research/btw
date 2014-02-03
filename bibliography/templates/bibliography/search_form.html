@@ -5,7 +5,6 @@
     {% csrf_token %}
     <table>
       <tr>
-        <td>{{ form.library.label_tag }}{{ form.library }}</td>
         <td>{{ form.keyword.label_tag }}<img id="loading" style="max-height: 1em" src="{% static "images/spinner.gif" %}">{{ form.keyword }} </td>
       </tr>
     </table>

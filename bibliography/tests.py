@@ -28,20 +28,6 @@ class TestSearchView(object):
 
         noz.assert_equal(response.status_code, 403)
 
-    def test_auth_search_no_profile(self):
-        """
-        Authenticated response without zotero profile.
-        """
-
-        # login the test user
-        response = self.client.login(username=u'test', password=u'test')
-
-        noz.assert_equal(response, True)
-
-        response = self.client.get('http://testserver/bibliography/search/')
-
-        noz.assert_equal(response.status_code, 500)
-
     def test_auth_search(self):
         """
         Authenticated AJAX or GET with zotero profile.
