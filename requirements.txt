@@ -4,3 +4,4 @@ South>=0.8.1,<0.8.99
 semver>=0.0.2
 django-nose>=1.2
 django-webtest>=1.7.5
+django-less>=0.7.2

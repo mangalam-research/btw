@@ -1,3 +1,8 @@
+# python imports
+import urllib
+import logging
+from functools import wraps
+
 # django imports
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, \
@@ -6,12 +11,7 @@ from django.template import Context, loader, RequestContext
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST, require_GET
-
-# python imports
-import urllib
-import logging
-from functools import wraps
-
+from django.contrib.auth.decorators import login_required
 
 # module imports
 from .utils import Zotero, zotero_settings
@@ -30,9 +30,29 @@ def ajax_login_required(view):
     return wrapper
 
 
-@ajax_login_required
 @require_GET
 def search(request):
+    return _ajax_search(request) if request.is_ajax() else _search(request)
+
+
+@ajax_login_required
+@require_GET
+def _ajax_search(request):
+    try:
+        ZoteroUser.objects.get(btw_user=request.user)
+    except ObjectDoesNotExist:
+        return HttpResponseServerError("users local profile not created.")
+
+    # present a unbound form.
+    form = SearchForm()
+    template = loader.get_template('bibliography/search_form.html')
+    context = RequestContext(request, {'form': form})
+    return HttpResponse(template.render(context))
+
+
+@login_required
+@require_GET
+def _search(request):
     try:
         ZoteroUser.objects.get(btw_user=request.user)
     except ObjectDoesNotExist:

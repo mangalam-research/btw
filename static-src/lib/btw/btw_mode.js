@@ -350,7 +350,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
 };
 
 BTWMode.prototype.getStylesheets = function () {
-    return [require.toUrl("./btw.css")];
+    return [require.toUrl("./btw-mode.css")];
 };
 
 BTWMode.prototype.nodesAroundEditableContents = function (parent) {

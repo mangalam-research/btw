@@ -1,0 +1,11 @@
+{% extends "base_site.html" %}
+{% load url from future %}
+{% load libcore %}
+{% load liblex %}
+{% load less %}
+{% block extrahead %}
+<link href="{{ STATIC_URL }}{% less "stylesheets/bibsearch.less" %}" type="text/css" media="screen" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+{% include "bibliography/search_form.html" %}
+{% endblock %}

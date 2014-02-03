@@ -1,4 +1,5 @@
-require(["jquery", "modules/bibSearch"], function ($, BS) {
+require(["jquery", "bootstrap", "modules/bibSearch"], function ($, _bootstrap,
+                                                                BS) {
     // instantiate the bibliography search class
     var bibSearch = new BS();
 

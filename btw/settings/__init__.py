@@ -97,6 +97,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'less.finders.LessFinder'
 )
 
 #
@@ -155,6 +156,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django_ace',
+    'less',
     'south',
     'django_nose',
     'core',
@@ -214,6 +216,7 @@ LOGGING = {
 }
 
 BTW_REQUIREJS_PATH = None
+BTW_BOOTSTRAP_CSS_PATH = '/static/lib/external/bootstrap/css/bootstrap.min.css'
 BTW_WED_USE_REQUIREJS = None
 BTW_WED_PATH = None
 BTW_WED_CSS = None
