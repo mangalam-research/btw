@@ -82,9 +82,9 @@ def exec_(request):
         # evaluate the results from the global account
         g_obj = Zotero(zotero_settings(), 'BTW Library')
 
-        search_url = g_obj.getSearchUrl(query_dict['keyword'])
+        search_url = g_obj.get_search_url(query_dict['keyword'])
         logger.debug("searching url: %s", search_url)
-        search_results, extra_vars = g_obj.getSearchResults(search_url)
+        search_results, extra_vars = g_obj.get_search_results(search_url)
 
         # update data
         results_list.extend(search_results)
@@ -140,7 +140,7 @@ def results(request):
 @require_GET
 def abbrev(request, itemKey):
     zotero = Zotero(zotero_settings(), "BTW Library")
-    item = zotero.getItem(itemKey)
+    item = zotero.get_item(itemKey)
     ret = None
 
     creators = item.get("creators", None)
@@ -158,7 +158,7 @@ def abbrev(request, itemKey):
 @require_GET
 def info(request, itemKey):
     zotero = Zotero(zotero_settings(), "BTW Library")
-    item = zotero.getItem(itemKey)
+    item = zotero.get_item(itemKey)
     ret = ""
 
     creators = item.get("creators", None)
@@ -213,27 +213,26 @@ def sync(request):
 
         # search for duplicate
         sync_obj = Zotero(zotero_settings(), "BTW Library")
-        search_url = sync_obj.dupSearchUrl(urllib.quote(title.lower()
-                                                        ), item_type)
+        search_url = sync_obj.dup_search_url(urllib.quote(title.lower()),
+                                             item_type)
 
         logger.debug("searching duplicates from url: %s", search_url)
 
-        search_results, extras = sync_obj.getSearchResults(search_url)
+        search_results, extras = sync_obj.get_search_results(search_url)
 
-        dup_results = sync_obj.duplicateDrillDown(
-            search_results, data_dict)
+        dup_results = sync_obj.duplicate_drill_down(search_results,
+                                                    data_dict)
 
         if len(dup_results) == 0:
             local_profile_object = ZoteroUser.objects.get(
                 btw_user=request.user)
             if item_type == u'attachment':
-                # call setAttachment
-                res = sync_obj.setAttachment(data_dict,
-                                             local_profile_object)
+                # call set_attachment
+                res = sync_obj.set_attachment(data_dict, local_profile_object)
 
             else:
-                # call setItem
-                res = sync_obj.setItem(data_dict)
+                # call set_item
+                res = sync_obj.set_item(data_dict)
 
             # do additional steps to manipulate bibliography_sync_status to 0
             if res == "OK":

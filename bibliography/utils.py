@@ -72,7 +72,7 @@ class Zotero(object):
         self.userid = re.sub("^u:|^g:", "", self.full_uid)
         self.object_type = object_type
 
-    def getItem(self, itemKey):
+    def get_item(self, itemKey):
         # As of 2013/08/28 the server at api.zotero.org does not
         # handle If-Modified-Since-Version at all for individual
         # items, but it does for collections. (When requesting
@@ -93,11 +93,11 @@ class Zotero(object):
             (self.userid, self.apikey, itemKey)
         logger.debug("getting item %s", search_url)
 
-        results_list, extra_data_dict = self.getSearchResults(search_url)
+        results_list, extra_data_dict = self.get_search_results(search_url)
         assert len(results_list) <= 1
         return results_list[0] if len(results_list) > 0 else None
 
-    def getSearchUrl(self, field):
+    def get_search_url(self, field):
         """ Creates the search api url"""
         search_field = urllib.quote(field.lower().strip())
         search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
@@ -106,7 +106,7 @@ class Zotero(object):
                                             search_field)
         return search_url
 
-    def dupSearchUrl(self, title, item_type):
+    def dup_search_url(self, title, item_type):
         """ Creates the search url for identifying duplicates"""
         search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
             "atom&content=json&itemType=%s&q=%s"
@@ -114,7 +114,7 @@ class Zotero(object):
                                             item_type, title)
         return search_url
 
-    def getSearchResults(self, url_string):
+    def get_search_results(self, url_string):
         """Gets all json objects from the given search url"""
         # 2. perform search
         # a. if result does not exist in cache forcefully fetch from zotero.
@@ -148,7 +148,7 @@ class Zotero(object):
         # alway search the modification status.
         headers = {'If-Modified-Since-Version': version}
 
-        err, res = self.__createRequest(url=url_string, headers=headers)
+        err, res = self.__create_request(url=url_string, headers=headers)
 
         if err == 1:
             logger.debug('search url not working')
@@ -194,7 +194,7 @@ class Zotero(object):
             json_list.append(json_string_tuple)
 
         # return list of json string objects
-        results_list, extra_data_dict = self.__processData(json_list)
+        results_list, extra_data_dict = self.__process_data(json_list)
         if version_key:
             # cache the results before returning.
             cache.set(cache_key,
@@ -204,7 +204,7 @@ class Zotero(object):
 
         return results_list, extra_data_dict
 
-    def __processData(self, json_list):
+    def __process_data(self, json_list):
         """Utility function to iterate over raw results to:
 
         1) Add the scope of search results ( coming from which account ?)
@@ -240,7 +240,7 @@ class Zotero(object):
 
         return processed_json_list, extra_data_dict
 
-    def setItem(self, data_dict):
+    def set_item(self, data_dict):
         """ Saves the data_dict of local item to BTW account
 
         Uses the zotero write API """
@@ -259,7 +259,7 @@ class Zotero(object):
                            "itemType=%s"
         template_url = item_tmplate_url % (item_type)
 
-        err, res = self.__createRequest(template_url)
+        err, res = self.__create_request(template_url)
 
         if err == 1:
             return "cannot create item:error in fetching item template."
@@ -294,12 +294,12 @@ class Zotero(object):
         # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
-        err, res = self.__createRequest(post_url, 'POST', header, json_string)
+        err, res = self.__create_request(post_url, 'POST', header, json_string)
 
         if err == 1:
             return "cannot create item:error in post url: %s" % res
 
-        err, msg = self.__parseResponseJSON(res.read())
+        err, msg = self.__parse_json_response(res.read())
 
         if err == 0 and res.code == 200:  # item created
             return "OK"
@@ -308,7 +308,7 @@ class Zotero(object):
         else:
             return "cannot create item:Error: %s, Return Code: %s" % (err, msg)
 
-    def setAttachment(self, data_dict, local_profile_object):
+    def set_attachment(self, data_dict, local_profile_object):
         """ Saves attachment from local account to BTW account
 
         Uses the zotero write API """
@@ -342,7 +342,7 @@ class Zotero(object):
             data_dict['itemKey'],
             local_profile_object.api_key)
 
-        err, res = self.__createRequest(olditem_download_url)
+        err, res = self.__create_request(olditem_download_url)
 
         if err == 1 or res.code != 200:
             return("cannot sync attachment: Source file read error.")
@@ -368,7 +368,7 @@ class Zotero(object):
 
         get_url = item_tmplate_url % (link_mode)
 
-        err, res = self.__createRequest(get_url)
+        err, res = self.__create_request(get_url)
 
         if err == 1:
             return "cannot create attachment:error in fetching item template."
@@ -393,12 +393,12 @@ class Zotero(object):
         # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
-        err, res = self.__createRequest(post_url, 'POST', header, json_string)
+        err, res = self.__create_request(post_url, 'POST', header, json_string)
 
         if err == 1:
             return "cannot create item:error in url: %s" % res
 
-        err, msg = self.__parseResponseJSON(res.read())
+        err, msg = self.__parse_json_response(res.read())
 
         if err != 0:
             return "cannot create attachment: Error: %s, Code: %s" % (err,
@@ -423,8 +423,8 @@ class Zotero(object):
         auth_headers = {'Content-Type': 'application/x-www-form-urlencoded',
                         'If-None-Match': '*'}
 
-        err, res = self.__createRequest(auth_post_url, 'POST',
-                                        auth_headers, post_data)
+        err, res = self.__create_request(auth_post_url, 'POST',
+                                         auth_headers, post_data)
         if err == 1:
             return "cannot sync attachment:error in authorization: %s" % res
 
@@ -437,7 +437,7 @@ class Zotero(object):
         else:
             return ("cannot sync attachment: API error.")
 
-    def __createRequest(self, url, rtype="GET", headers=None, data=None):
+    def __create_request(self, url, rtype="GET", headers=None, data=None):
         """ creates a http request to zotero website and gets response """
         if headers is None:
             headers = {}
@@ -463,7 +463,7 @@ class Zotero(object):
             return 1, e
         return 0, response
 
-    def duplicateDrillDown(self, results_dict, source_dict):
+    def duplicate_drill_down(self, results_dict, source_dict):
         """ drills down the resuls to identify exact duplicates """
 
         # define other keys apart author, itemType
@@ -491,7 +491,7 @@ class Zotero(object):
 
         return matched_list
 
-    def __parseResponseJSON(self, data):
+    def __parse_json_response(self, data):
         """ parser for the api response """
         response_dict = json.loads(data)
         keys = response_dict.keys()
@@ -509,8 +509,8 @@ class Zotero(object):
         else:
             return 1, 'internal error'
 
-    def testKeys(self):
+    def test_keys(self):
         """ tests the zotero keys explicitly """
-        search_url = self.getSearchUrl("")
-        status, response = self.__createRequest(search_url)
+        search_url = self.get_search_url("")
+        status, response = self.__create_request(search_url)
         return status, response
