@@ -4,6 +4,7 @@ disable=W0142
 
 [VARIABLES]
 additional-builtins=when,then,given,When,Then,Given,step_matcher
+dummy-variables-rgx=_.*|dummy
 
 [REPORTS]
 include-ids=y
