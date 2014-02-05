@@ -1,0 +1,34 @@
+{% extends "bibliography/base.html" %}
+{% load url from future %}
+{% load libcore %}
+{% load liblex %}
+{% load less %}
+{% block extrahead %}
+{{ block.super }}
+<link href="{{ btw_globals.btw_datatables_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+<script>
+  var django_active_submenu = "btw-bibliography-title-sub";
+  require.config({
+    config: {
+      "../scripts/title-table": {
+          ajax_url: "{% url 'bibliography-title-table' %}"
+      }
+    }
+  });
+  require(["../scripts/title-table"]);
+</script>
+{% endblock %}
+{% block content %}
+<table id="bibliography-table">
+  <thead>
+    <tr>
+      <th>Title for References</th>
+      <th>Author(s)</th>
+      <th>Original Title</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+{% endblock %}

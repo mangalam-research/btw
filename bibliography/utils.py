@@ -22,10 +22,20 @@ cache = get_cache('bibliography')
 _cached_details = None
 
 
-# Check if BTW project settings are available
-# if not raise exception.
 def zotero_settings():
-    """Function for retrieving organization-wide zotero account details."""
+    """
+    Function for retrieving project-wide zotero account details.
+
+    :returns: A dictionary containing two keys. The ``uid`` key has a
+              value which corresponds to the user id of the
+              project-wide Zotero account. The ``api_key`` key has a
+              value which corresponds to the Zotero API key to use to
+              access the project-wide account.
+    :rtype: :class:`dict`
+    :raises ImproperlyConfigured: If ``ZOTERO_SETTINGS`` is undefined
+             or not of the right format.
+
+    """
     # pylint: disable=W0603
     global _cached_details
 
@@ -49,10 +59,15 @@ def zotero_settings():
 
 
 class Zotero(object):
-    """ Class to provide utility functions for zotero API """
+    """
+    This class manages accesses to a Zotero database.
+
+    """
 
     def __init__(self, api_dict, object_type='local'):
-        """ initialize api details from the api_dict """
+        """
+        Initialize api details from `api_dict`.
+        """
         try:
             self.full_uid = api_dict['uid']
             self.apikey = api_dict['api_key']
@@ -72,6 +87,17 @@ class Zotero(object):
         self.userid = re.sub("^u:|^g:", "", self.full_uid)
         self.object_type = object_type
 
+        # This is the appropriate URL to get a single item.
+        self.basic_item_url = self.prefix + \
+            "%s/items?key=%s&format=atom&content=json" % \
+            (self.userid, self.apikey)
+
+        # For everything else, we want to use the /top version of the
+        # URL. If not, we'll *also* get items that are in the trash.
+        self.basic_top_url = self.prefix + \
+            "%s/items/top?key=%s&format=atom&content=json" % \
+            (self.userid, self.apikey)
+
     def get_item(self, itemKey):
         # As of 2013/08/28 the server at api.zotero.org does not
         # handle If-Modified-Since-Version at all for individual
@@ -88,41 +114,70 @@ class Zotero(object):
         # benefit from 304.
         #
 
-        search_url = self.prefix + \
-            "%s/items?key=%s&format=atom&content=json&itemKey=%s" % \
-            (self.userid, self.apikey, itemKey)
+        search_url = self.__build_item_search_url(itemKey)
         logger.debug("getting item %s", search_url)
 
-        results_list, extra_data_dict = self.get_search_results(search_url)
+        results_list, _extra_data_dict = self.__get_search_results(search_url)
         assert len(results_list) <= 1
         return results_list[0] if len(results_list) > 0 else None
 
-    def get_search_url(self, field):
-        """ Creates the search api url"""
-        search_field = urllib.quote(field.lower().strip())
-        search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
-            "atom&content=json&q=%s"
-        search_url = search_url_template % (self.userid, self.apikey,
-                                            search_field)
-        return search_url
+    def __build_item_search_url(self, itemKey):
+        return self.basic_item_url + "&itemKey=" + itemKey
 
-    def dup_search_url(self, title, item_type):
-        """ Creates the search url for identifying duplicates"""
-        search_url_template = self.prefix + "%s/items/top?key=%s&format=" + \
-            "atom&content=json&itemType=%s&q=%s"
-        search_url = search_url_template % (self.userid, self.apikey,
-                                            item_type, title)
-        return search_url
+    def __build_search_url(self, keyword):
+        """
+        Builds the URL to search for a keyword.
+        """
+        search_field = urllib.quote(keyword.lower().strip())
+        return self.basic_top_url + "&q=" + search_field
 
-    def get_search_results(self, url_string):
-        """Gets all json objects from the given search url"""
+    def search(self, keyword):
+        """
+        Performs a keyword search.
+        """
+        return self.__get_search_results(self.__build_search_url(keyword))
+
+    def duplicate_search(self, title, item_type):
+        """
+        Performs a duplicate search.
+        """
+        url = self.basic_top_url + "&itemType=%s&q=%s" % (item_type, title)
+        return self.__get_search_results(url)
+
+    def get_all(self):
+        """
+        Gets all records in the Zotero Library.
+        """
+        return self.__get_search_results(self.basic_top_url)
+
+    def __get_search_results(self, url):
+        """
+        Gets all JSON objects for the given search URL.
+
+        :param url: The URL to use for the request.
+        :type url: :class:`str`
+        :returns: A tuple of the form `(list, extras)` the list is the
+                  list of entries returned by the server as Python
+                  dictionaries converted from JSON. The extras is a
+                  dictionary whose keys are item keys and values are a
+                  dictionary of information not present at the server
+                  but added by this library.
+
+        """
         # 2. perform search
         # a. if result does not exist in cache forcefully fetch from zotero.
         # b. if available in cache, check if got modified for the field.
         # b. if not modified display from cache.
         # c. if modified fetch from zotero, reset key in cache.
 
-        cache_key = urlsafe_b64encode(url_string)
+        # It is safe to search for a parameter like this. (For
+        # instance, if the user were to search for an ampersand, this
+        # ampersand would not appear as a literal in the URL.)
+        for_single_item = url.find("&itemKey=") != -1
+
+        logger.debug("searching url: %s", url)
+
+        cache_key = urlsafe_b64encode(url)
 
         results_list = version = extras = None
 
@@ -148,31 +203,31 @@ class Zotero(object):
         # alway search the modification status.
         headers = {'If-Modified-Since-Version': version}
 
-        err, res = self.__create_request(url=url_string, headers=headers)
-
-        if err == 1:
+        fetch_from_cache = False
+        try:
+            res = self.__issue_request(url=url, headers=headers)
+        except urllib2.URLError:
             logger.debug('search url not working')
-            # return a empty search result for error in fetching url.
-            if results_list:
-                logger.debug('serving cached')
-                return results_list, extras
-            logger.debug('serving empty')
-            return [], {}
+            fetch_from_cache = True
 
-        elif res.code == 304:
+        if res.code == 304:
             logger.debug("got 'not modified' for key: %s", cache_key)
+            fetch_from_cache = True
+
+        if fetch_from_cache:
             if results_list:
                 logger.debug('serving cached')
                 return results_list, extras
             logger.debug('serving empty')
             return [], {}
 
-        elif res.code != 200:
+        if res.code != 200:
             # return a empty search result for error in fetching url.
-            return []
+            return [], {}
 
         logger.debug('serving latest (cache stale or cache miss) for key: %s',
                      cache_key)
+
         data = res.read()
         dom_object = minidom.parseString(data)
         json_list = []
@@ -195,14 +250,43 @@ class Zotero(object):
 
         # return list of json string objects
         results_list, extra_data_dict = self.__process_data(json_list)
+
+        # We cache the result of the query in a single cache entry.
         if version_key:
-            # cache the results before returning.
             cache.set(cache_key,
                       (CACHED_DATA_VERSION, results_list, version_key,
                        extra_data_dict))
             logger.debug("cache set for key: %s", cache_key)
 
+        if not for_single_item:
+            # Also take care to update the per-item entries in the cache.
+            self.__cache_items(results_list, extra_data_dict)
+
         return results_list, extra_data_dict
+
+    def __cache_items(self, results_list, extra_data_dict):
+        """
+        This method takes the results obtained when peforming any request
+        that returns a collection of items and unpacks these results
+        so as to cache each individual item.
+
+        For instance, if the user searches for keyword ``foo`` and
+        gets items ``A, B, C``, then we can proactively cache a result
+        for the query that would ask for A, for a query that would ask
+        for B and for a query that would ask for C.
+        """
+        for item in results_list:
+            key = item["itemKey"]
+            url = self.__build_item_search_url(key)
+            cache_key = urlsafe_b64encode(url)
+            new_results_list = [item]
+            new_extra_data_dict = {key: extra_data_dict[key]}
+            version_key = item["itemVersion"]
+            cache.set(cache_key, (CACHED_DATA_VERSION,
+                                  new_results_list,
+                                  version_key,
+                                  new_extra_data_dict))
+            logger.debug("cache set for key: %s", cache_key)
 
     def __process_data(self, json_list):
         """Utility function to iterate over raw results to:
@@ -259,9 +343,9 @@ class Zotero(object):
                            "itemType=%s"
         template_url = item_tmplate_url % (item_type)
 
-        err, res = self.__create_request(template_url)
-
-        if err == 1:
+        try:
+            res = self.__issue_request(template_url)
+        except urllib2.URLError:
             return "cannot create item:error in fetching item template."
 
         item_template = res.read()
@@ -294,9 +378,9 @@ class Zotero(object):
         # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
-        err, res = self.__create_request(post_url, 'POST', header, json_string)
-
-        if err == 1:
+        try:
+            res = self.__issue_request(post_url, 'POST', header, json_string)
+        except urllib2.URLError:
             return "cannot create item:error in post url: %s" % res
 
         err, msg = self.__parse_json_response(res.read())
@@ -342,9 +426,13 @@ class Zotero(object):
             data_dict['itemKey'],
             local_profile_object.api_key)
 
-        err, res = self.__create_request(olditem_download_url)
+        res = None
+        try:
+            res = self.__issue_request(olditem_download_url)
+        except urllib2.URLError:
+            pass  # res remains None
 
-        if err == 1 or res.code != 200:
+        if res is None or res.code != 200:
             return("cannot sync attachment: Source file read error.")
 
         # downloaded file data or
@@ -368,9 +456,9 @@ class Zotero(object):
 
         get_url = item_tmplate_url % (link_mode)
 
-        err, res = self.__create_request(get_url)
-
-        if err == 1:
+        try:
+            res = self.__issue_request(get_url)
+        except urllib2.URLError:
             return "cannot create attachment:error in fetching item template."
 
         item_template = res.read()
@@ -393,10 +481,10 @@ class Zotero(object):
         # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
-        err, res = self.__create_request(post_url, 'POST', header, json_string)
-
-        if err == 1:
-            return "cannot create item:error in url: %s" % res
+        try:
+            res = self.__issue_request(post_url, 'POST', header, json_string)
+        except urllib2.URLError:
+            return "cannot create item:error in url: %s" % post_url
 
         err, msg = self.__parse_json_response(res.read())
 
@@ -423,10 +511,12 @@ class Zotero(object):
         auth_headers = {'Content-Type': 'application/x-www-form-urlencoded',
                         'If-None-Match': '*'}
 
-        err, res = self.__create_request(auth_post_url, 'POST',
-                                         auth_headers, post_data)
-        if err == 1:
-            return "cannot sync attachment:error in authorization: %s" % res
+        try:
+            res = self.__issue_request(auth_post_url, 'POST',
+                                       auth_headers, post_data)
+        except urllib2.URLError:
+            return "cannot sync attachment: error in authorization: %s" % \
+                auth_post_url
 
         if res.code == 200 and err == 0:
             auth_data = json.loads(res.read())
@@ -437,31 +527,23 @@ class Zotero(object):
         else:
             return ("cannot sync attachment: API error.")
 
-    def __create_request(self, url, rtype="GET", headers=None, data=None):
-        """ creates a http request to zotero website and gets response """
+    def __issue_request(self, url, rtype="GET", headers=None, data=None):
+        """
+        Issues a HTTP request to zotero website and gets the response.
+        """
         if headers is None:
             headers = {}
 
-        handler = urllib2.HTTPSHandler
-        opener = urllib2.build_opener(handler)
-        if re.search("zotero.org", url):
-            # url must be for zotero api interactions, add header
-            headers['Zotero-API-Version'] = '2'
+        headers['Zotero-API-Version'] = '2'
 
+        req = urllib2.Request(url, data if rtype == 'POST' else None,
+                              headers)
         try:
-            if rtype == 'POST':
-                post_data = data
-                req = urllib2.Request(url, post_data, headers)
-            else:
-                req = urllib2.Request(url, None, headers)
+            response = urllib2.urlopen(req)
+        except urllib2.HTTPError as e:
+            return e
 
-            response = opener.open(req)
-
-        except urllib2.HTTPError, e:
-            return 0, e
-        except urllib2.URLError, e:
-            return 1, e
-        return 0, response
+        return response
 
     def duplicate_drill_down(self, results_dict, source_dict):
         """ drills down the resuls to identify exact duplicates """
@@ -511,6 +593,6 @@ class Zotero(object):
 
     def test_keys(self):
         """ tests the zotero keys explicitly """
-        search_url = self.get_search_url("")
-        status, response = self.__create_request(search_url)
+        search_url = self.__build_search_url("")
+        status, response = self.__issue_request(search_url)
         return status, response

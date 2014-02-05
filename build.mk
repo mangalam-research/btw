@@ -16,6 +16,9 @@ RST2HTML?=rst2html
 # jsdoc3 command
 JSDOC3?=jsdoc
 
+# wget command.
+WGET?=wget
+
 # Parameters to pass to behave
 BEHAVE_PARAMS?=
 
@@ -27,6 +30,8 @@ TEI?=/usr/share/xml/tei/stylesheet
 # End of customizable variables.
 #
 
+WGET:=$(WGET) --no-use-server-timestamps
+
 BUILD_DIR:=build
 
 QUNIT_VERSION:=1.12.0
@@ -35,6 +40,12 @@ JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # This creates a file name that a) identifies what it is an b) happens
 # to correspond to the top directory of the zip that github creates.
 JQUERY_COOKIE_BASE:=jquery-cookie-$(patsubst v%,%,$(notdir $(JQUERY_COOKIE_URL)))
+
+DATATABLES_URL:=http://datatables.net/releases/DataTables-1.9.4.zip
+# This creates a file name that a) identifies what it is an b) happens
+# to correspond to the top directory of the zip that github creates.
+DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
+
 
 # We don't use this yet.
 #CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
@@ -55,7 +66,7 @@ BUILD_DEST:=$(BUILD_DIR)/static-build
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -144,11 +155,22 @@ $(BUILD_DEST)/lib/external/jquery.cookie.js: downloads/$(JQUERY_COOKIE_BASE)
 	unzip -j -o -d $(dir $@) $< $(patsubst %.zip,%,$(JQUERY_COOKIE_BASE))/$(notdir $@)
 	touch $@
 
+$(BUILD_DEST)/lib/external/datatables: downloads/$(DATATABLES_BASE)
+	rm -rf $@/*
+	mkdir -p $@/temp
+	unzip -o -d $@/temp $<
+	mv $@/temp/DataTables*/media/* $@
+	(cd $@; rm -rf src unit_testing)
+	rm -rf $@/temp
+
 downloads build:
 	mkdir $@
 
 downloads/$(JQUERY_COOKIE_BASE): downloads
-	wget -O $@ $(JQUERY_COOKIE_URL)
+	$(WGET) -O $@ $(JQUERY_COOKIE_URL)
 
 downloads/$(CITEPROC_BASE): downloads
-	wget -O $@ $(CITEPROC_URL)
+	$(WGET) -O $@ $(CITEPROC_URL)
+
+downloads/$(DATATABLES_BASE): downloads
+	$(WGET) -O $@ $(DATATABLES_URL)

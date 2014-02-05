@@ -1,9 +1,7 @@
-# python imports
 import urllib
 import logging
 from functools import wraps
 
-# django imports
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, \
     HttpResponseServerError, HttpResponseBadRequest
@@ -12,13 +10,15 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
+from django_datatables_view.base_datatable_view import BaseDatatableView
 
-# module imports
 from .utils import Zotero, zotero_settings
-from .models import ZoteroUser
+from .models import ZoteroUser, Item
 from .forms import SearchForm
 
 logger = logging.getLogger(__name__)
+
+btw_zotero = Zotero(zotero_settings(), 'BTW Library')
 
 
 def ajax_login_required(view):
@@ -55,6 +55,26 @@ def _search(request):
     return HttpResponse(template.render(context))
 
 
+def _cache_all():
+    search_results, extra_vars = btw_zotero.get_all()
+    for result in search_results:
+        key = result["itemKey"]
+        if not Item.objects.filter(item_key=key).exists():
+            t = Item(item_key=key)
+            t.save()
+
+
+@login_required
+@require_GET
+def title(request):
+    _cache_all()
+    # present a unbound form.
+    form = SearchForm()
+    template = loader.get_template('bibliography/title.html')
+    context = RequestContext(request, {'form': form})
+    return HttpResponse(template.render(context))
+
+
 @ajax_login_required
 @require_POST
 def exec_(request):
@@ -79,12 +99,7 @@ def exec_(request):
     results_list = []
     extra_data = {}
     try:
-        # evaluate the results from the global account
-        g_obj = Zotero(zotero_settings(), 'BTW Library')
-
-        search_url = g_obj.get_search_url(query_dict['keyword'])
-        logger.debug("searching url: %s", search_url)
-        search_results, extra_vars = g_obj.get_search_results(search_url)
+        search_results, extra_vars = btw_zotero.search(query_dict['keyword'])
 
         # update data
         results_list.extend(search_results)
@@ -139,8 +154,7 @@ def results(request):
 @ajax_login_required
 @require_GET
 def abbrev(request, itemKey):
-    zotero = Zotero(zotero_settings(), "BTW Library")
-    item = zotero.get_item(itemKey)
+    item = btw_zotero.get_item(itemKey)
     ret = None
 
     creators = item.get("creators", None)
@@ -157,8 +171,7 @@ def abbrev(request, itemKey):
 @ajax_login_required
 @require_GET
 def info(request, itemKey):
-    zotero = Zotero(zotero_settings(), "BTW Library")
-    item = zotero.get_item(itemKey)
+    item = btw_zotero.get_item(itemKey)
     ret = ""
 
     creators = item.get("creators", None)
@@ -211,28 +224,24 @@ def sync(request):
         title = data_dict.get('title')
         item_type = data_dict.get('itemType')
 
-        # search for duplicate
-        sync_obj = Zotero(zotero_settings(), "BTW Library")
-        search_url = sync_obj.dup_search_url(urllib.quote(title.lower()),
-                                             item_type)
+        # Search for duplicates.
+        search_results, extras = btw_zotero.duplicate_search(
+            urllib.quote(title.lower()), item_type)
 
-        logger.debug("searching duplicates from url: %s", search_url)
-
-        search_results, extras = sync_obj.get_search_results(search_url)
-
-        dup_results = sync_obj.duplicate_drill_down(search_results,
-                                                    data_dict)
+        dup_results = btw_zotero.duplicate_drill_down(search_results,
+                                                      data_dict)
 
         if len(dup_results) == 0:
             local_profile_object = ZoteroUser.objects.get(
                 btw_user=request.user)
             if item_type == u'attachment':
                 # call set_attachment
-                res = sync_obj.set_attachment(data_dict, local_profile_object)
+                res = btw_zotero.set_attachment(data_dict,
+                                                local_profile_object)
 
             else:
                 # call set_item
-                res = sync_obj.set_item(data_dict)
+                res = btw_zotero.set_item(data_dict)
 
             # do additional steps to manipulate bibliography_sync_status to 0
             if res == "OK":
@@ -254,6 +263,43 @@ def sync(request):
             return HttpResponse("DUP")
 
     return HttpResponseServerError("ERROR: sync data i/o error.")
+
+
+class ItemList(BaseDatatableView):
+    model = Item
+
+    # define the columns that will be returned
+    columns = ['reference_title', 'creators', 'title', 'date']
+    order_columns = ['reference_title', 'creators', 'title', 'date']
+
+    max_display_length = 500
+
+    @classmethod
+    def as_view(cls, *args, **kwargs):
+        return ajax_login_required(
+            require_GET(super(BaseDatatableView, cls).as_view(*args,
+                                                              **kwargs)))
+
+    def get_initial_queryset(self):
+        return Item.objects.all()
+
+    def filter_queryset(self, qs):
+        sSearch = self.request.POST.get('sSearch', None)
+        if sSearch:
+            qs = qs.filter(name__istartswith=sSearch)
+
+        # more advanced example
+        filter_customer = self.request.POST.get('customer', None)
+
+        if filter_customer:
+            customer_parts = filter_customer.split(' ')
+            qs_params = None
+            for part in customer_parts:
+                q = Q(customer_firstname__istartswith=part) | \
+                    Q(customer_lastname__istartswith=part)
+                qs_params = qs_params | q if qs_params else q
+            qs = qs.filter(qs_params)
+        return qs
 
 
 @require_GET

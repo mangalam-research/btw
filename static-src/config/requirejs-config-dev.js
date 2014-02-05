@@ -1,13 +1,14 @@
 require.config({
  baseUrl: '/static/lib/',
  paths: {
-   'jquery': 'external/jquery-1.9.1',
-   'bootstrap': 'external/bootstrap/js/bootstrap.min',
-   'log4javascript': 'external/log4javascript',
+   jquery: 'external/jquery-1.9.1',
+   bootstrap: 'external/bootstrap/js/bootstrap.min',
+   log4javascript: 'external/log4javascript',
    'jquery.bootstrap-growl': 'external/jquery.bootstrap-growl',
    'font-awesome': 'external/font-awesome',
    'jquery.cookie': 'external/jquery.cookie',
-   'qunit': 'external/qunit-1.12.0',
+   datatables: 'external/datatables/js/jquery.dataTables',
+   qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
      // For bibliography
@@ -44,6 +45,10 @@ require.config({
    'jquery.cookie': {
      deps: ["jquery"],
      exports: "jQuery.cookie"
+   },
+   'datatables': {
+     deps: ["jquery"],
+     exports: "jQuery.fn.dataTable"
    },
    'log4javascript': {
        exports: "log4javascript"

@@ -1,15 +1,15 @@
-# Django imports
+import re
+import datetime
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from south.modelsinspector import add_introspection_rules
 
-#python imports
-import re
-
-# module imports
-from .utils import Zotero
+from .utils import Zotero, zotero_settings
+from lib import util
+import json
 
 # This is an arbitrary limit on the size of a Zotero URL fragment that
 # uniquely identifies a Zotero entry.
@@ -99,3 +99,77 @@ class ZoteroUser(models.Model):
                 else:
                     raise ValidationError(
                         "Wrong Zotero APIkey(Zapikey field) url query failed.")
+
+
+class ItemManager(models.Manager):
+    zotero = Zotero(zotero_settings(), 'BTW Library')
+
+MINIMUM_FRESHNESS = datetime.timedelta(minutes=30)
+
+
+class Item(models.Model):
+    """
+    Models a Zotero item. **This model is not meant for general
+    purpose modification of Zotero entries.** What it does is
+    represent an item in the local database so that:
+
+    * The data is cached locally, and so the application does not keep
+      hitting the Zotero servers.
+
+    * It is possible to use database search and filtering to find
+      items, rather than query the Zotero server.
+    """
+    objects = ItemManager()
+
+    item_key = models.CharField(max_length=22, primary_key=True)
+    reference_title = models.TextField(unique=True, null=True)
+    date = models.TextField(null=True)
+    title = models.TextField(null=True)
+    creators = models.TextField(null=True)
+    freshness = models.DateTimeField(null=True)
+    item = models.TextField(null=True)
+    _item = None
+
+    def __init__(self, *args, **kwargs):
+        super(Item, self).__init__(*args, **kwargs)
+        self.refresh()
+
+    def refresh(self, force=False):
+        if self._refresh(force):
+            self.date = self._date()
+            self.title = self._title()
+            self.creators = self._creators()
+            self.save()
+
+    def _refresh(self, force=False):
+        reloaded = False
+        now = util.utcnow()
+        if force or self.item is None or \
+           now - self.freshness > MINIMUM_FRESHNESS:
+            self._item = Item.objects.zotero.get_item(self.item_key)
+            self.item = json.dumps(self._item)
+            self.freshness = now
+            self.save()
+            reloaded = True
+
+        return reloaded
+
+    def _date(self):
+        return self._item.get("date", None)
+
+    def _title(self):
+        return self._item.get("title", None)
+
+    def _creators(self):
+        item = self._item
+        creators = item.get("creators", None)
+
+        ret = None
+        if creators is not None:
+            names = [creator.get("lastName", creator.get("firstName",
+                                                         creator.get("name",
+                                                                     "")))
+                     for creator in creators]
+            ret = ", ".join(names)
+
+        return ret
