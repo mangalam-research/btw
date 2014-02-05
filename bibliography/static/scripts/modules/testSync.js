@@ -33,7 +33,7 @@ return {
                 // server error assertion.
                 equal(jqXHR.status, 500, "500 response code");
                 equal(jqXHR.responseText,
-                      "ERROR: sync data i/o error.",
+                      "ERROR: session data or query parameters incorrect.",
                       "search view response text");
                 equal(errorThrown, "INTERNAL SERVER ERROR",
                       "HTTP response text");
@@ -51,7 +51,7 @@ return {
                 QUnit.start();
                 equal(jqXHR.status, 500, "500 response code");
                 equal(jqXHR.responseText,
-                      "Error: malformed data cannot be copied.",
+                      "ERROR: malformed data cannot be copied.",
                       "search view response text");
                 equal(errorThrown, "INTERNAL SERVER ERROR",
                       "HTTP response text");
@@ -69,7 +69,7 @@ return {
                 QUnit.start();
                 equal(jqXHR.status, 200, "200 response code");
                 equal(jqXHR.responseText,
-                      "Error: Item not in result database.",
+                      "ERROR: Item not in result database.",
                       "search view response text");
                 equal(jqXHR.statusText, "OK", "HTTP response text");
             });

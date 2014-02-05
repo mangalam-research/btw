@@ -217,9 +217,9 @@ def sync(request):
         else:
             if len(enc_string) == 0:
                 return HttpResponseServerError(
-                    "Error: malformed data cannot be copied.")
+                    "ERROR: malformed data cannot be copied.")
             return HttpResponse(
-                "Error: Item not in result database.")
+                "ERROR: Item not in result database.")
 
         title = data_dict.get('title')
         item_type = data_dict.get('itemType')
@@ -262,7 +262,8 @@ def sync(request):
 
             return HttpResponse("DUP")
 
-    return HttpResponseServerError("ERROR: sync data i/o error.")
+    return HttpResponseServerError(
+        "ERROR: session data or query parameters incorrect.")
 
 
 class ItemList(BaseDatatableView):
