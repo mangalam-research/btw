@@ -1,9 +1,3 @@
-# django imports
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.core.cache import get_cache
-
-# python core imports
 from base64 import urlsafe_b64encode
 import json
 import re
@@ -12,6 +6,10 @@ import urllib2
 import logging
 from json.encoder import JSONEncoder
 from xml.dom import minidom
+
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.core.cache import get_cache
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +52,9 @@ def zotero_settings():
         raise ImproperlyConfigured(
             "ZOTERO_SETTINGS does not have all fields required")
 
+    if 'server' not in details:
+        details['server'] = "https://api.zotero.org/"
+
     _cached_details = details
     return _cached_details
 
@@ -76,10 +77,10 @@ class Zotero(object):
 
         if re.search("^u:", self.full_uid):
             # create the user prefix
-            self.prefix = "https://api.zotero.org/users/"
+            self.prefix = api_dict['server'] + "users/"
         elif re.search("^g:", self.full_uid):
             # create the group prefix
-            self.prefix = "https://api.zotero.org/groups/"
+            self.prefix = api_dict['server'] + "groups/"
         else:
             raise ImproperlyConfigured("ZOTERO_SETTINGS['uid'] is of "
                                        "the wrong format")
@@ -115,7 +116,7 @@ class Zotero(object):
         #
 
         search_url = self.__build_item_search_url(itemKey)
-        logger.debug("getting item %s", search_url)
+        logger.debug("getting item: %s", search_url)
 
         results_list, _extra_data_dict = self.__get_search_results(search_url)
         assert len(results_list) <= 1
@@ -205,9 +206,9 @@ class Zotero(object):
 
         fetch_from_cache = False
         try:
-            res = self.__issue_request(url=url, headers=headers)
-        except urllib2.URLError:
-            logger.debug('search url not working')
+            res = self.__request(url=url, headers=headers)
+        except urllib2.URLError as e:
+            logger.debug('search url not working: ' + str(e))
             fetch_from_cache = True
 
         if res.code == 304:
@@ -344,7 +345,7 @@ class Zotero(object):
         template_url = item_tmplate_url % (item_type)
 
         try:
-            res = self.__issue_request(template_url)
+            res = self.__request(template_url)
         except urllib2.URLError:
             return "cannot create item:error in fetching item template."
 
@@ -379,7 +380,7 @@ class Zotero(object):
         header = {'Content-Type': 'application/json'}
 
         try:
-            res = self.__issue_request(post_url, 'POST', header, json_string)
+            res = self.__request(post_url, 'POST', header, json_string)
         except urllib2.URLError:
             return "cannot create item:error in post url: %s" % res
 
@@ -428,7 +429,7 @@ class Zotero(object):
 
         res = None
         try:
-            res = self.__issue_request(olditem_download_url)
+            res = self.__request(olditem_download_url)
         except urllib2.URLError:
             pass  # res remains None
 
@@ -457,7 +458,7 @@ class Zotero(object):
         get_url = item_tmplate_url % (link_mode)
 
         try:
-            res = self.__issue_request(get_url)
+            res = self.__request(get_url)
         except urllib2.URLError:
             return "cannot create attachment:error in fetching item template."
 
@@ -482,7 +483,7 @@ class Zotero(object):
         header = {'Content-Type': 'application/json'}
 
         try:
-            res = self.__issue_request(post_url, 'POST', header, json_string)
+            res = self.__request(post_url, 'POST', header, json_string)
         except urllib2.URLError:
             return "cannot create item:error in url: %s" % post_url
 
@@ -512,8 +513,8 @@ class Zotero(object):
                         'If-None-Match': '*'}
 
         try:
-            res = self.__issue_request(auth_post_url, 'POST',
-                                       auth_headers, post_data)
+            res = self.__request(auth_post_url, 'POST', auth_headers,
+                                 post_data)
         except urllib2.URLError:
             return "cannot sync attachment: error in authorization: %s" % \
                 auth_post_url
@@ -527,7 +528,7 @@ class Zotero(object):
         else:
             return ("cannot sync attachment: API error.")
 
-    def __issue_request(self, url, rtype="GET", headers=None, data=None):
+    def __request(self, url, rtype="GET", headers=None, data=None):
         """
         Issues a HTTP request to zotero website and gets the response.
         """
@@ -594,5 +595,5 @@ class Zotero(object):
     def test_keys(self):
         """ tests the zotero keys explicitly """
         search_url = self.__build_search_url("")
-        status, response = self.__issue_request(search_url)
+        status, response = self.__request(search_url)
         return status, response
