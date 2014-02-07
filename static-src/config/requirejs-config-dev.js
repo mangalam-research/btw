@@ -46,10 +46,6 @@ require.config({
      deps: ["jquery"],
      exports: "jQuery.cookie"
    },
-   'datatables': {
-     deps: ["jquery"],
-     exports: "jQuery.fn.dataTable"
-   },
    'log4javascript': {
        exports: "log4javascript"
    },
