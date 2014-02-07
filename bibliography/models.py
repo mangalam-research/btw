@@ -7,7 +7,7 @@ from django.conf import settings
 
 from south.modelsinspector import add_introspection_rules
 
-from .utils import Zotero, zotero_settings
+from .zotero import Zotero, zotero_settings
 from lib import util
 import json
 

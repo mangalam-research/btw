@@ -132,7 +132,7 @@ def _proxify(file_name, f):
 
     return wrapper
 
-urlopen_patcher = mock.patch('bibliography.utils.urllib2.urlopen')
+urlopen_patcher = mock.patch('bibliography.zotero.urllib2.urlopen')
 
 
 def no_net_decorator(f):

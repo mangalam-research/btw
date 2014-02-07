@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
-from .utils import Zotero, zotero_settings
+from .zotero import Zotero, zotero_settings
 from .models import ZoteroUser, Item
 from .forms import SearchForm
 
