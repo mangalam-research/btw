@@ -112,10 +112,13 @@ $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
 
-.PHONY: doc
-doc: build/doc README.html
-	sphinx-apidoc -o doc/_apidoc . $(APIDOC_EXCLUDE)
+.PHONY: python-doc
+python-doc:
+	sphinx-apidoc -f -o doc/_apidoc . $(APIDOC_EXCLUDE)
 	(cd doc; make html)
+
+.PHONY: doc
+doc: python-doc build/doc README.html
 
 build/doc: build $(filter %.js, $(SOURCES))
 	$(JSDOC3) -p -c jsdoc.conf.json -d build/doc -r static-src
