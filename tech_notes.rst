@@ -69,6 +69,49 @@ Django Tests
              you make changes that must propagate to your live version
              of the server then you must run ``make`` first.
 
+Zotero Tests
+------------
+
+The ``bibliography`` application communicates with the Zotero server
+at ``api.zotero.org``. To avoid being dependent on a network
+connection, on that server being up, on the account that was used to
+create the tests being available, the test suite uses ``mitmdump``
+(from the mitmproxy package) to record and replay interactions with
+the server. The infrastructure needed for this is in
+``bibliography.tests.util``.
+
+.. warning:: Version 0.10 of mitmproxy **cannot** be used to *record*
+             interactions with the Zotero server. It suffers from an
+             `SSL bug
+             <https://github.com/mitmproxy/netlib/issues/28>`__ which
+             will presumably be fixed in netlib 0.11. (The versions of
+             netlib and mitmproxy are in lockstep.) However, 0.10 can
+             be used to *replay* them. So if you are not concerned
+             with creating or modifying the tests you can ignore this
+             problem.
+
+Version 0.10 of ``mitmdump`` also suffers from a bug that makes
+replaying fail unless we use the ``--no-pop`` option. However, when we
+use ``--no-pop``, mitmproxy does not remove used match
+request/response pairs. So if we issue two requests that are
+considered *same* by ``mitmdump`` but we expect a *different*
+response, replaying will fail because the first response will be
+replayed twice. We work around this issue this way:
+
+* At recording time, rewrite the saved requests to add a
+``X-BTW-Sequence`` header field which is incremented with each
+request.
+
+* At replaying time, filter the requests made by the code being tested
+  so that they gain a ``X-BTW-Sequence`` field which is incremented
+  with each request.
+
+* At replaying time, add ``--rheader X-BTW-Sequence`` so that request
+  matching is performed on this field.
+
+We can probably remove this workaround by the time mitmproxy 0.11 is
+released.
+
 In-Browser Tests
 ================
 

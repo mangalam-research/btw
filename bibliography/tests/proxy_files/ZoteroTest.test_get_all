@@ -1,0 +1,1059 @@
+2927:5:error,0:~8:response,2301:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1392211668.542436^3:msg,2:OK,15:timestamp_start,17:1392211668.542073^7:headers,261:40:4:Date,29:Wed, 12 Feb 2014 13:27:48 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,20:Nothing to see here.,4:cert,1850:-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
+MTM1UkJCWU5kVWVRdTNNeFE2T3JQVFhrWmMwd24xEzARBgNVBAsTCkdUMDM4MDI1
+NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29tL3Jlc291cmNlcy9jcHMg
+KGMpMTIxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZhbGlkYXRlZCAtIFJhcGlk
+U1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQDYPL7zZHYhpDtAup7lDuUSFE7QuIBrgl6tHi/vj5Vn6QL5
+wzoUYNG2sK/tJT+htnbA6JaoA2AzxMgbn0Fe3aphpnZs7hbVheXl52lL4pdYKGq2
+3vT+u6pRIUYy6vKdMoOZya8jj9HIOL9OUAv08cBYZWVXWP/I0OoCQBPAvHh+e8QZ
+c/Z08Y0OVlzLCA8o3e/4nEDbihjhP+tKg9/xeE655l4clji5ALDEI60Wigw5+kNx
+L5DUy6jTRC95OkDrZJ/M76btUNfPPX7k0d3h7jU3ScwyrpGCDoC0FDCvCNOK/VrT
+wfEVDS3+xu8e4S4YvBZclmjkPckboCSx694rGLq7AgMBAAGjggGzMIIBrzAfBgNV
+HSMEGDAWgBRraT1qGEJK3Y8CZTn9NSSGeJEWMDAOBgNVHQ8BAf8EBAMCBaAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMCMGA1UdEQQcMBqCDCouem90ZXJv
+Lm9yZ4IKem90ZXJvLm9yZzBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vcmFwaWRz
+c2wtY3JsLmdlb3RydXN0LmNvbS9jcmxzL3JhcGlkc3NsLmNybDAdBgNVHQ4EFgQU
+Wmbf6RHVp3b94HXYV0aQMB622T0wDAYDVR0TAQH/BAIwADB4BggrBgEFBQcBAQRs
+MGowLQYIKwYBBQUHMAGGIWh0dHA6Ly9yYXBpZHNzbC1vY3NwLmdlb3RydXN0LmNv
+bTA5BggrBgEFBQcwAoYtaHR0cDovL3JhcGlkc3NsLWFpYS5nZW90cnVzdC5jb20v
+cmFwaWRzc2wuY3J0MEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsGAQUF
+BwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMA0GCSqG
+SIb3DQEBBQUAA4IBAQC1+3/bB4wSFC7RqP2xgG4T5OluXBMLXpLe3ZzyMWUkaqV1
+lBNgr8+7VD7qwpVBiT8TiUiiLHUD7MtZtFCNwxYwB1iQDF29rciJzcBvpd4aV6JK
+i9CNtPgGsnqteF5HSeTQVMXpyLrEhD5TtDlmIpZDdYotFFzvEinKlSBD6oROX5GQ
+je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
+MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
+sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
+-----END CERTIFICATE-----
+,4:code,3:200#}7:request,561:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:54442#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,1:/,4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392211668.511055^15:timestamp_start,17:1392211667.433044^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,17:1392211668.474015^13:timestamp_end,17:1392211668.513408^}7:version,9:1:0#2:10#]}88399:5:error,0:~8:response,87646:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1392211670.048378^3:msg,2:OK,15:timestamp_start,17:1392211669.984158^7:headers,217:40:4:Date,29:Wed, 12 Feb 2014 13:27:48 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:2,]30:21:Last-Modified-Version,2:24,]22:10:Connection,5:close,]40:12:Content-Type,20:application/atom+xml,]]7:content,85406:<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:zapi="http://zotero.org/ns/api">
+  <title>Zotero / BTW Testing Group / Top-Level Items</title>
+  <id>http://zotero.org/groups/137163/items/top?content=json</id>
+  <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json"/>
+  <link rel="first" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json"/>
+  <link rel="last" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json"/>
+  <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/137163/items/top"/>
+  <zapi:totalResults>47</zapi:totalResults>
+  <updated>2014-01-10T19:35:22Z</updated>
+  <entry>
+    <title>Indo-European Lexicon: Pokorny Master PIE Etyma</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/7MN7XGX8</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/7MN7XGX8?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/7MN7XGX8"/>
+    <zapi:key>7MN7XGX8</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>webpage</zapi:itemType>
+    <zapi:creatorSummary>Slocum</zapi:creatorSummary>
+    <zapi:year>2013</zapi:year>
+    <zapi:numChildren>1</zapi:numChildren>
+    <zapi:numTags>10</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"7MN7XGX8","itemVersion":22,"itemType":"webpage","title":"Indo-European Lexicon: Pokorny Master PIE Etyma","creators":[{"creatorType":"author","firstName":"Jonathan","lastName":"Slocum"}],"abstractNote":"Indo-European Lexicon: Pokorny Master PIE Etyma. These Indo-European materials are intended to provide background information about early Indo-European languages, specifically the portions of their lexicons derived from the Proto-Indo-European language, which was spoken ca. 5000 - 3000 B.C. Links may be provided to web pages showing derived words in numerous Indo-European languages.","websiteTitle":"","websiteType":"Text","date":"2013-12-18","shortTitle":"Indo-European Lexicon","url":"http://www.utexas.edu/cola/centers/lrc/ielex/PokornyMaster-X.html","accessDate":"2014-01-04 20:20:46","language":"eng;ine","rights":"Copyright (c) 2003-2013, The University of Texas at Austin","extra":"Indo-European Lexicon: Pokorny Master PIE Etyma. These Indo-European materials are intended to provide background information about early Indo-European languages, specifically the portions of their lexicons derived from the Proto-Indo-European language, which was spoken ca. 5000 - 3000 B.C. Links may be provided to web pages showing derived words in numerous Indo-European languages.","tags":[{"tag":"Indo-European Lexicon: Pokorny Master PIE Etyma","type":1},{"tag":"Indo-European dictionaries","type":1},{"tag":"Indo-European etymology","type":1},{"tag":"Indo-European languages","type":1},{"tag":"Indo-European languages--Etymology--Dictionaries.","type":1},{"tag":"Indo-European lexicons","type":1},{"tag":"Indogermanisches etymologisches Woerterbuch","type":1},{"tag":"Julius Pokorny","type":1},{"tag":"P 725","type":1},{"tag":"Proto-Indo-European","type":1}],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The universal vehicle discourse literature = Mahāyānasūtrālaṁkāra</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/NN9DVW38</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NN9DVW38?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/NN9DVW38"/>
+    <zapi:key>NN9DVW38</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Asaṅga et al.</zapi:creatorSummary>
+    <zapi:year>2004</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"NN9DVW38","itemVersion":22,"itemType":"book","title":"The universal vehicle discourse literature = Mahāyānasūtrālaṁkāra","creators":[{"creatorType":"author","name":"Asaṅga"},{"creatorType":"author","name":"Maitreyanātha"},{"creatorType":"author","firstName":"Robert A. F","lastName":"Thurman"},{"creatorType":"author","firstName":"L","lastName":"Jamspal"},{"creatorType":"author","firstName":"Vasubandhu","lastName":""},{"creatorType":"author","name":"American Institute of Buddhist Studies"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"New York","publisher":"American Institute of Buddhist Studies","date":"2004","numPages":"","language":"Translated from the Sanskrit, Tibetan, and Chinese.","ISBN":"9780975373408 0975373404","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Ratnavali of Nagarjuna</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/XZP3XVM7</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/XZP3XVM7?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/XZP3XVM7"/>
+    <zapi:key>XZP3XVM7</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>journalArticle</zapi:itemType>
+    <zapi:creatorSummary>Tucci</zapi:creatorSummary>
+    <zapi:year>1936</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"XZP3XVM7","itemVersion":22,"itemType":"journalArticle","title":"The Ratnavali of Nagarjuna","creators":[{"creatorType":"author","firstName":"Giuseppe","lastName":"Tucci"}],"abstractNote":"","publicationTitle":"J.R. Asiat. Soc. G.B. Irel. Journal of the Royal Asiatic Society of Great Britain \u0026 Ireland","volume":"68","issue":"03","pages":"423-435","date":"1936","series":"","seriesTitle":"","seriesText":"","journalAbbreviation":"","language":"English","DOI":"","ISSN":"0035-869X","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>LIV, Lexikon der Indogermanischen Verben die Wurzeln und ihre Primärstammbildungen</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/779XQW7M</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/779XQW7M?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/779XQW7M"/>
+    <zapi:key>779XQW7M</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Rix</zapi:creatorSummary>
+    <zapi:year>2001</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"779XQW7M","itemVersion":22,"itemType":"book","title":"LIV, Lexikon der Indogermanischen Verben die Wurzeln und ihre Primärstammbildungen","creators":[{"creatorType":"author","firstName":"Helmut, Kümmel, Martin","lastName":"Rix"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Wiesbaden","publisher":"L. Reichert","date":"2001","numPages":"","language":"German","ISBN":"3895002194  9783895002199","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/J8K2HIW3</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/J8K2HIW3?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/J8K2HIW3"/>
+    <zapi:key>J8K2HIW3</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Sthiramati and Büscher</zapi:creatorSummary>
+    <zapi:year>2007</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"J8K2HIW3","itemVersion":22,"itemType":"book","title":"Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation","creators":[{"creatorType":"author","name":"Sthiramati"},{"creatorType":"author","firstName":"Hartmut","lastName":"Büscher"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Wien","publisher":"Österreichische Akademie der Wissenschaften","date":"2007","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"Sthiramati's Triṃśikāvijñaptibhāṣya","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Buddhist manuscripts Vol. 3 Vol. 3</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/3UXZUGFW</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3UXZUGFW?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/3UXZUGFW"/>
+    <zapi:key>3UXZUGFW</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Braarvig</zapi:creatorSummary>
+    <zapi:year>2006</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"3UXZUGFW","itemVersion":22,"itemType":"book","title":"Buddhist manuscripts Vol. 3 Vol. 3","creators":[{"creatorType":"author","firstName":"Jens","lastName":"Braarvig"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Oslo","publisher":"Hermes Publ.","date":"2006","numPages":"","language":"English","ISBN":"8280340068 9788280340061","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/Q7ZDZIN8</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/Q7ZDZIN8?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/Q7ZDZIN8"/>
+    <zapi:key>Q7ZDZIN8</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Dharmapāla et al.</zapi:creatorSummary>
+    <zapi:year>1925</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"Q7ZDZIN8","itemVersion":22,"itemType":"book","title":"Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose","creators":[{"creatorType":"author","name":"Dharmapāla"},{"creatorType":"author","firstName":"Sylvain","lastName":"Lévi"},{"creatorType":"author","name":"Sthiramati"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Paris","publisher":"H. Champion","date":"1925","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"Vijñaptimātratāsiddhi.","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Suvarṇavarṇāvadāna; decipherment and historical study of a palm-leaf Sanskrit manuscript, an unknown Mahāyāna (avadāna) text from Tibet.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/QCRJ627I</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/QCRJ627I?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/QCRJ627I"/>
+    <zapi:key>QCRJ627I</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Roy</zapi:creatorSummary>
+    <zapi:year>1971</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"QCRJ627I","itemVersion":22,"itemType":"book","title":"Suvarṇavarṇāvadāna; decipherment and historical study of a palm-leaf Sanskrit manuscript, an unknown Mahāyāna (avadāna) text from Tibet.","creators":[{"creatorType":"author","firstName":"Sita Ram","lastName":"Roy"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Patna","publisher":"K.P. Jayaswal Research Institute","date":"1971","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The connected discourses of the Buddha: a translation of the Saṃyutta Nikāya ; translated from the Pāli by Bhikkhu Bodhi.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/PBBFNUU9</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/PBBFNUU9?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/PBBFNUU9"/>
+    <zapi:key>PBBFNUU9</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Bodhi</zapi:creatorSummary>
+    <zapi:year>2000</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"PBBFNUU9","itemVersion":22,"itemType":"book","title":"The connected discourses of the Buddha: a translation of the Saṃyutta Nikāya ; translated from the Pāli by Bhikkhu Bodhi.","creators":[{"creatorType":"author","name":"Bodhi"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Boston","publisher":"Wisdom Publications","date":"2000","numPages":"","language":"English","ISBN":"0861713311 9780861713318","shortTitle":"The connected discourses of the Buddha","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Vasubandhu's Pañcaskandhaka</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/E2N5EZVU</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/E2N5EZVU?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/E2N5EZVU"/>
+    <zapi:key>E2N5EZVU</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu et al.</zapi:creatorSummary>
+    <zapi:year>2008</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"E2N5EZVU","itemVersion":22,"itemType":"book","title":"Vasubandhu's Pañcaskandhaka","creators":[{"creatorType":"author","name":"Vasubandhu"},{"creatorType":"author","firstName":"Steinkellner, Ernst","lastName":"李学竹"},{"creatorType":"author","firstName":"Tōru","lastName":"Tomabechi"},{"creatorType":"author","name":"Zhongguo Zang xue yan jiu zhong xin"},{"creatorType":"author","name":"Österreichische Akademie der Wissenschaften"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Beijing; Vienna","publisher":"China Tibetology Pub. House ; Austrian Academy of Sciences Press","date":"2008","numPages":"","language":"Text in Sanskrit and in Tibetan and Chinese translations; introd. in English and Chinese.","ISBN":"9787802530331 7802530334 9783700161097 3700161093","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Nāgārjuna: Madhyamaka Kārikā ; Le stanze del cammino di mezzo</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/QI2PXQS5</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/QI2PXQS5?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/QI2PXQS5"/>
+    <zapi:key>QI2PXQS5</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Nāgārjuna</zapi:creatorSummary>
+    <zapi:year>1961</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"QI2PXQS5","itemVersion":22,"itemType":"book","title":"Nāgārjuna: Madhyamaka Kārikā ; Le stanze del cammino di mezzo","creators":[{"creatorType":"author","firstName":"Gnoli, Raniero","lastName":"Nāgārjuna"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Torino","publisher":"Paolo Boringhieri","date":"1961","numPages":"","language":"Italian","ISBN":"","shortTitle":"Nāgārjuna","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Nāgārjuna's Middle way: the Mūlamadhyamakākarikā</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/QS2ERJ88</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/QS2ERJ88?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/QS2ERJ88"/>
+    <zapi:key>QS2ERJ88</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Nāgārjuna et al.</zapi:creatorSummary>
+    <zapi:year>2013</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"QS2ERJ88","itemVersion":22,"itemType":"book","title":"Nāgārjuna's Middle way: the Mūlamadhyamakākarikā","creators":[{"creatorType":"author","name":"Nāgārjuna"},{"creatorType":"author","firstName":"Mark","lastName":"Siderits"},{"creatorType":"author","firstName":"Shōryū","lastName":"Katsura"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"","publisher":"","date":"2013","numPages":"","language":"English","ISBN":"9781614290506  1614290504  9781614290612  161429061X","shortTitle":"Nāgārjuna's Middle way","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Madhyāntavibhāga-bhāṣya: a buddhist philosophical treatise</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/FZIQBF67</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/FZIQBF67?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/FZIQBF67"/>
+    <zapi:key>FZIQBF67</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Nagao</zapi:creatorSummary>
+    <zapi:year>1964</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"FZIQBF67","itemVersion":22,"itemType":"book","title":"Madhyāntavibhāga-bhāṣya: a buddhist philosophical treatise","creators":[{"creatorType":"author","firstName":"Gadjin M","lastName":"Nagao"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Tokyo","publisher":"Suzuki Research Foundation","date":"1964","numPages":"","language":"English","ISBN":"","shortTitle":"Madhyāntavibhāga-bhāṣya","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Asanga's Chapter on ethics with the commentary of Tsong-Kha-Pa, The basic path to awakening, the complete Bodhisattva</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/744Z5GI4</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/744Z5GI4?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/744Z5GI4"/>
+    <zapi:key>744Z5GI4</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Tatz et al.</zapi:creatorSummary>
+    <zapi:year>1986</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"744Z5GI4","itemVersion":22,"itemType":"book","title":"Asanga's Chapter on ethics with the commentary of Tsong-Kha-Pa, The basic path to awakening, the complete Bodhisattva","creators":[{"creatorType":"author","firstName":"Mark","lastName":"Tatz"},{"creatorType":"author","name":"Asaṅga"},{"creatorType":"author","name":"Tsoṅ-kha-pa Blo-bzaṅ-grags-pa"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Lewiston, N.Y.","publisher":"Edwin Mellen Press","date":"1986","numPages":"","language":"English","ISBN":"088946054X  9780889460546","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Bodhisattvabhūmi; a statement of whole course of the Bodhisattva (being fifteenth section of Yogācārabhūmi)</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/PDU9MH6I</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/PDU9MH6I?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/PDU9MH6I"/>
+    <zapi:key>PDU9MH6I</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Ogihara</zapi:creatorSummary>
+    <zapi:year>1930</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"PDU9MH6I","itemVersion":22,"itemType":"book","title":"Bodhisattvabhūmi; a statement of whole course of the Bodhisattva (being fifteenth section of Yogācārabhūmi)","creators":[{"creatorType":"author","firstName":"Unrai","lastName":"Ogihara"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Tokyo","publisher":"","date":"1930","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>A unique collection of twenty Sūtras in a Sanskrit manuscript from the Potala</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/WXMXIRC2</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/WXMXIRC2?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/WXMXIRC2"/>
+    <zapi:key>WXMXIRC2</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vinītā</zapi:creatorSummary>
+    <zapi:year>2010</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"WXMXIRC2","itemVersion":22,"itemType":"book","title":"A unique collection of twenty Sūtras in a Sanskrit manuscript from the Potala","creators":[{"creatorType":"author","name":"Vinītā"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"","publisher":"","date":"2010","numPages":"","language":"In English, Sanskrit, Tibetan, and Chinese","ISBN":"9783700169062  370016906X  9787802532823  7802532825","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Aśokāvadāna.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/H9AGKUZT</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/H9AGKUZT?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/H9AGKUZT"/>
+    <zapi:key>H9AGKUZT</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Mukhopadhyaya</zapi:creatorSummary>
+    <zapi:year>1963</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"H9AGKUZT","itemVersion":22,"itemType":"book","title":"The Aśokāvadāna.","creators":[{"creatorType":"author","firstName":"Sujitkumar","lastName":"Mukhopadhyaya"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"New Delhi","publisher":"Sahitya Akademi","date":"1963","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Gathering the meanings: the compendium of categories : the Arthaviniʹscaya sūtra and its commentary, nibandhana</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/9P7NRXMX</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/9P7NRXMX?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/9P7NRXMX"/>
+    <zapi:key>9P7NRXMX</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Samtani and Viryaśrīdatta</zapi:creatorSummary>
+    <zapi:year>2002</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"9P7NRXMX","itemVersion":22,"itemType":"book","title":"Gathering the meanings: the compendium of categories : the Arthaviniʹscaya sūtra and its commentary, nibandhana","creators":[{"creatorType":"author","firstName":"N. H","lastName":"Samtani"},{"creatorType":"author","name":"Viryaśrīdatta"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Berkeley, CA","publisher":"Dharma Pub.","date":"2002","numPages":"","language":"Sanskrit","ISBN":"0898002680  9780898002683  0898002672  9780898002676","shortTitle":"Gathering the meanings","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Buddhist studies review.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/3B5ERAFI</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3B5ERAFI?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/3B5ERAFI"/>
+    <zapi:key>3B5ERAFI</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>journalArticle</zapi:itemType>
+    <zapi:creatorSummary>Institut de recherche bouddhique Linh-Son et al.</zapi:creatorSummary>
+    <zapi:year>1984</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"3B5ERAFI","itemVersion":22,"itemType":"journalArticle","title":"Buddhist studies review.","creators":[{"creatorType":"author","name":"Institut de recherche bouddhique Linh-Son"},{"creatorType":"author","name":"Pali Buddhist Union"},{"creatorType":"author","name":"UK Association for Buddhist Studies"}],"abstractNote":"","publicationTitle":"Buddhist studies review.","volume":"","issue":"","pages":"","date":"1984","series":"","seriesTitle":"","seriesText":"","journalAbbreviation":"","language":"English and French.","DOI":"","ISSN":"0265-2897","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Ratnavali of Nagarjuna</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/TNPEXD6H</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/TNPEXD6H?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/TNPEXD6H"/>
+    <zapi:key>TNPEXD6H</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>journalArticle</zapi:itemType>
+    <zapi:creatorSummary>Tucci</zapi:creatorSummary>
+    <zapi:year>1936</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"TNPEXD6H","itemVersion":22,"itemType":"journalArticle","title":"The Ratnavali of Nagarjuna","creators":[{"creatorType":"author","firstName":"Giuseppe","lastName":"Tucci"}],"abstractNote":"","publicationTitle":"J.R. Asiat. Soc. G.B. Irel. Journal of the Royal Asiatic Society of Great Britain \u0026 Ireland","volume":"68","issue":"02","pages":"237-252","date":"1936","series":"","seriesTitle":"","seriesText":"","journalAbbreviation":"","language":"English","DOI":"","ISSN":"0035-869X","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Etymologisches Wörterbuch des Altindoarischen</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/NK8CGZ4D</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NK8CGZ4D?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/NK8CGZ4D"/>
+    <zapi:key>NK8CGZ4D</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Mayrhofer</zapi:creatorSummary>
+    <zapi:year>1986</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"NK8CGZ4D","itemVersion":22,"itemType":"book","title":"Etymologisches Wörterbuch des Altindoarischen","creators":[{"creatorType":"author","firstName":"Manfred","lastName":"Mayrhofer"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Heidelberg","publisher":"C. Winter","date":"1986","numPages":"","language":"German","ISBN":"3825345505  9783825345501  3825305562  9783825305567  3533038262 9783533038269","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>A dictionary of selected synonyms in the principal Indo-European languages; a contribution to the history of ideas,</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/BJA7Q9EZ</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/BJA7Q9EZ?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/BJA7Q9EZ"/>
+    <zapi:key>BJA7Q9EZ</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Buck</zapi:creatorSummary>
+    <zapi:year>1949</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"BJA7Q9EZ","itemVersion":22,"itemType":"book","title":"A dictionary of selected synonyms in the principal Indo-European languages; a contribution to the history of ideas,","creators":[{"creatorType":"author","firstName":"Carl Darling","lastName":"Buck"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Chicago","publisher":"University of Chicago Press","date":"1949","numPages":"","language":"English","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>四譯對照唯識二十論硏究</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/5CQKFSAA</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/5CQKFSAA?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/5CQKFSAA"/>
+    <zapi:key>5CQKFSAA</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>宇井伯壽 and Vasubandhu</zapi:creatorSummary>
+    <zapi:year>1953</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"5CQKFSAA","itemVersion":22,"itemType":"book","title":"四譯對照唯識二十論硏究","creators":[{"creatorType":"author","name":"宇井伯壽"},{"creatorType":"author","name":"Vasubandhu"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"東京","publisher":"岩波書店","date":"1953","numPages":"","language":"Japanese","ISBN":"4000087843 9784000087841","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The dialectical method of Nāgārjuna</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/NPHZKVD8</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NPHZKVD8?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/NPHZKVD8"/>
+    <zapi:key>NPHZKVD8</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>journalArticle</zapi:itemType>
+    <zapi:creatorSummary>Bhattacharya</zapi:creatorSummary>
+    <zapi:year>1971</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"NPHZKVD8","itemVersion":22,"itemType":"journalArticle","title":"The dialectical method of Nāgārjuna","creators":[{"creatorType":"author","firstName":"Kamaleswar","lastName":"Bhattacharya"}],"abstractNote":"","publicationTitle":"J Indian Philos Journal of Indian Philosophy","volume":"1","issue":"3","pages":"217-261","date":"1971","series":"","seriesTitle":"","seriesText":"","journalAbbreviation":"","language":"English","DOI":"","ISSN":"0022-1791","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Vigrahavyāvartanī of Nāgārjuna, with the author's commentary. Edited by E. H. Johnston and Arnold Kunst.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/ME6PT3GS</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/ME6PT3GS?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/ME6PT3GS"/>
+    <zapi:key>ME6PT3GS</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>journalArticle</zapi:itemType>
+    <zapi:creatorSummary>Nāgārjuna</zapi:creatorSummary>
+    <zapi:year>1948</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"ME6PT3GS","itemVersion":22,"itemType":"journalArticle","title":"The Vigrahavyāvartanī of Nāgārjuna, with the author's commentary. Edited by E. H. Johnston and Arnold Kunst.","creators":[{"creatorType":"author","name":"Nāgārjuna"}],"abstractNote":"","publicationTitle":"","volume":"","issue":"","pages":"","date":"1948","series":"","seriesTitle":"","seriesText":"","journalAbbreviation":"","language":"Sanskrit","DOI":"","ISSN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Buddhist manuscripts. Volume 1 Volume 1</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/8UWVKKZH</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/8UWVKKZH?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/8UWVKKZH"/>
+    <zapi:key>8UWVKKZH</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Schøyen Collection et al.</zapi:creatorSummary>
+    <zapi:year>2000</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"8UWVKKZH","itemVersion":22,"itemType":"book","title":"Buddhist manuscripts. Volume 1 Volume 1","creators":[{"creatorType":"author","name":"Schøyen Collection"},{"creatorType":"author","firstName":"Jens","lastName":"Braarvig"},{"creatorType":"author","firstName":"Mark","lastName":"Allon"},{"creatorType":"author","firstName":"Martin","lastName":"Schøyen"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Oslo","publisher":"Hermes Pub.","date":"2000","numPages":"","language":"Undetermined","ISBN":"8280340017 9788280340016","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Etymological dictionary of the Iranian verb</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/RW9DHZTI</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/RW9DHZTI?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/RW9DHZTI"/>
+    <zapi:key>RW9DHZTI</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Cheung</zapi:creatorSummary>
+    <zapi:year>2007</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"RW9DHZTI","itemVersion":22,"itemType":"book","title":"Etymological dictionary of the Iranian verb","creators":[{"creatorType":"author","firstName":"Johnny","lastName":"Cheung"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Leiden ; Boston","publisher":"Brill","date":"2007","numPages":"","language":"English","ISBN":"9789004154964 9004154965","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The holy teaching of Vimalakīrti: a Mahāyāna scripture</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/5WXCKGMH</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/5WXCKGMH?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/5WXCKGMH"/>
+    <zapi:key>5WXCKGMH</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Thurman and </zapi:creatorSummary>
+    <zapi:year>1976</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"5WXCKGMH","itemVersion":22,"itemType":"book","title":"The holy teaching of Vimalakīrti: a Mahāyāna scripture","creators":[{"creatorType":"author","firstName":"Robert A.F","lastName":"Thurman"},{"creatorType":"author","firstName":"The Institute for advanced studies of world religions","lastName":""}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"University Park, PA; London [etc.]","publisher":"Pennsylvania State University Press, published in corporation with The Institute for advanced studies of world religions","date":"1976","numPages":"","language":"English","ISBN":"0271012099 9780271012094","shortTitle":"The holy teaching of Vimalakīrti","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The teaching of Vimalakīrti: (Vimalakīrtinirdeśa)</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/UA3ETISF</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/UA3ETISF?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/UA3ETISF"/>
+    <zapi:key>UA3ETISF</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Boin and Lamotte</zapi:creatorSummary>
+    <zapi:year>1994</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"UA3ETISF","itemVersion":22,"itemType":"book","title":"The teaching of Vimalakīrti: (Vimalakīrtinirdeśa)","creators":[{"creatorType":"author","firstName":"Sara","lastName":"Boin"},{"creatorType":"author","firstName":"Etienne","lastName":"Lamotte"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"London; London","publisher":"Pali Text Society ; Distributed by Routledge and Kegan Paul","date":"1994","numPages":"","language":"English","ISBN":"","shortTitle":"The teaching of Vimalakīrti","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>L'Enseignement de Vimalakīrti. Vimalakīrtinirdeśa. Traduit et annoté par Étienne Lamotte, etc. (Traduction basée sur la version tibétaine du Kandjour et la version chinoise de Hiuan-tsang.) [With facsimiles.].</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/649XHTSM</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/649XHTSM?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/649XHTSM"/>
+    <zapi:key>649XHTSM</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>VIMALA-KĪRTI-NIRDEṢA-SŪTRA and LAMOTTE</zapi:creatorSummary>
+    <zapi:year>1962</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"649XHTSM","itemVersion":22,"itemType":"book","title":"L'Enseignement de Vimalakīrti. Vimalakīrtinirdeśa. Traduit et annoté par Étienne Lamotte, etc. (Traduction basée sur la version tibétaine du Kandjour et la version chinoise de Hiuan-tsang.) [With facsimiles.].","creators":[{"creatorType":"author","name":"VIMALA-KĪRTI-NIRDEṢA-SŪTRA"},{"creatorType":"author","firstName":"Étienne","lastName":"LAMOTTE"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Pp. xv. 488. Louvain","publisher":"","date":"1962","numPages":"","language":"English","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Vimalakīrtinirdeśa: a Sanskrit edition based upon the manuscript newly found at the Potala Palace</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/CRZT74EH</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/CRZT74EH?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/CRZT74EH"/>
+    <zapi:key>CRZT74EH</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Taisho University et al.</zapi:creatorSummary>
+    <zapi:year>2006</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"CRZT74EH","itemVersion":22,"itemType":"book","title":"Vimalakīrtinirdeśa: a Sanskrit edition based upon the manuscript newly found at the Potala Palace","creators":[{"creatorType":"author","name":"Taisho University"},{"creatorType":"author","name":"The Institute for Comprehensive Studies of Buddhism"},{"creatorType":"author","name":"Study Group on Buddhist Sanskrit Literature"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Tokyo","publisher":"Taisho University Press","date":"2006","numPages":"","language":"Sanskrit","ISBN":"4924297348 9784924297340","shortTitle":"Vimalakīrtinirdeśa","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/JVE8IQCE</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/JVE8IQCE?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/JVE8IQCE"/>
+    <zapi:key>JVE8IQCE</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Sthiramati and Büscher</zapi:creatorSummary>
+    <zapi:year>2007</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"JVE8IQCE","itemVersion":22,"itemType":"book","title":"Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation","creators":[{"creatorType":"author","name":"Sthiramati"},{"creatorType":"author","firstName":"Hartmut","lastName":"Büscher"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Wien","publisher":"Verl. der Österreichischen Akademie der Wissenschaften","date":"2007","numPages":"","language":"Tibetan","ISBN":"9783700139263 3700139268","shortTitle":"Sthiramati's Triṃśikāvijñaptibhāṣya","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Sutta-Nipāta: früh-buddhist. Lehr-Dichtungen aus d. Pali-Kanon</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/2ICG36TJ</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/2ICG36TJ?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/2ICG36TJ"/>
+    <zapi:key>2ICG36TJ</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Nyanaponika</zapi:creatorSummary>
+    <zapi:year>1977</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"2ICG36TJ","itemVersion":22,"itemType":"book","title":"Sutta-Nipāta: früh-buddhist. Lehr-Dichtungen aus d. Pali-Kanon","creators":[{"creatorType":"author","name":"Nyanaponika"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Konstanz","publisher":"Christiani","date":"1977","numPages":"","language":"German","ISBN":"","shortTitle":"Sutta-Nipāta","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Saddharma-Pundarika.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/EDDK2GCX</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/EDDK2GCX?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/EDDK2GCX"/>
+    <zapi:key>EDDK2GCX</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Kern</zapi:creatorSummary>
+    <zapi:year>1884</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"EDDK2GCX","itemVersion":22,"itemType":"book","title":"The Saddharma-Pundarika.","creators":[{"creatorType":"author","firstName":"Hendrik","lastName":"Kern"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Oxford","publisher":"","date":"1884","numPages":"","language":"Translated from the Sanskrit.","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Saddharmapuṇḍarīkasūtram.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/3U6WBCAQ</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3U6WBCAQ?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/3U6WBCAQ"/>
+    <zapi:key>3U6WBCAQ</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vaidya</zapi:creatorSummary>
+    <zapi:year>1960</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"3U6WBCAQ","itemVersion":22,"itemType":"book","title":"Saddharmapuṇḍarīkasūtram.","creators":[{"creatorType":"author","firstName":"P. L","lastName":"Vaidya"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"[Darbhanga","publisher":"","date":"1960","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Nāgārjuna's Ratnāvalī Vol. I, Vol. I,</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/KG2439XD</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/KG2439XD?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/KG2439XD"/>
+    <zapi:key>KG2439XD</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Nāgārjuna and Hahn</zapi:creatorSummary>
+    <zapi:year>1982</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"KG2439XD","itemVersion":22,"itemType":"book","title":"Nāgārjuna's Ratnāvalī Vol. I, Vol. I,","creators":[{"creatorType":"author","name":"Nāgārjuna"},{"creatorType":"author","firstName":"Michael","lastName":"Hahn"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Bonn","publisher":"Indica et Tibetica","date":"1982","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Bodhisattvas of the forest and the formation of the Mahāyāna: a study and translation of the Rāṣṭrapālaparipr̥cchā-sūtra</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/AC86PSP8</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/AC86PSP8?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/AC86PSP8"/>
+    <zapi:key>AC86PSP8</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Boucher</zapi:creatorSummary>
+    <zapi:year>2008</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"AC86PSP8","itemVersion":22,"itemType":"book","title":"Bodhisattvas of the forest and the formation of the Mahāyāna: a study and translation of the Rāṣṭrapālaparipr̥cchā-sūtra","creators":[{"creatorType":"author","firstName":"Daniel","lastName":"Boucher"}],"abstractNote":"This volume delves into the socio religious milieu of the authors, editors, and propagators of the 'Rāṣṭrapālaparipr̥cchā-sūtra' ('Questions of Rastrapala'), a Buddhist text circulating in India during the first half of the first millennium CE.","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Honolulu","publisher":"University of Hawai'i Press","date":"2008","numPages":"","language":"Translated from the Sanskrit.","ISBN":"9780824828813  082482881X","shortTitle":"Bodhisattvas of the forest and the formation of the Mahāyāna","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The inner science of Buddhist practice: Vasubandhu's Summary of the five heaps with commentary by Sthiramati</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/GJXGINKS</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/GJXGINKS?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/GJXGINKS"/>
+    <zapi:key>GJXGINKS</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Engle et al.</zapi:creatorSummary>
+    <zapi:year>2009</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"GJXGINKS","itemVersion":22,"itemType":"book","title":"The inner science of Buddhist practice: Vasubandhu's Summary of the five heaps with commentary by Sthiramati","creators":[{"creatorType":"author","firstName":"Artemus B","lastName":"Engle"},{"creatorType":"author","firstName":"Vasubandhu","lastName":""},{"creatorType":"author","name":"Sthiramati"}],"abstractNote":"\"The Inner Science of Buddhist Practice contains translations of texts by two historically important Indian Buddhist scholars: Vasubhandhu's Summary of the Five Heaps and Sthiramati's commentary on Vasubandhu's root text. These works present the traditional Buddhist analysis of ordinary experience and provide rich resources for studying Buddhist and Western interpretations of the psychology of spiritual development.\" \"According to Buddhist doctrine, the mind of an ordinary person, even at birth, holds deeply ingrained predispositions that lead us to perceive the elements of everyday experience mistakenly and to believe, for instance, that entities persist through time, that the pleasures we pursue are genuinely satisfying, that our own personal being is governed by a real self, and that all physical and mental phenomena have a distinct, independent, and real essence. Our everyday language only serves to reinforce and deepen these erring notions.\" \"Buddhist teaching reveals how to reject these flawed beliefs and replace them with a model that both more accurately represents our experience and is indispensable to the realizations that will free us from cyclic existence. The ability to accomplish this rests largely with learning the unique vocabulary and explanations found in Buddhist literature, since that is how we will discover what is mistaken about our untutored beliefs and where we will gain the intellectual skills that are needed to construct a new and more refined conceptual infrastructure.\" \"Engle's introduction explores how the material contained in the two translations can specifically improve practice of the Tibetan teaching system known as Lamrim, or \"Stages of the Path.\" Each of the levels of motivation described by the Lamrim teachings is examined in light of the doctrine of the five heaps - form, feeling, conception, formations, and consciousness - to show how greater understanding of the classical Buddhist doctrines can enhance practice of that portion of the instruction.\"--BOOK JACKET.","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Ithaca, N.Y.","publisher":"Snow Lion Publications","date":"2009","numPages":"","language":"Includes Tibetan and Sanskrit texts and translations into English.","ISBN":"9781559393225  155939322X","shortTitle":"The inner science of Buddhist practice","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The middle length discourses of the Buddha: a new translation of the Majjhima Nik⁻aya</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/B23W3U6K</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/B23W3U6K?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/B23W3U6K"/>
+    <zapi:key>B23W3U6K</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Ñāṇamoli and Bodhi</zapi:creatorSummary>
+    <zapi:year>1995</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"B23W3U6K","itemVersion":22,"itemType":"book","title":"The middle length discourses of the Buddha: a new translation of the Majjhima Nik⁻aya","creators":[{"creatorType":"author","name":"Ñāṇamoli"},{"creatorType":"author","name":"Bodhi"}],"abstractNote":"This thoughtfully translated and organized volume is the cornerstone of any Buddhist library. The Middle Length Discourses of the Buddha is a companion to the equally essential The Connected Discourses of the Buddha, The Long Discourses of the Buddha, and the 2005 anthology of Discourses of the Buddha. The 152 discourses of this major collection combine a rich variety of contextual settings with deep and comprehensive teachings. This volume of Wisdom's Teachings of the Buddha series has received Choice Magazine's 1995 Outstanding Academic Book Award and the Tricycle Prize for Excellence in Buddhist Publishing for Dharma Discourse.","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Boston","publisher":"Wisdom Publications in association with the Barre Center for Buddhist Studies","date":"1995","numPages":"","language":"Pali","ISBN":"086171072X 9780861710720","shortTitle":"The middle length discourses of the Buddha","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Seven works of Vasubandhu, the Buddhist psychological doctor</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/URVS8UM7</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/URVS8UM7?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/URVS8UM7"/>
+    <zapi:key>URVS8UM7</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu</zapi:creatorSummary>
+    <zapi:year>1986</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"URVS8UM7","itemVersion":22,"itemType":"book","title":"Seven works of Vasubandhu, the Buddhist psychological doctor","creators":[{"creatorType":"author","firstName":"Anacker, Stefan","lastName":"Vasubandhu"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Delhi [u.a.]","publisher":"Motilal Banarsidass","date":"1986","numPages":"","language":"English","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Kāśyapaparivarta: Romanized text and facsimiles</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/VMS46E9W</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/VMS46E9W?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/VMS46E9W"/>
+    <zapi:key>VMS46E9W</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Karashima et al.</zapi:creatorSummary>
+    <zapi:year>2002</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"VMS46E9W","itemVersion":22,"itemType":"book","title":"The Kāśyapaparivarta: Romanized text and facsimiles","creators":[{"creatorType":"author","firstName":"Seishi","lastName":"Karashima"},{"creatorType":"author","firstName":"Norikuki","lastName":"Kudo"},{"creatorType":"author","firstName":"M. I","lastName":"Vorobʹeva-Desi︠a︡tovskai︠a︡"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Tokyo","publisher":"International Research Institute for Advanced Buddhology, Soka University","date":"2002","numPages":"","language":"English and Sanskrit (also in romanized form).","ISBN":"4998062247  9784998062240","shortTitle":"The Kāśyapaparivarta","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The long discourses of the Buddha: a translation of the Dīgha Nikāya</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/35CEXWGS</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/35CEXWGS?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/35CEXWGS"/>
+    <zapi:key>35CEXWGS</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Walshe</zapi:creatorSummary>
+    <zapi:year>1995</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"35CEXWGS","itemVersion":22,"itemType":"book","title":"The long discourses of the Buddha: a translation of the Dīgha Nikāya","creators":[{"creatorType":"author","firstName":"Maurice O'C","lastName":"Walshe"}],"abstractNote":"Of the Thirty-Four Suttas -- 1. Brahmajala Sutta: The Supreme Net - What the Teaching Is Not -- 2. Samannaphala Sutta: The Fruits of the Homeless Life -- 3. Ambattha Sutta: About Ambattha - Pride Humbled -- 4. Sonadanda Sutta: About Sonadanda - The Qualities of a True Brahmin -- 5. Kutadanta Sutta: About Kutadanta - A Bloodless Sacrifice -- 6. Mahali Sutta: About Mahali - Heavenly Sights, Soul and Body -- 7. Jaliya Sutta: About Jaliya -- 8. Mahasihanada Sutta: The Great Lion's Roar -- 9. Potthapada Sutta: About Potthapada - States of Consciousness -- 10. Subha Sutta: About Subha - Morality, Concentration, Wisdom -- 11. Kevaddha Sutta: About Kevaddha - What Brahma Didn't Know","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Boston","publisher":"Wisdom Publications","date":"1995","numPages":"","language":"English","ISBN":"0861711033  9780861711031","shortTitle":"The long discourses of the Buddha","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>On knowing reality: the Tattvārtha chapter of Asaṅga's Bodhisattvabhūmi</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/P9UIPQ4B</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/P9UIPQ4B?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/P9UIPQ4B"/>
+    <zapi:key>P9UIPQ4B</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Willis and Asaṅga</zapi:creatorSummary>
+    <zapi:year>1979</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"P9UIPQ4B","itemVersion":22,"itemType":"book","title":"On knowing reality: the Tattvārtha chapter of Asaṅga's Bodhisattvabhūmi","creators":[{"creatorType":"author","firstName":"Janice Dean","lastName":"Willis"},{"creatorType":"author","name":"Asaṅga"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"New York","publisher":"Columbia University Press","date":"1979","numPages":"","language":"English","ISBN":"0231046049 9780231046046","shortTitle":"On knowing reality","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The legend of King Aśoka: a study and translation of the Aśokāvadāna</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/5JM9BW5C</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/5JM9BW5C?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/5JM9BW5C"/>
+    <zapi:key>5JM9BW5C</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Strong</zapi:creatorSummary>
+    <zapi:year>1983</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"5JM9BW5C","itemVersion":22,"itemType":"book","title":"The legend of King Aśoka: a study and translation of the Aśokāvadāna","creators":[{"creatorType":"author","firstName":"John","lastName":"Strong"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Princeton, N.J.","publisher":"Princeton University Press","date":"1983","numPages":"","language":"English","ISBN":"0691065756  9780691065755","shortTitle":"The legend of King Aśoka","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Abhidharmakośabhāṣyam</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/NM6FWSDK</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NM6FWSDK?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/NM6FWSDK"/>
+    <zapi:key>NM6FWSDK</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu and La Vallée Poussin</zapi:creatorSummary>
+    <zapi:year>1988</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"NM6FWSDK","itemVersion":22,"itemType":"book","title":"Abhidharmakośabhāṣyam","creators":[{"creatorType":"author","name":"Vasubandhu"},{"creatorType":"author","firstName":"Louis de","lastName":"La Vallée Poussin"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Berkeley, Calif.","publisher":"Asian Humanities Press","date":"1988","numPages":"","language":"English","ISBN":"0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Abhidharmakośabhāṣyam of Vasubandhu</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/J2DKQ5IX</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/J2DKQ5IX?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/J2DKQ5IX"/>
+    <zapi:key>J2DKQ5IX</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu et al.</zapi:creatorSummary>
+    <zapi:year>1975</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"J2DKQ5IX","itemVersion":22,"itemType":"book","title":"Abhidharmakośabhāṣyam of Vasubandhu","creators":[{"creatorType":"author","name":"Vasubandhu"},{"creatorType":"author","firstName":"Prahlad","lastName":"Pradhan"},{"creatorType":"author","firstName":"Aruna","lastName":"Haldar"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Patna, India","publisher":"K.P. Jayaswal Research Institute","date":"1975","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The numerical discourses of the Buddha: a translation of the Aṅguttara Nikāya</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/I7KDTADM</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/I7KDTADM?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/I7KDTADM"/>
+    <zapi:key>I7KDTADM</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Bodhi</zapi:creatorSummary>
+    <zapi:year>2012</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"I7KDTADM","itemVersion":22,"itemType":"book","title":"The numerical discourses of the Buddha: a translation of the Aṅguttara Nikāya","creators":[{"creatorType":"author","name":"Bodhi"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"","publisher":"","date":"2012","numPages":"","language":"English","ISBN":"1614290407  9781614290407","shortTitle":"The numerical discourses of the Buddha","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+</feed>
+,4:cert,1850:-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
+MTM1UkJCWU5kVWVRdTNNeFE2T3JQVFhrWmMwd24xEzARBgNVBAsTCkdUMDM4MDI1
+NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29tL3Jlc291cmNlcy9jcHMg
+KGMpMTIxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZhbGlkYXRlZCAtIFJhcGlk
+U1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQDYPL7zZHYhpDtAup7lDuUSFE7QuIBrgl6tHi/vj5Vn6QL5
+wzoUYNG2sK/tJT+htnbA6JaoA2AzxMgbn0Fe3aphpnZs7hbVheXl52lL4pdYKGq2
+3vT+u6pRIUYy6vKdMoOZya8jj9HIOL9OUAv08cBYZWVXWP/I0OoCQBPAvHh+e8QZ
+c/Z08Y0OVlzLCA8o3e/4nEDbihjhP+tKg9/xeE655l4clji5ALDEI60Wigw5+kNx
+L5DUy6jTRC95OkDrZJ/M76btUNfPPX7k0d3h7jU3ScwyrpGCDoC0FDCvCNOK/VrT
+wfEVDS3+xu8e4S4YvBZclmjkPckboCSx694rGLq7AgMBAAGjggGzMIIBrzAfBgNV
+HSMEGDAWgBRraT1qGEJK3Y8CZTn9NSSGeJEWMDAOBgNVHQ8BAf8EBAMCBaAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMCMGA1UdEQQcMBqCDCouem90ZXJv
+Lm9yZ4IKem90ZXJvLm9yZzBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vcmFwaWRz
+c2wtY3JsLmdlb3RydXN0LmNvbS9jcmxzL3JhcGlkc3NsLmNybDAdBgNVHQ4EFgQU
+Wmbf6RHVp3b94HXYV0aQMB622T0wDAYDVR0TAQH/BAIwADB4BggrBgEFBQcBAQRs
+MGowLQYIKwYBBQUHMAGGIWh0dHA6Ly9yYXBpZHNzbC1vY3NwLmdlb3RydXN0LmNv
+bTA5BggrBgEFBQcwAoYtaHR0cDovL3JhcGlkc3NsLWFpYS5nZW90cnVzdC5jb20v
+cmFwaWRzc2wuY3J0MEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsGAQUF
+BwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMA0GCSqG
+SIb3DQEBBQUAA4IBAQC1+3/bB4wSFC7RqP2xgG4T5OluXBMLXpLe3ZzyMWUkaqV1
+lBNgr8+7VD7qwpVBiT8TiUiiLHUD7MtZtFCNwxYwB1iQDF29rciJzcBvpd4aV6JK
+i9CNtPgGsnqteF5HSeTQVMXpyLrEhD5TtDlmIpZDdYotFFzvEinKlSBD6oROX5GQ
+je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
+MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
+sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
+-----END CERTIFICATE-----
+,4:code,3:200#}7:request,687:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:54445#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,56:/groups/none/items/top?key=none&format=atom&content=json,4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392211668.628248^15:timestamp_start,17:1392211668.548327^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,17:1392211668.584073^13:timestamp_end,17:1392211668.629912^}7:version,9:1:0#2:10#]}

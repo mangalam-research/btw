@@ -13,7 +13,7 @@ from django.core.cache import get_cache
 
 logger = logging.getLogger(__name__)
 
-CACHED_DATA_VERSION = 1
+CACHED_DATA_VERSION = 2
 
 cache = get_cache('bibliography')
 
@@ -58,8 +58,62 @@ def zotero_settings():
     _cached_details = details
     return _cached_details
 
+key_re = re.compile(r"([&?]key=)[^&]+")
+
+
+def _sanitize_url(url):
+    """
+    Removes they `key=` parameter from a URL.
+    """
+    return key_re.sub("", url)
+
+
+_UNSAFE = False
+
+
+def _url_for_logging(url):
+    """
+    Modifies a URL for logging to as to remove sensitive
+    information. This is a seprate function from `_sanitize_url`
+    because we may want to turn this transformation off for
+    debugging. Whereas some operations that need sanitized URLs
+    *always* need sanitized URLs.
+    """
+
+    #
+    # We perform this check here because it is not okay to probe
+    # settings at the top level (see Django documentation).
+    #
+    if _UNSAFE and not settings.DEBUG:
+        raise ImproperlyConfigured(
+            "_UNSAFE cannot be used unless you are in debugging mode")
+
+    return _sanitize_url(url) if not _UNSAFE else url
+
+
+def _make_cache_key(url):
+    """
+    Creates a cache key. One of the things this function does is
+    remove the `key=` parameter. As of version 2 of the Zotero API,
+    given the way Zotero works, and given the way we use Zotero for
+    BTW, the results returned from a query *cannot* vary depending on
+    they key used. So if a key is changed because the previous key was
+    accidentally leaked, then queries with the new key should still be
+    hits.
+
+    This also has for advantage keeping keys out of the cache, and
+    out of the cache logs.
+
+    :param url: The URL of the query.
+    :type url: :class:`str`
+    :returns: The cache key.
+    :rtype: :class:`str`
+    """
+    return urlsafe_b64encode(_sanitize_url(url))
+
 
 class Zotero(object):
+
     """
     This class manages accesses to a Zotero database.
 
@@ -100,7 +154,7 @@ class Zotero(object):
             (self.userid, self.apikey)
 
     def get_item(self, itemKey):
-        # As of 2013/08/28 the server at api.zotero.org does not
+        # As of 2014/02/10 the server at api.zotero.org does not
         # handle If-Modified-Since-Version at all for individual
         # items, but it does for collections. (When requesting
         # individual items, the field is ignored and the request
@@ -116,7 +170,7 @@ class Zotero(object):
         #
 
         search_url = self.__build_item_search_url(itemKey)
-        logger.debug("getting item: %s", search_url)
+        logger.debug("getting item: %s", _url_for_logging(search_url))
 
         results_list, _extra_data_dict = self.__get_search_results(search_url)
         assert len(results_list) <= 1
@@ -176,15 +230,17 @@ class Zotero(object):
         # ampersand would not appear as a literal in the URL.)
         for_single_item = url.find("&itemKey=") != -1
 
-        logger.debug("searching url: %s", url)
+        logger.debug("searching url: %s", _url_for_logging(url))
 
-        cache_key = urlsafe_b64encode(url)
+        cache_key = _make_cache_key(url)
 
         results_list = version = extras = None
 
+        reason = "cache miss"
         if cache_key in cache:
             logger.debug("cache hit for key: %s", cache_key)
             cached_data = cache.get(cache_key)
+            reason = "cache stale"
 
             if type(cached_data) == tuple:
                 cached_data_version, results_list, version, extras = \
@@ -192,14 +248,18 @@ class Zotero(object):
                 if cached_data_version != CACHED_DATA_VERSION:
                     logger.debug("old data format for key: %s", cache_key)
                     logger.debug("deleting key: %s", cache_key)
+
                     cache.delete(cache_key)
                     results_list = None
                     version = None
                     extras = None
+                    reason = "cache held obsolete format"
             else:
-                logger.debug("cache corrupted for key: %s", cache_key)
+                # Corrupt data in the cache is an error.
+                logger.error("cache corrupted for key: %s", cache_key)
                 logger.debug("deleting key: %s", cache_key)
                 cache.delete(cache_key)
+                reason = "cache is corrupt"
 
         # alway search the modification status.
         headers = {'If-Modified-Since-Version': version}
@@ -222,12 +282,17 @@ class Zotero(object):
             logger.debug('serving empty')
             return [], {}
 
+        #
+        # Run-of-the-mill connection errors should have been taken
+        # care of much earlier. So if we get something else than 200
+        # here, then, in all likelihood, there is a bug in this code
+        # or on the server side, so we must fail, and fail hard.
+        #
         if res.code != 200:
-            # return a empty search result for error in fetching url.
-            return [], {}
+            raise Exception("communication error with Zotero server")
 
-        logger.debug('serving latest (cache stale or cache miss) for key: %s',
-                     cache_key)
+        logger.debug('serving latest (%s) for key: %s',
+                     reason, cache_key)
 
         data = res.read()
         dom_object = minidom.parseString(data)
@@ -261,13 +326,13 @@ class Zotero(object):
 
         if not for_single_item:
             # Also take care to update the per-item entries in the cache.
-            self.__cache_items(results_list, extra_data_dict)
+            self.__cache_items(results_list, extra_data_dict, version_key)
 
         return results_list, extra_data_dict
 
-    def __cache_items(self, results_list, extra_data_dict):
+    def __cache_items(self, results_list, extra_data_dict, version_key):
         """
-        This method takes the results obtained when peforming any request
+        This method takes the results obtained when performing any request
         that returns a collection of items and unpacks these results
         so as to cache each individual item.
 
@@ -279,10 +344,9 @@ class Zotero(object):
         for item in results_list:
             key = item["itemKey"]
             url = self.__build_item_search_url(key)
-            cache_key = urlsafe_b64encode(url)
+            cache_key = _make_cache_key(url)
             new_results_list = [item]
             new_extra_data_dict = {key: extra_data_dict[key]}
-            version_key = item["itemVersion"]
             cache.set(cache_key, (CACHED_DATA_VERSION,
                                   new_results_list,
                                   version_key,
@@ -330,7 +394,7 @@ class Zotero(object):
 
         Uses the zotero write API """
 
-        #remove unwanted extras
+        # remove unwanted extras
         try:
             item_type = data_dict.pop('itemType')
         except KeyError:
@@ -401,7 +465,7 @@ class Zotero(object):
         # 1. download file from the local account.
         # 2. upload the attachment as an item.
 
-        #remove unwanted extras, read utility data
+        # remove unwanted extras, read utility data
         try:
             file_md5 = data_dict.pop('md5')
             mtime = data_dict.pop('mtime')

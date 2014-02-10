@@ -1,0 +1,207 @@
+2927:5:error,0:~8:response,2301:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1392211670.312171^3:msg,2:OK,15:timestamp_start,17:1392211670.311711^7:headers,261:40:4:Date,29:Wed, 12 Feb 2014 13:27:50 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,20:Nothing to see here.,4:cert,1850:-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
+MTM1UkJCWU5kVWVRdTNNeFE2T3JQVFhrWmMwd24xEzARBgNVBAsTCkdUMDM4MDI1
+NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29tL3Jlc291cmNlcy9jcHMg
+KGMpMTIxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZhbGlkYXRlZCAtIFJhcGlk
+U1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQDYPL7zZHYhpDtAup7lDuUSFE7QuIBrgl6tHi/vj5Vn6QL5
+wzoUYNG2sK/tJT+htnbA6JaoA2AzxMgbn0Fe3aphpnZs7hbVheXl52lL4pdYKGq2
+3vT+u6pRIUYy6vKdMoOZya8jj9HIOL9OUAv08cBYZWVXWP/I0OoCQBPAvHh+e8QZ
+c/Z08Y0OVlzLCA8o3e/4nEDbihjhP+tKg9/xeE655l4clji5ALDEI60Wigw5+kNx
+L5DUy6jTRC95OkDrZJ/M76btUNfPPX7k0d3h7jU3ScwyrpGCDoC0FDCvCNOK/VrT
+wfEVDS3+xu8e4S4YvBZclmjkPckboCSx694rGLq7AgMBAAGjggGzMIIBrzAfBgNV
+HSMEGDAWgBRraT1qGEJK3Y8CZTn9NSSGeJEWMDAOBgNVHQ8BAf8EBAMCBaAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMCMGA1UdEQQcMBqCDCouem90ZXJv
+Lm9yZ4IKem90ZXJvLm9yZzBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vcmFwaWRz
+c2wtY3JsLmdlb3RydXN0LmNvbS9jcmxzL3JhcGlkc3NsLmNybDAdBgNVHQ4EFgQU
+Wmbf6RHVp3b94HXYV0aQMB622T0wDAYDVR0TAQH/BAIwADB4BggrBgEFBQcBAQRs
+MGowLQYIKwYBBQUHMAGGIWh0dHA6Ly9yYXBpZHNzbC1vY3NwLmdlb3RydXN0LmNv
+bTA5BggrBgEFBQcwAoYtaHR0cDovL3JhcGlkc3NsLWFpYS5nZW90cnVzdC5jb20v
+cmFwaWRzc2wuY3J0MEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsGAQUF
+BwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMA0GCSqG
+SIb3DQEBBQUAA4IBAQC1+3/bB4wSFC7RqP2xgG4T5OluXBMLXpLe3ZzyMWUkaqV1
+lBNgr8+7VD7qwpVBiT8TiUiiLHUD7MtZtFCNwxYwB1iQDF29rciJzcBvpd4aV6JK
+i9CNtPgGsnqteF5HSeTQVMXpyLrEhD5TtDlmIpZDdYotFFzvEinKlSBD6oROX5GQ
+je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
+MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
+sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
+-----END CERTIFICATE-----
+,4:code,3:200#}7:request,561:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:51742#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,1:/,4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392211670.277725^15:timestamp_start,17:1392211670.194596^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,17:1392211670.237573^13:timestamp_end,17:1392211670.280114^}7:version,9:1:0#2:10#]}12000:5:error,0:~8:response,11239:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1392211670.677146^3:msg,2:OK,15:timestamp_start,17:1392211670.672305^7:headers,217:40:4:Date,29:Wed, 12 Feb 2014 13:27:50 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:2,]30:21:Last-Modified-Version,2:24,]22:10:Connection,5:close,]40:12:Content-Type,20:application/atom+xml,]]7:content,9000:<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:zapi="http://zotero.org/ns/api">
+  <title>Zotero / BTW Testing Group / Top-Level Items</title>
+  <id>http://zotero.org/groups/137163/items/top?content=json&amp;q=dharma</id>
+  <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
+  <link rel="first" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
+  <link rel="last" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
+  <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/137163/items/top?q=dharma"/>
+  <zapi:totalResults>5</zapi:totalResults>
+  <updated>2014-01-10T19:35:22Z</updated>
+  <entry>
+    <title>Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/Q7ZDZIN8</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/Q7ZDZIN8?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/Q7ZDZIN8"/>
+    <zapi:key>Q7ZDZIN8</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Dharmapāla et al.</zapi:creatorSummary>
+    <zapi:year>1925</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"Q7ZDZIN8","itemVersion":22,"itemType":"book","title":"Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose","creators":[{"creatorType":"author","name":"Dharmapāla"},{"creatorType":"author","firstName":"Sylvain","lastName":"Lévi"},{"creatorType":"author","name":"Sthiramati"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Paris","publisher":"H. Champion","date":"1925","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"Vijñaptimātratāsiddhi.","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>The Saddharma-Pundarika.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/EDDK2GCX</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/EDDK2GCX?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/EDDK2GCX"/>
+    <zapi:key>EDDK2GCX</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Kern</zapi:creatorSummary>
+    <zapi:year>1884</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"EDDK2GCX","itemVersion":22,"itemType":"book","title":"The Saddharma-Pundarika.","creators":[{"creatorType":"author","firstName":"Hendrik","lastName":"Kern"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Oxford","publisher":"","date":"1884","numPages":"","language":"Translated from the Sanskrit.","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Saddharmapuṇḍarīkasūtram.</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/3U6WBCAQ</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3U6WBCAQ?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/3U6WBCAQ"/>
+    <zapi:key>3U6WBCAQ</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vaidya</zapi:creatorSummary>
+    <zapi:year>1960</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"3U6WBCAQ","itemVersion":22,"itemType":"book","title":"Saddharmapuṇḍarīkasūtram.","creators":[{"creatorType":"author","firstName":"P. L","lastName":"Vaidya"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"[Darbhanga","publisher":"","date":"1960","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Abhidharmakośabhāṣyam</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/NM6FWSDK</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NM6FWSDK?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/NM6FWSDK"/>
+    <zapi:key>NM6FWSDK</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu and La Vallée Poussin</zapi:creatorSummary>
+    <zapi:year>1988</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"NM6FWSDK","itemVersion":22,"itemType":"book","title":"Abhidharmakośabhāṣyam","creators":[{"creatorType":"author","name":"Vasubandhu"},{"creatorType":"author","firstName":"Louis de","lastName":"La Vallée Poussin"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Berkeley, Calif.","publisher":"Asian Humanities Press","date":"1988","numPages":"","language":"English","ISBN":"0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+  <entry>
+    <title>Abhidharmakośabhāṣyam of Vasubandhu</title>
+    <author>
+      <name>jlwitwer</name>
+      <uri>http://zotero.org/jlwitwer</uri>
+    </author>
+    <id>http://zotero.org/groups/137163/items/J2DKQ5IX</id>
+    <published>2014-01-10T19:35:22Z</published>
+    <updated>2014-01-10T19:35:22Z</updated>
+    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/J2DKQ5IX?content=json"/>
+    <link rel="alternate" type="text/html" href="http://zotero.org/groups/137163/items/J2DKQ5IX"/>
+    <zapi:key>J2DKQ5IX</zapi:key>
+    <zapi:version>22</zapi:version>
+    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
+    <zapi:itemType>book</zapi:itemType>
+    <zapi:creatorSummary>Vasubandhu et al.</zapi:creatorSummary>
+    <zapi:year>1975</zapi:year>
+    <zapi:numChildren>0</zapi:numChildren>
+    <zapi:numTags>0</zapi:numTags>
+    <content zapi:type="json">{"itemKey":"J2DKQ5IX","itemVersion":22,"itemType":"book","title":"Abhidharmakośabhāṣyam of Vasubandhu","creators":[{"creatorType":"author","name":"Vasubandhu"},{"creatorType":"author","firstName":"Prahlad","lastName":"Pradhan"},{"creatorType":"author","firstName":"Aruna","lastName":"Haldar"}],"abstractNote":"","series":"","seriesNumber":"","volume":"","numberOfVolumes":"","edition":"","place":"Patna, India","publisher":"K.P. Jayaswal Research Institute","date":"1975","numPages":"","language":"Sanskrit","ISBN":"","shortTitle":"","url":"","accessDate":"","archive":"","archiveLocation":"","libraryCatalog":"Open WorldCat","callNumber":"","rights":"","extra":"","tags":[],"collections":["7N2SWSDQ"],"relations":{}}</content>
+  </entry>
+</feed>
+,4:cert,1850:-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
+MTM1UkJCWU5kVWVRdTNNeFE2T3JQVFhrWmMwd24xEzARBgNVBAsTCkdUMDM4MDI1
+NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29tL3Jlc291cmNlcy9jcHMg
+KGMpMTIxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZhbGlkYXRlZCAtIFJhcGlk
+U1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQDYPL7zZHYhpDtAup7lDuUSFE7QuIBrgl6tHi/vj5Vn6QL5
+wzoUYNG2sK/tJT+htnbA6JaoA2AzxMgbn0Fe3aphpnZs7hbVheXl52lL4pdYKGq2
+3vT+u6pRIUYy6vKdMoOZya8jj9HIOL9OUAv08cBYZWVXWP/I0OoCQBPAvHh+e8QZ
+c/Z08Y0OVlzLCA8o3e/4nEDbihjhP+tKg9/xeE655l4clji5ALDEI60Wigw5+kNx
+L5DUy6jTRC95OkDrZJ/M76btUNfPPX7k0d3h7jU3ScwyrpGCDoC0FDCvCNOK/VrT
+wfEVDS3+xu8e4S4YvBZclmjkPckboCSx694rGLq7AgMBAAGjggGzMIIBrzAfBgNV
+HSMEGDAWgBRraT1qGEJK3Y8CZTn9NSSGeJEWMDAOBgNVHQ8BAf8EBAMCBaAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMCMGA1UdEQQcMBqCDCouem90ZXJv
+Lm9yZ4IKem90ZXJvLm9yZzBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vcmFwaWRz
+c2wtY3JsLmdlb3RydXN0LmNvbS9jcmxzL3JhcGlkc3NsLmNybDAdBgNVHQ4EFgQU
+Wmbf6RHVp3b94HXYV0aQMB622T0wDAYDVR0TAQH/BAIwADB4BggrBgEFBQcBAQRs
+MGowLQYIKwYBBQUHMAGGIWh0dHA6Ly9yYXBpZHNzbC1vY3NwLmdlb3RydXN0LmNv
+bTA5BggrBgEFBQcwAoYtaHR0cDovL3JhcGlkc3NsLWFpYS5nZW90cnVzdC5jb20v
+cmFwaWRzc2wuY3J0MEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsGAQUF
+BwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMA0GCSqG
+SIb3DQEBBQUAA4IBAQC1+3/bB4wSFC7RqP2xgG4T5OluXBMLXpLe3ZzyMWUkaqV1
+lBNgr8+7VD7qwpVBiT8TiUiiLHUD7MtZtFCNwxYwB1iQDF29rciJzcBvpd4aV6JK
+i9CNtPgGsnqteF5HSeTQVMXpyLrEhD5TtDlmIpZDdYotFFzvEinKlSBD6oROX5GQ
+je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
+MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
+sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
+-----END CERTIFICATE-----
+,4:code,3:200#}7:request,695:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:51745#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,65:/groups/none/items/top?key=none&format=atom&content=json&q=dharma,4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392211670.405058^15:timestamp_start,16:1392211670.31818^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,17:1392211670.354743^13:timestamp_end,17:1392211670.406847^}7:version,9:1:0#2:10#]}2948:5:error,0:~8:response,2185:11:httpversion,8:1:1#1:0#]13:timestamp_end,16:1392211670.85255^3:msg,12:Not Modified,15:timestamp_start,17:1392211670.852315^7:headers,156:40:4:Date,29:Wed, 12 Feb 2014 13:27:50 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]28:10:Connection,10:keep-alive,]37:10:Keep-Alive,19:timeout=30, max=100,]]7:content,0:,4:cert,1850:-----BEGIN CERTIFICATE-----
+MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
+MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
+HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
+MTM1UkJCWU5kVWVRdTNNeFE2T3JQVFhrWmMwd24xEzARBgNVBAsTCkdUMDM4MDI1
+NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29tL3Jlc291cmNlcy9jcHMg
+KGMpMTIxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZhbGlkYXRlZCAtIFJhcGlk
+U1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEiMA0GCSqGSIb3DQEBAQUA
+A4IBDwAwggEKAoIBAQDYPL7zZHYhpDtAup7lDuUSFE7QuIBrgl6tHi/vj5Vn6QL5
+wzoUYNG2sK/tJT+htnbA6JaoA2AzxMgbn0Fe3aphpnZs7hbVheXl52lL4pdYKGq2
+3vT+u6pRIUYy6vKdMoOZya8jj9HIOL9OUAv08cBYZWVXWP/I0OoCQBPAvHh+e8QZ
+c/Z08Y0OVlzLCA8o3e/4nEDbihjhP+tKg9/xeE655l4clji5ALDEI60Wigw5+kNx
+L5DUy6jTRC95OkDrZJ/M76btUNfPPX7k0d3h7jU3ScwyrpGCDoC0FDCvCNOK/VrT
+wfEVDS3+xu8e4S4YvBZclmjkPckboCSx694rGLq7AgMBAAGjggGzMIIBrzAfBgNV
+HSMEGDAWgBRraT1qGEJK3Y8CZTn9NSSGeJEWMDAOBgNVHQ8BAf8EBAMCBaAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMCMGA1UdEQQcMBqCDCouem90ZXJv
+Lm9yZ4IKem90ZXJvLm9yZzBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vcmFwaWRz
+c2wtY3JsLmdlb3RydXN0LmNvbS9jcmxzL3JhcGlkc3NsLmNybDAdBgNVHQ4EFgQU
+Wmbf6RHVp3b94HXYV0aQMB622T0wDAYDVR0TAQH/BAIwADB4BggrBgEFBQcBAQRs
+MGowLQYIKwYBBQUHMAGGIWh0dHA6Ly9yYXBpZHNzbC1vY3NwLmdlb3RydXN0LmNv
+bTA5BggrBgEFBQcwAoYtaHR0cDovL3JhcGlkc3NsLWFpYS5nZW90cnVzdC5jb20v
+cmFwaWRzc2wuY3J0MEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsGAQUF
+BwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMA0GCSqG
+SIb3DQEBBQUAA4IBAQC1+3/bB4wSFC7RqP2xgG4T5OluXBMLXpLe3ZzyMWUkaqV1
+lBNgr8+7VD7qwpVBiT8TiUiiLHUD7MtZtFCNwxYwB1iQDF29rciJzcBvpd4aV6JK
+i9CNtPgGsnqteF5HSeTQVMXpyLrEhD5TtDlmIpZDdYotFFzvEinKlSBD6oROX5GQ
+je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
+MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
+sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
+-----END CERTIFICATE-----
+,4:code,3:304#}7:request,698:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:51748#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,69:/groups/none/items?key=none&format=atom&content=json&itemKey=Q7ZDZIN8,4:host,14:api.zotero.org,7:headers,222:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]34:25:If-Modified-Since-Version,2:24,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:2#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392211670.760794^15:timestamp_start,17:1392211670.690129^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,17:1392211670.723319^13:timestamp_end,17:1392211670.762529^}7:version,9:1:0#2:10#]}

@@ -2,12 +2,17 @@ from functools import wraps
 import time
 import urllib2
 import os
+import re
+import tempfile
 
 import mock
 
 from django.conf import settings
+from libmproxy import flow
 
 dirname = os.path.dirname(__file__)
+key_re = re.compile(r"([&?]key=)[^&]+")
+id_re = re.compile(r"^(/(?:groups|users)/)\d+/")
 
 
 def get_port():
@@ -19,13 +24,39 @@ def get_port():
     return port
 
 
-def record(f):
+def record(entity):
     """
-    Use this decorator to mark a test as being in recording mode.
+    Use this decorator to mark a test as being in recording mode. This
+    decorator optionally takes an argument. So it can be used this
+    way::
+
+         @record
+         def foo(...):
+            ...
+
+    Or like this::
+
+         @record(proxy)
+         def foo(...):
+
+    The ``proxy`` parameter is a URL to a proxy to use. If this
+    parameter is not used, the test suite will start a ``mitmproxy``
+    instance. If it is used, then the test suite will not start a
+    proxy.
 
     """
-    f.record = True
-    return f
+    # The tests with callable allow us to use this decorator
+    # as @record(proxy...) and @record.
+    def _record(f):
+        f.record = True
+        if entity is not None and not callable(entity):
+            f.proxy = entity
+        return f
+
+    if callable(entity):
+        return _record(entity)
+
+    return _record
 
 
 def replay(entity):
@@ -91,49 +122,93 @@ def _proxify(file_name, f):
         prev_https_proxy = os.environ.get('https_proxy', None)
         proxy = None
 
-        # This flushes the previous opener that may have been
-        # installed.  We must do this so that urllib2 picks up the new
-        # https_proxy configuration.
-        urllib2.install_opener(urllib2.build_opener())
+        temp = tempfile.mkstemp()
+        try:
+            if not hasattr(f, "proxy"):
+                port = get_port()
 
-        if not hasattr(f, "proxy"):
-            port = get_port()
+                cmd = ["mitmdump", "-a", "-q", "-p", str(port)]
+                if hasattr(f, "record"):
+                    cmd += ["-w", temp[1]]
+                else:
+                    #
+                    # The X-BTW-Sequence thing is to work around an
+                    # sequencing issue. See the tech_notes.rst file
+                    # section on testing the Zotero code. We probably
+                    # will be able to get rid of this when mitmproxy
+                    # 0.11 is released.
+                    #
+                    cmd += ["--no-upstream-cert", "--no-pop",
+                            "--rheader", "X-BTW-Sequence",
+                            "-s", os.path.join(dirname, "proxy_rewrite.py"),
+                            "-S", fname]
 
-            cmd = ["mitmdump", "-a", "-q", "-F", server, "-p", str(port)]
-            if hasattr(f, "record"):
-                cmd += ["-s", os.path.join(dirname, "proxy_rewrite.py"),
-                        "-w", fname]
-            else:
-                cmd += ["--no-pop", "-S", fname]
-
-            proxy = subprocess.Popen(cmd)
-            if proxy.poll():
-                raise Exception("can't start mitmdump")
-
-            # We need to check that the proxy is ready to work.
-            os.environ['https_proxy'] = "https://localhost:" + str(port)
-        else:
-            os.environ['https_proxy'] = f.proxy
-
-        ready = False
-        while not ready:
-            try:
-                urllib2.urlopen(server)
-                ready = True
-            except urllib2.URLError as e:
+                proxy = subprocess.Popen(cmd)
                 if proxy.poll():
                     raise Exception("can't start mitmdump")
-                time.sleep(0.1)
 
-        try:
-            ret = f(*args, **kwargs)
-        finally:
-            if proxy is not None:
-                proxy.kill()
-            if prev_https_proxy is not None:
-                os.environ['https_proxy'] = prev_https_proxy
+                # We need to check that the proxy is ready to work.
+                os.environ['https_proxy'] = "https://localhost:" + str(port)
             else:
-                del os.environ['https_proxy']
+                os.environ['https_proxy'] = f.proxy
+
+            # This flushes the previous opener that may have been
+            # installed.  We must do this so that urllib2 picks up the new
+            # https_proxy configuration.
+            urllib2.install_opener(urllib2.build_opener())
+
+            ready = False
+            while not ready:
+                try:
+                    urllib2.urlopen(server)
+                    ready = True
+                except urllib2.URLError:
+                    if proxy.poll():
+                        raise Exception("can't start mitmdump")
+                    time.sleep(0.1)
+
+            try:
+                ret = f(*args, **kwargs)
+            finally:
+                if proxy is not None:
+                    if proxy.poll():
+                        raise Exception("mitmdump exited with status: " +
+                                        proxy.returcode)
+                    else:
+                        proxy.kill()
+                if prev_https_proxy is not None:
+                    os.environ['https_proxy'] = prev_https_proxy
+                else:
+                    del os.environ['https_proxy']
+
+            if not hasattr(f, "proxy") and hasattr(f, "record"):
+                inf = os.fdopen(temp[0], 'rb')
+                freader = flow.FlowReader(inf)
+                outf = open(fname, 'w')
+                fwriter = flow.FlowWriter(outf)
+                sequence = 0
+                for i in freader.stream():
+                    i.request.path = \
+                        id_re.sub(r"\1none/",
+                                  key_re.sub(r"\1none", i.request.path))
+
+                    #
+                    # The X-BTW-Sequence thing is to work around an
+                    # sequencing issue. See the tech_notes.rst file
+                    # section on testing the Zotero code. We probably
+                    # will be able to get rid of this when mitmproxy
+                    # 0.11 is released.
+                    #
+                    i.request.headers["X-BTW-Sequence"] = [sequence]
+                    sequence += 1
+                    fwriter.add(i)
+                outf.close()
+                inf.close()
+        finally:
+            try:
+                os.unlink(temp[1])
+            except:  # pylint: disable=bare-except
+                pass
 
         return ret
 
