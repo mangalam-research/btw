@@ -8,6 +8,7 @@ from nose.tools import assert_equal, assert_true
 import mock
 
 from .util import TestMeta, replay
+from . import mock_zotero
 from ..models import Item
 
 User = get_user_model()
@@ -187,18 +188,7 @@ class TestSyncView(BaseTest):
                      'ERROR: Item not in result database.')
 
 
-class MockRecords(object):
-
-    def __init__(self, values):
-        self.values = values
-
-    def get_item(self, itemKey):
-        return [x for x in self.values if x["itemKey"] == itemKey][0]
-
-    def __len__(self):
-        return len(self.values)
-
-mock_records = MockRecords([
+mock_records = mock_zotero.Records([
     {
         "itemKey": "1",
         "title": "Title 1",
@@ -255,22 +245,26 @@ new_values = [
 ]
 
 
+# We use ``side_effect`` for this mock because we need to refetch
+# ``mock_records.values`` at run time since we change it for some
+# tests.
+get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_item_mock = mock.Mock(side_effect=mock_records.get_item)
+
+
+@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
+                     get_item=get_item_mock)
 class TestTitleView(BaseTest):
 
     """
     Tests for the title view.
     """
 
-    # We use ``side_effect`` for this mock because we need to refetch
-    # ``mock_records.values`` at run time since we change it for some
-    # tests.
-    get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
-    get_item_mock = mock.Mock(side_effect=mock_records.get_item)
-
     def setUp(self):
         super(TestTitleView, self).setUp()
-        self.get_item_mock.reset_mock()
-        self.get_all_mock.reset_mock()
+        get_item_mock.reset_mock()
+        get_all_mock.reset_mock()
+        mock_records.reset()
 
     def test_not_logged(self):
         """
@@ -281,8 +275,6 @@ class TestTitleView(BaseTest):
         self.assertRedirects(response, self.login_url +
                              "?next=" + self.bare_title_url)
 
-    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                         get_item=get_item_mock)
     def test_logged(self):
         """
         Test that we get a response.
@@ -294,8 +286,6 @@ class TestTitleView(BaseTest):
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
-    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                         get_item=get_item_mock)
     def test_caching(self):
         """
         Test that accessing this view caches the items we obtain from
@@ -311,13 +301,11 @@ class TestTitleView(BaseTest):
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
-        assert_equal(self.get_all_mock.call_count, 1,
+        assert_equal(get_all_mock.call_count, 1,
                      "all items should have been fetched, but only once")
         assert_equal(Item.objects.all().count(), len(mock_records),
                      "all items should have been cached as ``Item``")
 
-    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                         get_item=get_item_mock)
     def test_recaching(self):
         """
         Test that a change on the Zotero server propagates to the ``Item``
@@ -333,7 +321,7 @@ class TestTitleView(BaseTest):
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
-        assert_equal(self.get_all_mock.call_count, 1,
+        assert_equal(get_all_mock.call_count, 1,
                      "all items should have been fetched, but only once")
         assert_equal(Item.objects.all().count(), len(mock_records),
                      "all items should have been cached as ``Item``")
@@ -346,7 +334,7 @@ class TestTitleView(BaseTest):
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
-        assert_equal(self.get_all_mock.call_count, 2,
+        assert_equal(get_all_mock.call_count, 2,
                      "all items should have been fetched, again")
         assert_equal(Item.objects.all().count(), first_length +
                      len(mock_records),
