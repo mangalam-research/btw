@@ -8,9 +8,11 @@
 # - W0232 also yields too many false positives with Django.
 #
 # - W0142: Used * or ** magic
-
-
-disable=W0613,W0232,E1101,E1103,W0142,missing-docstring
+#
+# pointless-string-statement is raised for the documentation of object
+# attributes because the string appears after the attribute.
+#
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement
 [REPORTS]
 include-ids=y
 [VARIABLES]
