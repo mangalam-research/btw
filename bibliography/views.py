@@ -56,19 +56,20 @@ def _search(request):
 
 
 def _cache_all():
-    search_results, extra_vars = btw_zotero.get_all()
+    search_results, _extra_vars = btw_zotero.get_all()
     for result in search_results:
         key = result["itemKey"]
         if not Item.objects.filter(item_key=key).exists():
-            t = Item(item_key=key)
+            t = Item(item_key=key, uid=btw_zotero.full_uid)
             t.save()
+
+    # Items are never deleted from this cache.
 
 
 @login_required
 @require_GET
 def title(request):
     _cache_all()
-    # present a unbound form.
     form = SearchForm()
     template = loader.get_template('bibliography/title.html')
     context = RequestContext(request, {'form': form})

@@ -5,10 +5,17 @@ from django.core.urlresolvers import reverse
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
+import mock
+
 from .util import TestMeta, replay
+from ..models import Item
 
 User = get_user_model()
 server_name = "http://testserver"
+
+# Turn on long messages. This will apply to all assertions unless turned off
+# somewhere else.
+assert_equal.im_self.longMessage = True
 
 
 class BaseTest(WebTest):
@@ -22,6 +29,9 @@ class BaseTest(WebTest):
         self.exec_url = server_name + reverse('bibliography_exec')
         self.results_url = server_name + reverse('bibliography_results')
         self.sync_url = server_name + reverse('bibliography_sync')
+        self.bare_title_url = reverse('bibliography_title')
+        self.title_url = server_name + self.bare_title_url
+        self.login_url = server_name + reverse('login')
 
     def setUp(self):
         self.client = Client()
@@ -175,3 +185,169 @@ class TestSyncView(BaseTest):
         assert_equal(response.status_code, 200)
         assert_equal(response.content,
                      'ERROR: Item not in result database.')
+
+
+class MockRecords(object):
+
+    def __init__(self, values):
+        self.values = values
+
+    def get_item(self, itemKey):
+        return [x for x in self.values if x["itemKey"] == itemKey][0]
+
+    def __len__(self):
+        return len(self.values)
+
+mock_records = MockRecords([
+    {
+        "itemKey": "1",
+        "title": "Title 1",
+        "date": "Date 1",
+        "creators": [
+            {"name": "Name 1 for Title 1"},
+            {"firstName": "FirstName 2 for Title 1",
+             "lastName": "LastName 2 for Title 1"},
+        ]
+    },
+    {
+        "itemKey": "2",
+        "title": "Title 2",
+        "date": "Date 2",
+        "creators": [
+            {"name": "Name 1 for Title 2"},
+            {"firstName": "FirstName 2 for Title 2",
+             "lastName": "LastName 2 for Title 2"},
+        ]
+    }
+])
+
+new_values = [
+    {
+        "itemKey": "3",
+        "title": "Title 3",
+        "date": "Date 3",
+        "creators": [
+            {"name": "Name 1 for Title 3"},
+            {"firstName": "FirstName 2 for Title 3",
+             "lastName": "LastName 2 for Title 3"},
+        ]
+    },
+    {
+        "itemKey": "4",
+        "title": "Title 4",
+        "date": "Date 4",
+        "creators": [
+            {"name": "Name 1 for Title 4"},
+            {"firstName": "FirstName 2 for Title 4",
+             "lastName": "LastName 2 for Title 4"},
+        ]
+    },
+    {
+        "itemKey": "5",
+        "title": "Title 5",
+        "date": "Date 5",
+        "creators": [
+            {"name": "Name 1 for Title 5"},
+            {"firstName": "FirstName 2 for Title 5",
+             "lastName": "LastName 2 for Title 5"},
+        ]
+    }
+]
+
+
+class TestTitleView(BaseTest):
+
+    """
+    Tests for the title view.
+    """
+
+    # We use ``side_effect`` for this mock because we need to refetch
+    # ``mock_records.values`` at run time since we change it for some
+    # tests.
+    get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+    get_item_mock = mock.Mock(side_effect=mock_records.get_item)
+
+    def setUp(self):
+        super(TestTitleView, self).setUp()
+        self.get_item_mock.reset_mock()
+        self.get_all_mock.reset_mock()
+
+    def test_not_logged(self):
+        """
+        Test that the response is a redirection to the login page when the
+        user is not logged in.
+        """
+        response = self.client.get(self.title_url)
+        self.assertRedirects(response, self.login_url +
+                             "?next=" + self.bare_title_url)
+
+    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
+                         get_item=get_item_mock)
+    def test_logged(self):
+        """
+        Test that we get a response.
+        """
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
+                         get_item=get_item_mock)
+    def test_caching(self):
+        """
+        Test that accessing this view caches the items we obtain from
+        Zotero.
+        """
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        assert_equal(Item.objects.all().count(), 0,
+                     "no Item object should exist yet")
+
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+        assert_equal(self.get_all_mock.call_count, 1,
+                     "all items should have been fetched, but only once")
+        assert_equal(Item.objects.all().count(), len(mock_records),
+                     "all items should have been cached as ``Item``")
+
+    @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
+                         get_item=get_item_mock)
+    def test_recaching(self):
+        """
+        Test that a change on the Zotero server propagates to the ``Item``
+        objects.
+        """
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        assert_equal(Item.objects.all().count(), 0,
+                     "no Item object should exist yet")
+
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+        assert_equal(self.get_all_mock.call_count, 1,
+                     "all items should have been fetched, but only once")
+        assert_equal(Item.objects.all().count(), len(mock_records),
+                     "all items should have been cached as ``Item``")
+        first_length = len(mock_records)
+
+        # Simulate a change on the server.
+        mock_records.values = new_values
+
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+        assert_equal(self.get_all_mock.call_count, 2,
+                     "all items should have been fetched, again")
+        assert_equal(Item.objects.all().count(), first_length +
+                     len(mock_records),
+                     "all items should have been cached as ``Item``")
