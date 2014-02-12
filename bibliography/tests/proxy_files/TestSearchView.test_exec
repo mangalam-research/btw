@@ -1,4 +1,4 @@
-2901:5:error,0:~8:response,2301:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1391803264.280441^3:msg,2:OK,15:timestamp_start,17:1391803264.280069^7:headers,261:40:4:Date,29:Fri, 07 Feb 2014 20:01:04 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,20:Nothing to see here.,4:cert,1850:-----BEGIN CERTIFICATE-----
+2927:5:error,0:~8:response,2301:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1392214838.861181^3:msg,2:OK,15:timestamp_start,17:1392214838.860814^7:headers,261:40:4:Date,29:Wed, 12 Feb 2014 14:20:38 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,20:Nothing to see here.,4:cert,1850:-----BEGIN CERTIFICATE-----
 MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
 MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
 HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
@@ -28,7 +28,18 @@ je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
 MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
 sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
 -----END CERTIFICATE-----
-,4:code,3:200#}7:request,535:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:42395#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,1:/,4:host,14:api.zotero.org,7:headers,128:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1391803264.207743^15:timestamp_start,17:1391803264.138114^2:ip,13:50.19.225.228,19:tcp_setup_timestamp,17:1391803264.171514^13:timestamp_end,17:1391803264.210124^}7:version,9:1:0#2:10#]}3004:5:error,0:~8:response,2269:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1391803264.515747^3:msg,9:Forbidden,15:timestamp_start,17:1391803264.515402^7:headers,231:40:4:Date,29:Fri, 07 Feb 2014 20:01:04 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]23:14:Content-Length,2:11,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,11:Invalid key,4:cert,1850:-----BEGIN CERTIFICATE-----
+,4:code,3:200#}7:request,561:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:51253#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,1:/,4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392214838.817255^15:timestamp_start,17:1392214838.743889^2:ip,13:50.19.225.228,19:tcp_setup_timestamp,17:1392214838.781623^13:timestamp_end,17:1392214838.819688^}7:version,9:1:0#2:10#]}3933:5:error,0:~8:response,3170:11:httpversion,8:1:1#1:0#]13:timestamp_end,16:1392214839.26734^3:msg,2:OK,15:timestamp_start,17:1392214839.266803^7:headers,292:40:4:Date,29:Wed, 12 Feb 2014 14:20:38 GMT,]35:6:Server,22:Apache/2.2.15 (CentOS),]26:18:Zotero-API-Version,1:2,]30:21:Last-Modified-Version,2:24,]24:14:Content-Length,3:858,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]40:12:Content-Type,20:application/atom+xml,]]7:content,858:<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:zapi="http://zotero.org/ns/api">
+  <title>Zotero / BTW Testing Group / Top-Level Items</title>
+  <id>http://zotero.org/groups/137163/items/top?content=json&amp;q=testtest</id>
+  <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=testtest"/>
+  <link rel="first" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=testtest"/>
+  <link rel="last" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=testtest"/>
+  <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/137163/items/top?q=testtest"/>
+  <zapi:totalResults>0</zapi:totalResults>
+  <updated>2014-02-12T14:20:39Z</updated>
+</feed>
+,4:cert,1850:-----BEGIN CERTIFICATE-----
 MIIFKjCCBBKgAwIBAgIDCCUvMA0GCSqGSIb3DQEBBQUAMDwxCzAJBgNVBAYTAlVT
 MRcwFQYDVQQKEw5HZW9UcnVzdCwgSW5jLjEUMBIGA1UEAxMLUmFwaWRTU0wgQ0Ew
 HhcNMTIwOTA3MjM0MzE2WhcNMTQxMDEwMTIxNDA1WjCBuzEpMCcGA1UEBRMgUmha
@@ -58,4 +69,4 @@ je7e9HSSm33SyaosM4HY0Hy9qjhtxtF+OtFOOjizzJ0Q3z/7ck3G6tS+zQ5grPQw
 MTeXDfmFy6ihHS6//z4SOnGQM4Vyc56nl9eQEdV9vt7eLqvFnkReGqd0u7CmHWRs
 sL78raOi+sirD+E3DXCDkNlpThjjRg9n1obInDIj
 -----END CERTIFICATE-----
-,4:code,3:403#}7:request,670:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:42398#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,67:/groups/none/items/top?key=none&format=atom&content=json&q=testtest,4:host,14:api.zotero.org,7:headers,198:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1391803264.407316^15:timestamp_start,17:1391803264.321147^2:ip,13:50.19.225.230,19:tcp_setup_timestamp,16:1391803264.35888^13:timestamp_end,16:1391803264.40904^}7:version,9:1:0#2:10#]}
+,4:code,3:200#}7:request,698:11:httpversion,8:1:1#1:1#]11:client_conn,65:7:address,20:9:127.0.0.1,5:51256#]12:requestcount,1:1#5:error,0:~}4:port,3:443#6:scheme,5:https,4:path,67:/groups/none/items/top?key=none&format=atom&content=json&q=testtest,4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,6:method,3:GET,19:ssl_setup_timestamp,17:1392214838.968972^15:timestamp_start,17:1392214838.897312^2:ip,13:50.19.225.228,19:tcp_setup_timestamp,17:1392214838.930093^13:timestamp_end,17:1392214838.970716^}7:version,9:1:0#2:10#]}
