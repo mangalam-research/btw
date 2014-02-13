@@ -1,5 +1,5 @@
 import os
-import itertools
+import time
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -41,6 +41,9 @@ def before_all(context):
                 "BTW's test suite require that native events be available; "
                 "you may have to use a different version of your browser, "
                 "one for which Selenium supports native events.")
+
+    behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
+    context.behave_wait = behave_wait and float(behave_wait)
 
 
 def after_all(context):
@@ -96,3 +99,8 @@ def after_scenario(context, _scenario):
         driver.get(context.selenic_config.SERVER + "/lexicography")
         alert = driver.switch_to_alert()
         alert.accept()
+
+
+def before_step(context, _step):
+    if context.behave_wait:
+        time.sleep(context.behave_wait)
