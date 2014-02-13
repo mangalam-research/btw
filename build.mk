@@ -130,6 +130,10 @@ README.html: README.rst
 selenium-test: all
 	behave $(BEHAVE_PARAMS) selenium_test
 
+.PHONY: selenium_test/%.feature
+selenium_test/%.feature: all
+	behave $(BEHAVE_PARAMS) $@
+
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
 $(BUILD_CONFIG):
