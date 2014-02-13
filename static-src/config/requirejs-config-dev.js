@@ -8,6 +8,7 @@ require.config({
    'font-awesome': 'external/font-awesome',
    'jquery.cookie': 'external/jquery.cookie',
    datatables: 'external/datatables/js/jquery.dataTables',
+   "bootstrap-editable": 'external/bootstrap3-editable/js/bootstrap-editable',
    qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
@@ -48,6 +49,10 @@ require.config({
    },
    'log4javascript': {
        exports: "log4javascript"
+   },
+   'bootstrap-editable': {
+       deps: ["bootstrap"],
+       exports: "jQuery.fn.editable"
    },
    'qunit': {
        exports: 'QUnit',

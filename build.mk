@@ -46,6 +46,8 @@ DATATABLES_URL:=http://datatables.net/releases/DataTables-1.9.4.zip
 # to correspond to the top directory of the zip that github creates.
 DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
 
+XEDITABLE_URL:=http://vitalets.github.io/x-editable/assets/zip/bootstrap3-editable-1.5.1.zip
+XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 
 # We don't use this yet.
 #CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
@@ -66,7 +68,7 @@ BUILD_DEST:=$(BUILD_DIR)/static-build
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -170,6 +172,11 @@ $(BUILD_DEST)/lib/external/datatables: downloads/$(DATATABLES_BASE)
 	(cd $@; rm -rf src unit_testing)
 	rm -rf $@/temp
 
+$(BUILD_DEST)/lib/external/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
+	rm -rf $@
+	unzip -o -d $(dir $@) $< $(notdir $@)/*
+	touch $@
+
 downloads build:
 	mkdir $@
 
@@ -181,3 +188,6 @@ downloads/$(CITEPROC_BASE): downloads
 
 downloads/$(DATATABLES_BASE): downloads
 	$(WGET) -O $@ $(DATATABLES_URL)
+
+downloads/$(XEDITABLE_BASE): downloads
+	$(WGET) -O $@ $(XEDITABLE_URL)

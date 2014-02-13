@@ -6,12 +6,13 @@
 {% block extrahead %}
 {{ block.super }}
 <link href="{{ btw_globals.btw_datatables_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+<link href="{{ btw_globals.btw_bootstrap_editable_css_path }}" type="text/css" media="screen" rel="stylesheet" />
 <script>
   var django_active_submenu = "btw-bibliography-title-sub";
   require.config({
     config: {
       "../scripts/title-table": {
-          ajax_url: "{% url 'bibliography-title-table' %}"
+          ajax_source_url: "{% url 'bibliography_title_table' %}"
       }
     }
   });
@@ -22,13 +23,16 @@
 <table id="bibliography-table">
   <thead>
     <tr>
-      <th>Title for References</th>
-      <th>Author(s)</th>
+      <th></th>
+      <th>Title for Reference</th>
+      <th>Creator(s)</th>
       <th>Original Title</th>
       <th>Date</th>
     </tr>
   </thead>
   <tbody>
   </tbody>
+  <tfoot>
+  </tfoot>
 </table>
 {% endblock %}

@@ -8,6 +8,7 @@ import threading
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from south.modelsinspector import add_introspection_rules
 
@@ -230,3 +231,7 @@ class Item(models.Model):
             ret = ", ".join(names)
 
         return ret
+
+    @property
+    def reference_title_url(self):
+        return reverse('bibliography_reference_title', args=(self.item_key, ))

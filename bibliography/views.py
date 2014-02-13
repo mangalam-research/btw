@@ -6,11 +6,12 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, \
     HttpResponseServerError, HttpResponseBadRequest
 from django.template import Context, loader, RequestContext
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.db.models import Q
 
 from .zotero import Zotero, zotero_settings
 from .models import ZoteroUser, Item
@@ -271,37 +272,38 @@ class ItemList(BaseDatatableView):
     model = Item
 
     # define the columns that will be returned
-    columns = ['reference_title', 'creators', 'title', 'date']
-    order_columns = ['reference_title', 'creators', 'title', 'date']
+    columns = ['reference_title_url', 'reference_title', 'creators', 'title',
+               'date']
+    order_columns = ['', 'reference_title', 'creators', 'title', 'date']
 
     max_display_length = 500
 
     @classmethod
     def as_view(cls, *args, **kwargs):
         return ajax_login_required(
-            require_GET(super(BaseDatatableView, cls).as_view(*args,
-                                                              **kwargs)))
+            require_GET(super(ItemList, cls).as_view(*args,
+                                                     **kwargs)))
 
     def get_initial_queryset(self):
         return Item.objects.all()
 
     def filter_queryset(self, qs):
-        sSearch = self.request.POST.get('sSearch', None)
+        sSearch = self.request.GET.get('sSearch', None)
         if sSearch:
-            qs = qs.filter(name__istartswith=sSearch)
+            qs = qs.filter(Q(reference_title__icontains=sSearch) |
+                           Q(creators__icontains=sSearch) |
+                           Q(title__icontains=sSearch))
 
-        # more advanced example
-        filter_customer = self.request.POST.get('customer', None)
-
-        if filter_customer:
-            customer_parts = filter_customer.split(' ')
-            qs_params = None
-            for part in customer_parts:
-                q = Q(customer_firstname__istartswith=part) | \
-                    Q(customer_lastname__istartswith=part)
-                qs_params = qs_params | q if qs_params else q
-            qs = qs.filter(qs_params)
         return qs
+
+
+@ajax_login_required
+@require_POST
+def reference_title(request, itemKey):
+    item = Item.objects.get(item_key=itemKey)
+    item.reference_title = request.POST.get('value')
+    item.save()
+    return HttpResponse()
 
 
 @require_GET

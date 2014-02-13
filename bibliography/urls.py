@@ -15,7 +15,10 @@ urlpatterns = patterns('bibliography.views',
                            name='bibliography_info'),
                        url(r'^sync/$', 'sync', name='bibliography_sync'),
                        url(r'^title-table/$', ItemList.as_view(),
-                           name='bibliography-title-table'),)
+                           name='bibliography_title_table'),
+                       url(r'^(?P<itemKey>.+?)/reference-title/$',
+                           'reference_title',
+                           name='bibliography_reference_title'),)
 
 # tests views are only made available during development
 if settings.DEBUG:
