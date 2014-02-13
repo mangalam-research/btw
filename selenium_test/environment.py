@@ -36,7 +36,8 @@ def before_all(context):
     context.selenic_config = config
     # Without this, window sizes vary depending on the actual browser
     # used.
-    driver.set_window_size(1020, 560)
+    driver.set_window_size(1020, 580)
+    context.initial_window_size = {"width": 1020, "height": 580}
     assert_true(driver.desired_capabilities["nativeEvents"],
                 "BTW's test suite require that native events be available; "
                 "you may have to use a different version of your browser, "
@@ -57,7 +58,12 @@ def after_all(context):
 
 def before_scenario(context, scenario):
     driver = context.driver
-    context.before_scenario_window_size = driver.get_window_size()
+    util = context.util
+
+    window_size = driver.get_window_size()
+    if window_size != context.initial_window_size:
+        driver.set_window_size(context.initial_window_size["width"],
+                               context.initial_window_size["height"])
 
     matching_funcs = set(m.func for m in
                          [step_registry.registry.find_match(s) for s
@@ -84,13 +90,6 @@ def before_scenario(context, scenario):
 
 def after_scenario(context, _scenario):
     driver = context.driver
-    util = context.util
-
-    window_size = driver.get_window_size()
-    if window_size != context.before_scenario_window_size:
-        wedutil.set_window_size(util,
-                                context.before_scenario_window_size["width"],
-                                context.before_scenario_window_size["height"])
 
     # If the scenario ends on an editor window, we want to move away
     # from it NOW so that the next scenario does not trigger the alert
