@@ -215,6 +215,9 @@ LOGGING = {
     }
 }
 
+SOUTH_TESTS_MIGRATE = False
+
+
 BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'
 BTW_DATATABLES_CSS_PATH = \
