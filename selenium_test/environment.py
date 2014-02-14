@@ -1,5 +1,9 @@
 import os
 import time
+import urllib2
+import tempfile
+import subprocess
+import shutil
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -46,6 +50,12 @@ def before_all(context):
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
 
+    context.server_tempdir = tempfile.mkdtemp()
+    context.server_fifo = os.path.join(context.server_tempdir, "fifo")
+    os.mkfifo(context.server_fifo)
+    context.server = subprocess.Popen(
+        ["utils/start_nginx", context.server_fifo])
+
 
 def after_all(context):
     driver = context.driver
@@ -54,6 +64,8 @@ def after_all(context):
     if not ((selenium_quit == "never") or
             (context.failed and selenium_quit == "on-success")):
         driver.quit()
+    context.server.terminate()
+    shutil.rmtree(context.server_tempdir, True)
 
 
 def before_scenario(context, scenario):
@@ -87,6 +99,14 @@ def before_scenario(context, scenario):
         btw_util.require_subsense_recording.get_senses_for_functions(
             matching_funcs)
 
+    found = False
+    while not found:
+        try:
+            urllib2.urlopen(config.SERVER + "/login")
+            found = True
+        except urllib2.URLError:
+            time.sleep(0.5)
+
 
 def after_scenario(context, _scenario):
     driver = context.driver
@@ -98,6 +118,10 @@ def after_scenario(context, _scenario):
         driver.get(context.selenic_config.SERVER + "/lexicography")
         alert = driver.switch_to_alert()
         alert.accept()
+
+    # Reset the server between scenarios.
+    with open(context.server_fifo, 'w') as fifo:
+        fifo.write("1")
 
 
 def before_step(context, _step):

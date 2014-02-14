@@ -1,5 +1,8 @@
 #!/bin/bash
 
+fifo=$1
+shift
+
 dead () {
     exit 1
 }
@@ -9,7 +12,7 @@ cleanup () {
     nginx -c `pwd`/build/config/nginx.conf -s stop
     jobs=`jobs -pr`
     if [ -n "$jobs" ]; then
-        kill `jobs -pr`
+        kill -9 `jobs -pr`
     fi
     exit
 }
@@ -23,6 +26,6 @@ mkdir -p var/log || true
 mkdir -p var/lib/nginx || true
 mkdir -p var/log/btw || true
 
-BTW_ENV=selenium ./manage.py test utils/liveserver_test.py --liveserver=localhost:7777 & nginx -c `pwd`/build/config/nginx.conf
+BTW_ENV=selenium ./manage.py liveserver localhost:7777 $fifo & nginx -c `pwd`/build/config/nginx.conf
 
 wait

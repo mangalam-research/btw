@@ -152,63 +152,57 @@ You also need to have `wedutil
 <http://github.com/mangalam-research/wedutil>`_ installed and
 available on your ``PYTHONPATH``.
 
-To run the Selenium-based tests, you must use a Django live server set
-up for testing. This server can work in standalone mode *or* behind an
-nginx server. The latter option is highly recommended, especially if
-you run your browser on a provisioning service like SauceLabs. Tests
-that can pass locally can quite easily fail when run from a remote
-service, *unless* a real web server is used. The nginx setup is
-recommended in any case because, let's face it, **Django is not a web
-server.** Some issues that Django may mask can become evident when
-using a real web server. This has happened during the development of
-BTW.
+To run the Selenium-based tests, the tests must be able to communicate
+with a live server. Tests that can pass locally can quite easily fail
+when run from a remote service, *unless* a real web server is
+used. Therefore, the test suite starts an nginx server because, let's
+face it, **Django is not a web server.** Some issues that Django may
+mask can become evident when using a real web server. This has
+happened during the development of BTW.
 
 .. note:: A "real web server" is one which understands the ins and
           outs of the HTTP protocol, can negotiate contents, can
           compress contents, understands caching on the basis of
           modification times, etc.
 
-The configuration environment used for the seleinum tests is named
+The configuration environment used for the selenium tests is named
 ``selenium``. See `Environment and Settings`_.
-
-Standalone
-----------
-
-Running ``./manage.py runserver`` would run the tests on the database
-which you use for development. Not a good deal. So instead you should
-run::
-
-    $ BTW_ENV=selenium ./manage.py test utils/liveserver_test.py
-
-This will create a live server and wait until it dies. Yes, that's a
-quick and dirty hack. At any rate the server will be ready to handle
-the test suite.
 
 Nginx
 -----
 
-To run nginx, just issue::
+Internally, the test suite starts nginx by issuing::
 
-    $ utils/start_nginx
+    $ utils/start_nginx <fifo>
 
-This will launch an nginx server listening on localhost:8080. It will
-handle all the requests to static resources itself but will forward
-all Ajax stuff to an instance of the Django live server (which is
-started by the ``start_nginx`` script to listen on
-localhost:7777). This server puts all of the things that would go in
-``/var`` if it was started by the OS in the `<var>`_ directory that
-sits at the top of the code tree. Look there for logs. This nginx
-instance uses the configuration built at `<build/config/nginx.conf>`_
-from `<config/nginx.conf>`_. Remember that if you want to override the
-configuration, the proper way to do it is to copy the configuration
-file into `<local_config>`_ and edit it there. Run make again after
-you made modifications. The only processing done on nginx's file is to
-change all instances of ``@PWD@`` with the top of the code tree.
+The fifo is a communication channel created by the test suite to
+control the server.  The command above will launch an nginx server
+listening on localhost:8080. It will handle all the requests to static
+resources itself but will forward all other requests to an instance of
+the Django live server (which is started by the ``start_nginx`` script
+to listen on localhost:7777). This server puts all of the things that
+would go in ``/var`` if it was started by the OS in the `<var>`_
+directory that sits at the top of the code tree. Look there for
+logs. This nginx instance uses the configuration built at
+`<build/config/nginx.conf>`_ from `<config/nginx.conf>`_. Remember
+that if you want to override the configuration, the proper way to do
+it is to copy the configuration file into `<local_config>`_ and edit
+it there. Run make again after you made modifications. The only
+processing done on nginx's file is to change all instances of
+``@PWD@`` with the top of the code tree.
+
+The Django server started by `start_nginx` is based on
+`LiveServerTestCase` and consequently organises its run time
+environment in the same way. The test suite sends a signal to the
+server so that with each new feature, the server resets itself. This
+means that database changes do not propagate from feature to
+feature. This mirrors the way the Django tests normally run. A test
+will not see the database changes performed by another test.
 
 Running the Suite
 -----------------
 
-Finally, to run the suite issue::
+To run the suite issue::
 
     $ make selenium-test
 
