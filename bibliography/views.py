@@ -9,7 +9,7 @@ from django.template import Context, loader, RequestContext
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_POST, require_GET
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.db import IntegrityError
@@ -299,6 +299,7 @@ class ItemList(BaseDatatableView):
 
 
 @ajax_login_required
+@permission_required('bibliography.change_item')
 @require_POST
 def reference_title(request, itemKey):
     item = Item.objects.get(item_key=itemKey)

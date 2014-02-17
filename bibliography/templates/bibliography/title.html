@@ -12,7 +12,8 @@
   require.config({
     config: {
       "../scripts/title-table": {
-          ajax_source_url: "{% url 'bibliography_title_table' %}"
+          ajax_source_url: "{% url 'bibliography_title_table' %}",
+          can_edit: {{ perms.bibliography.change_item|yesno:'true,false' }}
       }
     }
   });

@@ -11,28 +11,6 @@ import wedutil
 from selenium_test import btw_util
 
 
-@given("the user has logged in")
-@when("the user logs in")
-def step_impl(context):
-    driver = context.driver
-    util = context.util
-    config = context.selenic_config
-
-    driver.get(config.SERVER + "/login")
-    name = util.find_element((By.NAME, "username"))
-    pw = util.find_element((By.NAME, "password"))
-    form = util.find_element((By.TAG_NAME, "form"))
-
-    ActionChains(driver) \
-        .click(name) \
-        .send_keys("foo") \
-        .click(pw) \
-        .send_keys("foo") \
-        .perform()
-
-    form.submit()
-
-
 @when("the user loads the top page of the lexicography app")
 def user_load_lexicography(context):
     driver = context.driver
@@ -128,6 +106,40 @@ def step_impl(context, x):
 
 
 step_matcher('re')
+
+import collections
+
+User = collections.namedtuple("User", ["login", "password"])
+
+users = {
+    "the user": User("foo", "foo"),
+    "a user without permission to edit titles": User("foo2", "foo")
+}
+
+
+@given(ur"^(?P<user_desc>the user|a user without permission to edit titles) "
+       ur"has logged in$")
+@when(ur"^(?P<user_desc>the user) logs in$")
+def step_impl(context, user_desc):
+    driver = context.driver
+    util = context.util
+    config = context.selenic_config
+
+    driver.get(config.SERVER + "/login")
+    name = util.find_element((By.NAME, "username"))
+    pw = util.find_element((By.NAME, "password"))
+    form = util.find_element((By.TAG_NAME, "form"))
+
+    user = users[user_desc]
+
+    ActionChains(driver) \
+        .click(name) \
+        .send_keys(user.login) \
+        .click(pw) \
+        .send_keys(user.password) \
+        .perform()
+
+    form.submit()
 
 
 @Given("^a document with a single sense(?: that does not have a subsense)?$")

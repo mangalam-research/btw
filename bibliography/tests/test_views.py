@@ -2,6 +2,8 @@ from django_webtest import WebTest
 from django.test import Client
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
@@ -335,3 +337,107 @@ class TestTitleView(BaseTest):
         assert_equal(Item.objects.all().count(), first_length +
                      len(mock_records),
                      "all items should have been cached as ``Item``")
+
+# We use ``side_effect`` for this mock because we need to refetch
+# ``mock_records.values`` at run time since we change it for some
+# tests.
+get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_item_mock = mock.Mock(side_effect=mock_records.get_item)
+
+
+@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
+                     get_item=get_item_mock)
+class TestReferenceTitleView(BaseTest):
+
+    """
+    Tests for the title view.
+    """
+
+    def setUp(self):
+        super(TestReferenceTitleView, self).setUp()
+        get_item_mock.reset_mock()
+        get_all_mock.reset_mock()
+        mock_records.reset()
+
+    def test_not_logged(self):
+        """
+        Test that the response is 403 when the user is not logged in.
+        """
+        url = reverse('bibliography_reference_title', args=("1", ))
+
+        response = self.client.post(url, {"value": "blah"})
+        assert_equal(response.status_code, 403)
+
+    def test_logged(self):
+        """
+        Test that we get a response.
+        """
+
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(Item),
+            codename="change_item"))
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        # We must do this first so that the Item data is cached.
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+        url = reverse('bibliography_reference_title', args=("1", ))
+
+        response = self.client.post(url, {
+            "value": "foo"
+        })
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+    def test_change(self):
+        """
+        Test that the data is changed in the database.
+        """
+
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(Item),
+            codename="change_item"))
+        self.user.save()
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        # We must do this first so that the Item data is cached.
+        response = self.client.get(self.title_url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+        item = Item.objects.get(item_key="1")
+
+        assert_equal(item.reference_title, None,
+                     "the reference_title value should be None")
+
+        url = reverse('bibliography_reference_title', args=("1", ))
+
+        response = self.client.post(url, {
+            "value": "foo"
+        })
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+        item = Item.objects.get(item_key="1")
+
+        assert_equal(item.reference_title, "foo",
+                     "the reference_title value should be changed")
+
+    def test_no_permission(self):
+        """
+        Test that a user without the right permissions cannot change a
+        reference title.
+        """
+
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        url = reverse('bibliography_reference_title', args=("1", ))
+
+        response = self.client.post(url, {
+            "value": "foo"
+        })
+        assert_equal(response.status_code, 302, "the request should fail")
