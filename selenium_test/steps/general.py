@@ -119,6 +119,14 @@ def step_impl(context):
     context.window_scroll_top = util.window_scroll_top()
     context.window_scroll_left = util.window_scroll_left()
 
+
+@given(u"wait {x} seconds")
+@when(u"wait {x} seconds")
+def step_impl(context, x):
+    import time
+    time.sleep(float(x))
+
+
 step_matcher('re')
 
 
