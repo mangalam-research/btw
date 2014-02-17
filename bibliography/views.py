@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
+from django.db import IntegrityError
 
 from .zotero import Zotero, zotero_settings
 from .models import ZoteroUser, Item
@@ -302,7 +303,11 @@ class ItemList(BaseDatatableView):
 def reference_title(request, itemKey):
     item = Item.objects.get(item_key=itemKey)
     item.reference_title = request.POST.get('value')
-    item.save()
+    try:
+        item.save()
+    except IntegrityError:
+        return HttpResponseBadRequest(
+            "There is already an item with this title.")
     return HttpResponse()
 
 

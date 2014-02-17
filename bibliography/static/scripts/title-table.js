@@ -20,22 +20,23 @@ define(['module', 'jquery', 'jquery.cookie', 'datatables',
                     mRender: function (data) {
                         if (data === null || data === undefined)
                             data = "";
-                        return data;
+                        return "<span>" + data + "</span>";
                     },
                     fnCreatedCell: function (cell, type, full) {
-                        $(cell).editable({mode: 'inline',
-                                          send: 'always',
-                                          url: full[0],
-                                          ajaxOptions: {
-                                              headers: {
-                                                  'X-CSRFToken': csrftoken
-                                              }
-                                          },
-                                          success: function () {
-                                              table.fnDraw();
-                                          },
-                                          emptytext: '[No title assigned.]'
-                                         });
+                        $(cell).children("span").editable(
+                            {mode: 'inline',
+                             send: 'always',
+                             url: full[0],
+                             ajaxOptions: {
+                                 headers: {
+                                     'X-CSRFToken': csrftoken
+                                                               }
+                             },
+                             success: function () {
+                                 table.fnDraw();
+                             },
+                             emptytext: '[No title assigned.]'
+                            });
                     }
                 }
             ]

@@ -12,7 +12,6 @@ from . import mock_zotero
 from ..models import Item
 
 User = get_user_model()
-server_name = "http://testserver"
 
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
@@ -26,13 +25,12 @@ class BaseTest(WebTest):
         super(BaseTest, self).__init__(*args, **kwargs)
         self.client = None
         self.user = None
-        self.search_url = server_name + reverse('bibliography_search')
-        self.exec_url = server_name + reverse('bibliography_exec')
-        self.results_url = server_name + reverse('bibliography_results')
-        self.sync_url = server_name + reverse('bibliography_sync')
-        self.bare_title_url = reverse('bibliography_title')
-        self.title_url = server_name + self.bare_title_url
-        self.login_url = server_name + reverse('login')
+        self.search_url = reverse('bibliography_search')
+        self.exec_url = reverse('bibliography_exec')
+        self.results_url = reverse('bibliography_results')
+        self.sync_url = reverse('bibliography_sync')
+        self.title_url = reverse('bibliography_title')
+        self.login_url = reverse('login')
 
     def setUp(self):
         self.client = Client()
@@ -94,9 +92,7 @@ class TestSearchView(BaseTest):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Should get redirected to the pagination view.
-        assert_equal(response.status_code, 302)
-        assert_true(response.has_header('Location'))
-        assert_equal(response['Location'], self.results_url)
+        self.assertRedirects(response, self.results_url)
 
 
 class TestResultsView(BaseTest):
@@ -273,7 +269,7 @@ class TestTitleView(BaseTest):
         """
         response = self.client.get(self.title_url)
         self.assertRedirects(response, self.login_url +
-                             "?next=" + self.bare_title_url)
+                             "?next=" + self.title_url)
 
     def test_logged(self):
         """

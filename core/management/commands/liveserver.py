@@ -1,13 +1,44 @@
 import threading
 import os
-import socket
-import fcntl
 from unittest import TestSuite
 
 from django.core.management.base import BaseCommand
 from django.test import LiveServerTestCase
 from django.test.simple import DjangoTestSuiteRunner
 from south.management.commands import patch_for_test_db_setup
+import mock
+
+from bibliography.tests import mock_zotero
+
+
+mock_records = mock_zotero.Records([
+    {
+        "itemKey": "1",
+        "title": "Title 1",
+        "date": "Date 1",
+        "creators": [
+            {"name": "Abelard (Name 1 for Title 1)"},
+            {"firstName": "FirstName 2 for Title 1",
+             "lastName": "LastName 2 for Title 1"},
+        ]
+    },
+    {
+        "itemKey": "2",
+        "title": "Title 2",
+        "date": "Date 2",
+        "creators": [
+            {"name": "Beth (Name 1 for Title 2)"},
+            {"firstName": "FirstName 2 for Title 2",
+             "lastName": "LastName 2 for Title 2"},
+        ]
+    }
+])
+
+# We use ``side_effect`` for this mock because we need to refetch
+# ``mock_records.values`` at run time since we change it for some
+# tests.
+get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 
 class SeleniumTest(LiveServerTestCase):
@@ -73,7 +104,13 @@ class Command(BaseCommand):
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
         os.environ["DJANGO_SETTINGS_MODULE"] = "btw.test_settings"
 
-        while True:
-            print "Starting new server."
-            runner = Runner(control)
-            runner.run_tests(test_labels=None)
+        with mock.patch.multiple("bibliography.zotero.Zotero",
+                                 get_all=get_all_mock,
+                                 get_item=get_item_mock):
+            while True:
+                print "Starting new server."
+                runner = Runner(control)
+                runner.run_tests(test_labels=None)
+                get_item_mock.reset_mock()
+                get_all_mock.reset_mock()
+                mock_records.reset()
