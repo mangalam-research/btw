@@ -60,19 +60,29 @@ def step_impl(context, order, what):
 
     def cond(*_):
         rows = table.find_elements_by_xpath("./tbody/tr")
-        return rows if len(rows) == 2 else None
+        if len(rows) != 2:
+            return False
 
-    rows = util.wait(cond)
+        cells = []
+        try:
+            for row in rows:
+                cell = row.find_elements_by_tag_name("td")[column]
+                cells.append(cell)
+        except StaleElementReferenceException:
+            return False
 
-    cells = []
-    for row in rows:
-        cell = row.find_elements_by_tag_name("td")[column]
-        cells.append(cell)
+        op = ORDERS[order].op
 
-    op = ORDERS[order].op
+        try:
+            for i in xrange(0, len(cells) - 1):
+                if not op(cells[i].text, cells[i + 1].text):
+                    return False
+        except StaleElementReferenceException:
+            return False
 
-    for i in xrange(0, len(cells) - 1):
-        assert_true(op(cells[i].text, cells[i + 1].text))
+        return True
+
+    util.wait(cond)
 
 
 @when(ur'^the user clicks on the icon for sorting '
