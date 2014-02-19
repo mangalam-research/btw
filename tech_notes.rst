@@ -11,9 +11,9 @@
 
 * Determine how to use X-Zotero-Write-Token. What constitutes a *same* transaction?
 
-==============
- Installation
-==============
+============
+ Deployment
+============
 
 .. warning:: If you use uwsgi, use a version later than 1.2.6. See the
              warning on this page for the reason why:
@@ -25,6 +25,50 @@
              transactions. BTW relies on transactions to ensure data
              integrity. Use Django 1.6 or use a backend other than
              sqlite3.
+
+Database
+========
+
+BTW needs to have its own database. We do not use MySQL/MariaDB due to
+`complications with using UTF8
+<https://docs.djangoproject.com/en/1.6/ref/databases/#collation-settings>`__.
+The following instructions are for Postgresql 9.3.
+
+1. Create a database and user for it::
+
+    $ sudo -u postgres createuser -P btw
+    $ sudo -u postgres createdb -O btw btw
+
+2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.6/ref/databases/#optimizing-postgresql-s-configuration).
+
+.. note:: With the default configuration of postgres, you must connect either:
+
+  * As a local user with the same name as a postgres user. In this
+    case, postgres will takes authentication to the OS as
+    authentication to the database. This is what happens when we do
+    "sudo -u postgres createdb" for instance. No password is required
+    by postgres.
+
+  * Or as a network user using a password.
+
+  Since we do not create a btw user on the machine, we must use the
+  2nd option. Therefore all connections must be done by specifying
+  ``localhost`` as the host.
+
+3. Create a `default` database entry in the configuration::
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'btw',
+            'USER': 'btw',
+            'PASSWORD': 'whatever password',
+            'HOST': '127.0.0.1'
+        }
+    }
+
+  You probably want to put this inside a file local to your
+  installation. See `Environment and Settings`_.
 
 =========
  Testing

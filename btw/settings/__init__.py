@@ -26,12 +26,12 @@ MANAGERS = ADMINS
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'lexicography_main'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(TOPDIR, 'btw.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(TOPDIR, 'btw.sqlite3'),
+#     }
+# }
 
 CACHES = {
     'default': {
@@ -119,9 +119,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
+
+ATOMIC_REQUESTS = True
 
 ROOT_URLCONF = 'btw.urls'
 
