@@ -338,12 +338,6 @@ class TestTitleView(BaseTest):
                      len(mock_records),
                      "all items should have been cached as ``Item``")
 
-# We use ``side_effect`` for this mock because we need to refetch
-# ``mock_records.values`` at run time since we change it for some
-# tests.
-get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
-get_item_mock = mock.Mock(side_effect=mock_records.get_item)
-
 
 @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
                      get_item=get_item_mock)
