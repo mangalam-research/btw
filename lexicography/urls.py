@@ -20,8 +20,6 @@ urlpatterns = patterns(
         name="lexicography_change_revert"),
 
     url(r'^entry/new$', 'entry_new', name='lexicography_entry_new'),
-    #LoginRequiredCreateView.as_view(form_class=SaveForm,
-    # template_name="lexicography/new.html"),
     url(r'^log$', 'log', name='lexicography_log'),
 )
 
