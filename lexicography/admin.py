@@ -13,7 +13,7 @@ def make_link_method(field_name, display_name=None):
     def method(self, obj):
         field = getattr(obj, field_name)
         # pylint: disable-msg=W0212
-        model_name = field._meta.module_name
+        model_name = field._meta.model_name
         return mark_safe(u'<a href="%s">%s</a>' %
                          (urlresolvers.reverse("admin:lexicography_" +
                                                model_name + "_change",
@@ -37,6 +37,7 @@ class EntryAdmin(admin.ModelAdmin):
 
 
 class ChangeRecordAdmin(admin.ModelAdmin):
+
     class Media(object):
         js = (settings.BTW_REQUIREJS_PATH,
               settings.BTW_REQUIREJS_CONFIG_PATH,
