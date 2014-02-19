@@ -11,19 +11,21 @@ class SearchForm(forms.Form):
 
 
 class RawSaveForm(forms.ModelForm):
+
     class Meta(object):
         model = Chunk
-        exclude = ('c_hash', 'is_normal')
+        fields = ('data', )
 
 
 class SaveForm(forms.ModelForm):
+
     class Media(object):
         js = (settings.BTW_REQUIREJS_PATH, ) \
             if not settings.BTW_WED_USE_REQUIREJS else ()
 
     class Meta(object):
         model = Chunk
-        exclude = ('c_hash', 'is_normal')
+        fields = ('data', )
 
     logurl = forms.CharField(widget=forms.HiddenInput(),
                              initial=reverse_lazy('lexicography_log'))
