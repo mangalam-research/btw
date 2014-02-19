@@ -16,7 +16,6 @@ The possible state transitions are:
 
 
 from django.template.response import TemplateResponse
-from django.db import transaction
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -52,10 +51,6 @@ on the entry before calling this function.
 :returns: The lock if the lock was acquired, or ``None`` if not.
 :rtype: :class:`.EntryLock`
 """
-    if not transaction.is_managed():
-        raise Exception("_acquire_entry_lock requires transactions to be "
-                        "managed")
-
     lock = EntryLock()
     lock.entry = entry
     now = util.utcnow()
@@ -71,19 +66,14 @@ def release_entry_lock(entry, user):
     """
 Release the lock on an entry. It is a fatal error to call this
 function with a user who does not currently own the lock on the entry
-passed to the function. This function requires manual transaction to
-be enabled.
+passed to the function.
 
 :param entry: The entry for which we want to release the lock.
 :type entry: :class:`.Entry`
 :param user: The user requesting the release.
 :type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
 """
-    if not transaction.is_managed():
-        raise Exception("release_entry_lock requires transactions to be "
-                        "managed")
-
-    lock = EntryLock.objects.select_for_update().get(entry=entry)
+    lock = EntryLock.objects.select_for_update().get(id=entry.id)
     if lock.owner != user:
         raise ValueError("the user releasing the lock is not the one who owns "
                          "it")
@@ -95,15 +85,11 @@ be enabled.
 
 def _refresh_entry_lock(lock):
     """
-Refresh the entry lock. This function requires manual transaction to
-be enabled.
+Refresh the entry lock.
 
 :param lock: The lock to update.
 :type lock: :class:`.EntryLock`
 """
-    if not transaction.is_managed():
-        raise Exception("refresh_entry_lock requires transactions to be "
-                        "managed")
     lock.datetime = util.utcnow()
     lock.save()
     _report(lock, "refreshed")
@@ -111,18 +97,13 @@ be enabled.
 
 def _expire_entry_lock(lock, user):
     """
-Expire the entry lock. This function requires manual transaction to be
-enabled.
+Expire the entry lock.
 
 :param lock: The lock to update.
 :type lock: :class:`.EntryLock`
 :param user: The user updating the lock.
 :type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
 """
-    if not transaction.is_managed():
-        raise Exception("expire_entry_lock requires transactions to be "
-                        "managed")
-
     if lock.is_expirable():
         lock_id = lock.id
         lock.delete()
@@ -134,8 +115,7 @@ enabled.
 
 def try_acquiring_lock(entry, user):
     """
-Attempt to acquire the lock. This function requires manual transaction
-to be enabled.
+Attempt to acquire the lock.
 
 :param lock: The lock to update.
 :type lock: :class:`.EntryLock`
@@ -144,9 +124,6 @@ to be enabled.
 :returns: The lock if successful. ``None`` otherwise.
 :rtype: :class:`.EntryLock`
 """
-    if not transaction.is_managed():
-        raise Exception("try_acquiring_lock requires transactions to be "
-                        "managed")
     lock = None
     try:
         lock = entry.entrylock_set.all().select_for_update()[0]
@@ -193,17 +170,15 @@ back.
         lock = try_acquiring_lock(entry, user)
         if lock is None:
             # Ok, we just did not manage to get the lock, tell the user.
-            lock = EntryLock.objects.get(id=entry_id)
+            lock = EntryLock.objects.get(entry=entry_id)
             if request.is_ajax():
                 messages = [
                     {'type': 'locked',
                      'msg': 'The entry is locked by user %s' % str(lock.owner)}
                 ]
                 resp = json.dumps({'messages': messages}, ensure_ascii=False)
-                transaction.rollback()
                 return HttpResponse(resp, content_type="application/json")
             else:
-                transaction.rollback()
                 return TemplateResponse(
                     request, 'lexicography/locked.html',
                     {'page_title': settings.BTW_SITE_NAME + " | Lexicography",

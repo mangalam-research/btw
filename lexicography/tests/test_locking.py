@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.db import transaction
 
 import os
 import time
@@ -38,22 +37,19 @@ class LockingTestCase(TestCase):
         self.stream.truncate(0)
 
     def test_try_acquiring_lock_success(self):
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
     def test_try_acquiring_lock_failure(self):
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
         # Foo2 tries to acquire a lock on the entry already locked by foo.
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
             r"^foo2 failed to expire lock \d+ on entry \d+ "
@@ -61,53 +57,45 @@ class LockingTestCase(TestCase):
 
     def test_try_acquiring_lock_on_two_entries(self):
         # Same user acquires lock on two different entries.
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_foo, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_foo, self.foo)
         self.assertIsNotNone(lock)
 
     def test_try_acquiring_lock_two_users_two_entries(self):
         # Two users acquiring locks on two different entries. That's
         # okay.
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo2 acquired lock \d+ on entry \d+ \(headword: foo\)$")
 
     def test_try_acquiring_lock_refreshes(self):
         # A user acquires a lock on an entry already locked by this user.
-        with transaction.commit_on_success():
-            first = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        first = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(first)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
         time.sleep(1)
-        with transaction.commit_on_success():
-            second = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        second = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(second)
         self.assertTrue(second.datetime > first.datetime)
         self.assertLogRegexp(
             r"^foo refreshed lock \d+ on entry \d+ \(headword: abcd\)$")
 
     def test_release_entry_lock_releases(self):
-        with transaction.commit_on_success():
-            acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
-                                                       self.foo)
+        acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
+                                                   self.foo)
         self.assertIsNotNone(acquired_lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
             r"^foo2 failed to expire lock \d+ on entry \d+ "
@@ -118,15 +106,13 @@ class LockingTestCase(TestCase):
             r"^foo released lock \d+ on entry \d+ \(headword: abcd\)$")
 
         # This will work because the lock was released
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo2 acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
     def test_try_acquiring_lock_expire_success(self):
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
@@ -136,17 +122,15 @@ class LockingTestCase(TestCase):
 
         # Foo2 tries to acquire a lock on the entry already locked by foo
         # and expires it
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
             r"^foo2 expired lock \d+ on entry \d+ \(headword: abcd\)\n"
             r"foo2 acquired lock \d+ on entry \d+ \(headword: abcd\)$")
 
     def test_release_entry_lock_fails_on_wrong_user(self):
-        with transaction.commit_on_success():
-            acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
-                                                       self.foo)
+        acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
+                                                   self.foo)
         self.assertIsNotNone(acquired_lock)
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")

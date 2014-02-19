@@ -1,6 +1,5 @@
 from django.test import TransactionTestCase
 from django.contrib.auth import get_user_model
-from django.db import transaction
 
 from ..models import Entry
 from .. import locking
@@ -36,8 +35,7 @@ class EntryTestCase(TransactionTestCase):
         """
         Tests that Entry.is_locked returns the user who owns the lock.
         """
-        with transaction.commit_on_success():
-            locking.try_acquiring_lock(self.entry, self.foo)
+        locking.try_acquiring_lock(self.entry, self.foo)
         user = self.entry.is_locked()
         self.assertEqual(user.id, self.foo.id)
 
@@ -45,8 +43,7 @@ class EntryTestCase(TransactionTestCase):
         """
         Tests that Entry.is_locked returns None on an expired lock.
         """
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry, self.foo)
+        lock = locking.try_acquiring_lock(self.entry, self.foo)
         lock._force_expiry()
         self.assertIsNone(self.entry.is_locked())
 
@@ -80,8 +77,7 @@ class EntryTestCase(TransactionTestCase):
         """
         Tests that Entry.is_editable_by(X) returns True when locked by X.
         """
-        with transaction.commit_on_success():
-            locking.try_acquiring_lock(self.entry, self.foo)
+        locking.try_acquiring_lock(self.entry, self.foo)
         self.assertTrue(self.entry.is_editable_by(self.foo))
 
     def test_is_editable_by_locked_by_other_but_expired(self):
@@ -89,8 +85,7 @@ class EntryTestCase(TransactionTestCase):
         Tests that Entry.is_editable_by(X) returns True when locked by Y
         but the lock is expired.
         """
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(self.entry, self.foo)
+        lock = locking.try_acquiring_lock(self.entry, self.foo)
         lock._force_expiry()
         self.assertTrue(self.entry.is_editable_by(self.foo2))
 
@@ -98,8 +93,7 @@ class EntryTestCase(TransactionTestCase):
         """
         Tests that Entry.is_editable_by(X) returns False when locked by Y.
         """
-        with transaction.commit_on_success():
-            locking.try_acquiring_lock(self.entry, self.foo)
+        locking.try_acquiring_lock(self.entry, self.foo)
         self.assertFalse(self.entry.is_editable_by(self.foo2))
 
 
@@ -112,7 +106,6 @@ class EntryLockTestCase(TransactionTestCase):
 
     def test_is_expirable_expired(self):
         entry = Entry.objects.get(id=1)
-        with transaction.commit_on_success():
-            lock = locking.try_acquiring_lock(entry, self.foo)
+        lock = locking.try_acquiring_lock(entry, self.foo)
         lock._force_expiry()
         self.assertTrue(lock.is_expirable())

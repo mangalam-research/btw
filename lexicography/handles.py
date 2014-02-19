@@ -4,11 +4,12 @@
 
 """
 from django.db.models import Max
-from django.db import transaction
 
 from .models import Handle
 
+
 class HandleManager(object):
+
     """
     This class manages the mapping between entry ids and handles used
     for saving data. The handles provided by this class are passed to
@@ -42,6 +43,7 @@ class HandleManager(object):
 
     .. warning:: This class is not designed to provide security.
     """
+
     def __init__(self, session_key):
         self.session_key = session_key
         self.handle_to_handle_obj_id = {}
@@ -55,12 +57,9 @@ class HandleManager(object):
         :returns: The handle. Guaranteed to be unique for this session.
         :rtype: str
         """
-        if not transaction.is_managed():
-            raise Exception("transactions must be managed")
-
         max_handle = Handle.objects.select_for_update(). \
-                     filter(session=self.session_key). \
-                     aggregate(Max('handle'))['handle__max']
+            filter(session=self.session_key). \
+            aggregate(Max('handle'))['handle__max']
 
         handle = 0 if max_handle is None else max_handle + 1
         handle_obj = Handle(handle=handle, session=self.session_key)
@@ -81,9 +80,6 @@ class HandleManager(object):
         :param entry_id: The entry id.
         :type entry_id: int
         """
-        if not transaction.is_managed():
-            raise Exception("transactions must be managed")
-
         if self.id(handle) is not None:
             raise ValueError("handle {0} already associated".format(handle))
 
@@ -107,9 +103,6 @@ Return the id associated with a handle.
 :returns: The id.
 :rtype: int or None
 """
-        if not transaction.is_managed():
-            raise Exception("transactions must be managed")
-
         # If it is there and not none, it can't have changed, so we
         # don't have to read the database.
         if handle in self.handle_to_entry_id and \
@@ -123,7 +116,8 @@ Return the id associated with a handle.
         except Handle.DoesNotExist:
             raise ValueError("handle {0} does not exist".format(handle))
 
-        entry_id = handle_obj.entry.id if handle_obj.entry is not None else None
+        entry_id = handle_obj.entry.id if handle_obj.entry is not None \
+            else None
         self.handle_to_entry_id[handle] = entry_id
         self.handle_to_handle_obj_id[handle] = handle_obj.id
         if entry_id is not None:
@@ -131,6 +125,7 @@ Return the id associated with a handle.
         return entry_id
 
 _hms = {}
+
 
 def get_handle_manager(session):
     """

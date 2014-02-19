@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, \
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods
 from django.template import RequestContext
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError
 from django.conf import settings
 import os
 import subprocess
@@ -112,14 +112,13 @@ def update_entry(request, entry, chunk, xmltree, ctype, subtype):
     entry.ctype = ctype
     entry.csubtype = subtype
     entry.c_hash = chunk
-    cr.save()
+    # entry.save() first. So that if we have an integrity error, there is no
+    # stale ChangeRecord to remove.
     entry.save()
+    cr.save()
 
 
 def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
-    if not transaction.is_managed():
-        raise Exception("try_updating_entry requires transactions to be "
-                        "managed")
     chunk.save()
     if entry.id is None:
         entry.headword = xmltree.extract_headword()
@@ -232,28 +231,22 @@ def version_check(version):
 
 @login_required
 @require_POST
-@transaction.commit_manually
 def handle_save(request, handle_or_entry_id):
-    try:
-        if not request.is_ajax():
-            transaction.rollback()
-            return HttpResponseBadRequest()
+    if not request.is_ajax():
+        return HttpResponseBadRequest()
 
-        command = request.POST.get("command")
-        messages = []
-        if command:
-            messages += version_check(request.POST.get("version"))
-            if command == "check":
-                transaction.commit()
-            elif command in ("save", "recover"):
-                _save_command(request, handle_or_entry_id, command, messages)
-            else:
-                transaction.rollback()
-                return HttpResponseBadRequest("unrecognized command")
-        resp = json.dumps({'messages': messages}, ensure_ascii=False)
-        return HttpResponse(resp, content_type="application/json")
-    finally:
-        transaction.rollback()
+    command = request.POST.get("command")
+    messages = []
+    if command:
+        messages += version_check(request.POST.get("version"))
+        if command == "check":
+            pass
+        elif command in ("save", "recover"):
+            _save_command(request, handle_or_entry_id, command, messages)
+        else:
+            return HttpResponseBadRequest("unrecognized command")
+    resp = json.dumps({'messages': messages}, ensure_ascii=False)
+    return HttpResponse(resp, content_type="application/json")
 
 
 def _save_command(request, handle_or_entry_id, command, messages):
@@ -269,7 +262,6 @@ def _save_command(request, handle_or_entry_id, command, messages):
                 .format(request.user.username, handle,
                         request.session.session_key))
             messages.append({'type': 'save_fatal_error'})
-            transaction.rollback()
             return
     else:
         entry_id = handle_or_entry_id
@@ -283,7 +275,6 @@ def _save_command(request, handle_or_entry_id, command, messages):
         chunk.save()
         logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
         # Yes, we want to commit...
-        transaction.commit()
         messages.append({'type': 'save_fatal_error'})
         return
 
@@ -291,7 +282,6 @@ def _save_command(request, handle_or_entry_id, command, messages):
         messages.append(
             {'type': 'save_transient_error',
              'msg': 'Please specify a lemma for your entry.'})
-        transaction.rollback()
         return
 
     authority = xmltree.extract_authority()
@@ -324,10 +314,12 @@ def _save_command(request, handle_or_entry_id, command, messages):
                 {'type': 'save_transient_error',
                  'msg': 'The entry is locked by user %s.'
                  % lock.owner.username})
-            transaction.rollback()
+            # Clean up the chunk.
+            chunk.delete()
             return
     except IntegrityError:
-        transaction.rollback()
+        # Clean up the chunk.
+        chunk.delete()
         # Try to determine what the problem is. If there is an
         # IntegrityError it is possible that it is *not* due to a
         # duplicate headword.
@@ -347,7 +339,6 @@ def _save_command(request, handle_or_entry_id, command, messages):
     if entry_id is None:
         hm.associate(handle, entry.id)
     messages.append({'type': 'save_successful'})
-    transaction.commit()
 
 
 @login_required

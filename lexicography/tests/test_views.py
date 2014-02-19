@@ -264,7 +264,6 @@ class ViewsTestCase(TransactionWebTest):
         to save an entry that duplicates another entry's lemma, and
         that nothing is saved.
         """
-        # Tests what happens if a user tries to save without a lemma set.
         response, entry = self.open_abcd('foo')
 
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()

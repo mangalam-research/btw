@@ -10,6 +10,7 @@ import datetime
 
 
 class ChangeInfo(models.Model):
+
     class Meta(object):
         abstract = True
 
@@ -51,6 +52,7 @@ class ChangeInfo(models.Model):
 
 
 class Entry(ChangeInfo):
+
     class Meta(object):
         verbose_name_plural = "Entries"
         unique_together = (("headword"), )
@@ -152,6 +154,7 @@ LEXICOGRAPHY_LOCK_EXPIRY = \
 
 
 class EntryLock(models.Model):
+
     class Meta(object):
         verbose_name = "Entry lock"
         verbose_name_plural = "Entry locks"
@@ -179,22 +182,27 @@ class EntryLock(models.Model):
 
 
 class Authority(models.Model):
+
     class Meta(object):
         verbose_name_plural = "Authorities"
 
 
 class UserAuthority(Authority):
+
     class Meta(object):
         verbose_name_plural = "UserAuthorities"
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 class OtherAuthority(Authority):
+
     class Meta(object):
         verbose_name_plural = "OtherAuthorities"
     name = models.CharField(max_length=1024)
 
+
 class Handle(models.Model):
+
     class Meta(object):
         unique_together = (("session", "handle"), ("session", "entry"))
 
