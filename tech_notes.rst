@@ -70,6 +70,31 @@ The following instructions are for Postgresql 9.3.
   You probably want to put this inside a file local to your
   installation. See `Environment and Settings`_.
 
+4. Run::
+
+    ./manage.py syncdb
+
+5. Run::
+
+    ./manage.py migrate
+
+6. Go into the admin interface and make sure that there is a site with
+   id equal to the `SITE_ID` value from the settings, and a correct
+   domain name and display name.
+
+7. When deploying make sure the following settings are set::
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+
+8. Make sure the following environment variables are set::
+
+    HTTPS=on
+    wsgi.url_scheme=https
+
+
 =========
  Testing
 =========
