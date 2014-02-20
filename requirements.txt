@@ -1,4 +1,4 @@
-Django==1.5
+Django>=1.6
 # The south doc recommends not automatically upgrading beyond 0.8.
 South>=0.8.1,<0.8.99
 semver>=0.0.2
