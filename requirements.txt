@@ -7,3 +7,4 @@ django-webtest>=1.7.5
 django-less>=0.7.2
 mock>=1.0.1,<2
 mitmproxy>=0.10.0,<1
+django-allauth>=0.15.0

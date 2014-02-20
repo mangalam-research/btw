@@ -8,10 +8,11 @@ urlpatterns = patterns(
     '',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
-    url(r'^logout/$', 'core.views.logout', name="logout"),
+    url(r'^login/$', 'allauth.account.views.login', name="login"),
+    url(r'^logout/$', 'allauth.account.views.logout', name="logout"),
     url(r'^lexicography/', include('lexicography.urls')),
-    url(r'^bibliography/', include('bibliography.urls'))
+    url(r'^bibliography/', include('bibliography.urls')),
+    url(r'^accounts/', include('allauth.urls'))
 )
 
 

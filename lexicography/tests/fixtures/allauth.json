@@ -1,0 +1,26 @@
+[
+{
+  "pk": 1,
+  "model": "account.emailaddress",
+  "fields": {
+    "verified": true,
+    "user": [
+      "foo"
+    ],
+    "primary": true,
+    "email": "foo@foo.foo"
+  }
+},
+{
+  "pk": 2,
+  "model": "account.emailaddress",
+  "fields": {
+    "verified": true,
+    "user": [
+      "foo2"
+    ],
+    "primary": true,
+    "email": "foo2@foo.foo"
+  }
+}
+]

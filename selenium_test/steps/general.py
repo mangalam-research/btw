@@ -126,7 +126,7 @@ def step_impl(context, user_desc):
     config = context.selenic_config
 
     driver.get(config.SERVER + "/login")
-    name = util.find_element((By.NAME, "username"))
+    name = util.find_element((By.NAME, "login"))
     pw = util.find_element((By.NAME, "password"))
     form = util.find_element((By.TAG_NAME, "form"))
 

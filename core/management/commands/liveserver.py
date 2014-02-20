@@ -47,7 +47,7 @@ class SeleniumTest(LiveServerTestCase):
     fixtures = [os.path.join("lexicography", "fixtures",
                              "initial_data.json")] + \
         list(os.path.join("lexicography", "tests", "fixtures", x)
-             for x in ("users.json", "views.json"))
+             for x in ("users.json", "views.json", "allauth.json"))
 
     def __init__(self, control, *args, **kwargs):
         self.__control = control

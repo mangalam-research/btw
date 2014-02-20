@@ -140,8 +140,19 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
+    # Required by allauth template tags
+    "django.core.context_processors.request",
     "django.contrib.messages.context_processors.messages",
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
     "btw.context_processors.global_context_processor",
+)
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 INSTALLED_APPS = (
@@ -164,7 +175,32 @@ INSTALLED_APPS = (
     'wed',
     'lexicography',
     'bibliography',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.angellist',
+    # 'allauth.socialaccount.providers.bitly',
+    # 'allauth.socialaccount.providers.dropbox',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.feedly',
+    # 'allauth.socialaccount.providers.github',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.instagram',
+    # 'allauth.socialaccount.providers.linkedin',
+    # 'allauth.socialaccount.providers.openid',
+    # 'allauth.socialaccount.providers.persona',
+    # 'allauth.socialaccount.providers.soundcloud',
+    # 'allauth.socialaccount.providers.stackexchange',
+    # 'allauth.socialaccount.providers.twitch',
+    # 'allauth.socialaccount.providers.twitter',
+    # 'allauth.socialaccount.providers.vimeo',
+    # 'allauth.socialaccount.providers.vk',
+    # 'allauth.socialaccount.providers.weibo',
 )
+
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
