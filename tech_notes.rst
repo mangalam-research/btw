@@ -82,18 +82,23 @@ The following instructions are for Postgresql 9.3.
    id equal to the `SITE_ID` value from the settings, and a correct
    domain name and display name.
 
-7. When deploying make sure the following settings are set::
+7. When deploying make sure the following Django settings are set as
+   follows::
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
-8. Make sure the following environment variables are set::
+
+8. Make sure that the ``DEFAULT_FROM_EMAIL`` Django setting is set to
+   the value you want to use as the ``From:`` field of emails sent for
+   invitations to register to the site.
+
+9. Make sure the following environment variables are set as follows::
 
     HTTPS=on
     wsgi.url_scheme=https
-
 
 =========
  Testing

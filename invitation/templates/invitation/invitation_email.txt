@@ -1,0 +1,11 @@
+{% if sender_note %}
+{{sender_note}}{% endif %}
+
+You have been invited to join {{ site.name }}.
+
+Click the link below to register. This link will expire in {{expiration_days}} days.
+
+{{link}}
+
+All the best,
+The {{ site.name }} Team

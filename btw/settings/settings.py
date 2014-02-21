@@ -178,6 +178,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'invitation',
     # 'allauth.socialaccount.providers.angellist',
     # 'allauth.socialaccount.providers.bitly',
     # 'allauth.socialaccount.providers.dropbox',
@@ -201,6 +202,10 @@ INSTALLED_APPS = (
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_ADAPTER = 'invitation.account_adapter.AccountAdapter'
+ACCOUNT_SIGNUP_FORM_CLASS = 'core.forms.SignupForm'
+
+INVITATION_EXPIRY_DAYS = 5
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 

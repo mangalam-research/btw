@@ -12,7 +12,8 @@ urlpatterns = patterns(
     url(r'^logout/$', 'allauth.account.views.logout', name="logout"),
     url(r'^lexicography/', include('lexicography.urls')),
     url(r'^bibliography/', include('bibliography.urls')),
-    url(r'^accounts/', include('allauth.urls'))
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^invitation/', include('invitation.urls'))
 )
 
 

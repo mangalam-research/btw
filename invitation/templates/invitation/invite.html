@@ -1,0 +1,11 @@
+{% extends "base_site.html" %}
+{% load url from future %}
+{% block content %}
+<div>
+<form action="{% url 'invitation_invite' %}" method="POST">
+{% csrf_token %}
+{{form.as_p}}
+<button class="btn btn-primary" type="submit">Send Invitation</button>
+</form>
+</div>
+{% endblock %}
