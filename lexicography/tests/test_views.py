@@ -31,29 +31,6 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(type(a), type(b))
         self.assertEqual(a.pk, b.pk)
 
-    def test_login(self):
-        """
-        Tests that a user can login.
-        """
-        form = self.app.get(reverse("login")).form
-        form['username'] = 'foo'
-        form['password'] = 'foo'
-        response = form.submit()
-        self.assertEqual(response.location,
-                         server_name + "/lexicography/")
-        response = response.follow()
-        self.assertEqual(response.context['user'].username, 'foo')
-
-    def test_logout(self):
-        """
-        Tests that a user can logout.
-        """
-        response = self.app.get(reverse("logout"), user=self.foo)
-        self.assertEqual(response.location,
-                         server_name + "/lexicography/")
-        response = response.follow()
-        self.assertEqual(response.context['user'].username, '')
-
     def test_main(self):
         """
         Tests that a logged in user can issue a search on the main page.
