@@ -178,8 +178,8 @@ downloads build:
 downloads/$(JQUERY_COOKIE_BASE): downloads
 	$(WGET) -O $@ $(JQUERY_COOKIE_URL)
 
-downloads/$(CITEPROC_BASE): downloads
-	$(WGET) -O $@ $(CITEPROC_URL)
+#downloads/$(CITEPROC_BASE): downloads
+#	$(WGET) -O $@ $(CITEPROC_URL)
 
 downloads/$(DATATABLES_BASE): downloads
 	$(WGET) -O $@ $(DATATABLES_URL)
