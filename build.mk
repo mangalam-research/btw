@@ -5,11 +5,6 @@
 # modify this file. What follows are the default values.
 #
 
-# No default value for wed path
-ifndef WED_PATH
-$(error WED_PATH must point to the top level directory of wed\'s file tree.)
-endif
-
 # rst2html command.
 RST2HTML?=rst2html
 
@@ -53,8 +48,8 @@ XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 #CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
 #CITEPROC_BASE=citeproc-$(notdir $(CITEPROC_URL))
 
-# Which wed build to use
-WED_BUILD:=$(WED_PATH)/build/standalone
+WED_PATH:=./node_modules/wed
+WED_BUILD:=$(WED_PATH)/standalone
 WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
 WED_HTML_TO_XML_PATH:=$(WED_BUILD)/lib/wed/html-to-xml.xsl
 
@@ -191,3 +186,8 @@ downloads/$(DATATABLES_BASE): downloads
 
 downloads/$(XEDITABLE_BASE): downloads
 	$(WGET) -O $@ $(XEDITABLE_URL)
+
+.PHONY: clean
+clean::
+	-rm -rf build
+	-rm -rf sitestatic

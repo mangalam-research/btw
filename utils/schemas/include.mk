@@ -43,7 +43,7 @@ $$($(1)_outdir)/btw-storage-doc: $$($(1)_outdir)/utils/schemas/btw-storage.xml.c
 	-mkdir $$@
 	$$($(1)_SAXON) -s:$$< -xsl:$$($(1)_ODD2HTML) STDOUT=false splitLevel=0 outputDir=$$@
 
-clean:
+clean::
 	rm -rf $$($(1)_outdir)
 endef # UTIL_SCHEMAS_TEMPLATE
 
