@@ -105,7 +105,7 @@ $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	cp $< $@
 
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
-	lessc $< $@
+	node_modules/.bin/lessc $< $@
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
 
