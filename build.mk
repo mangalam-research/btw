@@ -146,14 +146,12 @@ $(BUILD_CONFIG)/%:
 $(BUILD_CONFIG)/nginx.conf:
 	sed -e's;@PWD@;$(PWD);'g $< > $@
 
-node_modules:
-	-mkdir $@
-
-node_modules/qunitjs: | node_modules
-	npm install qunitjs@1.12.0
-
-$(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).%: node_modules/qunitjs/qunit/qunit.% | node_modules/qunitjs
+$(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).%: node_modules/qunitjs/qunit/qunit.%
 	cp $< $@
+
+node_modules/qunitjs/qunit/qunit.%:
+	-mkdir -p node_modules
+	npm install qunitjs@$(QUNIT_VERSION)
 
 $(BUILD_DEST)/lib/external/jquery.cookie.js: downloads/$(JQUERY_COOKIE_BASE)
 	unzip -j -o -d $(dir $@) $< $(patsubst %.zip,%,$(JQUERY_COOKIE_BASE))/$(notdir $@)
