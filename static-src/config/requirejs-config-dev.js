@@ -1,7 +1,7 @@
 require.config({
  baseUrl: '/static/lib/',
  paths: {
-   jquery: 'external/jquery-1.9.1',
+   jquery: 'external/jquery-1.11.0',
    bootstrap: 'external/bootstrap/js/bootstrap.min',
    log4javascript: 'external/log4javascript',
    'jquery.bootstrap-growl': 'external/jquery.bootstrap-growl',
