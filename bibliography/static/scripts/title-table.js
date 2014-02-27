@@ -39,7 +39,7 @@ $(function() {
                                  }
                              },
                              success: function () {
-                                 table.fnDraw();
+                                 table.fnDraw(false);
                              },
                              emptytext: emptytext
                             });
