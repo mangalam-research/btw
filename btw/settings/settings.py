@@ -198,9 +198,10 @@ INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.weibo',
 )
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_UNIQUE_EMAIL = False
 ACCOUNT_ADAPTER = 'invitation.account_adapter.AccountAdapter'
 ACCOUNT_SIGNUP_FORM_CLASS = 'core.forms.SignupForm'
 
