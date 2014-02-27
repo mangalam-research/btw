@@ -1,6 +1,39 @@
 {% extends "base_site.html" %}
+{% load url from future %}
 {% block extrahead %}
 <script>
   var django_active_menu = "btw-home-menu";
 </script>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <h3>Buddhist Translators Workbench</h3>
+
+  <p>Welcome to the Buddhist Translators Workbench. If you have an
+    account, please <a href="{% url 'login' %}">log in</a>.</p>
+
+  <div class="col-lg-12 well well-sm">
+    <div class="col-lg-6">
+      <p>
+        Copyright 2013,
+        2014 <a href="http://www.mangalamresearch.org/">Mangalam
+          Research Center for Buddhist Languages, Berkeley, CA.</a>
+        </p>
+      <a href="http://www.mangalamresearch.org/"><img src="https://secure.gravatar.com/avatar/7fc4e7a64d9f789a90057e7737e39b2a"></img></a>
+    </div>
+    <div class="col-lg-6">
+      <p>
+        This project has been made possible in part by a Level I
+        Digital Humanities Start-up Grant and a Level II Digital
+        Humanities Start-up Grant from the National Endowment for
+        the Humanities (grant numbers HD-51383-11 and
+        HD-51772-13). Any views, findings, conclusions, or
+        recommendations expressed in this software do not
+        necessarily represent those of the National Endowment for
+        the Humanities.
+      </p>
+      <a href="http://www.neh.gov/"><img src="http://www.neh.gov/files/neh_logo_horizontal_rgb.jpg"></img></a>
+    </div>
+  </div>
+</div>
 {% endblock %}

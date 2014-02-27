@@ -1,5 +1,11 @@
 {% extends "base.html" %}
-{% block page_title %}{{ page_title }}{% endblock %}
+{% block page_title %}
+  {% if page_title %}
+    {{ page_title }}
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}
 
 {% block branding %}
 <ul id="btw-site-navigation" class="nav nav-pills">
@@ -21,7 +27,7 @@
   <a href="{% url 'login' %}">Log in</a>
   {% endif %}
   </li>
-</div>
+</ul>
 
 </ul>
 {% endblock %}

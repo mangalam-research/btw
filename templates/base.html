@@ -21,14 +21,20 @@
     </head>
 
     <body>
-        <div id="branding">
-        {% block branding %}{% endblock %}
-        </div>
-        {% block content %}{% endblock %}
-        <div class="site-footer">
-          {% comment %}
-          This is where the site-wide footer would go.
-          {% endcomment %}
+        <div class="container">
+          <div class="row" id="branding">
+            {% block branding %}{% endblock %}
+          </div>
+          {% block content %}{% endblock %}
+          <div class="row site-footer">
+            <div class="text-center navbar navbar-fixed-bottom"
+                 style="min-height: inherit;">
+              <p>Copyright 2013,
+                2014 <a href="http://www.mangalamresearch.org/">Mangalam
+                  Research Center for Buddhist Languages, Berkeley, CA.</a>
+              </p>
+            </div>
+          </div>
         </div>
         {% block end %}{% endblock %}
     </body>
