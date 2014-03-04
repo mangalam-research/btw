@@ -5,7 +5,8 @@ from .views import ItemList
 
 urlpatterns = patterns('bibliography.views',
                        url(r'^search/$', 'search', name='bibliography_search'),
-                       url(r'^title/$', 'title', name='bibliography_title'),
+                       url(r'^title/$', 'title', {'editable': True},
+                           name='bibliography_title'),
                        url(r'^exec/$', 'exec_', name='bibliography_exec'),
                        url(r'^results/$', 'results',
                            name='bibliography_results'),

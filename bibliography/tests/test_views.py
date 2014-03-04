@@ -59,9 +59,10 @@ class TestSearchView(BaseTest):
 
         assert_equal(response.status_code, 403)
 
+    @replay
     def test_search(self):
         """
-        Tests that when the user is logged it, doing an AJAX request on
+        Tests that when the user is logged in, doing an AJAX request on
         the search URL or loading the page yields a 200 response.
         """
         # login the test user

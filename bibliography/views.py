@@ -34,7 +34,8 @@ def ajax_login_required(view):
 
 @require_GET
 def search(request):
-    return _ajax_search(request) if request.is_ajax() else _search(request)
+    return _ajax_search(request) if request.is_ajax() else \
+        title(request, submenu="btw-bibliography-general-sub")
 
 
 @ajax_login_required
@@ -43,16 +44,6 @@ def _ajax_search(request):
     # present a unbound form.
     form = SearchForm()
     template = loader.get_template('bibliography/search_form.html')
-    context = RequestContext(request, {'form': form})
-    return HttpResponse(template.render(context))
-
-
-@login_required
-@require_GET
-def _search(request):
-    # present a unbound form.
-    form = SearchForm()
-    template = loader.get_template('bibliography/search.html')
     context = RequestContext(request, {'form': form})
     return HttpResponse(template.render(context))
 
@@ -70,11 +61,19 @@ def _cache_all():
 
 @login_required
 @require_GET
-def title(request):
+def title(request, editable=False, submenu="btw-bibliography-title-sub"):
     _cache_all()
     form = SearchForm()
     template = loader.get_template('bibliography/title.html')
-    context = RequestContext(request, {'form': form})
+    context = RequestContext(
+        request,
+        {
+            'form': form,
+            'can_edit': (editable and
+                         request.user.has_perm('bibliography.change_item')),
+            'submenu': submenu
+
+        })
     return HttpResponse(template.render(context))
 
 

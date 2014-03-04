@@ -8,12 +8,12 @@
 <link href="{{ btw_globals.btw_datatables_css_path }}" type="text/css" media="screen" rel="stylesheet" />
 <link href="{{ btw_globals.btw_bootstrap_editable_css_path }}" type="text/css" media="screen" rel="stylesheet" />
 <script>
-  var django_active_submenu = "btw-bibliography-title-sub";
+  var django_active_submenu = "{{ submenu }}";
   require.config({
     config: {
       "../scripts/title-table": {
           ajax_source_url: "{% url 'bibliography_title_table' %}",
-          can_edit: {{ perms.bibliography.change_item|yesno:'true,false' }}
+          can_edit: {{ can_edit|yesno:'true,false' }}
       }
     }
   });
