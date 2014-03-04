@@ -59,7 +59,12 @@ def before_all(context):
 
 def after_all(context):
     driver = context.driver
-    config.set_test_status(driver.session_id, not context.failed)
+
+    try:
+        config.set_test_status(driver.session_id, not context.failed)
+    except httplib.HTTPException:
+        # Ignore cases where we can't set the status.
+        pass
     selenium_quit = os.environ.get("SELENIUM_QUIT")
     if not ((selenium_quit == "never") or
             (context.failed and selenium_quit == "on-success")):
