@@ -50,9 +50,8 @@ def step_impl(context, order, what):
 
     column = COLUMNS[what]
 
-    header = table.find_elements_by_xpath("./thead/tr[1]/th")[column]
-
     def cond(*_):
+        header = table.find_elements_by_xpath("./thead/tr[1]/th")[column]
         classes = header.get_attribute("class").split(" ")
         return ORDERS[order].class_ in classes
 
