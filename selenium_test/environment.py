@@ -4,6 +4,7 @@ import urllib2
 import tempfile
 import subprocess
 import shutil
+import httplib
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -42,10 +43,24 @@ def before_all(context):
     # used.
     driver.set_window_size(1020, 580)
     context.initial_window_size = {"width": 1020, "height": 580}
-    assert_true(driver.desired_capabilities["nativeEvents"],
-                "BTW's test suite require that native events be available; "
-                "you may have to use a different version of your browser, "
-                "one for which Selenium supports native events.")
+    try:
+        assert_true(driver.desired_capabilities.get("nativeEvents", False),
+                    "BTW's test suite require that native events be "
+                    "available; you may have to use a different version of "
+                    "your browser, one for which Selenium supports native "
+                    "events.")
+    except AssertionError:
+        # Make sure to mark the test as failed.
+        try:
+            config.set_test_status(driver.session_id, False)
+        except httplib.HTTPException:
+            # Ignore cases where we can't set the status.
+            pass
+
+        # We don't want to check SELENIUM_QUIT here.
+        driver.quit()
+
+        raise
 
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
