@@ -23,13 +23,13 @@
                 var csrftoken = $.cookie('csrftoken');
                 var $parentform = $widget.parents("form").first();
                 options.ajaxlog = {
-                    url: $parentform.children("#id_logurl").val(),
+                    url: $parentform.find("#id_logurl").val(),
                     headers: {
                         'X-CSRFToken': csrftoken
                     }
                 };
                 options.save = {
-                    url: $parentform.children("#id_saveurl").val(),
+                    url: $parentform.find("#id_saveurl").val(),
                     headers: {
                         'X-CSRFToken': csrftoken
                     }
