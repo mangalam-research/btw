@@ -96,10 +96,16 @@ def before_all(context):
     context.behave_wait = behave_wait and float(behave_wait)
 
     context.server_tempdir = tempfile.mkdtemp()
-    context.server_fifo = os.path.join(context.server_tempdir, "fifo")
-    os.mkfifo(context.server_fifo)
+    context.server_write_fifo = os.path.join(
+        context.server_tempdir, "fifo_to_server")
+    os.mkfifo(context.server_write_fifo)
+    context.server_read_fifo = os.path.join(
+        context.server_tempdir, "fifo_from_server")
+    os.mkfifo(context.server_read_fifo)
+
     context.server = subprocess.Popen(
-        ["utils/start_nginx", context.server_fifo])
+        ["utils/start_nginx", context.server_write_fifo,
+         context.server_read_fifo])
 
 
 def after_all(context):
@@ -148,9 +154,8 @@ def before_scenario(context, scenario):
 
 def after_scenario(context, _scenario):
     driver = context.driver
-
     # Reset the server between scenarios.
-    with open(context.server_fifo, 'w') as fifo:
+    with open(context.server_write_fifo, 'w') as fifo:
         fifo.write("restart\n")
 
     # Overwrite onbeforeunload to prevent the dialog from showing up.
@@ -158,6 +163,7 @@ def after_scenario(context, _scenario):
     if (window.wed_editor)
         window.onbeforeunload = undefined;
     """)
+    driver.delete_all_cookies()
 
 
 def before_step(context, _step):

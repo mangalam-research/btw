@@ -1,6 +1,9 @@
 #!/bin/bash
 
-fifo=$1
+fifo_to_server=$1
+shift
+
+fifo_from_server=$1
 shift
 
 dead () {
@@ -26,6 +29,6 @@ mkdir -p var/log || true
 mkdir -p var/lib/nginx || true
 mkdir -p var/log/btw || true
 
-BTW_ENV=selenium ./manage.py liveserver localhost:7777 $fifo & nginx -c `pwd`/build/config/nginx.conf
+BTW_ENV=selenium ./manage.py liveserver localhost:7777 $fifo_to_server $fifo_from_server & nginx -c `pwd`/build/config/nginx.conf
 
 wait

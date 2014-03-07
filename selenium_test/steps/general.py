@@ -125,21 +125,31 @@ def step_impl(context, user_desc):
     util = context.util
     config = context.selenic_config
 
-    driver.get(config.SERVER + "/login")
-    name = util.find_element((By.NAME, "login"))
-    pw = util.find_element((By.NAME, "password"))
-    form = util.find_element((By.TAG_NAME, "form"))
-
     user = users[user_desc]
+    if not util.can_set_cookies:
+        driver.get(config.SERVER + "/login")
+        name = util.find_element((By.NAME, "login"))
+        pw = util.find_element((By.NAME, "password"))
+        form = util.find_element((By.TAG_NAME, "form"))
 
-    ActionChains(driver) \
-        .click(name) \
-        .send_keys(user.login) \
-        .click(pw) \
-        .send_keys(user.password) \
-        .perform()
+        ActionChains(driver) \
+            .click(name) \
+            .send_keys(user.login) \
+            .click(pw) \
+            .send_keys(user.password) \
+            .perform()
 
-    form.submit()
+        form.submit()
+    else:
+        driver.get(config.SERVER)
+        with open(context.server_write_fifo, 'w') as fifo:
+            fifo.write("login " + user.login + " " + user.password + "\n")
+        with open(context.server_read_fifo, 'r') as fifo:
+            session_key = fifo.read().strip()
+            driver.add_cookie({'name': 'sessionid',
+                               'value': session_key})
+            driver.add_cookie({'name': 'csrftoken',
+                               'value': 'foo'})
 
 
 @Given("^a document with a single sense(?: that does not have a subsense)?$")
