@@ -151,7 +151,7 @@ def after_scenario(context, _scenario):
 
     # Reset the server between scenarios.
     with open(context.server_fifo, 'w') as fifo:
-        fifo.write("1")
+        fifo.write("restart\n")
 
     # Overwrite onbeforeunload to prevent the dialog from showing up.
     driver.execute_script("""

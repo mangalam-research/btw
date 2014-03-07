@@ -65,10 +65,14 @@ class SeleniumTest(LiveServerTestCase):
         threading.Thread.join(self.server_thread)
 
     def control(self):
-        open(self.__control, 'r').read(1)
-        self.server_thread.join()
-        print "Restarting..."
-        os.execl(sys.executable, sys.executable, *sys.argv)
+        while True:
+            command = open(self.__control, 'r').read()
+            if command == "restart\n":
+                self.server_thread.join()
+                print "Restarting..."
+                os.execl(sys.executable, sys.executable, *sys.argv)
+            else:
+                print "Unknown command: ", command
 
 
 class Runner(DjangoTestSuiteRunner):
