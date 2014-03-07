@@ -149,17 +149,15 @@ def before_scenario(context, scenario):
 def after_scenario(context, _scenario):
     driver = context.driver
 
-    # If the scenario ends on an editor window, we want to move away
-    # from it NOW so that the next scenario does not trigger the alert
-    # about moving away.
-    if driver.execute_script("return window.wed_editor !== undefined;"):
-        driver.get(context.selenic_config.SERVER + "/lexicography")
-        alert = driver.switch_to_alert()
-        alert.accept()
-
     # Reset the server between scenarios.
     with open(context.server_fifo, 'w') as fifo:
         fifo.write("1")
+
+    # Overwrite onbeforeunload to prevent the dialog from showing up.
+    driver.execute_script("""
+    if (window.wed_editor)
+        window.onbeforeunload = undefined;
+    """)
 
 
 def before_step(context, _step):
