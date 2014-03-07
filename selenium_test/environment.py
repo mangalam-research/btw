@@ -33,8 +33,38 @@ assert_equal.im_self.longMessage = True
 import wedutil
 from selenium_test import btw_util
 
+import atexit
+
+
+def cleanup(context, failed):
+    driver = context.driver
+
+    if driver:
+        try:
+            config.set_test_status(
+                driver.session_id, not (failed or context.failed))
+        except httplib.HTTPException:
+            # Ignore cases where we can't set the status.
+            pass
+        selenium_quit = os.environ.get("SELENIUM_QUIT")
+        if not ((selenium_quit == "never") or
+                (context.failed and selenium_quit == "on-success")):
+            driver.quit()
+        context.driver = None
+
+    if context.server:
+        context.server.terminate()
+        context.server = None
+
+    if context.server_tempdir:
+        shutil.rmtree(context.server_tempdir, True)
+        context.server_tempdir = None
+
 
 def before_all(context):
+
+    atexit.register(cleanup, context, True)
+
     driver = config.get_driver()
     context.driver = driver
     context.util = selenic.util.Util(driver)
@@ -73,19 +103,7 @@ def before_all(context):
 
 
 def after_all(context):
-    driver = context.driver
-
-    try:
-        config.set_test_status(driver.session_id, not context.failed)
-    except httplib.HTTPException:
-        # Ignore cases where we can't set the status.
-        pass
-    selenium_quit = os.environ.get("SELENIUM_QUIT")
-    if not ((selenium_quit == "never") or
-            (context.failed and selenium_quit == "on-success")):
-        driver.quit()
-    context.server.terminate()
-    shutil.rmtree(context.server_tempdir, True)
+    cleanup(context, False)
 
 
 def before_scenario(context, scenario):
