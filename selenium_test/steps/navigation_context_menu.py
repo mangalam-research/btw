@@ -35,6 +35,14 @@ def step_impl(context, item, under):
         return search_point.find_element_by_partial_link_text(item)
 
     link = util.wait(cond)
+
+    # We must do this to make sure that the element is completely
+    # visible.
+    driver.execute_script("""
+    var el = arguments[0];
+    el.scrollIntoView(true);
+    """, link)
+
     target = link.location
     target["x"] += 10
     target["y"] += 10
