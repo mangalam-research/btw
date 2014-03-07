@@ -1,0 +1,15 @@
+#!/bin/bash
+
+size=1024x600
+number=:1
+
+type=${1-"Xephyr"}
+
+case $type in
+    Xephyr )
+        Xephyr $number -screen "$size";;
+    Xvfb | fb)
+        Xvfb $number -screen 0 "$size"x16;;
+    * ) echo "Unknown type: $type"
+        exit 1;;
+esac
