@@ -143,7 +143,7 @@ def before_scenario(context, scenario):
             urllib2.urlopen(config.SERVER + "/login")
             found = True
         except urllib2.URLError:
-            time.sleep(0.5)
+            time.sleep(0.1)
 
 
 def after_scenario(context, _scenario):
