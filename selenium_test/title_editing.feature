@@ -83,3 +83,22 @@ Scenario: the user cannot enter duplicate titles
   Then the title for reference of row 1 has an error message.
   When the user reloads the page for editing titles
   Then the title for reference of row 1 is "[No title assigned.]"
+
+Scenario: the user can delete titles
+  Given that the items are sorted by ascending creators
+  When the user clicks on the title for reference of row 0
+  And the user types "BBBB"
+  And the user types ENTER
+  Then the title for reference of row 0 is "BBBB"
+  When the user clicks on the title for reference of row 1
+  And the user types "AAAA"
+  And the user types ENTER
+  Then the title for reference of row 1 is "AAAA"
+  When the user clicks on the title for reference of row 0
+  And the user clicks the clear button
+  And the user types ENTER
+  Then the title for reference of row 0 is "[No title assigned.]"
+  When the user clicks on the title for reference of row 1
+  And the user clicks the clear button
+  And the user types ENTER
+  Then the title for reference of row 1 is "[No title assigned.]"

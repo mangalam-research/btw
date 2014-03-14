@@ -302,7 +302,8 @@ class ItemList(BaseDatatableView):
 @require_POST
 def reference_title(request, itemKey):
     item = Item.objects.get(item_key=itemKey)
-    item.reference_title = request.POST.get('value')
+    # An empty field must be normalized to None.
+    item.reference_title = request.POST.get('value') or None
     try:
         item.save()
     except IntegrityError:

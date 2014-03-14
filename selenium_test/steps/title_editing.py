@@ -108,6 +108,13 @@ def step_impl(context, row_n):
     cell.click()
 
 
+@when(ur'^the user clicks the clear button$')
+def step_impl(context):
+    util = context.util
+    button = util.find_element((By.CLASS_NAME, "editable-clear-x"))
+    button.click()
+
+
 @then(ur'^the title for reference of row (?P<row_n>\d+) is '
       ur'"(?P<value>.*?)"\.?$')
 def step_impl(context, row_n, value):
