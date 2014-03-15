@@ -4,12 +4,15 @@
 
 * A module to assign genres to texts.
 
-* When BTW has been used to produce articles for a bit, evaluate how to detect near-synonyms. See "Semantic fields for BTW2013_ldd_Reply".
+* When BTW has been used to produce articles for a bit, evaluate how
+  to detect near-synonyms. See "Semantic fields for
+  BTW2013_ldd_Reply".
 
 * Support for Paul Hackett's AIBS API. See email from Jack circa
 2013-06-09.
 
-* Determine how to use X-Zotero-Write-Token. What constitutes a *same* transaction?
+* Determine how to use X-Zotero-Write-Token. What constitutes a *same*
+  transaction?
 
 ============
  Deployment
@@ -26,17 +29,155 @@
              integrity. Use Django 1.6 or use a backend other than
              sqlite3.
 
+Server Setup
+============
+
+This documentation is based on installing BTW on Debian Wheezy. Later
+versions of Debian or other distributions need these instructions
+adapted to their specific case.
+
+This documentation uses a virtual environment to allow for different
+projects running different versions of libraries. This is not,
+strictly speaking, necessary. If you do not want it, then you have to
+adapt the instructions so as to not use virtualenv.
+
+1. Install necessary packages::
+
+    $ apt-get install uwsgi postgresql-9.1 postgresqlgit python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc
+
+   We need the following packages from backports::
+
+    $ apt-get -t wheezy-backports install nginx
+
+2. Install ``/etc/apt/sources.list.d/tei.list`` from the config
+   tree. Or add the following source to your apt sources::
+
+    deb http://tei.oucs.ox.ac.uk/teideb/binary ./
+
+3. Install uwsgi with pip::
+
+    $ sudo pip install uwsgi
+
+   This is needed because Debian Wheezy ships an outdated version of
+   uwsgi. We are **also** installing the version shipped with Debian
+   so that we get the whole service infrastructure, etc. However, we
+   do this so that the infrastructure provided by the Debian package
+   actually runs the version provided by pip::
+
+    $ cd /usr/bin
+    $ rm uwsgi
+    $ ln -s ../local/bin/uwsgi .
+
+   And we do this to prevent our links getting overwritten::
+
+    $ apt-mark hold uwsgi
+
+   It is **strongly** sugested to have apticron installed so that you
+   get a warning once a new version of uwsgi is installed.
+
+4. Add this key to the list of keys recognized by ``apt`` so that you
+   don't get security issues with installing tei::
+
+    pub   1024D/86A9A497 2001-11-27
+    uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
+    sub   1024g/BFABA9D0 2001-11-27
+
+5. You can try connecting to the server on port 80 to see that nginx
+   is running. Then stop nginx and::
+
+    $ rm /etc/nginx/sites-enabled/default
+
+6. Create a top directory for the site::
+
+    $ mkdir /srv/www/<site>
+    $ cd /srv/www/<site>
+
+The above is just a suggestion. If you are doing this for Mangalam,
+then you **must** consult the documentation on how to install a server
+and check the section named "FS Structure" to use the proper
+structure.
+
+7. Create the virtual environment for BTW::
+
+    $ cd /srv/www/<site>
+    $ pip install virtualenv
+    $ virtualenv btw_env
+
+The Django Project
+==================
+
+Deploying Experimental Code
+---------------------------
+
+If you are deploying some sort of experimental version and you do not
+want to push to a public server you can do the following::
+
+1. ::
+
+    $ cd /srv/www/<site>
+    $ mkdir btw_repo
+    $ cd btw_repo
+    $ git init --bare
+
+2. Add your public key into the ``~/.ssh/authorized_keys`` of the project
+   account.
+
+3. In your own personal repository, add the remote::
+
+    $ git remote add [name] uid@site:/srv/www/<site>/btw_repo
+
+4. In your own personal repository, push::
+
+    $ git push [name]
+
+5. On the server, clone::
+
+    $ git clone btw_repo btw
+
+Now you have a local copy of the code.
+
+Deploying Published Code
+------------------------
+
+Execute::
+
+    $ cd /srv/www/<site>
+    $ git clone https://github.com/mangalam-research/btw.git
+
+Installing
+----------
+
+1. Go into the top directory of the Django project you cloned (see above). Issue::
+
+    $ ../btw_env/bin/pip install -r requirements.txt
+
+2. Install some Node dependencies::
+
+    $ npm install wed less
+
+3. Use the virtual environment::
+
+    $ source ../btw_env/bin/activate
+
+4. Create a BTW environment for BTW. (This is the "environment" which
+   determines which Django settings apply to BTW. See `Environment and
+   Settings`_.) The database details will be determined after the
+   database is created.
+
 Database
-========
+--------
 
 BTW needs to have its own database. We do not use MySQL/MariaDB due to
 `complications with using UTF8
 <https://docs.djangoproject.com/en/1.6/ref/databases/#collation-settings>`__.
-The following instructions are for Postgresql 9.3.
+The following instructions are for Postgresql 9.1, 9.3.
 
-1. Create a database and user for it::
+1. Create a user for it::
 
     $ sudo -u postgres createuser -P btw
+
+Answer all questions negatively. Create a database::
+
     $ sudo -u postgres createdb -O btw btw
 
 2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.6/ref/databases/#optimizing-postgresql-s-configuration).
@@ -55,7 +196,7 @@ The following instructions are for Postgresql 9.3.
   2nd option. Therefore all connections must be done by specifying
   ``localhost`` as the host.
 
-3. Create a `default` database entry in the configuration::
+3. Create a ``default`` database entry in the configuration::
 
     DATABASES = {
         'default': {
@@ -78,11 +219,17 @@ The following instructions are for Postgresql 9.3.
 
     ./manage.py migrate
 
-6. Go into the admin interface and make sure that there is a site with
-   id equal to the `SITE_ID` value from the settings, and a correct
-   domain name and display name.
+6. Run::
 
-7. When deploying make sure the following Django settings are set as
+    ./manage.py createcachetable bibliography_cache
+
+7. Make sure that there is a site with id equal to the `SITE_ID` value
+   from the settings, and a correct domain name and display name. In
+   SQL, the command to do this would be something like::
+
+    => update django_site set domain = '<name>', name='BTW' where id=<id>;
+
+8. When deploying make sure the following Django settings are set as
    follows::
 
     SESSION_COOKIE_SECURE = True
@@ -90,15 +237,69 @@ The following instructions are for Postgresql 9.3.
 
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
-
-8. Make sure that the ``DEFAULT_FROM_EMAIL`` Django setting is set to
+9. Make sure that the ``DEFAULT_FROM_EMAIL`` Django setting is set to
    the value you want to use as the ``From:`` field of emails sent for
-   invitations to register to the site.
+   invitations to register to the site. Same with the ``SERVER_EMAIL``
+   field. Note that they are probably not going to be the same value.
 
-9. Make sure the following environment variables are set as follows::
+10. Make sure that the ``ADMINS`` Django setting is set properly.
+
+11. Make sure that the ``BTW_WED_LOGGING_PATH`` and that any custom
+    logging is done in ``/var/log/`` rather than in ``/srv``.
+
+12. The file structure is::
+
+    btw_env      The virtualenv environment created earlier.
+    btw_repo     Possible repository you use if you are deploying experimental code.
+    btw          Where you checked out btw.
+    static       Where the static files are collected.
+    media        Where media files are stored.
+
+   So you must ensure that ``STATIC_ROOT`` and ``MEDIA_ROOT`` are set
+   to point to these directories which are **above** ``TOPDIR``.
+
+13. Run::
+
+    $ ./manage.py collectstatic
+
+14. Make sure the following environment variables are set as follows::
 
     HTTPS=on
     wsgi.url_scheme=https
+
+Finalizing
+----------
+
+This needs to be done last because the ``Makefile`` may use
+``manage.py``, which may require a complete configuration.
+
+Run make::
+
+    $ make
+
+Nginx
+-----
+
+If needed, create some new server keys::
+
+    $ cd /srv/www/<site>
+    $ openssl genrsa -out ssl.key 2048
+    $ openssl req -new -key ssl.key -out ssl.csr
+    [Answer the questions to identify the machine. Leave the password blank.]
+    $ openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt
+
+Install a proper configuration in
+``/etc/nginx/sites-available/<site>``, and link it to the
+``/etc/nginx/sites-enabled/`` directory. For Mangalam, the config tree
+contains the file that has been used so far.
+
+Uwsgi
+-----
+
+Install a proper configuration in
+``/etc/uwsgi/apps-available/btw.ini``, and link it to the
+``/etc/uwsgi/apps-enabled/`` directory. For Mangalam, the config tree
+contains the file that has been used so far.
 
 =========
  Testing
