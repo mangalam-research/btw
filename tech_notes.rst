@@ -277,6 +277,18 @@ Run make::
 
     $ make
 
+Upgrades
+--------
+
+Generally:
+
+1. Run::
+
+    $ ../btw_env/bin/activate
+    $ ./manage.py syncdb
+    $ ./manage.py migrate
+    $ make
+
 Nginx
 -----
 
