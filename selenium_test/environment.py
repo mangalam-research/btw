@@ -118,10 +118,8 @@ def before_scenario(context, scenario):
     driver = context.driver
     util = context.util
 
-    window_size = driver.get_window_size()
-    if window_size != context.initial_window_size:
-        driver.set_window_size(context.initial_window_size["width"],
-                               context.initial_window_size["height"])
+    driver.set_window_size(context.initial_window_size["width"],
+                           context.initial_window_size["height"])
 
     matching_funcs = set(m.func for m in
                          [step_registry.registry.find_match(s) for s
@@ -160,11 +158,17 @@ def after_scenario(context, _scenario):
     with open(context.server_write_fifo, 'w') as fifo:
         fifo.write("restart\n")
 
-    # Overwrite onbeforeunload to prevent the dialog from showing up.
-    driver.execute_script("""
+    logs = driver.execute_script("""
+    // Overwrite onbeforeunload to prevent the dialog from showing up.
     if (window.wed_editor)
-        window.onbeforeunload = undefined;
+        window.onbeforeunload = function () {};
+    return window.selenium_log;
     """)
+    if logs:
+        print
+        print "JavaScript log:"
+        print "\n".join(repr(x) for x in logs)
+        print
     driver.delete_all_cookies()
 
 

@@ -37,13 +37,14 @@ def setup_editor(context):
     driver = context.driver
 
     wedutil.wait_for_editor(util)
-    # ... and that tooltips are not displayed. Otherwise, a tooltip
-    # may still be visible after we set the preference to ``false``.
-    wedutil.wait_until_no_tooltip(util)
 
     # Turning off tooltips makes the tests much easier to handle.
     driver.execute_script("""
+    // Turn off tooltips
     wed_editor.preferences.set("tooltips", false);
+
+    // Delete all tooltips.
+    jQuery(".tooltip").remove();
     """)
 
 
