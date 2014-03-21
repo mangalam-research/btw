@@ -73,7 +73,6 @@ def before_all(context):
     context.selenic_config = config
     # Without this, window sizes vary depending on the actual browser
     # used.
-    driver.set_window_size(1020, 580)
     context.initial_window_size = {"width": 1020, "height": 580}
     try:
         assert_true(driver.desired_capabilities.get("nativeEvents", False),

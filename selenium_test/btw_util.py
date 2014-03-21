@@ -6,12 +6,14 @@ from selenium.webdriver.common.by import By
 
 
 class PlainRecorder(dict):
+
     def decorator(self, f):
         self[f] = True
         return f
 
 
 class SenseRecorder(dict):
+
     def decorator(self, *senses):
         def inner(f):
             self[f] = senses
@@ -75,43 +77,86 @@ record_subsenses_for = require_subsense_recording.decorator
 
 
 def get_sense_terms(util):
-    ret = []
-    for sense in get_senses(util):
-        try:
-            term = sense.find_element_by_class_name("btw\\:english-term").text
-        except NoSuchElementException:
-            term = None
-        ret.append(term)
-    return ret
+    return util.driver.execute_script("""
+    var $senses = jQuery(".btw\\\\:sense");
+    var ret = [];
+    for(var i = 0, limit = $senses.length; i < limit; ++i) {
+        var $term = $senses.eq(i).find(".btw\\\\:english-term");
+        if ($term.length > 1)
+            throw new Error("too many terms!");
+        ret.push($term[0] ? $term.text() : undefined);
+    }
+    return ret;
+    """)
 
 
 def get_senses(util):
     return util.find_elements((By.CLASS_NAME, "btw\\:sense"))
 
 
-def get_rendition_terms_for_sense(sense):
+def get_rendition_terms_for_sense(util, label):
     """
-    :param sense: The sense we're interested in.
-    :type sense: :class:`selenium.webdriver.remote.webelement.WebElement`
+    :param label: The label of the sense we're interested in.
+    :type label: :class:`str`
     :returns: A list of rendition terms for the sense.
     :rtype: :class:`list` of strings.
 
     """
-    ret = []
-    rends = sense.find_elements(By.CLASS_NAME, "btw\\:english-rendition")
-    for rend in rends:
-        try:
-            term = rend.find_element(By.CLASS_NAME, "btw\\:english-term").text
-        except NoSuchElementException:
-            term = None
-        ret.append(term)
-    return ret
+    return get_rendition_terms_for_senses(util, [label])[label]
 
 
-def get_subsenses_for_sense(util, sense):
+def get_rendition_terms_for_senses(util, labels):
     """
-    :param sense: The sense we're interested in.
-    :type sense: :class:`selenium.webdriver.remote.webelement.WebElement`
+    :param labels: The labesl of the sense we're interested in.
+    :type labels: :class:`list` of strings.
+    :returns: A dictionary of rendition terms.
+    :rtype: :class:`dict` whose keys are term labels and the values are
+            the rendition terms, as strings.
+
+    """
+    return util.driver.execute_script("""
+    var labels = arguments[0];
+
+    var ret = {};
+    for(var lix = 0, lix_limit = labels.length; lix < lix_limit; ++lix) {
+        var label = labels[lix];
+
+        var $sense = jQuery(".btw\\\\:sense")
+            .eq(label.charCodeAt(0) - "A".charCodeAt(0));
+
+        var $rends = $sense.find(".btw\\\\:english-rendition");
+        var rends = [];
+        for(var i = 0, limit = $rends.length; i < limit; ++i) {
+            var $term = $rends.eq(i).find(".btw\\\\:english-term");
+            if ($term.length > 1)
+                throw new Error("too many terms!");
+            rends.push($term[0] ? $term.text() : undefined);
+        }
+        ret[label] = rends;
+    }
+    return ret;
+    """, labels)
+
+
+def get_subsenses_for_sense(util, label):
+    """
+    :param label: The label of the sense we're interested in.
+    :type label: :class:`str`
+    :returns: A dictionary of subsense information.
+    :rtype: :class:`dict` whose keys are sense labels and whose values are
+            :class:`list` of dictionaries. Each dictionary has the key
+            ``explanation`` set to the text of the explanation of the
+            subsense and the key ``head`` set to the text of the
+            subsense's heading. Both values are strings.
+
+    """
+    return get_subsenses_for_senses(util, [label])[label]
+
+
+def get_subsenses_for_senses(util, labels):
+    """
+    :param labels: The labels of the sense we're interested in.
+    :type labels: :class:`list` of strings.
     :returns: A list of subsense information.
     :rtype: :class:`list` of dictionaries. Each dictionary has the key
             ``explanation`` set to the text of the explanation of the
@@ -119,32 +164,41 @@ def get_subsenses_for_sense(util, sense):
             subsense's heading. Both values are strings.
 
     """
-    ret = []
-    subsenses = sense.find_elements(By.CLASS_NAME, "btw\\:subsense")
-    for ss in subsenses:
-        try:
-            explanation = ss.find_element(By.CLASS_NAME,
-                                          "btw\\:explanation")
-            explanation = util.get_text_excluding_children(explanation)
-        except NoSuchElementException:
-            explanation = None
 
-        try:
-            head = ss.find_element(By.CLASS_NAME, "head").text
-        except NoSuchElementException:
-            head = None
-        ret.append({"explanation": explanation, "head": head})
-    return ret
+    return util.driver.execute_script("""
+    var labels = arguments[0];
 
+    var $ = jQuery;
 
-def sense_label_to_index(label):
-    return ord(label) - ord("A")
+    var ret = {};
 
+    for(var lix = 0, lix_limit = labels.length; lix < lix_limit; ++lix) {
+        var label = labels[lix];
+        var $sense = $(".btw\\\\:sense")
+            .eq(label.charCodeAt(0) - "A".charCodeAt(0));
+        var $sss = $sense.find(".btw\\\\:subsense");
+        var sss = [];
+        for(var i = 0, limit = $sss.length; i < limit; ++i) {
+            var $ss = $sss.eq(i);
+            var $expl = $ss.find(".btw\\\\:explanation");
+            if ($expl.length > 1)
+                throw new Error("too many explanations!");
 
-def get_sense_by_label(util, label):
-    sense_ix = sense_label_to_index(label)
-    senses = get_senses(util)
-    return senses[sense_ix]
+            var $head = $ss.find(".head");
+            if ($head.length > 1)
+                throw new Error("too many heads!");
+
+            var expl = $expl[0] &&
+                $expl.contents().filter(function() {
+                    return this.nodeType == Node.TEXT_NODE;
+                }).text();
+
+            sss.push({ explanation: expl, head: $head[0] && $head.text()});
+        }
+        ret[label] = sss;
+    }
+    return ret;
+    """, labels)
 
 
 def record_document_features(context):
@@ -156,19 +210,11 @@ def record_document_features(context):
         context.initial_sense_terms = get_sense_terms(util)
 
     if context.require_rendition_recording:
-        sense_els = get_senses(util)
-        context.initial_renditions_by_sense = {}
-        for sense in context.require_rendition_recording:
-            sense_el = sense_els[sense_label_to_index(sense)]
-            renditions = get_rendition_terms_for_sense(sense_el)
-
-            context.initial_renditions_by_sense[sense] = renditions
+        context.initial_renditions_by_sense = \
+            get_rendition_terms_for_senses(
+                util, list(context.require_rendition_recording))
 
     if context.require_subsense_recording:
-        sense_els = get_senses(util)
-        context.initial_subsenses_by_sense = {}
-        for sense in context.require_subsense_recording:
-            sense_el = sense_els[sense_label_to_index(sense)]
-            subsenses = get_subsenses_for_sense(util, sense_el)
-
-            context.initial_subsenses_by_sense[sense] = subsenses
+        context.initial_subsenses_by_sense = \
+            get_subsenses_for_senses(
+                util, list(context.require_subsense_recording))

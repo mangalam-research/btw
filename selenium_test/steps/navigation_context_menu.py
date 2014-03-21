@@ -24,26 +24,29 @@ step_matcher("re")
 def step_impl(context, item, under):
     driver = context.driver
     util = context.util
-    search_point = util.find_element((By.ID, "sidebar"))
-
-    if under:
-        search_point = util.wait(
-            lambda: search_point.find_element_by_partial_link_text(under)).\
-            find_element_by_xpath("..")
 
     def cond(*_):
-        return search_point.find_element_by_partial_link_text(item)
+        ret = driver.execute_script("""
+        var item = arguments[0];
+        var under = arguments[1];
 
-    link = util.wait(cond)
+        var $ = jQuery;
 
-    # We must do this to make sure that the element is completely
-    # visible.
-    driver.execute_script("""
-    var el = arguments[0];
-    el.scrollIntoView(true);
-    """, link)
+        var $search_point = under ?
+            $("a:contains(" + under + ")").parent() : $("#sidebar");
 
-    target = link.location
+        var $ret = $search_point.find("a:contains(" + item + ")");
+        var ret = $ret[0];
+        if (ret)
+          ret.scrollIntoView(true);
+        var offset = $ret.offset();
+        return [ret, {'x': offset.left, 'y': offset.top}];
+        """, item, under)
+        return ret if ret[0] else None
+
+    link, location = util.wait(cond)
+
+    target = location
     target["x"] += 10
     target["y"] += 10
     context.context_menu_location = target
@@ -83,6 +86,5 @@ def step_impl(context, item):
     util = context.util
 
     link = util.wait(EC.element_to_be_clickable((By.LINK_TEXT, item)))
-    context.clicked_context_menu_item = \
-        util.get_text_excluding_children(link).strip()
+    context.clicked_context_menu_item = item
     link.click()

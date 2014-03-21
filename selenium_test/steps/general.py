@@ -163,11 +163,10 @@ def step_impl(context):
     util = context.util
 
     sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
-    with util.local_timeout(1):
-        assert_raises(
-            NoSuchElementException,
-            sense.find_element,
-            (By.CSS_SELECTOR, r".btw\:subsense"))
+    assert_raises(
+        NoSuchElementException,
+        sense.find_element,
+        (By.CSS_SELECTOR, r".btw\:subsense"))
 
 
 @Given("^a document with a single sense that has a subsense$")

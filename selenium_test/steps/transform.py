@@ -13,17 +13,27 @@ sense_re = re.compile(r"sense (.)\b")
 
 
 def senses_in_order(util):
-    senses = btw_util.get_senses(util)
+    senses = util.driver.execute_script("""
+    var $senses = jQuery(".btw\\\\:sense");
+    var ret = [];
+    for(var i = 0, limit = $senses.length; i < limit; ++i) {
+        var $heads = $senses.eq(i).find(".head");
+        var heads = [];
+        for(var j = 0, j_limit = $heads.length; j < j_limit; ++j)
+            heads.push($heads.eq(j).text());
+        ret.push(heads);
+    }
+    return ret;
+    """)
     label_ix = ord("A")
+
     for sense in senses:
-        heads = sense.find_elements_by_class_name("head")
-        for head in heads:
-            text = head.text
-            if text.startswith("[SENSE"):
-                assert_equal(text, "[SENSE {0}]".format(chr(label_ix)),
+        for head in sense:
+            if head.startswith("[SENSE"):
+                assert_equal(head, "[SENSE {0}]".format(chr(label_ix)),
                              "head text")
-            elif "sense" in text:
-                match = sense_re.search(text)
+            elif "sense" in head:
+                match = sense_re.search(head)
                 assert_equal(match.group(1), chr(label_ix).lower(),
                              "subhead text")
         label_ix += 1
@@ -97,10 +107,8 @@ def step_impl(context):
     util = context.util
     initial_renditions = context.initial_renditions_by_sense["A"]
 
-    sense = btw_util.get_sense_by_label(util, "A")
-
     def cond(*_):
-        renditions = btw_util.get_rendition_terms_for_sense(sense)
+        renditions = btw_util.get_rendition_terms_for_sense(util, "A")
         return renditions if len(renditions) == len(initial_renditions) + 1 \
             else None
 
@@ -115,8 +123,7 @@ def step_impl(context):
     util = context.util
 
     initial_renditions = context.initial_renditions_by_sense["A"]
-    sense = btw_util.get_sense_by_label(util, "A")
-    renditions = btw_util.get_rendition_terms_for_sense(sense)
+    renditions = btw_util.get_rendition_terms_for_sense(util, "A")
     assert_equal(len(renditions), len(initial_renditions) + 1, "length")
     assert_is_none(renditions[0], "first rendition is new")
 
@@ -127,10 +134,8 @@ def step_impl(context):
     util = context.util
     initial_renditions = context.initial_renditions_by_sense["A"]
 
-    sense = btw_util.get_sense_by_label(util, "A")
-
     def cond(*_):
-        renditions = btw_util.get_rendition_terms_for_sense(sense)
+        renditions = btw_util.get_rendition_terms_for_sense(util, "A")
         return renditions if len(renditions) == len(initial_renditions) + 1 \
             else None
 
@@ -145,8 +150,7 @@ def step_impl(context):
     util = context.util
 
     initial_renditions = context.initial_renditions_by_sense["A"]
-    sense = btw_util.get_sense_by_label(util, "A")
-    renditions = btw_util.get_rendition_terms_for_sense(sense)
+    renditions = btw_util.get_rendition_terms_for_sense(util, "A")
     assert_equal(len(renditions), len(initial_renditions) + 1, "length")
     assert_is_none(renditions[1], "second rendition is new")
 
@@ -155,12 +159,10 @@ def step_impl(context):
 def step_impl(context):
     util = context.util
 
-    sense = util.find_element((By.CLASS_NAME, r"btw\:sense"))
-    subsenses = sense.find_elements_by_class_name(r"btw\:subsense")
+    subsenses = btw_util.get_subsenses_for_sense(util, "A")
 
     assert_equal(len(subsenses), 1, "there is one subsense")
-    head = subsenses[0].find_element_by_class_name("head")
-    assert_equal(head.text, "[brief explanation of sense a1]",
+    assert_equal(subsenses[0]["head"], "[brief explanation of sense a1]",
                  "correct heading")
 
 step_matcher('re')
@@ -172,12 +174,8 @@ step_matcher('re')
 def step_impl(context, where):
     util = context.util
 
-    sense = util.find_element((By.CLASS_NAME, r"btw\:sense"))
-    subsenses = sense.find_elements_by_class_name(r"btw\:subsense")
-
     initial_subsenses = context.initial_subsenses_by_sense["A"]
-    sense = btw_util.get_sense_by_label(util, "A")
-    subsenses = btw_util.get_subsenses_for_sense(util, sense)
+    subsenses = btw_util.get_subsenses_for_sense(util, "A")
     assert_equal(len(subsenses), len(initial_subsenses) + 1,
                  "one new subsense")
 

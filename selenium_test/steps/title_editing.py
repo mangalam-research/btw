@@ -7,10 +7,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 step_matcher('re')
 
-
-# pylint: disable=no-name-in-module
-from nose.tools import assert_true, assert_equal
-
 COLUMNS = {
     "title for reference": 0,
     "titles for reference": 0,
@@ -45,39 +41,42 @@ ORDERS = {
 @given(title_re)
 @then(title_re)
 def step_impl(context, order, what):
+    driver = context.driver
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
-
     column = COLUMNS[what]
+    op = ORDERS[order].op
 
     def cond(*_):
-        header = table.find_elements_by_xpath("./thead/tr[1]/th")[column]
-        classes = header.get_attribute("class").split(" ")
-        return ORDERS[order].class_ in classes
 
-    util.wait(cond)
+        cells = driver.execute_script("""
+        var colno = arguments[0];
+        var class_ = arguments[1];
 
-    def cond(*_):
-        rows = table.find_elements_by_xpath("./tbody/tr")
-        if len(rows) != 2:
+        var $ = jQuery;
+        var $table = $("#bibliography-table");
+        var $header = $table.find("thead>tr").first().find("th").eq(colno);
+        if (!$header[0] || !$header[0].classList.contains(class_))
+            return false;
+
+        var $rows = $table.find("tbody>tr");
+        if ($rows.length != 2)
+            return false;
+
+        var cells = [];
+        for(var i = 0, limit = $rows.length; i < limit; ++i) {
+            var $row = $rows.eq(i);
+            cells.push($row.children("td").eq(colno).text());
+        }
+
+        return cells;
+        """, column, ORDERS[order].class_)
+
+        if not cells:
             return False
 
-        cells = []
-        try:
-            for row in rows:
-                cell = row.find_elements_by_tag_name("td")[column]
-                cells.append(cell)
-        except StaleElementReferenceException:
-            return False
-
-        op = ORDERS[order].op
-
-        try:
-            for i in xrange(0, len(cells) - 1):
-                if not op(cells[i].text, cells[i + 1].text):
-                    return False
-        except StaleElementReferenceException:
-            return False
+        for i in xrange(0, len(cells) - 1):
+            if not op(cells[i], cells[i + 1]):
+                return False
 
         return True
 
@@ -88,24 +87,32 @@ def step_impl(context, order, what):
       ur'(?P<what>creators|dates|original titles|titles for reference)$')
 def step_impl(context, what):
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
-
     column = COLUMNS[what]
 
-    headers = table.find_elements_by_xpath("./thead/tr[1]/th")
-    headers[column].click()
+    header = util.find_element((
+        By.XPATH,
+        "//table[@id='bibliography-table']/thead/tr[1]/th[{0}]".format(
+            column + 1)))
+    header.click()
 
 
 @when(ur'^the user clicks on the title for reference of row (?P<row_n>\d+)$')
 def step_impl(context, row_n):
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
-
     column = COLUMNS["title for reference"]
 
-    cell = table.find_element_by_xpath(
-        "./tbody/tr[{0}]/td[{1}]/span".format(int(row_n) + 1, column + 1))
-    cell.click()
+    def cond(*_):
+        try:
+            cell = util.find_element((
+                By.XPATH,
+                "//table[@id='bibliography-table']/tbody/tr[{0}]/td[{1}]/span"
+                .format(int(row_n) + 1, column + 1)))
+            cell.click()
+            return True
+        except StaleElementReferenceException:
+            return False
+
+    util.wait(cond)
 
 
 @when(ur'^the user clicks the clear button$')
@@ -118,23 +125,26 @@ def step_impl(context):
 @then(ur'^the title for reference of row (?P<row_n>\d+) is '
       ur'"(?P<value>.*?)"\.?$')
 def step_impl(context, row_n, value):
+    driver = context.driver
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
 
     column = COLUMNS["title for reference"]
+    row_n = int(row_n)
 
     def cond(*_):
-        cell = table.find_element_by_xpath(
-            "./tbody/tr[{0}]/td[{1}]".format(int(row_n) + 1, column + 1))
-        ret = False
+        return driver.execute_script("""
+        var row_n = arguments[0];
+        var colno = arguments[1];
+        var text = arguments[2];
 
-        # The cell might get recreated while we are doing this.
-        try:
-            ret = cell.text == value
-        except StaleElementReferenceException:
-            pass
+        var $ = jQuery;
+        var $table = $("#bibliography-table");
+        var $cell = $table.find("tbody>tr").eq(row_n).children("td").eq(colno);
+        if (!$cell[0])
+            return false;
 
-        return ret
+        return $cell.text() === text;
+        """, row_n, column, value)
 
     util.wait(cond)
 
@@ -142,23 +152,25 @@ def step_impl(context, row_n, value):
 @then(ur'^the title for reference of row (?P<row_n>\d+) has an error '
       ur'message\.?$')
 def step_impl(context, row_n):
+    driver = context.driver
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
 
     column = COLUMNS["title for reference"]
 
     def cond(*_):
-        cell = table.find_element_by_xpath(
-            "./tbody/tr[{0}]/td[{1}]".format(int(row_n) + 1, column + 1))
-        ret = False
+        return driver.execute_script("""
+        var row_n = arguments[0];
+        var colno = arguments[1];
+        var text = arguments[2];
 
-        # The cell might get recreated while we are doing this.
-        try:
-            ret = cell.find_element_by_class_name("editable-error-block")
-        except StaleElementReferenceException:
-            pass
+        var $ = jQuery;
+        var $table = $("#bibliography-table");
+        var $cell = $table.find("tbody>tr").eq(row_n).children("td").eq(colno);
+        if (!$cell[0])
+            return false;
 
-        return ret
+        return $cell.find(".editable-error-block")[0];
+        """, row_n, column)
 
     util.wait(cond)
 
@@ -170,12 +182,17 @@ rows_re = ur'^there (?:is|are) (?P<number>\d+) rows?\.?$'
 def step_impl(context, number):
     number = int(number)
 
+    driver = context.driver
     util = context.util
-    table = util.find_element((By.ID, "bibliography-table"))
 
     def cond(*_):
-        rows = table.find_elements_by_xpath("./tbody/tr")
-        return rows if len(rows) == number else None
+        return driver.execute_script("""
+        var no = arguments[0];
+
+        var $ = jQuery;
+        var $table = $("#bibliography-table");
+        return $table.find("tbody>tr").length === no;
+        """, number)
 
     util.wait(cond)
 
