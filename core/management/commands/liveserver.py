@@ -61,6 +61,13 @@ class SeleniumTest(LiveServerTestCase):
         list(os.path.join("lexicography", "tests", "fixtures", x)
              for x in ("users.json", "views.json", "allauth.json"))
 
+    def setUp(self):
+        from bibliography.models import Item
+        item = Item(item_key="3")
+        item.uid = Item.objects.zotero.full_uid
+        item.reference_title = "Foo"
+        item.save()
+
     def __init__(self, control_read, control_write, *args, **kwargs):
         self.__control_read = control_read
         self.__control_write = control_write
