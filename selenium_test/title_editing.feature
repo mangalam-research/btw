@@ -66,7 +66,7 @@ Scenario: the user's editing is saved
   And the title for reference of row 1 is "AAAA"
 
 Scenario: the user filters the items
-  Given there are 2 rows
+  Given all rows are loaded
   When the user clicks on the filtering field
   And the user types "Title 1"
   Then there is 1 row

@@ -204,7 +204,7 @@ class Item(models.Model):
         #
         # Don't refresh objects that are not from our current library.
         #
-        if Item.objects.zotero.full_uid != self.uid:
+        if self.uid is not None and Item.objects.zotero.full_uid != self.uid:
             return False
 
         now = util.utcnow()

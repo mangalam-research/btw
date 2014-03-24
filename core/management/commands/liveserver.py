@@ -34,6 +34,16 @@ mock_records = mock_zotero.Records([
             {"firstName": "FirstName 2 for Title 2",
              "lastName": "LastName 2 for Title 2"},
         ]
+    },
+    {
+        "itemKey": "3",
+        "title": "Title 3",
+        "date": "Date 3",
+        "creators": [
+            {"name": "Zeno (Name 1 for Title 3)"},
+            {"firstName": "FirstName 2 for Title 3",
+             "lastName": "LastName 2 for Title 3"},
+        ]
     }
 ])
 

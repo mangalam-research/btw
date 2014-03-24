@@ -15,6 +15,8 @@ COLUMNS = {
     "dates": 3
 }
 
+NUMBER_OF_ROWS = 3
+
 load_re = ur'^(?:that )?the user (?:is on|reloads) the page for editing '\
           ur'titles$'
 
@@ -51,6 +53,7 @@ def step_impl(context, order, what):
         cells = driver.execute_script("""
         var colno = arguments[0];
         var class_ = arguments[1];
+        var number_of_rows = arguments[2];
 
         var $ = jQuery;
         var $table = $("#bibliography-table");
@@ -59,7 +62,7 @@ def step_impl(context, order, what):
             return false;
 
         var $rows = $table.find("tbody>tr");
-        if ($rows.length != 2)
+        if ($rows.length != number_of_rows)
             return false;
 
         var cells = [];
@@ -69,7 +72,7 @@ def step_impl(context, order, what):
         }
 
         return cells;
-        """, column, ORDERS[order].class_)
+        """, column, ORDERS[order].class_, NUMBER_OF_ROWS)
 
         if not cells:
             return False
@@ -173,6 +176,13 @@ def step_impl(context, row_n):
         """, row_n, column)
 
     util.wait(cond)
+
+
+@given("^all rows are loaded\.?$")
+def step_impl(context):
+    context.execute_steps(u"""
+    Given there are {0} rows.
+    """.format(NUMBER_OF_ROWS))
 
 rows_re = ur'^there (?:is|are) (?P<number>\d+) rows?\.?$'
 
