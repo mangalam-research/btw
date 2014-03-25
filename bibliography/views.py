@@ -188,7 +188,6 @@ def info(request, itemKey):
     if title:
         ret += ", " + title
 
-    print item
     year = item.get("date", None)
     if year:
         ret += ", " + year
