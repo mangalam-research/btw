@@ -104,7 +104,10 @@ $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less
+btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less
+
+.SECONDEXPANSION:
+$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)
 	node_modules/.bin/lessc $< $@
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
