@@ -41,6 +41,7 @@ def search(request):
 @ajax_login_required
 @require_GET
 def _ajax_search(request):
+    _cache_all()
     # present a unbound form.
     form = SearchForm()
     template = loader.get_template('bibliography/search_form.html')
@@ -156,41 +157,41 @@ def results(request):
 @ajax_login_required
 @require_GET
 def abbrev(request, itemKey):
-    item = btw_zotero.get_item(itemKey)
-    ret = None
+    item = Item.objects.get(item_key=itemKey)
+    ret = ""
 
-    creators = item.get("creators", None)
-    if creators is not None:
-        first = creators[0]
-        ret = first.get("lastName", first.get("firstName", first.get("name",
-                                                                     None)))
+    if item.reference_title is not None:
+        ret = item.reference_title
+    else:
+        creators = item.creators
+        if creators is not None:
+            ret = creators.split(",")[0]
 
-    if ret is None:
-        ret = "***ITEM HAS NO AUTHORS***"
+        if ret is None:
+            ret = "***ITEM HAS NO AUTHORS***"
+
+        year = item.date
+        if year:
+            ret += ", " + year
+
     return HttpResponse(ret)
 
 
 @ajax_login_required
 @require_GET
 def info(request, itemKey):
-    item = btw_zotero.get_item(itemKey)
+    item = Item.objects.get(item_key=itemKey)
     ret = ""
 
-    creators = item.get("creators", None)
-    if creators is not None:
-        names = [creator.get("lastName", creator.get("firstName",
-                                                     creator.get("name",
-                                                                 "")))
-                 for creator in creators]
-        ret = ", ".join(names)
+    creators = item.creators
+    ret = creators.split(",")[0] if creators else "***ITEM HAS NO AUTHORS***"
 
-    title = item.get("title", None)
-    if title:
-        ret += ", " + title
+    title = item.title
+    ret += ", " + title
 
-    year = item.get("date", None)
-    if year:
-        ret += ", " + year
+    date = item.date
+    if date:
+        ret += ", " + date
 
     return HttpResponse(ret)
 
@@ -271,9 +272,9 @@ class ItemList(BaseDatatableView):
     model = Item
 
     # define the columns that will be returned
-    columns = ['reference_title_url', 'reference_title', 'creators', 'title',
-               'date']
-    order_columns = ['', 'reference_title', 'creators', 'title', 'date']
+    columns = ['item_key', 'reference_title_url', 'reference_title',
+               'creators', 'title', 'date']
+    order_columns = ['', '', 'reference_title', 'creators', 'title', 'date']
 
     max_display_length = 500
 

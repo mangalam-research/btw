@@ -6,21 +6,21 @@
 <link href="{{ btw_globals.btw_bootstrap_editable_css_path }}" type="text/css" media="screen" rel="stylesheet" />
 <script>
   var django_active_submenu = "{{ submenu }}";
-  require.config({
-    config: {
-      "../scripts/title-table": {
-          ajax_source_url: "{% url 'bibliography_title_table' %}",
-          can_edit: {{ can_edit|yesno:'true,false' }}
-      }
-    }
+  require(["jquery", "../scripts/title-table"], function ($, tt) {
+      $(function () {
+          tt($("#bibliography-table"), {
+              ajax_source_url: "{% url 'bibliography_title_table' %}",
+              can_edit: {{ can_edit|yesno:'true,false' }}
+          });
+      });
   });
-  require(["../scripts/title-table"]);
 </script>
 {% endblock %}
 {% block content %}
 <table id="bibliography-table">
   <thead>
     <tr>
+      <th></th>
       <th></th>
       <th>Title for Reference</th>
       <th>Creator(s)</th>

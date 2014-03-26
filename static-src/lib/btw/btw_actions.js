@@ -91,21 +91,22 @@ InsertBiblPtrDialogAction.prototype.execute = function (data) {
         // have to put this in the callback. (Or we could use
         // delegation but delegation is not strictly speaking
         // necessary here.)
-        $body.find("#result_list").on('bibsearch-refresh-results',
-                                       function () {
+        var $table = $body.find("#bibliography-table");
+        $table.on('refresh-results',
+                  function () {
             $primary.prop('disabled', true).addClass('disabled');
+        });
+        $table.on('selected-row', function () {
+            $primary.prop('disabled', false).removeClass('disabled');
         });
     });
     $primary.prop("disabled", true).addClass("disabled");
-    $body.on('click.wed', ':radio', function () {
-        $primary.prop('disabled', false).removeClass('disabled');
-    });
 
     modal.setBody($body);
     modal.modal(function () {
         var clicked = modal.getClickedAsText();
         if (clicked === "Insert") {
-            var item_key = $body.find(':radio:checked').val();
+            var item_key = $body.find('.selected-row').data('item-key');
             data.target = "/bibl/" + item_key;
             editor.mode.insert_ref_tr.execute(data);
         }

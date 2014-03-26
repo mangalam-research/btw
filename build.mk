@@ -48,7 +48,7 @@ XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 #CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
 #CITEPROC_BASE=citeproc-$(notdir $(CITEPROC_URL))
 
-WED_PATH:=./node_modules/wed
+WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/standalone-optimized
 WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
 WED_HTML_TO_XML_PATH:=$(WED_BUILD)/lib/wed/html-to-xml.xsl

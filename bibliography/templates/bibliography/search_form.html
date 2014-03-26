@@ -1,13 +1,46 @@
 {% load staticfiles %}
-<script src="{% static "scripts/main.js" %}"></script>
+<script>
+  require(["jquery", "../scripts/title-table"], function ($, tt) {
+      $(function () {
+          var $head = $("head");
+          var paths = ["{{ btw_globals.btw_datatables_css_path }}",
+                       "{{ btw_globals.btw_bootstrap_editable_css_path }}"];
+          for(var i = 0; i < paths.length; ++i) {
+              var path = paths[i];
+              if (!$head.find("link[href='" + path + "']")[0]) {
+                  var $link =
+                      $("<link type='text/css' media='screen' rel='stylesheet' />");
+                  $link[0].setAttribute("href", path);
+                  $head.append($link);
+              }
+          }
+
+          var $table = $("#bibliography-table");
+          tt($table, {
+              ajax_source_url: "{% url 'bibliography_title_table' %}",
+              can_edit: false,
+              rows: 4,
+              selectable: true
+          });
+      });
+  });
+</script>
+<!-- <script src="{% static "scripts/main.js" %}"></script> -->
 <div class="bibsearch">
-  <form class="bibsearch-form">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.keyword.label_tag }}<img id="loading" style="max-height: 1em" src="{% static "images/spinner.gif" %}">{{ form.keyword }} </td>
-      </tr>
-    </table>
-  </form>
-  <div id="result_list"></div>
+<table id="bibliography-table">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Title for Reference</th>
+      <th>Creator(s)</th>
+      <th>Original Title</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+  <tfoot>
+  </tfoot>
+</table>
 </div>
