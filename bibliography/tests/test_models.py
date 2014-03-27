@@ -91,7 +91,7 @@ class ItemTestCase(TestCase):
             datetime.timedelta(seconds=1)
         item.save()
 
-        item2 = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        item2 = Item.objects.get(id=item.id)
 
         assert_equal(item2.title, "Title 1 (bis)")
         assert_equal(item2.date, "Date 1 (bis)")
@@ -99,3 +99,30 @@ class ItemTestCase(TestCase):
                      "Name 1 for Title 1 (bis), LastName 2 for Title 1")
 
         assert_not_equal(item.freshness, item2.freshness)
+
+    def test_fresh(self):
+        """
+        Test that a fresh item is not refreshed.
+        """
+        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+
+        assert_equal(item.title, "Title 1")
+        assert_equal(item.date, "Date 1")
+        assert_equal(item.creators,
+                     "Name 1 for Title 1, LastName 2 for Title 1")
+
+        # We are modifying the fake Zotero database.
+        for key in ("title", "date"):
+            mock_records.values[0][key] += " (bis)"
+
+        mock_records.values[0]["creators"][0]["name"] += " (bis)"
+
+        # This item should be the same as the first.
+        item2 = Item.objects.get(id=item.id)
+
+        assert_equal(item2.title, "Title 1")
+        assert_equal(item2.date, "Date 1")
+        assert_equal(item2.creators,
+                     "Name 1 for Title 1, LastName 2 for Title 1")
+
+        assert_equal(item.freshness, item2.freshness)
