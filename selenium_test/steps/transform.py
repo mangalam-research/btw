@@ -96,9 +96,8 @@ def step_impl(context):
     senses_in_order(util)
 
     initial_terms = context.initial_sense_terms
-    terms = btw_util.get_sense_terms(util)
 
-    assert_equal(initial_terms, terms, "senses")
+    util.wait(lambda *_: initial_terms == btw_util.get_sense_terms(util))
 
 
 @record_renditions_for("A")

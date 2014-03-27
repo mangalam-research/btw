@@ -51,6 +51,9 @@ def step_impl(context, order, what):
     def cond(*_):
 
         cells = driver.execute_script("""
+        if (typeof jQuery === "undefined")
+            return false;
+
         var colno = arguments[0];
         var class_ = arguments[1];
         var number_of_rows = arguments[2];
@@ -136,6 +139,9 @@ def step_impl(context, row_n, value):
 
     def cond(*_):
         return driver.execute_script("""
+        if (typeof jQuery === "undefined")
+            return false;
+
         var row_n = arguments[0];
         var colno = arguments[1];
         var text = arguments[2];
@@ -162,6 +168,9 @@ def step_impl(context, row_n):
 
     def cond(*_):
         return driver.execute_script("""
+        if (typeof jQuery === "undefined")
+            return false;
+
         var row_n = arguments[0];
         var colno = arguments[1];
         var text = arguments[2];
@@ -197,6 +206,9 @@ def step_impl(context, number):
 
     def cond(*_):
         return driver.execute_script("""
+        if (typeof jQuery === "undefined")
+            return false;
+
         var no = arguments[0];
 
         var $ = jQuery;
