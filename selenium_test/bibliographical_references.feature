@@ -12,3 +12,11 @@ Scenario: adding a reference that does not have a reference title
   Given a document with a single sense
   When the user adds a reference to an item without a reference title
   Then the new reference contains the first author's last name and the date.
+
+Scenario: adding custom text to a reference
+  Given a document with a single sense
+  When the user adds a reference to an item
+  Then a new reference is inserted
+  When the user adds custom text to the new reference
+  Then the new reference contains a placeholder
+  And the new reference contains a separator.

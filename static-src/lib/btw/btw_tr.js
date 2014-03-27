@@ -19,6 +19,8 @@ var insertElement = transformation.insertElement;
 var makeElement = transformation.makeElement;
 var Transformation = transformation.Transformation;
 
+var _indexOf = Array.prototype.indexOf;
+
 function insert_ptr(editor, data) {
     var caret = editor.getDataCaret();
     var parent = caret.node;
@@ -41,14 +43,11 @@ function insert_ref(editor, data) {
     var index = caret.offset;
 
     var $ptr = transformation.makeElement('ref', {'target': data.target});
-    editor.data_updater.insertAt(parent, index, $ptr.get(0));
-
-    // The original parent and index information are no necessarily
-    // representative because insertAt can do quite a lot of things to
-    // insert the node.
-    parent = $ptr.parent().get(0);
-    editor.setDataCaret(parent, Array.prototype.indexOf.call(parent.childNodes,
-                                                             $ptr.get(0)));
+    editor.data_updater.insertAt(parent, index, $ptr[0]);
+    var gui_node = editor.fromDataLocation($ptr[0], 0).node;
+    var nodes = editor.mode.nodesAroundEditableContents(gui_node);
+    editor.setGUICaret(gui_node,
+                       _indexOf.call(gui_node.childNodes, nodes[0]) + 2);
 }
 
 

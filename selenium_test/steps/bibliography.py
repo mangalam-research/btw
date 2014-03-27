@@ -13,11 +13,16 @@ WHICH_TO_KEY = {
 }
 
 
+@when(ur'^the user adds a reference to an item$')
 @when(ur'^the user adds a reference to an item (?P<which>with|without) a '
-      ur'reference title')
-def step_impl(context, which):
+      ur'reference title$')
+def step_impl(context, which=None):
     driver = context.driver
     util = context.util
+
+    if which is None:
+        which = "with"
+
     # Obtain the first placeholder after "[etymology]".
     ph = driver.execute_script("""
     var $ = jQuery;
@@ -38,7 +43,7 @@ def step_impl(context, which):
 
     context.execute_steps(u"""
     When the user clicks the context menu option "Insert a new \
-bibliographical reference."
+bibliographical reference"
     """)
 
     def cond(*_):
@@ -57,7 +62,8 @@ bibliographical reference."
         .perform()
 
 
-@then(ur'^the new reference contains the reference title')
+@then(ur'^a new reference is inserted$')
+@then(ur'^the new reference contains the reference title\.?$')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -84,5 +90,39 @@ def step_impl(context):
         """)
 
         return text == "Abelard (Name 1 for Title 1), Date 1"
+
+    util.wait(cond)
+
+
+@when(ur"^the user adds custom text to the new reference$")
+def step_impl(context):
+    util = context.util
+
+    util.ctrl_x("/")
+
+    context.execute_steps(u"""
+    When the user clicks the context menu option "Add custom text \
+to reference"
+    """)
+
+
+@then(ur"^the new reference contains a placeholder\.?$")
+def step_impl(context):
+    util = context.util
+
+    util.find_element((By.CSS_SELECTOR, ".ref ._placeholder"))
+
+
+@then(ur"^the new reference contains a separator\.?$")
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    def cond(*_):
+        text = driver.execute_script("""
+        return jQuery(".ref").children("._text, ._ref_sep").text();
+        """)
+
+        return text == "Foo, "
 
     util.wait(cond)

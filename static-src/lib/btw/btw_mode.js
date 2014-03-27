@@ -14,6 +14,7 @@ var util = require("wed/util");
 var log = require("wed/log");
 var Mode = require("wed/modes/generic/generic").Mode;
 var oop = require("wed/oop");
+var dloc = require("wed/dloc");
 var BTWDecorator = require("./btw_decorator").BTWDecorator;
 var transformation = require("wed/transformation");
 var Toolbar = require("./btw_toolbar").Toolbar;
@@ -110,7 +111,9 @@ BTWMode.prototype.init = function (editor) {
         var $ref = $(caret.node).closest(util.classFromOriginalName("ref"));
         var ph = editor.insertTransientPlaceholderAt(caret.make(
             $ref[0], $ref[0].childNodes.length));
+        editor.decorator.refreshElement($(dloc.findRoot($ref).node), $ref);
         editor.setGUICaret(ph, 0);
+
     }.bind(this));
 
     /**
@@ -274,7 +277,7 @@ BTWMode.prototype._getTransformationRegistry = function () {
     ret.addTagTransformations("insert", "ref",
                               new btw_actions.InsertBiblPtrDialogAction(
                                   this._editor,
-                                  "Insert a new bibliographical reference."));
+                                  "Insert a new bibliographical reference"));
     return ret;
 };
 

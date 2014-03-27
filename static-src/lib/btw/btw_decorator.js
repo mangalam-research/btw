@@ -205,12 +205,19 @@ BTWDecorator.prototype.addHandlers = function () {
         "children-changed",
         util.classFromOriginalName("*"),
         function ($root, $added, $removed, $prev, $next, $el) {
+        var removed = $removed.is("._real, ._phantom_wrap") ||
+            $removed.filter(jqutil.textFilter).length;
+
         if ($added.is("._real, ._phantom_wrap") ||
-            $removed.is("._real, ._phantom_wrap") ||
-            $added.filter(jqutil.textFilter).length +
-            $removed.filter(jqutil.textFilter).length > 0) {
+            $added.filter(jqutil.textFilter).length && !removed)
             this.refreshElement($root, $el);
-        }
+
+        // Refresh the element **after** the data is removed.
+        if (removed)
+            setTimeout(function () {
+                this.refreshElement($root, $el);
+            }.bind(this), 0);
+
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -820,15 +827,30 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                                 "reference recorded as ptr");
 
             target = orig_target.slice(bibl_prefix.length);
-            $el.children("._text._phantom._ref_abbr").remove();
+
+            // It is okay to skip the tree updater for these operations.
+            $el.children("._ref_abbr, ._ref_paren, ._ref_sep").remove();
+
+            var start = [
+                "<div class='_phantom _decoration_text _ref_paren " +
+                    "_open_ref_paren'>(</div>",
+                '<div class="_text _phantom _ref_abbr"></div>'
+            ];
+
+            if ($el.contents().filter(function () {
+                return jqutil.textFilter.call(this) ||
+                    $(this).is("._placeholder, ._real");
+            }).length)
+                start.push('<div class="_text _phantom _ref_sep">, '+
+                           '</div>');
+
+            $el.prepend(start);
+            $el.append("<div class='_phantom _decoration_text " +
+                       "_ref_paren _close_ref_paren'>)</div>");
             $.ajax({url: this._mode._bibl_abbrev_url.replace(/<itemKey>/,
                                                              target)
                    }).done(function (data) {
-                       var before = $el.children("._open_ref_paren")[0];
-                       dec._gui_updater.insertBefore(
-                           $el[0],
-                           $('<div class="_text _phantom _ref_abbr">' +
-                             data + '</div>')[0], before.nextSibling);
+                       $el.children("._ref_abbr").text(data);
                    });
             $.ajax({url: this._mode._bibl_info_url.replace(/<itemKey>/,
                                                            target)
@@ -836,14 +858,6 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                        $el.tooltip({"title": data, container: "body"});
                    });
         }
-    }
-
-    if (!is_ptr) {
-        $el.children("._ref_paren").remove();
-        $el.prepend("<div class='_phantom _decoration_text _ref_paren " +
-                    "_open_ref_paren'>(</div>");
-        $el.append("<div class='_phantom _decoration_text " +
-                   "_ref_paren _close_ref_paren'>)</div>");
     }
 };
 
