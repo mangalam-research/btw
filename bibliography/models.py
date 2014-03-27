@@ -234,4 +234,4 @@ class Item(models.Model):
 
     @property
     def reference_title_url(self):
-        return reverse('bibliography_reference_title', args=(self.item_key, ))
+        return reverse('bibliography_reference_title', args=(self.pk, ))

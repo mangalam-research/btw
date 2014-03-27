@@ -270,7 +270,9 @@ class TestReferenceTitleView(BaseTest):
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
-        url = reverse('bibliography_reference_title', args=("1", ))
+        item = Item.objects.get(item_key="1")
+
+        url = reverse('bibliography_reference_title', args=(item.pk, ))
 
         response = self.client.post(url, {
             "value": "foo"
@@ -300,7 +302,7 @@ class TestReferenceTitleView(BaseTest):
         assert_equal(item.reference_title, None,
                      "the reference_title value should be None")
 
-        url = reverse('bibliography_reference_title', args=("1", ))
+        url = reverse('bibliography_reference_title', args=(item.pk, ))
 
         response = self.client.post(url, {
             "value": "foo"
@@ -321,7 +323,7 @@ class TestReferenceTitleView(BaseTest):
         response = self.client.login(username=u'test', password=u'test')
         assert_true(response)
 
-        url = reverse('bibliography_reference_title', args=("1", ))
+        url = reverse('bibliography_reference_title', args=(1, ))
 
         response = self.client.post(url, {
             "value": "foo"

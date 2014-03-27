@@ -71,8 +71,8 @@ def title(request, editable=False, submenu="btw-bibliography-title-sub"):
 
 @ajax_login_required
 @require_GET
-def abbrev(request, itemKey):
-    item = Item.objects.get(item_key=itemKey)
+def abbrev(request, pk):
+    item = Item.objects.get(pk=pk)
     ret = ""
 
     if item.reference_title is not None:
@@ -94,8 +94,8 @@ def abbrev(request, itemKey):
 
 @ajax_login_required
 @require_GET
-def info(request, itemKey):
-    item = Item.objects.get(item_key=itemKey)
+def info(request, pk):
+    item = Item.objects.get(pk=pk)
     ret = ""
 
     creators = item.creators
@@ -115,8 +115,8 @@ class ItemList(BaseDatatableView):
     model = Item
 
     # define the columns that will be returned
-    columns = ['item_key', 'reference_title_url', 'reference_title',
-               'creators', 'title', 'date']
+    columns = ['id', 'reference_title_url', 'reference_title', 'creators',
+               'title', 'date']
     order_columns = ['', '', 'reference_title', 'creators', 'title', 'date']
 
     max_display_length = 500
@@ -143,8 +143,8 @@ class ItemList(BaseDatatableView):
 @ajax_login_required
 @permission_required('bibliography.change_item')
 @require_POST
-def reference_title(request, itemKey):
-    item = Item.objects.get(item_key=itemKey)
+def reference_title(request, pk):
+    item = Item.objects.get(pk=pk)
     # An empty field must be normalized to None.
     item.reference_title = request.POST.get('value') or None
     try:

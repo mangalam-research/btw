@@ -7,9 +7,9 @@ from behave import step_matcher
 step_matcher("re")
 
 
-WHICH_TO_KEY = {
-    "with": 3,
-    "without": 1
+WHICH_TO_TITLE = {
+    "with": "Title 3",
+    "without": "Title 1"
 }
 
 
@@ -49,9 +49,9 @@ bibliographical reference"
     def cond(*_):
         ret = driver.execute_script("""
         var qs = document.querySelector.bind(document);
-        return [qs("#bibliography-table>tbody>tr[data-item-key='{0}']"),
+        return [jQuery("#bibliography-table>tbody>tr:contains('{0}')")[0],
                 qs(".modal.in .btn-primary")];
-        """.format(WHICH_TO_KEY[which]))
+        """.format(WHICH_TO_TITLE[which]))
         return ret if ret[0] and ret[1] else None
 
     row, button = util.wait(cond)
