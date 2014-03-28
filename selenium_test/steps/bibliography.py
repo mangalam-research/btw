@@ -126,3 +126,10 @@ def step_impl(context):
         return text == "Foo, "
 
     util.wait(cond)
+
+
+@when(ur"^the user brings up the context menu$")
+def step_impl(context):
+    util = context.util
+
+    util.ctrl_x("/")

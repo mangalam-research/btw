@@ -320,9 +320,11 @@ BTWMode.prototype._getTransformationRegistry = function () {
  */
 BTWMode.prototype.getContextualActions = function (type, tag,
                                                    container, offset) {
+    var ret;
     // We want the first *element* container, selecting div accomplishes this.
     var $container = $(container).closest("div");
-    for(var i = 0; i < this.transformation_filters.length; ++i) {
+
+    outer_loop: for(var i = 0; i < this.transformation_filters.length; ++i) {
         var filter = this.transformation_filters[i];
         if ($container.is(filter.selector)) {
 
@@ -341,7 +343,8 @@ BTWMode.prototype.getContextualActions = function (type, tag,
                 for (var j = 0; j < filter.substitute.length; ++j) {
                     var substitute = filter.substitute[j];
                     if (substitute.tag === tag && substitute.type === type) {
-                        return substitute.actions;
+                        ret = substitute.actions;
+                        break outer_loop;
                     }
                 }
             }
@@ -349,7 +352,17 @@ BTWMode.prototype.getContextualActions = function (type, tag,
         }
     }
 
-    return this._tr.getTagTransformations(type, tag);
+    if (!ret)
+        ret = this._tr.getTagTransformations(type, tag);
+
+    // Here we transform the returned array in ways that cannot be
+    // captured by transformation_filters.
+    return ret.filter(function (x) {
+        if (x !== this.insert_ref_text)
+            return true;
+
+        return $container[0].childNodes.length === 0;
+    }, this);
 };
 
 BTWMode.prototype.getStylesheets = function () {

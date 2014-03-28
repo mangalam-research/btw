@@ -20,3 +20,13 @@ Scenario: adding custom text to a reference
   When the user adds custom text to the new reference
   Then the new reference contains a placeholder
   And the new reference contains a separator.
+
+Scenario: adding custom text to a reference when there is already text
+  Given a document with a single sense
+  When the user adds a reference to an item
+  Then a new reference is inserted
+  When the user adds custom text to the new reference
+  Then the new reference contains a placeholder
+  When the user types "blah"
+  And the user brings up the context menu
+  Then there is no context menu option "Add custom text to reference"
