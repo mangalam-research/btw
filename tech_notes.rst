@@ -721,5 +721,22 @@ configuration file.
 create new users. Later version should have an interface to streamline
 this.
 
+========
+BTW Mode
+========
+
+Visible Absence
+---------------
+
+A "visible absence" is an absence of an element which is represented
+as a *presence* in the edited document. If ``<foo>`` might contain
+``<bar>`` but ``<bar>`` is absent, the usual means to represent this
+would be a ``<foo>`` that does not contain a ``<bar>``. With a visible
+absence, ``<foo>`` would contain a GUI element showing that ``<bar>``
+is absent.
+
+A "visible absence instantiator" is a visible absence which is also a
+control able to instantiate the absent element.
+
 ..  LocalWords:  uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth

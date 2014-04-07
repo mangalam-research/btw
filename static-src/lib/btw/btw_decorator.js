@@ -157,6 +157,42 @@ function BTWDecorator(mode, meta) {
         this._label_levels[x] = 2;
     }.bind(this));
 
+    /**
+     * @private
+     * @typedef VisibleAbsenceSpec
+     * @type {Object}
+     * @property {String} parent A jQuery selector indicating the
+     * parent(s) for which to create visible absences.
+     * @property {Array.<VisibleAbsenceSpecChild>} children An array
+     * indicating the children for which to create visible absences.
+     */
+
+    /**
+     * @private
+     * @typedef VisibleAbsenceSpecChild
+     * @type {Object}
+     * @property {String} name The name of the child element.
+     * @property {String} selector A jQuery selector corresponding to `name`.
+     */
+
+    // The following array is going to be transformed into the data
+    // structure just described above.
+    this._visible_absence_specs = [
+        {
+            parent: jqutil.toDataSelector("btw:sense"),
+            children: ["btw:subsense", "btw:explanation"]
+        }
+    ];
+
+    function mapf(child) {
+        return {
+            name: child,
+            selector: jqutil.toDataSelector(child)
+        };
+    }
+    this._visible_absence_specs.forEach(function (spec) {
+        spec.children = spec.children.map(mapf);
+    });
 }
 
 oop.inherit(BTWDecorator, Decorator);
@@ -276,6 +312,8 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     if ($el.closest($root).length === 0)
         return;
 
+    this.refreshVisibleAbsences($root, $el);
+
     var klass = this._meta.getAdditionalClasses($el.get(0));
     if (klass.length > 0)
         $el.addClass(klass);
@@ -354,6 +392,146 @@ BTWDecorator.prototype.elementDecorator = function ($root, $el) {
         this, $root, $el, this._label_levels[orig_name] || 1,
         log.wrap(this._contextMenuHandler.bind(this, true)),
         log.wrap(this._contextMenuHandler.bind(this, false)));
+};
+
+BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
+    var me = this;
+    $el.children("._va_instantiator").each(function () {
+        me._gui_updater.removeNode(this);
+    });
+
+    var found;
+    for(var i = 0, limit = this._visible_absence_specs.length; i < limit;
+        ++i) {
+        var spec = this._visible_absence_specs[i];
+        if ($el.is(spec.parent)) {
+            found = spec;
+            break;
+        }
+    }
+
+    if (found) {
+        var node = this._editor.toDataNode($el[0]);
+        var orig_errors = this._editor.validator.getErrorsFor(node);
+
+        // Create a hash table that we can use for later tests.
+        var orig_strings = Object.create(null);
+        for(var oe_ix = 0, oe_limit = orig_errors.length; oe_ix < oe_limit;
+            ++oe_ix)
+            orig_strings[orig_errors[oe_ix].error.toString()] = true;
+
+        var children = found.children;
+        for(var child_ix = 0, child_limit = children.length;
+            child_ix < child_limit; ++child_ix) {
+            var child = children[child_ix];
+
+            // We want to present controls only for children that are
+            // absent!
+            if ($el.children(child.selector).length)
+                continue;
+
+            var ename = this._mode._resolver.resolveName(child.name);
+            var locations = this._editor.validator.possibleWhere(
+                node, new validate.Event("enterStartTag", ename.ns,
+                                         ename.name));
+
+            // Narrow it down to locations where adding the element
+            // won't cause a subsequent problem.
+            locations = locations.filter(function (l) {
+                var $clone = $(node).clone();
+                var clone = $clone[0];
+                var $root = $("<div>");
+                $root.append(clone);
+                clone.insertBefore(
+                    transformation.makeElement(child.name)[0],
+                    clone.childNodes[l] || null);
+
+                var errors =
+                    this._editor.validator.speculativelyValidateFragment(
+                    node.parentNode,
+                    _indexOf.call(node.parentNode.childNodes, node),
+                    $root[0]);
+
+                // What we are doing here is reducing the errors only
+                // to those that indicate that the added element would
+                // be problematic.
+                errors = errors.filter(function (err) {
+                    var err_msg = err.error.toString();
+                    return err.node === clone &&
+                        // We want only errors that were not
+                        // originally present.
+                        !orig_strings[err_msg] &&
+                        // And that are about a tag not being allowed.
+                    err_msg.lastIndexOf("tag not allowed here: ", 0) ===
+                        0;
+                });
+
+                return errors.length === 0;
+            }.bind(this));
+
+            // No suitable location.
+            if (!locations.length)
+                continue;
+
+            var data_loc = makeDLoc(this._editor.data_root, node,
+                                    locations[0]);
+            var data = {element_name: child.name,
+                        move_caret_to: data_loc};
+            var gui_loc = this._gui_updater.fromDataLocation(data_loc);
+
+            // We purposely don't use getContextualActions.
+            var tuples = [];
+            this._mode._tr.getTagTransformations(
+                "insert", child.name).forEach(
+                    function (act) {
+                    tuples.push([act, data, act.getLabelFor(data)]);
+                });
+
+            var $control = $(
+                '<button class="_gui _phantom _va_instantiator btn btn-instantiator btn-xs" href="#">');
+            // Get tooltips from the current mode
+            var self = this;
+            var options = {
+                title: function (name) {
+                    if (!self._editor.preferences.get("tooltips"))
+                        return undefined;
+                    return self._editor.mode.shortDescriptionFor(name);
+                }.bind(undefined, child.name),
+                container: $control,
+                delay: { show: 1000 },
+                placement: "auto top"
+            };
+            $control.tooltip(options);
+
+            if (tuples.length > 1) {
+                $control.html(' + ' + child.name);
+
+                // Convert the tuples to actual menu items.
+                var items = [];
+                for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
+                    var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
+                    $a.click(tup[1], tup[0].bound_handler);
+                    items.push($("<li></li>").append($a).get(0));
+                }
+
+                $control.click(function (ev) {
+                    new context_menu.ContextMenu(
+                        this._editor.my_window.document,
+                        ev.clientX, ev.clientY, "none",
+                        items);
+                    return false;
+                }.bind(this));
+            }
+            else if (tuples.length === 1) {
+                $control.html(tuples[0][2]);
+                $control.click(tuples[0][1], function (ev) {
+                    tuples[0][0].bound_handler(ev);
+                    this.refreshElement($root, $el);
+                }.bind(this));
+            }
+            this._gui_updater.insertNodeAt(gui_loc, $control[0]);
+        }
+    }
 };
 
 BTWDecorator.prototype.citDecorator = function ($root, $el) {
