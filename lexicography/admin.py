@@ -46,6 +46,8 @@ class ChangeRecordAdmin(admin.ModelAdmin):
     list_display = ('entry', 'headword', 'user', 'datetime', 'session',
                     'ctype', 'csubtype', 'revert', 'chunk_link')
 
+    list_filter = ('entry', 'headword', 'user', 'session', 'ctype', 'csubtype')
+
     chunk_link = make_link_method('c_hash', "Chunk")
 
     def revert(self, obj):
