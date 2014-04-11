@@ -20,6 +20,15 @@
         <btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf>
       </btw:semantic-fields>
       <btw:contrastive-section>
+        <btw:antonyms>
+          <btw:none/>
+        </btw:antonyms>
+        <btw:cognates>
+          <btw:none/>
+        </btw:cognates>
+        <btw:conceptual-proximates>
+          <btw:none/>
+        </btw:conceptual-proximates>
       </btw:contrastive-section>
     </btw:sense>
   </btw:sense-discrimination>
@@ -29,8 +38,6 @@
     </btw:etymology>
   </btw:historico-semantical-data>
   <btw:renditions-and-discussions>
-    <btw:classical-renditions>
-    </btw:classical-renditions>
     <btw:modern-renditions>
     </btw:modern-renditions>
   </btw:renditions-and-discussions>

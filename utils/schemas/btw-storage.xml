@@ -298,15 +298,9 @@
           <desc>This element groups the terms that are cited to
           contrast the meaning of a sense.</desc>
           <content>
-            <rng:optional>
-              <rng:ref name="btw_antonyms"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="btw_cognates"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="btw_conceptual-proximates"/>
-            </rng:optional>
+            <rng:ref name="btw_antonyms"/>
+            <rng:ref name="btw_cognates"/>
+            <rng:ref name="btw_conceptual-proximates"/>
           </content>
         </elementSpec>
 
@@ -315,9 +309,12 @@
                      prefix="btw_">
           <desc>This element groups the antonyms of a sense.</desc>
           <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_antonym"/>
-            </rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="btw_none"/>
+              <rng:oneOrMore>
+                <rng:ref name="btw_antonym"/>
+              </rng:oneOrMore>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -344,9 +341,12 @@
                      prefix="btw_">
           <desc>This element groups the cognates of a sense.</desc>
           <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_cognate"/>
-            </rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="btw_none"/>
+              <rng:oneOrMore>
+                <rng:ref name="btw_cognate"/>
+              </rng:oneOrMore>
+            </rng:choice>
           </content>
         </elementSpec>
 
@@ -375,11 +375,22 @@
           <desc>This element groups the conceptual proximates of a
           sense.</desc>
           <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_conceptual-proximate"/>
-            </rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="btw_none"/>
+              <rng:oneOrMore>
+                <rng:ref name="btw_conceptual-proximate"/>
+              </rng:oneOrMore>
+            </rng:choice>
           </content>
         </elementSpec>
+
+        <elementSpec ident="none"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>This elmement records that its container contains 0 of
+          what the container would otherwise contain.</desc>
+        </elementSpec>
+
 
         <elementSpec ident="conceptual-proximate"
                      ns="http://mangalamresearch.org/ns/btw-storage"
@@ -395,7 +406,6 @@
             </rng:group>
           </content>
         </elementSpec>
-
 
         <elementSpec ident="explanation"
                      ns="http://mangalamresearch.org/ns/btw-storage"

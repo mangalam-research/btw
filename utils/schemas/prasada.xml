@@ -390,9 +390,9 @@
         <btw:sf>01.05.05.12.01</btw:sf>
       </btw:semantic-fields>
       <btw:contrastive-section>
-        <!--
-        [antonyms]
-        ø   -->
+        <btw:antonyms>
+          <btw:none/>
+        </btw:antonyms>
         <btw:cognates>
           <btw:cognate>
             <term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>
@@ -406,8 +406,9 @@
             ø -->
           </btw:cognate>
         </btw:cognates>
-        <!-- [conceptual proximates]
-        ø -->
+        <btw:conceptual-proximates>
+          <btw:none/>
+        </btw:conceptual-proximates>
       </btw:contrastive-section>
     </btw:sense>
     <btw:sense xml:id="S-d">
@@ -488,10 +489,12 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
             ø -->
           </btw:antonym>
         </btw:antonyms>
-        <!-- [cognates]
-        ø
-        [conceptual proximates]
-        ø -->
+        <btw:cognates>
+          <btw:none/>
+        </btw:cognates>
+        <btw:conceptual-proximates>
+          <btw:none/>
+        </btw:conceptual-proximates>
       </btw:contrastive-section>
     </btw:sense>
   </btw:sense-discrimination>
