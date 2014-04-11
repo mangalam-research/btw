@@ -65,7 +65,7 @@
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">aprasāda</foreign></term>
             <btw:citations><!-- [selected citations of antonyms for sense a] -->
-              <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 225</ref><foreign xml:lang="sa-Latn">sarve 'sya yadbhūyastvena krudhyanti, vyāpādanti <btw:antonym-instance>aprasādam</btw:antonym-instance>utpādayanti ākrośanti paribhāṣante</foreign></btw:cit><btw:tr><btw:cit><ref>Kern, 356</ref><quote>But all were extremely irritated and angry at it, showed him their <btw:antonym-instance>displeasure</btw:antonym-instance>, abused and insulted him</quote></btw:cit></btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 225</ref><foreign xml:lang="sa-Latn">sarve 'sya yadbhūyastvena krudhyanti, vyāpādanti <btw:antonym-instance>aprasādam</btw:antonym-instance>utpādayanti ākrośanti paribhāṣante</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
             <!--
             [other citations]
@@ -75,7 +75,7 @@
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">kāluṣya</foreign></term>
             <btw:citations>
-              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 10d-11a-c, p 76</ref><foreign xml:lang="sa-Latn">tatra śraddhā astitvaguṇavattvaśakyatveṣu karmaphalasatyaratneṣv abhisaṃpratyayaḥ prasādaś cetaso 'bhilāṣaḥ | śraddhā hi tridhā pravartate | sati vastuni guṇavaty aguṇavati vā saṃpratyayākārā | sati guṇavati ca prasādākārā | sati guṇavati ca prāptum utpādayituṃ vā śakye 'bhilāṣākārā | cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti | śraddhā hi citta<btw:antonym-instance>kāluṣya</btw:antonym-instance>vairodhikīty atas tatsaṃprayoge kleśopakleśamala<btw:antonym-instance>kāluṣya</btw:antonym-instance>vigamāc cittaṃ śraddhām āgamya prasīdatīti cetasaḥ prasāda ucyate | sā punaś chandasaṃniśrayadānakarmikā |</foreign></btw:cit><btw:tr>XXX</btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 10d-11a-c, p 76</ref><foreign xml:lang="sa-Latn">tatra śraddhā astitvaguṇavattvaśakyatveṣu karmaphalasatyaratneṣv abhisaṃpratyayaḥ prasādaś cetaso 'bhilāṣaḥ | śraddhā hi tridhā pravartate | sati vastuni guṇavaty aguṇavati vā saṃpratyayākārā | sati guṇavati ca prasādākārā | sati guṇavati ca prāptum utpādayituṃ vā śakye 'bhilāṣākārā | cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti | śraddhā hi citta<btw:antonym-instance>kāluṣya</btw:antonym-instance>vairodhikīty atas tatsaṃprayoge kleśopakleśamala<btw:antonym-instance>kāluṣya</btw:antonym-instance>vigamāc cittaṃ śraddhām āgamya prasīdatīti cetasaḥ prasāda ucyate | sā punaś chandasaṃniśrayadānakarmikā |</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
             <!--
             [other citations]
@@ -291,7 +291,7 @@
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">aprasāda</foreign></term>
             <btw:citations>
-              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 13, p 96</ref><foreign xml:lang="sa-Latn">āśraddhyāṃ karmaphalasatyaratneṣv anabhisaṃpratyayaḥ śraddhāvipakṣaḥ | śraddhā hy astitvaguṇavattvaśakyatveṣv abhisaṃpratyayaḥ prasādo 'bhilāṣaś ca yathākramam | aśraddhā tadviparyeṇāstitvaguṇavattvaśakyatveṣv anabhisaṃpratyayo <btw:antonym-instance>'prasādo</btw:antonym-instance> 'nabhilāṣaś ca | kausīdyasaṃniśrayadānakarmakam | aśraddadhānasya prayogacchandābhāvāt kausīdyasaṃniśrayadānakarmakatvam |</foreign></btw:cit><btw:tr>XXX</btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 13, p 96</ref><foreign xml:lang="sa-Latn">āśraddhyāṃ karmaphalasatyaratneṣv anabhisaṃpratyayaḥ śraddhāvipakṣaḥ | śraddhā hy astitvaguṇavattvaśakyatveṣv abhisaṃpratyayaḥ prasādo 'bhilāṣaś ca yathākramam | aśraddhā tadviparyeṇāstitvaguṇavattvaśakyatveṣv anabhisaṃpratyayo <btw:antonym-instance>'prasādo</btw:antonym-instance> 'nabhilāṣaś ca | kausīdyasaṃniśrayadānakarmakam | aśraddadhānasya prayogacchandābhāvāt kausīdyasaṃniśrayadānakarmakatvam |</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
               <btw:example><btw:cit><ref>Sarvadharmāpravṛttinirdeśa, 126</ref><foreign xml:lang="sa-Latn">bo)dhisatvānāṃ <btw:antonym-instance>aprasāda</btw:antonym-instance>cittam utpādayati aprasannacittam …</foreign></btw:cit><btw:tr>He <btw:antonym-instance>mistrusted</btw:antonym-instance> the bodhisatva, and being mistrustful …</btw:tr></btw:example>
             </btw:citations>
             <!-- [other citations] -->
@@ -471,10 +471,10 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
               <lg>
                 <l><foreign xml:lang="sa-Latn">mauryaḥ sabhṛtyaḥ sajanaḥ sapauraḥ</foreign></l>
                 <l><foreign xml:lang="sa-Latn">sulabdhalābhārthasuyaṣṭayajñaḥ| </foreign></l>
-                <l><foreign xml:lang="sa-Latn">yasyedṛśaḥ sādhujana <btw:lemma-instance>prasādaḥ</btw:lemma-instance> </foreign></l>
+                <l><foreign xml:lang="sa-Latn">yasyedṛśaḥ sādhujana <btw:lemma-instance>prasādaḥ</btw:lemma-instance></foreign></l>
                 <l><foreign xml:lang="sa-Latn">kāle tathotsāhi karoti dānaṃ||</foreign></l>
               </lg>
-            </btw:cit><btw:tr>XXX</btw:tr></btw:example>
+            </btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
             <!-- [other citations]
             ø -->
@@ -482,7 +482,7 @@ sarvottamaḥ sarvadarśī sarvākāravibhūṣitaḥ |4| sarvārthasiddhaḥ s
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">pradūṣaṇā</foreign></term>
             <btw:citations>
-              <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna 331-332</ref><foreign xml:lang="sa-Latn">puruṣasya hi jātasya kuṭhārī jāyate mukhe | cchinnatti hi yayātmānaṃ vācā durbhāṣitaṃ vadan |1| yo nindyajanaṃ praśaṃsati praśaṃsyañ ca janaṃ vinindati | sa cinoti mukhena taṃ kaliṃ kalīnāṃ yena sukhaṃ na vandati |2| alpamātro hy ayaṃ kalir ya ihākṣaiḥ svadhanaṃ parājayet | ayam atra mahattaraḥ kalir yaḥ sugateṣu manaḥ <btw:antonym-instance>pradūṣayet</btw:antonym-instance> |3| śataṃ sahasrāṇi  nirarbudānāṃ ṣaṭtriṅśataṃ pañca caivārbudāni | yān āryagarhī narakān upaiti vācaṃ manaś ca praṇidhāya pāpakaṃ |4| citta<btw:antonym-instance>pradūṣaṇā</btw:antonym-instance>hetoḥ satvā gacchanti durggatiṃ | citta<btw:lemma-instance>prasādanā</btw:lemma-instance>hetoḥ satvā gacchanti sadgatiṃ</foreign></btw:cit><btw:tr>XXX</btw:tr></btw:example>
+              <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna 331-332</ref><foreign xml:lang="sa-Latn">puruṣasya hi jātasya kuṭhārī jāyate mukhe | cchinnatti hi yayātmānaṃ vācā durbhāṣitaṃ vadan |1| yo nindyajanaṃ praśaṃsati praśaṃsyañ ca janaṃ vinindati | sa cinoti mukhena taṃ kaliṃ kalīnāṃ yena sukhaṃ na vandati |2| alpamātro hy ayaṃ kalir ya ihākṣaiḥ svadhanaṃ parājayet | ayam atra mahattaraḥ kalir yaḥ sugateṣu manaḥ <btw:antonym-instance>pradūṣayet</btw:antonym-instance> |3| śataṃ sahasrāṇi  nirarbudānāṃ ṣaṭtriṅśataṃ pañca caivārbudāni | yān āryagarhī narakān upaiti vācaṃ manaś ca praṇidhāya pāpakaṃ |4| citta<btw:antonym-instance>pradūṣaṇā</btw:antonym-instance>hetoḥ satvā gacchanti durggatiṃ | citta<btw:lemma-instance>prasādanā</btw:lemma-instance>hetoḥ satvā gacchanti sadgatiṃ</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
             <!-- [other citations]
             ø -->
