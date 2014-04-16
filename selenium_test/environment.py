@@ -5,6 +5,8 @@ import tempfile
 import subprocess
 import shutil
 import httplib
+import atexit
+from distutils.version import StrictVersion
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -22,6 +24,7 @@ execfile(conf_path, conf)
 
 config = conf["Config"](local_conf_path)
 
+import selenium
 import selenic.util
 from behave import step_registry
 
@@ -32,8 +35,6 @@ assert_equal.im_self.longMessage = True
 
 import wedutil
 from selenium_test import btw_util
-
-import atexit
 
 
 def cleanup(context, failed):
@@ -71,6 +72,7 @@ def before_all(context):
                                      # Give more time if we are remote.
                                      4 if config.remote else 2)
     context.selenic_config = config
+
     # Without this, window sizes vary depending on the actual browser
     # used.
     context.initial_window_size = {"width": 1020, "height": 580}

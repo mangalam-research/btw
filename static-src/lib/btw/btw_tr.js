@@ -181,9 +181,34 @@ function remove_mixed_handler(editor, data) {
     editor.setDataSelectionRange(range);
 }
 
+function make_replace_none(editor, replaced_with) {
+    return new Transformation(
+        editor, "Create new " + replaced_with, undefined,
+        "<i class='icon-plus icon-fixed-width'></i>",
+        function (editor, data) {
+        var caret = editor.getDataCaret();
+        var parent = caret.node;
+        var index = caret.offset;
+
+        // This is the node that contains btw:none.
+        var grandparent = parent.parentNode;
+
+        editor.data_updater.removeNodes(grandparent.childNodes);
+
+        var $el = transformation.makeElement(replaced_with);
+        editor.data_updater.insertAt(grandparent, 0, $el[0]);
+        var gui_node = editor.fromDataLocation($el[0], 0).node;
+        var nodes = editor.mode.nodesAroundEditableContents(gui_node);
+        editor.setGUICaret(gui_node,
+                           _indexOf.call(gui_node.childNodes, nodes[0]) + 2);
+    });
+}
+
+
 exports.insert_ptr = insert_ptr;
 exports.insert_ref = insert_ref;
 exports.SetTextLanguageTr = SetTextLanguageTr;
 exports.RemoveMixedTr = RemoveMixedTr;
+exports.make_replace_none = make_replace_none;
 
 });

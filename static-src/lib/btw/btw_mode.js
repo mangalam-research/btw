@@ -96,6 +96,15 @@ BTWMode.prototype.init = function (editor) {
             editor, data.node);
         });
 
+    this.replace_none_with_antonym =
+        btw_tr.make_replace_none(editor, "btw:antonym");
+
+    this.replace_none_with_cognate =
+        btw_tr.make_replace_none(editor, "btw:cognate");
+
+    this.replace_none_with_conceptual_proximate =
+        btw_tr.make_replace_none(editor, "btw:conceptual-proximate");
+
     this.swap_with_next_tr = new transformation.Transformation(
         editor, "Swap with next sibling", undefined,
         "<i class='icon-long-arrow-down'></i>",
@@ -210,6 +219,27 @@ BTWMode.prototype.init = function (editor) {
           pass: {
               "foreign": ["delete-parent"]
           }
+        },
+        { selector: jqutil.toDataSelector("btw:antonyms>btw:none"),
+          substitute: [
+              { tag: "btw:none",
+                type: "delete-parent",
+                actions: [this.replace_none_with_antonym] }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:cognates>btw:none"),
+          substitute: [
+              { tag: "btw:none",
+                type: "delete-parent",
+                actions: [this.replace_none_with_cognate] }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:conceptual-proximates>btw:none"),
+          substitute: [
+              { tag: "btw:none",
+                type: "delete-parent",
+                actions: [this.replace_none_with_conceptual_proximate] }
+          ]
         }
     ];
 };

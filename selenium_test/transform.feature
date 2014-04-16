@@ -52,3 +52,24 @@ Scenario: using the navigation context menu to insert a subsense before a subsen
   When the user brings up a context menu on navigation item "[brief explanation of sense a1]"
   And the user clicks the context menu option "Create new btw:subsense before this one"
   Then the single sense contains an additional subsense before the one that was already there
+
+Scenario: inserting an antonym
+  Given a document that has no btw:antonym
+  When the user clicks on the btw:none element of btw:antonyms
+  And the user brings up the context menu
+  And the user clicks the context menu option "Create new btw:antonym"
+  Then a new btw:antonym is created
+
+Scenario: inserting a cognate
+  Given a document that has no btw:cognate
+  When the user clicks on the btw:none element of btw:cognates
+  And the user brings up the context menu
+  And the user clicks the context menu option "Create new btw:cognate"
+  Then a new btw:cognate is created
+
+Scenario: inserting a conceptual proximate
+  Given a document that has no btw:conceptual-proximate
+  When the user clicks on the btw:none element of btw:conceptual-proximates
+  And the user brings up the context menu
+  And the user clicks the context menu option "Create new btw:conceptual-proximate"
+  Then a new btw:conceptual-proximate is created

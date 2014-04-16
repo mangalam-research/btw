@@ -194,3 +194,12 @@ def step_impl(context, where):
                       "head": u"[brief explanation of sense a2]"})
     else:
         raise ValueError("unexpected value for where: " + where)
+
+
+@then("^a new (?P<what>.*?) is created$")
+def step_impl(context, what):
+    util = context.util
+
+    what = "." + what.replace(":", r"\:")
+
+    util.find_element((By.CSS_SELECTOR, what))

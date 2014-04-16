@@ -186,3 +186,17 @@ def step_impl(context):
     setup_editor(context)
 
     btw_util.record_document_features(context)
+
+
+@Given("^a document that has no (?P<what>.*)$")
+def step_impl(context, what):
+    driver = context.driver
+    context.execute_steps(u"""
+    Given a document with a single sense that has a subsense
+    """)
+
+    # Make a CSS selector out of it
+    what = "." + what.replace(":", r"\:")
+    els = driver.find_elements_by_css_selector(what)
+
+    assert_equal(len(els), 0)

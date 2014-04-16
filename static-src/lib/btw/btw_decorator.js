@@ -152,7 +152,8 @@ function BTWDecorator(mode, meta) {
         "btw:antonyms",
         "btw:cognates",
         "btw:conceptual-proximates",
-        "btw:other-citations"
+        "btw:other-citations",
+        "btw:none"
     ].forEach(function (x) {
         this._label_levels[x] = 2;
     }.bind(this));
@@ -381,6 +382,9 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "btw:explanation":
         this.explanationDecorator($root, $el);
         break;
+    case "btw:none":
+        this.noneDecorator($root, $el);
+        return; // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
     }
 
     this.elementDecorator($root, $el);
@@ -392,6 +396,12 @@ BTWDecorator.prototype.elementDecorator = function ($root, $el) {
         this, $root, $el, this._label_levels[orig_name] || 1,
         log.wrap(this._contextMenuHandler.bind(this, true)),
         log.wrap(this._contextMenuHandler.bind(this, false)));
+};
+
+BTWDecorator.prototype.noneDecorator = function ($root, $el) {
+    this._gui_updater.removeNodes($el.children().toArray());
+    var $text = $('<div class="_phantom _text">ø</div>');
+    this._gui_updater.insertBefore($el[0], $text[0], null);
 };
 
 BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
@@ -610,9 +620,10 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
         $el.attr(util.encodeAttrName("xml:id"), parent_id + "." + id);
     }
 
-    if (!$el[0].firstChild) {
+    var data_el = $el.data("wed_mirror_node");
+    if (!data_el.firstChild) {
         var saved = this._editor.getGUICaret();
-        this._editor.setDataCaret($el.data("wed_mirror_node"), 0);
+        this._editor.setDataCaret(data_el, 0);
         this._mode.getContextualActions("insert", "btw:explanation",
                                         $el[0], 0)[0]
             .execute({element_name: "btw:explanation"});

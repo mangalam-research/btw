@@ -46,6 +46,7 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:authority":
     case "btw:sense-emphasis":
     case "btw:todo":
+    case "btw:none":
         return true;
     case "btw:english-term":
         return false;

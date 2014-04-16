@@ -76,8 +76,6 @@ def step_impl(context):
 
     link = util.wait(EC.element_to_be_clickable(
         (By.CSS_SELECTOR, ".wed-context-menu li>a")))
-    context.clicked_context_menu_item = \
-        util.get_text_excluding_children(link).strip()
     link.click()
 
 
@@ -86,7 +84,6 @@ def step_impl(context, item):
     util = context.util
 
     link = util.wait(EC.element_to_be_clickable((By.LINK_TEXT, item)))
-    context.clicked_context_menu_item = item
     link.click()
 
 
