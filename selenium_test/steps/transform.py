@@ -203,3 +203,31 @@ def step_impl(context, what):
     what = "." + what.replace(":", r"\:")
 
     util.find_element((By.CSS_SELECTOR, what))
+
+
+@when("^the user clicks on the visible absence for (?P<what>.*)$")
+def step_impl(context, what):
+    driver = context.driver
+    button = driver.execute_script("""
+    var what = arguments[0];
+    return jQuery("._va_instantiator:contains('Create new " + what + "')")[0];
+    """, what)
+    ActionChains(driver) \
+        .click(button) \
+        .perform()
+
+
+@then("^there is no visible absence for (?P<what>.*)$")
+def step_impl(context, what):
+    driver = context.driver
+
+    def cond(*_):
+        button = driver.execute_script("""
+        var what = arguments[0];
+        return jQuery("._va_instantiator:contains('Create new " + what +
+                      "')")[0];
+        """, what)
+
+        return button is None
+
+    context.util.wait(cond)

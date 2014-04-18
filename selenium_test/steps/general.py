@@ -192,7 +192,7 @@ def step_impl(context):
 def step_impl(context, what):
     driver = context.driver
     context.execute_steps(u"""
-    Given a document with a single sense that has a subsense
+    Given a document with a single sense
     """)
 
     # Make a CSS selector out of it

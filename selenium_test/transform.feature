@@ -73,3 +73,17 @@ Scenario: inserting a conceptual proximate
   And the user brings up the context menu
   And the user clicks the context menu option "Create new btw:conceptual-proximate"
   Then a new btw:conceptual-proximate is created
+
+Scenario: inserting an explanation by using a visible absence
+  Given a document that has no btw:explanation
+  When the user clicks on the visible absence for btw:explanation
+  Then a new btw:explanation is created
+  And there is no visible absence for btw:explanation
+  And there is no visible absence for btw:subsense
+
+Scenario: inserting a subsense by using a visible absence
+  Given a document that has no btw:subsense
+  When the user clicks on the visible absence for btw:subsense
+  Then a new btw:subsense is created
+  And there is no visible absence for btw:explanation
+  And there is no visible absence for btw:subsense
