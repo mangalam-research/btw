@@ -181,7 +181,11 @@ function BTWDecorator(mode, meta) {
     this._visible_absence_specs = [
         {
             parent: jqutil.toDataSelector("btw:sense"),
-            children: ["btw:subsense", "btw:explanation"]
+            children: ["btw:subsense", "btw:explanation", "btw:citations"]
+        },
+        {
+            parent: jqutil.toDataSelector("btw:citations"),
+            children: ["btw:example"]
         }
     ];
 

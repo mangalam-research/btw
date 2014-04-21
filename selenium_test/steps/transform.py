@@ -217,8 +217,8 @@ def step_impl(context, what):
         .perform()
 
 
-@then("^there is no visible absence for (?P<what>.*)$")
-def step_impl(context, what):
+@then("^there is (?P<assertion>a|no) visible absence for (?P<what>.*)$")
+def step_impl(context, assertion, what):
     driver = context.driver
 
     def cond(*_):
@@ -228,6 +228,7 @@ def step_impl(context, what):
                       "')")[0];
         """, what)
 
-        return button is None
+        is_none = button is None
+        return is_none if assertion == "no" else not is_none
 
     context.util.wait(cond)

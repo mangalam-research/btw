@@ -80,6 +80,7 @@ Scenario: inserting an explanation by using a visible absence
   Then a new btw:explanation is created
   And there is no visible absence for btw:explanation
   And there is no visible absence for btw:subsense
+  And there is a visible absence for btw:citations
 
 Scenario: inserting a subsense by using a visible absence
   Given a document that has no btw:subsense
@@ -87,3 +88,12 @@ Scenario: inserting a subsense by using a visible absence
   Then a new btw:subsense is created
   And there is no visible absence for btw:explanation
   And there is no visible absence for btw:subsense
+
+Scenario: inserting citations in a sense by using a visible absence
+  Given a document that has no btw:explanation
+  When the user clicks on the visible absence for btw:explanation
+  Then a new btw:explanation is created
+  And there is a visible absence for btw:citations
+  When the user clicks on the visible absence for btw:citations
+  Then a new btw:citations is created
+  And there is no visible absence for btw:citations
