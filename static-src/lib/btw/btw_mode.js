@@ -125,6 +125,12 @@ BTWMode.prototype.init = function (editor) {
 
     }.bind(this));
 
+    this.insert_bibl_ptr = new btw_actions.InsertBiblPtrDialogAction(
+        this._editor,
+        "Insert a new bibliographical reference",
+        "",
+        "<i class='icon-plus icon-fixed-width'></i>");
+
     /**
      * @private
      * @typedef Substitution
@@ -240,6 +246,14 @@ BTWMode.prototype.init = function (editor) {
                 type: "delete-parent",
                 actions: [this.replace_none_with_conceptual_proximate] }
           ]
+        },
+        { selector: jqutil.toDataSelector("*"),
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
         }
     ];
 };
@@ -304,10 +318,6 @@ BTWMode.prototype.makeDecorator = function () {
 
 BTWMode.prototype._getTransformationRegistry = function () {
     var ret = Mode.prototype._getTransformationRegistry.call(this);
-    ret.addTagTransformations("insert", "ref",
-                              new btw_actions.InsertBiblPtrDialogAction(
-                                  this._editor,
-                                  "Insert a new bibliographical reference"));
     return ret;
 };
 
