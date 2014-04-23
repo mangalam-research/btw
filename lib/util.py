@@ -1,6 +1,3 @@
-from django.db.models import Q
-from django.utils.timezone import utc
-
 import re
 import operator
 import datetime
@@ -9,7 +6,14 @@ import os
 import subprocess
 
 
+import semver
+from django.db.models import Q
+from django.utils.timezone import utc
+from django.conf import settings
+
+
 class WithTmpFiles(object):
+
     def __init__(self, input_data=None):
         self._input_data = input_data
         self._tmpinput_path = None
@@ -133,3 +137,34 @@ def nice_name(user):
                                   first_name if len(first_name) else last_name)
 
     return user.username
+
+_cached_version = None
+
+
+def version():
+    """
+    Returns the version of BTW. This value is computed once and then
+    cached.
+    """
+    global _cached_version
+    if _cached_version is not None:
+        return _cached_version
+
+    # We have to be running from a git tree.
+    unclean = subprocess.check_output(["git", "status", "--porcelain"])
+
+    if not settings.DEBUG and unclean:
+        raise Exception("running with unclean tree while DEBUG is false")
+
+    describe = subprocess.check_output(["git", "describe", "--match",
+                                        "v*"]).strip()
+
+    if unclean:
+        describe += "-unclean"
+
+    sep = describe.find("-")
+    semver.parse(describe[1:len(describe) if sep == -1 else sep])
+
+    _cached_version = describe
+
+    return describe
