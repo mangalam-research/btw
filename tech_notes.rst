@@ -287,7 +287,19 @@ Generally:
     $ ../btw_env/bin/activate
     $ ./manage.py syncdb
     $ ./manage.py migrate
+    $ npm outdated
+    [Upgrade anything that needs upgrading.]
     $ make
+
+See below for specific cases.
+
+0.0.2 to 0.0.3
+--------------
+
+1. Delete the database table ``biblliography_item``. This is okay
+   because the BTW software has not yet been used in production.
+
+2. Perform the general steps.
 
 Nginx
 -----

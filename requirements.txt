@@ -10,3 +10,4 @@ mitmproxy>=0.10.0,<1
 django-allauth>=0.15.0
 django-datatables-view>=1.7
 psycopg2>=2.5.2,<3
+django-forms-boostrap>=3.0.0,<4

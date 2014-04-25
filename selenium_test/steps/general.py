@@ -114,12 +114,12 @@ User = collections.namedtuple("User", ["login", "password"])
 
 users = {
     "the user": User("foo", "foo"),
-    "a user without permission to edit titles": User("foo2", "foo")
+    "a user without permission to edit primary sources": User("foo2", "foo")
 }
 
 
-@given(ur"^(?P<user_desc>the user|a user without permission to edit titles) "
-       ur"has logged in$")
+@given(ur"^(?P<user_desc>the user|a user without permission to edit "
+       ur"primary sources) has logged in$")
 @when(ur"^(?P<user_desc>the user) logs in$")
 def step_impl(context, user_desc):
     driver = context.driver
@@ -151,6 +151,7 @@ def step_impl(context, user_desc):
                                'value': session_key})
             driver.add_cookie({'name': 'csrftoken',
                                'value': 'foo'})
+        driver.get(config.SERVER)
 
 
 @Given("^a document with a single sense(?: that does not have a subsense)?$")

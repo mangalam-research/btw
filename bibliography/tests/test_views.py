@@ -11,7 +11,7 @@ import mock
 
 from .util import TestMeta, replay
 from . import mock_zotero
-from ..models import Item
+from ..models import Item, PrimarySource
 
 User = get_user_model()
 
@@ -19,45 +19,74 @@ User = get_user_model()
 # somewhere else.
 assert_equal.im_self.longMessage = True
 
+search_url = reverse('bibliography_search')
+manage_url = reverse('bibliography_manage')
+item_table_url = reverse('bibliography_item_table')
+login_url = reverse('login')
 
-class BaseTest(WebTest):
+
+class _BaseTest(WebTest):
     __metaclass__ = TestMeta
 
+    url = None
+
     def __init__(self, *args, **kwargs):
-        super(BaseTest, self).__init__(*args, **kwargs)
+        super(_BaseTest, self).__init__(*args, **kwargs)
         self.client = None
         self.user = None
-        self.search_url = reverse('bibliography_search')
-        self.title_url = reverse('bibliography_title')
-        self.login_url = reverse('login')
 
     def setUp(self):
+        super(_BaseTest, self).setUp()
         self.client = Client()
         # create test user with zotero profile setup.
         self.user = User.objects.create_user(username='test', password='test')
+        self.noperm = User.objects.create_user(username='noperm',
+                                               password='test')
 
     def tearDown(self):
         self.user.delete()
 
+    def test_not_logged(self):
+        """
+        Test that the response is 403 when the user is not logged in.
+        """
+        response = self.client.get(self.url)
+        assert_equal(response.status_code, 403)
 
-class TestSearchView(BaseTest):
+    def test_logged(self):
+        """
+        Test that we get a response.
+        """
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        response = self.client.get(self.url)
+        assert_equal(response.status_code, 200,
+                     "the request should be successful")
+
+
+class TestSearchView(_BaseTest):
 
     """
     Tests for the search view.
     """
 
-    def test_search_not_logged_in(self):
+    url = search_url
+
+    # We override the base one.
+    def test_not_logged(self):
         """
         Tests that the response is 403 when the user is not logged in.
         """
         # the user is not logged in.
-        response = self.client.get(self.search_url, {},
+        response = self.client.get(self.url, {},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         assert_equal(response.status_code, 403)
 
+    # We override the base one.
     @replay
-    def test_search(self):
+    def test_logged(self):
         """
         Tests that when the user is logged in, doing an AJAX request on
         the search URL or loading the page yields a 200 response.
@@ -67,13 +96,12 @@ class TestSearchView(BaseTest):
 
         assert_true(response)
 
-        response = self.client.get(self.search_url)
+        response = self.client.get(self.url)
 
         assert_equal(response.status_code, 200)
 
         # test ajax get call without any data
-        response = self.client.get(self.search_url,
-                                   {},
+        response = self.client.get(self.url, {},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         assert_equal(response.status_code, 200)
 
@@ -142,39 +170,38 @@ get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 
-@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                     get_item=get_item_mock)
-class TestTitleView(BaseTest):
-
-    """
-    Tests for the title view.
-    """
+class _PatchZoteroTest(_BaseTest):
 
     def setUp(self):
-        super(TestTitleView, self).setUp()
+        super(_PatchZoteroTest, self).setUp()
         get_item_mock.reset_mock()
         get_all_mock.reset_mock()
         mock_records.reset()
+        self.patch = mock.patch.multiple("bibliography.zotero.Zotero",
+                                         get_all=get_all_mock,
+                                         get_item=get_item_mock)
+        self.patch.start()
 
+    def tearDown(self):
+        self.patch.stop()
+
+
+class TestManageView(_PatchZoteroTest):
+
+    """
+    Tests for the manage view.
+    """
+
+    url = manage_url
+
+    # Override the base one.
     def test_not_logged(self):
         """
         Test that the response is a redirection to the login page when the
         user is not logged in.
         """
-        response = self.client.get(self.title_url)
-        self.assertRedirects(response, self.login_url +
-                             "?next=" + self.title_url)
-
-    def test_logged(self):
-        """
-        Test that we get a response.
-        """
-        response = self.client.login(username=u'test', password=u'test')
-        assert_true(response)
-
-        response = self.client.get(self.title_url)
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
+        response = self.client.get(manage_url)
+        self.assertRedirects(response, login_url + "?next=" + manage_url)
 
     def test_caching(self):
         """
@@ -187,7 +214,7 @@ class TestTitleView(BaseTest):
         assert_equal(Item.objects.all().count(), 0,
                      "no Item object should exist yet")
 
-        response = self.client.get(self.title_url)
+        response = self.client.get(self.url)
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
@@ -207,7 +234,7 @@ class TestTitleView(BaseTest):
         assert_equal(Item.objects.all().count(), 0,
                      "no Item object should exist yet")
 
-        response = self.client.get(self.title_url)
+        response = self.client.get(self.url)
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
@@ -220,7 +247,7 @@ class TestTitleView(BaseTest):
         # Simulate a change on the server.
         mock_records.values = new_values
 
-        response = self.client.get(self.title_url)
+        response = self.client.get(self.url)
         assert_equal(response.status_code, 200,
                      "the request should be successful")
 
@@ -231,101 +258,253 @@ class TestTitleView(BaseTest):
                      "all items should have been cached as ``Item``")
 
 
-@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                     get_item=get_item_mock)
-class TestReferenceTitleView(BaseTest):
+class TestItemTableView(_PatchZoteroTest):
 
     """
-    Tests for the title view.
+    Tests for the ItemTable view.
+    """
+    #
+    # Note that this test is not testing the nitty gritty of
+    # django-datatables-view. So don't go looking for such tests here.
+    #
+
+    url = item_table_url
+
+
+class TestItemPrimarySourcesView(_PatchZoteroTest):
+
+    """
+    Tests for the item_primary_sources view.
+    """
+
+    #
+    # Note that this test is not testing the nitty gritty of
+    # django-datatables-view. So don't go looking for such tests here.
+    #
+
+    def setUp(self):
+        super(TestItemPrimarySourcesView, self).setUp()
+        #
+        # When used in the app, caching should have occured due to
+        # other views.
+        #
+        from ..views import _cache_all
+        _cache_all()
+        self.url = reverse(
+            'bibliography_item_primary_sources',
+            args=(Item.objects.get(item_key="1").pk,))
+
+    def test_post(self):
+        response = self.client.login(username=u'test', password=u'test')
+        assert_true(response)
+
+        response = self.client.post(self.url)
+        assert_equal(response.status_code, 405, "the request should fail")
+
+
+class PrimarySourceMixin(object):
+
+    get_headers = {"Accept": "application/x-form"}
+    initial_values = None
+    # This is a fake value selected to shut jslint up.
+    submit_method = id
+
+    def make_submit_headers(self, form):
+        ret = dict(self.get_headers)
+        ret["Content-Type"] = \
+            "application/x-www-form-urlencoded; charset=UTF-8"
+        ret["X-CSRFToken"] = str(form['csrfmiddlewaretoken'].value)
+        return ret
+
+    def submit(self, form, *args, **kwargs):
+        return self.submit_method(headers=self.make_submit_headers(form),
+                                  *args, **kwargs)
+
+    def test_no_permission(self):
+        """
+        Test that a user without the right permissions cannot create a
+        primary source.
+        """
+
+        response = self.client.login(username=u'noperm', password=u'test')
+        assert_true(response)
+
+        response = self.client.get(self.url)
+        assert_equal(response.status_code, 302, "the request should fail")
+
+    def test_form(self):
+        """
+        Test that the form is properly initialized.
+        """
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        assert_equal(form['reference_title'].value,
+                     self.initial_values.reference_title)
+        assert_equal(form['genre'].value, self.initial_values.genre)
+
+    def test_post_valid_form(self):
+        """
+        Test that a valid form passes through, and creates an object.
+        """
+        count_before = PrimarySource.objects.all().count()
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        form['reference_title'] = 'Flibble'
+        form['genre'] = 'SH'
+        response = self.submit(form, self.url, params=form.submit_fields())
+        assert_equal(response.status_code, 200)
+
+        source = self.element_of_interest()
+        assert_equal(source.reference_title, "Flibble")
+        assert_equal(source.genre, "SH")
+        assert_equal(source.item.pk, Item.objects.get(item_key="1").pk)
+        self.assert_count_after_valid_post(count_before)
+
+    def test_post_title_normalized(self):
+        """
+        Test that a valid form normalizes a title that has leading or
+        trailing spaces in it.
+        """
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        form['reference_title'] = '  Bar  '
+        form['genre'] = 'SH'
+        response = self.submit(form, self.url, params=form.submit_fields())
+        assert_equal(response.status_code, 200)
+
+        source = self.element_of_interest()
+        assert_equal(source.reference_title, "Bar")
+        assert_equal(source.genre, "SH")
+        assert_equal(source.item.pk, Item.objects.get(item_key="1").pk)
+
+    def test_post_form_empty_title(self):
+        """
+        Test that an empty title yields an error.
+        """
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        form['reference_title'] = ''
+        form['genre'] = 'SH'
+        response = self.submit(form, self.url, params=form.submit_fields(),
+                               expect_errors=True)
+        self.assertContains(
+            response,
+            '<span id="error_id_reference_title_1" class="error-msg">'
+            'This field is required.</span>',
+            status_code=400)
+
+    def test_post_form_duplicate_title(self):
+        """
+        Test that a duplicate title yields an error.
+        """
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        form['reference_title'] = "Foo"
+        form['genre'] = 'SU'
+        response = self.submit(form, self.url, params=form.submit_fields(),
+                               expect_errors=True)
+        self.assertContains(
+            response,
+            '<span id="error_id_reference_title_1" class="error-msg">'
+            'Primary source with this Reference title already exists.</span>',
+            status_code=400)
+
+
+class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
+
+    """
+    Tests for the new_primary_sources view.
     """
 
     def setUp(self):
-        super(TestReferenceTitleView, self).setUp()
-        get_item_mock.reset_mock()
-        get_all_mock.reset_mock()
-        mock_records.reset()
+        super(TestNewPrimarySourcesView, self).setUp()
+        #
+        # When used in the app, caching should have occured due to
+        # other views.
+        #
+        from ..views import _cache_all
+        _cache_all()
+        item = Item.objects.get(item_key="1")
+        self.url = reverse(
+            'bibliography_new_primary_sources',
+            args=(item.pk,))
+        source = PrimarySource(item=Item.objects.get(item_key="1"),
+                               reference_title="Blah",
+                               genre="SU")
+        source.save()
+        source = PrimarySource(item=Item.objects.get(item_key="1"),
+                               reference_title="Foo",
+                               genre="SU")
+        source.save()
+        self.initial_values = PrimarySource(item=item, reference_title='',
+                                            genre='SU')
+        self.submit_method = self.app.post
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(PrimarySource),
+            codename="add_primarysource"))
 
-    def test_not_logged(self):
-        """
-        Test that the response is 403 when the user is not logged in.
-        """
-        url = reverse('bibliography_reference_title', args=("1", ))
+    def element_of_interest(self):
+        return PrimarySource.objects.all().last()
 
-        response = self.client.post(url, {"value": "blah"})
-        assert_equal(response.status_code, 403)
+    def assert_count_after_valid_post(self, count_before):
+        assert_equal(PrimarySource.objects.all().count(), count_before + 1)
+
+
+class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
+
+    """
+    Tests for the primary_sources view.
+    """
+
+    def setUp(self):
+        super(TestPrimarySourcesView, self).setUp()
+        #
+        # When used in the app, caching should have occured due to
+        # other views.
+        #
+        from ..views import _cache_all
+        _cache_all()
+        source = PrimarySource(item=Item.objects.get(item_key="1"),
+                               reference_title="Blah",
+                               genre="SU")
+        self.initial_values = source
+        source.save()
+        source = PrimarySource(item=Item.objects.get(item_key="1"),
+                               reference_title="Foo",
+                               genre="SU")
+        source.save()
+        self.submit_method = self.app.put
+        self.url = reverse(
+            'bibliography_primary_sources',
+            args=(PrimarySource.objects.all()[0].pk,))
+        self.user.user_permissions.add(Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(PrimarySource),
+            codename="change_primarysource"))
+
+    def element_of_interest(self):
+        return PrimarySource.objects.get(pk=self.initial_values.pk)
+
+    def assert_count_after_valid_post(self, count_before):
+        assert_equal(PrimarySource.objects.all().count(), count_before)
 
     def test_logged(self):
         """
         Test that we get a response.
         """
-
-        self.user.user_permissions.add(Permission.objects.get(
-            content_type=ContentType.objects.get_for_model(Item),
-            codename="change_item"))
         response = self.client.login(username=u'test', password=u'test')
         assert_true(response)
 
-        # We must do this first so that the Item data is cached.
-        response = self.client.get(self.title_url)
+        response = self.app.get(
+            self.url, headers=self.get_headers, user='test')
         assert_equal(response.status_code, 200,
                      "the request should be successful")
-
-        item = Item.objects.get(item_key="1")
-
-        url = reverse('bibliography_reference_title', args=(item.pk, ))
-
-        response = self.client.post(url, {
-            "value": "foo"
-        })
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-
-    def test_change(self):
-        """
-        Test that the data is changed in the database.
-        """
-
-        self.user.user_permissions.add(Permission.objects.get(
-            content_type=ContentType.objects.get_for_model(Item),
-            codename="change_item"))
-        self.user.save()
-        response = self.client.login(username=u'test', password=u'test')
-        assert_true(response)
-
-        # We must do this first so that the Item data is cached.
-        response = self.client.get(self.title_url)
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-
-        item = Item.objects.get(item_key="1")
-
-        assert_equal(item.reference_title, None,
-                     "the reference_title value should be None")
-
-        url = reverse('bibliography_reference_title', args=(item.pk, ))
-
-        response = self.client.post(url, {
-            "value": "foo"
-        })
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-        item = Item.objects.get(item_key="1")
-
-        assert_equal(item.reference_title, "foo",
-                     "the reference_title value should be changed")
-
-    def test_no_permission(self):
-        """
-        Test that a user without the right permissions cannot change a
-        reference title.
-        """
-
-        response = self.client.login(username=u'test', password=u'test')
-        assert_true(response)
-
-        url = reverse('bibliography_reference_title', args=(1, ))
-
-        response = self.client.post(url, {
-            "value": "foo"
-        })
-        assert_equal(response.status_code, 302, "the request should fail")

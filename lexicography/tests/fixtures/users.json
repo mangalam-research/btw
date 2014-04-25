@@ -35,9 +35,14 @@
     ],
     "user_permissions": [
       [
-        "change_item",
+        "add_primarysource",
         "bibliography",
-        "item"
+        "primarysource"
+      ],
+      [
+        "change_primarysource",
+        "bibliography",
+        "primarysource"
       ]
     ],
     "password": "pbkdf2_sha256$10000$TYWz4xLHOCqm$0env0MPK3H3w3GcuS9A9d6tydOEKh/DyDwvE7S+TDYc=",

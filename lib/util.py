@@ -146,14 +146,14 @@ def version():
     Returns the version of BTW. This value is computed once and then
     cached.
     """
-    global _cached_version
+    global _cached_version  # pylint: disable-msg=global-statement
     if _cached_version is not None:
         return _cached_version
 
     # We have to be running from a git tree.
     unclean = subprocess.check_output(["git", "status", "--porcelain"])
 
-    if not settings.DEBUG and unclean:
+    if not (settings.DEBUG or settings.BTW_TESTING) and unclean:
         raise Exception("running with unclean tree while DEBUG is false")
 
     describe = subprocess.check_output(["git", "describe", "--match",

@@ -3,13 +3,12 @@
 import re
 import datetime
 import json
-import threading
 
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.core.urlresolvers import reverse
-
+from django.core.validators import RegexValidator
 from south.modelsinspector import add_introspection_rules
 
 from .zotero import Zotero, zotero_settings
@@ -138,22 +137,12 @@ class Item(models.Model):
     item_key = models.CharField(max_length=16)
     """The key Zotero has assigned to the item."""
 
-    reference_title = models.TextField(unique=True, null=True)
-    """
-    The reference title assigned by users of BTW. This is the title
-    shown in articles. The reason for this field is that for instance
-    an edition of the Abhidharmakośa could be published under the name
-    "The Treasury of Scholasticism" but our users would want to refer
-    to it by its classical name. This is where such name is recorded.
-    """
-
     date = models.TextField(null=True)
     """Cached date of publication."""
 
     title = models.TextField(null=True)
     """
-    Cached title. This is the original title of the work. Compare with
-    ``reference_title``.
+    Cached title. This is the original title of the work.
     """
 
     creators = models.TextField(null=True)
@@ -233,5 +222,58 @@ class Item(models.Model):
         return ret
 
     @property
-    def reference_title_url(self):
-        return reverse('bibliography_reference_title', args=(self.pk, ))
+    def new_primary_source_url(self):
+        return reverse('bibliography_new_primary_sources', args=(self.pk, ))
+
+    @property
+    def primary_sources_url(self):
+        return reverse('bibliography_item_primary_sources', args=(self.pk, ))
+
+
+class PrimarySource(models.Model):
+    SUTRA = "SU"
+    SHASTRA = "SH"
+    AVADANA = "AV"
+    LITTEXT = "LI"
+    PALI = "PA"
+    GENRE_CHOICES = (
+        (SUTRA, "Sūtra"),
+        (SHASTRA, "Śāstra"),
+        (AVADANA, "Avadāna"),
+        (LITTEXT, "Literary Text"),
+        (PALI, "Pāli"),
+    )
+
+    class Meta(object):
+        verbose_name_plural = "Primary sources"
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(PrimarySource, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.reference_title is not None:
+            self.reference_title = self.reference_title.strip()
+
+    reference_title = models.TextField(
+        unique=True, default=None,
+        validators=[RegexValidator(r"[^\s]",
+                                   "This field cannot contain only spaces.")])
+
+    """
+    The reference title assigned by users of BTW. This is the title
+    shown in articles. The reason for this field is that for instance
+    an edition of the Abhidharmakośa could be published under the name
+    "The Treasury of Scholasticism" but our users would want to refer
+    to it by its classical name. This is where such name is recorded.
+    """
+
+    genre = models.CharField(max_length=2, choices=GENRE_CHOICES, default=None)
+    """The genre to which this primary source belongs."""
+
+    item = models.ForeignKey(Item, related_name="primary_sources")
+    """The bibliographical item to which it corresponds."""
+
+    @property
+    def change_url(self):
+        return reverse('bibliography_primary_sources', args=(self.pk, ))
