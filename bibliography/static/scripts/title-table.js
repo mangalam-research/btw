@@ -1,5 +1,6 @@
-define(['jquery', 'lodash', 'jquery.cookie', 'datatables'],
-       function ($, _) {
+define(['jquery', 'lodash/modern/utilities/template',
+        'jquery.cookie', 'datatables'],
+       function ($, template) {
 var csrftoken = $.cookie('csrftoken');
 
 var $modal = $(
@@ -23,7 +24,7 @@ var $modal = $(
   </div>\
 </div>');
 
-var buttons_template = _.template("\
+var buttons_template = template("\
 <div class='btn btn-default btn-sm'><i class='icon-plus'></i></div>\
 <div style='position: relative' \
      class='btn <% print(children ? 'btn-default ':'') %>btn-sm'>\
