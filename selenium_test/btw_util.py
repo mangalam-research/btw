@@ -84,7 +84,9 @@ def get_sense_terms(util):
         var $term = $senses.eq(i).find(".btw\\\\:english-term");
         if ($term.length > 1)
             throw new Error("too many terms!");
-        ret.push($term[0] ? $term.text() : undefined);
+        var $clone = $term.clone();
+        $clone.find("._phantom").remove();
+        ret.push($clone[0] ? $clone.text().trim() : undefined);
     }
     return ret;
     """)
@@ -130,7 +132,9 @@ def get_rendition_terms_for_senses(util, labels):
             var $term = $rends.eq(i).find(".btw\\\\:english-term");
             if ($term.length > 1)
                 throw new Error("too many terms!");
-            rends.push($term[0] ? $term.text() : undefined);
+            var $clone = $term.clone();
+            $clone.find("._phantom").remove();
+            rends.push($clone[0] ? $clone.text().trim() : undefined);
         }
         ret[label] = rends;
     }
@@ -184,7 +188,7 @@ def get_subsenses_for_senses(util, labels):
             if ($expl.length > 1)
                 throw new Error("too many explanations!");
 
-            var $head = $ss.find(".head");
+            var $head = $expl.children(".head");
             if ($head.length > 1)
                 throw new Error("too many heads!");
 

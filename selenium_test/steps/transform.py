@@ -75,7 +75,7 @@ def step_impl(context, label):
     terms = btw_util.get_sense_terms(util)
 
     assert_equal(len(initial_terms) + 1, len(terms), "number of terms")
-    assert_is_none(terms[ix], "the new sense has no term yet")
+    assert_equal(terms[ix], '', "the new sense has no term yet")
 
 
 @when(u'the user undoes')
@@ -124,7 +124,7 @@ def step_impl(context):
     initial_renditions = context.initial_renditions_by_sense["A"]
     renditions = btw_util.get_rendition_terms_for_sense(util, "A")
     assert_equal(len(renditions), len(initial_renditions) + 1, "length")
-    assert_is_none(renditions[0], "first rendition is new")
+    assert_equal(renditions[0], '', "first rendition is new")
 
 
 @record_renditions_for("A")
@@ -151,7 +151,7 @@ def step_impl(context):
     initial_renditions = context.initial_renditions_by_sense["A"]
     renditions = btw_util.get_rendition_terms_for_sense(util, "A")
     assert_equal(len(renditions), len(initial_renditions) + 1, "length")
-    assert_is_none(renditions[1], "second rendition is new")
+    assert_equal(renditions[1], '', "second rendition is new")
 
 
 @then("the single sense contains a single subsense")
