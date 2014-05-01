@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 step_matcher('re')
 
@@ -19,7 +20,7 @@ COLUMNS = {
 
 SUBCOLUMNS = {
     "buttons": 0,
-    "reference title": 1,
+    "reference_title": 1,
     "genre": 2
 }
 
@@ -115,14 +116,19 @@ def step_impl(context, row_n):
     util = context.util
     column = COLUMNS["buttons"]
 
-    def cond(*_):
+    def cond(driver):
         try:
-            button = util.find_element((
-                By.XPATH,
-                "//table[@id='bibliography-table']/tbody/tr[{0}]/"
-                "td[{1}]/div[1]"
-                .format(int(row_n) + 1, column + 1)))
-            button.click()
+            button = driver.execute_script("""
+            var row = arguments[0];
+            var column = arguments[1];
+            return jQuery("table#bibliography-table>tbody>tr")
+                .filter(".odd, .even").eq(row).children("td")
+                .eq(column).children("div").eq(0)[0];
+
+            """, int(row_n), column)
+            ActionChains(driver) \
+                .click(button) \
+                .perform()
             return True
         except StaleElementReferenceException:
             return False
@@ -237,12 +243,12 @@ def step_impl(context, row, subrow, title, genre):
         if (!$subrow[0])
             return "no subrow";
 
-        var $title = $subrow.find("td").eq(SUBCOLUMNS["reference title"]);
-        if (!$title.text() === title)
+        var $title = $subrow.find("td").eq(SUBCOLUMNS["reference_title"]);
+        if ($title.text() !== title)
             return "title differs";
 
         var $genre = $subrow.find("td").eq(SUBCOLUMNS["genre"]);
-        if (!$genre.text() === genre)
+        if ($genre.text() !== genre)
             return "genre differs";
 
         return 1;
