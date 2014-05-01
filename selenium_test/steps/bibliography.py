@@ -98,7 +98,7 @@ def step_impl(context):
 def step_impl(context):
     util = context.util
 
-    util.ctrl_x("/")
+    util.ctrl_equivalent_x("/")
 
     context.execute_steps(u"""
     When the user clicks the context menu option "Add custom text \
@@ -132,4 +132,4 @@ def step_impl(context):
 def step_impl(context):
     util = context.util
 
-    util.ctrl_x("/")
+    util.ctrl_equivalent_x("/")
