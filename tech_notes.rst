@@ -284,6 +284,9 @@ Generally:
 
 1. Run::
 
+    $ git fetch origin --tags
+    $ git describe
+    [Make sure the description shows what you expect.]
     $ ../btw_env/bin/activate
     $ ./manage.py syncdb
     $ ./manage.py migrate
@@ -293,7 +296,7 @@ Generally:
 
 See below for specific cases.
 
-0.0.2 to 0.0.3
+0.0.2 to 0.1.0
 --------------
 
 1. Delete the database table ``biblliography_item``. This is okay
