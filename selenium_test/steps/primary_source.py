@@ -9,6 +9,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
+from nose.tools import assert_equal
+
 step_matcher('re')
 
 COLUMNS = {
@@ -123,7 +125,7 @@ def step_impl(context, row_n):
             var column = arguments[1];
             return jQuery("table#bibliography-table>tbody>tr")
                 .filter(".odd, .even").eq(row).children("td")
-                .eq(column).children("div").eq(0)[0];
+                .eq(column).children("div.add-button")[0];
 
             """, int(row_n), column)
             ActionChains(driver) \
@@ -314,7 +316,7 @@ def step_impl(context, action, row):
             var column = arguments[1];
             return jQuery("table#bibliography-table>tbody>tr")
                        .filter(".odd, .even").eq(row).children("td")
-                       .eq(column).children("div").eq(1)[0];
+                       .eq(column).children("div.open-close-button")[0];
             """, int(row), column)
             button.click()
             return True
@@ -415,34 +417,41 @@ def step_impl(context):
 rows_re = ur'^there (?:is|are) (?P<number>\d+) rows?\.?$'
 
 
-@given(rows_re)
-@then(rows_re)
-def step_impl(context, number):
-    number = int(number)
-
-    driver = context.driver
-    util = context.util
-
-    def cond(*_):
+def wait_until_datatable_has_n_rows(util, selector_or_element, number):
+    def cond(driver):
         return driver.execute_script("""
         if (typeof jQuery === "undefined")
             return false;
 
-        var no = arguments[0];
+        var selector = arguments[0];
+        var no = arguments[1];
 
         var $ = jQuery;
-        var $table = $("#bibliography-table");
+        var $rows = $(selector);
 
         // When there are no records, the table contains a single row
         // that states so.
         if (no === 0)
-            return $table.find("tbody>tr").text()
-                === "No matching records found";
+            return $rows.text() === "No matching records found";
 
-        return $table.find("tbody>tr").length === no;
-        """, number)
+        if ($rows.length !== no)
+            return false;
 
+        if (no === 1)
+            return $rows.text() !== "No matching records found";
+
+        return true;
+        """, selector_or_element, number)
     util.wait(cond)
+
+
+@given(rows_re)
+@then(rows_re)
+def step_impl(context, number):
+    number = int(number)
+    util = context.util
+    wait_until_datatable_has_n_rows(util, "#bibliography-table>tbody>tr",
+                                    number)
 
 
 @when(ur'^the user clicks on the filtering field$')
@@ -460,3 +469,31 @@ def step_impl(context):
     # Clearing it will not, by itself, cause a refiltering.
     field.clear()
     field.send_keys(Keys.SHIFT)
+
+
+@then(ur'^there are no buttons for adding primary sources$')
+def step_impl(context):
+    driver = context.driver
+
+    assert_equal(len(driver.find_elements_by_css_selector(
+        "table#bibliography-table>tbody>tr div.add-button")), 0)
+
+
+@then(ur'^there are no buttons for editing primary sources$')
+def step_impl(context):
+    # This test is hardcoded to check only in the first subtable and
+    # expect the subtable to have only one row.
+    util = context.util
+    driver = context.driver
+
+    def cond(driver):
+        return driver.execute_script("""
+        return jQuery("table#bibliography-table>tbody>tr")
+            .filter(".odd, .even").eq(0).next().find("table")[0];
+        """)
+
+    subtable = util.wait(cond)
+    wait_until_datatable_has_n_rows(util, subtable, 1)
+
+    assert_equal(len(driver.find_elements_by_css_selector(
+        "table#bibliography-table>tbody>tr div.edit-button")), 0)

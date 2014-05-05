@@ -17,7 +17,7 @@
     </a>
     <ul class="dropdown-menu">
       <li id="btw-bibliography-general-sub"><a href="{% url 'bibliography_search' %}">General Search</a></li>
-      {% if perms.bibliography.add_primarysource or perms.bibliography.change_primarysource %}
+      {% if perms.bibliography.add_primarysource and perms.bibliography.change_primarysource %}
           <li id="btw-bibliography-manage-sub"><a href="{% url 'bibliography_manage' %}">Manage</a></li>
       {% endif %}
     </ul>

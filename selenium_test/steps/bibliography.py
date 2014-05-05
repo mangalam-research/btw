@@ -133,3 +133,11 @@ def step_impl(context):
     util = context.util
 
     util.ctrl_equivalent_x("/")
+
+
+@given(ur"^that the user is on the page for performing a general "
+       ur"bibliographical search")
+def step_impl(context):
+    driver = context.driver
+    config = context.selenic_config
+    driver.get(config.SERVER + "/bibliography/search/")

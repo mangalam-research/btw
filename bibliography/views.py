@@ -64,10 +64,11 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
     context = RequestContext(
         request,
         {
-            'can_edit': (editable and
-                         request.user.has_perm('bibliography.change_item')),
+            'can_edit': (
+                editable and
+                request.user.has_perm('bibliography.add_primarysource') and
+                request.user.has_perm('bibliography.change_primarysource')),
             'submenu': submenu
-
         })
     return HttpResponse(template.render(context))
 

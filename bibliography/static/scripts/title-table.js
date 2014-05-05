@@ -25,9 +25,11 @@ var $modal = $(
 </div>');
 
 var buttons_template = template("\
-<div class='btn btn-default btn-sm'><i class='icon-plus'></i></div>\
+<% if (edit) { %>\
+<div class='btn btn-default btn-sm add-button'><i class='icon-plus'></i></div>\
+<% } %>\
 <div style='position: relative' \
-     class='btn <% print(children ? 'btn-default ':'') %>btn-sm'>\
+     class='btn <% print(children ? 'btn-default ':'') %>btn-sm open-close-button'>\
   <i class='icon-fixed-width \
             <% print(children ? 'icon-caret-right': '') %>'></i>\
   <% print(children ? \
@@ -62,11 +64,66 @@ var subtable_template = '\
   </tfoot>\
 </table>';
 
-function makeSubtable(table, row_node, url) {
+function makeSubtable(table, options, row_node, url) {
     var $new_row = $(table.fnOpen(row_node, subtable_template, "subtable"));
     var $subtable = $new_row.find("table").first();
     $new_row.children("td").attr("colspan", "2");
     $new_row.prepend("<td colspan='1'></td>");
+
+    var aoColumnDefs = [];
+    if (options.can_edit) {
+        aoColumnDefs.push({
+            aTargets: [0],
+            bSortable: false,
+            mRender: function (data, type, row_data) {
+                return '<div class="btn btn-default btn-sm edit-button"><i class="icon-edit"></i></div>';
+            },
+            fnCreatedCell: function (cell, data, row, row_ix, col_ix) {
+                var $cell = $(cell);
+                var edit_url = row[0];
+                var $edit = $cell.children("div");
+                var $i = $edit.children("i");
+                $edit.click(function () {
+                    $.ajax({
+                        url: edit_url,
+                        headers: {
+                            Accept: "application/x-form"
+                        }
+                    }).done(function (data) {
+                        $body.html(data);
+                        setFormFields();
+                        $primary.one("click", function () {
+                            $.ajax({
+                                url: edit_url,
+                                type: "PUT",
+                                data: $modal.find("form").serialize(),
+                                headers: {
+                                    'X-CSRFToken': csrftoken,
+                                    Accept: "application/x-form"
+                                },
+                                success: function () {
+                                    $modal.modal("hide");
+                                    subtable.fnDraw(false);
+                                },
+                                error: function errorHandler(jqXHR) {
+                                    $body.html(jqXHR.responseText);
+                                }
+                            });
+                        });
+                        $modal.modal();
+                    });
+                });
+            }
+        });
+    }
+    else {
+        // We can't edit so the first column is not visible.
+        aoColumnDefs.push({
+            aTargets: [0],
+            bSortable: false,
+            bVisible: false
+        });
+    }
 
     var subtable = $subtable.dataTable({
         iDisplayLength: -1,
@@ -78,51 +135,7 @@ function makeSubtable(table, row_node, url) {
         aaSorting: [
             [1, 'asc']
         ],
-        aoColumnDefs: [
-            {
-                aTargets: [0],
-                bSortable: false,
-                mRender: function (data, type, row_data) {
-                    return '<div class="btn btn-default btn-sm"><i class="icon-edit"></i></div>';
-                },
-                fnCreatedCell: function (cell, data, row, row_ix, col_ix) {
-                    var $cell = $(cell);
-                    var edit_url = row[0];
-                    var $edit = $cell.children("div");
-                    var $i = $edit.children("i");
-                    $edit.click(function () {
-                        $.ajax({
-                            url: edit_url,
-                            headers: {
-                                Accept: "application/x-form"
-                            }
-                        }).done(function (data) {
-                            $body.html(data);
-                            setFormFields();
-                            $primary.one("click", function () {
-                                $.ajax({
-                                    url: edit_url,
-                                    type: "PUT",
-                                    data: $modal.find("form").serialize(),
-                                    headers: {
-                                        'X-CSRFToken': csrftoken,
-                                        Accept: "application/x-form"
-                                    },
-                                    success: function () {
-                                        $modal.modal("hide");
-                                        subtable.fnDraw(false);
-                                    },
-                                    error: function errorHandler(jqXHR) {
-                                        $body.html(jqXHR.responseText);
-                                    }
-                                });
-                            });
-                            $modal.modal();
-                        });
-                    });
-                }
-            }
-        ],
+        aoColumnDefs: aoColumnDefs,
         fnDrawCallback: function (options) {
             var visibility = (options._iDisplayLength === -1 ||
                               (options.fnRecordsTotal() <=
@@ -139,19 +152,19 @@ function makeSubtable(table, row_node, url) {
 
 var open_ids = Object.create(null);
 
-function openOrCloseRow(table, row_node, $i, url, id) {
+function openOrCloseRow(table, options, row_node, $i, url, id) {
     if (table.fnIsOpen(row_node)) {
         table.fnClose(row_node);
         $i.removeClass("icon-caret-down");
         $i.addClass("icon-caret-right");
-        $i.parents("div").first().removeClass("active");
+        $i.parents("div.open-close-button").removeClass("active");
         delete open_ids[id];
     }
     else {
-        makeSubtable(table, row_node, url);
+        makeSubtable(table, options, row_node, url);
         $i.removeClass("icon-caret-right");
         $i.addClass("icon-caret-down");
-        $i.parents("div").first().addClass("active");
+        $i.parents("div.open-close-button").addClass("active");
         open_ids[id] = true;
     }
 }
@@ -227,22 +240,23 @@ return function ($table, options) {
                 bSortable: false,
                 mRender: function (data, type, row_data) {
                     var children = Number(row_data[2]);
-                    return buttons_template({children: children});
+                    return buttons_template({children: children,
+                                             edit: options.can_edit});
                 },
                 fnCreatedCell: function (cell, data, row, row_ix, col_ix) {
                     var $cell = $(cell);
                     $cell.css("white-space", "nowrap");
                     var subtable_url = row[1];
-                    var $open = $cell.children("div").eq(1);
+                    var $open = $cell.children("div.open-close-button");
                     var $i = $open.children("i");
                     $open.click(function () {
                         var row_node = $open.parents("tr")[0];
-                        openOrCloseRow(table, row_node, $i, subtable_url,
-                                       row[0]);
+                        openOrCloseRow(table, options, row_node, $i,
+                                       subtable_url, row[0]);
                     });
 
                     var add_url = row[col_ix];
-                    var $add = $cell.children("div").first();
+                    var $add = $cell.children("div.add-button");
                     $add.click(function () {
                         $body.load(add_url, function () {
                             setFormFields();
@@ -273,19 +287,14 @@ return function ($table, options) {
             var url = data[1];
             var $i = $row_node.children("td").eq(0).find("i").eq(1);
             if (open_ids[id])
-                openOrCloseRow(table, row_node, $i, url, id);
+                openOrCloseRow(table, options, row_node, $i, url, id);
             $row_node.attr("data-item-key", id);
         },
-        fnDrawCallback: function (options) {
+        fnDrawCallback: function () {
             refilterOpenRows(table, $table);
             $table.trigger("refresh-results");
         }
     });
-
-    var old_fnFilter = table.fnFilter;
-    table.fnFilter = function () {
-        old_fnFilter.apply(this, arguments);
-    };
 
     $table.data("title-table", table);
 
@@ -300,7 +309,7 @@ return function ($table, options) {
                 var $i = $(row_node).children("td").eq(0).find("i").eq(1);
                 // We're going to close it so the last 2 arguments are
                 // not needed.
-                openOrCloseRow(table, row_node, $i, undefined, undefined);
+                openOrCloseRow(table, options, row_node, $i);
             }
         }
     });
@@ -312,7 +321,7 @@ return function ($table, options) {
             var data = table.fnGetData(i);
             if (Number(data[2]) > 0 && !table.fnIsOpen(row_node)) {
                 var $i = $(row_node).children("td").eq(0).find("i").eq(1);
-                openOrCloseRow(table, row_node, $i, data[1], data[0]);
+                openOrCloseRow(table, options, row_node, $i, data[1], data[0]);
             }
         }
     });
