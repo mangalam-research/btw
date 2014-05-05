@@ -149,21 +149,6 @@ class ItemTable(BaseDatatableView):
 
 
 @ajax_login_required
-@permission_required('bibliography.change_item')
-@require_POST
-def reference_title(request, pk):
-    item = Item.objects.get(pk=pk)
-    # An empty field must be normalized to None.
-    item.reference_title = request.POST.get('value') or None
-    try:
-        item.save()
-    except IntegrityError:  # pylint: disable-msg=catching-non-exception
-        return HttpResponseBadRequest(
-            "There is already an item with this title.")
-    return HttpResponse()
-
-
-@ajax_login_required
 @permission_required('bibliography.add_primarysource')
 @require_http_methods(["GET", "POST"])
 def new_primary_sources(request, pk):
