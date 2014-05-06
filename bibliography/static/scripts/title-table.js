@@ -267,7 +267,7 @@ return function ($table, options) {
                     $add.click(function () {
                         $body.load(add_url, function () {
                             setFormFields();
-                            $primary.one("click", function () {
+                            $primary.on("click", function () {
                                 $.ajax({
                                     url: add_url,
                                     type: "POST",
@@ -275,6 +275,7 @@ return function ($table, options) {
                                     success: function () {
                                         $modal.modal("hide");
                                         table.fnDraw(false);
+                                        $primary.off("click");
                                     },
                                     error: function errorHandler(jqXHR) {
                                         $body.html(jqXHR.responseText);

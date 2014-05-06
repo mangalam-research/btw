@@ -127,3 +127,12 @@ Scenario: the system remembers which rows are opened
   Then there are 0 rows
   When the user empties the filtering field
   Then row 0 is open
+
+Scenario: the user can correct an error in the form
+  Given that the items are sorted by ascending creators
+  When the user clicks on the button to add a primary source of row 0
+  When the user submits the dialog with reference title of "" and a genre of "Literary Text"
+  Then the modal dialog to add a primary source is visible
+  And the modal dialog shows the error "This field is required." for the reference title field
+  When the user submits the dialog with reference title of "ZZZ" and a genre of "Literary Text"
+  Then row 0 shows there is 1 primary source
