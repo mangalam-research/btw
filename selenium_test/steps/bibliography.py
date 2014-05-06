@@ -31,9 +31,12 @@ def step_impl(context, which=None):
     var found;
     for(var i = 0, limit = $phs.length; !found && i < limit; ++i) {
         var ph = $phs[i];
-        if (ph.compareDocumentPosition(etym) & 2)
+        if (ph.compareDocumentPosition(etym) & 2) {
             found = ph;
+            found.scrollIntoView();
+        }
     }
+
     return found;
     """)
 
@@ -48,10 +51,22 @@ bibliographical reference"
 
     def cond(*_):
         ret = driver.execute_script("""
+        var title = arguments[0];
+        var with_ = arguments[1];
+
         var qs = document.querySelector.bind(document);
-        return [jQuery("#bibliography-table>tbody>tr:contains('{0}')")[0],
-                qs(".modal.in .btn-primary")];
-        """.format(WHICH_TO_TITLE[which]))
+        var $row = jQuery("#bibliography-table>tbody>tr:contains('" + title +
+                          "')");
+        if (with_) {
+            // Open the next row if needed.
+            var $next = $row.next("tr");
+            if (!$next[0] || $next.is(".odd, .even"))
+                $row.find(".open-close-button").click();
+            // We can't reuse $next here.
+            $row = $row.next("tr").find("table>tbody>tr").first();
+        }
+        return [$row[0], qs(".modal.in .btn-primary")];
+        """, WHICH_TO_TITLE[which], which == "with")
         return ret if ret[0] and ret[1] else None
 
     row, button = util.wait(cond)

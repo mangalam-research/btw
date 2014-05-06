@@ -1,3 +1,5 @@
+import json
+
 from django_webtest import WebTest
 from django.test import Client
 from django.contrib.auth import get_user_model
@@ -184,6 +186,34 @@ class _PatchZoteroTest(_BaseTest):
 
     def tearDown(self):
         self.patch.stop()
+
+
+class TestItemsView(_PatchZoteroTest):
+
+    """
+    Tests for the items view.
+    """
+
+    def setUp(self):
+        super(TestItemsView, self).setUp()
+        #
+        # When used in the app, caching should have occured due to
+        # other views.
+        #
+        from ..views import _cache_all
+        _cache_all()
+        self.url = reverse(
+            'bibliography_items',
+            args=(Item.objects.get(item_key="1").pk,))
+
+    def test_correct_data(self):
+        response = self.app.get(self.url, user=u'test')
+        data = json.loads(response.body)
+        assert_equal(data["title"], "Title 1")
+        assert_equal(data["date"], "Date 1")
+        assert_equal(data["creators"],
+                     "Name 1 for Title 1, LastName 2 for Title 1")
+        assert_equal(data["pk"], Item.objects.get(item_key="1").pk)
 
 
 class TestManageView(_PatchZoteroTest):
@@ -508,3 +538,15 @@ class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
             self.url, headers=self.get_headers, user='test')
         assert_equal(response.status_code, 200,
                      "the request should be successful")
+
+    def test_correct_data(self):
+        response = self.app.get(
+            self.url, {'Accept': 'application/json'}, user='test')
+        data = json.loads(response.body)
+        assert_equal(data["reference_title"], "Blah")
+        assert_equal(data["genre"], "SU")
+        item = Item.objects.get(item_key="1")
+        assert_equal(data["item"]["pk"], item.pk)
+        assert_equal(data["item"]["title"], item.title)
+        assert_equal(data["item"]["creators"], item.creators)
+        assert_equal(data["item"]["date"], item.date)

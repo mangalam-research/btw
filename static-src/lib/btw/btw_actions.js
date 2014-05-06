@@ -106,8 +106,8 @@ InsertBiblPtrDialogAction.prototype.execute = function (data) {
     modal.modal(function () {
         var clicked = modal.getClickedAsText();
         if (clicked === "Insert") {
-            var item_key = $body.find('.selected-row').data('item-key');
-            data.target = "/bibl/" + item_key;
+            var url = $body.find('.selected-row').data('item-url');
+            data.target = url;
             editor.mode.insert_ref_tr.execute(data);
         }
     });

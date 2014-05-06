@@ -229,6 +229,10 @@ class Item(models.Model):
     def primary_sources_url(self):
         return reverse('bibliography_item_primary_sources', args=(self.pk, ))
 
+    @property
+    def url(self):
+        return reverse('bibliography_items', args=(self.pk, ))
+
 
 class PrimarySource(models.Model):
     SUTRA = "SU"
@@ -278,5 +282,5 @@ class PrimarySource(models.Model):
     """The bibliographical item to which it corresponds."""
 
     @property
-    def change_url(self):
+    def url(self):
         return reverse('bibliography_primary_sources', args=(self.pk, ))

@@ -931,6 +931,20 @@ function heterogeneousListItemDecorator(el, sep) {
     });
 }
 
+function setTitle($el, data) {
+    var creators = data.creators;
+    var first_creator = "***ITEM HAS NO CREATORS***";
+    if (creators)
+        first_creator = creators.split(",")[0];
+
+    var title = first_creator + ", " + data.title;
+    var date = data.date;
+    if (date)
+        title += ", " + date;
+
+    $el.tooltip({"title": title, container: "body"});
+}
+
 BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
     var dec = this;
     var orig_target = $.trim($el.attr(util.encodeAttrName("target")));
@@ -1012,14 +1026,14 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
     }
     else {
         // External target
-        var bibl_prefix = "/bibl/";
+        var bibl_prefix = "/bibliography/";
         if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
             // Bibliographical reference...
             if (is_ptr)
                 throw new Error("internal error: bibliographic "+
                                 "reference recorded as ptr");
 
-            target = orig_target.slice(bibl_prefix.length);
+            target = orig_target;
 
             // It is okay to skip the tree updater for these operations.
             $el.children("._ref_abbr, ._ref_paren, ._ref_sep").remove();
@@ -1040,16 +1054,40 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             $el.prepend(start);
             $el.append("<div class='_phantom _decoration_text " +
                        "_ref_paren _close_ref_paren'>)</div>");
-            $.ajax({url: this._mode._bibl_abbrev_url.replace(/<itemKey>/,
-                                                             target)
-                   }).done(function (data) {
-                       $el.children("._ref_abbr").text(data);
-                   });
-            $.ajax({url: this._mode._bibl_info_url.replace(/<itemKey>/,
-                                                           target)
-                   }).done(function (data) {
-                       $el.tooltip({"title": data, container: "body"});
-                   });
+            $.ajax({
+                url: target,
+                headers: {
+                    Accept: "application/json"
+                }
+            }).done(function (data) {
+                var text = "";
+
+                if (data.reference_title) {
+                    text = data.reference_title;
+                    setTitle($el, data.item);
+                }
+                else {
+                    var creators = data.creators;
+                    text = "***ITEM HAS NO CREATORS***";
+                    if (creators)
+                        text = creators.split(",")[0];
+
+                    if (data.date)
+                        text += ", " + data.date;
+                    setTitle($el, data);
+                }
+
+                $el.children("._ref_abbr").text(text);
+                $el.trigger("wed-refresh");
+                // dec._editor.setGUICaret(
+                //     $el[0],
+                //     _indexOf.call($el[0].childNodes,
+                //                   $el.children("._ref_abbr")[0]) + 1);
+
+            }).fail(function () {
+                $el.children("._ref_abbr").text("NON-EXISTENT");
+                $el.trigger("wed-refresh");
+            });
         }
     }
 };

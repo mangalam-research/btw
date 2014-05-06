@@ -1,4 +1,5 @@
 import logging
+import json
 from functools import wraps
 
 from django.shortcuts import render
@@ -73,50 +74,25 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
     return HttpResponse(template.render(context))
 
 
-@ajax_login_required
-@require_GET
-def abbrev(request, pk):
-    item = Item.objects.get(pk=pk)
-    ret = ""
-
-    if item.reference_title is not None:
-        ret = item.reference_title
-    else:
-        creators = item.creators
-        if creators is not None:
-            ret = creators.split(",")[0]
-
-        if ret is None:
-            ret = "***ITEM HAS NO AUTHORS***"
-
-        year = item.date
-        if year:
-            ret += ", " + year
-
-    return HttpResponse(ret)
+def _item_to_dict(item):
+    return {k: getattr(item, k)
+            for k in ("pk", "date", "title", "creators")}
 
 
 @ajax_login_required
 @require_GET
-def info(request, pk):
-    item = Item.objects.get(pk=pk)
-    ret = ""
-
-    creators = item.creators
-    ret = creators.split(",")[0] if creators else "***ITEM HAS NO AUTHORS***"
-
-    title = item.title
-    ret += ", " + title
-
-    date = item.date
-    if date:
-        ret += ", " + date
-
-    return HttpResponse(ret)
+def items(request, pk):
+    fmt = request.META.get('HTTP_ACCEPT', 'application/json')
+    if fmt != 'application/json':
+        return HttpResponseBadRequest("unknown content type: " + fmt)
+    # This narrows down the set of fields we are sending back to a
+    # limited set.
+    return HttpResponse(json.dumps(_item_to_dict(Item.objects.get(pk=pk))),
+                        content_type="application/json")
 
 
 class ItemTable(BaseDatatableView):
-    columns = ['id', 'primary_sources_url', 'primary_sources',
+    columns = ['url', 'primary_sources_url', 'primary_sources',
                'new_primary_source_url', 'creators', 'title', 'date']
     order_columns = ['', '', '', '', 'creators', 'title', 'date']
 
@@ -172,7 +148,7 @@ def new_primary_sources(request, pk):
 
 
 class PrimarySourceTable(BaseDatatableView):
-    columns = ['change_url', 'reference_title', 'genre']
+    columns = ['url', 'reference_title', 'genre']
     order_columns = ['', 'reference_title', 'genre']
 
     max_display_length = 500
@@ -218,6 +194,12 @@ def primary_sources(request, pk):
             form = PrimarySourceForm(instance=instance)
             return render(request, 'bibliography/add_primary_source.html',
                           {'form': form})
+        elif fmt == "application/json":
+            ret = {k: getattr(instance, k)
+                   for k in ("reference_title", "genre", "pk")}
+            ret["item"] = _item_to_dict(instance.item)
+            return HttpResponse(json.dumps(ret),
+                                content_type="application/json")
     elif request.method == "PUT":
         ctype = request.META["CONTENT_TYPE"]
         if ctype != "application/x-www-form-urlencoded; charset=UTF-8":

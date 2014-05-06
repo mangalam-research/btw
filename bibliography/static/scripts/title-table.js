@@ -136,6 +136,10 @@ function makeSubtable(table, options, row_node, url) {
             [1, 'asc']
         ],
         aoColumnDefs: aoColumnDefs,
+        fnCreatedRow: function (row_node, data, data_index) {
+            // Move the item key to a data attribute.
+            $(row_node).attr("data-item-url", data[0]);
+        },
         fnDrawCallback: function (options) {
             var visibility = (options._iDisplayLength === -1 ||
                               (options.fnRecordsTotal() <=
@@ -210,9 +214,12 @@ return function ($table, options) {
     if (options.selectable) {
         $table.find("tbody").on("click", "tr", function (ev) {
             var $this = $(this);
-            $this.siblings("tr").removeClass('selected-row');
-            $this.addClass('selected-row');
-            $table.trigger("selected-row");
+            if ($this.find("tbody>tr").length === 0) {
+                $table.find("tbody>tr").removeClass('selected-row');
+                $this.siblings("tr").removeClass('selected-row');
+                $this.addClass('selected-row');
+                $table.trigger("selected-row");
+            }
         });
     }
 
@@ -282,13 +289,14 @@ return function ($table, options) {
         ],
         fnCreatedRow: function (row_node, data, data_index) {
             var $row_node = $(row_node);
-            // Move the item key to a data attribute.
-            var id = data[0];
-            var url = data[1];
+            var url = data[0];
+            var primary_sources_url = data[1];
             var $i = $row_node.children("td").eq(0).find("i").eq(1);
-            if (open_ids[id])
-                openOrCloseRow(table, options, row_node, $i, url, id);
-            $row_node.attr("data-item-key", id);
+            if (open_ids[url])
+                openOrCloseRow(table, options, row_node, $i,
+                               primary_sources_url, url);
+            // Move the item key to a data attribute.
+            $row_node.attr("data-item-url", url);
         },
         fnDrawCallback: function () {
             refilterOpenRows(table, $table);
