@@ -111,7 +111,6 @@
 	    <rng:ref name="btw_overview"/>
             <rng:ref name="btw_sense-discrimination"/>
             <rng:ref name="btw_historico-semantical-data"/>
-            <rng:ref name="btw_renditions-and-discussions"/>
           </content>
           <attList>
             <attDef ident="authority" usage="req">
@@ -480,102 +479,6 @@
             <rng:oneOrMore>
               <rng:ref name="p"/>
             </rng:oneOrMore>
-          </content>
-        </elementSpec>
-
-        <!-- The structure of rendition-and-discussions is more
-             complex than strictly necessary. An other version had a
-             classical-renditions element for classical renditions and
-             also dealt with more than one modern language. When these
-             were removed, the structure was kept in such a shape that
-             we can easily reintroduce them in the future without
-             having to make major changes to the structure of this
-             element.
-
-             Seek commit 3c3f1bbb54bad1a2fce09ad0a33a914d5c0de509 to
-             see the last version of this file that contains the more
-             complex structure. (Or seek a version prior to
-             2014-01-30.)
-        -->
-        <elementSpec ident="renditions-and-discussions"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element records the renditions and discussions unit
-            of the article. It may contain one or more
-            paragraphs. This unit contains information about
-            renditions in classical languages other than Sanskrit and
-            modern renditions in modern languages.
-          </desc>
-          <content>
-            <rng:group>
-              <rng:ref name="btw_modern-renditions"/>
-            </rng:group>
-          </content>
-        </elementSpec>
-
-        <elementSpec ident="modern-renditions"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element groups the renditions in modern languages.
-          </desc>
-          <content>
-            <rng:ref name="btw_lang"/>
-          </content>
-        </elementSpec>
-
-
-        <elementSpec ident="lang"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element records the rendition of a lemma in a
-            language other than Sanskrit. The language can be
-            classical or modern.
-          </desc>
-          <content>
-	    <rng:oneOrMore>
-	      <rng:ref name="btw_occurrence"/>
-	    </rng:oneOrMore>
-          </content>
-          <attList>
-            <attDef ns="http://mangalamresearch.org/ns/btw-storage"
-                    ident="lang" usage="req">
-	      <desc>Language of the translations. The meaning of this
-	      attribute is different from xml:lang and
-	      tei:lang. Whereas these two attributes mark the entire
-	      contents of their child nodes as being of a certain
-	      language, this attribute marks the contents of
-	      btw:lang//btw:occurrence/btw:term as being of the
-	      language specified in the attribute, except if otherwise
-	      specified in a narrower scope.</desc>
-              <valList type="closed">
-                <valItem ident="en">
-                  <gloss>English</gloss>
-                </valItem>
-              </valList>
-	    </attDef>
-          </attList>
-        </elementSpec>
-
-        <elementSpec ident="occurrence"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>
-            This element records a single term occurring as a
-            rendition of a Sanskrit term in a classical language or a
-            modern language. The term itself is recorded in
-            <gi>term</gi>. A reference to a source is recorded in an
-            optional <gi>ref</gi>.
-          </desc>
-          <content>
-	    <rng:group>
-	      <rng:ref name="term"/>
-              <rng:optional>
-                <rng:ref name="ref"/>
-              </rng:optional>
-	    </rng:group>
           </content>
         </elementSpec>
 
