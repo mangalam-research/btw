@@ -73,7 +73,7 @@ passed to the function.
 :param user: The user requesting the release.
 :type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
 """
-    lock = EntryLock.objects.select_for_update().get(id=entry.id)
+    lock = EntryLock.objects.select_for_update().get(entry=entry)
     if lock.owner != user:
         raise ValueError("the user releasing the lock is not the one who owns "
                          "it")

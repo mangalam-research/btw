@@ -36,6 +36,10 @@ class LockingTestCase(TestCase):
         self.assertRegexpMatches(self.stream.getvalue(), regexp)
         self.stream.truncate(0)
 
+    def flush_log(self):
+        self.handler.flush()
+        self.stream.truncate(0)
+
     def test_try_acquiring_lock_success(self):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
@@ -89,27 +93,36 @@ class LockingTestCase(TestCase):
             r"^foo refreshed lock \d+ on entry \d+ \(headword: abcd\)$")
 
     def test_release_entry_lock_releases(self):
-        acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
+        # We do this to prevent the lock id and the entry id from
+        # being in lockstep.
+        first = locking.try_acquiring_lock(self.entry_abcd, self.foo)
+        self.assertIsNotNone(first)
+        self.flush_log()
+
+        acquired_lock = locking.try_acquiring_lock(self.entry_foo,
                                                    self.foo)
         self.assertIsNotNone(acquired_lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(headword: foo\)$")
 
-        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
             r"^foo2 failed to expire lock \d+ on entry \d+ "
-            r"\(headword: abcd\)$")
+            r"\(headword: foo\)$")
 
-        locking.release_entry_lock(acquired_lock, self.foo)
+        locking.release_entry_lock(self.entry_foo, self.foo)
         self.assertLogRegexp(
-            r"^foo released lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo released lock \d+ on entry \d+ \(headword: foo\)$")
+        self.assertEqual(
+            models.EntryLock.objects.filter(id=acquired_lock.id).count(),
+            0)
 
         # This will work because the lock was released
-        lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
+        lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo2 acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo2 acquired lock \d+ on entry \d+ \(headword: foo\)$")
 
     def test_try_acquiring_lock_expire_success(self):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
