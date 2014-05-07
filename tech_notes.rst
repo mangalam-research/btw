@@ -285,6 +285,7 @@ Generally:
 1. Run::
 
     $ git fetch origin --tags
+    $ git pull origin
     $ git describe
     [Make sure the description shows what you expect.]
     $ ../btw_env/bin/activate
