@@ -189,9 +189,6 @@
                 <rng:ref name="btw_citations"/>
               </rng:group>
             </rng:choice>
-            <rng:optional>
-              <rng:ref name="btw_other-citations"/>
-            </rng:optional>
             <rng:ref name="btw_semantic-fields"/>
             <rng:ref name="btw_contrastive-section"/>
           </content>
@@ -255,19 +252,6 @@
           </attList>
         </elementSpec>
 
-        <elementSpec ident="other-citations"
-                     ns="http://mangalamresearch.org/ns/btw-storage"
-                     prefix="btw_">
-          <desc>This element records the "other citations", those
-          citations that are of secondary importance and are not
-          translated.</desc>
-          <content>
-            <rng:oneOrMore>
-              <rng:ref name="btw_cit"/>
-            </rng:oneOrMore>
-          </content>
-        </elementSpec>
-
         <elementSpec ident="semantic-fields"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
@@ -323,15 +307,11 @@
                      prefix="btw_">
           <desc>This element records an antonym of a sense. The
           antonym itself is recorded in <gi>term</gi>. Supporting
-          citations are recorded in <gi>btw:citations</gi> and
-          <gi>btw:other-citations</gi>, as appropriate.</desc>
+          citations are recorded in <gi>btw:citations</gi> and</desc>
           <content>
             <rng:group>
               <rng:ref name="term"/>
               <rng:ref name="btw_citations"/>
-              <rng:optional>
-                <rng:ref name="btw_other-citations"/>
-              </rng:optional>
             </rng:group>
           </content>
         </elementSpec>
@@ -355,16 +335,12 @@
                      prefix="btw_">
           <desc>This element records a cognate of a sense. The cognate
           itself is recorded in <gi>term</gi>. Supporting citations
-          are recorded in <gi>btw:citations</gi> and
-          <gi>btw:other-citations</gi>, as appropriate.</desc>
+          are recorded in <gi>btw:citations</gi>, as appropriate.</desc>
           <content>
             <rng:group>
               <rng:ref name="term"/>
               <rng:ref name="btw_semantic-fields"/>
               <rng:ref name="btw_citations"/>
-              <rng:optional>
-                <rng:ref name="btw_other-citations"/>
-              </rng:optional>
             </rng:group>
           </content>
         </elementSpec>
@@ -425,10 +401,7 @@
         <elementSpec ident="citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>This element groups citations. Citations recorded in
-          this element must have an accompanying translation. If they
-          do not, they should be recorded in
-          <gi>btw:other-citations</gi>.</desc>
+          <desc>This element groups citations.</desc>
           <content>
             <rng:oneOrMore>
               <rng:choice>
