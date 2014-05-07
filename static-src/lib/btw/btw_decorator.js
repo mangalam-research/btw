@@ -1036,7 +1036,10 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             target = orig_target;
 
             // It is okay to skip the tree updater for these operations.
-            $el.children("._ref_abbr, ._ref_paren, ._ref_sep").remove();
+            $el.children("._ref_abbr, ._ref_paren, ._ref_sep").each(
+                function () {
+                dec._gui_updater.removeNode(this);
+            });
 
             var start = [
                 "<div class='_phantom _decoration_text _ref_paren " +
@@ -1051,9 +1054,17 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                 start.push('<div class="_text _phantom _ref_sep">, '+
                            '</div>');
 
-            $el.prepend(start);
-            $el.append("<div class='_phantom _decoration_text " +
-                       "_ref_paren _close_ref_paren'>)</div>");
+            var el = $el[0];
+            // Start from the end and insert before the first child.
+            for(var start_ix = start.length - 1; start_ix >= 0; --start_ix)
+                dec._gui_updater.insertBefore(el, $(start[start_ix])[0],
+                                              el.firstChild);
+            dec._gui_updater.insertBefore(
+                el, $("<div class='_phantom _decoration_text " +
+                      "_ref_paren _close_ref_paren'>)</div>")[0]);
+
+
+            var ref_abbr = $el.children("._ref_abbr")[0];
             $.ajax({
                 url: target,
                 headers: {
@@ -1077,15 +1088,12 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                     setTitle($el, data);
                 }
 
-                $el.children("._ref_abbr").text(text);
+
+                dec._gui_updater.insertText(ref_abbr, 0, text);
                 $el.trigger("wed-refresh");
-                // dec._editor.setGUICaret(
-                //     $el[0],
-                //     _indexOf.call($el[0].childNodes,
-                //                   $el.children("._ref_abbr")[0]) + 1);
 
             }).fail(function () {
-                $el.children("._ref_abbr").text("NON-EXISTENT");
+                dec._gui_updater.insertText(ref_abbr, 0, "NON-EXISTENT");
                 $el.trigger("wed-refresh");
             });
         }

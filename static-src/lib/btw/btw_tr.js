@@ -45,11 +45,14 @@ function insert_ref(editor, data) {
     var $ptr = transformation.makeElement('ref', {'target': data.target});
     editor.data_updater.insertAt(parent, index, $ptr[0]);
     var gui_node = editor.fromDataLocation($ptr[0], 0).node;
-    var nodes = editor.mode.nodesAroundEditableContents(gui_node);
-    editor.setGUICaret(gui_node,
-                       _indexOf.call(gui_node.childNodes,
-                                     $(gui_node).children("._ref_abbr")[0])
-                       + 1);
+    // We do this because if we set the caret immediately, it gets clobbered
+    // by the later refreshing of the ref element.
+    $(gui_node).one('wed-refresh', function () {
+        editor.setGUICaret(
+            gui_node,
+            _indexOf.call(gui_node.childNodes,
+                          $(gui_node).children("._ref_abbr")[0]) + 1);
+    });
 }
 
 
