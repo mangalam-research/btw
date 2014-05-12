@@ -77,7 +77,8 @@ function SetTextLanguageTr(editor, language) {
     this._language = language;
     this._nesting_modal = getNestingModal(editor);
     var desc = "Set language to " + language;
-    Transformation.call(this, editor, desc, language, set_language_handler);
+    Transformation.call(this, editor, desc, language, true,
+                        set_language_handler);
 }
 
 oop.inherit(SetTextLanguageTr, Transformation);
@@ -128,6 +129,7 @@ function RemoveMixedTr(editor, language) {
     Transformation.call(this, editor, "Remove mixed-content markup",
                         "Remove mixed-content markup",
                         '<i class="icon-eraser"></i>',
+                        true,
                         remove_mixed_handler);
 }
 

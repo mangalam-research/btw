@@ -97,3 +97,15 @@ Scenario: inserting citations in a sense by using a visible absence
   When the user clicks on the visible absence for btw:citations
   Then a new btw:citations is created
   And there is no visible absence for btw:citations
+
+@wip
+Scenario: creating a btw:example in a sense by using a visible absence
+  Given a document that has no btw:explanation
+  When the user clicks on the visible absence for btw:explanation
+  Then a new btw:explanation is created
+  When the user clicks on the visible absence for btw:citations
+  Then a new btw:citations is created
+  And there is a visible absence for btw:example
+  When the user clicks on the visible absence for btw:example
+  Then a new btw:example is created
+  And there is no ref

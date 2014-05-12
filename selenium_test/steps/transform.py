@@ -1,10 +1,11 @@
 import re
 
+from selenium.webdriver.support.wait import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium_test.btw_util import record_senses, record_renditions_for, \
     record_subsenses_for
-from nose.tools import assert_equal, assert_is_none  # pylint: disable=E0611
+from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
 from behave import then, when, step_matcher  # pylint: disable=E0611
 
 from selenium_test import btw_util
@@ -235,3 +236,13 @@ def step_impl(context, assertion, what):
         return is_none if assertion == "no" else not is_none
 
     context.util.wait(cond)
+
+
+@then("^there is no (?P<what>.*)$")
+def step_impl(context, what):
+    util = context.util
+
+    what = "." + what.replace(":", r"\:")
+
+    assert_raises(TimeoutException, util.find_element,
+                  (By.CSS_SELECTOR, what))

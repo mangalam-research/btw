@@ -80,7 +80,8 @@ BTWMode.prototype.init = function (editor) {
                         this._keyHandler.bind(this));
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
-        editor, "Insert a new hyperlink to a sense");
+        editor, "Insert a new hyperlink to a sense",
+        undefined, undefined, true);
 
     this.insert_ptr_tr = new transformation.Transformation(
         editor, "Insert a pointer", btw_tr.insert_ptr);
@@ -129,7 +130,8 @@ BTWMode.prototype.init = function (editor) {
         this._editor,
         "Insert a new bibliographical reference",
         "",
-        "<i class='icon-plus icon-fixed-width'></i>");
+        "<i class='icon-plus icon-fixed-width'></i>",
+        true);
 
     /**
      * @private
