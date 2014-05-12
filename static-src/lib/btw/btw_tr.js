@@ -77,7 +77,7 @@ function SetTextLanguageTr(editor, language) {
     this._language = language;
     this._nesting_modal = getNestingModal(editor);
     var desc = "Set language to " + language;
-    Transformation.call(this, editor, desc, language, true,
+    Transformation.call(this, editor, desc, language, undefined, true,
                         set_language_handler);
 }
 

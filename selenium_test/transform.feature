@@ -98,7 +98,6 @@ Scenario: inserting citations in a sense by using a visible absence
   Then a new btw:citations is created
   And there is no visible absence for btw:citations
 
-@wip
 Scenario: creating a btw:example in a sense by using a visible absence
   Given a document that has no btw:explanation
   When the user clicks on the visible absence for btw:explanation
