@@ -210,7 +210,10 @@ def step_impl(context, what):
     driver = context.driver
     button = driver.execute_script("""
     var what = arguments[0];
-    return jQuery("._va_instantiator:contains('Create new " + what + "')")[0];
+    var ret =
+        jQuery("._va_instantiator:contains('Create new " + what + "')")[0];
+    ret.scrollIntoView();
+    return ret;
     """, what)
     ActionChains(driver) \
         .click(button) \
