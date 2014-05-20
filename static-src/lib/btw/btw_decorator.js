@@ -531,7 +531,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
                 $control.click(function (ev) {
                     new context_menu.ContextMenu(
                         this._editor.my_window.document,
-                        ev.clientX, ev.clientY, "none",
+                        ev.clientX, ev.clientY,
                         items);
                     return false;
                 }.bind(this));
@@ -1324,7 +1324,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     }
 
     new context_menu.ContextMenu(this._editor.my_window.document,
-                                 ev.clientX, ev.clientY, "none", items);
+                                 ev.clientX, ev.clientY, items);
 
     return false;
 });

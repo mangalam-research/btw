@@ -115,8 +115,8 @@ function set_language_handler(editor, data) {
         util.classFromOriginalName("foreign"));
     $foreign.attr(util.encodeAttrName("xml:lang"), lang_code);
     var cut_ret = editor.data_updater.cut(
-        makeDLoc(editor.data_tree, range.startContainer, range.startOffset),
-        makeDLoc(editor.data_tree, range.endContainer, range.endOffset));
+        makeDLoc(editor.data_root, range.startContainer, range.startOffset),
+        makeDLoc(editor.data_root, range.endContainer, range.endOffset));
     $foreign.append(cut_ret[1]);
     editor.data_updater.insertAt(cut_ret[0], $realization.get(0));
     range.selectNodeContents($foreign.get(0));
@@ -161,15 +161,13 @@ function remove_mixed_handler(editor, data) {
     }
 
     var cut_ret = editor.data_updater.cut(
-        makeDLoc(editor.data_tree, range.startContainer, range.startOffset),
-        makeDLoc(editor.data_tree, range.endContainer, range.endOffset));
+        makeDLoc(editor.data_root, range.startContainer, range.startOffset),
+        makeDLoc(editor.data_root, range.endContainer, range.endOffset));
     var $div = $("<div>");
     var new_text = $(cut_ret[1]).text();
     var text_node = range.startContainer.ownerDocument.createTextNode(new_text);
 
-    if (editor.validator.speculativelyValidate(range.startContainer,
-                                               range.startOffset,
-                                               text_node)) {
+    if (editor.validator.speculativelyValidate(cut_ret[0], text_node)) {
         getRemoveMixedModal().modal();
         throw new AbortTransformationException(
             "result would be invalid");

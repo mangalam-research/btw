@@ -213,7 +213,6 @@ def step_impl(context, what):
     var what = arguments[0];
     var ret =
         jQuery("._va_instantiator:contains('Create new " + what + "')")[0];
-    ret.scrollIntoView();
     return ret;
     """, what)
     ActionChains(driver) \

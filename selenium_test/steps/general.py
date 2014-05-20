@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
 
 
@@ -75,7 +76,7 @@ def step_impl(context):
     wedutil.set_window_size(util, 683, 741)
 
 
-@when("the user scrolls the editor pane down")
+@when("the user scrolls the window down")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -107,6 +108,38 @@ def step_impl(context, x):
 
 
 step_matcher('re')
+
+
+@when("^(?:the user )?scrolls the editor pane (?P<choice>completely )?down$")
+def step_impl(context, choice):
+    driver = context.driver
+    util = context.util
+
+    if choice == "completely ":
+        # We must not call it before the body is fully loaded.
+        scroll_by = driver.execute_script("""
+        return wed_editor.gui_root.scrollHeight;
+        """)
+    else:
+        scroll_by = 10
+
+    # We must not call it before the body is fully loaded.
+    driver.execute_script("""
+    var by = arguments[0];
+    delete window.__selenic_scrolled;
+    jQuery(function () {
+      var top = window.wed_editor.$gui_root.scrollTop();
+      window.wed_editor.$gui_root.scrollTop(top + by);
+      window.__selenic_scrolled = true;
+    });
+    """, scroll_by)
+
+    def cond(*_):
+        return driver.execute_script("""
+        return window.__selenic_scrolled;
+        """)
+    util.wait(cond)
+    context.scrolled_editor_pane_by = scroll_by
 
 import collections
 
@@ -169,18 +202,26 @@ def step_impl(context):
         sense.find_element,
         (By.CSS_SELECTOR, r".btw\:subsense"))
 
+WHAT_TO_TITLE = {
+    u"single sense that has a subsense": "one sense, one subsense",
+    u"Pāli example": "pali example"
+}
 
-@Given("^a document with a single sense that has a subsense$")
-def step_impl(context):
+
+@Given(ur"^a document with a (?P<what>single sense that has a subsense|"
+       ur"Pāli example)$")
+def step_impl(context, what):
+    title = WHAT_TO_TITLE[what]
+
     util = context.util
     context.execute_steps(u"""
     Given the user has logged in
     And that the user has loaded the top page of the lexicography app
-    When the user searches for "one sense, one subsense"
-    Then the search results show one entry for "one sense, one subsense"
-    """)
+    When the user searches for "{0}"
+    Then the search results show one entry for "{0}"
+    """.format(title))
 
-    view_link = util.find_element((By.LINK_TEXT, "one sense, one subsense"))
+    view_link = util.find_element((By.LINK_TEXT, title))
     edit_link = view_link.find_element_by_xpath("../a[2]")
 
     edit_link.click()
