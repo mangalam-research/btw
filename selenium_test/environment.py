@@ -159,10 +159,22 @@ def after_scenario(context, _scenario):
     with open(context.server_write_fifo, 'w') as fifo:
         fifo.write("restart\n")
 
-    logs = driver.execute_script("""
+    driver.execute_script("""
     // Overwrite onbeforeunload to prevent the dialog from showing up.
     if (window.wed_editor)
         window.onbeforeunload = function () {};
+    """)
+    driver.delete_all_cookies()
+
+
+def before_step(context, _step):
+    if context.behave_wait:
+        time.sleep(context.behave_wait)
+
+
+def after_step(context, _step):
+    driver = context.driver
+    logs = driver.execute_script("""
     return window.selenium_log;
     """)
     if logs:
@@ -170,9 +182,6 @@ def after_scenario(context, _scenario):
         print "JavaScript log:"
         print "\n".join(repr(x) for x in logs)
         print
-    driver.delete_all_cookies()
-
-
-def before_step(context, _step):
-    if context.behave_wait:
-        time.sleep(context.behave_wait)
+        driver.execute_script("""
+        window.selenium_log = [];
+        """)
