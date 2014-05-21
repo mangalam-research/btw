@@ -108,3 +108,40 @@ Scenario: creating a btw:example in a sense by using a visible absence
   When the user clicks on the visible absence for btw:example
   Then a new btw:example is created
   And there is no ref
+
+Scenario: a Pāli example gets a Wheel of Dharma
+  Given a document with a Pāli example
+  Then the btw:example has a Wheel of Dharma
+
+Scenario: the user changes an example from Pāli to no language
+  Given a document with a Pāli example
+  Then the btw:example has a Wheel of Dharma
+  When the user removes the language from the btw:example
+  Then the btw:example does not have a Wheel of Dharma
+
+Scenario: the user changes an example from no language to Pāli
+  Given a document with a non-Pāli example
+  Then the btw:example does not have a Wheel of Dharma
+  When the user adds the Pāli language to the btw:example
+  Then the btw:example has a Wheel of Dharma
+
+Scenario: a Pāli explained example gets a Wheel of Dharma
+  Given a document with a Pāli example, explained
+  Then the btw:example-explained has a Wheel of Dharma
+  And the btw:explanation in btw:example-explained has a Wheel of Dharma
+
+Scenario: the user changes an explained example from Pāli to no language
+  Given a document with a Pāli example, explained
+  Then the btw:example-explained has a Wheel of Dharma
+  And the btw:explanation in btw:example-explained has a Wheel of Dharma
+  When the user removes the language from the btw:example-explained
+  Then the btw:example-explained does not have a Wheel of Dharma
+  And the btw:explanation in btw:example-explained does not have a Wheel of Dharma
+
+Scenario: the user changes an explained example from no language to Pāli
+  Given a document with a non-Pāli example, explained
+  Then the btw:example-explained does not have a Wheel of Dharma
+  And the btw:explanation in btw:example-explained does not have a Wheel of Dharma
+  When the user adds the Pāli language to the btw:example-explained
+  Then the btw:example-explained has a Wheel of Dharma
+  And the btw:explanation in btw:example-explained has a Wheel of Dharma

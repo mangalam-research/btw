@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 
 from selenium.webdriver.support.wait import TimeoutException
@@ -245,3 +246,60 @@ def step_impl(context, what):
 
     assert_raises(TimeoutException, util.find_element,
                   (By.CSS_SELECTOR, what))
+
+
+@then(ur"^the (?P<what>btw:example|btw:example-explained|"
+      ur"btw:explanation in btw:example-explained) has a Wheel of Dharma$")
+def step_impl(context, what):
+    util = context.util
+
+    if what == "btw:explanation in btw:example-explained":
+        what = r".btw\:example-explained>.btw\:explanation " \
+               r"._phantom._explanation_bullet"
+    else:
+        what = "." + what.replace(":", r"\:") + " ._phantom._cit_bullet"
+
+    util.find_element((By.CSS_SELECTOR, what))
+
+
+@then(ur"^the (?P<what>btw:example|btw:example-explained|"
+      ur"btw:explanation in btw:example-explained) does not have a Wheel "
+      ur"of Dharma$")
+def step_impl(context, what):
+    util = context.util
+
+    if what == "btw:explanation in btw:example-explained":
+        what = r".btw\:example-explained>.btw\:explanation " \
+               r"._phantom._explanation_bullet"
+    else:
+        what = "." + what.replace(":", r"\:") + " ._phantom._cit_bullet"
+
+    util.wait_until_not(lambda driver: driver.find_element_by_css_selector(
+        what))
+
+
+@when(ur"^the user removes the language from the "
+      ur"(?:btw:example|btw:example-explained)$")
+def step_impl(context):
+    util = context.util
+    util.ctrl_equivalent_x("]")
+    context.execute_steps(u"""
+    When the user clicks on the end label of the last foreign element
+    And the user brings up the context menu
+    And the user clicks the context menu option "Unwrap the content of \
+this element"
+    """)
+
+
+@when(ur"^the user adds the Pāli language to the "
+      ur"(?:btw:example|btw:example-explained)$")
+def step_impl(context):
+    util = context.util
+
+    btw_util.select_text_of_element_directly(context, r".btw\:cit")
+
+    assert_equal(context.expected_selection, "foo")
+    button = context.driver.execute_script(u"""
+    return jQuery("#toolbar .btn:contains('Pāli')")[0];
+    """)
+    button.click()

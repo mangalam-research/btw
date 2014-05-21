@@ -204,12 +204,16 @@ def step_impl(context):
 
 WHAT_TO_TITLE = {
     u"single sense that has a subsense": "one sense, one subsense",
-    u"Pāli example": "pali example"
+    u"Pāli example": "pali example",
+    u"non-Pāli example": "non-pali example",
+    u"Pāli example, explained": "pali explained example",
+    u"non-Pāli example, explained": "non-pali explained example"
 }
 
 
 @Given(ur"^a document with a (?P<what>single sense that has a subsense|"
-       ur"Pāli example)$")
+       ur"Pāli example|non-Pāli example|Pāli example, explained|"
+       ur"non-Pāli example, explained)$")
 def step_impl(context, what):
     title = WHAT_TO_TITLE[what]
 

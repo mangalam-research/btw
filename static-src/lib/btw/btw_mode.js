@@ -207,13 +207,13 @@ BTWMode.prototype.init = function (editor) {
               {tag: "ref", type: "insert", actions: [this.insert_ref_text]}
           ]
         },
-        { selector: jqutil.toDataSelector("btw:subsense>btw:citations foreign"),
+        { selector: jqutil.toDataSelector("btw:citations foreign"),
           pass: {
-              "foreign": ["delete-parent"],
+              "foreign": ["delete-parent", "unwrap"],
               "btw:lemma-instance": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:subsense>btw:citations btw:tr"),
+        { selector: jqutil.toDataSelector("btw:citations btw:tr"),
           pass: {
               "btw:tr": ["delete-parent"],
               "btw:lemma-instance": true,
@@ -358,42 +358,55 @@ BTWMode.prototype._getTransformationRegistry = function () {
  */
 BTWMode.prototype.getContextualActions = function (type, tag,
                                                    container, offset) {
-    var ret;
     // We want the first *element* container, selecting div accomplishes this.
     var $container = $(container).closest("div");
 
-    outer_loop: for(var i = 0; i < this.transformation_filters.length; ++i) {
+    if (!(type instanceof Array))
+        type = [type];
+
+    var ret = [];
+    filter_loop:
+    for(var i = 0; i < this.transformation_filters.length; ++i) {
         var filter = this.transformation_filters[i];
         if ($container.is(filter.selector)) {
 
-            if (filter.pass) {
-                var tr_types = filter.pass[tag];
-                if (!tr_types || // not among those to pass
-                    (tr_types !== true && // true means pass
-                    tr_types.indexOf(type) === -1))
-                    return [];
-            }
+            type_loop:
+            for(var tix = 0; tix < type.length; ++tix) {
+                var t = type[tix];
 
+                if (filter.pass) {
+                    var tr_types = filter.pass[tag];
+                    if (!tr_types || // not among those to pass
+                        (tr_types !== true && // true means pass
+                         tr_types.indexOf(t) === -1))
+                        // Skip this type...
+                        continue type_loop;
+                }
 
-            if (filter.substitute) {
-                for (var j = 0; j < filter.substitute.length; ++j) {
-                    var substitute = filter.substitute[j];
-                    if (substitute.tag === tag && substitute.type === type) {
-                        ret = substitute.actions;
-                        break outer_loop;
+                if (filter.substitute) {
+                    for (var j = 0; j < filter.substitute.length; ++j) {
+                        var substitute = filter.substitute[j];
+                        if (substitute.tag === tag && substitute.type === t) {
+                            ret = ret.concat(substitute.actions);
+                            break type_loop;
+                        }
                     }
                 }
+
+                ret = ret.concat(this._tr.getTagTransformations(t, tag));
             }
+
+            // First match of a selector ends the process.
             break;
         }
     }
 
-    if (!ret)
-        ret = this._tr.getTagTransformations(type, tag);
-
     // Here we transform the returned array in ways that cannot be
     // captured by transformation_filters.
     return ret.filter(function (x) {
+
+        // We want insert_ref_text to be included only if the current
+        // container does not have children.
         if (x !== this.insert_ref_text)
             return true;
 

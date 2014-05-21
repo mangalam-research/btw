@@ -241,6 +241,34 @@ BTWDecorator.prototype.addHandlers = function () {
         this.refreshElement($root, $el);
     }.bind(this));
 
+    // This is needed to handle cases when an btw:cit acquires or
+    // loses Pāli text.
+    this._domlistener.addHandler(
+        "excluded-element",
+        jqutil.toDataSelector("btw:cit foreign"),
+        function ($root, $tree, $parent,
+                  $prev, $next, $el) {
+        var $cit = $el.closest(util.classFromOriginalName("btw:cit"));
+        // Refresh after the element is removed.
+        var dec = this;
+        setTimeout(function () {
+            dec.refreshElement($root, $cit);
+            dec.refreshElement($root, $cit.prevAll(
+                util.classFromOriginalName("btw:explanation")));
+        }, 0);
+    }.bind(this));
+
+    this._domlistener.addHandler(
+        "included-element",
+        jqutil.toDataSelector("btw:cit foreign"),
+        function ($root, $tree, $parent,
+                  $prev, $next, $el) {
+        var $cit = $el.closest(util.classFromOriginalName("btw:cit"));
+        this.refreshElement($root, $cit);
+        this.refreshElement($root, $cit.prevAll(
+            util.classFromOriginalName("btw:explanation")));
+    }.bind(this));
+
 
     this._domlistener.addHandler(
         "children-changed",
@@ -548,10 +576,24 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
     }
 };
 
+var WHEEL = "☸";
+
 BTWDecorator.prototype.citDecorator = function ($root, $el) {
     this.elementDecorator($root, $el);
     var $ref = $el.children(util.classFromOriginalName("ref"));
     $ref.after('<div class="_phantom _text"> </div>');
+
+    this._gui_updater.removeNodeNF(
+        $el.children("._phantom._text._cit_bullet")[0]);
+    if ($el.find("*[" + util.encodeAttrName("xml:lang") +
+                 "='pi-Latn']").length) {
+        this._gui_updater.insertNodeAt(
+            $el[0], 0,
+            $("<div class='_phantom _text _cit_bullet' " +
+              "style='position: absolute; left: -1em'>"  +
+              WHEEL + "</div>")[0]);
+        $el.css("position", "relative");
+    }
 };
 
 BTWDecorator.prototype.trDecorator = function ($root, $el) {
@@ -716,6 +758,27 @@ BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
 };
 
 BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
+    // Handle explanations that are in btw:example-explained.
+    if ($el.parent(util.classFromOriginalName("btw:example-explained"))
+        .length) {
+
+        this._gui_updater.removeNodeNF(
+            $el.children("._phantom._text._explanation_bullet")[0]);
+
+        // If the next btw:cit element contains Pāli text.
+        if ($el.nextAll(util.classFromOriginalName("btw:cit"))
+            .find("*[" + util.encodeAttrName("xml:lang") +
+                     "='pi-Latn']").length) {
+            this._gui_updater.insertNodeAt(
+                $el[0], 0,
+                $("<div class='_phantom _text _explanation_bullet' " +
+                  "style='position: absolute; left: -1em'>"  +
+                  WHEEL + "</div>")[0]);
+            $el.css("position", "relative");
+        }
+        return;
+    }
+
     var $subsense = $el.parent(util.classFromOriginalName("btw:subsense"));
     var label;
     if ($subsense.length) {
@@ -726,7 +789,8 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
         var $sense = $el.parent(util.classFromOriginalName("btw:sense"));
         label = this._sense_refman.idToLabel($sense.attr("id"));
     }
-    $el.children("._phantom._text._explanation_number").remove();
+    this._gui_updater.removeNodeNF(
+        $el.children("._phantom._text._explanation_number")[0]);
     this._gui_updater.insertNodeAt(
         $el[0], 0,
         $("<div class='_phantom _text _explanation_number'>" + label +

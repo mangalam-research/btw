@@ -400,14 +400,20 @@
         <elementSpec ident="citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>This element groups citations.</desc>
+          <desc>This element groups all the citations associated with
+          its parent element.</desc>
           <content>
-            <rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="btw_example"/>
+              <rng:ref name="ptr"/>
+            </rng:choice>
+            <rng:zeroOrMore>
               <rng:choice>
+                <rng:ref name="btw_example-explained"/>
                 <rng:ref name="btw_example"/>
                 <rng:ref name="ptr"/>
               </rng:choice>
-            </rng:oneOrMore>
+            </rng:zeroOrMore>
           </content>
         </elementSpec>
 
@@ -417,6 +423,22 @@
           <desc>This element groups a citation together with its
           associated translation.</desc>
           <content>
+            <rng:ref name="btw_cit"/>
+            <rng:ref name="btw_tr"/>
+          </content>
+          <attList>
+            <attRef name="tei_att.global.attribute.xmlid"/>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="example-explained"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>This element groups a citation together with its
+          associated translation. This element must contain an
+          explanation of the term's usage in the citation.</desc>
+          <content>
+            <rng:ref name="btw_explanation"/>
             <rng:ref name="btw_cit"/>
             <rng:ref name="btw_tr"/>
           </content>
