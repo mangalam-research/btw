@@ -193,7 +193,6 @@ BTWMode.prototype.init = function (editor) {
                 "btw:sense-emphasis": true,
                 "ptr": true
             },
-            // filter: [...],
             substitute: [ {tag: "ptr",
                            type: "insert", actions: [this.insert_sense_ptr_action]} ]
         },
@@ -340,9 +339,6 @@ BTWMode.prototype._getTransformationRegistry = function () {
  *      * is defined, a list and ``type`` is absent from it, then return an
  *        empty list.
  *
- *    + if ``filter.filter`` is defined and the ``tag`` **is** in it,
- *    then return an empty list.
- *
  *    + if ``filter.substitute`` is defined and the ``tag`` and
  *      ``type`` parameters equal the ``tag`` and ``type`` properties
  *      of any of the substitutions in the list, then return the
@@ -378,8 +374,6 @@ BTWMode.prototype.getContextualActions = function (type, tag,
                     return [];
             }
 
-            if (filter.filter && filter.filter.indexOf(tag) > -1)
-                return [];
 
             if (filter.substitute) {
                 for (var j = 0; j < filter.substitute.length; ++j) {
