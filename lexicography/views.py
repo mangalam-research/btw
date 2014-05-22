@@ -222,9 +222,15 @@ def handle_update(request, handle_or_entry_id):
         'form': form,
     })
 
+# This is purposely not set through the settings. Why? Because this is
+# not something which someone installing BTW should have the
+# opportunity to change. The Django **code** depends on wed being at a
+# certain version. Changing this is a recipe for disaster.
+REQUIRED_WED_VERSION = "0.15.0"
+
 
 def version_check(version):
-    if not semver.match(version, ">=0.10.0"):
+    if not semver.match(version, ">=" + REQUIRED_WED_VERSION):
         return [{'type': "version_too_old_error"}]
     return []
 

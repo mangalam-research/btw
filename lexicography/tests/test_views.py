@@ -8,6 +8,7 @@ import os
 import datetime
 
 from ..models import Entry, EntryLock, ChangeRecord, ChangeInfo, Chunk
+from ..views import REQUIRED_WED_VERSION
 from . import util as test_util
 import lib.util as util
 from .. import xml
@@ -104,7 +105,7 @@ class ViewsTestCase(TransactionWebTest):
 
         params = {
             "command": "save" if not recover else "recover",
-            "version": "0.10.0",
+            "version": REQUIRED_WED_VERSION,
             "data": data
         }
 
@@ -508,7 +509,7 @@ class ViewsTestCase(TransactionWebTest):
 
         params = {
             "command": "check",
-            "version": "0.10.0"
+            "version": REQUIRED_WED_VERSION
         }
 
         headers = {
