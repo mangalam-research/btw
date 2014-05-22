@@ -1100,7 +1100,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             target = orig_target;
 
             // It is okay to skip the tree updater for these operations.
-            $el.children("._ref_abbr, ._ref_paren, ._ref_sep").each(
+            $el.children("._ref_abbr, ._ref_paren").each(
                 function () {
                 dec._gui_updater.removeNode(this);
             });
@@ -1110,13 +1110,6 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                     "_open_ref_paren'>(</div>",
                 '<div class="_text _phantom _ref_abbr"></div>'
             ];
-
-            if ($el.contents().filter(function () {
-                return jqutil.textFilter.call(this) ||
-                    $(this).is("._placeholder, ._real");
-            }).length)
-                start.push('<div class="_text _phantom _ref_sep">, '+
-                           '</div>');
 
             var el = $el[0];
             // Start from the end and insert before the first child.

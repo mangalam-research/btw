@@ -128,21 +128,6 @@ def step_impl(context):
     util.find_element((By.CSS_SELECTOR, ".ref ._placeholder"))
 
 
-@then(ur"^the new reference contains a separator\.?$")
-def step_impl(context):
-    util = context.util
-    driver = context.driver
-
-    def cond(*_):
-        text = driver.execute_script("""
-        return jQuery(".ref").children("._text, ._ref_sep").text();
-        """)
-
-        return text == "Foo, "
-
-    util.wait(cond)
-
-
 @when(ur"^the user brings up the context menu$")
 def step_impl(context):
     util = context.util

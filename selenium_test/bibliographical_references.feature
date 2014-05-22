@@ -19,7 +19,6 @@ Scenario: adding custom text to a reference
   Then a new reference is inserted
   When the user adds custom text to the new reference
   Then the new reference contains a placeholder
-  And the new reference contains a separator.
 
 Scenario: adding custom text to a reference when there is already text
   Given a document with a single sense
