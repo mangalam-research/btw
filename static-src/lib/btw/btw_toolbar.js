@@ -16,8 +16,7 @@ function Toolbar(editor) {
         new btw_tr.RemoveMixedTr(editor),
         new btw_tr.SetTextLanguageTr(editor, "Sanskrit"),
         new btw_tr.SetTextLanguageTr(editor, "Pāli"),
-        new btw_tr.SetTextLanguageTr(editor, 'Tibetan'),
-        new btw_tr.SetTextLanguageTr(editor, 'Chinese'),
+        new btw_tr.SetTextLanguageTr(editor, 'Latin'),
     ];
 
     this.$top = $('<div id="toolbar" class="ui-widget-header ui-corner-all">');
