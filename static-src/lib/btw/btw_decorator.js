@@ -75,18 +75,18 @@ function BTWDecorator(mode, meta) {
         label_f: this._bound_getSubsenseLabel
     }, {
         selector: "btw:sense>btw:citations",
-        heading: "selected citations for sense",
+        heading: "citations for sense",
         label_f: this._bound_getSenseLabel
     }, {
         selector: "btw:subsense>btw:citations",
-        heading: "selected citations for sense",
+        heading: "citations for sense",
         label_f: this._bound_getSubsenseLabel
     }, {
         selector:
         "btw:antonym>btw:citations," +
             "btw:cognate>btw:citations," +
             "btw:conceptual-proximate>btw:citations",
-        heading: "selected citations"
+        heading: "citations"
     },{
         selector: "btw:contrastive-section",
         heading: "contrastive section for sense",
