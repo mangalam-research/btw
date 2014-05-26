@@ -187,37 +187,34 @@ def step_impl(context, user_desc):
         driver.get(config.SERVER)
 
 
-@Given("^a document with a single sense(?: that does not have a subsense)?$")
-def step_impl(context):
-    context.execute_steps(u"""
-    Given the user has logged in
-    And a new document
-    """)
-
-    util = context.util
-
-    sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
-    assert_raises(
-        NoSuchElementException,
-        sense.find_element,
-        (By.CSS_SELECTOR, r".btw\:subsense"))
-
 WHAT_TO_TITLE = {
     u"single sense that has a subsense": "one sense, one subsense",
     u"Pāli example": "pali example",
     u"non-Pāli example": "non-pali example",
     u"Pāli example, explained": "pali explained example",
-    u"non-Pāli example, explained": "non-pali explained example"
+    u"non-Pāli example, explained": "non-pali explained example",
+    u"definition that has been filled": "definition filled",
+    u"definition with formatted text": "definition with formatted text"
 }
 
 
-@Given(ur"^a document with a (?P<what>single sense that has a subsense|"
-       ur"Pāli example|non-Pāli example|Pāli example, explained|"
-       ur"non-Pāli example, explained)$")
+@Given(ur"^a document with a (?P<what>.*?)$")
 def step_impl(context, what):
-    title = WHAT_TO_TITLE[what]
-
     util = context.util
+
+    if what in ("single sense", "single sense that does not have a subsense"):
+        context.execute_steps(u"""
+        Given the user has logged in
+        And a new document
+        """)
+
+        sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
+        assert_raises(NoSuchElementException,
+                      sense.find_element,
+                      (By.CSS_SELECTOR, r".btw\:subsense"))
+        return
+
+    title = WHAT_TO_TITLE[what]
     context.execute_steps(u"""
     Given the user has logged in
     And that the user has loaded the top page of the lexicography app

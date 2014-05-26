@@ -105,6 +105,36 @@
   }
 },
 {
+  "pk": 8,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "c_hash": "60ec16951deead9ab0d1a04af11a4230722c0cb9",
+    "ctype": "C",
+    "datetime": "2014-05-23T19:01:52.759Z",
+    "csubtype": "M",
+    "user": [
+      "admin"
+    ],
+    "headword": "definition filled"
+  }
+},
+{
+  "pk": 9,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "c_hash": "4dd64660a409b8bb16d81c3abd43e073df1bd914",
+    "ctype": "C",
+    "datetime": "2014-05-26T12:44:06.487Z",
+    "csubtype": "M",
+    "user": [
+      "admin"
+    ],
+    "headword": "definition with formatted text"
+  }
+},
+{
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
@@ -237,6 +267,21 @@
   "model": "lexicography.chunk",
   "fields": {
     "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">non-pali explained example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\"></div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example-explained _real\"><div class=\"btw:explanation _real\">foo</div><div class=\"btw:cit _real\">foo</div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "is_normal": true
+  }
+},{
+  "pk": "60ec16951deead9ab0d1a04af11a4230722c0cb9",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">definition filled</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</div><div class=\"p _real\">In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "4dd64660a409b8bb16d81c3abd43e073df1bd914",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">definition with formatted text</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Etymologically linked to the process of sedimentation (<div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pra\u221asad</div>, see below), <div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pras\u0101da</div> denotes the resulting state of <div class=\"btw:sense-emphasis _real\">clarity</div> and <div class=\"foreign _real\" data-wed-xml---lang=\"la\">translucency</div> of liquids. This sense is extended metaphorically [...] its most common meanings of <div class=\"btw:sense-emphasis _real\">serenity</div>, <div class=\"btw:sense-emphasis _real\">confidence</div>, and <div class=\"btw:sense-emphasis _real\">favor</div> or mercy.</div><div class=\"p _real\">In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
     "is_normal": true
   }
 },

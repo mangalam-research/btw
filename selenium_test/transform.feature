@@ -145,3 +145,32 @@ Scenario: the user changes an explained example from no language to Pāli
   When the user adds the Pāli language to the btw:example-explained
   Then the btw:example-explained has a Wheel of Dharma
   And the btw:explanation in btw:example-explained has a Wheel of Dharma
+
+Scenario: marking text as Pāli
+  Given a document with a definition that has been filled
+  And the btw:definition does not contain foreign text
+  When the user marks the text "prasāda" as Pāli in btw:definition
+  Then the text "prasāda" is marked as Pāli in btw:definition
+
+Scenario: marking text as Sanskrit
+  Given a document with a definition that has been filled
+  And the btw:definition does not contain foreign text
+  When the user marks the text "prasāda" as Sanskrit in btw:definition
+  Then the text "prasāda" is marked as Sanskrit in btw:definition
+
+Scenario: marking text as Latin
+  Given a document with a definition that has been filled
+  And the btw:definition does not contain foreign text
+  When the user marks the text "prasāda" as Latin in btw:definition
+  Then the text "prasāda" is marked as Latin in btw:definition
+
+Scenario: clearing formatting from text
+  Given a document with a definition with formatted text
+  Then the first paragraph in btw:defintion contains formatted text
+  When the user clears formatting from the first paragraph in btw:definition
+  Then the first paragraph in btw:defintion does not contain formatted text
+
+Scenario: clearing formatting from text, when the selection straddles.
+  Given a document with a definition with formatted text
+  When the user clears formatting from the first paragraph and second paragraph in btw:definition
+  Then the user gets a dialog saying that the selection is straddling

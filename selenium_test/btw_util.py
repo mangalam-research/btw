@@ -2,6 +2,7 @@ import itertools
 
 
 from selenium.webdriver.common.by import By
+import wedutil
 
 
 class PlainRecorder(dict):
@@ -232,23 +233,6 @@ def select_text_of_element_directly(context, selector):
     .. warning:: This function will fail if an element has more than a
                  single text node.
     """
-    driver = context.driver
-    text = driver.execute_script("""
-    var selector = arguments[0];
-    var $el = jQuery(selector);
-    var $text = $el.contents().filter(function () {
-        return this.nodeType === Node.TEXT_NODE;
-    });
-    if ($text.length !== 1)
-        throw new Error("the element must have exactly one text node");
-    var range = $el[0].ownerDocument.createRange();
-    range.selectNodeContents($text[0]);
-    // This messes up our previous selection...
-    wed_editor.setGUICaret(range.startContainer, range.startOffset);
-    // ... so we need to reselect.
-    range.selectNodeContents($text[0]);
-    wed_editor.setDOMSelectionRange(range);
-    return range.toString();
-    """, selector)
+    text = wedutil.select_text_of_element_directly(context.util, selector)
 
     context.expected_selection = text

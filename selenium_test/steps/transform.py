@@ -3,13 +3,17 @@ import re
 
 from selenium.webdriver.support.wait import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium_test.btw_util import record_senses, record_renditions_for, \
     record_subsenses_for
-from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
+# pylint: disable=E0611
+from nose.tools import assert_equal, assert_raises, assert_true
 from behave import then, when, step_matcher  # pylint: disable=E0611
 
 from selenium_test import btw_util
+
+import wedutil
 
 sense_re = re.compile(r"sense (.)\b")
 
@@ -299,7 +303,117 @@ def step_impl(context):
     btw_util.select_text_of_element_directly(context, r".btw\:cit")
 
     assert_equal(context.expected_selection, "foo")
+    context.execute_steps(u"""
+    When the user clicks the Pāli button
+    """)
+
+
+@given(ur"^the btw:definition does not contain foreign text")
+def step_impl(context):
+    driver = context.driver
+
+    el = driver.find_elements_by_css_selector(r".btw\:definition .foreign")
+    assert_equal(len(el), 0, "there should be no elements")
+
+
+@when(ur'the user marks the text "prasāda" as (?P<lang>Pāli|Sanskrit|Latin) '
+      ur'in btw:definition')
+def step_impl(context, lang):
+    driver = context.driver
+    util = context.util
+
+    p = driver.execute_script(u"""
+    var $p = jQuery(".p");
+    var $text = $p.contents().filter(function () {
+        return this.nodeType === Node.TEXT_NODE;
+    });
+    var text_node = $text[0];
+    var offset = text_node.nodeValue.indexOf("prasāda");
+    wed_editor.setGUICaret(text_node, offset);
+    return $p[0];
+    """)
+
+    util.send_keys(p,
+                   # This moves 4 characters to the right
+                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(u"prasāda") +
+                   [Keys.SHIFT])
+
+    context.execute_steps(u"""
+    When the user clicks the {0} button
+    """.format(lang))
+
+
+@when(ur"^the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button$")
+def step_impl(context, lang):
     button = context.driver.execute_script(u"""
-    return jQuery("#toolbar .btn:contains('Pāli')")[0];
+    return jQuery("#toolbar .btn:contains('{0}')")[0];
+    """.format(lang))
+    button.click()
+
+LANG_TO_CODE = {
+    u"Pāli": u"pi-Latn",
+    u"Sanskrit": u"sa-Latn",
+    u"Latin": u"la"
+}
+
+
+@then(ur'^the text "prasāda" is marked as (?P<lang>Pāli|Sanskrit|Latin) '
+      ur'in btw:definition$')
+def step_impl(context, lang):
+    driver = context.driver
+    util = context.util
+
+    test = driver.execute_script(ur"""
+    var $el = jQuery(".btw\\:definition .foreign:contains('prasāda')");
+    if (!$el[0])
+        return [false, undefined];
+    return [true, $el.attr('data-wed-xml---lang')];
+    """)
+    assert_true(test[0])
+    assert_equal(test[1], LANG_TO_CODE[lang])
+
+
+@when(ur"^the user clears formatting from the (?P<what>first paragraph"
+      ur"(?: and second paragraph)?) in btw:definition$")
+def step_impl(context, what):
+    driver = context.driver
+    util = context.util
+
+    if what == "first paragraph":
+        wedutil.select_contents_directly(util, r".btw\:definition .p")
+    else:
+        paras = driver.execute_script(ur"""
+        var $p = jQuery(".btw\\:definition .p");
+        var last = $p.last()[0];
+        return [ $p[0], last, last.childNodes.length ];
+        """)
+        wedutil.select_directly(util, paras[0], 0, paras[1], paras[2])
+
+    button = context.driver.execute_script(u"""
+    var $buttons = jQuery("#toolbar .btn");
+    return $buttons.has("i.icon-eraser")[0];
     """)
     button.click()
+
+
+@then(ur"^the first paragraph in btw:defintion (?P<test>does not contain"
+      ur"|contains) formatted text$")
+def step_impl(context, test):
+    util = context.util
+
+    selector = r".btw\:definition .p ._real"
+    if test == "does not contain":
+        util.wait(
+            lambda driver: len(driver.find_elements_by_css_selector(
+                selector)) == 0)
+    elif test == "contains":
+        util.find_element((By.CSS_SELECTOR, selector))
+    else:
+        raise ValueError("unknown test: " + test)
+
+
+@then(ur"^the user gets a dialog saying that the selection is straddling$")
+def step_impl(context):
+    util = context.util
+    modal = util.find_element((By.CSS_SELECTOR, ".modal.in"))
+    assert_true(modal.text.find("The text selected straddles") > -1)
