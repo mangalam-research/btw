@@ -761,12 +761,15 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
         var $sense = $el.parent(util.classFromOriginalName("btw:sense"));
         label = this._sense_refman.idToLabel($sense.attr("id"));
     }
-    this._gui_updater.removeNodeNF(
-        $el.children("._phantom._text._explanation_number")[0]);
-    this._gui_updater.insertNodeAt(
-        $el[0], 0,
-        $("<div class='_phantom _text _explanation_number'>" + label +
-          ". </div>")[0]);
+    this._gui_updater.removeNodeNF($el.children("._explanation_number")[0]);
+
+    // We want to insert it after the start label.
+    var $start = $el.children(".__start_label");
+    this._gui_updater.insertBefore(
+        $el[0],
+        $("<div class='_phantom _text _explanation_number _start_wrapper'>" +
+          label + ". </div>")[0],
+        $start[0] ? $start[0].nextSibling : null);
 
     this.sectionHeadingDecorator($root, $el, this._gui_updater);
 };
@@ -884,7 +887,8 @@ function unitHeadingDecorator($root, $el, gui_updater) {
         throw new Error("found an element with name " + name +
                         ", which is not handled");
 
-    var $head = $('<div class="head _phantom">' + head + "</div>");
+    var $head = $('<div class="head _phantom _start_wrapper">' + head +
+                  "</div>");
     $head.attr('id', allocateHeadID());
 
     gui_updater.insertNodeAt($el.get(0), 0, $head.get(0));
@@ -908,7 +912,8 @@ BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el,
             spec.heading;
     }
 
-    var $head = $('<div class="head _phantom">[' + head + "]</div>");
+    var $head = $('<div class="head _phantom _start_wrapper">[' + head +
+                  "]</div>");
     $head.attr('id', allocateHeadID());
 
     gui_updater.insertNodeAt($el.get(0), 0, $head.get(0));
@@ -1078,7 +1083,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
 
             var start = [
                 "<div class='_phantom _decoration_text _ref_paren " +
-                    "_open_ref_paren'>(</div>",
+                    "_open_ref_paren _start_wrapper'>(</div>",
                 '<div class="_text _phantom _ref_abbr"></div>'
             ];
 
@@ -1089,7 +1094,7 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                                               el.firstChild);
             dec._gui_updater.insertBefore(
                 el, $("<div class='_phantom _decoration_text " +
-                      "_ref_paren _close_ref_paren'>)</div>")[0]);
+                      "_ref_paren _close_ref_paren _end_wrapper'>)</div>")[0]);
 
 
             var ref_abbr = $el.children("._ref_abbr")[0];

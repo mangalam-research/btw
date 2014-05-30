@@ -418,25 +418,6 @@ BTWMode.prototype.getStylesheets = function () {
     return [require.toUrl("./btw-mode.css")];
 };
 
-BTWMode.prototype.nodesAroundEditableContents = function (parent) {
-    var ret = [null, null];
-    var start = parent.childNodes[0];
-    var $start = $(start);
-    // Otherwise, we want to search because a start label may be
-    // followed by a .head or ._open_ref_paren.
-    while ($(start).is("._gui.__start_label, .head, ._open_ref_paren")) {
-        ret[0] = start;
-        start = start.nextSibling;
-    }
-
-    var end = parent.childNodes[parent.childNodes.length - 1];
-    while ($(end).is("._gui.__end_label, ._close_ref_paren")) {
-        ret[1] = end;
-        end = end.previousSibling;
-    }
-    return ret;
-};
-
 BTWMode.prototype.makePlaceholderFor = function (el) {
     var name = util.getOriginalName(el);
     var ret;
