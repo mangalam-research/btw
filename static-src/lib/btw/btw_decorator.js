@@ -552,7 +552,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
                 var items = [];
                 for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
                     var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
-                    $a.click(tup[1], tup[0].bound_handler);
+                    $a.click(tup[1], tup[0].bound_terminal_handler);
+                    $a.mousedown(false);
                     items.push($("<li></li>").append($a).get(0));
                 }
 
@@ -566,8 +567,9 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
             }
             else if (tuples.length === 1) {
                 $control.html(tuples[0][2]);
+                $control.mousedown(false);
                 $control.click(tuples[0][1], function (ev) {
-                    tuples[0][0].bound_handler(ev);
+                    tuples[0][0].bound_terminal_handler(ev);
                     this.refreshElement($root, $el);
                 }.bind(this));
             }
