@@ -377,13 +377,13 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         break;
     case "btw:cit":
         this.citDecorator($root, $el);
-        break;
+        return; // citDecorator calls elementDecorator
     case "btw:tr":
         this.trDecorator($root, $el);
-        break;
+        return; // trDecorator calls elementDecorator
     case "btw:explanation":
         this.explanationDecorator($root, $el);
-        break;
+        return; // explanationDecorator calls elementDecorator
     case "btw:none":
         this.noneDecorator($root, $el);
         return; // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
@@ -748,9 +748,11 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
                   WHEEL + "</div>")[0]);
             $el.css("position", "relative");
         }
+        this.elementDecorator($root, $el);
         return;
     }
 
+    this.elementDecorator($root, $el);
     var $subsense = $el.parent(util.classFromOriginalName("btw:subsense"));
     var label;
     if ($subsense.length) {
