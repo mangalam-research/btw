@@ -60,12 +60,6 @@ function BTWDecorator(mode, meta) {
         selector: "btw:etymology",
         heading: "etymology"
     }, {
-        selector: "btw:classical-renditions",
-        heading: "classical renditions"
-    }, {
-        selector: "btw:modern-renditions",
-        heading: "renditions, translations and paraphrases in contemporary scholarship"
-    }, {
         selector: "btw:sense>btw:explanation",
         heading: "brief explanation of sense",
         label_f: this._bound_getSenseLabel
@@ -135,13 +129,8 @@ function BTWDecorator(mode, meta) {
         "p",
         "ptr",
         "foreign",
-        "btw:renditions-and-discussions",
         "btw:historico-semantical-data",
         "btw:etymology",
-        "btw:classical-renditions",
-        "btw:modern-renditions",
-        "btw:lang",
-        "btw:occurrence",
         "ref",
         "btw:sense-emphasis",
         "btw:lemma-instance",
@@ -355,7 +344,6 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     switch(name) {
     case "btw:overview":
     case "btw:sense-discrimination":
-    case "btw:renditions-and-discussions":
     case "btw:historico-semantical-data":
         unitHeadingDecorator($root, $el, this._gui_updater);
         break;
@@ -372,13 +360,8 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
         break;
     case "btw:semantic-fields":
-    case "btw:classical-renditions":
-    case "btw:modern-renditions":
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
         this.listDecorator($el.get(0), "; ");
-        break;
-    case "btw:lang":
-        includedBTWLangHandler($el);
         break;
     case "ptr":
         this.ptrDecorator($root, $el);
@@ -386,21 +369,8 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
     case "foreign":
         languageDecorator($el);
         break;
-    case "btw:authority":
-        this.listDecorator($el.get(0), ", ");
-        var target = $el.attr(util.encodeAttrName('target'));
-        var label = target.split("/").slice(-1)[0];
-        $el.prepend("<div class='_text _phantom'>" + label +
-                    " </div>");
-        break;
     case "ref":
         this.refDecorator($root, $el);
-        break;
-    case "btw:occurrence":
-        $el.children("._text._phantom._occurrence_space").remove();
-        var $ref = $el.children(util.classFromOriginalName("ref"));
-        if ($ref.length > 0)
-            $ref.before("<div class='_text _phantom _occurrence_space'> </div>");
         break;
     case "btw:example":
         this.idDecorator($el[0]);
@@ -903,8 +873,7 @@ function allocateHeadID() {
 var unit_heading_map = {
     "btw:overview": "UNIT 1: OVERVIEW",
     "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
-    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA",
-    "btw:renditions-and-discussions": "UNIT 4: RENDITIONS AND DISCUSSIONS"
+    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA"
 };
 
 function unitHeadingDecorator($root, $el, gui_updater) {
@@ -1184,27 +1153,6 @@ function languageDecorator($el) {
         label = label.split("; ")[0];
         $el.tooltip({"title": label, "container": "body"});
     }
-}
-
-
-function addedIdHandler($root, $parent, $previous_sibling, $next_sibling,
-                        $element) {
-    var $parent = $element.parent();
-    if ($parent.is(util.classFromOriginalName("sense"))) {
-        var $start = $parent.children("._gui.__start_label");
-        $start.nextUntil($element).addBack().add($element).wrapAll("<span class='_gui _label_and_id _phantom'>");
-    }
-}
-
-function includedBTWLangHandler($el) {
-    var lang = $el.attr(util.encodeAttrName('btw:lang'));
-    var label = btw_util.languageCodeToLabel(lang);
-    if (label === undefined)
-        throw new Error("unknown language: " + lang);
-    // We want the abbreviation
-    label = label.split("; ", 2)[1] + " ";
-    $el.prepend("<div class='_text _phantom'>" + label + "</div>");
-    heterogeneousListItemDecorator($el.get(0), ", ");
 }
 
 

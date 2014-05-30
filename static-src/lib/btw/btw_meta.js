@@ -42,8 +42,6 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:cognate-instance":
     case "btw:conceptual-proximate-instance":
     case "btw:lang":
-    case "btw:occurrence":
-    case "btw:authority":
     case "btw:sense-emphasis":
     case "btw:todo":
     case "btw:none":
