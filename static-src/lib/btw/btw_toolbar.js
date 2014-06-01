@@ -47,7 +47,7 @@ function Toolbar(editor) {
 
 Toolbar.prototype.getTopElement = function () {
     // There's no point in hiding this value.
-    return this.$top.get(0);
+    return this.$top[0];
 };
 
 Toolbar.prototype._click = log.wrap(function (ev) {

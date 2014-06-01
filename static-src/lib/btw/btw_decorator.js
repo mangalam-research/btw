@@ -336,11 +336,11 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
 
     this.refreshVisibleAbsences($root, $el);
 
-    var klass = this._meta.getAdditionalClasses($el.get(0));
+    var klass = this._meta.getAdditionalClasses($el[0]);
     if (klass.length > 0)
         $el.addClass(klass);
 
-    var name = util.getOriginalName($el.get(0));
+    var name = util.getOriginalName($el[0]);
     switch(name) {
     case "btw:overview":
     case "btw:sense-discrimination":
@@ -361,7 +361,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         break;
     case "btw:semantic-fields":
         this.sectionHeadingDecorator($root, $el, this._gui_updater);
-        this.listDecorator($el.get(0), "; ");
+        this.listDecorator($el[0], "; ");
         break;
     case "ptr":
         this.ptrDecorator($root, $el);
@@ -524,7 +524,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
                     var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
                     $a.click(tup[1], tup[0].bound_terminal_handler);
                     $a.mousedown(false);
-                    items.push($("<li></li>").append($a).get(0));
+                    items.push($("<li></li>").append($a)[0]);
                 }
 
                 $control.click(function (ev) {
@@ -670,7 +670,7 @@ BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
     this._sense_refman.deallocateAll();
     $root.find(util.classFromOriginalName("btw:sense")).each(function () {
         var $sense = $(this);
-        dec.idDecorator($sense.get(0));
+        dec.idDecorator($sense[0]);
         dec.sectionHeadingDecorator($root, $sense, dec._gui_updater);
         // Refresh the headings that use the sense label.
         for (var s_ix = 0, spec;
@@ -713,7 +713,7 @@ BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
     refman.deallocateAll();
     $sense.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
-        dec.idDecorator($subsense.get(0));
+        dec.idDecorator($subsense[0]);
         $subsense.children(util.classFromOriginalName("btw:explanation"))
             .each(function () {
                 dec.explanationDecorator($root, $(this));
@@ -780,7 +780,7 @@ BTWDecorator.prototype._getSenseLabelForHead = function (el) {
     var $el = $(el);
     var id = $el.attr("id");
     if (!id)
-        throw new Error("element does not have an id: " + $el.get(0));
+        throw new Error("element does not have an id: " + $el[0]);
     return this._sense_refman.idToLabelForHead(id);
 };
 
@@ -790,7 +790,7 @@ BTWDecorator.prototype._getSenseLabel = function (el) {
 
     if (!id)
         throw new Error("element does not have sense parent with an id: " +
-                        $el.get(0));
+                        $el[0]);
     return this._sense_refman.idToLabel(id);
 };
 
@@ -828,7 +828,7 @@ BTWDecorator.prototype._getSubsenseRefman = function (el) {
 };
 
 BTWDecorator.prototype._getRefmanForElement = function ($root, $el) {
-    var name = util.getOriginalName($el.get(0));
+    var name = util.getOriginalName($el[0]);
     switch(name) {
     case "ptr":
     case "ref":
@@ -859,7 +859,7 @@ BTWDecorator.prototype._getRefmanForElement = function ($root, $el) {
 // Override
 BTWDecorator.prototype.contentDecoratorInclusionHandler = function ($root,
                                                                     $element) {
-    var pair = this._mode.nodesAroundEditableContents($element.get(0));
+    var pair = this._mode.nodesAroundEditableContents($element[0]);
 
     this._contentDecorator($root, $element, $(pair[0]), $(pair[1]));
 };
@@ -883,7 +883,7 @@ var unit_heading_map = {
 
 function unitHeadingDecorator($root, $el, gui_updater) {
     $el.children('.head').remove();
-    var name = util.getOriginalName($el.get(0));
+    var name = util.getOriginalName($el[0]);
     var head = unit_heading_map[name];
     if (head === undefined)
         throw new Error("found an element with name " + name +
@@ -893,14 +893,14 @@ function unitHeadingDecorator($root, $el, gui_updater) {
                   "</div>");
     $head.attr('id', allocateHeadID());
 
-    gui_updater.insertNodeAt($el.get(0), 0, $head.get(0));
+    gui_updater.insertNodeAt($el[0], 0, $head[0]);
 }
 
 BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el,
                                                            gui_updater, head) {
     $el.children('.head').remove();
     if (head === undefined) {
-        var name = util.getOriginalName($el.get(0));
+        var name = util.getOriginalName($el[0]);
         for(var s_ix = 0, spec;
             (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix) {
             if ($el.is(spec.selector))
@@ -910,15 +910,14 @@ BTWDecorator.prototype.sectionHeadingDecorator = function ($root, $el,
             throw new Error("found an element with name " + name +
                             ", which is not handled");
         var label_f = spec.label_f;
-        head = (label_f) ? spec.heading + " " + label_f($el.get(0)) :
-            spec.heading;
+        head = (label_f) ? spec.heading + " " + label_f($el[0]) : spec.heading;
     }
 
     var $head = $('<div class="head _phantom _start_wrapper">[' + head +
                   "]</div>");
     $head.attr('id', allocateHeadID());
 
-    gui_updater.insertNodeAt($el.get(0), 0, $head.get(0));
+    gui_updater.insertNodeAt($el[0], 0, $head[0]);
 };
 
 /**
@@ -1040,10 +1039,10 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             $a.text(label);
 
             // A ptr contains only attributes, no text, so we can just append.
-            this._gui_updater.insertBefore($el.get(0), $text.get(0), null);
+            this._gui_updater.insertBefore($el[0], $text[0], null);
 
             if ($target.length > 0) {
-                var target_name = util.getOriginalName($target.get(0));
+                var target_name = util.getOriginalName($target[0]);
 
                 // Reduce the target to something sensible for tooltip text.
                 if (target_name === "btw:sense")
@@ -1191,7 +1190,7 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
         var my_depth = $parents.length;
 
         var $parent = $el.parent();
-        var orig_name = util.getOriginalName($parent.get(0));
+        var orig_name = util.getOriginalName($parent[0]);
 
         var $li = $("<li class='btw-navbar-item'>"+
                     "<a class='navbar-link' href='#" + el.id +
@@ -1334,7 +1333,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
         var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
         $a.click(tup[1], tup[0].bound_terminal_handler);
-        items.push($("<li></li>").append($a).get(0));
+        items.push($("<li></li>").append($a)[0]);
     }
 
     new context_menu.ContextMenu(this._editor.my_window.document,

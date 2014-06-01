@@ -301,7 +301,7 @@ BTWMode.prototype._assignLanguage = function (e) {
     if ($new_element !== undefined) {
         // Place the caret after the element we just wrapped.
         rangy.getNativeSelection().collapse(
-            $new_element.get(0).nextSibling, 0);
+            $new_element[0].nextSibling, 0);
         this._editor._caretChangeEmitter(e);
     }
 

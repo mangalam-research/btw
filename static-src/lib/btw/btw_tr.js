@@ -27,14 +27,14 @@ function insert_ptr(editor, data) {
     var index = caret.offset;
 
     var $ptr = transformation.makeElement('ptr', {'target': data.target});
-    editor.data_updater.insertAt(parent, index, $ptr.get(0));
+    editor.data_updater.insertAt(parent, index, $ptr[0]);
 
     // The original parent and index information are no necessarily
     // representative because insertAt can do quite a lot of things to
     // insert the node.
-    parent = $ptr.parent().get(0);
+    parent = $ptr.parent()[0];
     editor.setDataCaret(parent, Array.prototype.indexOf.call(parent.childNodes,
-                                                             $ptr.get(0)));
+                                                             $ptr[0]));
 }
 
 function insert_ref(editor, data) {
@@ -118,8 +118,8 @@ function set_language_handler(editor, data) {
         makeDLoc(editor.data_root, range.startContainer, range.startOffset),
         makeDLoc(editor.data_root, range.endContainer, range.endOffset));
     $foreign.append(cut_ret[1]);
-    editor.data_updater.insertAt(cut_ret[0], $realization.get(0));
-    range.selectNodeContents($foreign.get(0));
+    editor.data_updater.insertAt(cut_ret[0], $realization[0]);
+    range.selectNodeContents($foreign[0]);
     editor.setDataSelectionRange(range);
 }
 
