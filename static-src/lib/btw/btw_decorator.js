@@ -1333,7 +1333,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     var items = [];
     for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
         var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
-        $a.click(tup[1], tup[0].bound_handler);
+        $a.click(tup[1], tup[0].bound_terminal_handler);
         items.push($("<li></li>").append($a).get(0));
     }
 
