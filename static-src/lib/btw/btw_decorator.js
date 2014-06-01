@@ -735,7 +735,7 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
         .length) {
 
         this._gui_updater.removeNodeNF(
-            $el.children("._phantom._text._explanation_bullet")[0]);
+            $el.children("._phantom._decoration_text._explanation_bullet")[0]);
 
         // If the next btw:cit element contains Pāli text.
         if ($el.nextAll(util.classFromOriginalName("btw:cit"))
@@ -743,7 +743,7 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
                      "='pi-Latn']").length) {
             this._gui_updater.insertNodeAt(
                 $el[0], 0,
-                $("<div class='_phantom _text _explanation_bullet' " +
+                $("<div class='_phantom _decoration_text _explanation_bullet' " +
                   "style='position: absolute; left: -1em'>"  +
                   WHEEL + "</div>")[0]);
             $el.css("position", "relative");
@@ -769,8 +769,8 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
     var $start = $el.children(".__start_label");
     this._gui_updater.insertBefore(
         $el[0],
-        $("<div class='_phantom _text _explanation_number _start_wrapper'>" +
-          label + ". </div>")[0],
+        $("<div class='_phantom _decoration_text _explanation_number " +
+          "_start_wrapper'>" + label + ". </div>")[0],
         $start[0] ? $start[0].nextSibling : null);
 
     this.sectionHeadingDecorator($root, $el, this._gui_updater);
