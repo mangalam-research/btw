@@ -3,10 +3,11 @@ define(function (require, exports, module) {
 
 var $ = require("jquery");
 var util = require("wed/util");
+var jqutil = require("wed/jqutil");
 
 function termsForSense($sense) {
-    return $sense.find(util.classFromOriginalName("btw:english-rendition") +
-                       ">" + util.classFromOriginalName("btw:english-term"));
+    return $sense.find(jqutil.toDataSelector(
+        "btw:english-rendition>btw:english-term"));
 }
 
 var lang_to_label = {
