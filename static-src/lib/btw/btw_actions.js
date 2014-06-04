@@ -23,7 +23,8 @@ SensePtrDialogAction.prototype.execute = function (data) {
     var labels = [];
     $senses.each(function () {
         var $this = $(this);
-        var $terms = btw_util.termsForSense($this);
+        var $data_node = $($this.data("wed_mirror_node"));
+        var $terms = btw_util.termsForSense($data_node);
         var terms = [];
         $terms.each(function () {
             terms.push($(this).text());
@@ -39,9 +40,10 @@ SensePtrDialogAction.prototype.execute = function (data) {
         $this.find(util.classFromOriginalName("btw:subsense")).each(
             function () {
             var $this = $(this);
+            var $data_node = $($this.data("wed_mirror_node"));
             var subsense_label = editor.decorator._getSubsenseLabel(this);
-            var $explanation = $this.find(util.classFromOriginalName("btw:explanation")).clone();
-            $explanation.find("._gui, ._phantom").remove();
+            var $explanation = $data_node.find(
+                util.classFromOriginalName("btw:explanation"));
             var $div = $("<span>").attr(util.encodeAttrName("xml:id"),
                                        $this.attr(util.encodeAttrName("xml:id"))).
                 append(" [" + subsense_label + "] ").
