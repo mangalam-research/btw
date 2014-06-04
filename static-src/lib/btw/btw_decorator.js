@@ -638,17 +638,6 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
         $el.attr(util.encodeAttrName("xml:id"), parent_id + "." + id);
     }
 
-    var data_el = $el.data("wed_mirror_node");
-    if (!data_el.firstChild) {
-        var saved = this._editor.getGUICaret();
-        this._editor.setDataCaret(data_el, 0);
-        this._mode.getContextualActions("insert", "btw:explanation",
-                                        $el[0], 0)[0]
-            .execute({element_name: "btw:explanation"});
-        this._editor.setGUICaret(saved);
-    }
-
-
     this.idDecorator($el[0]);
     this.refreshSubsensesForSense($root, $parent);
 };
