@@ -1287,14 +1287,12 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     }
 
     // Delete the node
-    if (orig_name === "btw:subsense") {
-        data = {node: node, element_name: orig_name,
-                move_caret_to: makeDLoc(this._editor.data_root, node, 0)};
-        this._mode._tr.getTagTransformations(
-            "delete-element", "btw:subsense").forEach(function (act) {
-                tuples.push([act, data, act.getLabelFor(data)]);
-            });
-    }
+    data = {node: node, element_name: orig_name,
+            move_caret_to: makeDLoc(this._editor.data_root, node, 0)};
+    this._mode._tr.getTagTransformations(
+        "delete-element", orig_name).forEach(function (act) {
+            tuples.push([act, data, act.getLabelFor(data)]);
+        });
 
     // Senses get an additional menu item to insert a subsense.
     if (orig_name === "btw:sense" &&
