@@ -203,8 +203,8 @@ BTWDecorator.prototype.addHandlers = function () {
     this._gui_domlistener.addHandler(
         "excluded-element",
         util.classFromOriginalName("btw:sense"),
-        function () {
-        this._domlistener.trigger("included-sense");
+        function ($root, $tree, $parent, $prev, $next, $el) {
+        this.excludedSenseHandler($el);
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -625,6 +625,29 @@ BTWDecorator.prototype.includedSenseHandler = function ($el) {
     this._domlistener.trigger("included-sense");
 };
 
+BTWDecorator.prototype.excludedSenseHandler = function ($el) {
+    var dec = this;
+    var id = $el.attr(util.encodeAttrName("xml:id"));
+    var selectors = ["*[" + util.encodeAttrName("target") + "='#" + id + "']"];
+
+    var $subsense_links =
+            $el.find(util.classFromOriginalName("btw:subsense")).each(
+        function () {
+        var id = $(this).attr(util.encodeAttrName("xml:id"));
+        selectors.push("*[" + util.encodeAttrName("target") + "='#" + id +
+                       "']");
+    });
+
+    var $links = this._editor.$data_root.find(selectors.join(","));
+    for(var i = 0; i < $links.length; ++i)
+        this._editor.data_updater.removeNode($links[i]);
+
+    // Yep, we trigger the included-sense trigger.
+    this._domlistener.trigger("included-sense");
+};
+
+
+
 BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
     var id = $el.attr(util.encodeAttrName("xml:id"));
     var $parent = $el.parent();
@@ -644,6 +667,12 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
 
 
 BTWDecorator.prototype.excludedSubsenseHandler = function ($root, $el) {
+    var id = $el.attr(util.encodeAttrName("xml:id"));
+    var $links = this._editor.$data_root.find(
+        "*[" + util.encodeAttrName("target") + "='#" + id + "']");
+    for(var i = 0; i < $links.length; ++i)
+        this._editor.data_updater.removeNode($links[i]);
+
     var $parent = $el.parent();
     this.refreshSubsensesForSense($root, $parent);
 };
@@ -700,13 +729,17 @@ BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
 
     var refman = this._getSubsenseRefman($sense[0]);
     refman.deallocateAll();
+
+    // This happens if the sense was removed from the document.
+    if (!$sense.closest(this._editor.$gui_root).length)
+        return;
+
     $sense.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
-        dec.idDecorator($subsense[0]);
-        $subsense.children(util.classFromOriginalName("btw:explanation"))
-            .each(function () {
-                dec.explanationDecorator($root, $(this));
-            });
+        dec.idDecorator(this);
+        dec.explanationDecorator(
+            $root,
+            $subsense.children(util.classFromOriginalName("btw:explanation")));
 
         // Refresh the headings that use the subsense label.
         for (var s_ix = 0, spec;

@@ -135,6 +135,21 @@
   }
 },
 {
+  "pk": 10,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "c_hash": "84174720561d363bc7937093ecca29074d748020",
+    "ctype": "U",
+    "datetime": "2014-06-04T14:52:13.118Z",
+    "csubtype": "M",
+    "user": [
+      "admin"
+    ],
+    "headword": "senses and subsenses"
+  }
+},
+{
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
@@ -282,6 +297,14 @@
   "model": "lexicography.chunk",
   "fields": {
     "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">definition with formatted text</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Etymologically linked to the process of sedimentation (<div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pra\u221asad</div>, see below), <div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pras\u0101da</div> denotes the resulting state of <div class=\"btw:sense-emphasis _real\">clarity</div> and <div class=\"foreign _real\" data-wed-xml---lang=\"la\">translucency</div> of liquids. This sense is extended metaphorically [...] its most common meanings of <div class=\"btw:sense-emphasis _real\">serenity</div>, <div class=\"btw:sense-emphasis _real\">confidence</div>, and <div class=\"btw:sense-emphasis _real\">favor</div> or mercy.</div><div class=\"p _real\">In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "84174720561d363bc7937093ecca29074d748020",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">senses and subsenses</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Something.</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense a</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a1</div><div class=\"btw:citations _real\"></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a2</div><div class=\"btw:citations _real\"></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense b</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense b1</div><div class=\"btw:citations _real\"></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
     "is_normal": true
   }
 },

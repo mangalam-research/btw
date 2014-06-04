@@ -1,8 +1,14 @@
 import itertools
+import re
+import collections
 
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import TimeoutException
 import wedutil
+
+# pylint: disable=no-name-in-module
+from nose.tools import assert_true
 
 
 class PlainRecorder(dict):
@@ -75,25 +81,25 @@ record_subsenses_for = require_subsense_recording.decorator
 
 """  # pylint: disable=W0105
 
+SenseInfo = collections.namedtuple('SenseInfo', ('term', 'id'))
 
-def get_sense_terms(util):
-    return util.driver.execute_script("""
+
+def get_senses(util):
+    return [SenseInfo(**info) for info in util.driver.execute_script("""
     var $senses = jQuery(".btw\\\\:sense");
     var ret = [];
     for(var i = 0, limit = $senses.length; i < limit; ++i) {
-        var $term = $senses.eq(i).find(".btw\\\\:english-term");
+        var $sense = $senses.eq(i);
+        var $term = $sense.find(".btw\\\\:english-term");
         if ($term.length > 1)
             throw new Error("too many terms!");
         var $clone = $term.clone();
         $clone.find("._phantom").remove();
-        ret.push($clone[0] ? $clone.text().trim() : undefined);
+        ret.push({term: $clone[0] ? $clone.text().trim() : undefined,
+                  id: $sense.attr("data-wed-xml---id")});
     }
     return ret;
-    """)
-
-
-def get_senses(util):
-    return util.find_elements((By.CLASS_NAME, "btw\\:sense"))
+    """)]
 
 
 def get_rendition_terms_for_sense(util, label):
@@ -211,7 +217,7 @@ def record_document_features(context):
     # transformations are applied, so record it.
     if context.require_sense_recording:
         # We gather the btw:english-term text associated with each btw:sense.
-        context.initial_sense_terms = get_sense_terms(util)
+        context.initial_senses = get_senses(util)
 
     if context.require_rendition_recording:
         context.initial_renditions_by_sense = \
@@ -236,3 +242,31 @@ def select_text_of_element_directly(context, selector):
     text = wedutil.select_text_of_element_directly(context.util, selector)
 
     context.expected_selection = text
+
+
+SENSE_LINK_RE = re.compile(ur"\[.*?\]")
+
+
+def get_sense_hyperlinks(util):
+    def cond(driver):
+        ret = driver.execute_script(ur"""
+        return jQuery(".wed-document a[href^='#BTW-S.']").toArray().map(
+            function (x) {
+            return { el: x, text: jQuery(x).text() };
+        });
+        """)
+
+        # Always check that the hyperlinks are of the right form.  A
+        # hyperlink may be incorrect for a small amount of time, so we
+        # use a condition here rather than fail immediately.
+        if any(l for l in ret if not SENSE_LINK_RE.match(l["text"])):
+            return False
+
+        # We can't return just ``ret`` because if there are no
+        # hyperlinks it is a False value.
+        return [ret]
+
+    try:
+        return util.wait(cond)[0]
+    except TimeoutException:
+        raise Exception("cannot get sense hyperlinks")

@@ -50,13 +50,13 @@ def senses_in_order(util):
 def step_impl(context, first, second):
     util = context.util
 
-    initial_terms = context.initial_sense_terms
+    initial_senses = context.initial_senses
     first_ix = ord(first) - ord("A")
     second_ix = ord(second) - ord("A")
 
-    terms = btw_util.get_sense_terms(util)
+    senses = btw_util.get_senses(util)
 
-    assert_equal(initial_terms[first_ix], terms[second_ix],
+    assert_equal(initial_senses[first_ix].term, senses[second_ix].term,
                  "relative order of the senses")
 
     senses_in_order(util)
@@ -75,13 +75,13 @@ def step_impl(context, label):
 def step_impl(context, label):
     util = context.util
 
-    initial_terms = context.initial_sense_terms
+    initial_senses = context.initial_senses
     ix = ord(label) - ord("A")
 
-    terms = btw_util.get_sense_terms(util)
+    senses = btw_util.get_senses(util)
 
-    assert_equal(len(initial_terms) + 1, len(terms), "number of terms")
-    assert_equal(terms[ix], '', "the new sense has no term yet")
+    assert_equal(len(initial_senses) + 1, len(senses), "number of terms")
+    assert_equal(senses[ix].term, '', "the new sense has no term yet")
 
 
 @when(u'the user undoes')
@@ -101,9 +101,9 @@ def step_impl(context):
     util = context.util
     senses_in_order(util)
 
-    initial_terms = context.initial_sense_terms
+    initial_senses = context.initial_senses
 
-    util.wait(lambda *_: initial_terms == btw_util.get_sense_terms(util))
+    util.wait(lambda *_: initial_senses == btw_util.get_senses(util))
 
 
 @record_renditions_for("A")
@@ -242,14 +242,27 @@ def step_impl(context, assertion, what):
     context.util.wait(cond)
 
 
+hyperlink_re = re.compile(ur'"(.*?)"')
+
+
 @then("^there is no (?P<what>.*)$")
 def step_impl(context, what):
     util = context.util
 
-    what = "." + what.replace(":", r"\:")
+    if what.startswith("hyperlink with the label "):
+        match = hyperlink_re.search(what)
+        label = match.group(1)
 
-    assert_raises(TimeoutException, util.find_element,
-                  (By.CSS_SELECTOR, what))
+        def cond(*_):
+            links = btw_util.get_sense_hyperlinks(context.util)
+            return any(l for l in links if l["text"] == label)
+
+        assert_raises(TimeoutException, util.wait, cond)
+    else:
+        what = "." + what.replace(":", r"\:")
+
+        assert_raises(TimeoutException, util.find_element,
+                      (By.CSS_SELECTOR, what))
 
 
 @then(ur"^the (?P<what>btw:example|btw:example-explained|"

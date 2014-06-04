@@ -21,6 +21,13 @@ Scenario: undoing a sense insertion
   And the user undoes
   Then the senses are the same as originally
 
+Scenario: undoing a sense deletion
+  Given a document with a single sense
+  When the user brings up a context menu on navigation item "[SENSE A]"
+  And the user clicks the context menu option "Delete this element"
+  And the user undoes
+  Then the senses are the same as originally
+
 Scenario: using the navigation context menu to insert an english rendition before another english rendition
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[English rendition]" under "[SENSE A]"

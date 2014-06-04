@@ -188,21 +188,23 @@ def step_impl(context, user_desc):
 
 
 WHAT_TO_TITLE = {
-    u"single sense that has a subsense": "one sense, one subsense",
-    u"Pāli example": "pali example",
-    u"non-Pāli example": "non-pali example",
-    u"Pāli example, explained": "pali explained example",
-    u"non-Pāli example, explained": "non-pali explained example",
-    u"definition that has been filled": "definition filled",
-    u"definition with formatted text": "definition with formatted text"
+    u"a single sense that has a subsense": "one sense, one subsense",
+    u"a Pāli example": "pali example",
+    u"a non-Pāli example": "non-pali example",
+    u"a Pāli example, explained": "pali explained example",
+    u"a non-Pāli example, explained": "non-pali explained example",
+    u"a definition that has been filled": "definition filled",
+    u"a definition with formatted text": "definition with formatted text",
+    u"senses and subsenses": "senses and subsenses"
 }
 
 
-@Given(ur"^a document with a (?P<what>.*?)$")
+@Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
     util = context.util
 
-    if what in ("single sense", "single sense that does not have a subsense"):
+    if what in ("a single sense",
+                "a single sense that does not have a subsense"):
         context.execute_steps(u"""
         Given the user has logged in
         And a new document
@@ -243,3 +245,32 @@ def step_impl(context, what):
     els = driver.find_elements_by_css_selector(what)
 
     assert_equal(len(els), 0)
+
+
+@When("^the user saves the file$")
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    # We have to wait for the save to happen before moving on.
+    driver.execute_script("""
+    window.__selenium_saved = false;
+    wed_editor._saver.addOneTimeEventListener("saved", function () {
+        window.__selenium_saved = true;
+    });
+    """)
+    util.ctrl_equivalent_x("S")
+    util.wait(lambda driver: driver.execute_script(
+        "return window.__selenium_saved"))
+
+
+@When("^the user reloads the file$")
+def step_impl(context):
+    driver = context.driver
+
+    driver.execute_script("""
+    delete window.wed_editor;
+    """)
+    driver.get(driver.current_url)
+    driver.switch_to.alert.accept()
+    setup_editor(context)
