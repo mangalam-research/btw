@@ -147,8 +147,8 @@ def before_scenario(context, scenario):
     found = False
     while not found:
         try:
-            urllib2.urlopen(config.SERVER + "/login")
-            found = True
+            f = urllib2.urlopen(config.SERVER + "/login")
+            found = f.getcode() == 200
         except urllib2.URLError:
             time.sleep(0.1)
 
