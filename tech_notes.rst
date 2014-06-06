@@ -754,5 +754,29 @@ is absent.
 A "visible absence instantiator" is a visible absence which is also a
 control able to instantiate the absent element.
 
+IDs
+---
+
+For hyperlinking purposes, elements have to be assigned unique
+IDs. There are two types of IDs:
+
+* The "wed ID", a.k.a. the "GUI ID". This is an ``id`` attribute that
+  exists only in the GUI tree, which is assigned to all elements that
+  need labeling through a reference manager. Or it may be assigned for
+  other reasons that have to do with presentation in the editor.
+
+* The "data ID". This is an ``id`` attribute that exists only in the
+  data tree. This is what preserves hyperlinking between editing
+  sessions.
+
+The wed ID is derived from the data ID as follows:
+
+* If there is a data ID, then the wed ID is "BTW-" + the value of the
+  data ID.
+
+* If there is no data ID, then the wed ID is "BTW-" + a unique number.
+
+A data ID is assigned only if an element is hyperlinked.
+
 ..  LocalWords:  uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth

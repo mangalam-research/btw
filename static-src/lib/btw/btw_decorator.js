@@ -16,9 +16,11 @@ var transformation = require("wed/transformation");
 var Transformation = transformation.Transformation;
 var updater_domlistener = require("wed/updater_domlistener");
 var btw_util = require("./btw_util");
+var id_manager = require("./id_manager");
 var context_menu = require("wed/gui/context_menu");
 var validate = require("salve/validate");
 var makeDLoc = require("wed/dloc").makeDLoc;
+require("./jquery.selectIn");
 
 var _indexOf = Array.prototype.indexOf;
 
@@ -33,6 +35,7 @@ function BTWDecorator(mode, meta) {
     this._meta = meta;
     this._sense_refman = new refmans.SenseReferenceManager();
     this._example_refman = new refmans.ExampleReferenceManager();
+    this._sense_subsense_id_manager = new id_manager.IDManager("S.");
 
     this._senses_for_refresh_subsenses = [];
 
@@ -328,6 +331,24 @@ BTWDecorator.prototype.addHandlers = function () {
         key_constants.DELETE);
 };
 
+BTWDecorator.prototype.startListening = function ($root) {
+    //
+    // Perform general checks before we start decorating anything.
+    //
+    var $data_el = $($root.data("wed_mirror_node"));
+    var $senses_subsenses = $data_el.find(jqutil.toDataSelector(
+        "btw:sense, btw:subsense"));
+    for(var i = 0, limit = $senses_subsenses.length; i < limit; ++i) {
+        var $s = $senses_subsenses.eq(i);
+        var id = $s.attr(util.encodeAttrName("xml:id"));
+        if (id)
+            this._sense_subsense_id_manager.seen(id, true);
+    }
+
+    // Call the overriden method
+    Decorator.prototype.startListening.apply(this, arguments);
+};
+
 BTWDecorator.prototype.refreshElement = function ($root, $el) {
     // Skip elements which would already have been removed from
     // the tree. Unlikely but...
@@ -577,15 +598,7 @@ BTWDecorator.prototype.trDecorator = function ($root, $el) {
 BTWDecorator.prototype.idDecorator = function (el) {
     var $el = $(el);
     var name = util.getOriginalName(el);
-    var id = $el.attr(util.encodeAttrName("xml:id"));
 
-    // The idDecorator is not responsible for assigning ids to
-    // elements that don't have them.
-    if (id === undefined)
-        return;
-
-    var wed_id = "BTW-" + id;
-    $el.attr("id", wed_id);
     var refman;
     switch(name) {
     case "btw:sense":
@@ -600,8 +613,16 @@ BTWDecorator.prototype.idDecorator = function (el) {
         throw new Error("unknown element: " + name);
     }
 
-    if (refman)
+    if (refman) {
+        var wed_id = $el.attr("id");
+        if (!wed_id) {
+            var id = $el.attr(util.encodeAttrName("xml:id"));
+            wed_id = "BTW-" + (id ||
+                               this._sense_subsense_id_manager.generate());
+            $el.attr("id", wed_id);
+        }
         refman.allocateLabel(wed_id);
+    }
 
     this._domlistener.trigger("refresh-sense-ptrs");
 };
@@ -615,12 +636,6 @@ BTWDecorator.prototype.refreshSensePtrsHandler = function ($root) {
 
 
 BTWDecorator.prototype.includedSenseHandler = function ($el) {
-    var id = $el.attr(util.encodeAttrName("xml:id"));
-    if (id === undefined) {
-        // Give it an id.
-        id = this._sense_refman.nextNumber();
-        $el.attr(util.encodeAttrName("xml:id"), "S." + id);
-    }
     this.idDecorator($el[0]);
     this._domlistener.trigger("included-sense");
 };
@@ -649,18 +664,7 @@ BTWDecorator.prototype.excludedSenseHandler = function ($el) {
 
 
 BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
-    var id = $el.attr(util.encodeAttrName("xml:id"));
     var $parent = $el.parent();
-    if (id === undefined) {
-        // Give it an id.
-        var parent_wed_id = $parent.attr("id");
-        var subsense_refman =
-                this._sense_refman.idToSubsenseRefman(parent_wed_id);
-        id = subsense_refman.nextNumber();
-        var parent_id = $parent.attr(util.encodeAttrName("xml:id"));
-        $el.attr(util.encodeAttrName("xml:id"), parent_id + "." + id);
-    }
-
     this.idDecorator($el[0]);
     this.refreshSubsensesForSense($root, $parent);
 };
@@ -695,7 +699,7 @@ BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
              (spec = dec._section_heading_specs[s_ix]) !== undefined; ++s_ix)
         {
             if (spec.label_f === dec._bound_getSenseLabel)
-                $sense.find(spec.selector).each(decorateSubheader);
+                $sense.selectIn(spec.selector).each(decorateSubheader);
         }
         dec.refreshSubsensesForSense($root, $sense);
     });
@@ -746,7 +750,7 @@ BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
              (spec = dec._section_heading_specs[s_ix]) !== undefined; ++s_ix)
         {
             if (spec.label_f === dec._bound_getSubsenseLabel)
-                $subsense.find(spec.selector).each(decorateSubheader);
+                $subsense.selectIn(spec.selector).each(decorateSubheader);
         }
     });
 };
@@ -858,8 +862,7 @@ BTWDecorator.prototype._getRefmanForElement = function ($root, $el) {
 
         // Slice to drop the #.
         var target_id = $el.attr(util.encodeAttrName("target")).slice(1);
-        var $target = $root.find('[' + util.encodeAttrName("xml:id") + '="' +
-                                 target_id + '"]');
+        var $target = $root.find('[id="' + "BTW-" + target_id + '"]');
         return ($target.length === 0) ? null :
             this._getRefmanForElement($root, $target);
     case "btw:sense":

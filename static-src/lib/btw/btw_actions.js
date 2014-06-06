@@ -31,8 +31,7 @@ SensePtrDialogAction.prototype.execute = function (data) {
         });
         terms = terms.join(", ");
         var sense_label = editor.decorator._getSenseLabel(this);
-        var $div = $("<span>").attr(util.encodeAttrName("xml:id"),
-                                   $this.attr(util.encodeAttrName("xml:id"))).
+        var $div = $("<span>").data("wed-id", $this.attr("id")).
             append(" [" + sense_label + "] ").
             append(terms);
         labels.push($div);
@@ -44,8 +43,7 @@ SensePtrDialogAction.prototype.execute = function (data) {
             var subsense_label = editor.decorator._getSubsenseLabel(this);
             var $explanation = $data_node.find(
                 util.classFromOriginalName("btw:explanation"));
-            var $div = $("<span>").attr(util.encodeAttrName("xml:id"),
-                                       $this.attr(util.encodeAttrName("xml:id"))).
+            var $div = $("<span>").data("wed-id", $this.attr("id")).
                 append(" [" + subsense_label + "] ").
                 append($explanation.text());
             labels.push($div);
@@ -66,9 +64,8 @@ SensePtrDialogAction.prototype.execute = function (data) {
     hyperlink_modal.modal(function () {
         var clicked = hyperlink_modal.getClickedAsText();
         if (clicked === "Insert") {
-            var id = $body.find(':radio:checked').next()
-                    .attr(util.encodeAttrName('xml:id'));
-            data.target = "#" + id;
+            var id = $body.find(':radio:checked').next().data("wed-id");
+            data.target = id;
             editor.mode.insert_ptr_tr.execute(data);
         }
     });

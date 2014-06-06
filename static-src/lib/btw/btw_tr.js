@@ -26,7 +26,15 @@ function insert_ptr(editor, data) {
     var parent = caret.node;
     var index = caret.offset;
 
-    var $ptr = transformation.makeElement('ptr', {'target': data.target});
+    // The data.target value is the wed ID target of the ptr. We must
+    // find this element and add a data ID.
+    var $target = editor.$gui_root.find("*[id='" + data.target + "']");
+    var data_id = data.target.slice(4);
+    $target.attr(util.encodeAttrName("xml:id"), data_id);
+    $($target.data("wed_mirror_node")).attr(util.encodeAttrName("xml:id"),
+                                            data_id);
+
+    var $ptr = transformation.makeElement('ptr', {'target': "#" + data_id});
     editor.data_updater.insertAt(parent, index, $ptr[0]);
 
     // The original parent and index information are no necessarily
