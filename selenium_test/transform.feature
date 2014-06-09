@@ -181,3 +181,47 @@ Scenario: clearing formatting from text, when the selection straddles.
   Given a document with a definition with formatted text
   When the user clears formatting from the first paragraph and second paragraph in btw:definition
   Then the user gets a dialog saying that the selection is straddling
+
+Scenario: creating a paragraph
+  Given a document with a definition that has been filled
+  And the definition contains 2 paragraphs
+  When the user clicks in the first paragraph of the definition
+  And the user types ENTER
+  Then the definition contains 3 paragraphs
+
+Scenario: removing a paragraph with backspace
+  Given a document with a definition that has been filled
+  And the definition contains 2 paragraphs
+  When the user clicks at the start of the second paragraph of the definition
+  And the user types BACKSPACE
+  Then the definition contains 1 paragraph
+
+Scenario: removing a paragraph with delete
+  Given a document with a definition that has been filled
+  And the definition contains 2 paragraphs
+  When the user clicks at the start of the second paragraph of the definition
+  And the user hits the left arrow
+  And the user types DELETE
+  Then the definition contains 1 paragraph
+
+Scenario: splitting a semantic field
+  Given a document with some semantic fields
+  And the document contains 2 semantic fields
+  When the user clicks in the first semantic field
+  And the user types ";"
+  Then the document contains 3 semantic fields
+
+Scenario: removing a semantic field with backspace
+  Given a document with some semantic fields
+  And the document contains 2 semantic fields
+  When the user clicks at the start of the second semantic field
+  And the user types BACKSPACE
+  Then the document contains 1 semantic field
+
+Scenario: removing a semantic field with delete
+  Given a document with some semantic fields
+  And the document contains 2 semantic fields
+  When the user clicks at the start of the second semantic field
+  And the user hits the left arrow
+  And the user types DELETE
+  Then the document contains 1 semantic field

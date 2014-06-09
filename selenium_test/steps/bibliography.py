@@ -1,6 +1,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
-import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from behave import step_matcher
 
@@ -14,35 +14,52 @@ WHICH_TO_TITLE = {
 
 
 @when(ur'^the user adds a reference to an item$')
+@when(ur'^the user adds a reference to an item( to the first example)?$')
 @when(ur'^the user adds a reference to an item (?P<which>with|without) a '
       ur'reference title$')
 def step_impl(context, which=None):
     driver = context.driver
     util = context.util
+    seek_etymology = True
+
+    if which == " to the first example":
+        which = "with"
+        seek_etymology = False
 
     if which is None:
         which = "with"
 
-    # Obtain the first placeholder after "[etymology]".
-    ph = driver.execute_script("""
-    var $ = jQuery;
-    var etym = $(".head:contains('[etymology]')")[0];
-    var $phs = $("._placeholder");
-    var found;
-    for(var i = 0, limit = $phs.length; !found && i < limit; ++i) {
-        var ph = $phs[i];
-        if (ph.compareDocumentPosition(etym) & 2) {
-            found = ph;
-            found.scrollIntoView();
+    if seek_etymology:
+        # Obtain the first placeholder after "[etymology]".
+        ph = driver.execute_script("""
+        var $ = jQuery;
+        var etym = $(".head:contains('[etymology]')")[0];
+        var $phs = $("._placeholder");
+        var found;
+        for(var i = 0, limit = $phs.length; !found && i < limit; ++i) {
+            var ph = $phs[i];
+            if (ph.compareDocumentPosition(etym) & 2) {
+                found = ph;
+                found.scrollIntoView();
+            }
         }
-    }
 
-    return found;
-    """)
+        return found;
+        """)
 
-    ActionChains(driver) \
-        .context_click(ph) \
-        .perform()
+        ActionChains(driver) \
+            .context_click(ph) \
+            .perform()
+    else:
+        ph = driver.find_element_by_css_selector(
+            r".__start_label._btw\:cit_label")
+
+        ActionChains(driver) \
+            .click(ph) \
+            .send_keys([Keys.ARROW_RIGHT] * 2) \
+            .perform()
+
+        util.ctrl_equivalent_x("/")
 
     context.execute_steps(u"""
     When the user clicks the context menu option "Insert a new \
@@ -141,3 +158,43 @@ def step_impl(context):
     driver = context.driver
     config = context.selenic_config
     driver.get(config.SERVER + "/bibliography/search/")
+
+
+@when(ur"^the user deletes a reference")
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    el, context.deleted_reference_parent = \
+        driver.execute_script(u"""
+        var el = document.querySelector(".ref");
+        return [el, el.parentNode];
+        """)
+    # el.click()
+
+    util.ctrl_equivalent_x("/")
+
+    context.execute_steps(u"""
+    When the user clicks the context menu option "Delete ref"
+    """)
+
+
+@then(ur"^the element that contained the reference no longer contains the "
+      ur"space that was added for the reference$")
+def step_impl(context):
+    util = context.util
+    parent = context.deleted_reference_parent
+
+    def cond(driver):
+        ret = driver.execute_script("""
+        var $parent = jQuery(arguments[0]);
+        if ($parent.children(".ref").length)
+            return [false, "contains a reference"];
+        if ($parent.children("._ref_space").length)
+            return [false, "contains the space after the reference"];
+        return [true, 0];
+        """, parent)
+
+        return ret[0]
+
+    util.wait(cond)

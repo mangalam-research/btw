@@ -29,3 +29,10 @@ Scenario: adding custom text to a reference when there is already text
   When the user types "blah"
   And the user brings up the context menu
   Then there is no context menu option "Add custom text to reference"
+
+Scenario: deleting a reference
+  Given a document with a non-Pāli example
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title
+  When the user deletes a reference
+  Then the element that contained the reference no longer contains the space that was added for the reference

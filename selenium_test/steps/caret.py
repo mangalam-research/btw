@@ -1,4 +1,8 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
+import wedutil
 
 step_matcher('re')
 
@@ -29,3 +33,15 @@ def step_impl(context):
     """, ".__end_label._foreign_label:last")
 
     button.click()
+
+
+@when(u"^(?:the user )?hits the (?P<choice>right|left) arrow$")
+def step_impl(context, choice):
+    driver = context.driver
+
+    context.caret_position_before_arrow = wedutil.caret_pos(driver)
+
+    key = Keys.ARROW_RIGHT if choice == "right" else Keys.ARROW_LEFT
+    ActionChains(driver)\
+        .send_keys(key)\
+        .perform()

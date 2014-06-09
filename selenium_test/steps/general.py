@@ -195,7 +195,8 @@ WHAT_TO_TITLE = {
     u"a non-Pāli example, explained": "non-pali explained example",
     u"a definition that has been filled": "definition filled",
     u"a definition with formatted text": "definition with formatted text",
-    u"senses and subsenses": "senses and subsenses"
+    u"senses and subsenses": "senses and subsenses",
+    u"some semantic fields": "some semantic fields",
 }
 
 

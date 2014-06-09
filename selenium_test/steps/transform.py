@@ -308,12 +308,20 @@ this element"
     """)
 
 
+__EXAMPLE_SELECTORS = {
+    u"btw:example": ur".btw\:example .btw\:cit:first",
+    u"btw:example-explained": ur".btw\:example-explained .btw\:cit:first"
+}
+
+
 @when(ur"^the user adds the Pāli language to the "
-      ur"(?:btw:example|btw:example-explained)$")
-def step_impl(context):
+      ur"(?P<what>btw:example|btw:example-explained)$")
+def step_impl(context, what):
     util = context.util
 
-    btw_util.select_text_of_element_directly(context, r".btw\:cit")
+    selector = __EXAMPLE_SELECTORS[what]
+
+    btw_util.select_text_of_element_directly(context, selector)
 
     assert_equal(context.expected_selection, "foo")
     context.execute_steps(u"""
@@ -430,3 +438,54 @@ def step_impl(context):
     util = context.util
     modal = util.find_element((By.CSS_SELECTOR, ".modal.in"))
     assert_true(modal.text.find("The text selected straddles") > -1)
+
+__PARAGRAPH_COUNT_RE = ur"^the definition contains (?P<number>\d+) paragraphs?"
+
+
+@then(__PARAGRAPH_COUNT_RE)
+@given(__PARAGRAPH_COUNT_RE)
+def step_impl(context, number):
+    ps = context.util.find_elements((By.CSS_SELECTOR, r".btw\:definition .p"))
+    assert_equal(len(ps), int(number),
+                 "there should be " + number + " paragraphs")
+
+
+@when(ur"^the user clicks in the first paragraph of the definition")
+def step_impl(context):
+    ps = context.util.find_element((By.CSS_SELECTOR, r".btw\:definition .p"))
+    ps.click()
+
+
+@when(ur"^the user clicks at the start of the second paragraph of the "
+      ur"definition")
+def step_impl(context):
+    ps = context.util.find_elements((By.CSS_SELECTOR, r".btw\:definition .p"))
+    ActionChains(context.driver) \
+        .move_to_element_with_offset(ps[1], 1, 2) \
+        .click() \
+        .perform()
+
+__SF_COUNT_RE = ur"^the document contains (?P<number>\d+) semantic fields?$"
+
+
+@then(__SF_COUNT_RE)
+@given(__SF_COUNT_RE)
+def step_impl(context, number):
+    sfs = context.util.find_elements((By.CSS_SELECTOR, r".btw\:sf"))
+    assert_equal(len(sfs), int(number),
+                 "there should be " + number + " semantic fields")
+
+
+@when(ur"^the user clicks in the first semantic field")
+def step_impl(context):
+    sfs = context.util.find_element((By.CSS_SELECTOR, r".btw\:sf"))
+    sfs.click()
+
+
+@when(ur"^the user clicks at the start of the second semantic field")
+def step_impl(context):
+    sfs = context.util.find_elements((By.CSS_SELECTOR, r".btw\:sf"))
+    ActionChains(context.driver) \
+        .move_to_element_with_offset(sfs[1], 1, 2) \
+        .click() \
+        .perform()
