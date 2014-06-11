@@ -78,6 +78,7 @@ BTWMode.prototype.init = function (editor) {
     $(editor.widget).prepend(this._toolbar.getTopElement());
     $(editor.widget).on('wed-global-keydown.btw-mode',
                         this._keyHandler.bind(this));
+    editor.excludeFromBlur(this._toolbar.getTopElement());
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
         editor, "Insert a new hyperlink to a sense",

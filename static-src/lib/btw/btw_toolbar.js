@@ -56,10 +56,15 @@ Toolbar.prototype._click = log.wrap(function (ev) {
     var range = this._editor.getSelectionRange();
     var button_ix = $(ev.delegateTarget).attr("id");
     var button = this._buttons[button_ix];
-    if (button instanceof action.Action)
+    if (button instanceof btw_tr.SetTextLanguageTr) {
+        // Don't execute if there is no range.
+        if (range && !range.collapsed)
+            button.execute();
+    }
+    else if (button instanceof action.Action)
         button.execute();
     else
-        throw new Error("XXX broken toolbar");
+        throw new Error("broken toolbar");
     return false;
 });
 

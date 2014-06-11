@@ -104,6 +104,11 @@ SetTextLanguageTr.prototype.execute = function(data) {
 
 function set_language_handler(editor, data) {
     var range = editor.getDataSelectionRange();
+
+    // We don't do anything if the range is collapsed.
+    if (range.collapsed)
+        return;
+
     if (!domutil.isWellFormedRange(range)) {
         editor.straddling_modal.modal();
         throw new AbortTransformationException(

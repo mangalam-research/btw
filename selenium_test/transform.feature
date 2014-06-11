@@ -171,6 +171,21 @@ Scenario: marking text as Latin
   When the user marks the text "prasāda" as Latin in btw:definition
   Then the text "prasāda" is marked as Latin in btw:definition
 
+Scenario: using the Pāli button when there is no selection
+  Given a document with a definition that has been filled
+  When the user clicks the Pāli button
+  And the user clicks in the first semantic field
+
+Scenario: using the Sanskrit button when there is no selection
+  Given a document with a definition that has been filled
+  When the user clicks the Sanskrit button
+  And the user clicks in the first semantic field
+
+Scenario: using the Latin button when there is no selection
+  Given a document with a definition that has been filled
+  When the user clicks the Latin button
+  And the user clicks in the first semantic field
+
 Scenario: clearing formatting from text
   Given a document with a definition with formatted text
   Then the first paragraph in btw:defintion contains formatted text
