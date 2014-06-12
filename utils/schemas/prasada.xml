@@ -116,7 +116,7 @@
             <btw:sf>03.05.0</btw:sf> <!-- error -->
             </btw:semantic-fields>
             <btw:citations>
-              <btw:example xml:id="E-1"><btw:cit><ref>AkośBh ad VIII,9, 440
+              <btw:example xml:id="E.1"><btw:cit><ref>AkośBh ad VIII,9, 440
               4-12</ref><foreign xml:lang="sa-Latn">adhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance>
               nāma ka eṣa dharmaḥ |
               vitarkavicārakṣobhavirahātpraśāntavāhitā
@@ -170,7 +170,7 @@
           <btw:conceptual-proximate>
             <term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></term>
             <btw:citations>
-              <ptr target="#E-1"/>
+              <ptr target="#E.1"/>
             <!--
           [selected citations contrasting near-synonyms for sense a]
           See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
@@ -281,7 +281,7 @@
           <btw:antonym>
             <term><foreign xml:lang="sa-Latn">aprasanna</foreign></term>
             <btw:citations>
-              <ptr target="#E-2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
+              <ptr target="#E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
             </btw:citations>
             <!-- [other citations] -->
             <!-- ø -->
@@ -316,7 +316,7 @@
               <btw:sf>02.01.13.02</btw:sf>
             </btw:semantic-fields>
             <btw:citations>
-              <btw:example xml:id="E-2"><btw:cit><ref>Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit><btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr></btw:example>
+              <btw:example xml:id="E.2"><btw:cit><ref>Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit><btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr></btw:example>
             </btw:citations>
             <!-- [other citations]
                  ø
