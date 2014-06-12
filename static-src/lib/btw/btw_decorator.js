@@ -394,7 +394,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         this.refDecorator($root, $el);
         break;
     case "btw:example":
-        this.idDecorator($el[0]);
+        this.idDecorator($root, $el);
         break;
     case "btw:cit":
         this.citDecorator($root, $el);
@@ -595,24 +595,11 @@ BTWDecorator.prototype.trDecorator = function ($root, $el) {
     $ref.after('<div class="_phantom _text"> </div>');
 };
 
-BTWDecorator.prototype.idDecorator = function (el) {
-    var $el = $(el);
+BTWDecorator.prototype.idDecorator = function ($root, $el) {
+    var el = $el[0];
     var name = util.getOriginalName(el);
 
-    var refman;
-    switch(name) {
-    case "btw:sense":
-        refman = this._sense_refman;
-        break;
-    case "btw:subsense":
-        refman = this._getSubsenseRefman(el);
-        break;
-    case "btw:example":
-        break;
-    default:
-        throw new Error("unknown element: " + name);
-    }
-
+    var refman = this._getRefmanForElement($root, $el);
     if (refman) {
         var wed_id = $el.attr("id");
         if (!wed_id) {
@@ -621,7 +608,11 @@ BTWDecorator.prototype.idDecorator = function (el) {
                                this._sense_subsense_id_manager.generate());
             $el.attr("id", wed_id);
         }
-        refman.allocateLabel(wed_id);
+
+        // We have some reference managers that don't derive from
+        // ReferenceManager and thus do not have this method.
+        if (refman.allocateLabel)
+            refman.allocateLabel(wed_id);
     }
 
     this._domlistener.trigger("refresh-sense-ptrs");
@@ -635,8 +626,8 @@ BTWDecorator.prototype.refreshSensePtrsHandler = function ($root) {
 };
 
 
-BTWDecorator.prototype.includedSenseHandler = function ($el) {
-    this.idDecorator($el[0]);
+BTWDecorator.prototype.includedSenseHandler = function ($root, $el) {
+    this.idDecorator($root, $el);
     this._domlistener.trigger("included-sense");
 };
 
@@ -665,7 +656,7 @@ BTWDecorator.prototype.excludedSenseHandler = function ($el) {
 
 BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
     var $parent = $el.parent();
-    this.idDecorator($el[0]);
+    this.idDecorator($root, $el);
     this.refreshSubsensesForSense($root, $parent);
 };
 
@@ -692,7 +683,7 @@ BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
     this._sense_refman.deallocateAll();
     $root.find(util.classFromOriginalName("btw:sense")).each(function () {
         var $sense = $(this);
-        dec.idDecorator($sense[0]);
+        dec.idDecorator($root, $sense);
         dec.sectionHeadingDecorator($root, $sense, dec._gui_updater);
         // Refresh the headings that use the sense label.
         for (var s_ix = 0, spec;
@@ -740,7 +731,7 @@ BTWDecorator.prototype._refreshSubsensesForSense = function ($root, $sense) {
 
     $sense.find(util.classFromOriginalName("btw:subsense")).each(function () {
         var $subsense = $(this);
-        dec.idDecorator(this);
+        dec.idDecorator($root, $subsense);
         dec.explanationDecorator(
             $root,
             $subsense.children(util.classFromOriginalName("btw:explanation")));
