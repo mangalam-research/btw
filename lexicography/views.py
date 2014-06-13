@@ -49,17 +49,18 @@ def main(request):
 def search(request):
     found_entries = None
     query_string = request.GET.get('q', None)
+    headwords_only = request.GET.get('headwords_only', None)
     if query_string is not None and query_string.strip():
         entry_query = util.get_query(query_string, ['headword'])
 
         active_entries = Entry.objects.exclude(ctype=Entry.DELETE)
 
         found_entries = active_entries.filter(entry_query)
+        if not headwords_only:
+            chunk_query = util.get_query(query_string, ['data'])
+            chunks = Chunk.objects.filter(chunk_query)
 
-        chunk_query = util.get_query(query_string, ['data'])
-        chunks = Chunk.objects.filter(chunk_query)
-
-        found_entries |= active_entries.filter(c_hash=chunks)
+            found_entries |= active_entries.filter(c_hash=chunks)
 
     return render_to_response(
         'lexicography/main.html',

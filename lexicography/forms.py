@@ -7,7 +7,9 @@ from .models import Chunk
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(max_length=100, label="Search")
+    q = forms.CharField(max_length=100, label="Search for:")
+    headwords_only = forms.BooleanField(label="Headwords only",
+                                        required=False)
 
 
 class RawSaveForm(forms.ModelForm):

@@ -221,7 +221,7 @@ def step_impl(context, what):
     context.execute_steps(u"""
     Given the user has logged in
     And that the user has loaded the top page of the lexicography app
-    When the user searches for "{0}"
+    When the user searches for headword "{0}"
     Then the search results show one entry for "{0}"
     """.format(title))
 

@@ -7,11 +7,13 @@ from behave import Then, When, step_matcher  # pylint: disable=E0611
 step_matcher('re')
 
 
-@When('^the user searches for "(?P<query>.*?)"')
+@When('^the user searches for headword "(?P<query>.*?)"')
 def step_impl(context, query):
     util = context.util
     q = util.find_element((By.NAME, "q"))
     q.send_keys(query)
+    headwords_only = util.find_element((By.NAME, "headwords_only"))
+    headwords_only.click()
     search = util.find_clickable_element((By.CSS_SELECTOR,
                                           "input[type=submit]"))
     search.click()
