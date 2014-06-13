@@ -8,6 +8,7 @@ var sense_refs = require("./btw_refmans").sense_refs;
 var btw_util = require("./btw_util");
 var transformation = require("wed/transformation");
 var Action = require("wed/action").Action;
+var jqutil = require("wed/jqutil");
 
 function SensePtrDialogAction() {
     Action.apply(this, arguments);
@@ -72,6 +73,54 @@ SensePtrDialogAction.prototype.execute = function (data) {
 };
 
 exports.SensePtrDialogAction = SensePtrDialogAction;
+
+function ExamplePtrDialogAction() {
+    Action.apply(this, arguments);
+}
+
+oop.inherit(ExamplePtrDialogAction, Action);
+
+ExamplePtrDialogAction.prototype.execute = function (data) {
+    var editor = this._editor;
+
+    var $examples =
+            editor.$gui_root.find(jqutil.toDataSelector(
+                "btw:example, btw:example-explained"));
+    var labels = [];
+    $examples.each(function () {
+        var $this = $(this);
+        var $data_node = $($this.data("wed_mirror_node"));
+        var $cit = $data_node.children(util.classFromOriginalName("btw:cit"));
+        var $abbr = $this.find(util.classFromOriginalName("ref"))
+            .first().clone();
+        $abbr.children("._gui").remove();
+        var $div = $("<span>").data("wed-id", $this.attr("id")).
+            append(" " + $abbr.text() + " " + $cit.text());
+        labels.push($div);
+    });
+
+    var hyperlink_modal = editor.mode._hyperlink_modal;
+    var $primary = hyperlink_modal.getPrimary();
+    var $body = $('<div>');
+    $body.append(labels);
+    $body.children().wrap('<div></div>');
+    $body.children().prepend('<input type="radio" name="sense-radio"/>');
+    $body.find(":radio").on('click.wed', function () {
+        $primary.prop('disabled', false).removeClass('disabled');
+    });
+    $primary.prop("disabled", true).addClass("disabled");
+    hyperlink_modal.setBody($body);
+    hyperlink_modal.modal(function () {
+        var clicked = hyperlink_modal.getClickedAsText();
+        if (clicked === "Insert") {
+            var id = $body.find(':radio:checked').next().data("wed-id");
+            data.target = id;
+            editor.mode.insert_ptr_tr.execute(data);
+        }
+    });
+};
+
+exports.ExamplePtrDialogAction = ExamplePtrDialogAction;
 
 function InsertBiblPtrDialogAction() {
     Action.apply(this, arguments);

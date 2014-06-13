@@ -126,9 +126,18 @@ def step_impl(context):
     util.wait(cond)
 
 
-@when(ur"^the user adds custom text to the new reference$")
-def step_impl(context):
+@when(ur"^the user adds custom text to the (?P<what>new|first) reference$")
+def step_impl(context, what):
     util = context.util
+    driver = context.driver
+
+    if what == "first":
+        driver.find_element_by_css_selector(".ref").click()
+    elif what == "new":
+        # Nothing to do. The caret should already be in the reference.
+        pass
+    else:
+        raise Exception("unexpected what value: " + what)
 
     util.ctrl_equivalent_x("/")
 

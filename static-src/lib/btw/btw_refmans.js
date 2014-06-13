@@ -99,7 +99,10 @@ ExampleReferenceManager.prototype.idToLabel = function () {
 ExampleReferenceManager.prototype.getPositionalLabel = function ($ptr, $target,
                                                                  id) {
     var ret = "See ";
-    var $ref = $target.find(jqutil.toDataSelector("btw:cit>ref")).first();
+    var $ref =
+            $($target.data("wed_mirror_node")).find(
+                jqutil.toDataSelector("btw:cit>ref")).first().clone();
+    $ref.find("._gui, ._decoration_text").remove();
     ret += $ref.text();
     ret += " quoted ";
     var order = $ptr[0].compareDocumentPosition($target[0]);

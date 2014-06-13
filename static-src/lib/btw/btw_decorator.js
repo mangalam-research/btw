@@ -36,6 +36,7 @@ function BTWDecorator(mode, meta) {
     this._sense_refman = new refmans.SenseReferenceManager();
     this._example_refman = new refmans.ExampleReferenceManager();
     this._sense_subsense_id_manager = new id_manager.IDManager("S.");
+    this._example_id_manager = new id_manager.IDManager("E.");
 
     this._senses_for_refresh_subsenses = [];
 
@@ -200,7 +201,7 @@ BTWDecorator.prototype.addHandlers = function () {
         util.classFromOriginalName("btw:sense"),
         function ($root, $tree, $parent,
                   $prev, $next, $el) {
-        this.includedSenseHandler($el);
+        this.includedSenseHandler($root, $el);
     }.bind(this));
 
     this._gui_domlistener.addHandler(
@@ -223,6 +224,29 @@ BTWDecorator.prototype.addHandlers = function () {
         util.classFromOriginalName("btw:subsense"),
         function ($root, $tree, $parent, $prev, $next, $el) {
         this.excludedSubsenseHandler($root, $el);
+    }.bind(this));
+
+    this._gui_domlistener.addHandler(
+        "excluded-element",
+        util.classFromOriginalName("btw:example, btw:example-explained"),
+        function ($root, $tree, $parent, $prev, $next, $el) {
+        this.excludedExampleHandler($root, $el);
+    }.bind(this));
+
+    this._gui_domlistener.addHandler(
+        "children-changed",
+        jqutil.toDataSelector("ref, ref *"),
+        function ($root, $added, $removed, $prev, $next, $el) {
+        var $parent = $el.closest(util.classFromOriginalName("ref"));
+        this._refChangedInGUI($root, $parent);
+    }.bind(this));
+
+    this._gui_domlistener.addHandler(
+        "text-changed",
+        jqutil.toDataSelector("ref, ref *"),
+        function ($root, $el) {
+        var $parent = $el.closest(util.classFromOriginalName("ref"));
+        this._refChangedInGUI($root, $parent);
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -335,14 +359,25 @@ BTWDecorator.prototype.startListening = function ($root) {
     //
     // Perform general checks before we start decorating anything.
     //
+    var i, limit, id;
+
     var $data_el = $($root.data("wed_mirror_node"));
     var $senses_subsenses = $data_el.find(jqutil.toDataSelector(
         "btw:sense, btw:subsense"));
-    for(var i = 0, limit = $senses_subsenses.length; i < limit; ++i) {
+    for(i = 0, limit = $senses_subsenses.length; i < limit; ++i) {
         var $s = $senses_subsenses.eq(i);
-        var id = $s.attr(util.encodeAttrName("xml:id"));
+        id = $s.attr(util.encodeAttrName("xml:id"));
         if (id)
             this._sense_subsense_id_manager.seen(id, true);
+    }
+
+    var $examples = $data_el.find(jqutil.toDataSelector(
+        "btw:example, btw:example-explained"));
+    for(i = 0, limit = $examples.length; i < limit; ++i) {
+        var $ex = $examples.eq(i);
+        id = $ex.attr(util.encodeAttrName("xml:id"));
+        if (id)
+            this._example_id_manager.seen(id, true);
     }
 
     // Call the overriden method
@@ -362,6 +397,7 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         $el.addClass(klass);
 
     var name = util.getOriginalName($el[0]);
+    var skip_default = false;
     switch(name) {
     case "btw:overview":
     case "btw:sense-discrimination":
@@ -398,19 +434,25 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
         break;
     case "btw:cit":
         this.citDecorator($root, $el);
-        return; // citDecorator calls elementDecorator
+        skip_default = true; // citDecorator calls elementDecorator
+        break;
     case "btw:tr":
         this.trDecorator($root, $el);
-        return; // trDecorator calls elementDecorator
+        skip_default = true; // trDecorator calls elementDecorator
+        break;
     case "btw:explanation":
         this.explanationDecorator($root, $el);
-        return; // explanationDecorator calls elementDecorator
+        skip_default = true; // explanationDecorator calls elementDecorator
+        break;
     case "btw:none":
         this.noneDecorator($root, $el);
-        return; // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
+        // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
+        skip_default = true;
+        break;
     }
 
-    this.elementDecorator($root, $el);
+    if (!skip_default)
+        this.elementDecorator($root, $el);
 };
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
@@ -574,10 +616,14 @@ var WHEEL = "☸";
 BTWDecorator.prototype.citDecorator = function ($root, $el) {
     this.elementDecorator($root, $el);
     var $ref = $el.children(util.classFromOriginalName("ref"));
-    $ref.after('<div class="_phantom _text"> </div>');
 
-    this._gui_updater.removeNodeNF(
-        $el.children("._phantom._text._cit_bullet")[0]);
+    var $spaces = $el.children("._ref_space");
+    for(var i = 0, limit = $spaces.length; i < limit; ++i)
+        this._gui_updater.removeNode($spaces[i]);
+
+    $ref.after('<div class="_phantom _text _ref_space"> </div>');
+
+    this._gui_updater.removeNodeNF($el.children("._cit_bullet")[0]);
     if ($el.find("*[" + util.encodeAttrName("xml:lang") +
                  "='pi-Latn']").length) {
         this._gui_updater.insertNodeAt(
@@ -604,8 +650,8 @@ BTWDecorator.prototype.idDecorator = function ($root, $el) {
         var wed_id = $el.attr("id");
         if (!wed_id) {
             var id = $el.attr(util.encodeAttrName("xml:id"));
-            wed_id = "BTW-" + (id ||
-                               this._sense_subsense_id_manager.generate());
+            var id_man = this._getIDManagerForRefman(refman);
+            wed_id = "BTW-" + (id || id_man.generate());
             $el.attr("id", wed_id);
         }
 
@@ -632,21 +678,9 @@ BTWDecorator.prototype.includedSenseHandler = function ($root, $el) {
 };
 
 BTWDecorator.prototype.excludedSenseHandler = function ($el) {
-    var dec = this;
-    var id = $el.attr(util.encodeAttrName("xml:id"));
-    var selectors = ["*[" + util.encodeAttrName("target") + "='#" + id + "']"];
-
-    var $subsense_links =
-            $el.find(util.classFromOriginalName("btw:subsense")).each(
-        function () {
-        var id = $(this).attr(util.encodeAttrName("xml:id"));
-        selectors.push("*[" + util.encodeAttrName("target") + "='#" + id +
-                       "']");
-    });
-
-    var $links = this._editor.$data_root.find(selectors.join(","));
-    for(var i = 0; i < $links.length; ++i)
-        this._editor.data_updater.removeNode($links[i]);
+    var $pointed = $($el[0]);
+    $pointed.add($el.find(util.classFromOriginalName("btw:subsense")));
+    this._deleteLinksPointingTo($pointed);
 
     // Yep, we trigger the included-sense trigger.
     this._domlistener.trigger("included-sense");
@@ -662,14 +696,26 @@ BTWDecorator.prototype.includedSubsenseHandler = function ($root, $el) {
 
 
 BTWDecorator.prototype.excludedSubsenseHandler = function ($root, $el) {
-    var id = $el.attr(util.encodeAttrName("xml:id"));
-    var $links = this._editor.$data_root.find(
-        "*[" + util.encodeAttrName("target") + "='#" + id + "']");
-    for(var i = 0; i < $links.length; ++i)
-        this._editor.data_updater.removeNode($links[i]);
-
+    this._deleteLinksPointingTo($el);
     var $parent = $el.parent();
     this.refreshSubsensesForSense($root, $parent);
+};
+
+BTWDecorator.prototype._deleteLinksPointingTo = function ($el) {
+    var selectors = [];
+    for(var el_ix = 0, el_limit = $el.length; el_ix < el_limit; ++el_ix) {
+        var id = $el.attr(util.encodeAttrName("xml:id"));
+        selectors.push(["*[" + util.encodeAttrName("target") +
+                        "='#" + id + "']"]);
+    }
+
+    var $links = this._editor.$data_root.find(selectors.join(","));
+    for(var i = 0; i < $links.length; ++i)
+        this._editor.data_updater.removeNode($links[i]);
+};
+
+BTWDecorator.prototype.excludedExampleHandler = function ($root, $el) {
+    this._deleteLinksPointingTo($el);
 };
 
 BTWDecorator.prototype.includedSenseTriggerHandler = function ($root) {
@@ -851,8 +897,13 @@ BTWDecorator.prototype._getRefmanForElement = function ($root, $el) {
     case "ref":
         // Find the target and return its value
 
+        var target_attr = $el.attr(util.encodeAttrName("target"));
+        if (!target_attr)
+            return null;
+
         // Slice to drop the #.
-        var target_id = $el.attr(util.encodeAttrName("target")).slice(1);
+        var target_id = target_attr.slice(1);
+
         var $target = $root.find('[id="' + "BTW-" + target_id + '"]');
         return ($target.length === 0) ? null :
             this._getRefmanForElement($root, $target);
@@ -864,12 +915,24 @@ BTWDecorator.prototype._getRefmanForElement = function ($root, $el) {
         var id = $sense.attr("id");
         return this._sense_refman.idToSubsenseRefman(id);
     case "btw:example":
+    case "btw:example-explained":
         return this._example_refman;
     default:
         throw new Error("unexpected element: " + $el);
     }
 };
 
+BTWDecorator.prototype._getIDManagerForRefman = function (refman) {
+    switch(refman.name) {
+    case "sense":
+    case "subsense":
+        return this._sense_subsense_id_manager;
+    case "example":
+        return this._example_id_manager;
+    default:
+        throw new Error("unexpected name: " + refman.name);
+    }
+};
 
 
 // Override
@@ -1041,9 +1104,10 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                     // decorating the document.
                     if ($target.length) {
                         var data_el = this._editor.toDataNode($el[0]);
-                        var data_target = this._editor.toDataNode($target[0]);
+                        var $data_target =
+                                $(this._editor.toDataNode($target[0]));
                         label = refman.getPositionalLabel($(data_el),
-                                                          $(data_target),
+                                                          $data_target,
                                                           target.slice(1));
                     }
                 }
@@ -1068,14 +1132,15 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                 else if (target_name === "btw:subsense")
                     $target = $target.find(util.classFromOriginalName("btw:explanation"));
                 else if (target_name === "btw:example")
-                    $target = $target.find(util.classFromOriginalName("ref")).first();
+                    $target = undefined;
 
-
-                $target = $target.clone();
-                $target.find(".head").remove();
-                $target = $("<div/>").append($target);
-                $text.tooltip({"title": $target.html(), "html":
-                               true, "container": "body"});
+                if ($target) {
+                    $target = $target.clone();
+                    $target.find(".head").remove();
+                    $target = $("<div/>").append($target);
+                    $text.tooltip({"title": $target.html(), "html":
+                                   true, "container": "body"});
+                }
             }
         }
         else
@@ -1149,6 +1214,29 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
         }
     }
 };
+
+BTWDecorator.prototype._refChangedInGUI = function ($root, $el) {
+    var $example = $el.closest(util.classFromOriginalName(
+        "btw:example, btw:example-explained"));
+
+    if (!$example[0])
+        return;
+
+    var id = $example.attr(util.encodeAttrName("xml:id"));
+
+    if (!id)
+        return;
+
+    var refman = this._getRefmanForElement($root, $el);
+    // Find the referred element.
+    var $ptrs = $root.find(util.classFromOriginalName("ptr") + "[" +
+                           util.encodeAttrName("target") + "='#" + id + "']");
+
+    for (var i = 0, limit = $ptrs.length; i < limit; ++i)
+        this.refreshElement($root, $ptrs.eq(i));
+
+};
+
 
 BTWDecorator.prototype.ptrDecorator = function ($root, $el) {
     this.linkingDecorator($root, $el, true);

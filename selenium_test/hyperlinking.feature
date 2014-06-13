@@ -127,3 +127,65 @@ Scenario: creating a subsense renumbers the subsense hyperlinks
   When the user brings up a context menu on navigation item "[brief explanation of sense b1]"
   And the user clicks the context menu option "Create new btw:subsense before this one"
   Then the hyperlink with label "[b2]" points to "sense b1"
+
+Scenario: creating a hyperlink to an earlier example
+  Given a document with a non-Pāli example
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu in the last btw:citations
+  And the user clicks the context menu option "Insert a new hyperlink to an example"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | choice    |
+    | (Foo) foo |
+    | bar       |
+  When the user clicks the hyperlinking choice for "foo"
+  Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example.
+
+Scenario: creating a hyperlink to a later example
+  Given a document with a non-Pāli example
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu on the start label of the first example
+  And the user clicks the context menu option "Insert a new hyperlink to an example before this element"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | choice    |
+    | (Foo) foo |
+    | bar       |
+  When the user clicks the hyperlinking choice for "foo"
+  Then the example hyperlink with label "See Foo quoted below in [citations for sense a]." points to the first example.
+
+Scenario: modifying the reference of a hyperlinked example changes the hyperlink
+  Given a document with a non-Pāli example
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu in the last btw:citations
+  And the user clicks the context menu option "Insert a new hyperlink to an example"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | choice    |
+    | (Foo) foo |
+    | bar       |
+  When the user clicks the hyperlinking choice for "foo"
+  Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example.
+  When the user adds custom text to the first reference
+  Then the new reference contains a placeholder
+  When the user types ", blah"
+  Then the example hyperlink with label "See Foo, blah quoted above in [citations for sense a]." points to the first example.
+
+Scenario: deleting a hyperlinked example deletes the hyperlink
+  Given a document with a non-Pāli example
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu in the last btw:citations
+  And the user clicks the context menu option "Insert a new hyperlink to an example"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | choice    |
+    | (Foo) foo |
+    | bar       |
+  When the user clicks the hyperlinking choice for "foo"
+  Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example
+  When the user deletes the first example
+  Then there are no example hyperlinks

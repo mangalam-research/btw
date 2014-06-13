@@ -83,16 +83,22 @@ def step_impl(context):
     assert_equal(expect, [], "all expected links should have been found")
 
 
-@then(ur'^the hyperlink with label "(?P<label>.*?)" points '
+@then(ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
+      ur'points to the (?P<term>first) example\.?$')
+@then(ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
       ur'to "(?P<term>.*?)"\.?$')
-def step_impl(context, label, term):
+def step_impl(context, example, label, term):
+
+    id_selector = "#BTW-E." if example else "#BTW-S."
+
     def cond(driver):
         ret = driver.execute_script(ur"""
         var label = arguments[0];
         var term = arguments[1];
+        var id_selector = arguments[2];
         var $ = jQuery;
 
-        var $link = $(".wed-document a[href^='#BTW-S.']").filter(
+        var $link = $(".wed-document a[href^='" + id_selector + "']").filter(
             function (x) { return $(this).text() === label; });
         if (!$link[0])
             return [false, "there should be a link"];
@@ -105,16 +111,89 @@ def step_impl(context, label, term):
         if (!$data_target[0])
             return [false, "there should be a data target"];
 
-        var actual_term;
-        if ($data_target.is(".btw\\:sense"))
+        var test = false;
+        var actual_term, desc;
+        if ($data_target.is(".btw\\:sense")) {
             actual_term = $data_target.find(".btw\\:english-term").text();
-        else
+            test = term === actual_term;
+            desc = actual_term + " should match " + term;
+        }
+        else if ($data_target.is(".btw\\:subsense")) {
             actual_term = $data_target.find(".btw\\:explanation").text();
+            test = term === actual_term;
+            desc = actual_term + " should match " + term;
+        }
+        else if ($data_target.is(".btw\\:example, .btw\\:example-explained")) {
+            test = wed_editor.$data_root.find(
+                ".btw\\:example, .btw\\:example-explained").first()[0]
+                === $data_target[0];
+            desc = "link should point to " + term + " example";
+        }
+        else
+            return [false, "unexpected target"];
 
-        return [actual_term === term,
-                actual_term + " should match " + term];
-        """, label, term)
+        return [test, desc];
+        """, label, term, id_selector)
 
         return ret[0]
+
+    context.util.wait(cond)
+
+__CHOICE_TO_SELECTOR = {
+    u"in the last btw:citations": r".btw\:citations ._placeholder",
+    u"on the start label of the first example":
+    r".__start_label._btw\:example_label, "
+    r".__start_label._btw\:example-explained_label"
+}
+
+
+@when(ur"^the user brings up a context menu "
+      ur"(?P<choice>in the last btw:citations|on the start label of the "
+      ur"first example)")
+def step_impl(context, choice):
+    driver = context.driver
+
+    selector = __CHOICE_TO_SELECTOR[choice]
+
+    el = driver.find_elements_by_css_selector(selector)
+
+    index = 0
+    if choice.find("last") != -1:
+        index = -1
+
+    ActionChains(driver) \
+        .context_click(el[index]) \
+        .perform()
+
+
+@when(ur"^the user deletes the first example")
+def step_impl(context):
+    driver = context.driver
+
+    el = driver.find_element_by_css_selector(
+        r".__start_label._btw\:example_label, "
+        r".__start_label._btw\:example-explained_label")
+    el.click()
+
+    context.execute_steps(u"""
+    When the user brings up the context menu
+    And the user clicks the context menu option "Delete this element"
+    """)
+
+
+@then(ur"^there are no example hyperlinks")
+def step_impl(context):
+
+    id_selector = "#BTW-E."
+
+    def cond(driver):
+        ret = driver.execute_script(ur"""
+        var $ = jQuery;
+        var id_selector = arguments[0];
+        var $links = $(".wed-document a[href^='" + id_selector + "']");
+        return !$links[0];
+        """, id_selector)
+
+        return ret
 
     context.util.wait(cond)

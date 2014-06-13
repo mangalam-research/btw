@@ -84,6 +84,10 @@ BTWMode.prototype.init = function (editor) {
         editor, "Insert a new hyperlink to a sense",
         undefined, undefined, true);
 
+    this.insert_example_ptr_action = new btw_actions.ExamplePtrDialogAction(
+        editor, "Insert a new hyperlink to an example",
+        undefined, undefined, true);
+
     this.insert_ptr_tr = new transformation.Transformation(
         editor, "Insert a pointer", btw_tr.insert_ptr);
 
@@ -206,6 +210,12 @@ BTWMode.prototype.init = function (editor) {
           },
           substitute: [
               {tag: "ref", type: "insert", actions: [this.insert_ref_text]}
+          ]
+        },
+        { selector: util.classFromOriginalName("btw:citations"),
+          substitute: [
+              {tag: "ptr", type: "insert",
+               actions: [this.insert_example_ptr_action] }
           ]
         },
         { selector: jqutil.toDataSelector("btw:citations foreign"),
