@@ -202,24 +202,34 @@ def step_impl(context, where):
         raise ValueError("unexpected value for where: " + where)
 
 
-@then("^a new (?P<what>.*?) is created$")
-def step_impl(context, what):
+@then("^a new (?P<what>.*?) is created(?: in (?P<inside>.*))?$")
+def step_impl(context, what, inside=None):
     util = context.util
 
-    what = "." + what.replace(":", r"\:")
+    selector = ""
+    if inside:
+        selector = "." + inside.replace(":", r"\:")
 
-    util.find_element((By.CSS_SELECTOR, what))
+    selector += " ." + what.replace(":", r"\:")
+
+    util.find_element((By.CSS_SELECTOR, selector))
 
 
-@when("^the user clicks on the visible absence for (?P<what>.*)$")
-def step_impl(context, what):
+@when(ur"^the user clicks on the visible absence for (?P<what>.*?)"
+      ur"(?: in (?P<inside>.*))?$")
+def step_impl(context, what, inside=None):
     driver = context.driver
-    button = driver.execute_script("""
+
+    button = driver.execute_script(ur"""
     var what = arguments[0];
-    var ret =
-        jQuery("._va_instantiator:contains('Create new " + what + "')")[0];
-    return ret;
-    """, what)
+    var inside = arguments[1];
+
+    var selector = "._va_instantiator:contains('Create new " + what + "')";
+    if (inside)
+        selector = "." + inside.replace(":", "\\:") + " " + inside;
+
+    return jQuery(selector)[0];
+    """, what, inside)
     ActionChains(driver) \
         .click(button) \
         .perform()
@@ -355,13 +365,52 @@ def step_impl(context, lang):
     """)
 
     util.send_keys(p,
-                   # This moves 4 characters to the right
                    [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(u"prasāda") +
                    [Keys.SHIFT])
 
     context.execute_steps(u"""
     When the user clicks the {0} button
     """.format(lang))
+
+
+@when(ur'the user wraps the text "clarity" in a btw:sense-emphasis '
+      ur'in btw:definition')
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    p = driver.execute_script(ur"""
+    var $p = jQuery(".btw\\:definition .p");
+    var $text = $p.contents().filter(function () {
+        return this.nodeType === Node.TEXT_NODE;
+    });
+    var text_node = $text[0];
+    var offset = text_node.nodeValue.indexOf("clarity");
+    wed_editor.setGUICaret(text_node, offset);
+    return $p[0];
+    """)
+
+    util.send_keys(p,
+                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(u"clarity") +
+                   [Keys.SHIFT])
+
+    context.execute_steps(u"""
+    When the user brings up the context menu
+    And the user clicks the context menu option "Wrap in btw:sense-emphasis"
+    """)
+
+
+@then(ur'the text "clarity" is wrapped in a btw:sense-emphasis')
+def step_impl(context):
+    util = context.util
+
+    util.wait(lambda driver:
+              driver.execute_script(ur"""
+              return jQuery(".btw\\:definition .p .btw\\:sense-emphasis")
+                  .first().contents().filter(function () {
+                      return this.nodeType === Node.TEXT_NODE;
+                  }).text() === "clarity";
+              """))
 
 
 @when(ur"^the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button$")

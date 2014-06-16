@@ -116,6 +116,14 @@ Scenario: creating a btw:example in a sense by using a visible absence
   Then a new btw:example is created
   And there is no ref
 
+Scenario: creating a btw:example in a subsense by using a visible absence
+  Given a document that has no btw:subsense
+  When the user clicks on the visible absence for btw:subsense
+  Then a new btw:subsense is created
+  When the user clicks on the visible absence for btw:example in btw:subsense
+  Then a new btw:example is created in btw:subsense
+  And there is no ref
+
 Scenario: a Pāli example gets a Wheel of Dharma
   Given a document with a Pāli example
   Then the btw:example has a Wheel of Dharma
@@ -240,3 +248,8 @@ Scenario: removing a semantic field with delete
   And the user hits the left arrow
   And the user types DELETE
   Then the document contains 1 semantic field
+
+Scenario: creating a sense emphasis
+  Given a document with a definition that has been filled
+  When the user wraps the text "clarity" in a btw:sense-emphasis in btw:definition
+  Then the text "clarity" is wrapped in a btw:sense-emphasis
