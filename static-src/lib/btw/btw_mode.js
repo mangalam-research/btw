@@ -82,11 +82,11 @@ BTWMode.prototype.init = function (editor) {
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
         editor, "Insert a new hyperlink to a sense",
-        undefined, undefined, true);
+        undefined, "<i class='icon-plus icon-fixed-width'></i>", true);
 
     this.insert_example_ptr_action = new btw_actions.ExamplePtrDialogAction(
         editor, "Insert a new hyperlink to an example",
-        undefined, undefined, true);
+        undefined, "<i class='icon-plus icon-fixed-width'></i>", true);
 
     this.insert_ptr_tr = new transformation.Transformation(
         editor, "Insert a pointer", btw_tr.insert_ptr);
