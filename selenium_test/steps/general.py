@@ -197,6 +197,7 @@ WHAT_TO_TITLE = {
     u"a definition with formatted text": "definition with formatted text",
     u"senses and subsenses": "senses and subsenses",
     u"some semantic fields": "some semantic fields",
+    u"an antonym with citations": "antonym with citations",
 }
 
 

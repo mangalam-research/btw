@@ -224,14 +224,15 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:citations btw:tr"),
+        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:tr" +
+                                          "btw:subsense>btw:citations btw:tr"),
           pass: {
               "btw:tr": ["delete-parent"],
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
               "ref": true,
-              "btw:cit": true,
+              "btw:cit": true
           },
           substitute: [
               { tag: "ref",
@@ -240,10 +241,42 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:citations btw:cit"),
+        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:cit" +
+                                          "btw:subsense>btw:citations btw:cit"),
           pass: {
               "btw:cit": ["delete-parent"],
               "btw:lemma-instance": true,
+              "p": true,
+              "lg": true,
+              "ref": true
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:tr"),
+          pass: {
+              "btw:tr": ["delete-parent"],
+              "btw:antonym-instance": true,
+              "p": true,
+              "lg": true,
+              "ref": true,
+              "btw:cit": true
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:cit"),
+          pass: {
+              "btw:cit": ["delete-parent"],
+              "btw:antonym-instance": true,
               "p": true,
               "lg": true,
               "ref": true

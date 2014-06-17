@@ -267,3 +267,16 @@ Scenario: creating a lemma-instance in a translation
   When the user adds the text "blip" in btw:tr
   And the user wraps the text "blip" in a btw:lemma-instance in btw:tr
   Then the text "blip" is wrapped in a btw:lemma-instance
+
+Scenario: creating an antonym-instance in a citation
+  Given a document with an antonym with citations
+  And the document has no btw:antonym-instance
+  When the user adds a reference to an item to the first example
+  And the user wraps the text "citation" in a btw:antonym-instance in btw:cit
+  Then the text "citation" is wrapped in a btw:antonym-instance
+
+Scenario: creating an antonym-instance in a translation
+  Given a document with an antonym with citations
+  And the document has no btw:antonym-instance
+  When the user wraps the text "translation" in a btw:antonym-instance in btw:tr
+  Then the text "translation" is wrapped in a btw:antonym-instance

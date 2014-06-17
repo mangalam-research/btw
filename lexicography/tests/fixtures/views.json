@@ -165,6 +165,21 @@
   }
 },
 {
+  "pk": 12,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
+    "c_hash": "3171a0240bebd074e547d68627e3df4873409ec8",
+    "ctype": "C",
+    "datetime": "2014-06-17T13:48:15.004Z",
+    "csubtype": "M",
+    "user": [
+      "admin"
+    ],
+    "headword": "antonym with citations"
+  }
+},
+{
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
@@ -352,6 +367,14 @@
   "model": "lexicography.chunk",
   "fields": {
     "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">non-pali example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">foo</div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example _real\"><div class=\"btw:cit _real\">bar</div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "3171a0240bebd074e547d68627e3df4873409ec8",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">antonym with citations</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:antonym _real\"><div class=\"term _real\">antonym 1</div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">citation</div><div class=\"btw:tr _real\">translation</div></div></div></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
     "is_normal": true
   }
 },
