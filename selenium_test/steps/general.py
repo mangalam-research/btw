@@ -199,6 +199,8 @@ WHAT_TO_TITLE = {
     u"some semantic fields": "some semantic fields",
     u"an antonym with citations": "antonym with citations",
     u"a cognate with citations": "cognate with citations",
+    u"a conceptual proximate with citations":
+    "conceptual proximate with citations",
 }
 
 
