@@ -216,14 +216,13 @@ function make_replace_none(editor, replaced_with) {
         // This is the node that contains btw:none.
         var grandparent = parent.parentNode;
 
+        var actions = editor.mode.getContextualActions("insert", replaced_with,
+                                                       grandparent, 0);
         editor.data_updater.removeNodes(grandparent.childNodes);
-
-        var $el = transformation.makeElement(replaced_with);
-        editor.data_updater.insertAt(grandparent, 0, $el[0]);
-        var gui_node = editor.fromDataLocation($el[0], 0).node;
-        var nodes = editor.mode.nodesAroundEditableContents(gui_node);
-        editor.setGUICaret(gui_node,
-                           _indexOf.call(gui_node.childNodes, nodes[0]) + 2);
+        actions[0].execute({
+            move_caret_to: makeDLoc(editor.data_root, grandparent, 0),
+            element_name: replaced_with
+        });
     });
 }
 
