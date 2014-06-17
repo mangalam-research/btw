@@ -280,3 +280,16 @@ Scenario: creating an antonym-instance in a translation
   And the document has no btw:antonym-instance
   When the user wraps the text "translation" in a btw:antonym-instance in btw:tr
   Then the text "translation" is wrapped in a btw:antonym-instance
+
+Scenario: creating an cognate-instance in a citation
+  Given a document with a cognate with citations
+  And the document has no btw:cognate-instance
+  When the user adds a reference to an item to the first example
+  And the user wraps the text "citation" in a btw:cognate-instance in btw:cit
+  Then the text "citation" is wrapped in a btw:cognate-instance
+
+Scenario: creating an cognate-instance in a translation
+  Given a document with a cognate with citations
+  And the document has no btw:cognate-instance
+  When the user wraps the text "translation" in a btw:cognate-instance in btw:tr
+  Then the text "translation" is wrapped in a btw:cognate-instance

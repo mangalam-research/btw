@@ -198,6 +198,7 @@ WHAT_TO_TITLE = {
     u"senses and subsenses": "senses and subsenses",
     u"some semantic fields": "some semantic fields",
     u"an antonym with citations": "antonym with citations",
+    u"a cognate with citations": "cognate with citations",
 }
 
 

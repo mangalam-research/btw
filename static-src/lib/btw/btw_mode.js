@@ -288,6 +288,37 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
+        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:tr"),
+          pass: {
+              "btw:tr": ["delete-parent"],
+              "btw:cognate-instance": true,
+              "p": true,
+              "lg": true,
+              "ref": true,
+              "btw:cit": true
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:cit"),
+          pass: {
+              "btw:cit": ["delete-parent"],
+              "btw:cognate-instance": true,
+              "p": true,
+              "lg": true,
+              "ref": true
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
+        },
         { selector: util.classFromOriginalName("foreign"),
           pass: {
               "foreign": ["delete-parent"]
