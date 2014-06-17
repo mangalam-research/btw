@@ -248,6 +248,16 @@ def step_impl(context, what):
     assert_equal(len(els), 0)
 
 
+@Given("^the document has no (?P<what>.*)$")
+def step_impl(context, what):
+    driver = context.driver
+    # Make a CSS selector out of it
+    what = "." + what.replace(":", r"\:")
+    els = driver.find_elements_by_css_selector(what)
+
+    assert_equal(len(els), 0)
+
+
 @When("^the user saves the file$")
 def step_impl(context):
     driver = context.driver

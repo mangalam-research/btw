@@ -230,8 +230,30 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
-              "btw:cit": true
-          }
+              "ref": true,
+              "btw:cit": true,
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
+        },
+        { selector: jqutil.toDataSelector("btw:citations btw:cit"),
+          pass: {
+              "btw:cit": ["delete-parent"],
+              "btw:lemma-instance": true,
+              "p": true,
+              "lg": true,
+              "ref": true
+          },
+          substitute: [
+              { tag: "ref",
+                type: "insert",
+                actions: [ this.insert_bibl_ptr]
+              }
+          ]
         },
         { selector: util.classFromOriginalName("foreign"),
           pass: {

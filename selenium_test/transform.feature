@@ -253,3 +253,17 @@ Scenario: creating a sense emphasis
   Given a document with a definition that has been filled
   When the user wraps the text "clarity" in a btw:sense-emphasis in btw:definition
   Then the text "clarity" is wrapped in a btw:sense-emphasis
+
+Scenario: creating a lemma-instance in a citation
+  Given a document with a non-Pāli example
+  And the document has no btw:lemma-instance
+  When the user adds a reference to an item to the first example
+  And the user wraps the text "foo" in a btw:lemma-instance in btw:cit
+  Then the text "foo" is wrapped in a btw:lemma-instance
+
+Scenario: creating a lemma-instance in a translation
+  Given a document with a non-Pāli example
+  And the document has no btw:lemma-instance
+  When the user adds the text "blip" in btw:tr
+  And the user wraps the text "blip" in a btw:lemma-instance in btw:tr
+  Then the text "blip" is wrapped in a btw:lemma-instance

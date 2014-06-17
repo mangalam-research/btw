@@ -373,44 +373,56 @@ def step_impl(context, lang):
     """.format(lang))
 
 
-@when(ur'the user wraps the text "clarity" in a btw:sense-emphasis '
-      ur'in btw:definition')
-def step_impl(context):
+@when(ur'the user wraps the text "(?P<text>.*?)" in a (?P<wrapper>.*?) '
+      ur'in (?P<where>.*)')
+def step_impl(context, text, wrapper, where):
     driver = context.driver
     util = context.util
 
+    selector = "." + where.replace(":", ur"\:")
+
+    if where == "btw:definition":
+        selector += " .p"
+
     p = driver.execute_script(ur"""
-    var $p = jQuery(".btw\\:definition .p");
-    var $text = $p.contents().filter(function () {
+    var text = arguments[0];
+    var selector = arguments[1];
+    var $text = jQuery(selector).contents().filter(function () {
         return this.nodeType === Node.TEXT_NODE;
     });
     var text_node = $text[0];
-    var offset = text_node.nodeValue.indexOf("clarity");
+    var offset = text_node.data.indexOf(text);
     wed_editor.setGUICaret(text_node, offset);
-    return $p[0];
-    """)
+    return text_node.parentNode;
+    """, text, selector)
 
     util.send_keys(p,
-                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(u"clarity") +
+                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(text) +
                    [Keys.SHIFT])
 
     context.execute_steps(u"""
     When the user brings up the context menu
-    And the user clicks the context menu option "Wrap in btw:sense-emphasis"
-    """)
+    And the user clicks the context menu option "Wrap in {0}"
+    """.format(wrapper))
 
 
-@then(ur'the text "clarity" is wrapped in a btw:sense-emphasis')
-def step_impl(context):
+@then(ur'^the text "(?P<text>.*?)" is wrapped in a (?P<wrapper>.*)')
+def step_impl(context, text, wrapper):
     util = context.util
+
+    selector = "." + wrapper.replace(":", ur"\:")
+
+    if wrapper == "btw:sense-emphasis":
+        selector = r".btw\:definition .p " + selector
 
     util.wait(lambda driver:
               driver.execute_script(ur"""
-              return jQuery(".btw\\:definition .p .btw\\:sense-emphasis")
-                  .first().contents().filter(function () {
+              var text = arguments[0];
+              var selector = arguments[1];
+              return jQuery(selector).first().contents().filter(function () {
                       return this.nodeType === Node.TEXT_NODE;
-                  }).text() === "clarity";
-              """))
+                  }).text() === text;
+              """, text, selector))
 
 
 @when(ur"^the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button$")
@@ -538,3 +550,16 @@ def step_impl(context):
         .move_to_element_with_offset(sfs[1], 1, 2) \
         .click() \
         .perform()
+
+
+@when(ur'^the user adds the text "blip" in btw:tr$')
+def step_impl(context):
+    driver = context.driver
+
+    tr = driver.find_element_by_css_selector(r".__start_label._btw\:tr_label")
+
+    tr.click()
+    context.execute_steps(u"""
+    When the user hits the right arrow
+    And the user types "blip"
+    """)
