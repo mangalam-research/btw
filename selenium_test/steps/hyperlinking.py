@@ -146,6 +146,36 @@ def step_impl(context, example, label, term):
 
     context.util.wait(cond)
 
+
+@then(ur'^the sense hyperlink with label "(?P<label>.*?)" has a tooltip '
+      ur'that says "(?P<tooltip>.*)"')
+def step_impl(context, label, tooltip):
+
+    id_selector = "#BTW-S."
+
+    def cond(driver):
+        ret = driver.execute_script(ur"""
+        var label = arguments[0];
+        var tooltip = arguments[1];
+        var id_selector = arguments[2];
+        var $ = jQuery;
+
+        var $link = $(".wed-document a[href^='" + id_selector + "']").filter(
+            function (x) { return $(this).text() === label; });
+        if (!$link[0])
+            return [false, "there should be a link"];
+
+        var tt = $link.parent().data("bs.tooltip");
+        var title = $(tt.getTitle()).text();
+        return [title === tooltip,
+                "tooltip should have text: '" + tooltip + "' but has '" +
+        title + "'"];
+        """, label, tooltip, id_selector)
+
+        return ret[0]
+
+    context.util.wait(cond)
+
 __CHOICE_TO_SELECTOR = {
     u"in the last btw:citations": r".btw\:citations ._placeholder",
     u"on the start label of the first example":

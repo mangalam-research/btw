@@ -1131,13 +1131,13 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                     $target.find(jqutil.toDataSelector(
                         "btw:english-rendition>btw:english-term"));
                 else if (target_name === "btw:subsense")
-                    $target = $target.find(util.classFromOriginalName("btw:explanation"));
+                    $target = $target.children(util.classFromOriginalName("btw:explanation"));
                 else if (target_name === "btw:example")
                     $target = undefined;
 
                 if ($target) {
                     $target = $target.clone();
-                    $target.find(".head").remove();
+                    $target.find(".head, ._gui, ._explanation_number").remove();
                     $target = $("<div/>").append($target);
                     tooltip($text, {"title": $target.html(), "html":
                                     true, "container": "body"});
