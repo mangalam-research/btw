@@ -18,6 +18,7 @@ var updater_domlistener = require("wed/updater_domlistener");
 var btw_util = require("./btw_util");
 var id_manager = require("./id_manager");
 var context_menu = require("wed/gui/context_menu");
+var tooltip = require("wed/gui/tooltip").tooltip;
 var validate = require("salve/validate");
 var makeDLoc = require("wed/dloc").makeDLoc;
 require("./jquery.selectIn");
@@ -576,7 +577,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
                 delay: { show: 1000 },
                 placement: "auto top"
             };
-            $control.tooltip(options);
+            tooltip($control, options);
 
             if (tuples.length > 1) {
                 $control.html(' + ' + child.name);
@@ -1062,7 +1063,7 @@ function setTitle($el, data) {
     if (date)
         title += ", " + date;
 
-    $el.tooltip({"title": title, container: "body"});
+    tooltip($el, {"title": title, container: "body"});
 }
 
 BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
@@ -1138,8 +1139,8 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
                     $target = $target.clone();
                     $target.find(".head").remove();
                     $target = $("<div/>").append($target);
-                    $text.tooltip({"title": $target.html(), "html":
-                                   true, "container": "body"});
+                    tooltip($text, {"title": $target.html(), "html":
+                                    true, "container": "body"});
                 }
             }
         }
@@ -1261,7 +1262,7 @@ function languageDecorator($el) {
         if (label === undefined)
             throw new Error("unknown language: " + lang);
         label = label.split("; ")[0];
-        $el.tooltip({"title": label, "container": "body"});
+        tooltip($el, {"title": label, "container": "body"});
     }
 }
 
