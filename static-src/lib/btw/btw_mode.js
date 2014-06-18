@@ -74,6 +74,8 @@ BTWMode.prototype.init = function (editor) {
     this._bibliography_modal.addButton("Insert", true);
     this._bibliography_modal.addButton("Cancel");
 
+
+    editor.setNavigationList("");
     this._toolbar = new Toolbar(editor);
     $(editor.widget).prepend(this._toolbar.getTopElement());
     $(editor.widget).on('wed-global-keydown.btw-mode',

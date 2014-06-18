@@ -1328,8 +1328,7 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
 
     }.bind(this));
 
-    this._editor.$navigation_list.empty();
-    this._editor.$navigation_list.append(prev_at_depth[0].children());
+    this._editor.setNavigationList(prev_at_depth[0].children());
 };
 
 BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
