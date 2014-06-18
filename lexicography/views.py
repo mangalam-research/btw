@@ -149,7 +149,11 @@ def entry_raw_update(request, entry_id):
         form = RawSaveForm(request.POST)
         if form.is_valid():
             chunk = form.save(commit=False)
-            chunk.data = storage_to_editable(chunk.data)
+
+            # If it was not already entered in the editable format, then we
+            # need to convert it.
+            if not form.cleaned_data['editable_format']:
+                chunk.data = storage_to_editable(chunk.data)
             xmltree = XMLTree(chunk.data)
             try_updating_entry(request, entry, chunk, xmltree, Entry.UPDATE,
                                Entry.MANUAL)

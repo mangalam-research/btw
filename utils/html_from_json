@@ -1,0 +1,54 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var version = 0.1;
+
+var fs = require("fs");
+var _ = require("lodash");
+var ArgumentParser = require("argparse").ArgumentParser;
+
+var parser = new ArgumentParser({
+    addHelp: true,
+    description: 'Extracts the XHTML code of a given entry from a json file '+
+        'created with Django\'s dumpdata'});
+
+parser.addArgument(['--version'], {
+    action: 'version',
+    version: version,
+    help: "Shows version number and exit."
+});
+
+parser.addArgument(["json"]);
+parser.addArgument(["expression"], {
+    nargs: '?'
+});
+
+var args = parser.parseArgs();
+
+var data = fs.readFileSync(args.json);
+var json = JSON.parse(data);
+
+var entries = _.filter(json, {model: "lexicography.entry"});
+
+if (!args.expression) {
+    console.log("Available entries:\n");
+    console.log(_.map(entries, function (x) {
+        return x.fields.headword;
+    }).join("\n"));
+}
+else {
+    var re = RegExp(args.expression);
+    var matches = _.filter(entries, function (x) {
+        return re.test(x.fields.headword);
+    });
+    if (matches.length === 0)
+        throw new Error("no match!");
+
+    if (matches.length > 1)
+        throw new Error("too many matches!");
+
+    var chunk = _.filter(json, { model: "lexicography.chunk",
+                                 pk: matches[0].fields.c_hash});
+    console.log(chunk[0].fields.data);
+}

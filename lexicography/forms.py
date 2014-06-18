@@ -13,6 +13,9 @@ class SearchForm(forms.Form):
 
 
 class RawSaveForm(forms.ModelForm):
+    editable_format = forms.BooleanField(
+        label=("Data entered in the editable format (XHTML) rather than "
+               "the btw-storage format (XML)."), required=False)
 
     class Meta(object):
         model = Chunk

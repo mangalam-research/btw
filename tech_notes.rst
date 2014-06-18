@@ -153,7 +153,7 @@ Installing
 
 2. Install some Node dependencies::
 
-    $ npm install wed less
+    $ npm install wed less lodash argparse
 
 3. Use the virtual environment::
 
@@ -551,6 +551,17 @@ Before doing anything more, it is wise to run the Django tests and the
 Selenium tests to make sure that the new fixture does not break
 anything. It is also wise to immediately commit the new fixture to
 git once the tests are passing.
+
+Utility for Extractig Documents from Fixtures
+---------------------------------------------
+
+The ``html_from_json`` utility can be used to extract the latest XHTML
+representing the data of an entry that has been saved into a ``.json``
+file. This can then be used with the raw editing capability to import
+this entry into the development database. Make sure to check the box
+``Data entered in the editable format (XHTML) rather than the
+btw-storage format (XML)`` before submitting the raw edit, or the edit
+will fail.
 
 ==============
  User Stories
