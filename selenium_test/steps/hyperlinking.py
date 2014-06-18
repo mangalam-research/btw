@@ -82,11 +82,18 @@ def step_impl(context):
 
     assert_equal(expect, [], "all expected links should have been found")
 
+__LINK_RE1 = \
+    (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
+     ur'points to the (?P<term>first) example\.?$')
+__LINK_RE2 = \
+    (ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
+     ur'to "(?P<term>.*?)"\.?$')
 
-@then(ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
-      ur'points to the (?P<term>first) example\.?$')
-@then(ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
-      ur'to "(?P<term>.*?)"\.?$')
+
+@given(__LINK_RE1)
+@given(__LINK_RE2)
+@then(__LINK_RE1)
+@then(__LINK_RE2)
 def step_impl(context, example, label, term):
 
     id_selector = "#BTW-E." if example else "#BTW-S."
@@ -119,7 +126,7 @@ def step_impl(context, example, label, term):
             desc = actual_term + " should match " + term;
         }
         else if ($data_target.is(".btw\\:subsense")) {
-            actual_term = $data_target.find(".btw\\:explanation").text();
+            actual_term = $data_target.children(".btw\\:explanation").text();
             test = term === actual_term;
             desc = actual_term + " should match " + term;
         }

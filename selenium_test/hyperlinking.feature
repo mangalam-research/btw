@@ -23,34 +23,25 @@ Scenario: inserting a hyperlink to a subsense inserts a properly labeled link
   Then a new hyperlink with the label "[a2]" is inserted.
 
 Scenario: deleting a sense that has hyperlinks deletes the hyperlinks
-  Given a document with senses and subsenses
-  When the user brings up a context menu in the text in the definition
-  And the user clicks the context menu option "Insert a new hyperlink to a sense"
-  When the user clicks the hyperlinking choice for "sense a"
-  Then a new hyperlink with the label "[a]" is inserted
+  Given a document with senses, subsenses and hyperlinks
+  And the hyperlink with label "[a]" points to "sense a"
   When the user brings up a context menu on navigation item "[SENSE A]"
   And the user clicks the context menu option "Delete this element"
   Then there is no hyperlink with the label "[a]".
 
-Scenario: deleting a sense whose subsense has hyperlinks deletes the hyperlinks
-  Given a document with senses and subsenses
-  When the user brings up a context menu in the text in the definition
-  And the user clicks the context menu option "Insert a new hyperlink to a sense"
-  When the user clicks the hyperlinking choice for "sense a2"
-  Then a new hyperlink with the label "[a2]" is inserted
+Scenario: deleting a sense whose subsense has hyperlinks deletes the subsense hyperlinks
+  Given a document with senses, subsenses and hyperlinks
+  And the hyperlink with label "[a1]" points to "sense a1"
   When the user brings up a context menu on navigation item "[SENSE A]"
   And the user clicks the context menu option "Delete this element"
-  Then there is no hyperlink with the label "[a2]".
+  Then there is no hyperlink with the label "[a1]".
 
-Scenario: deleting a subsense that has a hyperlink deletes the hyperlinks
-  Given a document with senses and subsenses
-  When the user brings up a context menu in the text in the definition
-  And the user clicks the context menu option "Insert a new hyperlink to a sense"
-  When the user clicks the hyperlinking choice for "sense a2"
-  Then a new hyperlink with the label "[a2]" is inserted
-  When the user brings up a context menu on navigation item "[brief explanation of sense a2]"
+Scenario: deleting a subsense that has a hyperlink deletes the subsense hyperlinks
+  Given a document with senses, subsenses and hyperlinks
+  And the hyperlink with label "[a1]" points to "sense a1"
+  When the user brings up a context menu on navigation item "[brief explanation of sense a1]"
   And the user clicks the context menu option "Delete this element"
-  Then there is no hyperlink with the label "[a2]".
+  Then there is no hyperlink with the label "[a1]".
 
 Scenario: hyperlinks are saved
   Given a document with senses and subsenses

@@ -201,6 +201,7 @@ WHAT_TO_TITLE = {
     u"a cognate with citations": "cognate with citations",
     u"a conceptual proximate with citations":
     "conceptual proximate with citations",
+    u"senses, subsenses and hyperlinks": "senses, subsenses and hyperlinks",
 }
 
 
