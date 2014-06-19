@@ -164,7 +164,7 @@ def entry_raw_update(request, entry_id):
         tmp.data = editable_to_storage(instance.data)
         form = RawSaveForm(instance=tmp)
 
-    ret = render(request, 'lexicography/new.html', {
+    ret = render(request, 'lexicography/raw.html', {
         'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
         'form': form,
     })
