@@ -1318,9 +1318,12 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
                     util.classFromOriginalName("btw:subsense"))[0];
             $a.on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
+            $a.append(' <i class="icon icon-cog"></i>');
+            $el.find('.icon').remove();
+            $el.append(' <i class="icon icon-cog"></i>');
             $el.on("wed-context-menu", {node: data_parent},
                    this._navigationContextMenuHandler.bind(this));
-            $el.data("wed-custom-context-menu", true);
+            $el.attr("data-wed-custom-context-menu", true);
         }
 
         getParent(my_depth - 1).append($li);
@@ -1378,27 +1381,36 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
         tuples.push([act, data,
                      act.getLabelFor(data) + " after this one"]);
 
-    var $this_li = $(ev.currentTarget).closest("li");
-    var $sibling_links = $this_li.parent().find('li[data-wed-for="' +
-                                                orig_name + '"]');
+    var $target = $(ev.target);
+    if ($target.closest(".nav-list")[0]) {
+        // This context menu was invoked in the navigation list.
 
-    // If the node has siblings we potentially add swap with previous
-    // and swap with next.
-    if ($sibling_links.length > 1) {
-        // However, don't add swap with prev if we are first.
-        data = {element_name: orig_name, node: node,
-                move_caret_to: makeDLoc(this._editor.data_root,
-                                        container, offset)};
-        if ($sibling_links.first().findAndSelf(ev.currentTarget).length === 0)
-            tuples.push(
-                [this._mode.swap_with_prev_tr, data,
-                 this._mode.swap_with_prev_tr.getLabelFor(data)]);
+        var $this_li = $target.closest("li");
+        var $sibling_links = $this_li.parent().find('li[data-wed-for="' +
+                                                    orig_name + '"]');
 
-        // Don't add swap with next if we are last.
-        if ($sibling_links.last().findAndSelf(ev.currentTarget).length === 0)
-            tuples.push(
-                [this._mode.swap_with_next_tr, data,
-                 this._mode.swap_with_next_tr.getLabelFor(data)]);
+        // If the node has siblings we potentially add swap with previous
+        // and swap with next.
+        if ($sibling_links.length > 1) {
+            // However, don't add swap with prev if we are first.
+            data = {element_name: orig_name, node: node,
+                    move_caret_to: makeDLoc(this._editor.data_root,
+                                            container, offset)};
+            if ($sibling_links.first().findAndSelf(ev.currentTarget).length === 0)
+                tuples.push(
+                    [this._mode.swap_with_prev_tr, data,
+                     this._mode.swap_with_prev_tr.getLabelFor(data)]);
+
+            // Don't add swap with next if we are last.
+            if ($sibling_links.last().findAndSelf(ev.currentTarget).length === 0)
+                tuples.push(
+                    [this._mode.swap_with_next_tr, data,
+                     this._mode.swap_with_next_tr.getLabelFor(data)]);
+        }
+    }
+    else {
+        // Set the caret to be inside the head
+        this._editor.setGUICaret($target[0], 0);
     }
 
     // Delete the node

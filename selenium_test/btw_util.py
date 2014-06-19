@@ -203,7 +203,8 @@ def get_subsenses_for_senses(util, labels):
                     return this.nodeType == Node.TEXT_NODE;
                 }).text();
 
-            sss.push({ explanation: expl, head: $head[0] && $head.text()});
+            sss.push({ explanation: expl,
+                       head: $head[0] && $head.text().trim()});
         }
         ret[label] = sss;
     }

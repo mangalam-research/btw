@@ -36,7 +36,8 @@ def senses_in_order(util):
     for sense in senses:
         for head in sense:
             if head.startswith("[SENSE"):
-                assert_equal(head, "[SENSE {0}]".format(chr(label_ix)),
+                assert_equal(head.strip(),
+                             "[SENSE {0}]".format(chr(label_ix)),
                              "head text")
             elif "sense" in head:
                 match = sense_re.search(head)
