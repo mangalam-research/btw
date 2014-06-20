@@ -1,9 +1,10 @@
 import os
 
 from django.test import TransactionTestCase
+from django.db import transaction
 
 from .. import handles
-from ..models import Entry
+from ..models import Handle
 
 
 dirname = os.path.dirname(__file__)
@@ -69,7 +70,7 @@ class HandleManagerTestCase(TransactionTestCase):
         self.assertIsNone(self.a.id(handle_0))
         self.assertIsNone(self.a.id(handle_1))
 
-        self.a.associate(handle_0, Entry.objects.get(id=1))
+        self.a.associate(handle_0, 1)
 
         # This creates an object which will have to read from the DB
         # to recall what was associated
@@ -77,3 +78,36 @@ class HandleManagerTestCase(TransactionTestCase):
 
         self.assertEqual(new_a.id(handle_0), 1)
         self.assertIsNone(new_a.id(handle_1))
+
+    def test_associate_is_affected_by_rollbacks(self):
+        transaction.set_autocommit(False)
+        try:
+            handle_0 = self.a.make_unassociated()
+            transaction.commit()
+            self.a.associate(handle_0, 1)
+            transaction.rollback()
+
+            self.assertIsNone(Handle.objects.get(handle=handle_0).entry,
+                              "no entry should be associated in the database")
+            self.assertIsNone(self.a.id(handle_0),
+                              "the manager should not return an id")
+        finally:
+            transaction.rollback()
+            transaction.set_autocommit(True)
+
+    def test_make_unassociated_is_affected_by_rollbacks(self):
+        transaction.set_autocommit(False)
+        try:
+            handle_0 = self.a.make_unassociated()
+            transaction.rollback()
+
+            self.assertEqual(Handle.objects.filter(handle=handle_0).count(),
+                             0,
+                             "no entry should be associated in the database")
+            self.assertRaisesRegexp(ValueError,
+                                    "handle 0 does not exist",
+                                    self.a.associate, handle_0, 1)
+
+        finally:
+            transaction.rollback()
+            transaction.set_autocommit(True)

@@ -46,9 +46,6 @@ class HandleManager(object):
 
     def __init__(self, session_key):
         self.session_key = session_key
-        self.handle_to_handle_obj_id = {}
-        self.handle_to_entry_id = {}
-        self.entry_id_to_handle = {}
 
     def make_unassociated(self):
         """
@@ -65,8 +62,6 @@ class HandleManager(object):
         handle_obj = Handle(handle=handle, session=self.session_key)
         handle_obj.save()
 
-        self.handle_to_handle_obj_id[handle] = handle_obj.id
-        self.handle_to_entry_id[handle] = None
         return handle
 
     def associate(self, handle, entry_id):
@@ -83,16 +78,13 @@ class HandleManager(object):
         if self.id(handle) is not None:
             raise ValueError("handle {0} already associated".format(handle))
 
-        if self.entry_id_to_handle.get(entry_id, None) is not None:
+        if Handle.objects.filter(entry=entry_id).count():
             raise ValueError("id {0} already associated".format(entry_id))
 
         handle_obj = Handle.objects.select_for_update().get(
-            id=self.handle_to_handle_obj_id[handle])
+            handle=handle, session=self.session_key)
         handle_obj.entry_id = entry_id
         handle_obj.save()
-
-        self.handle_to_entry_id[handle] = entry_id
-        self.entry_id_to_handle[entry_id] = handle
 
     def id(self, handle):
         """
@@ -103,13 +95,6 @@ Return the id associated with a handle.
 :returns: The id.
 :rtype: int or None
 """
-        # If it is there and not none, it can't have changed, so we
-        # don't have to read the database.
-        if handle in self.handle_to_entry_id and \
-           self.handle_to_entry_id[handle] is not None:
-            return self.handle_to_entry_id[handle]
-
-        # Otherwise, check whether it has been associated.
         try:
             handle_obj = Handle.objects.get(session=self.session_key,
                                             handle=handle)
@@ -118,10 +103,6 @@ Return the id associated with a handle.
 
         entry_id = handle_obj.entry.id if handle_obj.entry is not None \
             else None
-        self.handle_to_entry_id[handle] = entry_id
-        self.handle_to_handle_obj_id[handle] = handle_obj.id
-        if entry_id is not None:
-            self.entry_id_to_handle[entry_id] = handle
         return entry_id
 
 _hms = {}
