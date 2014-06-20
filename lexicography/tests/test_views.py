@@ -87,7 +87,7 @@ class ViewsTestCase(TransactionWebTest):
 
         return response
 
-    def save(self, response, user, data=None, recover=False):
+    def save(self, response, user, data=None, command="save"):
         #
         # Saves the document.
         #
@@ -104,7 +104,7 @@ class ViewsTestCase(TransactionWebTest):
             response.lxml.xpath("//*[@id='id_data']")[0][0])
 
         params = {
-            "command": "save" if not recover else "recover",
+            "command": command,
             "version": REQUIRED_WED_VERSION,
             "data": data
         }
@@ -469,7 +469,7 @@ class ViewsTestCase(TransactionWebTest):
 
         nr_changes = ChangeRecord.objects.filter(entry=old_entry).count()
 
-        messages, data = self.save(response, "foo", recover=True)
+        messages, data = self.save(response, "foo", command="recover")
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -487,6 +487,45 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(entry.session, self.app.session.session_key)
         self.assertEqual(entry.ctype, entry.UPDATE)
         self.assertEqual(entry.csubtype, entry.RECOVERY)
+
+        # Check the chunk
+        self.assertEqual(entry.c_hash.data, data)
+        self.assertTrue(entry.c_hash.is_normal)
+
+        # Check that the lastest ChangeRecord corresponds to the old_entry
+        change = ChangeRecord.objects.filter(entry=old_entry) \
+                                     .order_by('-datetime')[0]
+
+        # pylint: disable=W0212
+        for i in ChangeInfo._meta.get_all_field_names():
+            self.assertEqual(getattr(old_entry, i), getattr(change, i))
+
+    def test_autosave(self):
+        """
+        Tests that upon autosave the data is saved.
+        """
+        response, old_entry = self.open_abcd('foo')
+
+        nr_changes = ChangeRecord.objects.filter(entry=old_entry).count()
+
+        messages, data = self.save(response, "foo", command="autosave")
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_successful", messages)
+
+        self.assertEqual(ChangeRecord.objects.filter(entry=old_entry).count(),
+                         nr_changes + 1,
+                         "there is one and only one additional record change")
+
+        # Check that we recorded the right thing.
+        entry = Entry.objects.get(pk=old_entry.pk)
+        self.assertEqual(entry.user, self.foo)
+        # The delay used here is arbitrary
+        self.assertTrue(util.utcnow() -
+                        entry.datetime <= datetime.timedelta(minutes=1))
+        self.assertEqual(entry.session, self.app.session.session_key)
+        self.assertEqual(entry.ctype, entry.UPDATE)
+        self.assertEqual(entry.csubtype, entry.AUTOMATIC)
 
         # Check the chunk
         self.assertEqual(entry.c_hash.data, data)

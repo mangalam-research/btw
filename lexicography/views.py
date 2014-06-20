@@ -252,12 +252,19 @@ def handle_save(request, handle_or_entry_id):
         messages += version_check(request.POST.get("version"))
         if command == "check":
             pass
-        elif command in ("save", "recover"):
+        elif command in ("save", "autosave", "recover"):
             _save_command(request, handle_or_entry_id, command, messages)
         else:
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
     return HttpResponse(resp, content_type="application/json")
+
+
+_COMMAND_TO_ENTRY_TYPE = {
+    "save": Entry.MANUAL,
+    "recover": Entry.RECOVERY,
+    "autosave": Entry.AUTOMATIC
+}
 
 
 def _save_command(request, handle_or_entry_id, command, messages):
@@ -314,7 +321,7 @@ def _save_command(request, handle_or_entry_id, command, messages):
     else:
         entry = Entry()
 
-    subtype = Entry.MANUAL if command == "save" else Entry.RECOVERY
+    subtype = _COMMAND_TO_ENTRY_TYPE[command]
 
     try:
         if not try_updating_entry(request, entry, chunk, xmltree,
