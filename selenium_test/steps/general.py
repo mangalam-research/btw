@@ -263,8 +263,9 @@ def step_impl(context, what):
     assert_equal(len(els), 0)
 
 
-@When("^the user saves the file$")
-def step_impl(context):
+@When('^the user saves the file'
+      '(?P<how> using the keyboard| using the toolbar)?$')
+def step_impl(context, how=None):
     driver = context.driver
     util = context.util
 
@@ -275,7 +276,13 @@ def step_impl(context):
         window.__selenium_saved = true;
     });
     """)
-    util.ctrl_equivalent_x("S")
+    if how is None or how == " using the keyboard":
+        util.ctrl_equivalent_x("S")
+    else:
+        context.execute_steps(u"""
+        When the user clicks the save button in the toolbar
+        """)
+
     util.wait(lambda driver: driver.execute_script(
         "return window.__selenium_saved"))
 
@@ -290,3 +297,11 @@ def step_impl(context):
     driver.get(driver.current_url)
     driver.switch_to.alert.accept()
     setup_editor(context)
+
+
+@when(ur"^the user clicks the (?P<what>save) button in the toolbar$")
+def step_impl(context, what):
+    button = context.driver.execute_script(u"""
+    return jQuery("#toolbar .btn[name='{0}']")[0];
+    """.format(what))
+    button.click()
