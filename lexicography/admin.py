@@ -3,7 +3,7 @@ from django.utils.html import escape, mark_safe
 from django.core import urlresolvers
 from django.contrib import admin
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
-    OtherAuthority, Authority, EntryLock
+    OtherAuthority, Authority, EntryLock, Handle
 
 
 def make_link_method(field_name, display_name=None):
@@ -60,6 +60,10 @@ class ChangeRecordAdmin(admin.ModelAdmin):
 class EntryLockAdmin(admin.ModelAdmin):
     list_display = ('entry', 'owner', 'datetime')
 
+
+class HandleAdmin(admin.ModelAdmin):
+    list_display = ('handle', 'entry', 'session')
+
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Chunk)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
@@ -67,3 +71,4 @@ admin.site.register(UserAuthority)
 admin.site.register(OtherAuthority)
 admin.site.register(Authority)
 admin.site.register(EntryLock, EntryLockAdmin)
+admin.site.register(Handle, HandleAdmin)
