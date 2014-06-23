@@ -9,10 +9,18 @@
 #
 # - W0142: Used * or ** magic
 #
-# pointless-string-statement is raised for the documentation of object
+# - pointless-string-statement is raised for the documentation of object
 # attributes because the string appears after the attribute.
 #
-disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement
+# - catching-non-exception is raised because some Django exceptions are
+# created like this:
+#
+# class Error(Exception if six.PY3 else StandardError):
+#     pass
+#
+# And it confuses pylint.
+
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception
 [REPORTS]
 include-ids=y
 [VARIABLES]
