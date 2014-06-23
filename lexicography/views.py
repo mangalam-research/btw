@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods
 from django.template import RequestContext
 from django.db import IntegrityError
+from django.db.models import ProtectedError
 from django.conf import settings
 from django.db import transaction
 import os
@@ -335,12 +336,24 @@ def _save_command(request, handle_or_entry_id, command, messages):
                     {'type': 'save_transient_error',
                      'msg': 'The entry is locked by user %s.'
                      % lock.owner.username})
+
                 # Clean up the chunk.
-                chunk.delete()
+                try:
+                    chunk.delete()
+                except ProtectedError:
+                    # This means that the chunk is shared with another
+                    # entry.
+                    pass
+
                 return
     except IntegrityError:
         # Clean up the chunk.
-        chunk.delete()
+        try:
+            chunk.delete()
+        except ProtectedError:
+            # This means that the chunk is shared with another
+            # entry.
+            pass
         # Try to determine what the problem is. If there is an
         # IntegrityError it is possible that it is *not* due to a
         # duplicate headword.

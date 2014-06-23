@@ -37,12 +37,13 @@ class ChangeInfo(models.Model):
     # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
     # could use TextField() but the flexibility there comes at a cost.
     headword = models.CharField(max_length=1024)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.PROTECT)
     datetime = models.DateTimeField()
     session = models.CharField(max_length=100, null=True)
     ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
     csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
-    c_hash = models.ForeignKey('Chunk')
+    c_hash = models.ForeignKey('Chunk', on_delete=models.PROTECT)
 
     def copy_to(self, to):
         if not isinstance(to, ChangeInfo):

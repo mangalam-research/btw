@@ -21,6 +21,17 @@ server_name = "http://localhost:80"
 user_model = get_user_model()
 
 
+def stringify_etree(data):
+    # This forces empty elements to be output as <foo></foo>
+    # rather than <foo/> so that it is consistent with how wed
+    # handles data.
+    for el in data.iter():
+        if len(el) == 0 and el.text is None:
+            el.text = ''
+
+    return lxml.etree.tostring(data)
+
+
 class ViewsTestCase(TransactionWebTest):
     fixtures = ["initial_data.json"] + local_fixtures
 
@@ -102,15 +113,7 @@ class ViewsTestCase(TransactionWebTest):
 
         if data is None:
             response_data = response.lxml.xpath("//*[@id='id_data']")[0][0]
-
-            # This forces empty elements to be output as <foo></foo>
-            # rather than <foo/> so that it is consistent with how wed
-            # handles data.
-            for el in response_data.iter():
-                if len(el) == 0 and el.text is None:
-                    el.text = ''
-
-            data = lxml.etree.tostring(response_data)
+            data = stringify_etree(response_data)
 
         params = {
             "command": command,
@@ -229,8 +232,7 @@ class ViewsTestCase(TransactionWebTest):
         for lemma in lemma_hits:
             lemma.getparent().remove(lemma)
 
-        messages, _ = self.save(response, "foo",
-                                lxml.etree.tostring(data_tree))
+        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
@@ -273,8 +275,7 @@ class ViewsTestCase(TransactionWebTest):
             del lemma[:]
             lemma.text = "foo"  # There is a foo entry already.
 
-        messages, _ = self.save(response, "foo",
-                                lxml.etree.tostring(data_tree))
+        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
@@ -322,8 +323,7 @@ class ViewsTestCase(TransactionWebTest):
             del lemma[:]
             lemma.text = "Glerbl"
 
-        messages, _ = self.save(response, "foo",
-                                lxml.etree.tostring(data_tree))
+        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -338,8 +338,7 @@ class ViewsTestCase(TransactionWebTest):
                          "number of entries with this headword after save")
 
         # Save a second time.
-        messages, _ = self.save(response, "foo",
-                                lxml.etree.tostring(data_tree))
+        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -378,8 +377,7 @@ class ViewsTestCase(TransactionWebTest):
             del lemma[:]
             lemma.text = "Glerbl"
 
-        messages, _ = self.save(response, "foo",
-                                lxml.etree.tostring(data_tree))
+        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
