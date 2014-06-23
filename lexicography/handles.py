@@ -4,6 +4,7 @@
 
 """
 from django.db.models import Max
+from django.db import transaction
 
 from .models import Handle
 
@@ -47,6 +48,7 @@ class HandleManager(object):
     def __init__(self, session_key):
         self.session_key = session_key
 
+    @transaction.atomic
     def make_unassociated(self):
         """
         Create an unassociated handle.
@@ -64,6 +66,7 @@ class HandleManager(object):
 
         return handle
 
+    @transaction.atomic
     def associate(self, handle, entry_id):
         """
         Associate an unassociated handle with an id. It is illegal to

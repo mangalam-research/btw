@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST, require_GET, \
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.conf import settings
+from django.db import transaction
 import os
 import subprocess
 import tempfile
@@ -267,6 +268,7 @@ _COMMAND_TO_ENTRY_TYPE = {
 }
 
 
+@transaction.atomic
 def _save_command(request, handle_or_entry_id, command, messages):
     if handle_or_entry_id.startswith("h:"):
         hm = handles.get_handle_manager(request.session)
@@ -324,17 +326,18 @@ def _save_command(request, handle_or_entry_id, command, messages):
     subtype = _COMMAND_TO_ENTRY_TYPE[command]
 
     try:
-        if not try_updating_entry(request, entry, chunk, xmltree,
-                                  Entry.UPDATE, subtype):
-            # Update failed due to locking
-            lock = EntryLock.objects.get(entry=entry)
-            messages.append(
-                {'type': 'save_transient_error',
-                 'msg': 'The entry is locked by user %s.'
-                 % lock.owner.username})
-            # Clean up the chunk.
-            chunk.delete()
-            return
+        with transaction.atomic():
+            if not try_updating_entry(request, entry, chunk, xmltree,
+                                      Entry.UPDATE, subtype):
+                # Update failed due to locking
+                lock = EntryLock.objects.get(entry=entry)
+                messages.append(
+                    {'type': 'save_transient_error',
+                     'msg': 'The entry is locked by user %s.'
+                     % lock.owner.username})
+                # Clean up the chunk.
+                chunk.delete()
+                return
     except IntegrityError:
         # Clean up the chunk.
         chunk.delete()

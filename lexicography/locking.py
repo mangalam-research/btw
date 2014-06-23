@@ -18,6 +18,7 @@ The possible state transitions are:
 from django.template.response import TemplateResponse
 from django.http import HttpResponse
 from django.conf import settings
+from django.db import transaction
 
 import json
 import logging
@@ -62,6 +63,7 @@ on the entry before calling this function.
     return lock
 
 
+@transaction.atomic
 def release_entry_lock(entry, user):
     """
 Release the lock on an entry. It is a fatal error to call this
@@ -113,6 +115,7 @@ Expire the entry lock.
     return False
 
 
+@transaction.atomic
 def try_acquiring_lock(entry, user):
     """
 Attempt to acquire the lock.
