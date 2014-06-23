@@ -100,8 +100,17 @@ class ViewsTestCase(TransactionWebTest):
         #
         saveurl = response.form['saveurl'].value
 
-        data = data or lxml.etree.tostring(
-            response.lxml.xpath("//*[@id='id_data']")[0][0])
+        if data is None:
+            response_data = response.lxml.xpath("//*[@id='id_data']")[0][0]
+
+            # This forces empty elements to be output as <foo></foo>
+            # rather than <foo/> so that it is consistent with how wed
+            # handles data.
+            for el in response_data.iter():
+                if len(el) == 0 and el.text is None:
+                    el.text = ''
+
+            data = lxml.etree.tostring(response_data)
 
         params = {
             "command": command,
