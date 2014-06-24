@@ -17,6 +17,7 @@
     <ul>
       {% for entry in found_entries %}
       <li>
+
         <a href="{% url 'lexicography_entry_details' entry.id %}">{{ entry.headword }}</a>
         {% if not entry|is_editable_by:user %}
           {% if entry.is_locked %}

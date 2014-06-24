@@ -76,32 +76,35 @@ def search(request):
 
 @require_GET
 def entry_details(request, entry_id):
-    data = Entry.objects.get(id=entry_id).data
-
-    (tmpdata_file, tmpdata_path) = tempfile.mkstemp(prefix='btwtmp')
-    with os.fdopen(tmpdata_file, 'w') as f:
-        f.write(data.encode("utf-8"))
-
-    (tmptei_file, tmptei_path) = tempfile.mkstemp(prefix='btwtmp')
-    os.close(tmptei_file)
-
-    subprocess.check_call(["saxon", "-s:" + tmpdata_path, "-xsl:" +
-                           os.path.join(schemas_dirname,
-                                        "btw-storage-to-tei.xsl"), "-o:" +
-                           tmptei_path])
-
-    (tmphtml_file, tmphtml_path) = tempfile.mkstemp(prefix="btwtmp")
-    os.close(tmphtml_file)
-
-    subprocess.check_call(["teitohtml", "--profiledir=" +
-                           os.path.join(dirname, "btw-profiles"),
-                           "--profile=html-render", tmptei_path, tmphtml_path])
-
-    data = open(tmphtml_path).read()
-
     return render_to_response('lexicography/details.html',
-                              {'data': data},
                               context_instance=RequestContext(request))
+    # data = Entry.objects.get(id=entry_id).data
+
+    # (tmpdata_file, tmpdata_path) = tempfile.mkstemp(prefix='btwtmp')
+    # with os.fdopen(tmpdata_file, 'w') as f:
+    #     f.write(data.encode("utf-8"))
+
+    # (tmptei_file, tmptei_path) = tempfile.mkstemp(prefix='btwtmp')
+    # os.close(tmptei_file)
+
+    # subprocess.check_call(["saxon", "-s:" + tmpdata_path, "-xsl:" +
+    #                        os.path.join(schemas_dirname,
+    #                                     "btw-storage-to-tei.xsl"), "-o:" +
+    #                        tmptei_path])
+
+    # (tmphtml_file, tmphtml_path) = tempfile.mkstemp(prefix="btwtmp")
+    # os.close(tmphtml_file)
+
+    # subprocess.check_call(["teitohtml", "--profiledir=" +
+    #                        os.path.join(dirname, "btw-profiles"),
+    #                        "--profile=html-render", tmptei_path,
+    #                        tmphtml_path])
+
+    # data = open(tmphtml_path).read()
+
+    # return render_to_response('lexicography/details.html',
+    #                           {'data': data},
+    #                           context_instance=RequestContext(request))
 
 
 def update_entry(request, entry, chunk, xmltree, ctype, subtype):
