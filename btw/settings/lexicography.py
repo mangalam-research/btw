@@ -1,3 +1,3 @@
 import _env
 
-LEXICOGRAPHY_LOCK_EXPIRY = 24  # Locks expire after 24 hours
+LEXICOGRAPHY_LOCK_EXPIRY = 48  # Locks expire after 48 hours
