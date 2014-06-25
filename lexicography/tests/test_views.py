@@ -2,16 +2,16 @@ from django_webtest import TransactionWebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 
-import lxml.etree
-
 import os
 import datetime
 
+import lxml.etree
+
+from .. import models
 from ..models import Entry, EntryLock, ChangeRecord, ChangeInfo, Chunk
 from ..views import REQUIRED_WED_VERSION
 from . import util as test_util
 import lib.util as util
-from .. import xml
 
 dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
@@ -21,15 +21,9 @@ server_name = "http://localhost:80"
 user_model = get_user_model()
 
 
-def stringify_etree(data):
-    # This forces empty elements to be output as <foo></foo>
-    # rather than <foo/> so that it is consistent with how wed
-    # handles data.
-    for el in data.iter():
-        if len(el) == 0 and el.text is None:
-            el.text = ''
-
-    return lxml.etree.tostring(data)
+def set_lemma(tree, new_lemma):
+    return test_util.set_lemma(
+        lxml.etree.tostring(tree.xpath("//*[@id='id_data']")[0][0]), new_lemma)
 
 
 class ViewsTestCase(TransactionWebTest):
@@ -98,7 +92,8 @@ class ViewsTestCase(TransactionWebTest):
 
         return response
 
-    def save(self, response, user, data=None, command="save"):
+    def save(self, response, user, data=None, command="save",
+             expect_errors=False):
         #
         # Saves the document.
         #
@@ -113,7 +108,7 @@ class ViewsTestCase(TransactionWebTest):
 
         if data is None:
             response_data = response.lxml.xpath("//*[@id='id_data']")[0][0]
-            data = stringify_etree(response_data)
+            data = test_util.stringify_etree(response_data)
 
         params = {
             "command": command,
@@ -124,7 +119,8 @@ class ViewsTestCase(TransactionWebTest):
         headers = {
             'X-REQUESTED-WITH': 'XMLHttpRequest',
             'X-CSRFToken':
-            response.form['csrfmiddlewaretoken'].value.encode('utf-8')
+            response.form['csrfmiddlewaretoken'].value.encode('utf-8'),
+            'If-Match': response.form['initial_etag'].value.encode('utf-8'),
         }
 
         response = self.app.post(
@@ -132,9 +128,24 @@ class ViewsTestCase(TransactionWebTest):
             user=user,
             params=params,
             content_type='application/x-www-form-urlencoded; charset=UTF-8',
+            expect_errors=expect_errors,
             headers=headers)
 
-        return test_util.parse_response_to_wed(response.json), params["data"]
+        if expect_errors:
+            return response
+        else:
+            return test_util.parse_response_to_wed(response.json), \
+                params["data"]
+
+    def close(self, response, entry, user):
+        url = reverse('lexicography_handle_update', args=(entry.id, ))
+        headers = {
+            'X-CSRFToken':
+            response.form['csrfmiddlewaretoken'].value.encode('utf-8')
+        }
+        response = self.app.post(url,
+                                 user=user, headers=headers).follow()
+        return response
 
     def test_edit(self):
         """
@@ -216,23 +227,11 @@ class ViewsTestCase(TransactionWebTest):
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
-        # The data is xhtml so convert it to xml before manipulating the tree.
-        data = lxml.etree.tostring(
-            response.lxml.xpath("//*[@id='id_data']")[0][0])
-        data = xml.xhtml_to_xml(data)
+        # Delete the lemma.
+        data_tree = set_lemma(response.lxml, None)
 
-        data_tree = lxml.etree.fromstring(data)
-
-        # This casts a wider net than strictly necessary but it does not
-        # matter.
-        lemma_hits = data_tree.xpath(
-            "xhtml:div[contains(@class, 'btw:lemma')]",
-            namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
-
-        for lemma in lemma_hits:
-            lemma.getparent().remove(lemma)
-
-        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
@@ -258,24 +257,11 @@ class ViewsTestCase(TransactionWebTest):
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
-        # The data is xhtml so convert it to xml before manipulating the tree.
-        data = lxml.etree.tostring(
-            response.lxml.xpath("//*[@id='id_data']")[0][0])
-        data = xml.xhtml_to_xml(data)
+        # There is a foo entry already
+        data_tree = set_lemma(response.lxml, "foo")
 
-        data_tree = lxml.etree.fromstring(data)
-
-        # This casts a wider net than strictly necessary but it does not
-        # matter.
-        lemma_hits = data_tree.xpath(
-            "xhtml:div[contains(@class, 'btw:lemma')]",
-            namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
-
-        for lemma in lemma_hits:
-            del lemma[:]
-            lemma.text = "foo"  # There is a foo entry already.
-
-        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
@@ -302,28 +288,11 @@ class ViewsTestCase(TransactionWebTest):
         # Does not create a new entry until we save.
         self.assertEqual(nr_entries, Entry.objects.count())
 
-        #
-        # Set a lemma.
-        #
+        # Set a new lemma
+        data_tree = set_lemma(response.lxml, "Glerbl")
 
-        # The data is xhtml so convert it to xml before manipulating the tree.
-        data = lxml.etree.tostring(
-            response.lxml.xpath("//*[@id='id_data']")[0][0])
-        data = xml.xhtml_to_xml(data)
-
-        data_tree = lxml.etree.fromstring(data)
-
-        # This casts a wider net than strictly necessary but it does not
-        # matter.
-        lemma_hits = data_tree.xpath(
-            "xhtml:div[contains(@class, 'btw:lemma')]",
-            namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
-
-        for lemma in lemma_hits:
-            del lemma[:]
-            lemma.text = "Glerbl"
-
-        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -338,7 +307,8 @@ class ViewsTestCase(TransactionWebTest):
                          "number of entries with this headword after save")
 
         # Save a second time.
-        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -356,28 +326,11 @@ class ViewsTestCase(TransactionWebTest):
         # Does not create a new entry until we save.
         self.assertEqual(nr_entries, Entry.objects.count())
 
-        #
-        # Set a lemma.
-        #
+        # Set a new lemma
+        data_tree = set_lemma(response.lxml, "Glerbl")
 
-        # The data is xhtml so convert it to xml before manipulating the tree.
-        data = lxml.etree.tostring(
-            response.lxml.xpath("//*[@id='id_data']")[0][0])
-        data = xml.xhtml_to_xml(data)
-
-        data_tree = lxml.etree.fromstring(data)
-
-        # This casts a wider net than strictly necessary but it does not
-        # matter.
-        lemma_hits = data_tree.xpath(
-            "xhtml:div[contains(@class, 'btw:lemma')]",
-            namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
-
-        for lemma in lemma_hits:
-            del lemma[:]
-            lemma.text = "Glerbl"
-
-        messages, _ = self.save(response, "foo", stringify_etree(data_tree))
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
@@ -405,6 +358,67 @@ class ViewsTestCase(TransactionWebTest):
 
         # Conversely the user is told that the article is locked.
         self.assertIn("Locked by foo (Foo Bwip).", response)
+
+    def test_lock_expires(self):
+        """
+        Tests that when an article is already locked by user X, and the
+        lock is expirable by the time user Y does a search, she can
+        edit it.
+        """
+        response, entry = self.open_abcd('foo')
+
+        # Expire the lock manually
+        lock = EntryLock.objects.get(entry=entry)
+        lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
+            datetime.timedelta(seconds=1)
+        lock.save()
+
+        form = self.app.get(reverse("lexicography_main"), user="foo2").form
+        form['q'] = 'abcd'
+        response = form.submit(user="foo2")
+
+        # Check that the option is not available
+        url = reverse('lexicography_entry_update', args=(entry.id, ))
+        self.assertIn(url, response)
+
+        # Conversely the user is told that the article is locked.
+        self.assertNotIn("Locked by foo (Foo Bwip).", response)
+
+    def test_cannot_save_after_other_user_modifies_entry(self):
+        """
+        Tests that when an article is locked by user X, and user Y opens
+        it successfully because the lock has expired and saves a
+        modified version, then X's next attempt at saving will fail.
+        """
+        response1, entry1 = self.open_abcd('foo')
+
+        # Expire the lock manually
+        lock = EntryLock.objects.get(entry=entry1)
+        lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
+            datetime.timedelta(seconds=1)
+        lock.save()
+
+        # The 2nd user opens the article.
+        response2, entry2 = self.open_abcd('foo2')
+        self.assertEqual(entry2.is_locked(),
+                         self.foo2, "new entry locked by correct user")
+
+        # The 2nd user edits the article and saves.
+        data_tree = set_lemma(response2.lxml, "Glerbl")
+        messages, _ = self.save(
+            response2, "foo2", test_util.stringify_etree(data_tree))
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_successful", messages)
+
+        # The 2nd user closes the article.
+        self.close(response2, entry2, "foo2")
+
+        # The first user tries to save. Which should fail because
+        # their version of the file misses the changes made by the 2nd
+        # user.
+        response3 = self.save(response1, "foo", expect_errors=True)
+        self.assertEqual(response3.status_code, 412,
+                         "the save should have failed")
 
     def test_direct_concurrent_edit(self):
         """

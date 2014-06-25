@@ -51,6 +51,10 @@ class ChangeInfo(models.Model):
         for i in ChangeInfo._meta.get_all_field_names():
             setattr(to, i, getattr(self, i))
 
+    @property
+    def etag(self):
+        return self.c_hash.c_hash
+
 
 class Entry(ChangeInfo):
 

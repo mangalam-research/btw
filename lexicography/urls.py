@@ -28,3 +28,12 @@ if settings.DEBUG:
         'lexicography.views',
         url(r'^editing_data$', 'editing_data'),
     )
+
+# These are views used only in testing.
+if settings.BTW_TESTING:
+    urlpatterns += patterns(
+        'lexicography.views',
+        url(r'^handle/(?P<handle_or_entry_id>.+)/mod$',
+            'handle_background_mod',
+            name='lexicography_handle_background_mod'),
+    )

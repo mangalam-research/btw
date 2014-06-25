@@ -35,6 +35,7 @@ class SaveForm(forms.ModelForm):
     logurl = forms.CharField(widget=forms.HiddenInput(),
                              initial=reverse_lazy('lexicography_log'))
     saveurl = forms.CharField(widget=forms.HiddenInput())
+    initial_etag = forms.CharField(widget=forms.HiddenInput())
     data = forms.CharField(label="",
                            widget=WedWidget(source=settings.BTW_WED_PATH,
                                             css=settings.BTW_WED_CSS))

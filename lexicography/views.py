@@ -9,17 +9,20 @@ from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, \
-    HttpResponseBadRequest, Http404
+    HttpResponseBadRequest, Http404, QueryDict
 from django.views.decorators.http import require_POST, require_GET, \
-    require_http_methods
+    require_http_methods, etag
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.db.models import ProtectedError
 from django.conf import settings
 from django.db import transaction
+from django.utils.http import quote_etag
+from django.contrib.auth import get_user_model
+
+from functools import wraps
 import os
-import subprocess
-import tempfile
+import datetime
 import semver
 import json
 import urllib
@@ -28,6 +31,7 @@ import logging
 import lib.util as util
 from . import handles
 from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
+from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
 from .xml import storage_to_editable, editable_to_storage, XMLTree, \
@@ -225,7 +229,8 @@ def handle_update(request, handle_or_entry_id):
     form = SaveForm(instance=chunk,
                     initial={"saveurl":
                              reverse('lexicography_handle_save',
-                                     args=(handle_or_entry_id,))})
+                                     args=(handle_or_entry_id,)),
+                             "initial_etag": entry.c_hash if entry else None})
 
     return render(request, 'lexicography/new.html', {
         'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
@@ -245,24 +250,70 @@ def version_check(version):
     return []
 
 
+def uses_handle_or_entry_id(view):
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        handle_or_entry_id = kwargs.pop('handle_or_entry_id')
+        handle = None
+        entry_id = None
+        if handle_or_entry_id.startswith("h:"):
+            hm = handles.get_handle_manager(request.session)
+            handle = handle_or_entry_id[2:]
+            try:
+                entry_id = hm.id(handle)
+            except ValueError:
+                logger.error(
+                    ("user {0} tried accessing handle {1} which did not exist"
+                     " in the handle manager associated with sesssion {2}")
+                    .format(request.user.username, handle,
+                            request.session.session_key))
+                resp = json.dumps(
+                    {'messages': [{'type': 'save_fatal_error'}]},
+                    ensure_ascii=False)
+                return HttpResponse(resp, content_type="application/json")
+        else:
+            entry_id = handle_or_entry_id
+
+        return view(request, entry_id=entry_id, handle=handle, *args, **kwargs)
+    return wrapper
+
+
+def get_etag(request, entry_id, handle):
+    if entry_id is None:
+        return None
+
+    return Entry.objects.get(id=entry_id).etag
+
+
 @login_required
 @require_POST
-def handle_save(request, handle_or_entry_id):
+@uses_handle_or_entry_id
+@etag(get_etag)
+def handle_save(request, entry_id, handle):
     if not request.is_ajax():
         return HttpResponseBadRequest()
 
     command = request.POST.get("command")
     messages = []
+    entry = None
     if command:
         messages += version_check(request.POST.get("version"))
         if command == "check":
             pass
         elif command in ("save", "autosave", "recover"):
-            _save_command(request, handle_or_entry_id, command, messages)
+            entry = _save_command(request, entry_id, handle, command, messages)
         else:
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
-    return HttpResponse(resp, content_type="application/json")
+    response = HttpResponse(resp, content_type="application/json")
+
+    # We want to set ETag ourselves to the correct value because the
+    # etag decorator will actually set it to the value it had before the
+    # request was processed!
+    if entry:
+        response['ETag'] = quote_etag(entry.etag)
+
+    return response
 
 
 _COMMAND_TO_ENTRY_TYPE = {
@@ -273,23 +324,7 @@ _COMMAND_TO_ENTRY_TYPE = {
 
 
 @transaction.atomic
-def _save_command(request, handle_or_entry_id, command, messages):
-    if handle_or_entry_id.startswith("h:"):
-        hm = handles.get_handle_manager(request.session)
-        handle = handle_or_entry_id[2:]
-        try:
-            entry_id = hm.id(handle)
-        except ValueError:
-            logger.error(
-                ("user {0} tried accessing handle {1} which did not exist"
-                 " in the handle manager associated with sesssion {2}")
-                .format(request.user.username, handle,
-                        request.session.session_key))
-            messages.append({'type': 'save_fatal_error'})
-            return
-    else:
-        entry_id = handle_or_entry_id
-
+def _save_command(request, entry_id, handle, command, messages):
     data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
     xmltree = XMLTree(data)
 
@@ -300,13 +335,13 @@ def _save_command(request, handle_or_entry_id, command, messages):
         logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
         # Yes, we want to commit...
         messages.append({'type': 'save_fatal_error'})
-        return
+        return None
 
     if xmltree.extract_headword() is None:
         messages.append(
             {'type': 'save_transient_error',
              'msg': 'Please specify a lemma for your entry.'})
-        return
+        return None
 
     authority = xmltree.extract_authority()
     if authority == "/":
@@ -348,7 +383,7 @@ def _save_command(request, handle_or_entry_id, command, messages):
                     # entry.
                     pass
 
-                return
+                return None
     except IntegrityError:
         # Clean up the chunk.
         try:
@@ -367,15 +402,17 @@ def _save_command(request, handle_or_entry_id, command, messages):
                 {'type': 'save_transient_error',
                  'msg': 'There is another entry with the lemma "{0}".'
                  .format(entry.headword)})
-            return
+            return None
 
         # Can't figure it out.
         logger.error("undetermined integrity error")
         raise
 
     if entry_id is None:
+        hm = handles.get_handle_manager(request.session)
         hm.associate(handle, entry.id)
     messages.append({'type': 'save_successful'})
+    return entry
 
 
 @login_required
@@ -460,3 +497,52 @@ def collect(request):
 
 #  LocalWords:  html btwtmp utf saxon xsl btw tei teitohtml xml xhtml
 #  LocalWords:  profiledir lxml xmlns
+
+
+# Yes, we use GET instead of POST for this view. Yes, we are breaking
+# the rules. This is used only by the test suite.
+@login_required
+@require_GET
+@uses_handle_or_entry_id
+def handle_background_mod(request, entry_id, handle):
+    if not settings.BTW_TESTING:
+        raise Exception("BTW_TESTING not on!")
+
+    entry = None
+    if entry_id is None:
+        raise Exception("this requires an existing entry")
+
+    entry = Entry.objects.get(id=entry_id)
+
+    locks = EntryLock.objects.filter(entry=entry)
+    if locks.count():
+        lock = locks[0]
+        # Cause the lock to expire.
+        lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
+            datetime.timedelta(seconds=1)
+        lock.save()
+
+    # We set the user of the modification to "admin".
+    request.user = get_user_model().objects.get(username="admin")
+    messages = []
+    from .tests import util as test_util
+    tree = test_util.set_lemma(entry.c_hash.data, "Glerbl")
+    old_post = request.POST
+    request.POST = QueryDict('', mutable=True)
+    request.POST.update(old_post)
+    request.POST["data"] = test_util.stringify_etree(tree)
+
+    logger.debug(entry.etag)
+    _save_command(request, entry_id, handle, "save", messages)
+    entry = Entry.objects.get(id=entry_id)
+    logger.debug(entry.etag)
+
+    if len(messages) != 1:
+        raise Exception("there should be only one message")
+
+    if messages[0]['type'] != "save_successful":
+        raise Exception("the save was not successful")
+
+    release_entry_lock(entry, request.user)
+
+    return HttpResponse()

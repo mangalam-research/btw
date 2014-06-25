@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from nose.tools import assert_equal, assert_raises  # pylint: disable=E0611
+# pylint: disable=E0611
+from nose.tools import assert_equal, assert_raises, \
+    assert_true
 
 
 from selenium.webdriver.common.by import By
@@ -275,6 +277,10 @@ def step_impl(context, how=None):
     wed_editor._saver.addOneTimeEventListener("saved", function () {
         window.__selenium_saved = true;
     });
+    wed_editor._saver.addOneTimeEventListener("failed", function () {
+        // Yes, we do the same thing.
+        window.__selenium_saved = true;
+    });
     """)
     if how is None or how == " using the keyboard":
         util.ctrl_equivalent_x("S")
@@ -305,3 +311,39 @@ def step_impl(context, what):
     return jQuery("#toolbar .btn[name='{0}']")[0];
     """.format(what))
     button.click()
+
+
+@when('^someone else modifies the file$')
+def step_impl(context, how=None):
+    driver = context.driver
+    util = context.util
+
+    url = driver.current_url
+    assert_true(url.endswith("/update"))
+    url = url[:-6] + "mod"
+
+    driver.execute_script("""
+    var url = arguments[0];
+    var $ = jQuery;
+    window.__btw_test_waiting_for_mod = true;
+    $.ajax({
+        type: "GET",
+        url: url
+    }).done(function () {
+      delete window.__btw_test_waiting_for_mod;
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+      window.selenium_log = [textStatus, errorThrown];
+    });
+    """, url)
+
+    # We have to wait for the save to happen before moving on.
+    util.wait(lambda driver: driver.execute_script(
+        "return !window.__btw_test_waiting_for_mod"))
+
+
+@then('^the user gets a dialog that the file has been modified by '
+      'another user$')
+def step_impl(context):
+    header = context.util.find_element((By.CSS_SELECTOR,
+                                        ".modal.in .modal-header h3"))
+    assert_equal(header.text, "Edited by another!")

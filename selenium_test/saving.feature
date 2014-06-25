@@ -24,3 +24,13 @@ Scenario: saving using the mouse
   And the user reloads the file
   # It was saved...
   Then the first paragraph in btw:defintion does not contain formatted text
+
+Scenario: saving after someone else has modified the document
+  # The transform is a bit random. We just need something to
+  # save.
+  Then the first paragraph in btw:defintion contains formatted text
+  When the user clears formatting from the first paragraph in btw:definition
+  Then the first paragraph in btw:defintion does not contain formatted text
+  When someone else modifies the file
+  When the user saves the file using the keyboard
+  Then the user gets a dialog that the file has been modified by another user

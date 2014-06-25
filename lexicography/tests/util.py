@@ -6,6 +6,10 @@
 import logging
 from StringIO import StringIO
 
+import lxml.etree
+
+from .. import xml
+
 
 def setup_logger_for_StringIO(logger):
     """
@@ -52,3 +56,35 @@ Convert a json response to a Python dictionary.
         array.append(message)
 
     return ret
+
+
+def stringify_etree(data):
+    # This forces empty elements to be output as <foo></foo>
+    # rather than <foo/> so that it is consistent with how wed
+    # handles data.
+    for el in data.iter():
+        if len(el) == 0 and el.text is None:
+            el.text = ''
+
+    return lxml.etree.tostring(data)
+
+
+def set_lemma(data, new_lemma):
+    data = xml.xhtml_to_xml(data)
+
+    data_tree = lxml.etree.fromstring(data)
+
+    # This casts a wider net than strictly necessary but it does not
+    # matter.
+    lemma_hits = data_tree.xpath(
+        "xhtml:div[contains(@class, 'btw:lemma')]",
+        namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
+
+    for lemma in lemma_hits:
+        if new_lemma is None:  # None means "remove the lemma"
+            lemma.getparent().remove(lemma)
+        else:
+            del lemma[:]
+            lemma.text = new_lemma
+
+    return data_tree
