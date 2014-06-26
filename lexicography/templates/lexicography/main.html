@@ -2,11 +2,13 @@
 {% load url from future %}
 {% load libcore %}
 {% load liblex %}
+{% load bootstrap_tags %}
 {% block content %}
-<a href="{% url 'lexicography_entry_new' %}"/>New</a>
+<a class="btn btn-default" href="{% url 'lexicography_entry_new' %}"/>New Article</a>
+<hr>
 <form action="search" method="get">{% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Search" />
+  {{ form|as_bootstrap }}
+  <input class="btn btn-default" type="submit" value="Search" />
 </form>
 {% if query_string %}
 <div>
