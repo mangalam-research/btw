@@ -9,28 +9,49 @@
 {% endblock %}
 
 {% block branding %}
-<ul id="btw-site-navigation" class="nav nav-pills">
-  <li id="btw-home-menu"><a href="/">Home</a></li>
-  <li id="btw-lexicography-menu"><a href="{% url 'lexicography_main' %}">Lexicography</a></li>
-  <li id="btw-bibliography-menu" class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-      Bibliography <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      <li id="btw-bibliography-general-sub"><a href="{% url 'bibliography_search' %}">General Search</a></li>
-      {% if perms.bibliography.add_primarysource and perms.bibliography.change_primarysource %}
+<nav id="btw-site-navigation" class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse"
+              data-target="#btw-site-navigation-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">BTW</a>
+    </div>
+    <div class="collapse navbar-collapse" id="btw-site-navigation-collapse">
+    <ul class="nav navbar-nav">
+      <li id="btw-home-menu"><a href="/">Home</a></li>
+      <li id="btw-lexicography-menu"><a href="{% url 'lexicography_main' %}">Lexicography</a></li>
+      <li id="btw-bibliography-menu" class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          Bibliography <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li id="btw-bibliography-general-sub"><a href="{% url 'bibliography_search' %}">General Search</a></li>
+          {% if perms.bibliography.add_primarysource and perms.bibliography.change_primarysource %}
           <li id="btw-bibliography-manage-sub"><a href="{% url 'bibliography_manage' %}">Manage</a></li>
-      {% endif %}
+          {% endif %}
+        </ul>
+      </li>
     </ul>
-  </li>
-  <li class="pull-right">
-  {% if user.is_authenticated %}
-  <a href="{% url 'logout' %}">Log out</a>
-  {% else %}
-  <a href="{% url 'login' %}">Log in</a>
-  {% endif %}
-  </li>
-</ul>
+
+    <ul class="nav navbar-nav navbar-right">
+      {% if user.is_authenticated %}
+      <li class="navbar-text">Logged in as: {{ user.username }} </li>
+      {% endif %}
+      <li>
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}">Log out</a>
+        {% else %}
+        <a href="{% url 'login' %}">Log in</a>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+</div>
 {% endblock %}
 
 {% block end %}
