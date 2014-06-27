@@ -42,6 +42,8 @@ function Toolbar(editor) {
                              container: "body",
                              placement: "auto"});
         $button.click(this._click.bind(this));
+        // Prevents acquiring the focus.
+        $button.mousedown(false);
 	this.$top.append($button);
         this._name_to_action[name] = action;
     }
