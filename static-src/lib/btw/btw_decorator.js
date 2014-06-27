@@ -1325,6 +1325,12 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
                    this._navigationContextMenuHandler.bind(this));
             $el.attr("data-wed-custom-context-menu", true);
         }
+        else {
+            // We turn off context menus on the link and on the header.
+            $a.on("contextmenu", false);
+            $el.attr("data-wed-custom-context-menu", true);
+            $el.on("wed-context-menu", false);
+        }
 
         getParent(my_depth - 1).append($li);
         prev_at_depth[my_depth] = $li;
