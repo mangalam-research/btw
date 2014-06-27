@@ -1120,7 +1120,8 @@ BTWDecorator.prototype.linkingDecorator = function ($root, $el, is_ptr) {
             $a.text(label);
 
             // A ptr contains only attributes, no text, so we can just append.
-            this._gui_updater.insertBefore($el[0], $text[0], null);
+            var pair = this._mode.nodesAroundEditableContents($el[0]);
+            this._gui_updater.insertBefore($el[0], $text[0], pair[1]);
 
             if ($target.length > 0) {
                 var target_name = util.getOriginalName($target[0]);
