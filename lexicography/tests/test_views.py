@@ -32,6 +32,7 @@ class ViewsTestCase(TransactionWebTest):
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
+        self.noperm = user_model.objects.get(username="noperm")
 
     def assertSameDBRecord(self, a, b):
         self.assertEqual(type(a), type(b))
@@ -340,6 +341,14 @@ class ViewsTestCase(TransactionWebTest):
                          "number of entries after save")
         self.assertEqual(Entry.objects.get(headword='Glerbl').is_locked(),
                          self.foo, "new entry locked by correct user")
+
+    def test_new_without_permissions(self):
+        response = self.app.get(reverse("lexicography_main"),
+                                user=self.noperm)
+        url = reverse('lexicography_entry_new')
+        self.assertNotIn(url, response,
+                         "the url for creating new articles should not "
+                         "be present")
 
     def test_concurrent_edit(self):
         """

@@ -4,7 +4,9 @@
 {% load liblex %}
 {% load bootstrap_tags %}
 {% block content %}
+{% if perms.lexicography.add_entry %}
 <a class="btn btn-default" href="{% url 'lexicography_entry_new' %}"/>New Article</a>
+{% endif %}
 <hr>
 <form action="search" method="get">{% csrf_token %}
   {{ form|as_bootstrap }}
