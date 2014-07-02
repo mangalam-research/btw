@@ -106,7 +106,7 @@ function set_language_handler(editor, data) {
     var range = editor.getDataSelectionRange();
 
     // We don't do anything if the range is collapsed.
-    if (range.collapsed)
+    if (!range || range.collapsed)
         return;
 
     if (!domutil.isWellFormedRange(range)) {
@@ -172,6 +172,11 @@ function getRemoveMixedModal(editor) {
 
 function remove_mixed_handler(editor, data) {
     var range = editor.getDataSelectionRange();
+
+    // Do nothing if we don't have a range.
+    if (!range || range.collapsed)
+        return;
+
     if (!domutil.isWellFormedRange(range)) {
         editor.straddling_modal.modal();
         throw new AbortTransformationException(

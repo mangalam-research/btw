@@ -61,7 +61,9 @@ Toolbar.prototype._click = log.wrap(function (ev) {
     var name = $(ev.delegateTarget).attr("name");
     var act = this._name_to_action[name];
     if (act instanceof btw_tr.SetTextLanguageTr) {
-        // Don't execute if there is no range.
+        // Don't execute if there is no range. Otherwise, wed will
+        // raise an error that there is no caret when
+        // fireTransformation is run.
         if (range && !range.collapsed)
             act.execute();
     }
