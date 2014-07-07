@@ -1451,6 +1451,14 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
 
     // Convert the tuples to actual menu items.
     var items = [];
+
+    // Put the documentation link first.
+    var doc_url = this._mode.documentationLinkFor(orig_name);
+    if (doc_url) {
+        var a = this._editor.makeDocumentationLink(doc_url);
+        items.push($("<li></li>").append(a)[0]);
+    }
+
     for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
         var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
         $a.mousedown(false);
