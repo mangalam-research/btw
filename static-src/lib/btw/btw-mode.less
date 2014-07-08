@@ -1,3 +1,5 @@
+@import "wed-vars.less";
+
 .wed-sidebar-panel {
     .nav-list {
         li {
@@ -27,8 +29,8 @@ div.wed-frame {
             &.head {
                 display: block;
                 font-weight: bold;
-                margin-top: 1em;
-                margin-bottom: 1em;
+                margin-bottom: 0.5em;
+                margin-left: 5px;
             }
 
             &.p {
@@ -80,16 +82,26 @@ div.wed-frame {
         }
 
 
+        @foreign-color: #DFCFAF;
         div.foreign {
-            background-color: #DFCFAF;
+            background-color: @foreign-color;
             font-style: italic;
             &[data-wed-xml---lang|="zh"] {
                 font-syle: normal;
             }
-            *:not(._gui){
+            *:not(._gui, ._owns_caret){
                 background-color: inherit;
             }
+
+            &._owns_caret {
+                .owns-caret-background(@foreign-color);
+            }
+
+            *._owns_caret {
+                .owns-caret-background(@foreign-color);
+            }
         }
+
 
         div._phantom._gui._ref_paren {
             background-color: #C0C0C0;

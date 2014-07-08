@@ -52,6 +52,7 @@ WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/standalone
 WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
 WED_HTML_TO_XML_PATH:=$(WED_BUILD)/lib/wed/html-to-xml.xsl
+WED_LESS_INC_PATH:=$(WED_BUILD)/lib/wed/less-inc/
 
 ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
@@ -104,11 +105,11 @@ $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less
+btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less node_modules/wed/standalone/lib/wed/less-inc/*.less
 
 .SECONDEXPANSION:
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)
-	node_modules/.bin/lessc $< $@
+	node_modules/.bin/lessc --include-path=$(WED_LESS_INC_PATH) $< $@
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
 
