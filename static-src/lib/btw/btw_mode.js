@@ -196,7 +196,6 @@ BTWMode.prototype.init = function (editor) {
         { // paragraph in a definition
             selector: jqutil.toDataSelector("btw:definition>p"),
             pass: {
-                "term": true,
                 "btw:sense-emphasis": true,
                 "ptr": true
             },
