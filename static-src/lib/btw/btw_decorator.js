@@ -1303,20 +1303,25 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
                     "'>" + $(el).text() +
                     "</a></li>");
 
+        // getContextualActions needs to operate on the data tree.
+        var data_parent = $parent.data("wed_mirror_node");
+
+        // btw:explanation is the element that gets the heading that
+        // marks the start of a sense. So we need to adjust.
+        if (orig_name === "btw:explanation") {
+            orig_name = "btw:subsense";
+            data_parent = $(data_parent).parent(
+                util.classFromOriginalName("btw:subsense"))[0];
+        }
+
         // Add contextmenu handlers depending on the type of parent
         // we are dealing with.
         var $a = $li.children("a");
         $li.attr('data-wed-for', orig_name);
 
-        // getContextualActions needs to operate on the data tree.
-        var data_parent = $parent.data("wed_mirror_node");
-
         if (orig_name === "btw:sense" ||
             orig_name === "btw:english-rendition" ||
-            orig_name === "btw:explanation") {
-            if (orig_name === "btw:explanation")
-                data_parent = $(data_parent).parent(
-                    util.classFromOriginalName("btw:subsense"))[0];
+            orig_name === "btw:subsense") {
             $a.on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
             $a.append(' <i class="icon icon-cog"></i>');
