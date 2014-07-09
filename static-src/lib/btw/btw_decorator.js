@@ -1322,6 +1322,8 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
             $a.append(' <i class="icon icon-cog"></i>');
             $el.find('.icon').remove();
             $el.append(' <i class="icon icon-cog"></i>');
+            // We must remove all previous handlers.
+            $el.off("wed-context-menu");
             $el.on("wed-context-menu", {node: data_parent},
                    this._navigationContextMenuHandler.bind(this));
             $el.attr("data-wed-custom-context-menu", true);
