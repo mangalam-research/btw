@@ -564,3 +564,37 @@ def step_impl(context):
     When the user hits the right arrow
     And the user types "blip"
     """)
+
+
+@when(ur'^the user deletes all (?P<what>btw:antonym|btw:cognate|'
+      ur'btw:conceptual-proximate) elements$')
+def step_impl(context, what):
+    driver = context.driver
+    util = context.util
+
+    label_class = "._" + what.replace(":", ur"\:") + "_label"
+
+    # Use util to wait until the elements are decorated...
+    antonym_lbls = util.find_elements(
+        (By.CSS_SELECTOR, r".__start_label" + label_class))
+
+    while len(antonym_lbls):
+        ActionChains(driver) \
+            .click(antonym_lbls[0]) \
+            .perform()
+
+        context.execute_steps(u"""
+        When the user brings up the context menu
+        And the user clicks the context menu option "Delete this element"
+        """)
+
+        # Use driver so that we don't get a timeout.
+        antonym_lbls = driver.find_elements_by_css_selector(
+            r".__start_label" + label_class)
+
+
+@then(ur'^a btw:none element is created$')
+def step_impl(context):
+    util = context.util
+
+    util.find_element((By.CSS_SELECTOR, r".btw\:none"))

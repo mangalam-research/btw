@@ -81,6 +81,21 @@ Scenario: inserting a conceptual proximate
   And the user clicks the context menu option "Create new btw:conceptual-proximate"
   Then a new btw:conceptual-proximate is created
 
+Scenario: deleting all antonyms
+  Given a document with one btw:antonyms with one btw:antonym and no btw:none
+  When the user deletes all btw:antonym elements
+  Then a btw:none element is created
+
+Scenario: deleting all cognates
+  Given a document with one btw:cognates with one btw:cognate and no btw:none
+  When the user deletes all btw:cognate elements
+  Then a btw:none element is created
+
+Scenario: deleting all conceptual proximates
+  Given a document with one btw:conceptual-proximate with one btw:conceptual-proximate and no btw:none
+  When the user deletes all btw:conceptual-proximate elements
+  Then a btw:none element is created
+
 Scenario: inserting an explanation by using a visible absence
   Given a document that has no btw:explanation
   When the user clicks on the visible absence for btw:explanation
