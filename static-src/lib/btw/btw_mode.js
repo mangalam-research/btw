@@ -439,12 +439,29 @@ BTWMode.prototype._assignLanguage = function (e) {
     return true;
 };
 
-BTWMode.prototype.makeDecorator = function () {
+BTWMode.prototype.makeDecorator = function (domlistener) {
     var obj = Object.create(BTWDecorator.prototype);
     // Make arg an array and add our extra argument(s).
     var args = Array.prototype.slice.call(arguments);
     args = [this, this._meta].concat(args);
     BTWDecorator.apply(obj, args);
+
+    // We attach to the domlistener object to perform some cleanup
+    // transformations.
+
+    domlistener.addHandler(
+        "children-changed",
+        jqutil.toDataSelector(
+            "btw:antonyms, btw:cognates, btw:conceptual-proximates"),
+        function addNone ($root, $added, $removed, $prev, $next, $el) {
+            var el = $el[0];
+            if (!$el.children("._real")[0]) {
+                this._editor.data_updater.insertBefore(
+                    $el.data("wed_mirror_node"),
+                    transformation.makeElement('btw:none')[0], null);
+            }
+        }.bind(this));
+
     return obj;
 };
 
