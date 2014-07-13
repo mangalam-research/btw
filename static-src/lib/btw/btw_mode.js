@@ -512,6 +512,17 @@ BTWMode.prototype.getContextualActions = function (type, tag,
     if (!(type instanceof Array))
         type = [type];
 
+    //
+    // Special case:
+    //
+    // None of the non-inline elements should be able to be unwrapped.
+    //
+    if (!this._meta.isInline(container)) {
+        var unwrap = type.indexOf("unwrap");
+        if (unwrap !== -1)
+            type.splice(unwrap, 1);
+    }
+
     var ret = [];
     filter_loop:
     for(var i = 0; i < this.transformation_filters.length; ++i) {
