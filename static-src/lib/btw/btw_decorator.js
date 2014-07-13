@@ -822,21 +822,18 @@ BTWDecorator.prototype.explanationDecorator = function ($root, $el) {
     if ($subsense.length) {
         var refman = this._getSubsenseRefman($el[0]);
         label = refman.idToSublabel($subsense.attr("id"));
-    }
-    else {
-        var $sense = $el.parent(util.classFromOriginalName("btw:sense"));
-        label = this._sense_refman.idToLabel($sense.attr("id"));
-    }
-    this._gui_updater.removeNodeNF($el.children("._explanation_number")[0]);
+        this._gui_updater.removeNodeNF(
+            $el.children("._explanation_number")[0]);
 
-    // We want to insert it after the start label.
-    var $start = $el.children(".__start_label");
-    this._gui_updater.insertBefore(
-        $el[0],
-        $("<div class='_phantom _decoration_text _explanation_number " +
-          "_start_wrapper'>" + label + ". </div>")[0],
-        $start[0] ? $start[0].nextSibling : null);
+        // We want to insert it after the start label.
+        var $start = $el.children(".__start_label");
+        this._gui_updater.insertBefore(
+            $el[0],
+            $("<div class='_phantom _decoration_text _explanation_number " +
+              "_start_wrapper'>" + label + ". </div>")[0],
+            $start[0] ? $start[0].nextSibling : null);
 
+    }
     this.sectionHeadingDecorator($root, $el, this._gui_updater);
 };
 
