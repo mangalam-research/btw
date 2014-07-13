@@ -1309,9 +1309,12 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
         // btw:explanation is the element that gets the heading that
         // marks the start of a sense. So we need to adjust.
         if (orig_name === "btw:explanation") {
-            orig_name = "btw:subsense";
-            data_parent = $(data_parent).parent(
+            var parent_subsense = $(data_parent).parent(
                 util.classFromOriginalName("btw:subsense"))[0];
+            if (parent_subsense) {
+                orig_name = "btw:subsense";
+                data_parent = parent_subsense;
+            }
         }
 
         // Add contextmenu handlers depending on the type of parent
