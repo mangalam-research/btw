@@ -95,8 +95,7 @@ function BTWDecorator(mode, meta) {
         heading: "antonyms"
     }, {
         selector: "btw:cognates",
-        heading: "cognates related to sense",
-        label_f: this._bound_getSenseLabel
+        heading: "cognates"
     }, {
         selector: "btw:conceptual-proximates",
         heading: "conceptual proximates"
