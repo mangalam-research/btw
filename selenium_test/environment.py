@@ -117,10 +117,11 @@ def after_all(context):
 
 def before_scenario(context, scenario):
     driver = context.driver
-    util = context.util
 
     driver.set_window_size(context.initial_window_size["width"],
                            context.initial_window_size["height"])
+    driver.set_window_position(0, 0)
+    context.initial_window_handle = driver.current_window_handle
 
     matching_funcs = set(m.func for m in
                          [step_registry.registry.find_match(s) for s
@@ -155,6 +156,14 @@ def before_scenario(context, scenario):
 
 def after_scenario(context, _scenario):
     driver = context.driver
+
+    # Close all extra tabs.
+    for handle in driver.window_handles:
+        if handle != context.initial_window_handle:
+            driver.switch_to_window(handle)
+            driver.close()
+    driver.switch_to_window(context.initial_window_handle)
+
     # Reset the server between scenarios.
     with open(context.server_write_fifo, 'w') as fifo:
         fifo.write("restart\n")
