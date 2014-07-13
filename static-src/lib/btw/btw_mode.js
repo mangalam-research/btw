@@ -355,7 +355,7 @@ BTWMode.prototype.init = function (editor) {
         },
         { selector: util.classFromOriginalName("foreign"),
           pass: {
-              "foreign": ["delete-parent"]
+              "foreign": ["delete-parent", "unwrap"]
           }
         },
         { selector: jqutil.toDataSelector("btw:antonyms>btw:none"),
@@ -547,21 +547,6 @@ BTWMode.prototype.getContextualActions = function (type, tag,
 
 BTWMode.prototype.getStylesheets = function () {
     return [require.toUrl("./btw-mode.css")];
-};
-
-BTWMode.prototype.makePlaceholderFor = function (el) {
-    var name = util.getOriginalName(el);
-    var ret;
-
-    switch(name) {
-    case "term":
-        ret = domutil.makePlaceholder("term");
-        break;
-    default:
-        ret = Mode.prototype.makePlaceholderFor.call(this, el);
-    }
-
-    return ret;
 };
 
 exports.Mode = BTWMode;
