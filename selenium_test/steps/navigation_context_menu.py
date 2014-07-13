@@ -6,6 +6,7 @@ from nose.tools import assert_equal  # pylint: disable=E0611
 from behave import then, when, given, step_matcher  # pylint: disable=E0611
 
 import selenic
+import wedutil
 
 
 @given('that a navigation context menu is open')
@@ -108,3 +109,17 @@ def step_impl(context, item):
         """, item)
 
     util.wait(cond)
+
+
+@then(u'the heading for the first btw:explanation element is not '
+      'actionable')
+def step_impl(context):
+    util = context.util
+
+    heading = util.find_element((By.CSS_SELECTOR,
+                                 ur".btw\:explanation>.head"))
+
+    # This is necessary to prevent the next test form happening too early.
+    wedutil.wait_for_first_validation_complete(util)
+    assert_equal(
+        len(heading.find_elements_by_css_selector("i")), 0)
