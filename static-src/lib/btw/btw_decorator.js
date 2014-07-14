@@ -1434,27 +1434,6 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
             tuples.push([act, data, act.getLabelFor(data)]);
         });
 
-    // Senses get an additional menu item to insert a subsense.
-    if (orig_name === "btw:sense" &&
-        $(node).children(util.classFromOriginalName("btw:subsense")).length ===
-        0) {
-        // We want to know where "btw:subsense" is valid.
-        var ename = this._mode._resolver.resolveName("btw:subsense");
-        var locations = this._editor.validator.possibleWhere(
-            node,
-            new validate.Event("enterStartTag", ename.ns, ename.name));
-
-        data = {element_name: "btw:subsense",
-                move_caret_to: makeDLoc(this._editor.data_root, node,
-                                        locations[0])};
-        // We purposely don't use getContextualActions.
-        this._mode._tr.getTagTransformations(
-            "insert", "btw:subsense").forEach(
-                function (act) {
-                tuples.push([act, data, act.getLabelFor(data)]);
-            });
-    }
-
     // Convert the tuples to actual menu items.
     var items = [];
 
