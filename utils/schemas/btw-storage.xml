@@ -176,7 +176,10 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>One sense for a lemma. A sense may contain multiple
-          subsenses.</desc>
+          subsenses. If it is the case, then the subsenses each have
+          their own expalantion and citations but the sense itself
+          does not. If a sense does not contain subsenses, then it has
+          its own explanation and citations.</desc>
           <content>
             <rng:ref name="btw_english-renditions"/>
             <rng:choice>
