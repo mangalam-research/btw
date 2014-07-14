@@ -455,6 +455,19 @@ BTWDecorator.prototype.refreshElement = function ($root, $el) {
 
     if (!skip_default)
         this.elementDecorator($root, $el);
+
+    //
+    // This mode makes the validator work while it is decorating the
+    // GUI tree. Therefore, the position of errors *can* be erroneous
+    // when these errors are generated while the GUI tree is being
+    // decorated. So we need to restart the validation to fix the
+    // erroneous error markers.
+    //
+    // We want to do it only if there *are* validation errors in this
+    // element.
+    //
+    if ($el.children(".wed-validation-error"))
+        this._editor.validator.restartAt($el.data("wed-mirror-node"));
 };
 
 BTWDecorator.prototype.elementDecorator = function ($root, $el) {
