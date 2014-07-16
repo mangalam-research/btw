@@ -14,8 +14,6 @@ urlpatterns = patterns(
         name='lexicography_handle_update'),
     url(r'^handle/(?P<handle_or_entry_id>.+)/save$', 'handle_save',
         name='lexicography_handle_save'),
-    url(r'^entry/(?P<entry_id>\d+)/raw_update$', 'entry_raw_update',
-        name="lexicography_entry_rawupdate"),
     url(r'^change/(?P<change_id>\d+)/revert$', 'change_revert',
         name="lexicography_change_revert"),
 

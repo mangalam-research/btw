@@ -1,18 +1,22 @@
 from django.conf import settings
 from django.utils.html import escape, mark_safe
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.contrib.admin.templatetags.admin_modify import register, submit_row
+from django.utils.translation import ugettext as _
+from django.utils.encoding import force_text
+from django.http import HttpResponseRedirect
 
 from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
     OtherAuthority, Authority, EntryLock, Handle
-from .xml import storage_to_editable, XMLTree
+from .xml import storage_to_editable, editable_to_storage, XMLTree
 from .views import try_updating_entry
 
 
@@ -25,9 +29,9 @@ def make_link_method(field_name, display_name=None):
         # pylint: disable-msg=W0212
         model_name = field._meta.model_name
         return mark_safe(u'<a href="%s">%s</a>' %
-                         (urlresolvers.reverse("admin:lexicography_" +
-                                               model_name + "_change",
-                                               args=(field, )),
+                         (reverse("admin:lexicography_" +
+                                  model_name + "_change",
+                                  args=(field, )),
                           escape(str(field))))
     method.allow_tags = True
     method.short_description = display_name
@@ -42,19 +46,21 @@ class EntryAdmin(admin.ModelAdmin):
 
     def raw_edit(self, obj):
         return mark_safe('<a href="%s">Edit raw XML</a>' %
-                         (urlresolvers.reverse('lexicography_entry_rawupdate',
-                                               args=(obj.id, ))))
+                         (reverse('admin:lexicography_entry_rawupdate',
+                                  args=(obj.id, ))))
 
     def get_urls(self):
         return [
-            url(r'^add_raw/$', self.entry_raw_new,
-                name='admin_lexicography_entry_rawnew'),
+            url(r'^add_raw/$', self.raw_new,
+                name='lexicography_entry_rawnew'),
+            url(r'^(?P<entry_id>\d+)/raw_update$', self.raw_update,
+                name="lexicography_entry_rawupdate")
         ] + \
             super(EntryAdmin, self).get_urls()
 
     @method_decorator(login_required)
     @method_decorator(require_http_methods(["GET", "POST"]))
-    def entry_raw_new(self, request):
+    def raw_new(self, request):
         if request.method == 'POST':
             form = RawSaveForm(request.POST)
             if form.is_valid():
@@ -70,14 +76,86 @@ class EntryAdmin(admin.ModelAdmin):
                 try_updating_entry(request, entry, chunk, xmltree,
                                    Entry.CREATE, Entry.MANUAL)
                 release_entry_lock(entry, request.user)
+                return HttpResponseRedirect(
+                    reverse('admin:lexicography_entry_changelist'))
         else:
             form = RawSaveForm()
 
-        ret = render(request, 'lexicography/raw.html', {
-            'page_title': settings.BTW_SITE_NAME + " | Lexicography | New ",
+            opts = self.model._meta
+            return self.render_raw_form(
+                request, form,
+                _('Add %s') % force_text(opts.verbose_name))
+
+    @method_decorator(login_required)
+    @method_decorator(require_http_methods(["GET", "POST"]))
+    @method_decorator(entry_lock_required)
+    def raw_update(self, request, entry_id):
+        entry = Entry.objects.get(id=entry_id)
+        if request.method == 'POST':
+            form = RawSaveForm(request.POST)
+            if form.is_valid():
+                chunk = form.save(commit=False)
+
+                # If it was not already entered in the editable format, then we
+                # need to convert it.
+                if not form.cleaned_data['editable_format']:
+                    chunk.data = storage_to_editable(chunk.data)
+                xmltree = XMLTree(chunk.data)
+                try_updating_entry(
+                    request, entry, chunk, xmltree, Entry.UPDATE,
+                    Entry.MANUAL)
+                release_entry_lock(entry, request.user)
+                return HttpResponseRedirect(
+                    reverse('admin:lexicography_entry_changelist'))
+
+        else:
+            instance = entry.c_hash
+            tmp = Chunk()
+            tmp.data = editable_to_storage(instance.data)
+            form = RawSaveForm(instance=tmp)
+
+            opts = self.model._meta
+            return self.render_raw_form(
+                request, form, _('Change %s') % force_text(opts.verbose_name),
+                entry)
+
+    def render_raw_form(self, request, form, title, entry=None):
+        opts = self.model._meta
+        return render(request, 'admin/lexicography/entry/raw.html', {
+            'title': title,
             'form': form,
+            'opts': opts,
+            'app_label': opts.app_label,
+            'change': True,
+            'is_popup': False,
+            'save_as': False,
+            'has_add_permission': self.has_add_permission(request),
+            'has_change_permission':
+            self.has_change_permission(request, entry) if entry else False,
+            'has_delete_permission':
+            self.has_delete_permission(request, entry) if entry else False,
+            'add': False,
+            'show_save_and_add_another': False,
+            'show_save_and_continue': False,
+            'show_delete': False
         })
-        return ret
+
+
+#
+# What this rigmarole does is allow us to turn off the two save
+# buttons by setting a context when using ``render``. Without this,
+# the context given to ``render`` has no effect at all.
+#
+
+@register.inclusion_tag('admin/submit_line.html', takes_context=True)
+def my_submit_row(context):
+    ctx = submit_row(context)  # Get a new context from the original.
+
+    # Override on the basis of what the passed context contains...
+    for name in ('show_save_and_add_another', 'show_save_and_continue'):
+        ctx[name] = context.get(name, ctx[name])
+
+    return ctx
 
 
 class ChangeRecordAdmin(admin.ModelAdmin):
@@ -97,12 +175,13 @@ class ChangeRecordAdmin(admin.ModelAdmin):
     def revert(self, obj):
         return mark_safe(('<a class="lexicography-revert" href="%s">'
                           'Revert entry to this version</a>') %
-                         (urlresolvers.reverse('lexicography_change_revert',
-                                               args=(obj.id, ))))
+                         (reverse('lexicography_change_revert',
+                                  args=(obj.id, ))))
 
 
 class EntryLockAdmin(admin.ModelAdmin):
-    list_display = ('entry', 'owner', 'datetime')
+    list_display = ('entry', 'owner', 'expirable', 'datetime')
+    list_filter = ('owner', )
 
 
 class HandleAdmin(admin.ModelAdmin):

@@ -1,13 +1,12 @@
-{% extends "lexicography/base.html" %}
+{% extends "admin/change_form.html" %}
 {% block extrahead %}
 {{ form.media }}
 {{ block.super }}
 {% endblock %}
-{% block content %}
+{% block field_sets %}
 <form id="form" action="" method="post">{% csrf_token %}
 <table>
 {{ form }}
 </table>
-<input type="submit" value="Submit" />
 </form>
 {% endblock %}

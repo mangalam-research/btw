@@ -34,9 +34,8 @@ from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
-from .xml import storage_to_editable, editable_to_storage, XMLTree, \
-    set_authority, xhtml_to_xml
-from .forms import SearchForm, RawSaveForm, SaveForm
+from .xml import storage_to_editable, XMLTree, set_authority, xhtml_to_xml
+from .forms import SearchForm, SaveForm
 
 logger = logging.getLogger("lexicography")
 
@@ -147,37 +146,6 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
             return False
         update_entry(request, entry, chunk, xmltree, ctype, subtype)
     return True
-
-
-@login_required
-@require_http_methods(["GET", "POST"])
-@entry_lock_required
-def entry_raw_update(request, entry_id):
-    entry = Entry.objects.get(id=entry_id)
-    if request.method == 'POST':
-        form = RawSaveForm(request.POST)
-        if form.is_valid():
-            chunk = form.save(commit=False)
-
-            # If it was not already entered in the editable format, then we
-            # need to convert it.
-            if not form.cleaned_data['editable_format']:
-                chunk.data = storage_to_editable(chunk.data)
-            xmltree = XMLTree(chunk.data)
-            try_updating_entry(request, entry, chunk, xmltree, Entry.UPDATE,
-                               Entry.MANUAL)
-            release_entry_lock(entry, request.user)
-    else:
-        instance = entry.c_hash
-        tmp = Chunk()
-        tmp.data = editable_to_storage(instance.data)
-        form = RawSaveForm(instance=tmp)
-
-    ret = render(request, 'lexicography/raw.html', {
-        'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
-        'form': form,
-    })
-    return ret
 
 
 @login_required
