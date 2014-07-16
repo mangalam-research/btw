@@ -104,8 +104,8 @@ class EntryLockTestCase(TransactionTestCase):
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
 
-    def test_is_expirable_expired(self):
+    def test_expirable_expired(self):
         entry = Entry.objects.get(id=1)
         lock = locking.try_acquiring_lock(entry, self.foo)
         lock._force_expiry()
-        self.assertTrue(lock.is_expirable())
+        self.assertTrue(lock.expirable)

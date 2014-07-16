@@ -81,7 +81,7 @@ class Entry(ChangeInfo):
         """
         if self.entrylock_set.exists():
             lock = self.entrylock_set.all()[0]
-            if not lock.is_expirable():
+            if not lock.expirable:
                 return lock.owner
 
         return None
@@ -170,7 +170,8 @@ class EntryLock(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     datetime = models.DateTimeField()
 
-    def is_expirable(self):
+    @property
+    def expirable(self):
         """
         :returns: ``True`` if the lock is expirable, ``False`` if not.
         :rtype: :class:`bool`

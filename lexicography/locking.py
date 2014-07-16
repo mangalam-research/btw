@@ -106,7 +106,7 @@ Expire the entry lock.
 :param user: The user updating the lock.
 :type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
 """
-    if lock.is_expirable():
+    if lock.expirable:
         lock_id = lock.id
         lock.delete()
         _report(lock, "expired", user, lock_id)
