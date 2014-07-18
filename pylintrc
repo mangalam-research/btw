@@ -19,8 +19,14 @@
 #     pass
 #
 # And it confuses pylint.
+#
+# - no-value-for-parameter is raised erroneously, see:
+#
+# https://bitbucket.org/logilab/pylint/issue/222/having-trouble-linting-schematics-models
+#
+# And reevaluate when new versions of pylint are released.
 
-disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter
 [REPORTS]
 include-ids=y
 [VARIABLES]
