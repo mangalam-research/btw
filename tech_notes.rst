@@ -789,5 +789,74 @@ The wed ID is derived from the data ID as follows:
 
 A data ID is assigned only if an element is hyperlinked.
 
+===================
+Management Commands
+===================
+
+transform
+=========
+
+This command is used to perform a batch transformation on all
+articles. This is a very powerfull tool but can severely damage your
+database if misused. It would be used, for instance, if there is a
+need to change the schema under which articles are stored and here is
+no plan for backward compatibility.
+
+.. warning:: This command has not been thorougly tested yet.
+
+The procedure to use it is:
+
+1. Kick all users out of the system and prevent them from logging in.
+
+2. Back up the database.
+
+3. Create a directory in which you'll put:
+
+  a. A ``before.rng`` file that contains the schema to which articles
+     must conform before the transformation.
+
+  b. An ``after.rng`` file that contains the schema to which articles
+     must conform after the transformation.
+
+  c. A ``transform.xsl`` file that contains the transformation to
+     apply. (XSLT version 2, please.)
+
+4. Test your transformation on some representative XML first.
+
+5. Run in ``noop`` mode::
+
+        $ ./manage.py transform --noop <path>
+
+   where ``<path>`` is the directory that contains the files above.
+
+6. Inspect the files in the ``log`` subdirectory created under
+   ``<path>``. Files under it are of this form:
+
+        - ``<hash>/before.xml``: XML before transformation.
+
+        - ``<hash>/after.xml``: XML after transformation.
+
+        - ``<hash>/BECAME_INVALID``: Indicates the chunk became
+          invalid after the transformation.
+
+   where ``<hash>`` is a chunk's original hash. In particular, search
+   for ``BECAME_INVALID`` files, which indicate that a chunk that was
+   valid *before* the transformation became invalid *after*, which
+   means your transformation was incorrect.
+
+7. You may also wish to perform ``diff`` between the ``before.xml``
+   and ``after.xml`` of the chunks to check for proper operation.
+
+8. Once you are satisfied, move your old logs somewhere else and
+   reissue the same command you did earlier but without
+   ``--noop``. **This will actually modify the database and can only
+   be reversed by restoring from a database backup.**
+
+.. warning:: There is no attempt to make the overall operation atomic
+             because it would be quite costly. If an invocation of
+             ``./manage.py transform`` without ``--noop`` fails, then
+             the database is left in an intermediary state. Recover by
+             performing a database restore.
+
 ..  LocalWords:  uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth
