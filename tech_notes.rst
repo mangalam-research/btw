@@ -2,8 +2,6 @@
  TODO
 ======
 
-* A module to assign genres to texts.
-
 * When BTW has been used to produce articles for a bit, evaluate how
   to detect near-synonyms. See "Semantic fields for
   BTW2013_ldd_Reply".
