@@ -1,14 +1,15 @@
+import hashlib
+import datetime
+
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.contrib.auth.models import Group
-from lib import util
 from django.utils.decorators import method_decorator
 from django.db import transaction
 
-import hashlib
-import datetime
+from lib import util
 
 
 class ChangeInfo(models.Model):
