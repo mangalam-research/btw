@@ -60,6 +60,12 @@ def run_xsltproc(xsl_path, input_data):
         return ret
 
 
+def validate(rng_path, input_data):
+    with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
+        return subprocess.call(
+            ["xmllint", "--noout", "--relaxng", rng_path, tmpinput_path]) == 0
+
+
 def utcnow():
     """
 :returns: The date and time now with the timezone information set
