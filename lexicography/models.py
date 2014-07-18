@@ -59,7 +59,27 @@ class ChangeInfo(models.Model):
         return self.c_hash.c_hash
 
 
+class EntryManager(models.Manager):
+
+    def locked(self, qs=None):
+        """
+        :param qs: A query set from which to find the locked entries. May
+                   be ``None``, in which case all entries are searched.
+        :type qs: :class:`django.db.models.query import QuerySet`
+        :returns: A list of locked entries.
+        :rtype: :class:`list`
+        """
+
+        if qs is None:
+            # This should be faster than going through Entry.objects.all().
+            return [lock.entry for lock in EntryLock.objects.all() if not
+                    lock.expirable]
+
+        return [entry for entry in qs if entry.is_locked()]
+
+
 class Entry(ChangeInfo):
+    objects = EntryManager()
 
     class Meta(object):
         verbose_name_plural = "Entries"
