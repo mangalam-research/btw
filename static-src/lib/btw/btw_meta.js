@@ -47,12 +47,8 @@ BTWMeta.prototype.isInline = function (node) {
         return true;
     case "btw:none":
     case "btw:english-term":
+    case "btw:term":
         return false;
-    case "tei:term":
-        if ($(node.parentNode).is(jqutil.toDataSelector(
-            "btw:antonym, btw:cognate, btw:conceptual-proximate")))
-            return false;
-        /* falls through */
     default:
         return TEIMeta.prototype.isInline.call(this, node);
     }

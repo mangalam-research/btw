@@ -146,6 +146,7 @@ function BTWDecorator(mode, meta) {
         "btw:cognates",
         "btw:conceptual-proximates",
         "btw:other-citations",
+        "btw:term",
         "btw:none"
     ].forEach(function (x) {
         this._label_levels[x] = 2;

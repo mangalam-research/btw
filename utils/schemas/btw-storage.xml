@@ -308,11 +308,11 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>This element records an antonym of a sense. The
-          antonym itself is recorded in <gi>term</gi>. Supporting
+          antonym itself is recorded in <gi>btw:term</gi>. Supporting
           citations are recorded in <gi>btw:citations</gi> and</desc>
           <content>
             <rng:group>
-              <rng:ref name="term"/>
+              <rng:ref name="btw_term"/>
               <rng:ref name="btw_citations"/>
             </rng:group>
           </content>
@@ -336,11 +336,11 @@
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
           <desc>This element records a cognate of a sense. The cognate
-          itself is recorded in <gi>term</gi>. Supporting citations
+          itself is recorded in <gi>btw:term</gi>. Supporting citations
           are recorded in <gi>btw:citations</gi>, as appropriate.</desc>
           <content>
             <rng:group>
-              <rng:ref name="term"/>
+              <rng:ref name="btw_term"/>
               <rng:ref name="btw_semantic-fields"/>
               <rng:ref name="btw_citations"/>
             </rng:group>
@@ -375,11 +375,11 @@
                      prefix="btw_">
           <desc>This element records a conceptual proximate of a
           sense. The cognate itself is recorded in
-          <gi>term</gi>. Supporting citations are recorded in
+          <gi>btw_term</gi>. Supporting citations are recorded in
           <gi>btw:citations</gi>.</desc>
           <content>
             <rng:group>
-              <rng:ref name="term"/>
+              <rng:ref name="btw_term"/>
               <rng:ref name="btw_citations"/>
             </rng:group>
           </content>
@@ -584,6 +584,25 @@
           </classes>
           <content>
             <rng:text/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="term"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>
+            A term in one of the classical languages. This is the term
+            regarding which the parent element of this element is
+            providing information.
+          </desc>
+          <content>
+            <rng:choice>
+              <rng:ref name="foreign"/>
+              <!-- In theory this should only contain
+                   foreign... however we need to be able to enter the
+                   text without having the foreign element yet. -->
+              <rng:text/>
+            </rng:choice>
           </content>
         </elementSpec>
 

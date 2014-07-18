@@ -379,6 +379,12 @@ BTWMode.prototype.init = function (editor) {
                 actions: [this.replace_none_with_conceptual_proximate] }
           ]
         },
+        {
+            selector: util.classFromOriginalName("btw:term"),
+            // We don't want to let anything go through because this
+            // can contain only text or a foreign element.
+            pass: {}
+        },
         { selector: jqutil.toDataSelector("*"),
           substitute: [
               { tag: "ref",
@@ -386,7 +392,7 @@ BTWMode.prototype.init = function (editor) {
                 actions: [ this.insert_bibl_ptr]
               }
           ]
-        }
+        },
     ];
 };
 
