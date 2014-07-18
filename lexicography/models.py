@@ -4,6 +4,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.contrib.auth.models import Group
 from lib import util
+from django.utils.decorators import method_decorator
+from django.db import transaction
 
 import hashlib
 import datetime
@@ -133,7 +135,34 @@ class ChangeRecord(ChangeInfo):
             str(self.datetime) + " " + (self.session or "")
 
 
+class ChunkManager(models.Manager):
+
+    @method_decorator(transaction.atomic)
+    def collect(self):
+        """
+        Garbage collects (i.e. deletes) all the chunks that are no longer
+        referenced by any Entry or ChangeRecord.
+
+        :returns: The chunks that were removed.
+        :rtype: class:`Chunk`
+        """
+        # A SQL DELETE will not delete anything if any of the records
+        # to be deleted are protected, so we retry until it works.
+        while True:
+            chunks = Chunk.objects.filter(
+                entry__isnull=True, changerecord__isnull=True)
+            try:
+                chunks.delete()
+                break
+            except models.ProtectedError:
+                pass
+
+        return chunks
+
+
 class Chunk(models.Model):
+    objects = ChunkManager()
+
     c_hash = models.CharField(max_length=40, primary_key=True)
     is_normal = models.BooleanField(default=True)
     data = models.TextField()

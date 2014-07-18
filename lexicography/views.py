@@ -456,10 +456,7 @@ def change_revert(request, change_id):
 @require_POST
 @permission_required('lexicography.garbage_collect')
 def collect(request):
-    # Find all chunks which are no longer referenced
-    chunks = Chunk.objects.select_for_update().filter(
-        entry__isnull=True, changerecord__isnull=True)
-    chunks.delete()
+    chunks = Chunk.objects.collect()
     resp = "<br>".join(str(c) for c in chunks)
     return HttpResponse(resp + "<br>collected.")
 
