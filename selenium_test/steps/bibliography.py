@@ -51,13 +51,15 @@ def step_impl(context, which=None):
             .context_click(ph) \
             .perform()
     else:
-        ph = driver.find_element_by_css_selector(
-            r".__start_label._btw\:cit_label")
-
-        ActionChains(driver) \
-            .click(ph) \
-            .send_keys([Keys.ARROW_RIGHT] * 2) \
-            .perform()
+        # By doing it this way, we avoid being thrown off by possible
+        # error markers that could show in front of it.
+        driver.execute_script(ur"""
+        var $text = jQuery(".btw\\:cit").contents().filter(function () {
+            return this.nodeType === Node.TEXT_NODE;
+        });
+        var text_node = $text[0];
+        wed_editor.setGUICaret(text_node, 0);
+        """)
 
         util.ctrl_equivalent_x("/")
 
