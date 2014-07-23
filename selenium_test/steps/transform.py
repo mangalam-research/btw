@@ -227,7 +227,7 @@ def step_impl(context, what, inside=None):
 
     var selector = "._va_instantiator:contains('Create new " + what + "')";
     if (inside)
-        selector = "." + inside.replace(":", "\\:") + " " + inside;
+        selector = "." + inside.replace(":", "\\:") + " " + selector;
 
     return jQuery(selector)[0];
     """, what, inside)

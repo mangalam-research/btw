@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from nose.tools import assert_equal, assert_true
 
 from selenium_test import btw_util
+import wedutil
 
 step_matcher('re')
 
@@ -177,7 +178,7 @@ def step_impl(context, label, tooltip):
     context.util.wait(cond)
 
 __CHOICE_TO_SELECTOR = {
-    u"in the last btw:citations": r".btw\:citations ._placeholder",
+    u"in the last btw:citations": r".btw\:citations>._placeholder",
     u"on the start label of the first example":
     r".__start_label._btw\:example_label, "
     r".__start_label._btw\:example-explained_label"
@@ -189,6 +190,7 @@ __CHOICE_TO_SELECTOR = {
       ur"first example)")
 def step_impl(context, choice):
     driver = context.driver
+    util = context.util
 
     selector = __CHOICE_TO_SELECTOR[choice]
 
@@ -198,9 +200,18 @@ def step_impl(context, choice):
     if choice.find("last") != -1:
         index = -1
 
-    ActionChains(driver) \
-        .context_click(el[index]) \
-        .perform()
+    # Earlier code would use context_click but that was fragile due to
+    # the asynchronous nature of the editor. In effect, Selenium could
+    # "miss" the target element if decorations were added while it was
+    # trying to click, and the click would end up in the wrong place.
+    while True:
+        ActionChains(driver) \
+            .click(el[index]) \
+            .perform()
+
+        if wedutil.is_caret_in(util, el[index]):
+            util.ctrl_equivalent_x("/")
+            break
 
 
 @when(ur"^the user deletes the first example")

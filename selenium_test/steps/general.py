@@ -205,6 +205,7 @@ WHAT_TO_TITLE = {
     "conceptual proximate with citations",
     u"senses, subsenses and hyperlinks": "senses, subsenses and hyperlinks",
     u"a sense with explanation": "sense with explanation",
+    u"a sense with citations": "sense with citations",
     u"one btw:antonyms with one btw:antonym and no btw:none":
     "contrastive elements with one child",
     u"one btw:cognates with one btw:cognate and no btw:none":

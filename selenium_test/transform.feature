@@ -106,29 +106,19 @@ Scenario: inserting a subsense by using a visible absence
   And there is no visible absence for btw:subsense
 
 Scenario: inserting citations in a sense by using a visible absence
-  Given a document that has no btw:explanation
-  When the user clicks on the visible absence for btw:explanation
-  Then a new btw:explanation is created
-  And there is a visible absence for btw:citations
+  Given a document with a sense with explanation
   When the user clicks on the visible absence for btw:citations
   Then a new btw:citations is created
   And there is no visible absence for btw:citations
 
 Scenario: creating a btw:example in a sense by using a visible absence
-  Given a document that has no btw:explanation
-  When the user clicks on the visible absence for btw:explanation
-  Then a new btw:explanation is created
-  When the user clicks on the visible absence for btw:citations
-  Then a new btw:citations is created
-  And there is a visible absence for btw:example
+  Given a document with a sense with citations
   When the user clicks on the visible absence for btw:example
   Then a new btw:example is created
   And there is no ref
 
 Scenario: creating a btw:example in a subsense by using a visible absence
-  Given a document that has no btw:subsense
-  When the user clicks on the visible absence for btw:subsense
-  Then a new btw:subsense is created
+  Given a document with senses and subsenses
   When the user clicks on the visible absence for btw:example in btw:subsense
   Then a new btw:example is created in btw:subsense
   And there is no ref
