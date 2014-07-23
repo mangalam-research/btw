@@ -39,7 +39,7 @@ def step_impl(context):
 def step_impl(context, choice):
     driver = context.driver
 
-    context.caret_position_before_arrow = wedutil.caret_pos(driver)
+    context.caret_position_before_arrow = wedutil.caret_screen_pos(driver)
 
     key = Keys.ARROW_RIGHT if choice == "right" else Keys.ARROW_LEFT
     ActionChains(driver)\
