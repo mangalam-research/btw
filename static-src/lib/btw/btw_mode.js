@@ -219,21 +219,21 @@ BTWMode.prototype.init = function (editor) {
                actions: [this.insert_example_ptr_action] }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:citations foreign"),
-          pass: {
-              "foreign": ["delete-parent", "unwrap"],
-              "btw:lemma-instance": true
-          }
-        },
-        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:tr" +
+        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:tr, " +
                                           "btw:subsense>btw:citations btw:tr"),
           pass: {
-              "btw:tr": ["delete-parent"],
+              "btw:lemma-instance": true,
+              "p": true,
+              "lg": true
+          }
+        },
+        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:cit, " +
+                                          "btw:subsense>btw:citations btw:cit"),
+          pass: {
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
-              "ref": true,
-              "btw:cit": true
+              "ref": true
           },
           substitute: [
               { tag: "ref",
@@ -242,10 +242,9 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:cit" +
-                                          "btw:subsense>btw:citations btw:cit"),
+        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:cit"),
           pass: {
-              "btw:cit": ["delete-parent"],
+              "btw:antonym-instance": true,
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
@@ -260,24 +259,23 @@ BTWMode.prototype.init = function (editor) {
         },
         { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:tr"),
           pass: {
-              "btw:tr": ["delete-parent"],
               "btw:antonym-instance": true,
+              "btw:lemma-instance": true,
               "p": true,
-              "lg": true,
-              "ref": true,
-              "btw:cit": true
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
+              "lg": true
+          }
         },
-        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:cit"),
+        { selector: jqutil.toDataSelector("btw:antonym>btw:citations foreign"),
           pass: {
-              "btw:cit": ["delete-parent"],
+              "foreign": ["delete-parent", "unwrap"],
               "btw:antonym-instance": true,
+              "btw:lemma-instance": true
+          }
+        },
+        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:cit"),
+          pass: {
+              "btw:cognate-instance": true,
+              "btw:lemma-instance": true,
               "p": true,
               "lg": true,
               "ref": true
@@ -291,24 +289,24 @@ BTWMode.prototype.init = function (editor) {
         },
         { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:tr"),
           pass: {
-              "btw:tr": ["delete-parent"],
               "btw:cognate-instance": true,
+              "btw:lemma-instance": true,
               "p": true,
-              "lg": true,
-              "ref": true,
-              "btw:cit": true
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
+              "lg": true
+          }
         },
-        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:cit"),
+        { selector: jqutil.toDataSelector("btw:cognate>btw:citations foreign"),
           pass: {
-              "btw:cit": ["delete-parent"],
+              "foreign": ["delete-parent", "unwrap"],
               "btw:cognate-instance": true,
+              "btw:lemma-instance": true
+          }
+        },
+        { selector: jqutil.toDataSelector(
+            "btw:conceptual-proximate>btw:citations btw:cit"),
+          pass: {
+              "btw:conceptual-proximate-instance": true,
+              "btw:lemma-instance": true,
               "p": true,
               "lg": true,
               "ref": true
@@ -323,35 +321,25 @@ BTWMode.prototype.init = function (editor) {
         { selector: jqutil.toDataSelector(
             "btw:conceptual-proximate>btw:citations btw:tr"),
           pass: {
-              "btw:tr": ["delete-parent"],
               "btw:conceptual-proximate-instance": true,
+              "btw:lemma-instance": true,
               "p": true,
-              "lg": true,
-              "ref": true,
-              "btw:cit": true
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
+              "lg": true
+          }
         },
         { selector: jqutil.toDataSelector(
-            "btw:conceptual-proximate>btw:citations btw:cit"),
+            "btw:conceptual-proximate>btw:citations foreign"),
           pass: {
-              "btw:cit": ["delete-parent"],
+              "foreign": ["delete-parent", "unwrap"],
               "btw:conceptual-proximate-instance": true,
-              "p": true,
-              "lg": true,
-              "ref": true
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
+              "btw:lemma-instance": true
+          }
+        },
+        { selector: jqutil.toDataSelector("btw:citations foreign"),
+          pass: {
+              "foreign": ["delete-parent", "unwrap"],
+              "btw:lemma-instance": true
+          }
         },
         { selector: util.classFromOriginalName("foreign"),
           pass: {
@@ -384,6 +372,12 @@ BTWMode.prototype.init = function (editor) {
             // We don't want to let anything go through because this
             // can contain only text or a foreign element.
             pass: {}
+        },
+        {
+            selector: util.classFromOriginalName("lg"),
+            pass: {
+                "l": true
+            }
         },
         { selector: jqutil.toDataSelector("*"),
           substitute: [
