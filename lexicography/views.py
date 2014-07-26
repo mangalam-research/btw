@@ -253,7 +253,23 @@ def get_etag(request, entry_id, handle):
     return Entry.objects.get(id=entry_id).etag
 
 
-@login_required
+def save_login_required(view):
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return view(request, *args, **kwargs)
+
+        messages = [{'type': 'save_transient_error',
+                     'msg': 'Save failed because you are not logged in. '
+                     'Perhaps you logged out from BTW in another tab?'}]
+
+        resp = json.dumps({'messages': messages}, ensure_ascii=False)
+        return HttpResponse(resp, content_type="application/json")
+
+    return wrapper
+
+
+@save_login_required
 @require_POST
 @uses_handle_or_entry_id
 @etag(get_etag)

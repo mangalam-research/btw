@@ -1,6 +1,7 @@
 from django_webtest import TransactionWebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+import cookielib as http_cookiejar
 
 import os
 import datetime
@@ -484,6 +485,55 @@ class ViewsTestCase(TransactionWebTest):
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_fatal_error", messages)
+        # Check that no new data was recorded
+        self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
+                         nr_changes,
+                         "no change to the entry")
+
+        self.assertEqual(nr_chunks, Chunk.objects.all().count())
+
+    def test_save_not_logged_in(self):
+        """
+        Tests someone trying to save while not logged in.
+        """
+        response, entry = self.open_abcd('foo')
+
+        nr_changes = ChangeRecord.objects.filter(entry=entry).count()
+        nr_chunks = Chunk.objects.all().count()
+
+        # The rigmarole with renew_app and csrftoken is so that we can
+        # simulate that the user has logged out. renew_app makes it so
+        # that the next request is not with a logged in 'foo'
+        # user. The csrftoken manipulation is so that we pass the
+        # csrftoken check.
+        csrftoken = self.app.cookies['csrftoken']
+        self.renew_app()
+        cookie = http_cookiejar.Cookie(
+            version=0,
+            name='csrftoken',
+            value=csrftoken,
+            port=None,
+            port_specified=False,
+            domain='.localhost',
+            domain_specified=True,
+            domain_initial_dot=False,
+            path='/',
+            path_specified=True,
+            secure=False,
+            expires=None,
+            discard=False,
+            comment=None,
+            comment_url=None,
+            rest=None
+        )
+        self.app.cookiejar.set_cookie(cookie)
+        messages, _ = self.save(response, None)
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_transient_error", messages)
+        self.assertEqual(messages["save_transient_error"][0]['msg'],
+                         'Save failed because you are not logged in. '
+                         'Perhaps you logged out from BTW in another tab?')
         # Check that no new data was recorded
         self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
                          nr_changes,
