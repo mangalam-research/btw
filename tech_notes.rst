@@ -71,7 +71,7 @@ adapt the instructions so as to not use virtualenv.
     $ apt-mark hold uwsgi
 
    It is **strongly** sugested to have apticron installed so that you
-   get a warning once a new version of uwsgi is installed.
+   get a warning once a new version of uwsgi is available.
 
 4. Add this key to the list of keys recognized by ``apt`` so that you
    don't get security issues with installing tei::
@@ -90,10 +90,10 @@ adapt the instructions so as to not use virtualenv.
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
 
-The above is just a suggestion. If you are doing this for Mangalam,
-then you **must** consult the documentation on how to install a server
-and check the section named "FS Structure" to use the proper
-structure.
+The above directory is just a suggestion. If you are doing this for
+Mangalam, then you **must** consult the documentation on how to
+install a server and check the section named "FS Structure" to use the
+proper structure.
 
 7. Create the virtual environment for BTW::
 
@@ -293,7 +293,7 @@ Generally:
     [Upgrade anything that needs upgrading.]
     $ make
 
-See below for specific cases.
+See below for specific upgrade cases.
 
 0.0.2 to 0.1.0
 --------------
