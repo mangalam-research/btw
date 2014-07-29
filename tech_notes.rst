@@ -278,6 +278,34 @@ Run make::
 Upgrades
 --------
 
+Dealing with Logged-in Users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Before upgrading, consider the impact on currently logged in
+users. The following cases are possible:
+
+1. No database change: there is no need to put the server in
+   maintenance mode. Just upgrade the Python and Javascript code. If a
+   new version of the wed editor is needed, the users will get a
+   message asking to reload.
+
+2. Database change:
+
+   a. Establish a time at which the server will go into
+   maintenance mode, tell the users.
+
+   b. At the appointed time, set the nginx server configuration for
+   BTW to be in maintenance mode.
+
+   c. Use the ``logout`` management command to log all users out.
+
+   d. Perform the code upgrade as needed.
+
+   e. Get nginx out of maintenance mode.
+
+Upgrade Proper
+~~~~~~~~~~~~~~
+
 Generally:
 
 1. Run::
