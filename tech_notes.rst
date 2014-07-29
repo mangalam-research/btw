@@ -101,6 +101,16 @@ proper structure.
     $ pip install virtualenv
     $ virtualenv btw_env
 
+.. warning:: As of 07292014 the server over at ``tilaa.nl`` requires
+             that there be a file named ``/srv/www/btw.tilaa.nl``
+             which is a symlink to the ``/srv/www/<site>`` directory
+             above. This is because the address for BTW changed from
+             ``btw.tilaa.nl`` to ``btw.mangalamresearch.org`` (on
+             07292014). A virtual environment is not movable so the
+             symlink is there to keep the virtual environment
+             happy. One day, when a new environment is created, the
+             link can be removed.
+
 The Django Project
 ==================
 
