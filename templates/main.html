@@ -9,9 +9,11 @@
 <div class="row">
   <h3>Buddhist Translators Workbench</h3>
 
-  <p>Welcome to the Buddhist Translators Workbench. If you have an
-    account, please <a href="{% url 'login' %}">log in</a>.</p>
-
+  <p>Welcome to the Buddhist Translators Workbench.
+    {% if not user.is_authenticated %}
+    If you have an account, please <a href="{% url 'login' %}">log in</a>.
+    {% endif %}
+  </p>
   <div class="col-lg-12 well well-sm">
     <div class="col-lg-6">
       <p>
