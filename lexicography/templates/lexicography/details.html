@@ -1,7 +1,19 @@
 {% extends "lexicography/base.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+<link href="{% static "lib/wed/wed.css" %}" media="screen" rel="stylesheet" />
+<link href="{% static "lib/btw/btw-mode.css" %}" media="screen" rel="stylesheet" />
+{{ block.super }}
+<script>
+require(['btw/btw_view']);
+</script>
+{% endblock %}
 {% block content %}
-<!-- {% autoescape off %}
-{{ data }}
-{% endautoescape %} -->
-<p>Displaying articles is not yet supported. (You can edit them, just not display them as an end user would.)</p>
+<div class="wed-frame">
+  <div class="wed-document">
+    {% autoescape off %}
+    {{ data }}
+    {% endautoescape %}
+  </div>
+</div>
 {% endblock %}
