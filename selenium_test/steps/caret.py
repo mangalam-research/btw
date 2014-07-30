@@ -9,11 +9,14 @@ step_matcher('re')
 
 @when(r"^the user clicks on the btw:none element of (?P<parent>.*)$")
 def step_impl(context, parent):
+    util = context.util
 
     parent = "." + parent.replace(":", r"\:")
-    element = context.util.find_element((By.CSS_SELECTOR,
-                                         parent + r">.btw\:none"))
-    element.click()
+    element = util.find_element((By.CSS_SELECTOR, parent + r">.btw\:none"))
+
+    # Rendering can screw up our click... so check that it is where we
+    # want it.
+    wedutil.click_until_caret_in(util, element)
 
 
 @when(u"^the user clicks on the end label of the last foreign element$")

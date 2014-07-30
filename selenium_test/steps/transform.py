@@ -579,10 +579,7 @@ def step_impl(context, what):
         (By.CSS_SELECTOR, r".__start_label" + label_class))
 
     while len(antonym_lbls):
-        ActionChains(driver) \
-            .click(antonym_lbls[0]) \
-            .perform()
-
+        wedutil.click_until_caret_in(util, antonym_lbls[0])
         context.execute_steps(u"""
         When the user brings up the context menu
         And the user clicks the context menu option "Delete this element"

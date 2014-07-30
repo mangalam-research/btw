@@ -216,13 +216,14 @@ def step_impl(context, choice):
 
 @when(ur"^the user deletes the first example")
 def step_impl(context):
+    util = context.util
     driver = context.driver
 
     el = driver.find_element_by_css_selector(
         r".__start_label._btw\:example_label, "
         r".__start_label._btw\:example-explained_label")
-    el.click()
 
+    wedutil.click_until_caret_in(util, el)
     context.execute_steps(u"""
     When the user brings up the context menu
     And the user clicks the context menu option "Delete this element"

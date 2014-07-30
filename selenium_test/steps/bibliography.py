@@ -2,6 +2,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+import wedutil
 from behave import step_matcher
 
 step_matcher("re")
@@ -47,9 +48,8 @@ def step_impl(context, which=None):
         return found;
         """)
 
-        ActionChains(driver) \
-            .context_click(ph) \
-            .perform()
+        wedutil.click_until_caret_in(util, ph)
+        util.ctrl_equivalent_x("/")
     else:
         # By doing it this way, we avoid being thrown off by possible
         # error markers that could show in front of it.

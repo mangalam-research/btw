@@ -77,7 +77,7 @@ def before_all(context):
     # used.
     context.initial_window_size = {"width": 1020, "height": 580}
     try:
-        assert_true(driver.desired_capabilities.get("nativeEvents", False),
+        assert_true(driver.desired_capabilities["nativeEvents"],
                     "BTW's test suite require that native events be "
                     "available; you may have to use a different version of "
                     "your browser, one for which Selenium supports native "

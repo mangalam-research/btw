@@ -257,7 +257,10 @@ Scenario: creating a lemma-instance in a citation
   Given a document with a non-Pāli example
   And the document has no btw:lemma-instance
   When the user adds a reference to an item to the first example
-  And the user wraps the text "foo" in a btw:lemma-instance in btw:cit
+  # This step is important to ensure that the document is in a proper
+  # state before the next step is executed.
+  Then a new reference is inserted
+  When the user wraps the text "foo" in a btw:lemma-instance in btw:cit
   Then the text "foo" is wrapped in a btw:lemma-instance
 
 Scenario: creating a lemma-instance in a translation
@@ -271,7 +274,10 @@ Scenario: creating an antonym-instance in a citation
   Given a document with an antonym with citations
   And the document has no btw:antonym-instance
   When the user adds a reference to an item to the first example
-  And the user wraps the text "citation" in a btw:antonym-instance in btw:cit
+  # This step is important to ensure that the document is in a proper
+  # state before the next step is executed.
+  Then a new reference is inserted
+  When the user wraps the text "citation" in a btw:antonym-instance in btw:cit
   Then the text "citation" is wrapped in a btw:antonym-instance
 
 Scenario: creating an antonym-instance in a translation
@@ -284,7 +290,10 @@ Scenario: creating an cognate-instance in a citation
   Given a document with a cognate with citations
   And the document has no btw:cognate-instance
   When the user adds a reference to an item to the first example
-  And the user wraps the text "citation" in a btw:cognate-instance in btw:cit
+  # This step is important to ensure that the document is in a proper
+  # state before the next step is executed.
+  Then a new reference is inserted
+  When the user wraps the text "citation" in a btw:cognate-instance in btw:cit
   Then the text "citation" is wrapped in a btw:cognate-instance
 
 Scenario: creating an cognate-instance in a translation
@@ -297,7 +306,10 @@ Scenario: creating an conceptual proximate-instance in a citation
   Given a document with a conceptual proximate with citations
   And the document has no btw:conceptual-proximate-instance
   When the user adds a reference to an item to the first example
-  And the user wraps the text "citation" in a btw:conceptual-proximate-instance in btw:cit
+  # This step is important to ensure that the document is in a proper
+  # state before the next step is executed.
+  Then a new reference is inserted
+  When the user wraps the text "citation" in a btw:conceptual-proximate-instance in btw:cit
   Then the text "citation" is wrapped in a btw:conceptual-proximate-instance
 
 Scenario: creating an conceptual proximate-instance in a translation
