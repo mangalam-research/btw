@@ -110,6 +110,8 @@ def before_all(context):
         ["utils/start_nginx", context.server_write_fifo,
          context.server_read_fifo])
 
+    context.selenium_logs = os.environ.get("SELENIUM_LOGS", False)
+
 
 def after_all(context):
     cleanup(context, False)
@@ -186,14 +188,16 @@ def before_step(context, _step):
 
 def after_step(context, _step):
     driver = context.driver
-    logs = driver.execute_script("""
-    return window.selenium_log;
-    """)
-    if logs:
-        print
-        print "JavaScript log:"
-        print "\n".join(repr(x) for x in logs)
-        print
-        driver.execute_script("""
-        window.selenium_log = [];
+    # Perform this query only if SELENIUM_LOGS is on.
+    if context.selenium_logs:
+        logs = driver.execute_script("""
+        return window.selenium_log;
         """)
+        if logs:
+            print
+            print "JavaScript log:"
+            print "\n".join(repr(x) for x in logs)
+            print
+            driver.execute_script("""
+            window.selenium_log = [];
+            """)

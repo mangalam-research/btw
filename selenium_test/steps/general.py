@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import urllib
 # pylint: disable=E0611
 from nose.tools import assert_equal, assert_raises, \
     assert_true
@@ -54,13 +55,13 @@ def setup_editor(context):
 @given("a new document")
 def step_impl(context):
     util = context.util
+    driver = context.driver
+    config = context.selenic_config
+
     context.execute_steps(u"""
     Given the user has logged in
-    When the user loads the top page of the lexicography app
-    Then the user gets the top page of the lexicography app
     """)
-    new = util.find_clickable_element((By.PARTIAL_LINK_TEXT, "New"))
-    new.click()
+    driver.get(config.SERVER + "/lexicography/entry/new")
     setup_editor(context)
 
     btw_util.record_document_features(context)
@@ -227,6 +228,8 @@ WHAT_TO_TITLE = {
 @Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
     util = context.util
+    driver = context.driver
+    config = context.selenic_config
 
     if what in ("a single sense",
                 "a single sense that does not have a subsense"):
@@ -243,13 +246,17 @@ def step_impl(context, what):
     title = WHAT_TO_TITLE[what]
     context.execute_steps(u"""
     Given the user has logged in
-    And that the user has loaded the top page of the lexicography app
-    When the user searches for headword "{0}"
-    Then the search results show one entry for "{0}"
-    """.format(title))
+    """)
 
-    view_link = util.find_element((By.LINK_TEXT, title))
-    edit_link = view_link.find_element_by_xpath("../a[2]")
+    # We skip the UI.
+    driver.get(config.SERVER +
+               "/lexicography/search?csrfmiddlewaretoken=foo"
+               "&q={0}&headwords_only=on"
+               .format(urllib.quote(title.encode("utf8"))))
+
+    view_links = util.find_elements((By.LINK_TEXT, title))
+    assert_equal(len(view_links), 1)
+    edit_link = view_links[0].find_element_by_xpath("../a[2]")
 
     edit_link.click()
     setup_editor(context)
