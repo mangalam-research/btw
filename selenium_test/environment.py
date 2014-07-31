@@ -153,6 +153,9 @@ def before_scenario(context, scenario):
         except urllib2.URLError:
             time.sleep(0.1)
 
+    # Each scenario means logging in again.
+    context.is_logged_in = False
+
 
 def after_scenario(context, _scenario):
     driver = context.driver

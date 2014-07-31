@@ -3,9 +3,6 @@ Feature: navigation context menus
 # By "context menu" here we understand only "wed context menu", not
 # the default browser context menu.
 
-Background: a new document
-  Given the user has logged in
-
 Scenario: bringing up a context menu over a navigation element
   Given a new document
   When the user resizes the window so that the editor pane has a vertical scrollbar

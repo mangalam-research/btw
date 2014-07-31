@@ -55,6 +55,7 @@ def setup_editor(context):
 def step_impl(context):
     util = context.util
     context.execute_steps(u"""
+    Given the user has logged in
     When the user loads the top page of the lexicography app
     Then the user gets the top page of the lexicography app
     """)
@@ -163,6 +164,13 @@ def step_impl(context, user_desc):
 
     user = users[user_desc]
     if not util.can_set_cookies:
+        if context.is_logged_in:
+            # Log out first...
+            driver.get(config.SERVER + "/logout")
+            button = driver.find_element_by_css_selector(
+                "button[type='submit']")
+            button.click()
+
         driver.get(config.SERVER + "/login")
         name = util.find_element((By.NAME, "login"))
         pw = util.find_element((By.NAME, "password"))
@@ -187,7 +195,7 @@ def step_impl(context, user_desc):
             driver.add_cookie({'name': 'csrftoken',
                                'value': 'foo'})
         driver.get(config.SERVER)
-
+    context.is_logged_in = True
 
 WHAT_TO_TITLE = {
     u"a single sense that has a subsense": "one sense, one subsense",
@@ -223,8 +231,7 @@ def step_impl(context, what):
     if what in ("a single sense",
                 "a single sense that does not have a subsense"):
         context.execute_steps(u"""
-        Given the user has logged in
-        And a new document
+        Given a new document
         """)
 
         sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
