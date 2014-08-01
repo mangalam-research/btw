@@ -6,7 +6,6 @@ import subprocess
 import shutil
 import httplib
 import atexit
-from distutils.version import StrictVersion
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -24,7 +23,6 @@ execfile(conf_path, conf)
 
 config = conf["Config"](local_conf_path)
 
-import selenium
 import selenic.util
 from behave import step_registry
 
@@ -33,7 +31,6 @@ from behave import step_registry
 from nose.tools import assert_equal  # pylint: disable=E0611
 assert_equal.im_self.longMessage = True
 
-import wedutil
 from selenium_test import btw_util
 
 
