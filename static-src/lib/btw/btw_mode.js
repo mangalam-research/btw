@@ -465,12 +465,6 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
     return obj;
 };
 
-BTWMode.prototype._getTransformationRegistry = function () {
-    var ret = Mode.prototype._getTransformationRegistry.call(this);
-    return ret;
-};
-
-
 /**
  *
  * {@link module:wed/modes/btw/btw_mode~BTWMode#transformation_filters
@@ -552,7 +546,8 @@ BTWMode.prototype.getContextualActions = function (type, tag,
                     }
                 }
 
-                ret = ret.concat(this._tr.getTagTransformations(t, tag));
+                ret = ret.concat(Mode.prototype.getContextualActions.call(
+                    this, t, tag, container, offset));
             }
 
             // First match of a selector ends the process.

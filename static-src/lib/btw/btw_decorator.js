@@ -572,8 +572,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
 
             // We purposely don't use getContextualActions.
             var tuples = [];
-            this._mode._tr.getTagTransformations(
-                "insert", child.name).forEach(
+            this._mode.getContextualActions(
+                "insert", child.name, node, locations[0]).forEach(
                     function (act) {
                     tuples.push([act, data, act.getLabelFor(data)]);
                 });
@@ -1445,8 +1445,8 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     // Delete the node
     data = {node: node, element_name: orig_name,
             move_caret_to: makeDLoc(this._editor.data_root, node, 0)};
-    this._mode._tr.getTagTransformations(
-        "delete-element", orig_name).forEach(function (act) {
+    this._mode.getContextualActions(
+        "delete-element", orig_name, node, 0).forEach(function (act) {
             tuples.push([act, data, act.getLabelFor(data)]);
         });
 
