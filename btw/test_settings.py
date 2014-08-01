@@ -1,6 +1,13 @@
 # pylint: disable=W0401,W0614
 from .settings import *
 
+#
+# These must be off for WebTest based tests to run without issue.
+#
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
 __SILENT = True
 
 LOGGING['loggers'] = {}
