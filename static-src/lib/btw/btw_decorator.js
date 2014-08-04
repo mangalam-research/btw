@@ -534,7 +534,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function ($root, $el) {
                 var $root = $("<div>");
                 $root.append(clone);
                 clone.insertBefore(
-                    transformation.makeElement(child.name)[0],
+                    transformation.makeElement(child.name),
                     clone.childNodes[l] || null);
 
                 var errors =

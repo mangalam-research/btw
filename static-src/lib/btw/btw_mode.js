@@ -458,7 +458,7 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
             if (!$el.children("._real")[0]) {
                 this._editor.data_updater.insertBefore(
                     $el.data("wed_mirror_node"),
-                    transformation.makeElement('btw:none')[0], null);
+                    transformation.makeElement('btw:none'), null);
             }
         }.bind(this));
 

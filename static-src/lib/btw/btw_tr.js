@@ -33,15 +33,15 @@ function insert_ptr(editor, data) {
     $($target.data("wed_mirror_node")).attr(util.encodeAttrName("xml:id"),
                                             data_id);
 
-    var $ptr = transformation.makeElement('ptr', {'target': "#" + data_id});
-    editor.data_updater.insertAt(parent, index, $ptr[0]);
+    var ptr = makeElement('ptr', {'target': "#" + data_id});
+    editor.data_updater.insertAt(parent, index, ptr);
 
     // The original parent and index information are no necessarily
     // representative because insertAt can do quite a lot of things to
     // insert the node.
-    parent = $ptr.parent()[0];
+    parent = ptr.parentNode;
     editor.setDataCaret(parent, Array.prototype.indexOf.call(parent.childNodes,
-                                                             $ptr[0]));
+                                                             ptr));
 }
 
 function insert_ref(editor, data) {
@@ -49,9 +49,9 @@ function insert_ref(editor, data) {
     var parent = caret.node;
     var index = caret.offset;
 
-    var $ptr = transformation.makeElement('ref', {'target': data.target});
-    editor.data_updater.insertAt(parent, index, $ptr[0]);
-    var gui_node = editor.fromDataLocation($ptr[0], 0).node;
+    var ptr = makeElement('ref', {'target': data.target});
+    editor.data_updater.insertAt(parent, index, ptr);
+    var gui_node = editor.fromDataLocation(ptr, 0).node;
 
     // We must immediately set the caret because it is likely the old
     // caret is no longer valid.
