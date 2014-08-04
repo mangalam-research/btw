@@ -21,6 +21,9 @@ require.config({
          location: "external/lodash"
      }
  ],
+ bundles: {
+     "lodash": ["lodash/modern/utilities/template"]
+ },
  shim: {
    xregexp: {
      exports: "XRegExp",
