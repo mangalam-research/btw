@@ -421,9 +421,9 @@ BTWMode.prototype._assignLanguage = function (e) {
     // XXX hardcoded
     var $new_element;
     if (word === "Abhidharma") {
-        $new_element = transformation.wrapTextInElement(
+        $new_element = $(transformation.wrapTextInElement(
             this._editor.data_updater,
-            caret.node, offset, caret.offset, "term", {"xml:lang": "sa-Latn"});
+            caret.node, offset, caret.offset, "term", {"xml:lang": "sa-Latn"}));
         // Simulate a link
         if ($new_element !== undefined)
             $new_element.contents().wrapAll("<a href='fake'>");
