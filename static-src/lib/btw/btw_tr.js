@@ -15,7 +15,6 @@ var AbortTransformationException =
 var makeDLoc = require("wed/dloc").makeDLoc;
 
 var transformation = require("wed/transformation");
-var insertElement = transformation.insertElement;
 var makeElement = transformation.makeElement;
 var Transformation = transformation.Transformation;
 
