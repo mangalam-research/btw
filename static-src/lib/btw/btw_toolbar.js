@@ -26,39 +26,43 @@ function Toolbar(editor) {
 
     this._name_to_action = Object.create(null);
 
-    this.$top = $('<div id="toolbar" class="ui-widget-header ui-corner-all">');
-    for(var button_ix = 0, button;
-        (button = this._buttons[button_ix]) !== undefined; button_ix++) {
-        var name = button.name;
-        var action = button.action;
-        var $button;
+    this.top = document.createElement("div");
+    this.top.id = "toolbar";
+    this.top.className = "ui-widget-header ui-corner-all";
+    var bound_click = this._click.bind(this);
+    for(var button_ix = 0, spec;
+        (spec = this._buttons[button_ix]) !== undefined; button_ix++) {
+        var name = spec.name;
+        var action = spec.action;
         var icon = action.getIcon();
-        $button = $("<button class='btn btn-default' name='" + name + "'>" +
-                    (icon || action.getAbbreviatedDescription()) +
-                    "</button>");
+        var button = document.createElement("button");
+        button.className = "btn btn-default";
+        button.name = name;
+        button.innerHTML = icon || action.getAbbreviatedDescription();
+        var $button = $(button);
         if (icon || action.getAbbreviatedDescription() !==
             action.getDescription())
             $button.tooltip({title: action.getDescription(),
                              container: "body",
                              placement: "auto"});
-        $button.click(this._click.bind(this));
+        $button.click(bound_click);
         // Prevents acquiring the focus.
         $button.mousedown(false);
-	this.$top.append($button);
+	this.top.appendChild(button);
         this._name_to_action[name] = action;
     }
 }
 
 Toolbar.prototype.getTopElement = function () {
     // There's no point in hiding this value.
-    return this.$top[0];
+    return this.top;
 };
 
 Toolbar.prototype._click = log.wrap(function (ev) {
     ev.stopImmediatePropagation();
     ev.preventDefault();
     var range = this._editor.getSelectionRange();
-    var name = $(ev.delegateTarget).attr("name");
+    var name = ev.delegateTarget.name;
     var act = this._name_to_action[name];
     if (act instanceof btw_tr.SetTextLanguageTr) {
         // Don't execute if there is no range. Otherwise, wed will
