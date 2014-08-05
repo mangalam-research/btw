@@ -77,10 +77,11 @@ BTWMode.prototype.init = function (editor) {
 
     editor.setNavigationList("");
     this._toolbar = new Toolbar(editor);
-    $(editor.widget).prepend(this._toolbar.getTopElement());
+    var toolbar_top = this._toolbar.getTopElement();
+    editor.widget.insertBefore(toolbar_top, editor.widget.firstChild);
     $(editor.widget).on('wed-global-keydown.btw-mode',
                         this._keyHandler.bind(this));
-    editor.excludeFromBlur(this._toolbar.getTopElement());
+    editor.excludeFromBlur(toolbar_top);
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
         editor, "Insert a new hyperlink to a sense",
@@ -125,10 +126,10 @@ BTWMode.prototype.init = function (editor) {
         this._editor, "Add custom text to reference",
         function (editor, data) {
         var caret = editor.getGUICaret();
-        var $ref = $(caret.node).closest(util.classFromOriginalName("ref"));
+        var ref = $(caret.node).closest(util.classFromOriginalName("ref"))[0];
         var ph = editor.insertTransientPlaceholderAt(caret.make(
-            $ref[0], $ref[0].childNodes.length));
-        editor.decorator.refreshElement(dloc.findRoot($ref).node, $ref[0]);
+            ref, ref.childNodes.length));
+        editor.decorator.refreshElement(dloc.findRoot(ref).node, ref);
         editor.setGUICaret(ph, 0);
 
     }.bind(this));
@@ -454,10 +455,20 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
         jqutil.toDataSelector(
             "btw:antonyms, btw:cognates, btw:conceptual-proximates"),
         function addNone (root, added, removed, prev, next, el) {
-            var $el = $(el);
-            if (!$el.children("._real")[0]) {
+            var child = el.firstElementChild;
+            var found = false;
+
+            while(child) {
+                found = child.classList.contains("_real");
+                if (found)
+                    break;
+
+                child = child.nextElementSibling;
+            }
+
+            if (!found) {
                 this._editor.data_updater.insertBefore(
-                    $el.data("wed_mirror_node"),
+                    $(el).data("wed_mirror_node"),
                     transformation.makeElement('btw:none'), null);
             }
         }.bind(this));
