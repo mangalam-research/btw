@@ -128,7 +128,7 @@ BTWMode.prototype.init = function (editor) {
         var $ref = $(caret.node).closest(util.classFromOriginalName("ref"));
         var ph = editor.insertTransientPlaceholderAt(caret.make(
             $ref[0], $ref[0].childNodes.length));
-        editor.decorator.refreshElement($(dloc.findRoot($ref).node), $ref);
+        editor.decorator.refreshElement(dloc.findRoot($ref).node, $ref[0]);
         editor.setGUICaret(ph, 0);
 
     }.bind(this));
@@ -453,8 +453,8 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
         "children-changed",
         jqutil.toDataSelector(
             "btw:antonyms, btw:cognates, btw:conceptual-proximates"),
-        function addNone ($root, $added, $removed, $prev, $next, $el) {
-            var el = $el[0];
+        function addNone (root, added, removed, prev, next, el) {
+            var $el = $(el);
             if (!$el.children("._real")[0]) {
                 this._editor.data_updater.insertBefore(
                     $el.data("wed_mirror_node"),
