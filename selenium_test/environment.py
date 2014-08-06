@@ -9,22 +9,15 @@ import atexit
 
 # pylint: disable=E0611
 from nose.tools import assert_true
+import selenic.util
+from selenic import Builder
+from behave import step_registry
 
 _dirname = os.path.dirname(__file__)
 
-local_conf_path = os.path.join(os.path.dirname(_dirname),
-                               "build", "config", "selenium_local_config.py")
-
-
 conf_path = os.path.join(os.path.dirname(_dirname),
-                         "build", "config", "selenium_test_config.py")
-conf = {"__file__": conf_path}
-execfile(conf_path, conf)
-
-config = conf["Config"](local_conf_path)
-
-import selenic.util
-from behave import step_registry
+                         "build", "config", "selenium_config.py")
+builder = Builder(conf_path)
 
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
@@ -39,7 +32,7 @@ def cleanup(context, failed):
 
     if driver:
         try:
-            config.set_test_status(
+            builder.set_test_status(
                 driver.session_id, not (failed or context.failed))
         except httplib.HTTPException:
             # Ignore cases where we can't set the status.
@@ -63,12 +56,12 @@ def before_all(context):
 
     atexit.register(cleanup, context, True)
 
-    driver = config.get_driver()
+    driver = builder.get_driver()
     context.driver = driver
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
-                                     4 if config.remote else 2)
-    context.selenic_config = config
+                                     4 if builder.remote else 2)
+    context.selenic = builder
 
     # Without this, window sizes vary depending on the actual browser
     # used.
@@ -82,7 +75,7 @@ def before_all(context):
     except AssertionError:
         # Make sure to mark the test as failed.
         try:
-            config.set_test_status(driver.session_id, False)
+            builder.set_test_status(driver.session_id, False)
         except httplib.HTTPException:
             # Ignore cases where we can't set the status.
             pass
@@ -147,7 +140,7 @@ def before_scenario(context, scenario):
     found = False
     while not found:
         try:
-            f = urllib2.urlopen(config.SERVER + "/login")
+            f = urllib2.urlopen(context.selenic.SERVER + "/login")
             found = f.getcode() == 200
         except urllib2.URLError:
             time.sleep(0.1)

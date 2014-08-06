@@ -167,8 +167,7 @@ def step_impl(context):
        ur"bibliographical search")
 def step_impl(context):
     driver = context.driver
-    config = context.selenic_config
-    driver.get(config.SERVER + "/bibliography/search/")
+    driver.get(context.selenic.SERVER + "/bibliography/search/")
 
 
 @when(ur"^the user deletes a reference")

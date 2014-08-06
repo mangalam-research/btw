@@ -18,8 +18,7 @@ from selenium_test import btw_util
 @when("the user loads the top page of the lexicography app")
 def user_load_lexicography(context):
     driver = context.driver
-    config = context.selenic_config
-    driver.get(config.SERVER + "/lexicography")
+    driver.get(context.selenic.SERVER + "/lexicography")
 
 
 @then("the user gets the top page of the lexicography app")
@@ -56,12 +55,11 @@ def setup_editor(context):
 def step_impl(context):
     util = context.util
     driver = context.driver
-    config = context.selenic_config
 
     context.execute_steps(u"""
     Given the user has logged in
     """)
-    driver.get(config.SERVER + "/lexicography/entry/new")
+    driver.get(context.selenic.SERVER + "/lexicography/entry/new")
     setup_editor(context)
 
     btw_util.record_document_features(context)
@@ -161,18 +159,18 @@ users = {
 def step_impl(context, user_desc):
     driver = context.driver
     util = context.util
-    config = context.selenic_config
+    selenic = context.selenic
 
     user = users[user_desc]
     if not util.can_set_cookies:
         if context.is_logged_in:
             # Log out first...
-            driver.get(config.SERVER + "/logout")
+            driver.get(selenic.SERVER + "/logout")
             button = driver.find_element_by_css_selector(
                 "button[type='submit']")
             button.click()
 
-        driver.get(config.SERVER + "/login")
+        driver.get(selenic.SERVER + "/login")
         name = util.find_element((By.NAME, "login"))
         pw = util.find_element((By.NAME, "password"))
         form = util.find_element((By.TAG_NAME, "form"))
@@ -186,7 +184,7 @@ def step_impl(context, user_desc):
 
         form.submit()
     else:
-        driver.get(config.SERVER)
+        driver.get(selenic.SERVER)
         with open(context.server_write_fifo, 'w') as fifo:
             fifo.write("login " + user.login + " " + user.password + "\n")
         with open(context.server_read_fifo, 'r') as fifo:
@@ -195,7 +193,7 @@ def step_impl(context, user_desc):
                                'value': session_key})
             driver.add_cookie({'name': 'csrftoken',
                                'value': 'foo'})
-        driver.get(config.SERVER)
+        driver.get(selenic.SERVER)
     context.is_logged_in = True
 
 WHAT_TO_TITLE = {
@@ -229,7 +227,6 @@ WHAT_TO_TITLE = {
 def step_impl(context, what):
     util = context.util
     driver = context.driver
-    config = context.selenic_config
 
     if what in ("a single sense",
                 "a single sense that does not have a subsense"):
@@ -249,7 +246,7 @@ def step_impl(context, what):
     """)
 
     # We skip the UI.
-    driver.get(config.SERVER +
+    driver.get(context.selenic.SERVER +
                "/lexicography/search?csrfmiddlewaretoken=foo"
                "&q={0}&headwords_only=on"
                .format(urllib.quote(title.encode("utf8"))))

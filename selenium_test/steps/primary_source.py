@@ -36,8 +36,7 @@ load_re = ur'^(?:that )?the user (?:is on|reloads) the page for editing '\
 @when(load_re)
 def step_impl(context):
     driver = context.driver
-    config = context.selenic_config
-    driver.get(config.SERVER + "/bibliography/manage/")
+    driver.get(context.selenic.SERVER + "/bibliography/manage/")
 
 
 title_re = ur'^(?:that )?the items are sorted by ' \

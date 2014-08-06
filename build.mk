@@ -128,11 +128,15 @@ README.html: README.rst
 	$(RST2HTML) $< $@
 
 .PHONY: selenium-test
-selenium-test: all
+selenium-test: build-config
+	python utils/check_selenium_config.py
+	$(MAKE) -f build.mk all
 	behave $(BEHAVE_PARAMS) selenium_test
 
 .PHONY: selenium_test/%.feature
-selenium_test/%.feature: all
+selenium_test/%.feature: build-config
+	python utils/check_selenium_config.py
+	$(MAKE) -f build.mk all
 	behave $(BEHAVE_PARAMS) $@
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
