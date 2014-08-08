@@ -1,7 +1,7 @@
 require.config({
  baseUrl: '/static/lib/',
  paths: {
-   jquery: 'external/jquery-1.11.0',
+   jquery: 'external/jquery-2.1.1',
    bootstrap: 'external/bootstrap/js/bootstrap.min',
    log4javascript: 'external/log4javascript',
    'jquery.bootstrap-growl': 'external/jquery.bootstrap-growl',
@@ -22,7 +22,7 @@ require.config({
      }
  ],
  bundles: {
-     "lodash": ["lodash/modern/utilities/template"]
+     "lodash": ["lodash/modern/utilities/template"],
  },
  shim: {
    xregexp: {
