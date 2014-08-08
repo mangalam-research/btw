@@ -21,7 +21,7 @@ var context_menu = require("wed/gui/context_menu");
 var tooltip = require("wed/gui/tooltip").tooltip;
 var validate = require("salve/validate");
 var makeDLoc = require("wed/dloc").makeDLoc;
-require("./jquery.selectIn");
+require("wed/jquery.findandself");
 
 var _indexOf = Array.prototype.indexOf;
 
