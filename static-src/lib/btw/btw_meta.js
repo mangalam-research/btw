@@ -22,7 +22,6 @@ function BTWMeta() {
 oop.inherit(BTWMeta, TEIMeta);
 
 BTWMeta.prototype.isInline = function (node) {
-    var $node = $(node);
     // We need to normalize the name to fit the names we have below.
     var original_name = util.getOriginalName(node);
     var parts = original_name.split(":");

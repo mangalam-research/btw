@@ -9,6 +9,7 @@ var btw_util = require("./btw_util");
 var transformation = require("wed/transformation");
 var Action = require("wed/action").Action;
 var jqutil = require("wed/jqutil");
+var domutil = require("wed/domutil");
 
 function SensePtrDialogAction() {
     Action.apply(this, arguments);
@@ -19,53 +20,79 @@ oop.inherit(SensePtrDialogAction, Action);
 SensePtrDialogAction.prototype.execute = function (data) {
     var editor = this._editor;
 
-    var $senses =
-            editor.$gui_root.find(util.classFromOriginalName("btw:sense"));
+    var doc = editor.gui_root.ownerDocument;
+    var senses = editor.gui_root.querySelectorAll(
+        util.classFromOriginalName("btw:sense"));
     var labels = [];
-    $senses.each(function () {
-        var $this = $(this);
-        var $data_node = $($this.data("wed_mirror_node"));
-        var $terms = btw_util.termsForSense($data_node);
+    var radios = [];
+    for(var i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
+        var data_node = $.data(sense, "wed_mirror_node");
+        var term_nodes = btw_util.termsForSense(data_node);
         var terms = [];
-        $terms.each(function () {
-            terms.push($(this).text());
-        });
+        for(var tix = 0, term_node; (term_node = term_nodes[tix]) !== undefined;
+            ++tix)
+            terms.push(term_node.textContent);
         terms = terms.join(", ");
-        var sense_label = editor.decorator._getSenseLabel(this);
-        var $div = $("<span>").data("wed-id", $this.attr("id")).
-            append(" [" + sense_label + "] ").
-            append(terms);
-        labels.push($div);
+        var sense_label = editor.decorator._getSenseLabel(sense);
 
-        $this.find(util.classFromOriginalName("btw:subsense")).each(
-            function () {
-            var $this = $(this);
-            var $data_node = $($this.data("wed_mirror_node"));
-            var subsense_label = editor.decorator._getSubsenseLabel(this);
-            var $explanation = $data_node.find(
-                util.classFromOriginalName("btw:explanation"));
-            var $div = $("<span>").data("wed-id", $this.attr("id")).
-                append(" [" + subsense_label + "] ").
-                append($explanation.text());
-            labels.push($div);
-        });
-    });
+        var span = doc.createElement("span");
+        span.textContent = " [" + sense_label + "] " + terms;
+        span.setAttribute("data-wed-id", sense.id);
+
+        var radio = doc.createElement("input");
+        radio.type = "radio";
+        radio.name = "sense";
+
+        var div = doc.createElement("div");
+        div.appendChild(radio);
+        div.appendChild(span);
+
+        labels.push(div);
+        radios.push(radio);
+
+        var subsenses = domutil.childrenByClass(sense, "btw:subsense");
+        for(var ssix = 0, subsense; (subsense = subsenses[ssix]) !== undefined;
+            ++ssix) {
+            data_node = $.data(subsense, "wed_mirror_node");
+            var subsense_label = editor.decorator._getSubsenseLabel(subsense);
+            var explanation = domutil.childByClass(data_node, "btw:explanation");
+
+            span = doc.createElement("span");
+            span.textContent = " [" + subsense_label + "] " +
+                explanation.textContent;
+            span.setAttribute("data-wed-id", subsense.id);
+
+            radio = doc.createElement("input");
+            radio.type = "radio";
+            radio.name = "sense";
+
+            div = doc.createElement("div");
+            div.appendChild(radio);
+            div.appendChild(span);
+
+            labels.push(div);
+            radios.push(radio);
+        }
+    }
 
     var hyperlink_modal = editor.mode._hyperlink_modal;
-    var $primary = hyperlink_modal.getPrimary();
-    var $body = $('<div>');
-    $body.append(labels);
-    $body.children().wrap('<div></div>');
-    $body.children().prepend('<input type="radio" name="sense-radio"/>');
-    $body.find(":radio").on('click.wed', function () {
-        $primary.prop('disabled', false).removeClass('disabled');
+    var primary = hyperlink_modal.getPrimary()[0];
+    var body = doc.createElement("div");
+    var el;
+    for(i = 0; (el = labels[i]) !== undefined; ++i)
+        body.appendChild(el);
+    $(radios).on('click.wed', function () {
+        primary.disabled = false;
+        primary.classList.remove('disabled');
     });
-    $primary.prop("disabled", true).addClass("disabled");
-    hyperlink_modal.setBody($body);
+    primary.disabled = true;
+    primary.classList.add("disabled");
+    hyperlink_modal.setBody(body);
     hyperlink_modal.modal(function () {
         var clicked = hyperlink_modal.getClickedAsText();
         if (clicked === "Insert") {
-            var id = $body.find(':radio:checked').next().data("wed-id");
+            var id = body.querySelector('input[type="radio"]:checked')
+                    .nextElementSibling.getAttribute("data-wed-id");
             data.target = id;
             editor.mode.insert_ptr_tr.execute(data);
         }
@@ -83,37 +110,61 @@ oop.inherit(ExamplePtrDialogAction, Action);
 ExamplePtrDialogAction.prototype.execute = function (data) {
     var editor = this._editor;
 
-    var $examples =
-            editor.$gui_root.find(jqutil.toDataSelector(
-                "btw:example, btw:example-explained"));
+    var doc = editor.gui_root.ownerDocument;
+    var examples = editor.gui_root.querySelectorAll(jqutil.toDataSelector(
+        "btw:example, btw:example-explained"));
     var labels = [];
-    $examples.each(function () {
-        var $this = $(this);
-        var $data_node = $($this.data("wed_mirror_node"));
-        var $cit = $data_node.children(util.classFromOriginalName("btw:cit"));
-        var $abbr = $this.find(util.classFromOriginalName("ref"))
-            .first().clone();
-        $abbr.children("._gui").remove();
-        var $div = $("<span>").data("wed-id", $this.attr("id")).
-            append(" " + $abbr.text() + " " + $cit.text());
-        labels.push($div);
-    });
+    var radios = [];
+    for(var i = 0, example; (example = examples[i]) !== undefined; ++i) {
+        var data_node = $.data(example, "wed_mirror_node");
+        var cit = domutil.childByClass(data_node, "btw:cit");
+        var abbr = example.querySelector(util.classFromOriginalName("ref"));
+        if (abbr) {
+            abbr = abbr.cloneNode(true);
+            var child = abbr.firstElementChild;
+            while(child) {
+                var next = child.nextElementSibling;
+                if (child.classList.contains("_gui"))
+                    abbr.removeChild(child);
+                child = next;
+            }
+        }
+
+        var span = doc.createElement("span");
+        span.setAttribute("data-wed-id", example.id);
+        span.textContent = " " + (abbr ? abbr.textContent + " " : "") +
+            cit.textContent;
+
+        var radio = doc.createElement("input");
+        radio.type = "radio";
+        radio.name = "example";
+
+        var div = doc.createElement("div");
+        div.appendChild(radio);
+        div.appendChild(span);
+
+        labels.push(div);
+        radios.push(radio);
+    }
 
     var hyperlink_modal = editor.mode._hyperlink_modal;
-    var $primary = hyperlink_modal.getPrimary();
-    var $body = $('<div>');
-    $body.append(labels);
-    $body.children().wrap('<div></div>');
-    $body.children().prepend('<input type="radio" name="sense-radio"/>');
-    $body.find(":radio").on('click.wed', function () {
-        $primary.prop('disabled', false).removeClass('disabled');
+    var primary = hyperlink_modal.getPrimary()[0];
+    var body = doc.createElement('div');
+    var el;
+    for(i = 0; (el = labels[i]) !== undefined; ++i)
+        body.appendChild(el);
+    $(radios).on('click.wed', function () {
+        primary.disabled = false;
+        primary.classList.remove('disabled');
     });
-    $primary.prop("disabled", true).addClass("disabled");
-    hyperlink_modal.setBody($body);
+    primary.disabled = true;
+    primary.classList.add("disabled");
+    hyperlink_modal.setBody(body);
     hyperlink_modal.modal(function () {
         var clicked = hyperlink_modal.getClickedAsText();
         if (clicked === "Insert") {
-            var id = $body.find(':radio:checked').next().data("wed-id");
+            var id = body.querySelector('input[type="radio"]:checked')
+                    .nextElementSibling.getAttribute("data-wed-id");
             data.target = id;
             editor.mode.insert_ptr_tr.execute(data);
         }

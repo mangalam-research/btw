@@ -6,6 +6,7 @@ var ReferenceManager = require("wed/refman").ReferenceManager;
 var jqutil = require("wed/jqutil");
 var $ = require("jquery");
 var util = require("wed/util");
+var domutil = require("wed/domutil");
 
 var sense_labels = 'abcdefghijklmnopqrstuvwxyz';
 function SenseReferenceManager() {
@@ -96,16 +97,18 @@ ExampleReferenceManager.prototype.idToLabel = function () {
     return undefined;
 };
 
-ExampleReferenceManager.prototype.getPositionalLabel = function ($ptr, $target,
+ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
                                                                  id) {
+    var gui_target = $.data(target, "wed_mirror_node");
     var ret = "See ";
-    var $ref =
-            $($target.data("wed_mirror_node")).find(
-                jqutil.toDataSelector("btw:cit>ref")).first().clone();
-    $ref.find("._gui, ._decoration_text").remove();
-    ret += $ref.text();
+    var ref = gui_target.querySelector(jqutil.toDataSelector("btw:cit>ref"))
+            .cloneNode(true);
+    var to_remove = ref.querySelectorAll("._gui, ._decoration_text");
+    for(var i = 0, it; (it = to_remove[i]) !== undefined; ++i)
+        it.parentNode.removeChild(it);
+    ret += ref.textContent;
     ret += " quoted ";
-    var order = $ptr[0].compareDocumentPosition($target[0]);
+    var order = ptr.compareDocumentPosition(target);
     if (order & Node.DOCUMENT_POSITION_DISCONNECTED)
         throw new Error("disconnected nodes");
 
@@ -120,17 +123,31 @@ ExampleReferenceManager.prototype.getPositionalLabel = function ($ptr, $target,
     else
         ret += "below";
 
-    var gui_target = $target.data("wed_mirror_node");
     if (gui_target) {
-        var $gui_target = $(gui_target);
-        ret += " in " + $gui_target.closest(":has(> .head)").children(".head").first().text();
+        var parent = gui_target.parentNode;
+        var head;
+        while (parent) {
+            head = domutil.childByClass(parent, "head");
+            if (head)
+                break;
 
-        var term = $ptr.closest(":has(>" +
-                                util.classFromOriginalName("term") +
-                                ")").children(util.classFromOriginalName("term")).first().text();
+            parent = parent.parentNode;
+        }
+
+        ret += " in " + head.textContent;
+
+        var term;
+        parent= ptr.parentNode;
+        while (parent) {
+            term = domutil.childByClass(parent, "term");
+            if (term)
+                break;
+
+            parent = parent.parentNode;
+        }
 
         if (term)
-            ret += ", " + term;
+            ret += ", " + term.textContent;
     }
 
     ret += ".";

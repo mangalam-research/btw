@@ -1,12 +1,11 @@
 define(function (require, exports, module) {
 'use strict';
 
-var $ = require("jquery");
 var util = require("wed/util");
 var jqutil = require("wed/jqutil");
 
-function termsForSense($sense) {
-    return $sense.find(jqutil.toDataSelector(
+function termsForSense(sense) {
+    return sense.querySelectorAll(jqutil.toDataSelector(
         "btw:english-rendition>btw:english-term"));
 }
 

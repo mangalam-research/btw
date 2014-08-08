@@ -3,6 +3,7 @@ define(function (require, exports, module) {
 
 var oop = require("wed/oop");
 var domutil = require("wed/domutil");
+var closest = domutil.closest;
 var $ = require("jquery");
 var jqutil = require("wed/jqutil");
 
@@ -27,11 +28,11 @@ function insert_ptr(editor, data) {
 
     // The data.target value is the wed ID target of the ptr. We must
     // find this element and add a data ID.
-    var $target = editor.$gui_root.find("*[id='" + data.target + "']");
+    var target = editor.gui_root.ownerDocument.getElementById(data.target);
     var data_id = data.target.slice(4);
-    $target.attr(util.encodeAttrName("xml:id"), data_id);
-    $($target.data("wed_mirror_node")).attr(util.encodeAttrName("xml:id"),
-                                            data_id);
+    target.setAttribute(util.encodeAttrName("xml:id"), data_id);
+    $.data(target, "wed_mirror_node").setAttribute(util.encodeAttrName("xml:id"),
+                                                   data_id);
 
     var ptr = makeElement('ptr', {'target': "#" + data_id});
     editor.data_updater.insertAt(parent, index, ptr);
@@ -63,7 +64,7 @@ function insert_ref(editor, data) {
         editor.setGUICaret(
             gui_node,
             _indexOf.call(gui_node.childNodes,
-                          $(gui_node).children("._ref_abbr")[0]) + 1);
+                          domutil.childByClass(gui_node, "_ref_abbr")) + 1);
     });
 }
 
@@ -119,24 +120,25 @@ function set_language_handler(editor, data) {
     var data_selector = jqutil.toDataSelector(selector);
 
     var container = range.startContainer;
-    var $closest = $(container).closest(data_selector);
-    if ($closest.length > 0) {
+    var cl = closest(container, data_selector, editor.data_root);
+    if (cl) {
         this._nesting_modal.modal();
         throw new AbortTransformationException(
             "the range does not wholly contain the contents of a parent " +
                 "foreign language element");
     }
 
-    var $realization = jqutil.selectorToElements(selector);
-    var $foreign = $realization.findAndSelf(
-        util.classFromOriginalName("foreign"));
-    $foreign.attr(util.encodeAttrName("xml:lang"), lang_code);
+    var foreign = container.ownerDocument.createElement("div");
+    foreign.className = "_real foreign";
+    foreign.setAttribute(util.encodeAttrName("xml:lang"), lang_code);
     var cut_ret = editor.data_updater.cut(
         makeDLoc(editor.data_root, range.startContainer, range.startOffset),
         makeDLoc(editor.data_root, range.endContainer, range.endOffset));
-    $foreign.append(cut_ret[1]);
-    editor.data_updater.insertAt(cut_ret[0], $realization[0]);
-    range.selectNodeContents($foreign[0]);
+    var cut_nodes = cut_ret[1];
+    for (var i = 0, el; (el = cut_nodes[i]) !== undefined; ++i)
+        foreign.appendChild(el);
+    editor.data_updater.insertAt(cut_ret[0], foreign);
+    range.selectNodeContents(foreign);
     editor.setDataSelectionRange(range);
 }
 
@@ -185,8 +187,11 @@ function remove_mixed_handler(editor, data) {
     var cut_ret = editor.data_updater.cut(
         makeDLoc(editor.data_root, range.startContainer, range.startOffset),
         makeDLoc(editor.data_root, range.endContainer, range.endOffset));
-    var $div = $("<div>");
-    var new_text = $(cut_ret[1]).text();
+    var div = range.startContainer.ownerDocument.createElement("div");
+    var new_text = '';
+    var cut_nodes = cut_ret[1];
+    for(var i = 0, el; (el = cut_nodes[i]) !== undefined; ++i)
+        new_text += el.textContent;
     var text_node = range.startContainer.ownerDocument.createTextNode(new_text);
 
     if (editor.validator.speculativelyValidate(cut_ret[0], text_node)) {

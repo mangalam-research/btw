@@ -22,6 +22,8 @@ var tooltip = require("wed/gui/tooltip").tooltip;
 var validate = require("salve/validate");
 var makeDLoc = require("wed/dloc").makeDLoc;
 require("wed/jquery.findandself");
+var closestByClass = domutil.closestByClass;
+var closest = domutil.closest;
 
 var _indexOf = Array.prototype.indexOf;
 
@@ -29,7 +31,6 @@ function BTWDecorator(mode, meta) {
     Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
 
     this._gui_root = this._editor.gui_root;
-    this._$gui_root = $(this._gui_root);
     this._gui_domlistener =
         new updater_domlistener.Listener(this._gui_root, this._gui_updater);
     this._mode = mode;
@@ -221,16 +222,14 @@ BTWDecorator.prototype.addHandlers = function () {
         "children-changed",
         jqutil.toDataSelector("ref, ref *"),
         function (root, added, removed, prev, next, el) {
-        var $parent = $(el).closest(util.classFromOriginalName("ref"));
-        this._refChangedInGUI(root, $parent[0]);
+        this._refChangedInGUI(root, closestByClass(el, "ref", root));
     }.bind(this));
 
     this._gui_domlistener.addHandler(
         "text-changed",
         jqutil.toDataSelector("ref, ref *"),
         function (root, el) {
-        var $parent = $(el).closest(util.classFromOriginalName("ref"));
-        this._refChangedInGUI(root, $parent[0]);
+        this._refChangedInGUI(root, closestByClass(el, "ref", root));
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -246,13 +245,13 @@ BTWDecorator.prototype.addHandlers = function () {
         "excluded-element",
         jqutil.toDataSelector("btw:cit foreign"),
         function (root, tree, parent, prev, next, el) {
-        var $cit = $(el).closest(util.classFromOriginalName("btw:cit"));
+        var cit = closestByClass(el, "btw:cit", root);
         // Refresh after the element is removed.
         var dec = this;
         setTimeout(function () {
-            dec.refreshElement(root, $cit[0]);
-            dec.refreshElement(root, $cit.prevAll(
-                util.classFromOriginalName("btw:explanation"))[0]);
+            dec.refreshElement(root, cit);
+            dec.refreshElement(root, domutil.siblingByClass(
+                cit, "btw:explanation"));
         }, 0);
     }.bind(this));
 
@@ -260,10 +259,10 @@ BTWDecorator.prototype.addHandlers = function () {
         "included-element",
         jqutil.toDataSelector("btw:cit foreign"),
         function (root, tree, parent, prev, next, el) {
-        var $cit = $(el).closest(util.classFromOriginalName("btw:cit"));
-        this.refreshElement(root, $cit[0]);
-        this.refreshElement(root, $cit.prevAll(
-            util.classFromOriginalName("btw:explanation"))[0]);
+        var cit = closestByClass(el, "btw:cit", root);
+        this.refreshElement(root, cit);
+        this.refreshElement(root, domutil.siblingByClass(
+            cit, "btw:explanation"));
     }.bind(this));
 
 
@@ -462,7 +461,7 @@ BTWDecorator.prototype.refreshElement = function (root, el) {
     }
 
     if (error)
-        this._editor.validator.restartAt($(el).data("wed-mirror-node"));
+        this._editor.validator.restartAt($.data(el, "wed-mirror-node"));
 };
 
 BTWDecorator.prototype.elementDecorator = function (root, el) {
@@ -490,12 +489,11 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
         child = next;
     }
 
-    var $el = $(el);
     var found, spec;
     for(var i = 0, limit = this._visible_absence_specs.length; i < limit;
         ++i) {
         spec = this._visible_absence_specs[i];
-        if ($el.is(spec.parent)) {
+        if (el.matches(spec.parent)) {
             found = spec;
             break;
         }
@@ -608,10 +606,13 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 // Convert the tuples to actual menu items.
                 var items = [];
                 for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
-                    var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
+                    var li = el.ownerDocument.createElement("li");
+                    li.innerHTML = "<a tabindex='0' href='#'>" + tup[2] +
+                        "</a>";
+                    var $a = $(li.firstChild);
                     $a.click(tup[1], tup[0].bound_handler);
                     $a.mousedown(false);
-                    items.push($("<li></li>").append($a)[0]);
+                    items.push(li);
                 }
 
                 $control.click(function (ev) {
@@ -661,12 +662,13 @@ BTWDecorator.prototype.citDecorator = function (root, el) {
 
     if (el.querySelector("*[" + util.encodeAttrName("xml:lang") +
                  "='pi-Latn']")) {
-        this._gui_updater.insertNodeAt(
-            el, 0,
-            $("<div class='_phantom _text _cit_bullet' " +
-              "style='position: absolute; left: -1em'>"  +
-              WHEEL + "</div>")[0]);
-        $(el).css("position", "relative");
+        var div = el.ownerDocument.createElement("div");
+        div.className = "_phantom _text _cit_bullet";
+        div.style.position = "absolute";
+        div.style.left = "-1em";
+        div.textContent = WHEEL;
+        this._gui_updater.insertNodeAt(el, 0, div);
+        el.style.position = "relative";
     }
 };
 
@@ -813,7 +815,7 @@ BTWDecorator.prototype._refreshSubsensesForSense = function (root, sense) {
 };
 
 BTWDecorator.prototype.explanationDecorator = function (root, el) {
-    var child, next; // Damn hoisting...
+    var child, next, div; // Damn hoisting...
     // Handle explanations that are in btw:example-explained.
     if (el.parentNode.classList.contains("btw:example-explained")) {
         child = el.firstElementChild;
@@ -831,12 +833,13 @@ BTWDecorator.prototype.explanationDecorator = function (root, el) {
         if (cit.classList.contains("btw:cit") &&
             cit.querySelector("*[" + util.encodeAttrName("xml:lang") +
                               "='pi-Latn']")) {
-            this._gui_updater.insertNodeAt(
-                el, 0,
-                $("<div class='_phantom _decoration_text _explanation_bullet' " +
-                  "style='position: absolute; left: -1em'>"  +
-                  WHEEL + "</div>")[0]);
-            $(el).css("position", "relative");
+            div = el.ownerDocument.createElement("div");
+            div.className = "_phantom _decoration_text _explanation_bullet";
+            div.style.position = "absolute";
+            div.style.left = "-1em";
+            div.textContent = WHEEL;
+            this._gui_updater.insertNodeAt(el, 0, div);
+            el.style.position = "relative";
         }
         this.elementDecorator(root, el);
         return;
@@ -861,11 +864,12 @@ BTWDecorator.prototype.explanationDecorator = function (root, el) {
         }
 
         // We want to insert it after the start label.
-        this._gui_updater.insertBefore(
-            el,
-            $("<div class='_phantom _decoration_text _explanation_number " +
-              "_start_wrapper'>" + label + ". </div>")[0],
-            start ? start.nextSibling : null);
+        div = el.ownerDocument.createElement("div");
+        div.className = "_phantom _decoration_text _explanation_number " +
+            "_start_wrapper'";
+        div.textContent = label;
+        this._gui_updater.insertBefore(el, div,
+                                       start ? start.nextSibling : null);
 
     }
     this.sectionHeadingDecorator(root, el, this._gui_updater);
@@ -1042,11 +1046,10 @@ BTWDecorator.prototype.sectionHeadingDecorator = function (root, el,
     }
 
     if (head_str === undefined) {
-        var $el = $(el);
         var name = util.getOriginalName(el);
         for(var s_ix = 0, spec;
             (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix) {
-            if ($el.is(spec.selector))
+            if (el.matches(spec.selector))
                 break;
         }
         if (spec === undefined)
@@ -1058,7 +1061,7 @@ BTWDecorator.prototype.sectionHeadingDecorator = function (root, el,
 
     var head = el.ownerDocument.createElement("div");
     head.className = "head _phantom _start_wrapper";
-    head.innerHTML = "[" + head_str + "]";
+    head.textContent = "[" + head_str + "]";
     head.id = allocateHeadID();
     gui_updater.insertNodeAt(el, 0, head);
 };
@@ -1078,9 +1081,14 @@ function setTitle($el, data) {
 }
 
 BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
-    var orig_target = $.trim(el.getAttribute(util.encodeAttrName("target")));
-    if (orig_target === undefined)
-        throw new Error("ptr element without target");
+    var orig_target = el.getAttribute(util.encodeAttrName("target"));
+    // XXX This should become an error one day. The only reason we
+    // need this now is that some of the early test files had <ref>
+    // elements without targets.
+    if (!orig_target)
+        orig_target = "";
+
+    orig_target = orig_target.trim();
 
     var doc = root.ownerDocument;
     var target_id, child, next; // Damn hoisting.
@@ -1126,9 +1134,9 @@ BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
                     // decorating the document.
                     if (target) {
                         var data_el = this._editor.toDataNode(el);
-                        var $data_target = $(this._editor.toDataNode(target));
-                        label = refman.getPositionalLabel($(data_el),
-                                                          $data_target,
+                        var data_target = this._editor.toDataNode(target);
+                        label = refman.getPositionalLabel(data_el,
+                                                          data_target,
                                                           target_id.slice(1));
                     }
                 }
@@ -1253,8 +1261,8 @@ BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
 };
 
 BTWDecorator.prototype._refChangedInGUI = function (root, el) {
-    var example = $(el).closest(util.classFromOriginalName(
-        "btw:example, btw:example-explained"))[0];
+    var example = closest(el, jqutil.toDataSelector(
+        "btw:example, btw:example-explained"));
 
     if (!example)
         return;
@@ -1302,49 +1310,56 @@ function languageDecorator(el) {
 
 
 BTWDecorator.prototype._refreshNavigationHandler = function () {
-    var prev_at_depth = [];
-    prev_at_depth[0] = $("<li></li>");
+    var doc = this._gui_root.ownerDocument;
+    var prev_at_depth = [doc.createElement("li")];
 
     function getParent(depth) {
-        var $parent = prev_at_depth[depth];
-        if (!$parent) {
-            $parent = $("<li></li>");
-            prev_at_depth[depth] = $parent;
-            var $grandparent = getParent(depth - 1);
-            $grandparent.append($parent);
+        var parent = prev_at_depth[depth];
+        if (!parent) {
+            parent = doc.createElement("li");
+            prev_at_depth[depth] = parent;
+            var grandparent = getParent(depth - 1);
+            grandparent.appendChild(parent);
         }
-        return $parent;
+        return parent;
     }
 
-    var $heads = this._$gui_root.find(".head");
-    $heads.each(function (x, el) {
-        var $el = $(el);
+    var heads = this._gui_root.getElementsByClassName("head");
+    for(var i = 0, el; (el = heads[i]) !== undefined; ++i) {
         // This is the list of DOM parents that do have a head
         // child, i.e. which participate in navigation.
-        var $parents =
-            $el.parentsUntil(this._$gui_root).filter(":has(> .head)");
+        var parents = [];
+        var parent = el.parentNode;
+        while (parent) {
+            if (domutil.childByClass(parent, "head"))
+                parents.push(parent);
+
+            if (parent === this._gui_root)
+                break; // Don't go beyond this point.
+
+            parent = parent.parentNode;
+        }
 
         // This will never be less than 1 because the current
         // element's parent satisfies the selectors above.
-        var my_depth = $parents.length;
+        var my_depth = parents.length;
 
-        var $parent = $el.parent();
-        var orig_name = util.getOriginalName($parent[0]);
+        parent = el.parentNode;
+        var orig_name = util.getOriginalName(parent);
 
-        var $li = $("<li class='btw-navbar-item'>"+
-                    "<a class='navbar-link' href='#" + el.id +
-                    "'>" + $(el).text() +
-                    "</a></li>");
+        var li = doc.createElement("li");
+        li.className = 'btw-navbar-item';
+        li.innerHTML = "<a class='navbar-link' href='#" + el.id +
+                    "'>" + el.textContent + "</a>";
 
         // getContextualActions needs to operate on the data tree.
-        var data_parent = $parent.data("wed_mirror_node");
+        var data_parent = $.data(parent, "wed_mirror_node");
 
         // btw:explanation is the element that gets the heading that
         // marks the start of a sense. So we need to adjust.
         if (orig_name === "btw:explanation") {
-            var parent_subsense = $(data_parent).parent(
-                util.classFromOriginalName("btw:subsense"))[0];
-            if (parent_subsense) {
+            var parent_subsense = data_parent.parentNode;
+            if (parent_subsense.classList.contains("btw:subsense")) {
                 orig_name = "btw:subsense";
                 data_parent = parent_subsense;
             }
@@ -1352,36 +1367,38 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
 
         // Add contextmenu handlers depending on the type of parent
         // we are dealing with.
-        var $a = $li.children("a");
-        $li.attr('data-wed-for', orig_name);
+        var a = li.firstChild;
+        li.setAttribute('data-wed-for', orig_name);
 
+        var $el = $(el);
         if (orig_name === "btw:sense" ||
             orig_name === "btw:english-rendition" ||
             orig_name === "btw:subsense") {
-            $a.on("contextmenu", {node: data_parent},
+            $(a).on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
-            $a.append(' <i class="icon icon-cog"></i>');
-            $el.find('.icon').remove();
-            $el.append(' <i class="icon icon-cog"></i>');
+            a.innerHTML += ' <i class="icon icon-cog"></i>';
+            var old_icon = domutil.childByClass(el, 'icon');
+            if (old_icon)
+                old_icon.parentNode.removeChild(old_icon);
+            el.innerHTML += ' <i class="icon icon-cog"></i>';
             // We must remove all previous handlers.
             $el.off("wed-context-menu");
             $el.on("wed-context-menu", {node: data_parent},
                    this._navigationContextMenuHandler.bind(this));
-            $el.attr("data-wed-custom-context-menu", true);
         }
         else {
             // We turn off context menus on the link and on the header.
-            $a.on("contextmenu", false);
-            $el.attr("data-wed-custom-context-menu", true);
+            $(a).on("contextmenu", false);
             $el.on("wed-context-menu", false);
         }
+        el.setAttribute("data-wed-custom-context-menu", true);
 
-        getParent(my_depth - 1).append($li);
-        prev_at_depth[my_depth] = $li;
+        getParent(my_depth - 1).appendChild(li);
+        prev_at_depth[my_depth] = li;
+    }
 
-    }.bind(this));
-
-    this._editor.setNavigationList(prev_at_depth[0].children());
+    this._editor.setNavigationList(
+        Array.prototype.slice.call(prev_at_depth[0].children));
 };
 
 BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
@@ -1431,28 +1448,36 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
         tuples.push([act, data,
                      act.getLabelFor(data) + " after this one"]);
 
-    var $target = $(ev.target);
-    if ($target.closest(".nav-list")[0]) {
+    var target = ev.target;
+    var doc = ev.target.ownerDocument;
+    var nav_list = closestByClass(target, "nav-list", document.body);
+    if (nav_list) {
         // This context menu was invoked in the navigation list.
 
-        var $this_li = $target.closest("li");
-        var $sibling_links = $this_li.parent().find('li[data-wed-for="' +
-                                                    orig_name + '"]');
+        var this_li = closest(target, "li", nav_list);
+        var sibling_links = [];
+        var parent = this_li.parentNode;
+        var child = parent.firstElementChild;
+        while(child) {
+            if (child.getAttribute('data-wed-for') === orig_name)
+                sibling_links.push(child);
+            child = child.nextElementSibling;
+        }
 
         // If the node has siblings we potentially add swap with previous
         // and swap with next.
-        if ($sibling_links.length > 1) {
-            // However, don't add swap with prev if we are first.
+        if (sibling_links.length > 1) {
             data = {element_name: orig_name, node: node,
                     move_caret_to: makeDLoc(this._editor.data_root,
                                             container, offset)};
-            if ($sibling_links.first().findAndSelf(ev.currentTarget).length === 0)
+            // However, don't add swap with prev if we are first.
+            if (!sibling_links[0].contains(ev.currentTarget))
                 tuples.push(
                     [this._mode.swap_with_prev_tr, data,
                      this._mode.swap_with_prev_tr.getLabelFor(data)]);
 
             // Don't add swap with next if we are last.
-            if ($sibling_links.last().findAndSelf(ev.currentTarget).length === 0)
+            if (!sibling_links[sibling_links.length - 1].contains(ev.currentTarget))
                 tuples.push(
                     [this._mode.swap_with_next_tr, data,
                      this._mode.swap_with_next_tr.getLabelFor(data)]);
@@ -1460,7 +1485,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     }
     else {
         // Set the caret to be inside the head
-        this._editor.setGUICaret($target[0], 0);
+        this._editor.setGUICaret(target, 0);
     }
 
     // Delete the node
@@ -1471,21 +1496,27 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
             tuples.push([act, data, act.getLabelFor(data)]);
         });
 
+    var li;
+
     // Convert the tuples to actual menu items.
     var items = [];
 
     // Put the documentation link first.
     var doc_url = this._mode.documentationLinkFor(orig_name);
     if (doc_url) {
+        li = doc.createElement("li");
         var a = this._editor.makeDocumentationLink(doc_url);
-        items.push($("<li></li>").append(a)[0]);
+        li.appendChild(a);
+        items.push(li);
     }
 
     for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
-        var $a = $("<a tabindex='0' href='#'>" + tup[2] + "</a>");
+        li = doc.createElement("li");
+        li.innerHTML = "<a tabindex='0' href='#'>" + tup[2] + "</a>";
+        var $a = $(li.firstChild);
         $a.mousedown(false);
         $a.click(tup[1], tup[0].bound_handler);
-        items.push($("<li></li>").append($a)[0]);
+        items.push(li);
     }
 
     new context_menu.ContextMenu(this._editor.my_window.document,
