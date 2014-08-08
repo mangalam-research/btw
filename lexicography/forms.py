@@ -25,8 +25,9 @@ class RawSaveForm(forms.ModelForm):
 class SaveForm(forms.ModelForm):
 
     class Media(object):
-        js = (settings.BTW_REQUIREJS_PATH, ) \
-            if not settings.BTW_WED_USE_REQUIREJS else ()
+        js = settings.BTW_WED_POLYFILLS + \
+            ((settings.BTW_REQUIREJS_PATH, )
+             if not settings.BTW_WED_USE_REQUIREJS else ())
 
     class Meta(object):
         model = Chunk

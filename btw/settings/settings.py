@@ -270,6 +270,10 @@ BTW_DATATABLES_CSS_PATH = \
 BTW_BOOTSTRAP_EDITABLE__CSS_PATH = \
     '/static/lib/external/bootstrap3-editable/css/bootstrap-editable.css'
 BTW_REQUIREJS_PATH = None
+# We don't load classList from the external directory because it is
+# needed only for IE 9 and we don't support it for BTW.
+BTW_WED_POLYFILLS = tuple('/static/lib/wed/polyfills/' +
+                          x for x in ('contains.js', 'matches.js'))
 BTW_WED_USE_REQUIREJS = None
 BTW_WED_PATH = None
 BTW_WED_CSS = None
