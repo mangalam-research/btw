@@ -147,7 +147,7 @@ function RemoveMixedTr(editor, language) {
     this._nesting_modal = getNestingModal(editor);
     Transformation.call(this, editor, "Remove mixed-content markup",
                         "Remove mixed-content markup",
-                        '<i class="icon-eraser"></i>',
+                        '<i class="fa fa-eraser"></i>',
                         true,
                         remove_mixed_handler);
 }
@@ -216,7 +216,7 @@ function remove_mixed_handler(editor, data) {
 function make_replace_none(editor, replaced_with) {
     return new Transformation(
         editor, "Create new " + replaced_with, undefined,
-        "<i class='icon-plus icon-fixed-width'></i>",
+        "<i class='fa fa-plus fa-fw'></i>",
         function (editor, data) {
         var caret = editor.getDataCaret();
         var parent = caret.node;

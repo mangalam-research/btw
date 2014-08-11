@@ -26,12 +26,12 @@ var $modal = $(
 
 var buttons_template = template("\
 <% if (edit) { %>\
-<div class='btn btn-default btn-sm add-button'><i class='icon-plus'></i></div>\
+<div class='btn btn-default btn-sm add-button'><i class='fa fa-plus'></i></div>\
 <% } %>\
 <div style='position: relative' \
      class='btn <% print(children ? 'btn-default ':'') %>btn-sm open-close-button'>\
-  <i class='icon-fixed-width \
-            <% print(children ? 'icon-caret-right': '') %>'></i>\
+  <i class='fa fa-fw \
+            <% print(children ? 'fa-caret-right': '') %>'></i>\
   <% print(children ? \
            '<span class=\"primary-source-count\" style=\"position: absolute; font-size: x-small; text-align: left; top:0; left: 0.5em;\">' + \
            children + '</span>' : '') %>\
@@ -76,7 +76,7 @@ function makeSubtable(table, options, row_node, url) {
             aTargets: [0],
             bSortable: false,
             mRender: function (data, type, row_data) {
-                return '<div class="btn btn-default btn-sm edit-button"><i class="icon-edit"></i></div>';
+                return '<div class="btn btn-default btn-sm edit-button"><i class="fa fa-edit"></i></div>';
             },
             fnCreatedCell: function (cell, data, row, row_ix, col_ix) {
                 var $cell = $(cell);
@@ -159,15 +159,15 @@ var open_ids = Object.create(null);
 function openOrCloseRow(table, options, row_node, $i, url, id) {
     if (table.fnIsOpen(row_node)) {
         table.fnClose(row_node);
-        $i.removeClass("icon-caret-down");
-        $i.addClass("icon-caret-right");
+        $i.removeClass("fa-caret-down");
+        $i.addClass("fa-caret-right");
         $i.parents("div.open-close-button").removeClass("active");
         delete open_ids[id];
     }
     else {
         makeSubtable(table, options, row_node, url);
-        $i.removeClass("icon-caret-right");
-        $i.addClass("icon-caret-down");
+        $i.removeClass("fa-caret-right");
+        $i.addClass("fa-caret-down");
         $i.parents("div.open-close-button").addClass("active");
         open_ids[id] = true;
     }

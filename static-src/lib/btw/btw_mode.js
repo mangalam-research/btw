@@ -85,11 +85,11 @@ BTWMode.prototype.init = function (editor) {
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
         editor, "Insert a new hyperlink to a sense",
-        undefined, "<i class='icon-plus icon-fixed-width'></i>", true);
+        undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
     this.insert_example_ptr_action = new btw_actions.ExamplePtrDialogAction(
         editor, "Insert a new hyperlink to an example",
-        undefined, "<i class='icon-plus icon-fixed-width'></i>", true);
+        undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
     this.insert_ptr_tr = new transformation.Transformation(
         editor, "Insert a pointer", btw_tr.insert_ptr);
@@ -99,7 +99,7 @@ BTWMode.prototype.init = function (editor) {
 
     this.swap_with_prev_tr = new transformation.Transformation(
         editor, "Swap with previous sibling", undefined,
-        "<i class='icon-long-arrow-up'></i>",
+        "<i class='fa fa-long-arrow-up'></i>",
         function (editor, data) {
         return transformation.swapWithPreviousHomogeneousSibling(
             editor, data.node);
@@ -116,7 +116,7 @@ BTWMode.prototype.init = function (editor) {
 
     this.swap_with_next_tr = new transformation.Transformation(
         editor, "Swap with next sibling", undefined,
-        "<i class='icon-long-arrow-down'></i>",
+        "<i class='fa fa-long-arrow-down'></i>",
         function (editor, data) {
         return transformation.swapWithNextHomogeneousSibling(
             editor, data.node);
@@ -138,7 +138,7 @@ BTWMode.prototype.init = function (editor) {
         this._editor,
         "Insert a new bibliographical reference",
         "",
-        "<i class='icon-plus icon-fixed-width'></i>",
+        "<i class='fa fa-plus fa-fw'></i>",
         true);
 
     /**

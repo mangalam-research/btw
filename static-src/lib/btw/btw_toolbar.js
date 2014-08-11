@@ -80,7 +80,7 @@ Toolbar.prototype._click = log.wrap(function (ev) {
 
 function UndoAction(editor) {
     action.Action.call(this, editor, "Undo", "Undo",
-                       "<i class='icon-undo'></i>");
+                       "<i class='fa fa-undo'></i>");
 }
 
 oop.inherit(UndoAction, action.Action);
@@ -91,7 +91,7 @@ UndoAction.prototype.execute = function (data) {
 
 function RedoAction(editor) {
     action.Action.call(this, editor, "Redo", "Redo",
-                       "<i class='icon-repeat'></i>");
+                       "<i class='fa fa-repeat'></i>");
 }
 
 oop.inherit(RedoAction, action.Action);
@@ -103,7 +103,7 @@ RedoAction.prototype.execute = function (data) {
 
 function QuitAction(editor) {
     action.Action.call(this, editor, "Save and quit", "Save and quit",
-                       "<i class='icon-ban-circle' style='color: red'></i>");
+                       "<i class='fa fa-ban' style='color: red'></i>");
 }
 
 oop.inherit(QuitAction, action.Action);
@@ -118,7 +118,7 @@ QuitAction.prototype.execute = function (data) {
 
 function SaveAction(editor) {
     action.Action.call(this, editor, "Save", "Save",
-                       "<i class='icon-cloud-upload'></i>");
+                       "<i class='fa fa-cloud-upload'></i>");
 }
 
 oop.inherit(SaveAction, action.Action);

@@ -1376,11 +1376,11 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
             orig_name === "btw:subsense") {
             $(a).on("contextmenu", {node: data_parent},
                   this._navigationContextMenuHandler.bind(this));
-            a.innerHTML += ' <i class="icon icon-cog"></i>';
-            var old_icon = domutil.childByClass(el, 'icon');
+            a.innerHTML += ' <i class="fa fa-cog"></i>';
+            var old_icon = domutil.childByClass(el, 'fa');
             if (old_icon)
                 old_icon.parentNode.removeChild(old_icon);
-            el.innerHTML += ' <i class="icon icon-cog"></i>';
+            el.innerHTML += ' <i class="fa fa-cog"></i>';
             // We must remove all previous handlers.
             $el.off("wed-context-menu");
             $el.on("wed-context-menu", {node: data_parent},

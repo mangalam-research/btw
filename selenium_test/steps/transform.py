@@ -90,7 +90,7 @@ def step_impl(context):
     driver = context.driver
     util = context.util
 
-    undo = util.find_clickable_element((By.CLASS_NAME, "icon-undo"))
+    undo = util.find_clickable_element((By.CLASS_NAME, "fa-undo"))
     ActionChains(driver) \
         .click(undo) \
         .perform()
@@ -474,7 +474,7 @@ def step_impl(context, what):
 
     button = context.driver.execute_script(u"""
     var $buttons = jQuery("#toolbar .btn");
-    return $buttons.has("i.icon-eraser")[0];
+    return $buttons.has("i.fa-eraser")[0];
     """)
     button.click()
 
