@@ -90,8 +90,8 @@ function SetTextLanguageTr(editor, language) {
     this._language = language;
     this._nesting_modal = getNestingModal(editor);
     var desc = "Set language to " + language;
-    Transformation.call(this, editor, desc, language, undefined, true,
-                        set_language_handler);
+    Transformation.call(this, editor, undefined, desc, language, undefined,
+                        true, set_language_handler);
 }
 
 oop.inherit(SetTextLanguageTr, Transformation);
@@ -145,7 +145,7 @@ function set_language_handler(editor, data) {
 function RemoveMixedTr(editor, language) {
     this._language = language;
     this._nesting_modal = getNestingModal(editor);
-    Transformation.call(this, editor, "Remove mixed-content markup",
+    Transformation.call(this, editor, "delete", "Remove mixed-content markup",
                         "Remove mixed-content markup",
                         '<i class="fa fa-eraser"></i>',
                         true,
@@ -215,8 +215,7 @@ function remove_mixed_handler(editor, data) {
 
 function make_replace_none(editor, replaced_with) {
     return new Transformation(
-        editor, "Create new " + replaced_with, undefined,
-        "<i class='fa fa-plus fa-fw'></i>",
+        editor, "add", "Create new " + replaced_with,
         function (editor, data) {
         var caret = editor.getDataCaret();
         var parent = caret.node;

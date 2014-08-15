@@ -13,7 +13,6 @@ var key_constants = require("wed/key_constants");
 var key = require("wed/key");
 var domutil = require("wed/domutil");
 var transformation = require("wed/transformation");
-var Transformation = transformation.Transformation;
 var updater_domlistener = require("wed/updater_domlistener");
 var btw_util = require("./btw_util");
 var id_manager = require("./id_manager");

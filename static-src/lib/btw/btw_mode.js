@@ -92,14 +92,14 @@ BTWMode.prototype.init = function (editor) {
         undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
     this.insert_ptr_tr = new transformation.Transformation(
-        editor, "Insert a pointer", btw_tr.insert_ptr);
+        editor, "add", "Insert a pointer", btw_tr.insert_ptr);
 
     this.insert_ref_tr = new transformation.Transformation(
-        editor, "Insert a reference", btw_tr.insert_ref);
+        editor, "add", "Insert a reference", btw_tr.insert_ref);
 
     this.swap_with_prev_tr = new transformation.Transformation(
-        editor, "Swap with previous sibling", undefined,
-        "<i class='fa fa-long-arrow-up'></i>",
+        editor, "swap-with-previous", "Swap with previous sibling", undefined,
+        "<i class='fa fa-long-arrow-up fa-fw'></i>",
         function (editor, data) {
         return transformation.swapWithPreviousHomogeneousSibling(
             editor, data.node);
@@ -115,15 +115,15 @@ BTWMode.prototype.init = function (editor) {
         btw_tr.make_replace_none(editor, "btw:conceptual-proximate");
 
     this.swap_with_next_tr = new transformation.Transformation(
-        editor, "Swap with next sibling", undefined,
-        "<i class='fa fa-long-arrow-down'></i>",
+        editor, "swap-with-next", "Swap with next sibling", undefined,
+        "<i class='fa fa-long-arrow-down fa-fw'></i>",
         function (editor, data) {
         return transformation.swapWithNextHomogeneousSibling(
             editor, data.node);
     });
 
     this.insert_ref_text = new transformation.Transformation(
-        this._editor, "Add custom text to reference",
+        this._editor, "add", "Add custom text to reference",
         function (editor, data) {
         var caret = editor.getGUICaret();
         var ref = $(caret.node).closest(util.classFromOriginalName("ref"))[0];
