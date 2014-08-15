@@ -169,11 +169,17 @@ function BTWDecorator(mode, meta) {
             parent: jqutil.toDataSelector("btw:sense"),
             children: ["btw:subsense", "btw:explanation",
                        "btw:semantic-fields", "btw:citations",
-                       "btw:contrastive-section"]
+                       "btw:other-citations", "btw:contrastive-section"]
         },
         {
             parent: jqutil.toDataSelector("btw:citations"),
             children: ["btw:example"]
+        },
+        {
+            parent: jqutil.toDataSelector(
+                "btw:subsense, btw:antonym, btw:cognate, "+
+                    "btw:conceptual-proximate"),
+            children: ["btw:other-citations"]
         }
     ];
 
@@ -615,6 +621,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 }
 
                 $control.click(function (ev) {
+                    if (this._editor.getGUICaret() === undefined)
+                        this._editor.setGUICaret(gui_loc);
                     new context_menu.ContextMenu(
                         this._editor.my_window.document,
                         ev.clientX, ev.clientY,
@@ -626,6 +634,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 control.innerHTML = tuples[0][2];
                 $control.mousedown(false);
                 $control.click(tuples[0][1], function (ev) {
+                    if (this._editor.getDataCaret() === undefined)
+                        this._editor.setDataCaret(data_loc);
                     tuples[0][0].bound_terminal_handler(ev);
                     this.refreshElement(root, el);
                 }.bind(this));

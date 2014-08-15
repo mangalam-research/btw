@@ -189,6 +189,9 @@
               <rng:group>
                 <rng:ref name="btw_explanation"/>
                 <rng:ref name="btw_citations"/>
+                <rng:optional>
+                  <rng:ref name="btw_other-citations"/>
+                </rng:optional>
               </rng:group>
             </rng:choice>
             <rng:ref name="btw_semantic-fields"/>
@@ -248,6 +251,9 @@
           <content>
             <rng:ref name="btw_explanation"/>
             <rng:ref name="btw_citations"/>
+            <rng:optional>
+              <rng:ref name="btw_other-citations"/>
+            </rng:optional>
           </content>
           <attList>
             <attRef name="tei_att.global.attribute.xmlid"/>
@@ -314,6 +320,9 @@
             <rng:group>
               <rng:ref name="btw_term"/>
               <rng:ref name="btw_citations"/>
+              <rng:optional>
+                <rng:ref name="btw_other-citations"/>
+              </rng:optional>
             </rng:group>
           </content>
         </elementSpec>
@@ -343,6 +352,9 @@
               <rng:ref name="btw_term"/>
               <rng:ref name="btw_semantic-fields"/>
               <rng:ref name="btw_citations"/>
+              <rng:optional>
+                <rng:ref name="btw_other-citations"/>
+              </rng:optional>
             </rng:group>
           </content>
         </elementSpec>
@@ -381,6 +393,9 @@
             <rng:group>
               <rng:ref name="btw_term"/>
               <rng:ref name="btw_citations"/>
+              <rng:optional>
+                <rng:ref name="btw_other-citations"/>
+              </rng:optional>
             </rng:group>
           </content>
         </elementSpec>
@@ -403,8 +418,9 @@
         <elementSpec ident="citations"
                      ns="http://mangalamresearch.org/ns/btw-storage"
                      prefix="btw_">
-          <desc>This element groups all the citations associated with
-          its parent element.</desc>
+          <desc>This element groups all the main citations associated
+          with its parent element. These citations are
+          translated.</desc>
           <content>
             <rng:choice>
               <rng:ref name="btw_example"/>
@@ -417,6 +433,20 @@
                 <rng:ref name="ptr"/>
               </rng:choice>
             </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+
+        <elementSpec ident="other-citations"
+                     ns="http://mangalamresearch.org/ns/btw-storage"
+                     prefix="btw_">
+          <desc>This element groups all "other" citations associated
+          with its parent element. These citations are not
+          translated.</desc>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="btw_cit"/>
+            </rng:oneOrMore>
           </content>
         </elementSpec>
 

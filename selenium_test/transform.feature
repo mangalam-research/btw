@@ -117,6 +117,12 @@ Scenario: creating a btw:example in a sense by using a visible absence
   Then a new btw:example is created
   And there is no ref
 
+Scenario: creating a btw:other-citations in a sense by using a visible absence
+  Given a document with a sense with citations
+  When the user clicks on the visible absence for btw:other-citations
+  Then a new btw:other-citations is created
+  And there is no ref
+
 Scenario: creating a btw:example in a subsense by using a visible absence
   Given a document with senses and subsenses
   When the user clicks on the visible absence for btw:example in btw:subsense
