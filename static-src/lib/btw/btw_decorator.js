@@ -876,7 +876,7 @@ BTWDecorator.prototype.explanationDecorator = function (root, el) {
         div = el.ownerDocument.createElement("div");
         div.className = "_phantom _decoration_text _explanation_number " +
             "_start_wrapper'";
-        div.textContent = label;
+        div.textContent = label + ". ";
         this._gui_updater.insertBefore(el, div,
                                        start ? start.nextSibling : null);
 
