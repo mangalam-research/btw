@@ -576,7 +576,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 continue;
 
             var data_loc = makeDLoc(this._editor.data_root, node, locations[0]);
-            var data = {element_name: spec, move_caret_to: data_loc};
+            var data = {name: spec, move_caret_to: data_loc};
             var gui_loc = this._gui_updater.fromDataLocation(data_loc);
 
             var tuples = [];
@@ -1436,7 +1436,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     var actions = this._mode.getContextualActions("insert", orig_name,
                                                   container, offset);
     // data to pass to transformations
-    var data = {element_name: orig_name,
+    var data = {name: orig_name,
                 move_caret_to: makeDLoc(this._editor.data_root,
                                         container, offset)};
     var act_ix, act;
@@ -1451,7 +1451,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     actions = this._mode.getContextualActions("insert", orig_name,
                                               container, offset + 1);
 
-    data = {element_name: orig_name, move_caret_to: makeDLoc(
+    data = {name: orig_name, move_caret_to: makeDLoc(
         this._editor.data_root, container, offset + 1)};
     for(act_ix = 0, act; (act = actions[act_ix]) !== undefined; ++act_ix)
         tuples.push([act, data,
@@ -1476,7 +1476,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
         // If the node has siblings we potentially add swap with previous
         // and swap with next.
         if (sibling_links.length > 1) {
-            data = {element_name: orig_name, node: node,
+            data = {name: orig_name, node: node,
                     move_caret_to: makeDLoc(this._editor.data_root,
                                             container, offset)};
             // However, don't add swap with prev if we are first.
@@ -1498,7 +1498,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     }
 
     // Delete the node
-    data = {node: node, element_name: orig_name,
+    data = {node: node, name: orig_name,
             move_caret_to: makeDLoc(this._editor.data_root, node, 0)};
     this._mode.getContextualActions(
         "delete-element", orig_name, node, 0).forEach(function (act) {

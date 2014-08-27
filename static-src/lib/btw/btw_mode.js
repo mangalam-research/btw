@@ -57,6 +57,7 @@ function BTWMode (options) {
     };
 
     this._wed_options.label_levels.max = 2;
+    this._wed_options.attributes = "hide";
 }
 
 oop.inherit(BTWMode, Mode);

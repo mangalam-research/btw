@@ -228,7 +228,7 @@ function make_replace_none(editor, replaced_with) {
                                                        grandparent, 0);
         actions[0].execute({
             move_caret_to: makeDLoc(editor.data_root, grandparent, 0),
-            element_name: replaced_with
+            name: replaced_with
         });
         editor.data_updater.removeNode(parent);
     });
