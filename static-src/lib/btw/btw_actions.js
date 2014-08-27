@@ -32,7 +32,7 @@ SensePtrDialogAction.prototype.execute = function (data) {
             ++tix)
             terms.push($.data(term_node, "wed_mirror_node").textContent);
         terms = terms.join(", ");
-        var sense_label = editor.decorator._getSenseLabel(sense);
+        var sense_label = editor.decorator._refmans.getSenseLabel(sense);
 
         var span = doc.createElement("span");
         span.textContent = " [" + sense_label + "] " + terms;
@@ -53,7 +53,7 @@ SensePtrDialogAction.prototype.execute = function (data) {
         for(var ssix = 0, subsense; (subsense = subsenses[ssix]) !== undefined;
             ++ssix) {
             data_node = $.data(subsense, "wed_mirror_node");
-            var subsense_label = editor.decorator._getSubsenseLabel(subsense);
+            var subsense_label = editor.decorator._refmans._getSubsenseLabel(subsense);
             var child = data_node.firstElementChild;
             var explanation;
             while (child) {

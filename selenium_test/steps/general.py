@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import json
 import requests
 import re
+import os
+import urllib
 # pylint: disable=E0611
 from nose.tools import assert_equal, assert_raises, \
     assert_true
@@ -231,20 +232,29 @@ href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
 @Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
+    feature = context.feature
     util = context.util
     driver = context.driver
 
-    if what in ("a single sense",
-                "a single sense that does not have a subsense"):
-        context.execute_steps(u"""
-        Given a new document
-        """)
+    # This step will work differently depending whether it executed
+    # from a feature named "view" or "view_structure", or not. In the
+    # former case, it is assumed that the user only wants to view the
+    # document. In the later case, it is assumed that the user wants
+    # to edit the document.
+    name = os.path.splitext(os.path.basename(feature.filename))[0]
+    edit = name not in ("view", "view_structure")
+    if edit:
+        if what in ("a single sense",
+                    "a single sense that does not have a subsense"):
+            context.execute_steps(u"""
+            Given a new document
+            """)
 
-        sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
-        assert_raises(NoSuchElementException,
-                      sense.find_element,
-                      (By.CSS_SELECTOR, r".btw\:subsense"))
-        return
+            sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
+            assert_raises(NoSuchElementException,
+                          sense.find_element,
+                          (By.CSS_SELECTOR, r".btw\:subsense"))
+            return
 
     title = WHAT_TO_TITLE[what]
     context.execute_steps(u"""
@@ -276,10 +286,12 @@ def step_impl(context, what):
                      })
 
     hits = funcs.parse_search_results(r.text)
-    driver.get(context.selenic.SERVER + hits[title]["edit_url"])
-    setup_editor(context)
-
-    btw_util.record_document_features(context)
+    if edit:
+        driver.get(context.selenic.SERVER + hits[title]["edit_url"])
+        setup_editor(context)
+        btw_util.record_document_features(context)
+    else:
+        driver.get(context.selenic.SERVER + hits[title]["view_url"])
 
 
 @Given("^a document that has no (?P<what>.*)$")

@@ -3,12 +3,11 @@ import re
 import collections
 
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import TimeoutException
 import wedutil
 
 # pylint: disable=no-name-in-module
-from nose.tools import assert_true
+from nose.tools import assert_equal, assert_true
 
 
 class PlainRecorder(dict):
@@ -271,3 +270,74 @@ def get_sense_hyperlinks(util):
         return util.wait(cond)[0]
     except TimeoutException:
         raise Exception("cannot get sense hyperlinks")
+
+
+sense_re = re.compile(r"sense (.).?\b")
+subsense_re = re.compile(r"sense (..)\b")
+
+
+def assert_senses_in_order(util):
+    """
+    Verifies that all senses are properly labeled and that all
+    occurrences of the word "sense" in headers that appear in a sense
+    are followed by a proper sense label.
+    """
+    senses = util.driver.execute_script("""
+    var senses = document.getElementsByClassName("btw:sense");
+    var ret = [];
+    for(var i = 0, limit = senses.length; i < limit; ++i) {
+        var heads = senses[i].querySelectorAll(".head");
+        var head_texts = [];
+        for(var j = 0, j_limit = heads.length; j < j_limit; ++j)
+            head_texts.push(heads[j].textContent);
+
+        var subsenses = senses[i].querySelectorAll(".btw\\\\:subsense");
+        var subsense_info = [];
+        for(var j = 0, j_limit = subsenses.length; j < j_limit; ++j) {
+            var subheads = subsenses[j].querySelectorAll(".head");
+            var subhead_texts = [];
+            for(var q = 0, q_limit = subheads.length; q < q_limit; ++q)
+                subhead_texts.push(subheads[q].textContent);
+            subsense_info.push(subhead_texts);
+        }
+        ret.push({heads: head_texts, subsenses: subsense_info});
+    }
+    return ret;
+    """)
+    sense_label_ix = ord("A")
+
+    assert_true(len(senses) > 0)
+
+    for sense in senses:
+        saw_main_head = False
+        assert_true(len(sense["heads"]) > 0, "there should be heads")
+        for head in sense["heads"]:
+            if head.startswith("[SENSE"):
+                saw_main_head = True
+                assert_equal(head.strip(),
+                             "[SENSE {0}]".format(chr(sense_label_ix)),
+                             "the head text should be correct")
+            elif "sense" in head:
+                # This test in effect tests the heads that appear
+                # inside subsenses twice, but that's okay. (Here it
+                # tests that it is of the form "sense [abcdef]" and
+                # may have a number after it. The later test checks
+                # for the letter and the number.)
+                match = sense_re.search(head)
+                assert_equal(
+                    match and match.group(1), chr(sense_label_ix).lower(),
+                    "the subhead text should be correct")
+        subsense_label_ix = 1
+        assert_true(saw_main_head, "should have seen the main head")
+        for subsense in sense["subsenses"]:
+            assert_true(len(subsense) > 0, "there should be heads in the "
+                        "subsense")
+            for head in subsense:
+                if "sense" in head:
+                    match = subsense_re.search(head)
+                    assert_equal(match and match.group(1),
+                                 chr(sense_label_ix).lower() +
+                                 str(subsense_label_ix),
+                                 "subsense head text")
+            subsense_label_ix += 1
+        sense_label_ix += 1

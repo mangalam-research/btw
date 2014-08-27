@@ -19,6 +19,8 @@ var context_menu = require("wed/gui/context_menu");
 var tooltip = require("wed/gui/tooltip").tooltip;
 var validate = require("salve/validate");
 var makeDLoc = require("wed/dloc").makeDLoc;
+var DispatchMixin = require("./btw_dispatch").DispatchMixin;
+var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
 require("wed/jquery.findandself");
 var closestByClass = domutil.closestByClass;
 var closest = domutil.closest;
@@ -33,84 +35,13 @@ function BTWDecorator(mode, meta) {
         new updater_domlistener.Listener(this._gui_root, this._gui_updater);
     this._mode = mode;
     this._meta = meta;
-    this._sense_refman = new refmans.SenseReferenceManager();
-    this._example_refman = new refmans.ExampleReferenceManager();
     this._sense_subsense_id_manager = new id_manager.IDManager("S.");
     this._example_id_manager = new id_manager.IDManager("E.");
+    this._refmans = new refmans.WholeDocumentManager();
+    this._heading_decorator = new HeadingDecorator(
+        this._refmans, this._gui_updater);
 
     this._senses_for_refresh_subsenses = [];
-
-    // We bind them here so that we have a unique function to use.
-    this._bound_getSenseLabel = this._getSenseLabel.bind(this);
-    this._bound_getSubsenseLabel = this._getSubsenseLabel.bind(this);
-
-    this._section_heading_specs = [ {
-        selector: "btw:definition",
-        heading: "definition"
-    }, {
-        selector: "btw:sense",
-        heading: "SENSE",
-        label_f: this._getSenseLabelForHead.bind(this)
-    }, {
-        selector: "btw:english-renditions",
-        heading: "English renditions"
-    }, {
-        selector: "btw:english-rendition",
-        heading: "English rendition"
-    }, {
-        selector: "btw:semantic-fields",
-        heading: "semantic categories"
-    }, {
-        selector: "btw:etymology",
-        heading: "etymology"
-    }, {
-        selector: "btw:sense>btw:explanation",
-        heading: "brief explanation of sense",
-        label_f: this._bound_getSenseLabel
-    }, {
-        selector: "btw:subsense>btw:explanation",
-        heading: "brief explanation of sense",
-        label_f: this._bound_getSubsenseLabel
-    }, {
-        selector: "btw:sense>btw:citations",
-        heading: "citations for sense",
-        label_f: this._bound_getSenseLabel
-    }, {
-        selector: "btw:subsense>btw:citations",
-        heading: "citations for sense",
-        label_f: this._bound_getSubsenseLabel
-    }, {
-        selector:
-        "btw:antonym>btw:citations," +
-            "btw:cognate>btw:citations," +
-            "btw:conceptual-proximate>btw:citations",
-        heading: "citations"
-    },{
-        selector: "btw:contrastive-section",
-        heading: "contrastive section for sense",
-        label_f: this._bound_getSenseLabel
-    }, {
-        selector: "btw:antonyms",
-        heading: "antonyms"
-    }, {
-        selector: "btw:cognates",
-        heading: "cognates"
-    }, {
-        selector: "btw:conceptual-proximates",
-        heading: "conceptual proximates"
-    }, {
-        selector: "btw:sense>btw:other-citations",
-        heading: "other citations for sense ",
-        label_f: this._bound_getSenseLabel
-    }, {
-        selector: "btw:other-citations",
-        heading: "other citations"
-    }];
-
-    // Convert the selectors to actual selectors.
-    for (var s_ix = 0, spec;
-         (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
-        spec.selector = domutil.toGUISelector(spec.selector);
 
     this._label_levels = {};
     [
@@ -185,6 +116,7 @@ function BTWDecorator(mode, meta) {
 }
 
 oop.inherit(BTWDecorator, Decorator);
+oop.implement(BTWDecorator, DispatchMixin);
 
 BTWDecorator.prototype.addHandlers = function () {
     this._domlistener.addHandler(
@@ -390,63 +322,7 @@ BTWDecorator.prototype.refreshElement = function (root, el) {
 
     this.refreshVisibleAbsences(root, el);
 
-    var klass = this._meta.getAdditionalClasses(el);
-    if (klass.length)
-        el.className += " " + klass;
-
-    var name = util.getOriginalName(el);
-    var skip_default = false;
-    switch(name) {
-    case "btw:overview":
-    case "btw:sense-discrimination":
-    case "btw:historico-semantical-data":
-        unitHeadingDecorator(root, el, this._gui_updater);
-        break;
-    case "btw:definition":
-    case "btw:english-renditions":
-    case "btw:english-rendition":
-    case "btw:etymology":
-    case "btw:contrastive-section":
-    case "btw:antonyms":
-    case "btw:cognates":
-    case "btw:conceptual-proximates":
-    case "btw:other-citations":
-    case "btw:citations":
-        this.sectionHeadingDecorator(root, el, this._gui_updater);
-        break;
-    case "btw:semantic-fields":
-        this.sectionHeadingDecorator(root, el, this._gui_updater);
-        this.listDecorator(el, "; ");
-        break;
-    case "ptr":
-        this.ptrDecorator(root, el);
-        break;
-    case "foreign":
-        languageDecorator(el);
-        break;
-    case "ref":
-        this.refDecorator(root, el);
-        break;
-    case "btw:example":
-        this.idDecorator(root, el);
-        break;
-    case "btw:cit":
-        this.citDecorator(root, el);
-        skip_default = true; // citDecorator calls elementDecorator
-        break;
-    case "btw:explanation":
-        this.explanationDecorator(root, el);
-        skip_default = true; // explanationDecorator calls elementDecorator
-        break;
-    case "btw:none":
-        this.noneDecorator(root, el);
-        // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
-        skip_default = true;
-        break;
-    }
-
-    if (!skip_default)
-        this.elementDecorator(root, el);
+    this.dispatch(root, el);
 
     //
     // This mode makes the validator work while it is decorating the
@@ -649,61 +525,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
     }
 };
 
-var WHEEL = "☸";
-
-BTWDecorator.prototype.citDecorator = function (root, el) {
-    this.elementDecorator(root, el);
-
-    var ref;
-    var child = el.firstElementChild;
-    while(child) {
-        var next = child.nextElementSibling;
-        if (child.classList.contains("_ref_space") ||
-            child.classList.contains("_cit_bullet"))
-            this._gui_updater.removeNode(child);
-        else if (child.classList.contains("ref"))
-            ref = child;
-        child = next;
-    }
-
-    if (ref) {
-        var space = el.ownerDocument.createElement("div");
-        space.className = "_text _phantom _ref_space";
-        space.innerHTML = " ";
-        el.insertBefore(space, ref.nextSibling);
-    }
-
-    if (el.querySelector("*[" + util.encodeAttrName("xml:lang") +
-                 "='pi-Latn']")) {
-        var div = el.ownerDocument.createElement("div");
-        div.className = "_phantom _text _cit_bullet";
-        div.style.position = "absolute";
-        div.style.left = "-1em";
-        div.textContent = WHEEL;
-        this._gui_updater.insertNodeAt(el, 0, div);
-        el.style.position = "relative";
-    }
-};
-
 BTWDecorator.prototype.idDecorator = function (root, el) {
-    var name = util.getOriginalName(el);
-
-    var refman = this._getRefmanForElement(root, el);
-    if (refman) {
-        var wed_id = el.id;
-        if (!wed_id) {
-            var id = el.getAttribute(util.encodeAttrName("xml:id"));
-            var id_man = this._getIDManagerForRefman(refman);
-            wed_id = "BTW-" + (id || id_man.generate());
-            el.id = wed_id;
-        }
-
-        // We have some reference managers that don't derive from
-        // ReferenceManager and thus do not have this method.
-        if (refman.allocateLabel)
-            refman.allocateLabel(wed_id);
-    }
-
+    DispatchMixin.prototype.idDecorator.call(this, root, el);
     this._domlistener.trigger("refresh-sense-ptrs");
 };
 
@@ -756,22 +579,13 @@ BTWDecorator.prototype.excludedExampleHandler = function (root, el) {
 };
 
 BTWDecorator.prototype.includedSenseTriggerHandler = function (root) {
-    this._sense_refman.deallocateAll();
     var senses = root.getElementsByClassName("btw:sense");
+    if (senses.length)
+        this._refmans.getRefmanForElement(senses[0]).deallocateAll();
     for(var i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
         this.idDecorator(root, sense);
-        this.sectionHeadingDecorator(root, sense, this._gui_updater);
-        // Refresh the headings that use the sense label.
-        for (var s_ix = 0, spec;
-             (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
-        {
-            if (spec.label_f === this._bound_getSenseLabel) {
-                var subheaders = sense.querySelectorAll(spec.selector);
-                for(var shix = 0, sh; (sh = subheaders[shix]) !== undefined;
-                    ++shix)
-                    this.sectionHeadingDecorator(root, sh, this._gui_updater);
-            }
-        }
+        this._heading_decorator.sectionHeadingDecorator(sense);
+        this._heading_decorator.updateHeadingsForSense(sense);
         this.refreshSubsensesForSense(root, sense);
     }
 };
@@ -794,7 +608,7 @@ BTWDecorator.prototype.refreshSubsensesTriggerHandler = function (root) {
 };
 
 BTWDecorator.prototype._refreshSubsensesForSense = function (root, sense) {
-    var refman = this._getSubsenseRefman(sense);
+    var refman = this._refmans.getSubsenseRefman(sense);
     refman.deallocateAll();
 
     // This happens if the sense was removed from the document.
@@ -803,479 +617,18 @@ BTWDecorator.prototype._refreshSubsensesForSense = function (root, sense) {
 
     var subsenses = sense.getElementsByClassName("btw:subsense");
     for(var i = 0, subsense; (subsense = subsenses[i]) !== undefined; ++i) {
-        var explanation;
-        var child = subsenses.firstElementChild;
-        while(child) {
-            if (child.classList.contains("btw:explanation")) {
-                explanation = child;
-                break;
-            }
-            child = child.nextElementSibling;
-        }
-
         this.idDecorator(root, subsense);
+        var explanation = domutil.childByClass("btw:explanantion");
         if (explanation)
             this.explanationDecorator(root, explanation);
 
-        // Refresh the headings that use the subsense label.
-        for (var s_ix = 0, spec;
-             (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
-        {
-            if (spec.label_f === this._bound_getSubsenseLabel) {
-                var subheaders = subsense.querySelectorAll(spec.selector);
-                for(var shix = 0, sh; (sh = subheaders[shix]) !== undefined;
-                    ++shix)
-                    this.sectionHeadingDecorator(root, sh, this._gui_updater);
-            }
-        }
+        this._heading_decorator.updateHeadingsForSubsense(subsense);
     }
 };
-
-BTWDecorator.prototype.explanationDecorator = function (root, el) {
-    var child, next, div; // Damn hoisting...
-    // Handle explanations that are in btw:example-explained.
-    if (el.parentNode.classList.contains("btw:example-explained")) {
-        child = el.firstElementChild;
-        while(child) {
-            next = child.nextElementSibling;
-            if (child.classList.contains("_explanation_bullet")) {
-                this._gui_updater.removeNode(child);
-                break; // There's only one.
-            }
-            child = next;
-        }
-
-        var cit = el.nextElementSibling;
-        // If the next btw:cit element contains Pāli text.
-        if (cit.classList.contains("btw:cit") &&
-            cit.querySelector("*[" + util.encodeAttrName("xml:lang") +
-                              "='pi-Latn']")) {
-            div = el.ownerDocument.createElement("div");
-            div.className = "_phantom _decoration_text _explanation_bullet";
-            div.style.position = "absolute";
-            div.style.left = "-1em";
-            div.textContent = WHEEL;
-            this._gui_updater.insertNodeAt(el, 0, div);
-            el.style.position = "relative";
-        }
-        this.elementDecorator(root, el);
-        return;
-    }
-
-    this.elementDecorator(root, el);
-    var label;
-    var parent = el.parentNode;
-    // Is it in a subsense?
-    if (parent.classList.contains("btw:subsense")) {
-        var refman = this._getSubsenseRefman(el);
-        label = refman.idToSublabel(parent.id);
-        child = el.firstElementChild;
-        var start;
-        while(child) {
-            next = child.nextElementSibling;
-            if (child.classList.contains("_explanation_number"))
-                this._gui_updater.removeNode(child);
-            else if (child.classList.contains("__start_label"))
-                start = child;
-            child = next;
-        }
-
-        // We want to insert it after the start label.
-        div = el.ownerDocument.createElement("div");
-        div.className = "_phantom _decoration_text _explanation_number " +
-            "_start_wrapper'";
-        div.textContent = label + ". ";
-        this._gui_updater.insertBefore(el, div,
-                                       start ? start.nextSibling : null);
-
-    }
-    this.sectionHeadingDecorator(root, el, this._gui_updater);
-};
-
-BTWDecorator.prototype._getSenseLabelForHead = function (el) {
-    var id = el.id;
-    if (!id)
-        throw new Error("element does not have an id: " + el);
-    return this._sense_refman.idToLabelForHead(id);
-};
-
-BTWDecorator.prototype._getSenseLabel = function (el) {
-    var what = el;
-    var sense;
-    while(what) {
-        if (what.classList.contains("btw:sense")) {
-            sense = what;
-            break;
-        }
-        what = what.parentNode;
-    }
-
-    var id = sense && sense.id;
-
-    if (!id)
-        throw new Error("element does not have sense parent with an id: " + el);
-    return this._sense_refman.idToLabel(id);
-};
-
-BTWDecorator.prototype._getSubsenseLabel = function (el) {
-    var refman = this._getSubsenseRefman(el);
-
-    var what = el;
-    var subsense;
-    while(what) {
-        if (what.classList.contains("btw:subsense")) {
-            subsense = what;
-            break;
-        }
-        what = what.parentNode;
-    }
-
-    var id = subsense && subsense.id;
-    if (!id)
-        // This can happen during the decoration of the tree because
-        // there is in general no guarantee about the order in which
-        // elements are decorated. A second pass will ensure that the
-        // label is not undefined.
-        return undefined;
-    var label = refman.idToLabelForHead(id);
-    return label;
-};
-
-function closestSense(el) {
-    var what = el;
-    var sense;
-    while(what) {
-        if (what.classList.contains("btw:sense")) {
-            sense = what;
-            break;
-        }
-        what = what.parentNode;
-    }
-
-    return sense;
-}
-
-/**
- * @param {Node} el The element for which we want the subsense
- * reference manager. This element must be a child of a btw:sense
- * element or a btw:sense element.
- * @returns {module:btw_refmans~SubsenseReferenceManager} The subsense
- * reference manager.
- */
-BTWDecorator.prototype._getSubsenseRefman = function (el) {
-    var sense = closestSense(el);
-    var id = sense && sense.id;
-    return this._sense_refman.idToSubsenseRefman(id);
-};
-
-BTWDecorator.prototype._getRefmanForElement = function (root, el) {
-    var name = util.getOriginalName(el);
-    switch(name) {
-    case "ptr":
-    case "ref":
-        // Find the target and return its value
-
-        var target_attr = el.getAttribute(util.encodeAttrName("target"));
-        if (!target_attr)
-            return null;
-
-        // Slice to drop the #.
-        var target_id = target_attr.slice(1);
-
-        var target = el.ownerDocument.getElementById("BTW-" + target_id);
-        return target ? this._getRefmanForElement(root, target) : null;
-    case "btw:sense":
-        return this._sense_refman;
-    case "btw:subsense":
-        var sense = closestSense(el);
-        return this._sense_refman.idToSubsenseRefman(sense.id);
-    case "btw:example":
-    case "btw:example-explained":
-        return this._example_refman;
-    default:
-        throw new Error("unexpected element: " + el);
-    }
-};
-
-BTWDecorator.prototype._getIDManagerForRefman = function (refman) {
-    switch(refman.name) {
-    case "sense":
-    case "subsense":
-        return this._sense_subsense_id_manager;
-    case "example":
-        return this._example_id_manager;
-    default:
-        throw new Error("unexpected name: " + refman.name);
-    }
-};
-
 
 function jQuery_escapeID(id) {
     return id.replace(/\./g, '\\.');
 }
-
-var next_head = 0;
-function allocateHeadID() {
-    return "BTW-H-" + ++next_head;
-}
-
-var unit_heading_map = {
-    "btw:overview": "UNIT 1: OVERVIEW",
-    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
-    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA"
-};
-
-function unitHeadingDecorator(root, el, gui_updater) {
-    var child = el.firstElementChild;
-    while(child) {
-        var next = child.nextElementSibling;
-        if (child.classList.contains("head")) {
-            gui_updater.removeNode(child);
-            break; // There's only one.
-        }
-        child = next;
-    }
-
-    var name = util.getOriginalName(el);
-    var head_str = unit_heading_map[name];
-    if (head_str === undefined)
-        throw new Error("found an element with name " + name +
-                        ", which is not handled");
-
-    var head = el.ownerDocument.createElement("div");
-    head.className = "head _phantom _start_wrapper";
-    head.innerHTML = head_str;
-    head.id = allocateHeadID();
-    gui_updater.insertNodeAt(el, 0, head);
-}
-
-BTWDecorator.prototype.sectionHeadingDecorator = function (root, el,
-                                                           gui_updater,
-                                                           head_str) {
-    var child = el.firstElementChild;
-    while(child) {
-        var next = child.nextElementSibling;
-        if (child.classList.contains("head")) {
-            gui_updater.removeNode(child);
-            break; // There's only one.
-        }
-        child = next;
-    }
-
-    if (head_str === undefined) {
-        var name = util.getOriginalName(el);
-        for(var s_ix = 0, spec;
-            (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix) {
-            if (el.matches(spec.selector))
-                break;
-        }
-        if (spec === undefined)
-            throw new Error("found an element with name " + name +
-                            ", which is not handled");
-        var label_f = spec.label_f;
-        head_str = (label_f) ? spec.heading + " " + label_f(el) : spec.heading;
-    }
-
-    var head = el.ownerDocument.createElement("div");
-    head.className = "head _phantom _start_wrapper";
-    head.textContent = "[" + head_str + "]";
-    head.id = allocateHeadID();
-    gui_updater.insertNodeAt(el, 0, head);
-};
-
-function setTitle($el, data) {
-    var creators = data.creators;
-    var first_creator = "***ITEM HAS NO CREATORS***";
-    if (creators)
-        first_creator = creators.split(",")[0];
-
-    var title = first_creator + ", " + data.title;
-    var date = data.date;
-    if (date)
-        title += ", " + date;
-
-    tooltip($el, {"title": title, container: "body"});
-}
-
-BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
-    var orig_target = el.getAttribute(util.encodeAttrName("target"));
-    // XXX This should become an error one day. The only reason we
-    // need this now is that some of the early test files had <ref>
-    // elements without targets.
-    if (!orig_target)
-        orig_target = "";
-
-    orig_target = orig_target.trim();
-
-    var doc = root.ownerDocument;
-    var target_id, child, next; // Damn hoisting.
-    if (orig_target.lastIndexOf("#", 0) === 0) {
-        // Internal target
-        // Add BTW in front because we want the target used by wed.
-        target_id = orig_target.replace(/#(.*)$/,'#BTW-$1');
-
-        var text = doc.createElement("div");
-        text.className = "_text _phantom _linking_deco";
-        var a = doc.createElement("a");
-        a.className = "_phantom";
-        a.setAttribute("href", target_id);
-        text.appendChild(a);
-        if (is_ptr) {
-            // _linking_deco is used locally to make this function idempotent
-
-            child = el.firstElementChild;
-            while(child) {
-                next = child.nextElementSibling;
-                if (child.classList.contains("_linking_deco")) {
-                    this._gui_updater.removeNode(child);
-                    break; // There is only one.
-                }
-                child = next;
-            }
-
-            var refman = this._getRefmanForElement(root, el);
-
-            // Find the referred element. Slice to drop the #.
-            var target = doc.getElementById(target_id.slice(1));
-
-            // An undefined or null refman can happen when first
-            // decorating the document.
-            var label;
-            if (refman) {
-                if (refman.name === "sense" || refman.name === "subsense") {
-                    label = refman.idToLabel(target_id.slice(1));
-                    label = label && "[" + label + "]";
-                }
-                else {
-                    // An empty target can happen when first
-                    // decorating the document.
-                    if (target) {
-                        var data_el = this._editor.toDataNode(el);
-                        var data_target = this._editor.toDataNode(target);
-                        label = refman.getPositionalLabel(data_el,
-                                                          data_target,
-                                                          target_id.slice(1));
-                    }
-                }
-            }
-
-            if (label === undefined)
-                label = target_id;
-
-            a.textContent = label;
-
-            // A ptr contains only attributes, no text, so we can just append.
-            var pair = this._mode.nodesAroundEditableContents(el);
-            this._gui_updater.insertBefore(el, text, pair[1]);
-
-            if (target) {
-                var target_name = util.getOriginalName(target);
-
-                // Reduce the target to something sensible for tooltip text.
-                if (target_name === "btw:sense")
-                    target = target.querySelector(domutil.toGUISelector(
-                        "btw:english-rendition>btw:english-term"));
-                else if (target_name === "btw:subsense") {
-                    child = target.firstElementChild;
-                    while(child) {
-                        if (child.classList.contains("btw:explanation")) {
-                            target = child;
-                            break;
-                        }
-                        child = child.nextElementSibling;
-                    }
-                }
-                else if (target_name === "btw:example")
-                    target = undefined;
-
-                if (target) {
-                    target = target.cloneNode(true);
-                    var nodes = target.querySelectorAll(
-                        ".head, ._gui, ._explanation_number");
-                    for (var node_ix = 0, node;
-                         (node = nodes[node_ix]) !== undefined; ++node_ix)
-                        node.parentNode.removeChild(node);
-                    tooltip($(text), {"title":
-                                      "<div>" + target.innerHTML + "</div>",
-                                      "html": true, "container": "body"});
-                }
-            }
-        }
-        else
-            throw new Error("internal error: ref with unexpected target");
-    }
-    else {
-        // External target
-        var bibl_prefix = "/bibliography/";
-        if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
-            // Bibliographical reference...
-            if (is_ptr)
-                throw new Error("internal error: bibliographic "+
-                                "reference recorded as ptr");
-
-            target_id = orig_target;
-
-            // It is okay to skip the tree updater for these operations.
-            child = el.firstElementChild;
-            while(child) {
-                next = child.nextElementSibling;
-                if (child.classList.contains("_ref_abbr") ||
-                    child.classList.contains("_ref_paren"))
-                    this._gui_updater.removeNode(child);
-                child = next;
-            }
-
-            var abbr = doc.createElement("div");
-            abbr.className = "_text _phantom _ref_abbr";
-            this._gui_updater.insertBefore(el, abbr, el.firstChild);
-            var open = doc.createElement("div");
-            open.className = "_phantom _decoration_text _ref_paren " +
-                "_open_ref_paren _start_wrapper";
-            open.innerHTML = "(";
-            this._gui_updater.insertBefore(el, open, abbr);
-
-            var close = doc.createElement("div");
-            close.className = "_phantom _decoration_text " +
-                      "_ref_paren _close_ref_paren _end_wrapper";
-            close.innerHTML = ")";
-            this._gui_updater.insertBefore(el, close);
-
-            var dec = this;
-            var $el = $(el);
-            $.ajax({
-                url: target_id,
-                headers: {
-                    Accept: "application/json"
-                }
-            }).done(function (data) {
-                var text = "";
-
-                if (data.reference_title) {
-                    text = data.reference_title;
-                    setTitle($el, data.item);
-                }
-                else {
-                    var creators = data.creators;
-                    text = "***ITEM HAS NO CREATORS***";
-                    if (creators)
-                        text = creators.split(",")[0];
-
-                    if (data.date)
-                        text += ", " + data.date;
-                    setTitle($el, data);
-                }
-
-
-                dec._gui_updater.insertText(abbr, 0, text);
-                $el.trigger("wed-refresh");
-
-            }).fail(function () {
-                dec._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
-                $el.trigger("wed-refresh");
-            });
-        }
-    }
-};
 
 BTWDecorator.prototype._refChangedInGUI = function (root, el) {
     var example = closest(el, domutil.toGUISelector(
@@ -1298,15 +651,7 @@ BTWDecorator.prototype._refChangedInGUI = function (root, el) {
 };
 
 
-BTWDecorator.prototype.ptrDecorator = function (root, el) {
-    this.linkingDecorator(root, el, true);
-};
-
-BTWDecorator.prototype.refDecorator = function (root, el) {
-    this.linkingDecorator(root, el, false);
-};
-
-function languageDecorator(el) {
+BTWDecorator.prototype.languageDecorator = function (el) {
     var lang = el.getAttribute(util.encodeAttrName("xml:lang"));
     var prefix = lang.slice(0, 2);
     if (prefix !== "en") {

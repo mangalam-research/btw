@@ -22,9 +22,19 @@ require.config({
          location: "external/lodash"
      }
  ],
+ bundles: {
+     "lodash": ["lodash/modern/utilities/template"],
+     "wed/wed": ["wed/tree_updater", "wed/util", "wed/jqutil",
+             "wed/domutil", "wed/oop", "wed/dloc"]
+ },
  shim: {
    xregexp: {
+     // RequireJS wants to have this here even if the ``init`` field
+     // makes it pointless.
      exports: "XRegExp",
+     // We do it this way because salve is developed in Node and in
+     // Node when we require XRegExp we get a module which has an
+     // XRegExp field on it.
      init: function () { return {XRegExp: XRegExp}; }
    },
    'bootstrap': {

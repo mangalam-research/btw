@@ -15,36 +15,6 @@ from selenium_test import btw_util
 
 import wedutil
 
-sense_re = re.compile(r"sense (.)\b")
-
-
-def senses_in_order(util):
-    senses = util.driver.execute_script("""
-    var $senses = jQuery(".btw\\\\:sense");
-    var ret = [];
-    for(var i = 0, limit = $senses.length; i < limit; ++i) {
-        var $heads = $senses.eq(i).find(".head");
-        var heads = [];
-        for(var j = 0, j_limit = $heads.length; j < j_limit; ++j)
-            heads.push($heads.eq(j).text());
-        ret.push(heads);
-    }
-    return ret;
-    """)
-    label_ix = ord("A")
-
-    for sense in senses:
-        for head in sense:
-            if head.startswith("[SENSE"):
-                assert_equal(head.strip(),
-                             "[SENSE {0}]".format(chr(label_ix)),
-                             "head text")
-            elif "sense" in head:
-                match = sense_re.search(head)
-                assert_equal(match.group(1), chr(label_ix).lower(),
-                             "subhead text")
-        label_ix += 1
-
 
 @record_senses
 @then(u'sense {first} becomes sense {second}')
@@ -60,7 +30,7 @@ def step_impl(context, first, second):
     assert_equal(initial_senses[first_ix].term, senses[second_ix].term,
                  "relative order of the senses")
 
-    senses_in_order(util)
+    btw_util.assert_senses_in_order(util)
 
 
 @record_senses
@@ -100,7 +70,7 @@ def step_impl(context):
 @then(u'the senses are the same as originally')
 def step_impl(context):
     util = context.util
-    senses_in_order(util)
+    btw_util.assert_senses_in_order(util)
 
     initial_senses = context.initial_senses
 

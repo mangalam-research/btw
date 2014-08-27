@@ -112,6 +112,7 @@ $(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
 	cp $< $@
 
 btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less node_modules/wed/standalone/lib/wed/less-inc/*.less
+btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less
 
 .SECONDEXPANSION:
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)

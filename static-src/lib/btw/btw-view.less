@@ -1,0 +1,38 @@
+@import "btw-mode.less";
+
+div.wed-frame {
+    div.wed-document {
+        .btw\:english-term {
+            font-weight: bold;
+        }
+
+        div {
+            &.head {
+                margin-left: 0px;
+                margin-bottom: 0px;
+                margin-top: 5px;
+            }
+
+            &._decoration_text {
+                display: inline;
+            }
+
+            &._text {
+                display: inline;
+            }
+
+            &.btw\:tr {
+                margin-left: @base-margin + 0.5;
+            }
+
+            &.btw\:subsense {
+                margin-left: 1em;
+            }
+
+            &.foreign {
+                background-color: inherit;
+            }
+        }
+
+    }
+}

@@ -6,6 +6,7 @@ var ReferenceManager = require("wed/refman").ReferenceManager;
 var $ = require("jquery");
 var util = require("wed/util");
 var domutil = require("wed/domutil");
+var id_manager = require("./id_manager");
 
 var sense_labels = 'abcdefghijklmnopqrstuvwxyz';
 function SenseReferenceManager() {
@@ -155,5 +156,117 @@ ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
 };
 
 exports.ExampleReferenceManager = ExampleReferenceManager;
+
+function WholeDocumentManager() {
+    this._sense_refman = new SenseReferenceManager();
+    this._example_refman = new ExampleReferenceManager();
+}
+
+WholeDocumentManager.prototype.getSenseLabelForHead = function (el) {
+    var id = el.id;
+    if (!id)
+        throw new Error("element does not have an id: " + el);
+    return this._sense_refman.idToLabelForHead(id);
+};
+
+WholeDocumentManager.prototype.getSenseLabel = function (el) {
+    var what = el;
+    var sense;
+    while(what) {
+        if (what.classList.contains("btw:sense")) {
+            sense = what;
+            break;
+        }
+        what = what.parentNode;
+    }
+
+    var id = sense && sense.id;
+
+    if (!id)
+        throw new Error("element does not have sense parent with an id: " + el);
+    return this._sense_refman.idToLabel(id);
+};
+
+WholeDocumentManager.prototype.getSubsenseLabel = function (el) {
+    var refman = this.getSubsenseRefman(el);
+
+    var what = el;
+    var subsense;
+    while(what) {
+        if (what.classList.contains("btw:subsense")) {
+            subsense = what;
+            break;
+        }
+        what = what.parentNode;
+    }
+
+    var id = subsense && subsense.id;
+    if (!id)
+        // This can happen during the decoration of the tree because
+        // there is in general no guarantee about the order in which
+        // elements are decorated. A second pass will ensure that the
+        // label is not undefined.
+        return undefined;
+    var label = refman.idToLabelForHead(id);
+    return label;
+};
+
+function closestSense(el) {
+    var what = el;
+    var sense;
+    while(what) {
+        if (what.classList.contains("btw:sense")) {
+            sense = what;
+            break;
+        }
+        what = what.parentNode;
+    }
+
+    return sense;
+}
+
+/**
+ * @param {Node} el The element for which we want the subsense
+ * reference manager. This element must be a child of a btw:sense
+ * element or a btw:sense element.
+ * @returns {module:btw_refmans~SubsenseReferenceManager} The subsense
+ * reference manager.
+ */
+WholeDocumentManager.prototype.getSubsenseRefman = function (el) {
+    var sense = closestSense(el);
+    var id = sense && sense.id;
+    return this._sense_refman.idToSubsenseRefman(id);
+};
+
+WholeDocumentManager.prototype.getRefmanForElement = function (el) {
+    var name = util.getOriginalName(el);
+    switch(name) {
+    case "ptr":
+    case "ref":
+        // Find the target and return its value
+
+        var target_attr = el.getAttribute(util.encodeAttrName("target"));
+        if (!target_attr)
+            return null;
+
+        // Slice to drop the #.
+        var target_id = target_attr.slice(1);
+
+        var target = el.ownerDocument.getElementById("BTW-" + target_id);
+        return target ? this.getRefmanForElement(target) : null;
+    case "btw:sense":
+        return this._sense_refman;
+    case "btw:subsense":
+        var sense = closestSense(el);
+        return this._sense_refman.idToSubsenseRefman(sense.id);
+    case "btw:example":
+    case "btw:example-explained":
+        return this._example_refman;
+    default:
+        throw new Error("unexpected element: " + el);
+    }
+};
+
+exports.WholeDocumentManager = WholeDocumentManager;
 
 });
