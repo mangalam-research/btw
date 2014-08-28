@@ -265,8 +265,14 @@ BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'
 BTW_FONTAWESOME_CSS_PATH = \
     '/static/lib/external/font-awesome/css/font-awesome.min.css'
+#
+# Default:
+# BTW_DATATABLES_CSS_PATH = \
+#    '/static/lib/external/datatables/css/jquery.dataTables.css'
+#
+# For styling with bootstrap:
 BTW_DATATABLES_CSS_PATH = \
-    '/static/lib/external/datatables/css/jquery.dataTables.css'
+    '/static/lib/external/datatables/css/dataTables.bootstrap.css'
 BTW_BOOTSTRAP_EDITABLE__CSS_PATH = \
     '/static/lib/external/bootstrap3-editable/css/bootstrap-editable.css'
 BTW_REQUIREJS_PATH = None

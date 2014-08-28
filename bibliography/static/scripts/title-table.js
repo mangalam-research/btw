@@ -1,5 +1,5 @@
 define(['jquery', 'lodash/modern/utilities/template',
-        'jquery.cookie', 'datatables'],
+        'jquery.cookie', 'datatables.bootstrap'],
        function ($, template) {
 var csrftoken = $.cookie('csrftoken');
 
@@ -50,7 +50,7 @@ $modal.on('click', '.btn', function (ev) {
 $("body").prepend($modal);
 
 var subtable_template = '\
-<table class="primary-source-table" width="100%">\
+<table class="primary-source-table table table-striped" width="100%">\
   <thead>\
     <tr>\
       <th></th>\

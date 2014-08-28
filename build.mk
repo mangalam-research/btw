@@ -36,10 +36,13 @@ JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # to correspond to the top directory of the zip that github creates.
 JQUERY_COOKIE_BASE:=jquery-cookie-$(patsubst v%,%,$(notdir $(JQUERY_COOKIE_URL)))
 
-DATATABLES_URL:=http://datatables.net/releases/DataTables-1.9.4.zip
+DATATABLES_URL:=http://datatables.net/releases/DataTables-1.10.2.zip
 # This creates a file name that a) identifies what it is an b) happens
 # to correspond to the top directory of the zip that github creates.
 DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
+
+DATATABLES_PLUGINS_URL:=https://github.com/DataTables/Plugins/archive/master.zip
+DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
 
 XEDITABLE_URL:=http://vitalets.github.io/x-editable/assets/zip/bootstrap3-editable-1.5.1.zip
 XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
@@ -64,7 +67,10 @@ BUILD_DEST:=$(BUILD_DIR)/static-build
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable
+
+DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
+
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(DATATABLES_PLUGIN_TARGETS)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -173,6 +179,15 @@ $(BUILD_DEST)/lib/external/datatables: downloads/$(DATATABLES_BASE)
 	(cd $@; rm -rf src unit_testing)
 	rm -rf $@/temp
 
+$(DATATABLES_PLUGIN_TARGETS): COMMON_DIR:=$(BUILD_DEST)/lib/external/datatables
+$(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(BUILD_DEST)/lib/external/datatables
+	rm -rf $(COMMON_DIR)/Plugins-master
+	unzip -o -d $(COMMON_DIR) $< Plugins-master/integration/bootstrap/*
+	cp $(COMMON_DIR)/Plugins-master/integration/bootstrap/3/*.js $(COMMON_DIR)/js
+	cp $(COMMON_DIR)/Plugins-master/integration/bootstrap/3/*.css $(COMMON_DIR)/css
+# mv $(COMMON_DIR)/Plugins-master/integration/bootstrap/images/* $(COMMON_DIR)/images
+	rm -rf $(COMMON_DIR)/Plugins-master
+
 $(BUILD_DEST)/lib/external/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
 	rm -rf $@
 	unzip -o -d $(dir $@) $< $(notdir $@)/*
@@ -189,6 +204,9 @@ downloads/$(JQUERY_COOKIE_BASE): downloads
 
 downloads/$(DATATABLES_BASE): downloads
 	$(WGET) -O $@ $(DATATABLES_URL)
+
+downloads/$(DATATABLES_PLUGINS_BASE): downloads
+	$(WGET) -O $@ $(DATATABLES_PLUGINS_URL)
 
 downloads/$(XEDITABLE_BASE): downloads
 	$(WGET) -O $@ $(XEDITABLE_URL)

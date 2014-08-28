@@ -8,6 +8,7 @@ require.config({
    'font-awesome': 'external/font-awesome',
    'jquery.cookie': 'external/jquery.cookie',
    datatables: 'external/datatables/js/jquery.dataTables',
+   'datatables.bootstrap': 'external/datatables/js/dataTables.bootstrap',
    "bootstrap-editable": 'external/bootstrap3-editable/js/bootstrap-editable',
    qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
