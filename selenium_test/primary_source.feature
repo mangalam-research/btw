@@ -122,10 +122,7 @@ Scenario: the system remembers which rows are opened
   Then the modal dialog to add a primary source disappears
   When the user opens row 0
   Then row 0 is open
-  When the user clicks on the filtering field
-  And the user types "QQQQ"
-  Then there are 0 rows
-  When the user empties the filtering field
+  When the user selects the menu to show 25 entries
   Then row 0 is open
 
 Scenario: the system remembers which rows are closed

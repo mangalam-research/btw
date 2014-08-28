@@ -462,15 +462,6 @@ def step_impl(context):
     field.click()
 
 
-@when(ur'^the user empties the filtering field$')
-def step_impl(context):
-    field = context.util.find_element(
-        (By.CSS_SELECTOR, "input[aria-controls='bibliography-table']"))
-    # Clearing it will not, by itself, cause a refiltering.
-    field.clear()
-    field.send_keys(Keys.SHIFT)
-
-
 @then(ur'^there are no buttons for adding primary sources$')
 def step_impl(context):
     driver = context.driver
