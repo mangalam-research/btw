@@ -128,6 +128,24 @@ Scenario: the system remembers which rows are opened
   When the user empties the filtering field
   Then row 0 is open
 
+Scenario: the system remembers which rows are closed
+  Given all rows are loaded
+  When the user clicks on the button to add a primary source of row 0
+  And the user submits the dialog with reference title of "AAAA" and a genre of "Literary Text"
+  Then the modal dialog to add a primary source disappears
+  When the user clicks on the button to add a primary source of row 1
+  And the user submits the dialog with reference title of "AAAAA" and a genre of "Literary Text"
+  Then the modal dialog to add a primary source disappears
+  When the user opens all rows
+  Then row 0 is open
+  And row 1 is open
+  When the user closes all rows
+  Then row 0 is closed
+  And row 1 is closed
+  When the user selects the menu to show 25 entries
+  Then row 0 is closed
+  And row 1 is closed
+
 Scenario: the user can correct an error in the form
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0

@@ -314,11 +314,10 @@ return function ($table, options) {
         var rows = table.fnGetNodes();
         for(var i = 0, limit = rows.length; i < limit; ++i) {
             var row_node = rows[i];
+            var data = table.fnGetData(i);
             if (table.fnIsOpen(row_node)) {
                 var $i = $(row_node).children("td").eq(0).find("i").eq(1);
-                // We're going to close it so the last 2 arguments are
-                // not needed.
-                openOrCloseRow(table, options, row_node, $i);
+                openOrCloseRow(table, options, row_node, $i, data[1], data[0]);
             }
         }
     });

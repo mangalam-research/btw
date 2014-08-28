@@ -8,6 +8,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import Select
 
 from nose.tools import assert_equal
 
@@ -496,3 +497,23 @@ def step_impl(context):
 
     assert_equal(len(driver.find_elements_by_css_selector(
         "table#bibliography-table>tbody>tr div.edit-button")), 0)
+
+
+@when(ur'^the user selects the menu to show 25 entries$')
+def step_impl(context):
+    driver = context.driver
+    driver.execute_async_script("""
+    var done = arguments[0];
+    var $ = jQuery;
+    var table = document.getElementById("bibliography-table");
+    // We wait until the results have refreshed.
+    $(table).on("refresh-results", function () {
+        done();
+    });
+    // Switch to a 25 row display.
+    var select = document.querySelector(
+        "select[name='bibliography-table_length']");
+    select.value = 25;
+    // Must trigger the event manually...
+    $(select).change();
+    """)
