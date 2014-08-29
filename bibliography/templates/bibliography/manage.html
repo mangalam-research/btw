@@ -17,26 +17,5 @@
 </script>
 {% endblock %}
 {% block content %}
-<div class="row">
-  <table id="bibliography-table" class="table table-striped">
-    <thead>
-      <tr>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th>
-          <button class="btn btn-default btn-sm hide-all-ps" title="Hide all primary sources"><i class="fa fa-caret-right"></i></button>
-          <button class="btn btn-default btn-sm show-all-ps" title="Show all primary sources"><i class="fa fa-caret-down"></i></button>
-        </th>
-        <th>Creator(s)</th>
-        <th>Original Title</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-    </tfoot>
-  </table>
-</div>
+{% include "bibliography/table.html" %}
 {% endblock %}
