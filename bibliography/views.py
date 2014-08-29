@@ -6,12 +6,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
 from django.template import loader, RequestContext
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_POST, require_GET, \
-    require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
-from django.db import IntegrityError
 
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
@@ -110,10 +108,11 @@ class ItemTable(BaseDatatableView):
     def filter_queryset(self, qs):
         sSearch = self.request.GET.get('sSearch', None)
         if sSearch:
-            qs = qs.filter(Q(creators__icontains=sSearch) |
-                           Q(title__icontains=sSearch) |
-                           Q(primary_sources__reference_title__icontains=
-                             sSearch)).distinct()
+            qs = qs.filter(
+                Q(creators__icontains=sSearch) |
+                Q(title__icontains=sSearch) |
+                Q(primary_sources__reference_title__icontains=sSearch)) \
+                .distinct()
 
         return qs
 
