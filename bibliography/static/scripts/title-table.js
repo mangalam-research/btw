@@ -209,8 +209,6 @@ function setFormFields() {
 }
 
 return function ($table, options) {
-    var emptytext = '[No title assigned.]';
-
     if (options.selectable) {
         $table.find("tbody").on("click", "tr", function (ev) {
             var $this = $(this);
