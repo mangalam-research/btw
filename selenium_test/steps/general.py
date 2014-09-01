@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import urllib
+import json
+import requests
+import re
 # pylint: disable=E0611
 from nose.tools import assert_equal, assert_raises, \
     assert_true
@@ -11,6 +13,7 @@ from behave import then, when, given, Given, \
     step_matcher  # pylint: disable=E0611
 from selenium.common.exceptions import NoSuchElementException
 
+import lexicography.tests.funcs as funcs
 import wedutil
 from selenium_test import btw_util
 
@@ -223,6 +226,9 @@ WHAT_TO_TITLE = {
 }
 
 
+href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
+
+
 @Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
     util = context.util
@@ -245,17 +251,32 @@ def step_impl(context, what):
     Given the user has logged in
     """)
 
-    # We skip the UI.
-    driver.get(context.selenic.SERVER +
-               "/lexicography/search?csrfmiddlewaretoken=foo"
-               "&q={0}&headwords_only=on"
-               .format(urllib.quote(title.encode("utf8"))))
+    # We simulate an AJAX query on the search table.
+    r = requests.get(context.selenic.SERVER +
+                     "/lexicography/search-table/",
+                     params={
+                         "sEcho": 1,
+                         "iColumns": 1,
+                         "iDisplayStart": 0,
+                         "iDisplayLength": 10,
+                         "mDataProp_0": 0,
+                         "sSearch_0": "",
+                         "bRegex_0": "false",
+                         "bSearchable_0": "true",
+                         "bSortable_0": "true",
+                         "sSearch": title.encode("utf8"),
+                         "bRegex": "false",
+                         "iSortCol_0": 0,
+                         "sSortDir_0": "asc",
+                         "iSortingCols": 1,
+                         "bHeadwordsOnly": "true"
+                     },
+                     cookies={
+                         "sessionid": driver.get_cookie("sessionid")["value"]
+                     })
 
-    view_links = util.find_elements((By.LINK_TEXT, title))
-    assert_equal(len(view_links), 1)
-    edit_link = view_links[0].find_element_by_xpath("../a[2]")
-
-    edit_link.click()
+    hits = funcs.parse_search_results(r.text)
+    driver.get(context.selenic.SERVER + hits[title]["edit_url"])
     setup_editor(context)
 
     btw_util.record_document_features(context)

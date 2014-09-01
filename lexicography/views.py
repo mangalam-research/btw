@@ -18,7 +18,9 @@ from django.db.models import ProtectedError
 from django.conf import settings
 from django.db import transaction
 from django.utils.http import quote_etag
+from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
+from django_datatables_view.base_datatable_view import BaseDatatableView
 
 from functools import wraps
 import os
@@ -50,8 +52,48 @@ def main(request):
                    'form': SearchForm()})
 
 
+class SearchTable(BaseDatatableView):
+    model = Entry
+    columns = ['headword']
+    order_columns = ['headword']
+
+    def render_column(self, row, column):
+        ret = super(SearchTable, self).render_column(row, column)
+        if column == 'headword':
+            if row.is_editable_by(self.request.user):
+                ret = mark_safe(
+                    ('<a class="btn btn-xs btn-default" href="%s">Edit</a> ') %
+                    reverse("lexicography_entry_update", args=(row.id, ))) + \
+                    ret
+            elif row.is_locked():
+                ret = mark_safe('Locked by ' +
+                                util.nice_name(row.is_locked()) + '. ') + ret
+        return ret
+
+    def filter_queryset(self, qs):
+        sSearch = self.request.GET.get('sSearch', None)
+        bHeadwordsOnly = self.request.GET.get('bHeadwordsOnly', "false") == \
+            "true"
+        # Remove deleted entries from the set.
+        active = qs.exclude(ctype=Entry.DELETE)
+        if sSearch:
+            qs = active.filter(util.get_query(sSearch, ['headword']))
+            if not bHeadwordsOnly:
+                chunks = Chunk.objects.filter(
+                    util.get_query(sSearch, ['data']))
+                qs |= active.filter(c_hash=chunks)
+
+        return qs
+
+
 @require_GET
 def search(request):
+    """
+    This is a view meant only for testing. It allows bypassing
+    ``SearchTable`` to talk directly to the backend rather than having
+    to emulate the AJAX talk between a ``DataTable`` instance in the
+    client and the ``SearchTable`` view.
+    """
     found_entries = None
     query_string = request.GET.get('q', None)
     headwords_only = request.GET.get('headwords_only', None)
@@ -67,14 +109,19 @@ def search(request):
 
             found_entries |= active_entries.filter(c_hash=chunks)
 
-    return render_to_response(
-        'lexicography/main.html',
-        {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
-         'form': SearchForm(request.GET),
-         'query_string': query_string,
-         'user': request.user,
-         'found_entries': found_entries},
-        context_instance=RequestContext(request))
+    data = {}
+    for entry in found_entries:
+        data[entry.headword] = {
+            "headword": entry.headword,
+            "id": entry.id,
+            "edit_url":
+            reverse("lexicography_entry_update", args=(entry.id, ))
+            if entry.is_editable_by(request.user) else None,
+            "view_url": reverse("lexicography_entry_details",
+                                args=(entry.id, ))
+        }
+    resp = json.dumps(data, ensure_ascii=False)
+    return HttpResponse(resp, content_type="application/json")
 
 
 @require_GET

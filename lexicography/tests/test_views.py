@@ -6,6 +6,7 @@ import cookielib as http_cookiejar
 import os
 import datetime
 
+import requests
 import lxml.etree
 
 from .. import models
@@ -39,17 +40,36 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(type(a), type(b))
         self.assertEqual(a.pk, b.pk)
 
+    def search_table_search(self, title, user):
+        return self.app.get(reverse("lexicography_search_table"),
+                            params={
+                                "sEcho": 1,
+                                "iColumns": 1,
+                                "iDisplayStart": 0,
+                                "iDisplayLength": -1,
+                                "mDataProp_0": 0,
+                                "bSearchable_0": "true",
+                                "bSortable_0": "true",
+                                "sSearch": "abcd",
+                                "bRegex": "false",
+                                "iSortCol_0": 0,
+                                "sSortDir_0": "asc",
+                                "iSortingCols": 1,
+                                "bHeadwordsOnly": "true"},
+                            user=user)
+
     def test_main(self):
         """
-        Tests that a logged in user can issue a search on the main page.
+        Tests that a logged in user can view the main page.
         """
-        form = self.app.get(reverse("lexicography_main"), user=self.foo).form
-        form['q'] = 'abcd'
-        response = form.submit()
-        self.assertEqual(response.context['query_string'], 'abcd')
-        self.assertQuerysetEqual(
-            Entry.objects.filter(headword='abcd'),
-            [repr(x) for x in response.context['found_entries']])
+        self.app.get(reverse("lexicography_main"), user=self.foo)
+
+    def test_search_table(self):
+        """
+        Tests that the search table ajax calls can go through for a logged
+        in user.
+        """
+        self.search_table_search("abcd", self.foo)
 
     def open_abcd(self, user):
         #
@@ -58,18 +78,17 @@ class ViewsTestCase(TransactionWebTest):
         # Returns the response which has the editing page and the entry
         # object that the user is editing.
         #
-        form = self.app.get(reverse("lexicography_main"), user=user).form
-        form['q'] = 'abcd'
-        response = form.submit()
         headword = 'abcd'
-        self.assertEqual(response.context['query_string'], headword)
-        self.assertQuerysetEqual(
-            Entry.objects.filter(headword=headword),
-            [repr(x) for x in response.context['found_entries']])
-        entry = Entry.objects.get(headword=headword)
-        url = reverse('lexicography_entry_update', args=(entry.id, ))
-        response = response.click(href=url).follow()
+        response = self.app.get(reverse("lexicography_search"),
+                                params={"q": headword},
+                                user=user)
+        data = response.json
+        self.assertEqual(
+            Entry.objects.filter(headword=headword).count(),
+            len(data))
+        response = self.app.get(data[headword]["edit_url"]).follow()
         # Check that a lock as been acquired.
+        entry = Entry.objects.get(id=data[headword]["id"])
         lock = EntryLock.objects.get(entry=entry)
         self.assertSameDBRecord(lock.entry, entry)
 
@@ -358,9 +377,7 @@ class ViewsTestCase(TransactionWebTest):
         """
         response, entry = self.open_abcd('foo')
 
-        form = self.app.get(reverse("lexicography_main"), user="foo2").form
-        form['q'] = 'abcd'
-        response = form.submit(user="foo2")
+        response = self.search_table_search("abcd", self.foo2)
 
         # Check that the option is not available
         url = reverse('lexicography_entry_update', args=(entry.id, ))
@@ -383,11 +400,9 @@ class ViewsTestCase(TransactionWebTest):
             datetime.timedelta(seconds=1)
         lock.save()
 
-        form = self.app.get(reverse("lexicography_main"), user="foo2").form
-        form['q'] = 'abcd'
-        response = form.submit(user="foo2")
+        response = self.search_table_search("abcd", self.foo2)
 
-        # Check that the option is not available
+        # Check that the option is available
         url = reverse('lexicography_entry_update', args=(entry.id, ))
         self.assertIn(url, response)
 

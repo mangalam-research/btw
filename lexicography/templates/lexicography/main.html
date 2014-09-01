@@ -3,40 +3,45 @@
 {% load libcore %}
 {% load liblex %}
 {% load bootstrap_tags %}
+{% block extrahead %}
+{{ block.super }}
+<link href="{{ btw_globals.btw_datatables_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+<style type="text/css">
+  #search-table_filter label {
+    float: none;
+  }
+  #search-table_filter {
+    white-space: nowrap;
+  }
+
+  #search-table_filter input[type="checkbox"] {
+    width: auto;
+  }
+
+</style>
+{% endblock %}
 {% block content %}
 {% if perms.lexicography.add_entry %}
 <a class="btn btn-default" href="{% url 'lexicography_entry_new' %}"/>New Article</a>
 {% endif %}
 <hr>
-<form action="search" method="get">{% csrf_token %}
-  {{ form|as_bootstrap }}
-  <input class="btn btn-default" type="submit" value="Search" />
-</form>
-{% if query_string %}
-<div>
-  <p><label>Query</label>: {{ query_string }}</p>
-  <p>
-    {% if found_entries %}
-    Results:
-    <ul>
-      {% for entry in found_entries %}
-      <li>
-
-        <a href="{% url 'lexicography_entry_details' entry.id %}">{{ entry.headword }}</a>
-        {% if not entry|is_editable_by:user %}
-          {% if entry.is_locked %}
-            Locked by {{ entry.is_locked|nice_name }}.
-          {% endif %}
-        {% else %}
-        <a href="{% url 'lexicography_entry_update' entry.id %}">edit</a>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    No hits.
-    {% endif %}
-  </p>
-  {% endif %}
-</div>
+<table id="search-table" class="table table-striped">
+  <thead>
+    <tr>
+      <th>Headword</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+  <tfoot>
+  </tfoot>
+</table>
+<script>
+  require(["jquery", "../js/search-table"], function ($, st) {
+    var $table = $(document.getElementById("search-table"));
+    st($table, {
+      ajax_source_url: "{% url 'lexicography_search_table' %}",
+    });
+  });
+</script>
 {% endblock %}

@@ -93,7 +93,7 @@ class Entry(ChangeInfo):
         return self.headword
 
     def get_absolute_url(self):
-        return reverse('entry_details', args=[str(self.id)])
+        return reverse('lexicography_entry_details', args=[str(self.id)])
 
     def is_locked(self):
         """

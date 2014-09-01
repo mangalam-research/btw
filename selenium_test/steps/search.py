@@ -10,13 +10,10 @@ step_matcher('re')
 @When('^the user searches for headword "(?P<query>.*?)"')
 def step_impl(context, query):
     util = context.util
-    q = util.find_element((By.NAME, "q"))
-    q.send_keys(query)
-    headwords_only = util.find_element((By.NAME, "headwords_only"))
-    headwords_only.click()
-    search = util.find_clickable_element((By.CSS_SELECTOR,
-                                          "input[type=submit]"))
-    search.click()
+    controls = util.find_elements((By.CSS_SELECTOR,
+                                   "#search-table_filter input"))
+    controls[0].send_keys(query)
+    controls[1].click()
 
 
 @Then('^the search results show one entry for "(?P<headword>.*?)"')

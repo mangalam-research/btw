@@ -255,6 +255,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'django_datatables_view': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        }
     }
 }
 

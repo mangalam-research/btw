@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, url
 from django.conf import settings
 
+from .views import SearchTable
+
 urlpatterns = patterns(
     'lexicography.views',
     url(r'^$', 'main', name='lexicography_main'),
-    url(r'^search$', 'search'),
     url(r'^collect$', 'collect'),
     url(r'^entry/(?P<entry_id>\d+)/$', 'entry_details',
         name='lexicography_entry_details'),
@@ -16,6 +17,8 @@ urlpatterns = patterns(
         name='lexicography_handle_save'),
     url(r'^change/(?P<change_id>\d+)/revert$', 'change_revert',
         name="lexicography_change_revert"),
+    url(r'^search-table/$', SearchTable.as_view(),
+        name='lexicography_search_table'),
 
     url(r'^entry/new$', 'entry_new', name='lexicography_entry_new'),
     url(r'^log$', 'log', name='lexicography_log'),
@@ -34,4 +37,5 @@ if settings.BTW_TESTING:
         url(r'^handle/(?P<handle_or_entry_id>.+)/mod$',
             'handle_background_mod',
             name='lexicography_handle_background_mod'),
+        url(r'^search$', 'search', name="lexicography_search"),
     )
