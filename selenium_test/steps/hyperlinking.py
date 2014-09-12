@@ -7,6 +7,8 @@ from nose.tools import assert_equal, assert_true
 from selenium_test import btw_util
 import wedutil
 
+from selenic.util import Condition, Result
+
 step_matcher('re')
 
 
@@ -106,46 +108,47 @@ def step_impl(context, example, label, term):
         var id_selector = arguments[2];
         var $ = jQuery;
 
-        var $link = $(".wed-document a[href^='" + id_selector + "']").filter(
-            function (x) { return $(this).text() === label; });
-        if (!$link[0])
+        var links = Array.prototype.slice.call(document.querySelectorAll(
+            ".wed-document a[href^='" + id_selector + "']")).filter(
+            function (x) { return x.textContent === label; });
+        if (!links[0])
             return [false, "there should be a link"];
 
-        var $target = $($link.attr("href").replace(/\./g, "\\."));
-        if (!$target[0])
+        var target = document.getElementById(links[0].attributes["href"]
+            .value.slice(1));
+        if (!target)
             return [false, "there should be a target"];
-
-        var $data_target = $($target.data("wed_mirror_node"));
-        if (!$data_target[0])
-            return [false, "there should be a data target"];
 
         var test = false;
         var actual_term, desc;
-        if ($data_target.is(".btw\\:sense")) {
-            actual_term = $data_target.find(".btw\\:english-term").text();
+        if (target.matches(".btw\\:sense")) {
+            actual_term = $.data(target.querySelector(".btw\\:english-term"),
+                "wed_mirror_node").textContent;
             test = term === actual_term;
             desc = actual_term + " should match " + term;
         }
-        else if ($data_target.is(".btw\\:subsense")) {
-            actual_term = $data_target.children(".btw\\:explanation").text();
+        else if (target.matches(".btw\\:subsense")) {
+            actual_term = $.data(target.querySelector(".btw\\:explanation"),
+                 "wed_mirror_node").textContent;
             test = term === actual_term;
             desc = actual_term + " should match " + term;
         }
-        else if ($data_target.is(".btw\\:example, .btw\\:example-explained")) {
-            test = wed_editor.$data_root.find(
-                ".btw\\:example, .btw\\:example-explained").first()[0]
-                === $data_target[0];
+        else if (target.matches(".btw\\:example, .btw\\:example-explained")) {
+            test = wed_editor.gui_root.querySelector(
+                ".btw\\:example, .btw\\:example-explained") === target;
             desc = "link should point to " + term + " example";
         }
         else
-            return [false, "unexpected target"];
+            return [false,
+                    "unexpected target (tagName: " + target.tagName + ")"];
 
         return [test, desc];
         """, label, term, id_selector)
 
-        return ret[0]
+        return Result(ret[0], ret)
 
-    context.util.wait(cond)
+    result = Condition(context.util, cond).wait()
+    assert_true(result.payload[0], result.payload[1])
 
 
 @then(ur'^the sense hyperlink with label "(?P<label>.*?)" has a tooltip '

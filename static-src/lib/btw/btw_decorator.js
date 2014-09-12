@@ -6,7 +6,6 @@ var refmans = require("./btw_refmans");
 var oop = require("wed/oop");
 var $ = require("jquery");
 var util = require("wed/util");
-var jqutil = require("wed/jqutil");
 var log = require("wed/log");
 var input_trigger_factory = require("wed/input_trigger_factory");
 var key_constants = require("wed/key_constants");
@@ -111,7 +110,7 @@ function BTWDecorator(mode, meta) {
     // Convert the selectors to actual selectors.
     for (var s_ix = 0, spec;
          (spec = this._section_heading_specs[s_ix]) !== undefined; ++s_ix)
-        spec.selector = jqutil.toDataSelector(spec.selector);
+        spec.selector = domutil.toGUISelector(spec.selector);
 
     this._label_levels = {};
     [
@@ -166,17 +165,17 @@ function BTWDecorator(mode, meta) {
     // structure just described above.
     this._visible_absence_specs = [
         {
-            parent: jqutil.toDataSelector("btw:sense"),
+            parent: domutil.toGUISelector("btw:sense"),
             children: ["btw:subsense", "btw:explanation",
                        "btw:semantic-fields", "btw:citations",
                        "btw:other-citations", "btw:contrastive-section"]
         },
         {
-            parent: jqutil.toDataSelector("btw:citations"),
+            parent: domutil.toGUISelector("btw:citations"),
             children: ["btw:example"]
         },
         {
-            parent: jqutil.toDataSelector(
+            parent: domutil.toGUISelector(
                 "btw:subsense, btw:antonym, btw:cognate, "+
                     "btw:conceptual-proximate"),
             children: ["btw:other-citations"]
@@ -188,6 +187,13 @@ function BTWDecorator(mode, meta) {
 oop.inherit(BTWDecorator, Decorator);
 
 BTWDecorator.prototype.addHandlers = function () {
+    this._domlistener.addHandler(
+        "added-element",
+        util.classFromOriginalName("btw:entry"),
+        function (root, parent, prev, next, el) {
+        this.addedEntryHandler(root, el);
+    }.bind(this));
+
     this._domlistener.addHandler(
         "included-element",
         util.classFromOriginalName("btw:sense"),
@@ -225,14 +231,14 @@ BTWDecorator.prototype.addHandlers = function () {
 
     this._gui_domlistener.addHandler(
         "children-changed",
-        jqutil.toDataSelector("ref, ref *"),
+        domutil.toGUISelector("ref, ref *"),
         function (root, added, removed, prev, next, el) {
         this._refChangedInGUI(root, closestByClass(el, "ref", root));
     }.bind(this));
 
     this._gui_domlistener.addHandler(
         "text-changed",
-        jqutil.toDataSelector("ref, ref *"),
+        domutil.toGUISelector("ref, ref *"),
         function (root, el) {
         this._refChangedInGUI(root, closestByClass(el, "ref", root));
     }.bind(this));
@@ -248,7 +254,7 @@ BTWDecorator.prototype.addHandlers = function () {
     // loses Pāli text.
     this._domlistener.addHandler(
         "excluded-element",
-        jqutil.toDataSelector("btw:cit foreign"),
+        domutil.toGUISelector("btw:cit foreign"),
         function (root, tree, parent, prev, next, el) {
         var cit = closestByClass(el, "btw:cit", root);
         // Refresh after the element is removed.
@@ -262,7 +268,7 @@ BTWDecorator.prototype.addHandlers = function () {
 
     this._domlistener.addHandler(
         "included-element",
-        jqutil.toDataSelector("btw:cit foreign"),
+        domutil.toGUISelector("btw:cit foreign"),
         function (root, tree, parent, prev, next, el) {
         var cit = closestByClass(el, "btw:cit", root);
         this.refreshElement(root, cit);
@@ -337,46 +343,43 @@ BTWDecorator.prototype.addHandlers = function () {
     Decorator.prototype.addHandlers.apply(this, arguments);
     input_trigger_factory.makeSplitMergeInputTrigger(
         this._editor,
-        util.classFromOriginalName("p"),
+        "p",
         key_constants.ENTER,
         key_constants.BACKSPACE,
         key_constants.DELETE);
 
     input_trigger_factory.makeSplitMergeInputTrigger(
         this._editor,
-        util.classFromOriginalName("btw:sf"),
+        "btw:sf",
         key.makeKey(";"),
         key_constants.BACKSPACE,
         key_constants.DELETE);
 };
 
-BTWDecorator.prototype.startListening = function ($root) {
+BTWDecorator.prototype.addedEntryHandler = function (root, el) {
     //
     // Perform general checks before we start decorating anything.
     //
     var i, limit, id;
 
-    var data_el = $root.data("wed_mirror_node");
-    var senses_subsenses = data_el.querySelectorAll(jqutil.toDataSelector(
-        "btw:sense, btw:subsense"));
+    var data_el = $.data(el, "wed_mirror_node");
+    var senses_subsenses = domutil.dataFindAll(data_el,
+                                               "btw:sense, btw:subsense");
     for(i = 0, limit = senses_subsenses.length; i < limit; ++i) {
         var s = senses_subsenses[i];
-        id = s.getAttribute(util.encodeAttrName("xml:id"));
+        id = s.getAttribute("xml:id");
         if (id)
             this._sense_subsense_id_manager.seen(id, true);
     }
 
-    var examples = data_el.querySelectorAll(jqutil.toDataSelector(
-        "btw:example, btw:example-explained"));
+    var examples = domutil.dataFindAll(data_el,
+                                       "btw:example, btw:example-explained");
     for(i = 0, limit = examples.length; i < limit; ++i) {
         var ex = examples[i];
-        id = ex.getAttribute(util.encodeAttrName("xml:id"));
+        id = ex.getAttribute("xml:id");
         if (id)
             this._example_id_manager.seen(id, true);
     }
-
-    // Call the overriden method
-    Decorator.prototype.startListening.apply(this, arguments);
 };
 
 BTWDecorator.prototype.refreshElement = function (root, el) {
@@ -542,8 +545,9 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 var clone = node.cloneNode(true);
                 var div = clone.ownerDocument.createElement("div");
                 div.appendChild(clone);
-                clone.insertBefore(transformation.makeElement(spec),
-                                   clone.childNodes[l] || null);
+                clone.insertBefore(
+                    transformation.makeElement(clone.ownerDocument, spec),
+                    clone.childNodes[l] || null);
 
                 var errors =
                     this._editor.validator.speculativelyValidateFragment(
@@ -736,7 +740,11 @@ BTWDecorator.prototype.excludedSubsenseHandler = function (root, el) {
 
 BTWDecorator.prototype._deleteLinksPointingTo = function (el) {
     var id = el.getAttribute(util.encodeAttrName("xml:id"));
-    var selector = ["*[" + util.encodeAttrName("target") + "='#" + id + "']"];
+
+    // Whereas using querySelectorAll does not **generally** work,
+    // using this selector, which selects only on attribute values,
+    // works.
+    var selector = "*[target='#" + id + "']";
 
     var links = this._editor.data_root.querySelectorAll(selector);
     for(var i = 0; i < links.length; ++i)
@@ -1165,7 +1173,7 @@ BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
 
                 // Reduce the target to something sensible for tooltip text.
                 if (target_name === "btw:sense")
-                    target = target.querySelector(jqutil.toDataSelector(
+                    target = target.querySelector(domutil.toGUISelector(
                         "btw:english-rendition>btw:english-term"));
                 else if (target_name === "btw:subsense") {
                     child = target.firstElementChild;
@@ -1270,7 +1278,7 @@ BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr) {
 };
 
 BTWDecorator.prototype._refChangedInGUI = function (root, el) {
-    var example = closest(el, jqutil.toDataSelector(
+    var example = closest(el, domutil.toGUISelector(
         "btw:example, btw:example-explained"));
 
     if (!example)
@@ -1368,7 +1376,7 @@ BTWDecorator.prototype._refreshNavigationHandler = function () {
         // marks the start of a sense. So we need to adjust.
         if (orig_name === "btw:explanation") {
             var parent_subsense = data_parent.parentNode;
-            if (parent_subsense.classList.contains("btw:subsense")) {
+            if (parent_subsense.tagName === "btw:subsense") {
                 orig_name = "btw:subsense";
                 data_parent = parent_subsense;
             }
@@ -1420,7 +1428,7 @@ BTWDecorator.prototype._navigationContextMenuHandler = log.wrap(
     // navigation item for which a context menu handler was required
     // by the user.
     var node = wed_ev.data.node;
-    var orig_name = util.getOriginalName(node);
+    var orig_name = node.tagName;
 
     // container, offset: location of the node in its parent.
     var container = node.parentNode;

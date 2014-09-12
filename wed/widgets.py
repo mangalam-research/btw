@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 
 
 class WedWidget(forms.Widget):
+
     def __init__(self, source, css=[], require=None, *args, **kwargs):
         if css is None:
             css = []
@@ -16,7 +17,7 @@ class WedWidget(forms.Widget):
 
         js.append("wed/widget.js")
 
-        css = { "screen": css }
+        css = {"screen": css}
 
         self._media = forms.Media(js=js, css=css)
         super(WedWidget, self).__init__(*args, **kwargs)
@@ -30,14 +31,20 @@ class WedWidget(forms.Widget):
 
         parent_attrs = {
             "class": "wed-widget-parent",
-            }
+        }
         wed_attrs = {
             "class": "wed-widget loading container",
             "style": "display: none",
-            "id": attrs['id']
-            }
-        return mark_safe('<div%s><div>Loading...</div><div%s>%s</div></div>' %
-                         (flatatt(parent_attrs), flatatt(wed_attrs), value))
+        }
+        script_attrs = {
+            "id": attrs['id'],
+            "type": "text/xml"
+        }
+        return mark_safe(
+            '<div%s><div>Loading...</div><div%s></div>'
+            '<script%s>%s</script></div>' %
+            (flatatt(parent_attrs), flatatt(wed_attrs), flatatt(script_attrs),
+             value))
 
     def __unicode__(self):
         return self.render()

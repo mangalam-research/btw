@@ -8,7 +8,6 @@ var sense_refs = require("./btw_refmans").sense_refs;
 var btw_util = require("./btw_util");
 var transformation = require("wed/transformation");
 var Action = require("wed/action").Action;
-var jqutil = require("wed/jqutil");
 var domutil = require("wed/domutil");
 
 function SensePtrDialogAction() {
@@ -27,11 +26,11 @@ SensePtrDialogAction.prototype.execute = function (data) {
     var radios = [];
     for(var i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
         var data_node = $.data(sense, "wed_mirror_node");
-        var term_nodes = btw_util.termsForSense(data_node);
+        var term_nodes = btw_util.termsForSense(sense);
         var terms = [];
         for(var tix = 0, term_node; (term_node = term_nodes[tix]) !== undefined;
             ++tix)
-            terms.push(term_node.textContent);
+            terms.push($.data(term_node, "wed_mirror_node").textContent);
         terms = terms.join(", ");
         var sense_label = editor.decorator._getSenseLabel(sense);
 
@@ -55,7 +54,15 @@ SensePtrDialogAction.prototype.execute = function (data) {
             ++ssix) {
             data_node = $.data(subsense, "wed_mirror_node");
             var subsense_label = editor.decorator._getSubsenseLabel(subsense);
-            var explanation = domutil.childByClass(data_node, "btw:explanation");
+            var child = data_node.firstElementChild;
+            var explanation;
+            while (child) {
+                if (child.tagName === "btw:explanation") {
+                    explanation = child;
+                    break;
+                }
+                child = child.nextElementSibling;
+            }
 
             span = doc.createElement("span");
             span.textContent = " [" + subsense_label + "] " +
@@ -111,17 +118,26 @@ ExamplePtrDialogAction.prototype.execute = function (data) {
     var editor = this._editor;
 
     var doc = editor.gui_root.ownerDocument;
-    var examples = editor.gui_root.querySelectorAll(jqutil.toDataSelector(
+    var examples = editor.gui_root.querySelectorAll(domutil.toGUISelector(
         "btw:example, btw:example-explained"));
     var labels = [];
     var radios = [];
     for(var i = 0, example; (example = examples[i]) !== undefined; ++i) {
         var data_node = $.data(example, "wed_mirror_node");
-        var cit = domutil.childByClass(data_node, "btw:cit");
+        var child = data_node.firstElementChild;
+        var cit;
+        while (child) {
+            if (child.tagName === "btw:cit") {
+                cit = child;
+                break;
+            }
+            child = child.nextElementSibling;
+        }
+
         var abbr = example.querySelector(util.classFromOriginalName("ref"));
         if (abbr) {
             abbr = abbr.cloneNode(true);
-            var child = abbr.firstElementChild;
+            child = abbr.firstElementChild;
             while(child) {
                 var next = child.nextElementSibling;
                 if (child.classList.contains("_gui"))

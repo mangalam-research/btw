@@ -24,8 +24,8 @@ user_model = get_user_model()
 
 
 def set_lemma(tree, new_lemma):
-    return test_util.set_lemma(
-        lxml.etree.tostring(tree.xpath("//*[@id='id_data']")[0][0]), new_lemma)
+    return test_util.set_lemma(tree.xpath("//*[@id='id_data']")[0].text,
+                               new_lemma)
 
 
 class ViewsTestCase(TransactionWebTest):
@@ -128,8 +128,7 @@ class ViewsTestCase(TransactionWebTest):
         saveurl = response.form['saveurl'].value
 
         if data is None:
-            response_data = response.lxml.xpath("//*[@id='id_data']")[0][0]
-            data = test_util.stringify_etree(response_data)
+            data = response.lxml.xpath("//*[@id='id_data']")[0].text
 
         params = {
             "command": command,

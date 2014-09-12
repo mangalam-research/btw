@@ -9,7 +9,6 @@ define(/** @lends module:wed/modes/btw/btw_mode */
 'use strict';
 
 var $ = require("jquery");
-var jqutil = require("wed/jqutil");
 var util = require("wed/util");
 var log = require("wed/log");
 var Mode = require("wed/modes/generic/generic").Mode;
@@ -184,19 +183,19 @@ BTWMode.prototype.init = function (editor) {
      * getContextualActions method is called.
      */
     this.transformation_filters = [
-        { selector: jqutil.toDataSelector(
+        { selector: domutil.toGUISelector(
             ["btw:overview",
              "btw:definition"].join(",")),
           pass: {}
         },
         {
-            selector: jqutil.toDataSelector("btw:sense-discrimination"),
+            selector: domutil.toGUISelector("btw:sense-discrimination"),
             pass: {
                 "btw:sense": true
             }
         },
         { // paragraph in a definition
-            selector: jqutil.toDataSelector("btw:definition>p"),
+            selector: domutil.toGUISelector("btw:definition>p"),
             pass: {
                 "btw:sense-emphasis": true,
                 "ptr": true
@@ -221,7 +220,7 @@ BTWMode.prototype.init = function (editor) {
                actions: [this.insert_example_ptr_action] }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:tr, " +
+        { selector: domutil.toGUISelector("btw:sense>btw:citations btw:tr, " +
                                           "btw:subsense>btw:citations btw:tr"),
           pass: {
               "btw:lemma-instance": true,
@@ -229,7 +228,7 @@ BTWMode.prototype.init = function (editor) {
               "lg": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:sense>btw:citations btw:cit, " +
+        { selector: domutil.toGUISelector("btw:sense>btw:citations btw:cit, " +
                                           "btw:subsense>btw:citations btw:cit"),
           pass: {
               "btw:lemma-instance": true,
@@ -244,7 +243,7 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:cit"),
+        { selector: domutil.toGUISelector("btw:antonym>btw:citations btw:cit"),
           pass: {
               "btw:antonym-instance": true,
               "btw:lemma-instance": true,
@@ -259,7 +258,7 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:antonym>btw:citations btw:tr"),
+        { selector: domutil.toGUISelector("btw:antonym>btw:citations btw:tr"),
           pass: {
               "btw:antonym-instance": true,
               "btw:lemma-instance": true,
@@ -267,14 +266,14 @@ BTWMode.prototype.init = function (editor) {
               "lg": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:antonym>btw:citations foreign"),
+        { selector: domutil.toGUISelector("btw:antonym>btw:citations foreign"),
           pass: {
               "foreign": ["delete-parent", "unwrap"],
               "btw:antonym-instance": true,
               "btw:lemma-instance": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:cit"),
+        { selector: domutil.toGUISelector("btw:cognate>btw:citations btw:cit"),
           pass: {
               "btw:cognate-instance": true,
               "btw:lemma-instance": true,
@@ -289,7 +288,7 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:cognate>btw:citations btw:tr"),
+        { selector: domutil.toGUISelector("btw:cognate>btw:citations btw:tr"),
           pass: {
               "btw:cognate-instance": true,
               "btw:lemma-instance": true,
@@ -297,14 +296,14 @@ BTWMode.prototype.init = function (editor) {
               "lg": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:cognate>btw:citations foreign"),
+        { selector: domutil.toGUISelector("btw:cognate>btw:citations foreign"),
           pass: {
               "foreign": ["delete-parent", "unwrap"],
               "btw:cognate-instance": true,
               "btw:lemma-instance": true
           }
         },
-        { selector: jqutil.toDataSelector(
+        { selector: domutil.toGUISelector(
             "btw:conceptual-proximate>btw:citations btw:cit"),
           pass: {
               "btw:conceptual-proximate-instance": true,
@@ -320,7 +319,7 @@ BTWMode.prototype.init = function (editor) {
               }
           ]
         },
-        { selector: jqutil.toDataSelector(
+        { selector: domutil.toGUISelector(
             "btw:conceptual-proximate>btw:citations btw:tr"),
           pass: {
               "btw:conceptual-proximate-instance": true,
@@ -329,7 +328,7 @@ BTWMode.prototype.init = function (editor) {
               "lg": true
           }
         },
-        { selector: jqutil.toDataSelector(
+        { selector: domutil.toGUISelector(
             "btw:conceptual-proximate>btw:citations foreign"),
           pass: {
               "foreign": ["delete-parent", "unwrap"],
@@ -337,7 +336,7 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true
           }
         },
-        { selector: jqutil.toDataSelector("btw:citations foreign"),
+        { selector: domutil.toGUISelector("btw:citations foreign"),
           pass: {
               "foreign": ["delete-parent", "unwrap"],
               "btw:lemma-instance": true
@@ -348,21 +347,21 @@ BTWMode.prototype.init = function (editor) {
               "foreign": ["delete-parent", "unwrap"]
           }
         },
-        { selector: jqutil.toDataSelector("btw:antonyms>btw:none"),
+        { selector: domutil.toGUISelector("btw:antonyms>btw:none"),
           substitute: [
               { tag: "btw:none",
                 type: "delete-parent",
                 actions: [this.replace_none_with_antonym] }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:cognates>btw:none"),
+        { selector: domutil.toGUISelector("btw:cognates>btw:none"),
           substitute: [
               { tag: "btw:none",
                 type: "delete-parent",
                 actions: [this.replace_none_with_cognate] }
           ]
         },
-        { selector: jqutil.toDataSelector("btw:conceptual-proximates>btw:none"),
+        { selector: domutil.toGUISelector("btw:conceptual-proximates>btw:none"),
           substitute: [
               { tag: "btw:none",
                 type: "delete-parent",
@@ -381,7 +380,7 @@ BTWMode.prototype.init = function (editor) {
                 "l": true
             }
         },
-        { selector: jqutil.toDataSelector("*"),
+        { selector: domutil.toGUISelector("*"),
           substitute: [
               { tag: "ref",
                 type: "insert",
@@ -448,32 +447,24 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
     args = [this, this._meta].concat(args);
     BTWDecorator.apply(obj, args);
 
-    // We attach to the domlistener object to perform some cleanup
-    // transformations.
-
-    domlistener.addHandler(
-        "children-changed",
-        jqutil.toDataSelector(
-            "btw:antonyms, btw:cognates, btw:conceptual-proximates"),
-        function addNone (root, added, removed, prev, next, el) {
-            var child = el.firstElementChild;
-            var found = false;
-
-            while(child) {
-                found = child.classList.contains("_real");
-                if (found)
-                    break;
-
-                child = child.nextElementSibling;
-            }
-
-            if (!found) {
-                this._editor.data_updater.insertBefore(
-                    $(el).data("wed_mirror_node"),
-                    transformation.makeElement('btw:none'), null);
-            }
-        }.bind(this));
-
+    // This is as good a place as any where to attach listeners to the
+    // data updater directly. Note that we attach to the updater
+    // rather than the domlistener because otherwise we would trigger
+    // a data update from a GUI update, which is likely to result in
+    // issues. (Crash, infinite loop, etc.)
+    this._editor.data_updater.addEventListener("deleteNode",
+                                               function (ev) {
+        var el = ev.node;
+        if (!(el.tagName === "btw:antonym" ||
+              el.tagName === "btw:cognate" ||
+              el.tagName === "btw:conceptual-proximate"))
+            return;
+        if (el.parentNode.childElementCount === 1)
+            this._editor.data_updater.insertBefore(
+                el.parentNode,
+                transformation.makeElement(el.ownerDocument,
+                                           'btw:none'), null);
+    }.bind(this));
     return obj;
 };
 
@@ -512,8 +503,10 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
  */
 BTWMode.prototype.getContextualActions = function (type, tag,
                                                    container, offset) {
-    // We want the first *element* container, selecting div accomplishes this.
-    var $container = $(container).closest("div");
+    var el = (container.nodeType === Node.TEXT_NODE) ?
+            container.parentNode : container;
+    var gui_el = $.data(el, "wed_mirror_node");
+
 
     if (!(type instanceof Array))
         type = [type];
@@ -523,7 +516,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
     //
     // None of the non-inline elements should be able to be unwrapped.
     //
-    if (!this._meta.isInline(container)) {
+    if (!this._meta.isInline(gui_el)) {
         var unwrap = type.indexOf("unwrap");
         if (unwrap !== -1)
             type.splice(unwrap, 1);
@@ -533,7 +526,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
     filter_loop:
     for(var i = 0; i < this.transformation_filters.length; ++i) {
         var filter = this.transformation_filters[i];
-        if ($container.is(filter.selector)) {
+        if (gui_el.matches(filter.selector)) {
 
             type_loop:
             for(var tix = 0; tix < type.length; ++tix) {
@@ -576,7 +569,7 @@ BTWMode.prototype.getContextualActions = function (type, tag,
         if (x !== this.insert_ref_text)
             return true;
 
-        return $container[0].childNodes.length === 0;
+        return el.childNodes.length === 0;
     }, this);
 };
 

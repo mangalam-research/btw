@@ -13,9 +13,6 @@ class SearchForm(forms.Form):
 
 
 class RawSaveForm(forms.ModelForm):
-    editable_format = forms.BooleanField(
-        label=("Data entered in the editable format (XHTML) rather than "
-               "the btw-storage format (XML)."), required=False)
 
     class Meta(object):
         model = Chunk
@@ -23,6 +20,9 @@ class RawSaveForm(forms.ModelForm):
 
 
 class SaveForm(forms.ModelForm):
+    # This form is a left-over from the initial version of BTW. It has
+    # ceased to act like a form a long time ago and should probably be
+    # replaced with something nicer.
 
     class Media(object):
         js = settings.BTW_WED_POLYFILLS + \

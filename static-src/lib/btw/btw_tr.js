@@ -5,7 +5,6 @@ var oop = require("wed/oop");
 var domutil = require("wed/domutil");
 var closest = domutil.closest;
 var $ = require("jquery");
-var jqutil = require("wed/jqutil");
 
 var util = require("wed/util");
 var sense_refs = require("./btw_refmans").sense_refs;
@@ -31,10 +30,10 @@ function insert_ptr(editor, data) {
     var target = editor.gui_root.ownerDocument.getElementById(data.target);
     var data_id = data.target.slice(4);
     target.setAttribute(util.encodeAttrName("xml:id"), data_id);
-    $.data(target, "wed_mirror_node").setAttribute(util.encodeAttrName("xml:id"),
-                                                   data_id);
+    $.data(target, "wed_mirror_node").setAttribute("xml:id", data_id);
 
-    var ptr = makeElement('ptr', {'target': "#" + data_id});
+    var ptr = makeElement(parent.ownerDocument,
+                          'ptr', {'target': "#" + data_id});
     editor.data_updater.insertAt(parent, index, ptr);
 
     // The original parent and index information are no necessarily
@@ -50,7 +49,7 @@ function insert_ref(editor, data) {
     var parent = caret.node;
     var index = caret.offset;
 
-    var ptr = makeElement('ref', {'target': data.target});
+    var ptr = makeElement(parent.ownerDocument, 'ref', {'target': data.target});
     editor.data_updater.insertAt(parent, index, ptr);
     var gui_node = editor.fromDataLocation(ptr, 0).node;
 
@@ -117,7 +116,7 @@ function set_language_handler(editor, data) {
 
     var lang_code = btw_util.languageToLanguageCode(data.language);
     var selector = "foreign";
-    var data_selector = jqutil.toDataSelector(selector);
+    var data_selector = domutil.toGUISelector(selector);
 
     var container = range.startContainer;
     var cl = closest(container, data_selector, editor.data_root);
@@ -128,9 +127,8 @@ function set_language_handler(editor, data) {
                 "foreign language element");
     }
 
-    var foreign = container.ownerDocument.createElement("div");
-    foreign.className = "_real foreign";
-    foreign.setAttribute(util.encodeAttrName("xml:lang"), lang_code);
+    var foreign = makeElement(container.ownerDocument,
+                              'foreign', {'xml:lang': lang_code});
     var cut_ret = editor.data_updater.cut(
         makeDLoc(editor.data_root, range.startContainer, range.startOffset),
         makeDLoc(editor.data_root, range.endContainer, range.endOffset));

@@ -36,7 +36,7 @@ from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
-from .xml import storage_to_editable, XMLTree, set_authority, xhtml_to_xml
+from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
 from .forms import SearchForm, SaveForm
 
 logger = logging.getLogger("lexicography")
@@ -237,7 +237,7 @@ def handle_update(request, handle_or_entry_id):
         chunk = entry.c_hash
     else:
         chunk = Chunk()
-        chunk.data = storage_to_editable(
+        chunk.data = clean_xml(
             open(os.path.join(dirname, "skeleton.xml"), 'r').read())
         chunk.save()
 
@@ -356,8 +356,9 @@ _COMMAND_TO_ENTRY_TYPE = {
 
 @transaction.atomic
 def _save_command(request, entry_id, handle, command, messages):
-    data = xhtml_to_xml(urllib.unquote(request.POST.get("data")))
-    xmltree = XMLTree(data)
+    data = xhtml_to_xml(
+        urllib.unquote(request.POST.get("data")))
+    xmltree = XMLTree(data.encode("utf-8"))
 
     unclean = xmltree.is_data_unclean()
     if unclean:
@@ -449,6 +450,10 @@ def _save_command(request, entry_id, handle, command, messages):
 @login_required
 @require_GET
 def editing_data(request):
+    # This view exists only when debugging.
+    if not settings.DEBUG:
+        raise Http404
+
     found_entries = None
     query_string = request.GET.get('q', None)
     if query_string is not None and query_string.strip():
@@ -460,8 +465,7 @@ def editing_data(request):
         raise Http404
 
     # We return only data for the first hit.
-    return HttpResponse(storage_to_editable(found_entries[0].data),
-                        content_type="text/plain")
+    return HttpResponse(found_entries[0].data, content_type="text/plain")
 
 _cached_BTW_WED_LOGGING_PATH = None
 
@@ -508,7 +512,7 @@ def log(request):
 def change_revert(request, change_id):
     change = ChangeRecord.objects.get(id=change_id)
     chunk = change.c_hash
-    xmltree = XMLTree(chunk.data)
+    xmltree = XMLTree(chunk.data.encode("utf-8"))
     if not try_updating_entry(request, change.entry, chunk, xmltree,
                               Entry.REVERT, Entry.MANUAL):
         return HttpResponse("<br>entry locked!")

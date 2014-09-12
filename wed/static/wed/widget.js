@@ -15,6 +15,9 @@
 
             for (var i = 0; i < widgets.length; i++) {
                 var widget = widgets[i];
+                var script = widget.nextElementSibling;
+                if (script.tagName !== "SCRIPT")
+                    throw new Error("script element for data not found!");
                 var $widget = $(widget);
 
                 var options = (typeof wed_config === 'object') ?
@@ -37,7 +40,7 @@
                 };
 
                 var wed_editor = new wed.Editor();
-                wed_editor.init(widget, options);
+                wed_editor.init(widget, options, script.textContent);
                 // Yep, this means only one wed editor per window.
                 window.wed_editor = wed_editor;
                 wed_editor.whenCondition("initialized",

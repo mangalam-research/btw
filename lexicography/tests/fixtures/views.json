@@ -4,7 +4,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
     "ctype": "U",
     "datetime": "2013-09-06T19:57:52.120Z",
     "csubtype": "M",
@@ -19,7 +19,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
-    "c_hash": "62a0a7946ecff97649b85019fcc02b10f287c95f",
+    "c_hash": "f7140d095e6b4d42692b340a7ac223779143f2f3",
     "ctype": "C",
     "datetime": "2013-09-09T20:41:01.291Z",
     "csubtype": "M",
@@ -34,7 +34,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "x5sxno7s4mhdkii8t2n2mhbpq72sx1xt",
-    "c_hash": "f14fef2656f335709c582c5afd5822cea2d11d1a",
+    "c_hash": "87e2eec4174f20bd59eb905a3ebf447d73bd91dd",
     "ctype": "U",
     "datetime": "2013-11-18T20:02:23.385Z",
     "csubtype": "M",
@@ -49,7 +49,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
-    "c_hash": "96aad14f5ed3d70f93c865703857331041c9c27f",
+    "c_hash": "0de8e7737e7fddb4da56f87f9179cab5c5eaf7ae",
     "ctype": "C",
     "datetime": "2014-05-14T20:27:55.611Z",
     "csubtype": "M",
@@ -64,7 +64,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
-    "c_hash": "d0ed73c59c6e13bb0f0769dcafe9cdd40b5174b9",
+    "c_hash": "90245c48aa64c206f3f5e6bb4c614107ee51435e",
     "ctype": "C",
     "datetime": "2014-05-21T13:39:26.454Z",
     "csubtype": "M",
@@ -79,7 +79,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "2fa0abfcb07661f08df0b7034c5a4f0bd5837e50",
+    "c_hash": "da1e4c7ba0de661c01cfd0adf6dc5b684b5d5104",
     "ctype": "C",
     "datetime": "2014-05-22T19:24:50.790Z",
     "csubtype": "M",
@@ -94,7 +94,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "dfa7e630495b240a1c547f860c7335b1598c3675",
+    "c_hash": "da8511a6111250bd85bf7d61d2c49ff28dc50b4c",
     "ctype": "C",
     "datetime": "2014-05-22T20:04:34.494Z",
     "csubtype": "M",
@@ -109,7 +109,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "60ec16951deead9ab0d1a04af11a4230722c0cb9",
+    "c_hash": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
     "ctype": "C",
     "datetime": "2014-05-23T19:01:52.759Z",
     "csubtype": "M",
@@ -124,7 +124,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "4dd64660a409b8bb16d81c3abd43e073df1bd914",
+    "c_hash": "3a16724b8ea4b94c69f04b45a7fa1e4a6a51cc90",
     "ctype": "C",
     "datetime": "2014-05-26T12:44:06.487Z",
     "csubtype": "M",
@@ -139,7 +139,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "84174720561d363bc7937093ecca29074d748020",
+    "c_hash": "95a6a98b9b2c4238b28fb5b2756fc21c3caafc63",
     "ctype": "U",
     "datetime": "2014-06-04T14:52:13.118Z",
     "csubtype": "M",
@@ -154,7 +154,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "282ee521937fb4f673193d547f2071236401bd5b",
+    "c_hash": "411b587eb5e9854e0b8fbb26fd69b323b64f478b",
     "ctype": "C",
     "datetime": "2014-06-09T20:08:31.629Z",
     "csubtype": "M",
@@ -169,7 +169,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "3171a0240bebd074e547d68627e3df4873409ec8",
+    "c_hash": "b63f633f8dcaea1ad502e8bc9128430bfab2e4a0",
     "ctype": "C",
     "datetime": "2014-06-17T13:48:15.004Z",
     "csubtype": "M",
@@ -184,7 +184,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "973e51726e4347734c2143042011c8ff5045fb1c",
+    "c_hash": "64bfff9555e116a78e7b495f6fd2ae04eb54e436",
     "ctype": "C",
     "datetime": "2014-06-17T14:21:16.188Z",
     "csubtype": "M",
@@ -199,7 +199,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "9546eedb97b499f42d89e008b989ab07386934a1",
+    "c_hash": "361e67c5f4b634531b4c571d48e72f4f74ad07d7",
     "ctype": "C",
     "datetime": "2014-06-17T14:45:47.819Z",
     "csubtype": "M",
@@ -214,7 +214,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "f5a3b2c6194cdbb1b0dbeca0b77fa0c9aefd9c5e",
+    "c_hash": "356eb601fa611883a6361ccc4135a24acb0a7c84",
     "ctype": "U",
     "datetime": "2014-06-18T13:01:33.472Z",
     "csubtype": "M",
@@ -229,7 +229,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
-    "c_hash": "bb6530806929f7faf57d39efd1fe83f193cd399f",
+    "c_hash": "8ca99fdc686b7deb537be65747696f70a1f156a3",
     "ctype": "C",
     "datetime": "2014-07-13T15:17:11.845Z",
     "csubtype": "M",
@@ -244,7 +244,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
-    "c_hash": "bc83bd6742ba607b511312e0d35ce749eeb09e58",
+    "c_hash": "02dcad56758d94d733cb902d570acb2413e83c84",
     "ctype": "U",
     "datetime": "2014-07-13T18:08:06.613Z",
     "csubtype": "M",
@@ -259,7 +259,7 @@
   "model": "lexicography.entry",
   "fields": {
     "session": "z00mmvhp9mezbkd6ygfxrlbpuunm7mla",
-    "c_hash": "841a41eb516a2475e7d01941a084a0678ac0af7c",
+    "c_hash": "aa77988c068b8e24771da810169b7fbe30d04d4d",
     "ctype": "U",
     "datetime": "2014-07-23T13:43:49.359Z",
     "csubtype": "M",
@@ -274,7 +274,7 @@
   "model": "lexicography.changerecord",
   "fields": {
     "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
     "ctype": "C",
     "datetime": "2013-09-06T15:04:57.032Z",
     "csubtype": "M",
@@ -290,7 +290,7 @@
   "model": "lexicography.changerecord",
   "fields": {
     "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
     "ctype": "U",
     "datetime": "2013-09-06T15:09:43.913Z",
     "csubtype": "M",
@@ -306,7 +306,7 @@
   "model": "lexicography.changerecord",
   "fields": {
     "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
     "ctype": "U",
     "datetime": "2013-09-06T15:09:45.344Z",
     "csubtype": "M",
@@ -322,7 +322,7 @@
   "model": "lexicography.changerecord",
   "fields": {
     "session": "x5sxno7s4mhdkii8t2n2mhbpq72sx1xt",
-    "c_hash": "7c0bd9bdb8212615eb09144662076265f99ea361",
+    "c_hash": "0cf827fe832e4ba7f73dd821170625fb78ddac1e",
     "ctype": "C",
     "datetime": "2013-11-18T20:02:15.722Z",
     "csubtype": "M",
@@ -334,185 +334,154 @@
   }
 },
 {
-  "pk": "6236c198eab95d43cbea8f472eda7daec90ed571",
+  "pk": "02dcad56758d94d733cb902d570acb2413e83c84",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/\"><div class=\"btw:lemma _real\"><div class=\"btw:todo _real\">Fill lemma.</div></div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>contrastive elements with one child</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:antonym><term/><btw:citations/></btw:antonym></btw:antonyms><btw:cognates><btw:cognate><term/><btw:semantic-fields><btw:sf/></btw:semantic-fields><btw:citations/></btw:cognate></btw:cognates><btw:conceptual-proximates><btw:conceptual-proximate><term/><btw:citations/></btw:conceptual-proximate></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "62a0a7946ecff97649b85019fcc02b10f287c95f",
+  "pk": "0cf827fe832e4ba7f73dd821170625fb78ddac1e",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">foo</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/2\"><btw:lemma>one sense, one subsense</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation/></btw:subsense><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
+  "pk": "0de8e7737e7fddb4da56f87f9179cab5c5eaf7ae",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">abcd</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>pali example</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example><btw:cit><foreign xml:lang=\"pi-Latn\">blah</foreign></btw:cit><btw:tr>something</btw:tr></btw:example></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "7c0bd9bdb8212615eb09144662076265f99ea361",
+  "pk": "356eb601fa611883a6361ccc4135a24acb0a7c84",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/2\"><div class=\"btw:lemma _real\">one sense, one subsense</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\"></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>senses, subsenses and hyperlinks</btw:lemma><btw:overview><btw:definition><p>Something.<ptr target=\"#S.0\"/><ptr target=\"#S.2\"/></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense xml:id=\"S.0\"><btw:english-renditions><btw:english-rendition><btw:english-term>sense a</btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense xml:id=\"S.2\"><btw:explanation>sense a1</btw:explanation><btw:citations><btw:example><btw:cit/><btw:tr/></btw:example><btw:example-explained><btw:explanation>explanation</btw:explanation><btw:cit><foreign xml:lang=\"pi-Latn\">pali</foreign></btw:cit><btw:tr/></btw:example-explained></btw:citations></btw:subsense><btw:subsense><btw:explanation>sense a2</btw:explanation><btw:citations/></btw:subsense><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term>sense b</btw:english-term><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation>sense b1</btw:explanation><btw:citations/></btw:subsense></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "96aad14f5ed3d70f93c865703857331041c9c27f",
+  "pk": "361e67c5f4b634531b4c571d48e72f4f74ad07d7",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">pali example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\"><div class=\"foreign _real\" data-wed-xml---lang=\"pi-Latn\">blah</div></div><div class=\"btw:tr _real\">something</div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>conceptual proximate with citations</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:conceptual-proximate><term>conceptual proximate</term><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example></btw:citations></btw:conceptual-proximate></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "5f0684e822668e86467baa8bebb2917a5d1bfc2f",
+  "pk": "3a16724b8ea4b94c69f04b45a7fa1e4a6a51cc90",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">non-pali example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">foo</div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>definition with formatted text</btw:lemma><btw:overview><btw:definition><p>Etymologically linked to the process of sedimentation (<foreign xml:lang=\"sa-Latn\">pra\u221asad</foreign>, see below), <foreign xml:lang=\"sa-Latn\">pras\u0101da</foreign> denotes the resulting state of <btw:sense-emphasis>clarity</btw:sense-emphasis> and <foreign xml:lang=\"la\">translucency</foreign> of liquids. This sense is extended metaphorically [...] its most common meanings of <btw:sense-emphasis>serenity</btw:sense-emphasis>, <btw:sense-emphasis>confidence</btw:sense-emphasis>, and <btw:sense-emphasis>favor</btw:sense-emphasis> or mercy.</p><p>In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "f14fef2656f335709c582c5afd5822cea2d11d1a",
+  "pk": "411b587eb5e9854e0b8fbb26fd69b323b64f478b",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/2\"><div class=\"btw:lemma _real\">one sense, one subsense</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a1</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div><div class=\"btw:renditions-and-discussions _real\"><div class=\"btw:classical-renditions _real\"></div><div class=\"btw:modern-renditions _real\"></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>some semantic fields</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf>01.02</btw:sf><btw:sf>02.02</btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields/><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "2fa0abfcb07661f08df0b7034c5a4f0bd5837e50",
+  "pk": "64bfff9555e116a78e7b495f6fd2ae04eb54e436",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">pali explained example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\"></div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example-explained _real\"><div class=\"btw:explanation _real\">foo</div><div class=\"btw:cit _real\"><div class=\"foreign _real\" data-wed-xml---lang=\"pi-Latn\">foo</div></div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>cognate with citations</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:cognate><term>cognate 1</term><btw:semantic-fields><btw:sf/></btw:semantic-fields><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example></btw:citations></btw:cognate></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "dfa7e630495b240a1c547f860c7335b1598c3675",
+  "pk": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">non-pali explained example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\"></div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example-explained _real\"><div class=\"btw:explanation _real\">foo</div><div class=\"btw:cit _real\">foo</div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
-    "is_normal": true
-  }
-},{
-  "pk": "60ec16951deead9ab0d1a04af11a4230722c0cb9",
-  "model": "lexicography.chunk",
-  "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">definition filled</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</div><div class=\"p _real\">In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>definition filled</btw:lemma><btw:overview><btw:definition><p>Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</p><p>In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "4dd64660a409b8bb16d81c3abd43e073df1bd914",
+  "pk": "87e2eec4174f20bd59eb905a3ebf447d73bd91dd",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">definition with formatted text</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Etymologically linked to the process of sedimentation (<div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pra\u221asad</div>, see below), <div class=\"foreign _real\" data-wed-xml---lang=\"sa-Latn\">pras\u0101da</div> denotes the resulting state of <div class=\"btw:sense-emphasis _real\">clarity</div> and <div class=\"foreign _real\" data-wed-xml---lang=\"la\">translucency</div> of liquids. This sense is extended metaphorically [...] its most common meanings of <div class=\"btw:sense-emphasis _real\">serenity</div>, <div class=\"btw:sense-emphasis _real\">confidence</div>, and <div class=\"btw:sense-emphasis _real\">favor</div> or mercy.</div><div class=\"p _real\">In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/2\"><btw:lemma>one sense, one subsense</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation>sense a1</btw:explanation></btw:subsense><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "84174720561d363bc7937093ecca29074d748020",
+  "pk": "8ca99fdc686b7deb537be65747696f70a1f156a3",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">senses and subsenses</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Something.</div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense a</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a1</div><div class=\"btw:citations _real\"></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a2</div><div class=\"btw:citations _real\"></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense b</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense b1</div><div class=\"btw:citations _real\"></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>sense with explanation</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation>blah</btw:explanation><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "a7df34b076c3ec2123752a53a48e7e93c3f180d7",
+  "pk": "90245c48aa64c206f3f5e6bb4c614107ee51435e",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">some semantic fields</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\">01.02</div><div class=\"btw:sf _real\">02.02</div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>non-pali example</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example><btw:cit>foo</btw:cit><btw:tr/></btw:example><btw:example><btw:cit>bar</btw:cit><btw:tr/></btw:example></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term/><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "d4eca0da981e0125bec95d29ab5afc246c2f85d4",
+  "pk": "95a6a98b9b2c4238b28fb5b2756fc21c3caafc63",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">some semantic fields</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\">01.02</div><div class=\"btw:sf _real\">02.02</div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>senses and subsenses</btw:lemma><btw:overview><btw:definition><p>Something.</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term>sense a</btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation>sense a1</btw:explanation><btw:citations/></btw:subsense><btw:subsense><btw:explanation>sense a2</btw:explanation><btw:citations/></btw:subsense><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term>sense b</btw:english-term><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation>sense b1</btw:explanation><btw:citations/></btw:subsense></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "282ee521937fb4f673193d547f2071236401bd5b",
+  "pk": "aa77988c068b8e24771da810169b7fbe30d04d4d",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">some semantic fields</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\">01.02</div><div class=\"btw:sf _real\">02.02</div></div></div></div><div class=\"btw:semantic-fields _real\"></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>sense with citations</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation>blah</btw:explanation><btw:citations/><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "d0ed73c59c6e13bb0f0769dcafe9cdd40b5174b9",
+  "pk": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">non-pali example</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">foo</div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example _real\"><div class=\"btw:cit _real\">bar</div><div class=\"btw:tr _real\"></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div></div></div><div class=\"btw:explanation _real\"></div><div class=\"btw:citations _real\"></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>abcd</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "3171a0240bebd074e547d68627e3df4873409ec8",
+  "pk": "b63f633f8dcaea1ad502e8bc9128430bfab2e4a0",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">antonym with citations</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:antonym _real\"><div class=\"term _real\">antonym 1</div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">citation</div><div class=\"btw:tr _real\">translation</div></div></div></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>antonym with citations</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:antonym><term>antonym 1</term><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example></btw:citations></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "973e51726e4347734c2143042011c8ff5045fb1c",
+  "pk": "da1e4c7ba0de661c01cfd0adf6dc5b684b5d5104",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">cognate with citations</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:cognate _real\"><div class=\"term _real\">cognate 1</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">citation</div><div class=\"btw:tr _real\">translation</div></div></div></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>pali explained example</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example><btw:cit/><btw:tr/></btw:example><btw:example-explained><btw:explanation>foo</btw:explanation><btw:cit><foreign xml:lang=\"pi-Latn\">foo</foreign></btw:cit><btw:tr/></btw:example-explained></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "9546eedb97b499f42d89e008b989ab07386934a1",
+  "pk": "da8511a6111250bd85bf7d61d2c49ff28dc50b4c",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">conceptual proximate with citations</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:conceptual-proximate _real\"><div class=\"term _real\">conceptual proximate</div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\">citation</div><div class=\"btw:tr _real\">translation</div></div></div></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>non-pali explained example</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example><btw:cit/><btw:tr/></btw:example><btw:example-explained><btw:explanation>foo</btw:explanation><btw:cit>foo</btw:cit><btw:tr/></btw:example-explained></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },
 {
-  "pk": "f5a3b2c6194cdbb1b0dbeca0b77fa0c9aefd9c5e",
+  "pk": "f7140d095e6b4d42692b340a7ac223779143f2f3",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">senses, subsenses and hyperlinks</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\">Something.<div class=\"ptr _real\" data-wed-target=\"#S.0\"></div><div class=\"ptr _real\" data-wed-target=\"#S.2\"></div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\" data-wed-xml---id=\"S.0\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense a</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:subsense _real\" data-wed-xml---id=\"S.2\"><div class=\"btw:explanation _real\">sense a1</div><div class=\"btw:citations _real\"><div class=\"btw:example _real\"><div class=\"btw:cit _real\"></div><div class=\"btw:tr _real\"></div></div><div class=\"btw:example-explained _real\"><div class=\"btw:explanation _real\">explanation</div><div class=\"btw:cit _real\"><div class=\"foreign _real\" data-wed-xml---lang=\"pi-Latn\">pali</div></div><div class=\"btw:tr _real\"></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense a2</div><div class=\"btw:citations _real\"></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\">sense b</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div></div></div><div class=\"btw:subsense _real\"><div class=\"btw:explanation _real\">sense b1</div><div class=\"btw:citations _real\"></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
-    "is_normal": true
-  }
-},
-{
-  "pk": "bb6530806929f7faf57d39efd1fe83f193cd399f",
-  "model": "lexicography.chunk",
-  "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">sense with explanation</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\">blah</div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
-    "is_normal": true
-  }
-},
-{
-  "pk": "bc83bd6742ba607b511312e0d35ce749eeb09e58",
-  "model": "lexicography.chunk",
-  "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">contrastive elements with one child</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:antonym _real\"><div class=\"term _real\"></div><div class=\"btw:citations _real\"></div></div></div><div class=\"btw:cognates _real\"><div class=\"btw:cognate _real\"><div class=\"term _real\"></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"></div></div><div class=\"btw:citations _real\"></div></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:conceptual-proximate _real\"><div class=\"term _real\"></div><div class=\"btw:citations _real\"></div></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
-    "is_normal": true
-  }
-},
-{
-  "pk": "841a41eb516a2475e7d01941a084a0678ac0af7c",
-  "model": "lexicography.chunk",
-  "fields": {
-    "data": "<div xmlns=\"http://www.w3.org/1999/xhtml\" data-wed-xmlns=\"http://www.tei-c.org/ns/1.0\" data-wed-xmlns---btw=\"http://mangalamresearch.org/ns/btw-storage\" class=\"btw:entry _real\" data-wed-authority=\"/authority/1\"><div class=\"btw:lemma _real\">sense with citations</div><div class=\"btw:overview _real\"><div class=\"btw:definition _real\"><div class=\"p _real\"><div class=\"btw:todo _real\">Fill definition.</div></div></div></div><div class=\"btw:sense-discrimination _real\"><div class=\"btw:sense _real\"><div class=\"btw:english-renditions _real\"><div class=\"btw:english-rendition _real\"><div class=\"btw:english-term _real\"><div class=\"btw:todo _real\">Fill term.</div></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div></div></div><div class=\"btw:explanation _real\">blah</div><div class=\"btw:citations _real\"></div><div class=\"btw:semantic-fields _real\"><div class=\"btw:sf _real\"><div class=\"btw:todo _real\">Fill semantic field.</div></div></div><div class=\"btw:contrastive-section _real\"><div class=\"btw:antonyms _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:cognates _real\"><div class=\"btw:none _real\"></div></div><div class=\"btw:conceptual-proximates _real\"><div class=\"btw:none _real\"></div></div></div></div></div><div class=\"btw:historico-semantical-data _real\"><div class=\"btw:etymology _real\"><div class=\"p _real\"></div></div></div></div>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>foo</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
     "is_normal": true
   }
 },

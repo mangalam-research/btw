@@ -16,7 +16,7 @@ from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
     OtherAuthority, Authority, EntryLock, Handle
-from .xml import storage_to_editable, editable_to_storage, XMLTree
+from .xml import XMLTree
 from .views import try_updating_entry
 
 
@@ -66,10 +66,6 @@ class EntryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 chunk = form.save(commit=False)
 
-                # If it was not already entered in the editable format, then we
-                # need to convert it.
-                if not form.cleaned_data['editable_format']:
-                    chunk.data = storage_to_editable(chunk.data)
                 xmltree = XMLTree(chunk.data)
 
                 entry = Entry()
@@ -96,10 +92,6 @@ class EntryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 chunk = form.save(commit=False)
 
-                # If it was not already entered in the editable format, then we
-                # need to convert it.
-                if not form.cleaned_data['editable_format']:
-                    chunk.data = storage_to_editable(chunk.data)
                 xmltree = XMLTree(chunk.data)
                 try_updating_entry(
                     request, entry, chunk, xmltree, Entry.UPDATE,
@@ -109,10 +101,7 @@ class EntryAdmin(admin.ModelAdmin):
                     reverse('admin:lexicography_entry_changelist'))
 
         else:
-            instance = entry.c_hash
-            tmp = Chunk()
-            tmp.data = editable_to_storage(instance.data)
-            form = RawSaveForm(instance=tmp)
+            form = RawSaveForm(instance=entry.c_hash)
 
             opts = self.model._meta
             return self.render_raw_form(

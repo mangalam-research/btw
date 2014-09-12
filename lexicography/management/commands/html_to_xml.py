@@ -7,28 +7,27 @@ from django.utils.termcolors import colorize
 from optparse import make_option
 
 from lexicography.models import Entry, Chunk, ChangeRecord
-from lib import util
+from lexicography import xml
+
+# This command is meant to be used for a one-shot move from HTML to
+# XML as the "editable" format for articles. It should eventually be
+# removed from the code base.
 
 
 class Command(BaseCommand):
     args = 'dir'
     help = """\
-Perform an XSLT transformation on all entries.
+Transforms all entries from the HTML format of earlier wed to XML.
 
-dir    The directory that contains the files that drive the transformation,
-       and the resulting logs. The XSLT transformation must be in a file named
-       ``transform.xsl``. The schema to validate the data before
-       transformation must be in a file named ``before.rng``. The schema
-       to validate after must be in a file named ``after.rng``. The
-       transformations are logged into the ``log`` subdirectory.
-"""
+dir The directory that contains the resulting logs, and the ``after.rng``
+    file that validates files after conversion."""
 
     option_list = BaseCommand.option_list + (
         make_option('--noop',
                     action='store_true',
                     dest='noop',
                     default=False,
-                    help='Do everything except performing the transformation'),
+                    help='Do everything except perform the transformation'),
     )
 
     def handle(self, *args, **options):
@@ -51,16 +50,8 @@ WARNING: in general, this operation cannot be reliably undone without
             raise CommandError("One argument required.")
 
         mydir = args[0]
-        xsl_path = os.path.join(mydir, "transform.xsl")
-        before_rng = os.path.join(mydir, "before.rng")
-        after_rng = os.path.join(mydir, "after.rng")
         log_dir = os.path.join(mydir, "log")
-
-        if not os.path.exists(xsl_path):
-            raise CommandError(xsl_path + " does not exist.")
-
-        if not os.path.exists(before_rng):
-            raise CommandError(before_rng + " does not exist.")
+        after_rng = os.path.join(mydir, "after.rng")
 
         if not os.path.exists(after_rng):
             raise CommandError(after_rng + " does not exist.")
@@ -91,50 +82,34 @@ WARNING: in general, this operation cannot be reliably undone without
 
         self.stdout.write("Transforming all entries.")
         chunk_mapping = {}
+        count = Entry.objects.all().count() + \
+            ChangeRecord.objects.all().count()
+        item = 1
         for data in itertools.chain(Entry.objects.all(),
                                     ChangeRecord.objects.all()):
-            initially_invalid = False
-
+            print "Item {0} of {1}".format(item, count)
             chunk = data.c_hash
             if chunk.pk not in chunk_mapping:
+                storage = xml.editable_to_storage(chunk.data)
                 os.makedirs(os.path.join(log_dir, chunk.pk))
-                with open(os.path.join(log_dir, chunk.pk, "before.xml"), 'w') \
+                with open(os.path.join(log_dir, chunk.pk, "before.html"), 'w') \
                         as before:
                     before.write(chunk.data.encode('utf-8'))
 
-                if not util.validate(before_rng, chunk.data):
-                    self.stdout.write(
-                        "Invalid initial chunk data for chunk: " +
-                        chunk.pk)
-                    self.stdout.write(
-                        "Won't validate chunk after transformation.")
-                    initially_invalid = True
-
-                converted = util.run_saxon(xsl_path, chunk.data)
                 new_chunk = Chunk()
-                new_chunk.data = converted
+                new_chunk.data = storage
 
                 with open(os.path.join(log_dir, chunk.pk, "after.xml"), 'w') \
                         as after:
-                    after.write(converted.encode('utf-8'))
+                    after.write(storage.encode('utf-8'))
 
                 new_chunk.clean()  # Generate the pk
                 chunk_mapping[chunk.pk] = new_chunk.pk
 
-                if not initially_invalid and \
-                   not util.validate(after_rng, converted):
-                    self.stderr.write(
-                        "Invalid transformation result for chunk: " +
-                        chunk.pk)
-                    with open(os.path.join(log_dir, chunk.pk,
-                                           "BECAME_INVALID"), 'w'):
-                        pass
-
-                    continue
-
                 if not options['noop']:
                     new_chunk.save()
 
+            item += 1
             if not options['noop']:
                 data.c_hash = Chunk.objects.get(pk=chunk_mapping[chunk.pk])
                 data.save()

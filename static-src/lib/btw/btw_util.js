@@ -2,10 +2,10 @@ define(function (require, exports, module) {
 'use strict';
 
 var util = require("wed/util");
-var jqutil = require("wed/jqutil");
+var domutil = require("wed/domutil");
 
 function termsForSense(sense) {
-    return sense.querySelectorAll(jqutil.toDataSelector(
+    return sense.querySelectorAll(domutil.toGUISelector(
         "btw:english-rendition>btw:english-term"));
 }
 

@@ -15,17 +15,21 @@ schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
 
-def storage_to_editable(data):
-    return util.run_saxon(os.path.join(xsl_dirname, "out/xml-to-html.xsl"),
-                          data)
-
-
+# 20140912: No longer needed as part of normal operations but we are
+# keeping it here in case some old data needs conversion. It should
+# probably be removed after a few versions of BTW have been released.
 def editable_to_storage(data):
     return util.run_saxon(os.path.join(xsl_dirname, "out/html-to-xml.xsl"),
                           data)
 
 
+def clean_xml(data):
+    return util.run_saxon(os.path.join(xsl_dirname, "xml-to-xml.xsl"),
+                          data)
+
+
 class XMLTree(object):
+
     def __init__(self, data):
         """
 The XML tree representation of the data. Allows performing operations
@@ -43,36 +47,13 @@ on this tree or querying it.
 
     def is_data_unclean(self):
         """
-Ensure that the tree parses as XML and that it contains only div
-elements in the ``http://www.w3.org/1999/xhtml`` namespace, no
-processing instructions, no attributes in any namespace and no
-attribute other than ``class`` or ``data-wed-*``.
+Ensure that the tree parses as XML.
 
 :returns: Evaluates to False if the tree is clean, True if not. When
           unclean the value returned is a diagnosis message.
-
-.. warning:: This method is security-critical. In theory it would be
-    possible for one user of the system to include JavaScript in the
-    data they send to BTW. This JavaScript could then be loaded in
-    someone else's browser and executed there.
     """
         if self.parsing_error:
             return self.parsing_error
-
-        for node in self.tree.iter():
-            # pylint: disable-msg=W0212
-            if isinstance(node, lxml.etree._ProcessingInstruction):
-                return "Processing instruction found."
-            elif isinstance(node, lxml.etree._Element):
-                if node.tag != "{http://www.w3.org/1999/xhtml}div":
-                    return "Element outside the xhtml namespace: " + node.tag
-                for attr in node.attrib.keys():
-                    if attr == "xmlns":
-                        if node.attrib[attr] != "http://www.w3.org/1999/xhtml":
-                            return ("Attribute xmlns with invalid value: " +
-                                    node.attrib[attr] + ".")
-                    elif attr != "class" and not attr.startswith("data-wed-"):
-                        return "Invalid attribute: " + attr + "."
 
         return False
 
@@ -84,20 +65,10 @@ btw:lemma element.
 :returns: The headword.
 :rtype: str
 """
-        class_sought = 'btw:lemma'
         lemma = self.tree.xpath(
-            "xhtml:div[contains(@class, '" + class_sought + "')]",
+            "btw:lemma",
             namespaces={
-                'xhtml':
-                'http://www.w3.org/1999/xhtml'})
-
-        # Check that it is really what we want. Unfortunately writing the
-        # XPath 1.0 (what lxml supports) required to do a good job at
-        # tokenizing @class would be hairier than just doing it in python.
-        if len(lemma):
-            classes = lemma[0].get("class").strip().split()
-            if not any(x == class_sought for x in classes):
-                lemma = []  # Not what we wanted after all
+                'btw': 'http://mangalamresearch.org/ns/btw-storage'})
 
         if not len(lemma):
             return None
@@ -122,7 +93,7 @@ authority attribute on the top element.
 :returns: The authority
 :rtype: str
 """
-        authority = self.tree.get('data-wed-authority')
+        authority = self.tree.get('authority')
 
         if authority is None:
             raise ValueError("can't find the authority in the data passed")

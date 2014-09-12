@@ -70,15 +70,15 @@ def stringify_etree(data):
 
 
 def set_lemma(data, new_lemma):
-    data = xml.xhtml_to_xml(data)
+    data = xml.xhtml_to_xml(data).encode("utf-8")
 
     data_tree = lxml.etree.fromstring(data)
 
     # This casts a wider net than strictly necessary but it does not
     # matter.
     lemma_hits = data_tree.xpath(
-        "xhtml:div[contains(@class, 'btw:lemma')]",
-        namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
+        "btw:lemma",
+        namespaces={'btw': 'http://mangalamresearch.org/ns/btw-storage'})
 
     for lemma in lemma_hits:
         if new_lemma is None:  # None means "remove the lemma"

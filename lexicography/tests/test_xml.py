@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 from django.utils import unittest
 import os
-import difflib
 import lib.util as util
 from .. import xml
 
@@ -18,38 +17,14 @@ def as_editable(filepath):
     # We ask xsltproc not to put out a declaration and add our own.
     tidy = '<?xml version="1.0" encoding="UTF-8"?>' + \
         util.run_xsltproc(os.path.join(xml.xsl_dirname, "strip.xsl"),
-                          data)
+                          data).encode("utf-8")
 
-    editable = xml.storage_to_editable(tidy)
-    as_editable_table[filepath] = editable
-
-    return editable
-
-
-class DataTestCase(unittest.TestCase):
-    def test_roundtrip(self):
-        # We don't use as_editable() here because we need the tidy
-        # intermediary state.
-        data = open(os.path.join(xml.schemas_dirname, "prasada.xml")) \
-            .read().decode('utf-8')
-
-        # We ask xsltproc not to put out a declaration and add our own.
-        tidy = '<?xml version="1.0" encoding="UTF-8"?>' + \
-            util.run_xsltproc(os.path.join(xml.xsl_dirname, "strip.xsl"),
-                              data)
-        editable = xml.storage_to_editable(tidy)
-        final = xml.editable_to_storage(editable)
-
-        # There's no way to test whether a generator is empty.
-        failed = False
-        for line in difflib.unified_diff(tidy.split('\n'), final.split('\n')):
-            print line.encode('utf-8')
-            failed = True
-
-        self.assertFalse(failed)
+    as_editable_table[filepath] = tidy
+    return tidy
 
 
 class XMLTreeTestCase(unittest.TestCase):
+
     def test_is_data_unclean_passes(self):
         editable = as_editable(os.path.join(xml.schemas_dirname,
                                             "prasada.xml"))
@@ -57,50 +32,6 @@ class XMLTreeTestCase(unittest.TestCase):
 
     def test_is_data_unclean_fails_on_unparseable(self):
         data = '<div'
-        self.assertTrue(xml.XMLTree(data).is_data_unclean())
-
-    def test_is_data_unclean_fails_on_processing_instruction(self):
-        data = '''
-<div xmlns="http://www.w3.org/1999/xhtml"
-     data-wed-xmlns="uri:q" data-wed-xmlns---a="uri:a" class="a:html _real"
-     data-wed-a---data-blah--blah----blah="toto" data-wed-z="flex">
-  <div class="head _real"><div data-wed-xmlns="uri:default"
-       data-wed-xmlns---a="uri:a2" class="a:title _real">ab&amp;
-cd&amp;
-ef</div></div><?q?>
-<div class="body _real">
-abc<div class="a:em _real" data-wed-xml---lang="sa-Latn">def&amp;
-gh<div class="em _real"></div></div>
-</div>
-</div>'''
-        self.assertTrue(xml.XMLTree(data).is_data_unclean())
-
-    def test_is_data_unclean_fails_on_non_div(self):
-        data = '''
-<div xmlns="http://www.w3.org/1999/xhtml">
-  <div class="head _real"><b></b></div>
-</div>'''
-        self.assertTrue(xml.XMLTree(data).is_data_unclean())
-
-    def test_is_data_unclean_fails_on_foreign_element(self):
-        data = '''
-<div xmlns="http://www.w3.org/1999/xhtml">
-  <div class="head _real"><div xmlns="q"></div></div>
-</div>'''
-        self.assertTrue(xml.XMLTree(data).is_data_unclean())
-
-    def test_is_data_unclean_fails_on_bad_attribute(self):
-        data = '''
-<div xmlns="http://www.w3.org/1999/xhtml">
-  <div gaga="q" class="head _real"></div>
-</div>'''
-        self.assertTrue(xml.XMLTree(data).is_data_unclean())
-
-    def test_is_data_unclean_fails_on_foreign_attribute(self):
-        data = '''
-<div xmlns="http://www.w3.org/1999/xhtml">
-  <div xmlns:z="z" z:class="k" class="head _real"></div>
-</div>'''
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
     def test_extract_headword_passes(self):
@@ -115,22 +46,12 @@ gh<div class="em _real"></div></div>
         self.assertFalse(xmltree.is_data_unclean())
         self.assertIsNone(xmltree.extract_headword())
 
-    def test_extract_headword_returns_none_when_incorrect_class(self):
-        # This tests an internal condition in extract_headword
-        data = """
-<div xmlns="http://www.w3.org/1999/xhtml">
-<div class="btw:lemmagaga"></div>
-</div>
-        """
-        xmltree = xml.XMLTree(data)
-        self.assertFalse(xmltree.is_data_unclean())
-        self.assertIsNone(xmltree.extract_headword())
-
     def test_extract_headword_returns_none_when_empty_lemma(self):
         data = """
-<div xmlns="http://www.w3.org/1999/xhtml">
-<div class="btw:lemma"></div>
-</div>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  <btw:lemma></btw:lemma>
+</btw:entry>
         """
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
@@ -138,9 +59,10 @@ gh<div class="em _real"></div></div>
 
     def test_extract_headword_returns_none_when_whitespace_lemma(self):
         data = """
-<div xmlns="http://www.w3.org/1999/xhtml">
-<div class="btw:lemma">   </div>
-</div>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  <btw:lemma>   </btw:lemma>
+</btw:entry>
         """
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())

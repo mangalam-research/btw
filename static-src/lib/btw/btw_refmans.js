@@ -3,7 +3,6 @@ define(function (require, exports, module) {
 
 var oop = require("wed/oop");
 var ReferenceManager = require("wed/refman").ReferenceManager;
-var jqutil = require("wed/jqutil");
 var $ = require("jquery");
 var util = require("wed/util");
 var domutil = require("wed/domutil");
@@ -101,7 +100,7 @@ ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
                                                                  id) {
     var gui_target = $.data(target, "wed_mirror_node");
     var ret = "See ";
-    var ref = gui_target.querySelector(jqutil.toDataSelector("btw:cit>ref"))
+    var ref = gui_target.querySelector(domutil.toGUISelector("btw:cit>ref"))
             .cloneNode(true);
     var to_remove = ref.querySelectorAll("._gui, ._decoration_text");
     for(var i = 0, it; (it = to_remove[i]) !== undefined; ++i)
