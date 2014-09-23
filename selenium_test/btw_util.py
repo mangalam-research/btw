@@ -326,7 +326,7 @@ def assert_senses_in_order(util):
                 match = sense_re.search(head)
                 assert_equal(
                     match and match.group(1), chr(sense_label_ix).lower(),
-                    "the subhead text should be correct")
+                    "the subhead text should be correct for head " + head)
         subsense_label_ix = 1
         assert_true(saw_main_head, "should have seen the main head")
         for subsense in sense["subsenses"]:

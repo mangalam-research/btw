@@ -40,6 +40,7 @@ function BTWDecorator(mode, meta) {
     this._refmans = new refmans.WholeDocumentManager();
     this._heading_decorator = new HeadingDecorator(
         this._refmans, this._gui_updater);
+    this._sense_tooltip_selector = "btw:english-rendition>btw:english-term";
 
     this._senses_for_refresh_subsenses = [];
 

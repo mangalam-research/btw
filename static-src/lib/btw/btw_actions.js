@@ -53,7 +53,7 @@ SensePtrDialogAction.prototype.execute = function (data) {
         for(var ssix = 0, subsense; (subsense = subsenses[ssix]) !== undefined;
             ++ssix) {
             data_node = $.data(subsense, "wed_mirror_node");
-            var subsense_label = editor.decorator._refmans._getSubsenseLabel(subsense);
+            var subsense_label = editor.decorator._refmans.getSubsenseLabel(subsense);
             var child = data_node.firstElementChild;
             var explanation;
             while (child) {

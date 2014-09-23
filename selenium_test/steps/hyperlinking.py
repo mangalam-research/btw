@@ -119,22 +119,42 @@ def step_impl(context, example, label, term):
         if (!target)
             return [false, "there should be a target"];
 
+        // It would be easier to inspect the data tree rather than
+        // inspect the GUI tree and clean it up. However, this code needs
+        // to work to test viewing articles, which has no data tree to
+        // work with.
+
+        function cleanup(node) {
+            var heads = node.getElementsByClassName("head");
+            while (heads.length)
+                heads[0].parentNode.removeChild(heads[0]);
+            var phantom = node.getElementsByClassName("_phantom");
+            while (phantom.length)
+                phantom[0].parentNode.removeChild(phantom[0]);
+            var decorations = node.getElementsByClassName("_decoration_text");
+            while (decorations.length)
+                decorations[0].parentNode.removeChild(decorations[0]);
+            return node;
+        }
+
         var test = false;
         var actual_term, desc;
         if (target.matches(".btw\\:sense")) {
-            actual_term = $.data(target.querySelector(".btw\\:english-term"),
-                "wed_mirror_node").textContent;
+            actual_term = cleanup(
+                target.querySelector(".btw\\:english-term").cloneNode(true))
+                .textContent;
             test = term === actual_term;
             desc = actual_term + " should match " + term;
         }
         else if (target.matches(".btw\\:subsense")) {
-            actual_term = $.data(target.querySelector(".btw\\:explanation"),
-                 "wed_mirror_node").textContent;
+            actual_term = cleanup(
+                 target.querySelector(".btw\\:explanation").cloneNode(true))
+                 .textContent;
             test = term === actual_term;
             desc = actual_term + " should match " + term;
         }
         else if (target.matches(".btw\\:example, .btw\\:example-explained")) {
-            test = wed_editor.gui_root.querySelector(
+            test = document.querySelector(
                 ".btw\\:example, .btw\\:example-explained") === target;
             desc = "link should point to " + term + " example";
         }

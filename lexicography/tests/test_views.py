@@ -371,8 +371,9 @@ class ViewsTestCase(TransactionWebTest):
 
     def test_concurrent_edit(self):
         """
-        Tests that when an article is already locked by X and Y does a
-        search, she's not going to get an edit link.
+        Tests that when an article is already locked by user X and user Y
+        does a search, she's not going to get an edit link but will
+        get instead a notice that the article is locked.
         """
         response, entry = self.open_abcd('foo')
 
@@ -384,6 +385,23 @@ class ViewsTestCase(TransactionWebTest):
 
         # Conversely the user is told that the article is locked.
         self.assertIn("Locked by foo (Foo Bwip).", response)
+
+    def test_search_by_non_editor(self):
+        """
+        Tests that when an article is already locked by user X and user Y
+        does a search, and user Y is not able to edit articles, then
+        user Y is not going to see any information about locking.
+        """
+        response, entry = self.open_abcd('foo')
+
+        response = self.search_table_search("abcd", self.noperm)
+
+        # Check that the edit option is not available
+        url = reverse('lexicography_entry_update', args=(entry.id, ))
+        self.assertNotIn(url, response)
+
+        # And the user is *NOT* told that the article is locked.
+        self.assertNotIn("Locked by", response)
 
     def test_lock_expires(self):
         """

@@ -7,7 +7,7 @@ define(function (require, exports, module) {
 'use strict';
 
 var util = require("wed/util");
-var jqutil = require("wed/jqutil");
+var domutil = require("wed/domutil");
 
 function HeadingDecorator(refmans, gui_updater) {
     this._refmans = refmans;
@@ -78,7 +78,7 @@ function HeadingDecorator(refmans, gui_updater) {
         heading: "conceptual proximates"
     }, {
         selector: "btw:sense>btw:other-citations",
-        heading: "other citations for sense ",
+        heading: "other citations for sense",
         label_f: this._bound_getSenseLabel
     }, {
         selector: "btw:other-citations",
@@ -87,7 +87,7 @@ function HeadingDecorator(refmans, gui_updater) {
 
     // Convert the selectors to actual selectors.
     for (var s_ix = 0, spec; (spec = this._specs[s_ix]) !== undefined; ++s_ix)
-        spec.data_selector = jqutil.toDataSelector(spec.selector);
+        spec.data_selector = domutil.toGUISelector(spec.selector);
 }
 
 var next_head = 0;
@@ -105,7 +105,7 @@ HeadingDecorator.prototype.addSpec = function(spec) {
     this._specs = this._specs.filter(function (x) {
         return x.selector !== spec.selector;
     });
-    spec.data_selector = jqutil.toDataSelector(spec.selector);
+    spec.data_selector = domutil.toGUISelector(spec.selector);
     this._specs.push(spec);
 };
 

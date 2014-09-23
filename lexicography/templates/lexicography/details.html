@@ -4,16 +4,24 @@
 <link href="{% static "lib/wed/wed.css" %}" media="screen" rel="stylesheet" />
 <link href="{% static "lib/btw/btw-view.css" %}" media="screen" rel="stylesheet" />
 {{ block.super }}
+<script id="wed-data" type="text/xml">{% autoescape off %}{{ data }}{% endautoescape %}</script>
 <script>
-require(['btw/btw_view']);
+require(['btw/btw_view'], function(Viewer) {
+  var wed_document = document.getElementsByClassName("wed-document")[0];
+  var data = document.getElementById("wed-data").textContent;
+  new Viewer(wed_document, data);
+});
 </script>
 {% endblock %}
 {% block content %}
 <div class="wed-frame">
+  {% if edit_url %}
+    <a class="wed-edit-button btn btn-default" title="Edit"
+       href="{{edit_url}}">
+      <i class="fa fa-pencil-square-o"></i>
+    </a>
+  {% endif %}
   <div class="wed-document">
-    {% autoescape off %}
-    {{ data }}
-    {% endautoescape %}
   </div>
 </div>
 {% endblock %}

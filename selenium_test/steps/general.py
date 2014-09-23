@@ -204,6 +204,8 @@ WHAT_TO_TITLE = {
     u"a single sense that has a subsense": "one sense, one subsense",
     u"a Pāli example": "pali example",
     u"a non-Pāli example": "non-pali example",
+    (u"a non-Pāli example with a bibliographical reference and a link to "
+     u"the example"): "non-pali example, with ref and ptr",
     u"a Pāli example, explained": "pali explained example",
     u"a non-Pāli example, explained": "non-pali explained example",
     u"a definition that has been filled": "definition filled",

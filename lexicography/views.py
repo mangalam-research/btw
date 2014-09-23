@@ -36,8 +36,7 @@ from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
-from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml, \
-    editable_to_viewable
+from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
 from .forms import SearchForm, SaveForm
 
 logger = logging.getLogger("lexicography")
@@ -60,7 +59,11 @@ class SearchTable(BaseDatatableView):
 
     def render_column(self, row, column):
         ret = super(SearchTable, self).render_column(row, column)
-        if column == 'headword':
+        # We check the permission because for people who cannot edit
+        # entries, we do not want to show anything. (They are not
+        # affected by locking.)
+        if column == 'headword' and \
+           self.request.user.has_perm("lexicography.change_entry"):
             if row.is_editable_by(self.request.user):
                 ret = mark_safe(
                     ('<a class="btn btn-xs btn-default" href="%s">Edit</a> ') %
@@ -127,12 +130,18 @@ def search(request):
 
 @require_GET
 def entry_details(request, entry_id):
-    data = Entry.objects.get(id=entry_id).c_hash.data
+    entry = Entry.objects.get(id=entry_id)
+    data = entry.c_hash.data
 
-    viewable = editable_to_viewable(data)
-    return render_to_response('lexicography/details.html',
-                              {'data': viewable},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'lexicography/details.html',
+        {
+            'data': data,
+            'edit_url': reverse("lexicography_entry_update",
+                                args=(entry.id, ))
+            if entry.is_editable_by(request.user) else None
+        },
+        context_instance=RequestContext(request))
 
 
 def update_entry(request, entry, chunk, xmltree, ctype, subtype):

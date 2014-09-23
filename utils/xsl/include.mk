@@ -10,7 +10,4 @@ $(_outdir)/xml-to-html.xsl: $(_include_mk_DIR)/xml-to-html.xsl.in | $(_outdir)
 $(_outdir)/html-to-xml.xsl: $(WED_HTML_TO_XML_PATH) | $(_outdir)
 	cp $< $@
 
-$(_outdir)/editable-to-viewable.xsl: $(_include_mk_DIR)/editable-to-viewable.xsl
-	cp $< $@
-
-TARGETS += $(_outdir)/xml-to-html.xsl $(_outdir)/html-to-xml.xsl $(_outdir)/editable-to-viewable.xsl
+TARGETS += $(_outdir)/xml-to-html.xsl $(_outdir)/html-to-xml.xsl

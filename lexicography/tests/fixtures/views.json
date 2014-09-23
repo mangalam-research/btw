@@ -270,6 +270,21 @@
   }
 },
 {
+  "pk": 19,
+  "model": "lexicography.entry",
+  "fields": {
+    "session": "zxk1lh81piph2nwiansxx08o5e1c1fzx",
+    "c_hash": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
+    "ctype": "U",
+    "datetime": "2014-09-23T15:18:30.245Z",
+    "csubtype": "M",
+    "user": [
+      "foo"
+    ],
+    "headword": "non-pali example, with ref and ptr"
+  }
+},
+{
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
@@ -482,6 +497,22 @@
   "model": "lexicography.chunk",
   "fields": {
     "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>foo</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>non-pali example, with ref and ptr</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example xml:id=\"E.0\"><btw:cit><ref target=\"/bibliography/1\"/>foo</btw:cit><btw:tr/></btw:example><btw:example><btw:cit>bar</btw:cit><btw:tr/></btw:example><ptr target=\"#E.0\"/></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term/><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>definition filled</btw:lemma><btw:overview><btw:definition><p>Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</p><p>In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "is_normal": true
   }
 },

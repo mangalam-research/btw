@@ -22,5 +22,17 @@
     "primary": true,
     "email": "foo2@foo.foo"
   }
+},
+{
+  "pk": 3,
+  "model": "account.emailaddress",
+  "fields": {
+    "verified": true,
+    "user": [
+      "admin"
+    ],
+    "primary": true,
+    "email": ""
+  }
 }
 ]

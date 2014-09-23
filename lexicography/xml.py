@@ -28,12 +28,6 @@ def clean_xml(data):
                           data)
 
 
-def editable_to_viewable(data):
-    return util.run_saxon(os.path.join(xsl_dirname,
-                                       "out/editable-to-viewable.xsl"),
-                          data)
-
-
 class XMLTree(object):
 
     def __init__(self, data):

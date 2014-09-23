@@ -8,9 +8,9 @@ define(/** @lends module:wed/modes/btw/btw_view */
     function (require, exports, module) {
 'use strict';
 
+var convert = require("wed/convert");
 var TreeUpdater = require("wed/tree_updater").TreeUpdater;
 var util = require("wed/util");
-var jqutil = require("wed/jqutil");
 var domutil = require("wed/domutil");
 var oop = require("wed/oop");
 var dloc = require("wed/dloc");
@@ -19,14 +19,19 @@ var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
 var btw_refmans = require("./btw_refmans");
 var DispatchMixin = require("./btw_dispatch").DispatchMixin;
 var id_manager = require("./id_manager");
+var $ = require("jquery");
 
 var _slice = Array.prototype.slice;
+var closest = domutil.closest;
 
-var wed_document = document.getElementsByClassName("wed-document")[0];
-
-function Viewer(root) {
+function Viewer(root, data) {
     var doc = root.ownerDocument;
-    var gui_updater = new TreeUpdater(wed_document);
+    var parser = new doc.defaultView.DOMParser();
+    var data_doc = parser.parseFromString(data, "text/xml");
+    root.appendChild(convert.toHTMLTree(doc, data_doc.firstChild));
+
+    var gui_updater = new TreeUpdater(root);
+
     this._gui_updater = gui_updater;
     this._refmans = new btw_refmans.WholeDocumentManager();
     this._meta = new btw_meta.Meta();
@@ -57,30 +62,30 @@ function Viewer(root) {
          heading: "semantic categories of possible English renditions"});
     this._heading_decorator.addSpec(
         {selector: "btw:cognates>btw:semantic-fields-collection",
-         heading: "semantic categories of cognates related to sense ",
+         heading: "semantic categories of cognates related to sense",
          label_f: this._heading_decorator._bound_getSenseLabel});
     this._heading_decorator.addSpec(
         {selector: "btw:semantic-fields-collection>btw:semantic-fields",
          heading: null});
     this._heading_decorator.addSpec(
         {selector: "btw:sense>btw:semantic-fields",
-         heading: "semantic categories for sense ",
+         heading: "semantic categories for sense",
          label_f: this._heading_decorator._bound_getSenseLabel});
     this._heading_decorator.addSpec({selector: "btw:semantic-fields",
                                      heading: "semantic categories"});
     this._heading_decorator.addSpec({
         selector: "btw:antonyms>btw:citations-collection",
-        heading: "citations for antonyms related to sense ",
+        heading: "citations for antonyms related to sense",
         label_f: this._heading_decorator._bound_getSenseLabel
     });
     this._heading_decorator.addSpec({
         selector: "btw:cognates>btw:citations-collection",
-        heading: "citations for cognates related to sense ",
+        heading: "citations for cognates related to sense",
         label_f: this._heading_decorator._bound_getSenseLabel
     });
     this._heading_decorator.addSpec({
         selector: "btw:conceptual-proximates>btw:citations-collection",
-        heading: "citations for conceptual-proximates related to sense ",
+        heading: "citations for conceptual-proximates related to sense",
         label_f: this._heading_decorator._bound_getSenseLabel
     });
     this._heading_decorator.addSpec({
@@ -94,8 +99,10 @@ function Viewer(root) {
     this._sense_subsense_id_manager = new id_manager.IDManager("S.");
     this._example_id_manager = new id_manager.IDManager("E.");
 
+    this._sense_tooltip_selector = "btw:english-term-list>btw:english-term";
+
     var i, limit, id;
-    var senses_subsenses = root.querySelectorAll(jqutil.toDataSelector(
+    var senses_subsenses = root.querySelectorAll(domutil.toGUISelector(
         "btw:sense, btw:subsense"));
     for(i = 0, limit = senses_subsenses.length; i < limit; ++i) {
         var s = senses_subsenses[i];
@@ -104,7 +111,7 @@ function Viewer(root) {
             this._sense_subsense_id_manager.seen(id, true);
     }
 
-    var examples = root.querySelectorAll(jqutil.toDataSelector(
+    var examples = root.querySelectorAll(domutil.toGUISelector(
         "btw:example, btw:example-explained"));
     for(i = 0, limit = examples.length; i < limit; ++i) {
         var ex = examples[i];
@@ -216,7 +223,10 @@ function Viewer(root) {
 
     new dloc.DLocRoot(root);
 
-    this.process(root, root);
+    this.process(root, root.firstElementChild);
+
+    // Create part 2, which does not exist as such in the file we store.
+    this.createPartTwo(root);
 }
 
 oop.implement(Viewer, DispatchMixin);
@@ -348,7 +358,58 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
     }
 };
 
+/**
+ * This function works exactly like the one in {@link
+ * module:btw_dispatch~DispatchMixin DispatchMixin} except that it
+ * takes the additional ``final_`` parameter.
+ *
+ * @param {boolean} final_ Whether there will be any more changes to
+ * this ptr or not.
+ */
+Viewer.prototype.linkingDecorator = function (root, el, is_ptr, final_) {
+    DispatchMixin.prototype.linkingDecorator.call(this, root, el, is_ptr);
 
-new Viewer(wed_document);
+    // What we are doing here is taking care of updating links to
+    // examples when the reference to the bibliographical source they
+    // contain is updated. These updates happen asynchronously.
+    if (is_ptr && !final_) {
+        var doc = el.ownerDocument;
+        var orig_target = el.getAttribute(util.encodeAttrName("target"));
+        if (!orig_target)
+            orig_target = "";
+
+        orig_target = orig_target.trim();
+
+        if (orig_target.lastIndexOf("#", 0) !== 0)
+            return;
+
+        // Internal target
+        // Add BTW in front because we want the target used by wed.
+        var target_id = orig_target.replace(/#(.*)$/,'#BTW-$1');
+
+        // Find the referred element. Slice to drop the #.
+        var target = doc.getElementById(target_id.slice(1));
+
+        if (!(target.classList.contains("btw:example") ||
+              target.classList.contains("btw:example-explained")))
+            return;
+
+        // Get the ref element that olds the reference to the
+        // bibliographical item, and set an event handler to make sure
+        // we update *this* ptr, when the ref changes.
+        var ref =
+                target.querySelector(domutil.toGUISelector("btw:cit>ref"));
+
+        $(ref).on("wed-refresh", function () {
+            this.linkingDecorator(root, el, is_ptr);
+        }.bind(this));
+    }
+};
+
+Viewer.prototype.createPartTwo = function (root) {
+};
+
+
+return Viewer;
 
 });

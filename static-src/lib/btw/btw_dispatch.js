@@ -9,7 +9,7 @@ define(function (require, exports, module) {
 var util = require("wed/util");
 var $ = require("jquery");
 var tooltip = require("wed/gui/tooltip").tooltip;
-var jqutil = require("wed/jqutil");
+var domutil = require("wed/domutil");
 
 
 function DispatchMixin() {
@@ -301,14 +301,23 @@ DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
                 var target_name = util.getOriginalName(target);
 
                 // Reduce the target to something sensible for tooltip text.
-                if (target_name === "btw:sense")
-                    target = target.querySelector(jqutil.toDataSelector(
-                        "btw:english-rendition>btw:english-term"));
+                if (target_name === "btw:sense") {
+                    var terms = target.querySelectorAll(domutil.toGUISelector(
+                        this._sense_tooltip_selector));
+                    var html = "";
+                    for (var i = 0, term; (term = terms[i]); ++i) {
+                        html += term.innerHTML;
+                        if (i < terms.length - 1)
+                            html += ", ";
+                    }
+                    target = target.ownerDocument.createElement("div");
+                    target.innerHTML = html;
+                }
                 else if (target_name === "btw:subsense") {
                     child = target.firstElementChild;
                     while(child) {
                         if (child.classList.contains("btw:explanation")) {
-                            target = child;
+                            target = child.cloneNode(true);
                             break;
                         }
                         child = child.nextElementSibling;
@@ -318,7 +327,6 @@ DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
                     target = undefined;
 
                 if (target) {
-                    target = target.cloneNode(true);
                     var nodes = target.querySelectorAll(
                         ".head, ._gui, ._explanation_number");
                     for (var node_ix = 0, node;
