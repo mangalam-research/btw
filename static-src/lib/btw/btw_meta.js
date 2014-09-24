@@ -47,6 +47,11 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:english-term":
     case "btw:term":
         return false;
+    case "tei:ptr":
+        if (node.parentNode &&
+            util.getOriginalName(node.parentNode) === "btw:citations")
+            return false;
+        /* falls through */
     default:
         return TEIMeta.prototype.isInline.call(this, node);
     }

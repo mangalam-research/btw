@@ -62,7 +62,7 @@
       <btw:contrastive-section> <!-- [contrastive section for sense a] -->
         <btw:antonyms>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">aprasāda</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">aprasāda</foreign></btw:term>
             <btw:citations><!-- [selected citations of antonyms for sense a] -->
               <btw:example><btw:cit><ref>Saddharmapuṇḍarīka, 225</ref><foreign xml:lang="sa-Latn">sarve 'sya yadbhūyastvena krudhyanti, vyāpādanti <btw:antonym-instance>aprasādam</btw:antonym-instance>utpādayanti ākrośanti paribhāṣante</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
@@ -72,7 +72,7 @@
             -->
           </btw:antonym>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">kāluṣya</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">kāluṣya</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 10d-11a-c, p 76</ref><foreign xml:lang="sa-Latn">tatra śraddhā astitvaguṇavattvaśakyatveṣu karmaphalasatyaratneṣv abhisaṃpratyayaḥ prasādaś cetaso 'bhilāṣaḥ | śraddhā hi tridhā pravartate | sati vastuni guṇavaty aguṇavati vā saṃpratyayākārā | sati guṇavati ca prasādākārā | sati guṇavati ca prāptum utpādayituṃ vā śakye 'bhilāṣākārā | cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti | śraddhā hi citta<btw:antonym-instance>kāluṣya</btw:antonym-instance>vairodhikīty atas tatsaṃprayoge kleśopakleśamala<btw:antonym-instance>kāluṣya</btw:antonym-instance>vigamāc cittaṃ śraddhām āgamya prasīdatīti cetasaḥ prasāda ucyate | sā punaś chandasaṃniśrayadānakarmikā |</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>
@@ -84,7 +84,7 @@
         </btw:antonyms>
         <btw:cognates>
           <btw:cognate>
-            <term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">pra√sad</foreign></btw:term>
             <btw:semantic-fields>
               <btw:sf>01.02.11</btw:sf>
               <btw:sf>01.04.04</btw:sf>
@@ -103,7 +103,7 @@
             -->
           </btw:cognate>
           <btw:cognate>
-            <term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></btw:term>
             <btw:semantic-fields>
               <btw:sf>01.02.11</btw:sf>
               <btw:sf>01.04.04</btw:sf>
@@ -168,7 +168,7 @@
         </btw:cognates>
         <btw:conceptual-proximates>
           <btw:conceptual-proximate>
-            <term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></btw:term>
             <btw:citations>
               <ptr target="#E.1"/>
             <!--
@@ -270,7 +270,7 @@
       <btw:contrastive-section>
         <btw:antonyms>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">aprasāda</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">aprasāda</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Triṃśikābhāṣya ad 13, p 96</ref><foreign xml:lang="sa-Latn">āśraddhyāṃ karmaphalasatyaratneṣv anabhisaṃpratyayaḥ śraddhāvipakṣaḥ | śraddhā hy astitvaguṇavattvaśakyatveṣv abhisaṃpratyayaḥ prasādo 'bhilāṣaś ca yathākramam | aśraddhā tadviparyeṇāstitvaguṇavattvaśakyatveṣv anabhisaṃpratyayo <btw:antonym-instance>'prasādo</btw:antonym-instance> 'nabhilāṣaś ca | kausīdyasaṃniśrayadānakarmakam | aśraddadhānasya prayogacchandābhāvāt kausīdyasaṃniśrayadānakarmakatvam |</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
               <btw:example><btw:cit><ref>Sarvadharmāpravṛttinirdeśa, 126</ref><foreign xml:lang="sa-Latn">bo)dhisatvānāṃ <btw:antonym-instance>aprasāda</btw:antonym-instance>cittam utpādayati aprasannacittam …</foreign></btw:cit><btw:tr>He <btw:antonym-instance>mistrusted</btw:antonym-instance> the bodhisatva, and being mistrustful …</btw:tr></btw:example>
@@ -279,7 +279,7 @@
             <!-- ø -->
           </btw:antonym>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">aprasanna</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">aprasanna</foreign></btw:term>
             <btw:citations>
               <ptr target="#E.2"/><!-- XXX See Vimalakīrti 116, quoted below under [citations for cognates related to sense b], aprasanna -->
             </btw:citations>
@@ -287,7 +287,7 @@
             <!-- ø -->
           </btw:antonym>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">pratigha</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">pratigha</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Ratnāvalī IV.97-98 , 130</ref><lg><l><foreign xml:lang="sa-Latn">iti sadbhir mahāyāne kartavyaḥ <btw:antonym-instance>pratigha</btw:antonym-instance>kṣayaḥ |</foreign></l><l><foreign xml:lang="sa-Latn">prasādaś cādhikaḥ kāryaḥ saṃyaksaṃbodhisiddhaye ||97|</foreign></l><l><foreign xml:lang="sa-Latn">mahāyānaprasādena taduktācaraṇena ca |</foreign></l><l><foreign xml:lang="sa-Latn">prāpyate ’nuttarā bodhiḥ sarvasaukhyāni cāntarā ||98||</foreign></l></lg></btw:cit><btw:tr><lg><l>So, wise people should crush any <btw:antonym-instance>opposition</btw:antonym-instance> they might have against the mahāyāna</l><l>and generate abundant trust [in it] [so that they can attain perfect awakening.</l><l>By trusting the mahāyāna and practicing its teachings, </l><l>they will obtain the unexcelled awakening and enjoy all kinds of happiness in the meantime.</l></lg></btw:tr></btw:example>
               <!-- [other citations] -->
@@ -297,7 +297,7 @@
         </btw:antonyms>
         <btw:cognates>
           <btw:cognate>
-            <term><foreign xml:lang="sa-Latn">abhipra√sad</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">abhipra√sad</foreign></btw:term>
             <btw:semantic-fields>
               <btw:sf>02.01.13</btw:sf>
               <btw:sf>03.07</btw:sf>
@@ -309,7 +309,7 @@
             </btw:citations>
           </btw:cognate>
           <btw:cognate>
-            <term><foreign xml:lang="sa-Latn">prasanna</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">prasanna</foreign></btw:term>
             <btw:semantic-fields>
               <btw:sf>02.01.13</btw:sf>
               <btw:sf>02.02.22</btw:sf>
@@ -325,7 +325,7 @@
         </btw:cognates>
         <btw:conceptual-proximates>
           <btw:conceptual-proximate>
-            <term><foreign xml:lang="sa-Latn">śraddhā</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">śraddhā</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Aśokāvadāna, 71</ref><foreign xml:lang="sa-Latn">sa idānīm acirajāta<btw:lemma-instance>prasād</btw:lemma-instance>o buddhāśāsane yatra śākyaputrīyān dadarśa, ākīrṇe rahasi vā tatra śirasā pādayornipatya vandate sma| tasya ca yaśo nāmāmātyaḥ parama<btw:conceptual-proximate-instance>śrāddho</btw:conceptual-proximate-instance> bhagavati| / sa taṃ rājānamuvāca / deva nārhasi sarvarṇapravrajitānāṃ praṇipātaṃ kartuṃ / santi hi śākyaśrāmaṇerakāścaturbhyo varṇebhyaḥ pravrajitā iti /</foreign></btw:cit><btw:tr>As soon as the [King] had generated <btw:lemma-instance>faith</btw:lemma-instance> in the Buddha’s teachings, he started paying homage to the monastics (śākyaputrīya) falling at their feet whenever he saw them, be it in public or in private. His minister Yaśa had the greatest <btw:conceptual-proximate-instance>belief</btw:conceptual-proximate-instance> (<foreign xml:lang="sa-Latn">śraddhā</foreign>) in the Buddha, [yet] he said o the king: ‘Majesty,  you should not prostrate to religious mendicats of every caste! Indeed the mendicants in the buddhist order come from all the four castes’.</btw:tr></btw:example>
               <btw:example><btw:cit><ref>Tathāgatācintyaguhya, 26v8-27r1</ref><foreign xml:lang="sa-Latn">iha mārṣāḥ kulaputro vā kuladuhitā vā adhyāśayenānuttarāyāṃ samyaksaṃbodhau cittam utpādya <btw:conceptual-proximate-instance>śrāddho</btw:conceptual-proximate-instance> bhavati prasādabahulaḥ āryāṇāṃ saṃdarśanakāmaḥ saddharmaśrotukāmaḥ | […] sa karmavipākaṃ <btw:conceptual-proximate-instance>śraddadhāti</btw:conceptual-proximate-instance> ’vakalpayati | avagacchati niskā[ṃ]kṣā ni[r]vicikitsā nirvimatir bhavati |</foreign></btw:cit><btw:tr>Esteemed friends, a lady or gentleman who has generated the aspiration to unexcelled perfect awakening with earnest intention is a <btw:conceptual-proximate-instance>believer</btw:conceptual-proximate-instance>, one who has much faith and is eager to behold the noble and to listen to the true doctrine. […]. he <btw:conceptual-proximate-instance>believes</btw:conceptual-proximate-instance> in and is persuaded of the results of karma; he aknowledges it, entertains no doubt, or uncertainty or misgiving [about it].</btw:tr></btw:example>
@@ -362,7 +362,7 @@
         </btw:antonyms>
         <btw:cognates>
           <btw:cognate>
-            <term><foreign xml:lang="sa-Latn">pra√sad</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">pra√sad</foreign></btw:term>
             <btw:semantic-fields>
               <btw:sf>01.05.05.12.01</btw:sf>
             </btw:semantic-fields>
@@ -407,7 +407,7 @@
       <btw:contrastive-section>
         <btw:antonyms>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">aprasāda</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">aprasāda</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Aśokāvadāna, 102-103</ref><p><foreign xml:lang="sa-Latn">tau dṛṣṭvā rājā hasitaḥ / imau śrāmaṇerau bālakrīḍayā krīḍataḥ yāvad rājñā bhikṣusaṅghaṃ pariveṣya vṛddhāntamārūḍhaḥ / sthavireṇa cānuyuktaḥ / mā devena kutracid <btw:antonym-instance>aprasāda</btw:antonym-instance> utpādita iti / rājāha / neti / api tu asti dvau śrāmaṇerau bālakrīḍayā krīḍayo yathā bāladārakāḥ pāṃśvāgāraiḥ krīḍantyevaṃ tau śrāmaṇerau saktukrīḍayā krīḍataḥ khādyakrīḍayā krīḍataḥ / sthavira uvāca / alaṃ mahārāja / ubhau hi tau ubhayato bhāgavimuktau arhantau / śrutvā ca rājñaḥ prītimanaso buddhirutpannā / tau śramaṇerāvāgamya bhikṣusaṅghaṃ paṭenācchādayiṣyāmi / tatastau śrāmaṇerau rājño 'bhiprāyamavagamya bhūyo 'nye 'smābhiḥ svaguṇā ubhdāvayitavyā iti [cintitau] / tayorekena kaṭāhakā upasthāpitā dvitīyena raṅgaḥ samudānītaḥ / rājñā pṛṣṭau śrāmaṇerakau / kimidamārabdhaṃ / tayorabhihitaṃ / devo 'smākamāgamya bhikṣusaṅghaṃ paṭenācchāditukāmaḥ / tān paṭān rañjayiṣyāmaḥ / śrutvā ca rājño buddhirutpannā| mayā kevalaṃ cintitaṃ na tu vāṅa niścāritā| paracittavidāvetau mahātmānau| tataḥ sarvaśarīreṇa pādayornipatyaṃ kṛtāñjaliruvāca|</foreign></p>
               <lg>
@@ -422,7 +422,7 @@
             ø -->
           </btw:antonym>
           <btw:antonym>
-            <term><foreign xml:lang="sa-Latn">pradūṣaṇā</foreign></term>
+            <btw:term><foreign xml:lang="sa-Latn">pradūṣaṇā</foreign></btw:term>
             <btw:citations>
               <btw:example><btw:cit><ref>Suvarṇavarṇāvadāna 331-332</ref><foreign xml:lang="sa-Latn">puruṣasya hi jātasya kuṭhārī jāyate mukhe | cchinnatti hi yayātmānaṃ vācā durbhāṣitaṃ vadan |1| yo nindyajanaṃ praśaṃsati praśaṃsyañ ca janaṃ vinindati | sa cinoti mukhena taṃ kaliṃ kalīnāṃ yena sukhaṃ na vandati |2| alpamātro hy ayaṃ kalir ya ihākṣaiḥ svadhanaṃ parājayet | ayam atra mahattaraḥ kalir yaḥ sugateṣu manaḥ <btw:antonym-instance>pradūṣayet</btw:antonym-instance> |3| śataṃ sahasrāṇi  nirarbudānāṃ ṣaṭtriṅśataṃ pañca caivārbudāni | yān āryagarhī narakān upaiti vācaṃ manaś ca praṇidhāya pāpakaṃ |4| citta<btw:antonym-instance>pradūṣaṇā</btw:antonym-instance>hetoḥ satvā gacchanti durggatiṃ | citta<btw:lemma-instance>prasādanā</btw:lemma-instance>hetoḥ satvā gacchanti sadgatiṃ</foreign></btw:cit><btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr></btw:example>
             </btw:citations>

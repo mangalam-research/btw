@@ -14,6 +14,7 @@ var util = require("wed/util");
 var domutil = require("wed/domutil");
 var oop = require("wed/oop");
 var dloc = require("wed/dloc");
+var transformation = require("wed/transformation");
 var btw_meta = require("./btw_meta");
 var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
 var btw_refmans = require("./btw_refmans");
@@ -43,6 +44,8 @@ function Viewer(root, data, bibl_data) {
 
     var gui_updater = new TreeUpdater(root);
 
+    this._doc = doc;
+    this._data_doc = data_doc;
     this._gui_updater = gui_updater;
     this._refmans = new btw_refmans.WholeDocumentManager();
     this._meta = new btw_meta.Meta();
@@ -425,15 +428,144 @@ Viewer.prototype.linkingDecorator = function (root, el, is_ptr, final_) {
     }
 };
 
-DispatchMixin.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
+Viewer.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
     var data = this._bibl_data[target_id];
     if (!data)
         throw new Error("missing bibliographical data");
     this.fillBiblData(el, abbr, data);
 };
 
+Viewer.prototype.makeElement = function (name, attrs) {
+    var e = transformation.makeElement.call(undefined, this._data_doc,
+                                            name, attrs);
+    return convert.toHTMLTree(this._doc, e);
+};
+
+
+function cleanIDs(node) {
+    node.id = null;
+    if (!node.children)
+        return node;
+
+    var child = node.firstElementChild;
+    while (child) {
+        cleanIDs(child);
+        child = child.nextElementSibling;
+    }
+
+    return node;
+}
+
+function prepareCitations(el, p2_el, which) {
+    var doc = el.ownerDocument;
+    var citations = domutil.childByClass(el, which);
+    if (citations) {
+        var p2_citations = citations.cloneNode(true);
+        var head = domutil.childByClass(p2_citations, "head");
+        if (head)
+            p2_citations.removeChild(head);
+        // Replace links to examples with the actual example.
+        var ptrs = domutil.childrenByClass(p2_citations, "ptr");
+        for (var i = 0, ptr; (ptr = ptrs[i]); ++i) {
+            var a = ptr.getElementsByTagName("a")[0];
+            var target = doc.getElementById(a.attributes.href.value.slice(1));
+            if (!target)
+                throw new Error("can't get target for " +
+                                a.attributes.href.value);
+            var p2_target = cleanIDs(target.cloneNode(true));
+            p2_citations.insertBefore(p2_target, ptr);
+            p2_citations.removeChild(ptr);
+        }
+
+        cleanIDs(p2_citations);
+        p2_el.appendChild(p2_citations);
+    }
+}
+
+
 
 Viewer.prototype.createPartTwo = function (root) {
+    var part_two = this.makeElement("part-two");
+    var head = this.makeElement("head");
+    head.innerHTML = "Part Two<br/>All Citations Ordered by Sense";
+    part_two.appendChild(head);
+
+    var senses = root.getElementsByClassName("btw:sense");
+    var i, sense;
+    for (i = 0; (sense = senses[i]); ++i) {
+        var p2_sense = this.makeElement("sense");
+        head = domutil.childByClass(sense, "head");
+        p2_sense.appendChild(cleanIDs(head.cloneNode(true)));
+
+        var subsenses = sense.getElementsByClassName("btw:subsense");
+        var j, subsense;
+        for (j = 0; (subsense = subsenses[j]); ++j) {
+            var p2_subsense = this.makeElement("subsense");
+            var explanation =
+                    domutil.childByClass(subsense, "btw:explanation");
+            var p2_explanation;
+            if (explanation) {
+                p2_explanation = cleanIDs(explanation.cloneNode(true));
+                head = domutil.childByClass(p2_explanation, "head");
+                if (head)
+                    p2_explanation.removeChild(head);
+                var number = domutil.childByClass(p2_explanation,
+                                                  "_explanation_number");
+                if (number)
+                    p2_explanation.removeChild(number);
+            }
+            else
+                // Fake object so that the followig code does not have
+                // to worry about a missing explanation.
+                p2_explanation = {innerHTML: ""};
+
+
+            var refman = this._refmans.getSubsenseRefman(subsense);
+            var label = refman.idToLabel(subsense.id);
+
+            head = this.makeElement("head");
+            head.innerHTML = label + " " + p2_explanation.innerHTML;
+            p2_subsense.appendChild(head);
+
+            prepareCitations(subsense, p2_subsense, "btw:citations");
+            prepareCitations(subsense, p2_subsense, "btw:other-citations");
+
+            p2_sense.appendChild(p2_subsense);
+        }
+
+        var contrastive =
+                domutil.childByClass(sense, "btw:contrastive-section");
+
+        if (contrastive) {
+            var p2_contrastive = this.makeElement("contrastive-section");
+            head = this.makeElement("head");
+            head.textContent = "[contrastive section]";
+            p2_contrastive.appendChild(head);
+
+            // btw:citations-collection is an element we have created
+            // when generating the view structure for part 1.
+            var cols = contrastive.querySelectorAll(
+                domutil.toGUISelector("btw:citations-collection"));
+            for (var col_ix = 0, col; (col = cols[col_ix]); ++col_ix) {
+                var kind = col.parentNode.classList[0].slice(4, -1);
+                var p2_term = this.makeElement("term");
+                var term = col.querySelector(domutil.toGUISelector(
+                    "btw:" + kind + "-term-item btw:term"));
+                head = this.makeElement("head");
+                head.innerHTML =
+                    "[contrast with " + kind + " " + term.outerHTML + "]";
+                p2_term.appendChild(head);
+                prepareCitations(col, p2_term, "btw:citations");
+                p2_contrastive.appendChild(p2_term);
+            }
+
+            p2_sense.appendChild(p2_contrastive);
+        }
+
+        part_two.appendChild(p2_sense);
+    }
+
+    this._gui_updater.insertBefore(root.firstElementChild, part_two);
 };
 
 

@@ -25,7 +25,7 @@ require.config({
  bundles: {
      "lodash": ["lodash/modern/utilities/template"],
      "wed/wed": ["wed/tree_updater", "wed/util", "wed/jqutil",
-             "wed/domutil", "wed/oop", "wed/dloc"]
+             "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation"]
  },
  shim: {
    xregexp: {
