@@ -559,7 +559,7 @@ There is no direct way to modify the fixtures used by the Django tests
 (this includes the live server tests which is used to run the Selenium
 tests). The procedure to follow is::
 
-1. Move your development database to a differenc location
+1. Move your development database to a different location
    temporariy. **Or** modify the development environment so that the
    development server connects to a temporary, different database.
 
