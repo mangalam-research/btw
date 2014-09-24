@@ -377,42 +377,50 @@ DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
             close.innerHTML = ")";
             this._gui_updater.insertBefore(el, close);
 
-            var dec = this;
-            var $el = $(el);
-            $.ajax({
-                url: target_id,
-                headers: {
-                    Accept: "application/json"
-                }
-            }).done(function (data) {
-                var text = "";
-
-                if (data.reference_title) {
-                    text = data.reference_title;
-                    setTitle($el, data.item);
-                }
-                else {
-                    var creators = data.creators;
-                    text = "***ITEM HAS NO CREATORS***";
-                    if (creators)
-                        text = creators.split(",")[0];
-
-                    if (data.date)
-                        text += ", " + data.date;
-                    setTitle($el, data);
-                }
-
-
-                dec._gui_updater.insertText(abbr, 0, text);
-                $el.trigger("wed-refresh");
-
-            }).fail(function () {
-                dec._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
-                $el.trigger("wed-refresh");
-            });
+            this.fetchAndFillBiblData(target_id, el, abbr);
         }
     }
 };
+
+DispatchMixin.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
+    var dec = this;
+    var $el = $(el);
+    $.ajax({
+        url: target_id,
+        headers: {
+            Accept: "application/json"
+        }
+    }).done(function (data) {
+        dec.fillBiblData(el, abbr, data);
+        $el.trigger("wed-refresh");
+
+    }).fail(function () {
+        dec._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
+        $el.trigger("wed-refresh");
+    });
+};
+
+DispatchMixin.prototype.fillBiblData = function (el, abbr, data) {
+    var $el = $(el);
+    var text = "";
+    if (data.reference_title) {
+        text = data.reference_title;
+        setTitle($el, data.item);
+    }
+    else {
+        var creators = data.creators;
+        text = "***ITEM HAS NO CREATORS***";
+        if (creators)
+            text = creators.split(",")[0];
+
+        if (data.date)
+            text += ", " + data.date;
+        setTitle($el, data);
+    }
+
+    this._gui_updater.insertText(abbr, 0, text);
+};
+
 
 exports.DispatchMixin = DispatchMixin;
 

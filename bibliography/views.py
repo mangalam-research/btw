@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
+from django.core.urlresolvers import resolve
 
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
@@ -73,13 +74,26 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
 
 
 def _item_to_dict(item):
+    """
+    Converts a database item to a dictionary of values. The set of
+    values included in the dictionary is limited to what we want to
+    expose from the database.
+
+    We expose ``pk``, ``date``, ``title``, and ``creators``.
+
+    :param item: The item.
+    :type item: :class:`models.Item`
+    :returns: The dictionary of values.
+    """
     return {k: getattr(item, k)
             for k in ("pk", "date", "title", "creators")}
 
 
-@ajax_login_required
 @require_GET
 def items(request, pk):
+    if not request.is_ajax():
+        return HttpResponseBadRequest("only AJAX requests are supported")
+
     fmt = request.META.get('HTTP_ACCEPT', 'application/json')
     if fmt != 'application/json':
         return HttpResponseBadRequest("unknown content type: " + fmt)
@@ -87,6 +101,18 @@ def items(request, pk):
     # limited set.
     return HttpResponse(json.dumps(_item_to_dict(Item.objects.get(pk=pk))),
                         content_type="application/json")
+
+
+def targets_to_dicts(targets):
+    """
+    :param target: The targets to resolve.
+    :type target: An iteratable structure.
+    :returns: A dictionary that maps targets to a dictionary of values.
+    """
+    return dict([(target,
+                  _item_to_dict(Item.objects.get(pk=resolve(target)
+                                                 .kwargs['pk'])))
+                 for target in targets])
 
 
 class ItemTable(BaseDatatableView):

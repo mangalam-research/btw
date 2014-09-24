@@ -38,6 +38,7 @@ from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
 from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
 from .forms import SearchForm, SaveForm
+from bibliography.views import targets_to_dicts
 
 logger = logging.getLogger("lexicography")
 
@@ -133,10 +134,15 @@ def entry_details(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     data = entry.c_hash.data
 
+    xml = XMLTree(data.encode("utf-8"))
+    targets = xml.get_bibilographical_targets()
+    bibl_data = targets_to_dicts(targets)
+
     return render_to_response(
         'lexicography/details.html',
         {
             'data': data,
+            'bibl_data': json.dumps(bibl_data),
             'edit_url': reverse("lexicography_entry_update",
                                 args=(entry.id, ))
             if entry.is_editable_by(request.user) else None

@@ -9,7 +9,8 @@
 require(['btw/btw_view'], function(Viewer) {
   var wed_document = document.getElementsByClassName("wed-document")[0];
   var data = document.getElementById("wed-data").textContent;
-  new Viewer(wed_document, data);
+  new Viewer(wed_document, data,
+             {% autoescape off %}{{ bibl_data }}{% endautoescape %});
 });
 </script>
 {% endblock %}

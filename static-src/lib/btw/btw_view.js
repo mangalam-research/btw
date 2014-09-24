@@ -24,7 +24,18 @@ var $ = require("jquery");
 var _slice = Array.prototype.slice;
 var closest = domutil.closest;
 
-function Viewer(root, data) {
+/**
+ * @param {Element} root The element of ``wed-document`` class that is
+ * meant to hold the viewed document.
+ * @param {string} data The document, as XML.
+ * @param {string} bibl_data The bibliographical data. This is a
+ * mapping of targets (i.e. the targets given to the ``ref`` tags that
+ * point to bibliographical items) to dictionaries that contain the
+ * same values those returned as when asking the server to resolve
+ * these targets individually. This mapping must be
+ * complete. Otherwise, it is an internal error.
+ */
+function Viewer(root, data, bibl_data) {
     var doc = root.ownerDocument;
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");
@@ -35,6 +46,7 @@ function Viewer(root, data) {
     this._gui_updater = gui_updater;
     this._refmans = new btw_refmans.WholeDocumentManager();
     this._meta = new btw_meta.Meta();
+    this._bibl_data = bibl_data;
 
     //
     // We provide minimal objects that are used by some of the logic
@@ -223,6 +235,13 @@ function Viewer(root, data) {
 
     new dloc.DLocRoot(root);
 
+    // We want to process all ref elements earlier so that hyperlinks
+    // to examples are created properly.
+    var refs = root.getElementsByClassName("ref");
+    var ref;
+    for (i = 0; (ref = refs[i]); ++i)
+        this.process(root, ref);
+
     this.process(root, root.firstElementChild);
 
     // Create part 2, which does not exist as such in the file we store.
@@ -405,6 +424,14 @@ Viewer.prototype.linkingDecorator = function (root, el, is_ptr, final_) {
         }.bind(this));
     }
 };
+
+DispatchMixin.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
+    var data = this._bibl_data[target_id];
+    if (!data)
+        throw new Error("missing bibliographical data");
+    this.fillBiblData(el, abbr, data);
+};
+
 
 Viewer.prototype.createPartTwo = function (root) {
 };

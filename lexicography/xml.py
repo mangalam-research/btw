@@ -57,6 +57,15 @@ Ensure that the tree parses as XML.
 
         return False
 
+    def get_bibilographical_targets(self):
+        refs = self.tree.xpath("//tei:ref",
+                               namespaces={
+                                   'tei': 'http://www.tei-c.org/ns/1.0'
+                               })
+
+        return [target for target in [ref.get('target') for ref in refs]
+                if target.startswith('/bibliography/')]
+
     def extract_headword(self):
         """
 Extracts the headword from the XML tree. This is the contents of the

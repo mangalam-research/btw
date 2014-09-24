@@ -81,3 +81,19 @@ class XMLTreeTestCase(unittest.TestCase):
         self.assertRaisesRegexp(ValueError,
                                 "can't find the authority in the data passed",
                                 xmltree.extract_authority)
+
+    def test_get_bibliographical_targets(self):
+        data = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  <btw:lemma></btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>
+        """
+        xmltree = xml.XMLTree(data)
+        self.assertFalse(xmltree.is_data_unclean())
+        self.assertEqual(xmltree.get_bibilographical_targets(),
+                         ["/bibliography/1", "/bibliography/2"])

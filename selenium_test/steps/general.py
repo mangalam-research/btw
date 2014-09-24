@@ -258,36 +258,44 @@ def step_impl(context, what):
                           (By.CSS_SELECTOR, r".btw\:subsense"))
             return
 
+        # For editing we must be logged in. If we are just viewing,
+        # then it is better to view as a random user that does not
+        # have an account on the system.
+        context.execute_steps(u"""
+        Given the user has logged in
+        """)
+
     title = WHAT_TO_TITLE[what]
-    context.execute_steps(u"""
-    Given the user has logged in
-    """)
-
     # We simulate an AJAX query on the search table.
-    r = requests.get(context.selenic.SERVER +
-                     "/lexicography/search-table/",
-                     params={
-                         "sEcho": 1,
-                         "iColumns": 1,
-                         "iDisplayStart": 0,
-                         "iDisplayLength": 10,
-                         "mDataProp_0": 0,
-                         "sSearch_0": "",
-                         "bRegex_0": "false",
-                         "bSearchable_0": "true",
-                         "bSortable_0": "true",
-                         "sSearch": title.encode("utf8"),
-                         "bRegex": "false",
-                         "iSortCol_0": 0,
-                         "sSortDir_0": "asc",
-                         "iSortingCols": 1,
-                         "bHeadwordsOnly": "true"
-                     },
-                     cookies={
-                         "sessionid": driver.get_cookie("sessionid")["value"]
-                     })
+    while True:
+        r = requests.get(context.selenic.SERVER +
+                         "/lexicography/search-table/",
+                         params={
+                             "sEcho": 1,
+                             "iColumns": 1,
+                             "iDisplayStart": 0,
+                             "iDisplayLength": 10,
+                             "mDataProp_0": 0,
+                             "sSearch_0": "",
+                             "bRegex_0": "false",
+                             "bSearchable_0": "true",
+                             "bSortable_0": "true",
+                             "sSearch": title.encode("utf8"),
+                             "bRegex": "false",
+                             "iSortCol_0": 0,
+                             "sSortDir_0": "asc",
+                             "iSortingCols": 1,
+                             "bHeadwordsOnly": "true"
+                         },
+                         cookies={
+                             "sessionid":
+                             driver.get_cookie("sessionid")["value"]
+                         } if edit else None)
 
-    hits = funcs.parse_search_results(r.text)
+        hits = funcs.parse_search_results(r.text)
+        if title in hits:
+            break
+
     if edit:
         driver.get(context.selenic.SERVER + hits[title]["edit_url"])
         setup_editor(context)
