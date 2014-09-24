@@ -60,6 +60,46 @@ class LoginTestCase(ViewTestCase):
         self.assertRedirects(response, reverse("main"))
         assert_not_equal(session_id, self.app.cookies["sessionid"])
 
+    def test_main_show_login(self):
+        """
+        Tests that the main view shows a login option when the user has
+        not logged in yet.
+        """
+        response = self.app.get(reverse("main"))
+        self.assertTrue(
+            len(response.lxml.xpath("//a[@href='{0}']"
+                                    .format(reverse("login")))) > 0)
+
+    def test_main_show_logout(self):
+        """
+        Tests that the main view shows a logout option when the user is
+        logged in.
+        """
+        response = self.app.get(reverse("main"), user='foo')
+        self.assertTrue(
+            len(response.lxml.xpath("//a[@href='{0}']"
+                                    .format(reverse("logout")))) > 0)
+
+    def test_main_show_administration(self):
+        """
+        Tests that the main view shows an administration option when the
+        user is an administrator.
+        """
+        response = self.app.get(reverse("main"), user='admin')
+        self.assertTrue(
+            len(response.lxml.xpath("//a[@href='{0}']"
+                                    .format(reverse("admin:index")))) > 0)
+
+    def test_main_does_not_show_administration(self):
+        """
+        Tests that the main view does not show an administration option
+        when the user is not an administrator.
+        """
+        response = self.app.get(reverse("main"), user='foo')
+        self.assertTrue(
+            len(response.lxml.xpath("//a[@href='{0}']"
+                                    .format(reverse("admin:index")))) == 0)
+
 
 class SignupTestCase(ViewTestCase):
 
