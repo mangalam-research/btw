@@ -40,13 +40,18 @@ def make_link_method(field_name, display_name=None):
 
 class EntryAdmin(admin.ModelAdmin):
     list_display = ('headword', 'user', 'datetime', 'session', 'ctype',
-                    'csubtype', 'raw_edit', 'chunk_link')
+                    'csubtype', 'edit_raw', 'view', 'chunk_link')
 
     chunk_link = make_link_method('c_hash', "Chunk")
 
-    def raw_edit(self, obj):
+    def edit_raw(self, obj):
         return mark_safe('<a href="%s">Edit raw XML</a>' %
                          (reverse('admin:lexicography_entry_rawupdate',
+                                  args=(obj.id, ))))
+
+    def view(self, obj):
+        return mark_safe('<a href="%s">View</a>' %
+                         (reverse('lexicography_entry_details',
                                   args=(obj.id, ))))
 
     def get_urls(self):
@@ -92,7 +97,7 @@ class EntryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 chunk = form.save(commit=False)
 
-                xmltree = XMLTree(chunk.data)
+                xmltree = XMLTree(chunk.data.encode("utf-8"))
                 try_updating_entry(
                     request, entry, chunk, xmltree, Entry.UPDATE,
                     Entry.MANUAL)
