@@ -482,6 +482,25 @@ function prepareCitations(el, p2_el, which) {
     }
 }
 
+function prepareExplanation(explanation, force_real) {
+    var p2_explanation;
+    if (explanation) {
+        p2_explanation = cleanIDs(explanation.cloneNode(true));
+        var head = domutil.childByClass(p2_explanation, "head");
+        if (head)
+            p2_explanation.removeChild(head);
+        var number = domutil.childByClass(p2_explanation,
+                                          "_explanation_number");
+        if (number)
+            p2_explanation.removeChild(number);
+    }
+    else if (!force_real)
+        // Fake object so that the followig code does not have
+        // to worry about a missing explanation.
+        p2_explanation = {innerHTML: ""};
+
+    return p2_explanation;
+}
 
 
 Viewer.prototype.createPartTwo = function (root) {
@@ -498,27 +517,11 @@ Viewer.prototype.createPartTwo = function (root) {
         p2_sense.appendChild(cleanIDs(head.cloneNode(true)));
 
         var subsenses = sense.getElementsByClassName("btw:subsense");
-        var j, subsense;
+        var j, subsense, explanation, p2_explanation;
         for (j = 0; (subsense = subsenses[j]); ++j) {
             var p2_subsense = this.makeElement("subsense");
-            var explanation =
-                    domutil.childByClass(subsense, "btw:explanation");
-            var p2_explanation;
-            if (explanation) {
-                p2_explanation = cleanIDs(explanation.cloneNode(true));
-                head = domutil.childByClass(p2_explanation, "head");
-                if (head)
-                    p2_explanation.removeChild(head);
-                var number = domutil.childByClass(p2_explanation,
-                                                  "_explanation_number");
-                if (number)
-                    p2_explanation.removeChild(number);
-            }
-            else
-                // Fake object so that the followig code does not have
-                // to worry about a missing explanation.
-                p2_explanation = {innerHTML: ""};
-
+            explanation = domutil.childByClass(subsense, "btw:explanation");
+            p2_explanation = prepareExplanation(explanation);
 
             var refman = this._refmans.getSubsenseRefman(subsense);
             var label = refman.idToLabel(subsense.id);
@@ -532,6 +535,14 @@ Viewer.prototype.createPartTwo = function (root) {
 
             p2_sense.appendChild(p2_subsense);
         }
+
+        explanation = domutil.childByClass(sense, "btw:explanation");
+        p2_explanation = prepareExplanation(explanation, true);
+        if (p2_explanation)
+            p2_sense.appendChild(p2_explanation);
+
+        prepareCitations(sense, p2_sense, "btw:citations");
+        prepareCitations(sense, p2_sense, "btw:other-citations");
 
         var contrastive =
                 domutil.childByClass(sense, "btw:contrastive-section");
