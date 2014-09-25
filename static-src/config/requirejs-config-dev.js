@@ -13,6 +13,7 @@ require.config({
    qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
+   'jquery.growl': 'external/jquery-growl/js/jquery.growl',
      // For bibliography
    'modules': '/static/scripts/modules'
  },
@@ -69,6 +70,10 @@ require.config({
        exports: 'QUnit',
        init: function () { this.QUnit.config.autostart = false;
                            return this.QUnit; }
+   },
+   'jquery.growl': {
+       deps: ['jquery'],
+       exports: 'jQuery.growl'
    }
  },
  config: {

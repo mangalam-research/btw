@@ -508,8 +508,8 @@ def change_revert(request, change_id):
     xmltree = XMLTree(chunk.data.encode("utf-8"))
     if not try_updating_entry(request, change.entry, chunk, xmltree,
                               Entry.REVERT, Entry.MANUAL):
-        return HttpResponse("<br>entry locked!")
-    return HttpResponse("<br>reverted.")
+        return HttpResponse("Entry locked!", status=409)
+    return HttpResponse("Reverted.")
 
 
 @login_required

@@ -51,6 +51,10 @@ XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 #CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
 #CITEPROC_BASE=citeproc-$(notdir $(CITEPROC_URL))
 
+JQUERY_GROWL_URL:=https://github.com/ksylvest/jquery-growl/archive/v1.2.3.zip
+JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
+
+
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/standalone-optimized
 WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
@@ -70,7 +74,7 @@ LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-
 
 DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(DATATABLES_PLUGIN_TARGETS)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -194,6 +198,17 @@ $(BUILD_DEST)/lib/external/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
 	unzip -o -d $(dir $@) $< $(notdir $@)/*
 	touch $@
 
+$(BUILD_DEST)/lib/external/jquery-growl/%: COMMON_DIR:=$(BUILD_DEST)/lib/external/jquery-growl
+$(BUILD_DEST)/lib/external/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
+	rm -rf $(COMMON_DIR)
+	unzip -o -d $(COMMON_DIR) $<
+	mkdir $(COMMON_DIR)/js
+	mv $(COMMON_DIR)/jquery-growl-*/javascripts/jquery.growl.js $(COMMON_DIR)/js
+	mkdir $(COMMON_DIR)/css
+	mv $(COMMON_DIR)/jquery-growl-*/stylesheets/jquery.growl.css $(COMMON_DIR)/css
+	rm -rf $(COMMON_DIR)/jquery-growl-*
+	touch $(COMMON_DIR)/js/* $(COMMON_DIR)/css/*
+
 downloads build:
 	mkdir $@
 
@@ -211,6 +226,9 @@ downloads/$(DATATABLES_PLUGINS_BASE): downloads
 
 downloads/$(XEDITABLE_BASE): downloads
 	$(WGET) -O $@ $(XEDITABLE_URL)
+
+downloads/$(JQUERY_GROWL_BASE): downloads
+	$(WGET) -O $@ $(JQUERY_GROWL_URL)
 
 .PHONY: clean
 clean::

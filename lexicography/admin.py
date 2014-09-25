@@ -11,6 +11,7 @@ from django.contrib.admin.templatetags.admin_modify import register, submit_row
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from django.http import HttpResponseRedirect
+from django import forms
 
 from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
@@ -38,11 +39,46 @@ def make_link_method(field_name, display_name=None):
     return method
 
 
+class ChangeRecordMixin(object):
+
+    def revert(self, obj):
+        if obj.id is None:
+            return ""
+
+        return mark_safe(('<a class="lexicography-revert" href="%s">'
+                          'Revert entry to this version</a>') %
+                         (reverse('lexicography_change_revert',
+                                  args=(obj.id, ))))
+
+
+class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
+
+    class Media(object):
+        js = (settings.BTW_REQUIREJS_PATH,
+              settings.BTW_REQUIREJS_CONFIG_PATH,
+              '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
+
+        css = {
+            'all': (settings.BTW_JQUERY_GROWL_CSS_PATH, )
+        }
+
+    model = ChangeRecord
+    fields = ('headword', 'user', 'datetime', 'session', 'ctype', 'csubtype',
+              'c_hash', 'revert')
+    readonly_fields = ('revert', )
+    ordering = ('-datetime', )
+
+    def has_add_permission(self, _request):
+        return False
+
+
 class EntryAdmin(admin.ModelAdmin):
     list_display = ('headword', 'user', 'datetime', 'session', 'ctype',
                     'csubtype', 'edit_raw', 'view', 'chunk_link')
 
     chunk_link = make_link_method('c_hash', "Chunk")
+
+    inlines = (ChangeRecordInline, )
 
     def edit_raw(self, obj):
         return mark_safe('<a href="%s">Edit raw XML</a>' %
@@ -152,7 +188,7 @@ def my_submit_row(context):
     return ctx
 
 
-class ChangeRecordAdmin(admin.ModelAdmin):
+class ChangeRecordAdmin(admin.ModelAdmin, ChangeRecordMixin):
 
     class Media(object):
         js = (settings.BTW_REQUIREJS_PATH,
@@ -165,12 +201,6 @@ class ChangeRecordAdmin(admin.ModelAdmin):
     list_filter = ('entry', 'headword', 'user', 'session', 'ctype', 'csubtype')
 
     chunk_link = make_link_method('c_hash', "Chunk")
-
-    def revert(self, obj):
-        return mark_safe(('<a class="lexicography-revert" href="%s">'
-                          'Revert entry to this version</a>') %
-                         (reverse('lexicography_change_revert',
-                                  args=(obj.id, ))))
 
 
 class EntryLockAdmin(admin.ModelAdmin):
