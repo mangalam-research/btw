@@ -459,9 +459,9 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
               el.tagName === "btw:cognate" ||
               el.tagName === "btw:conceptual-proximate"))
             return;
-        if (el.parentNode.childElementCount === 1)
+        if (ev.former_parent.childElementCount === 0)
             this._editor.data_updater.insertBefore(
-                el.parentNode,
+                ev.former_parent,
                 transformation.makeElement(el.ownerDocument,
                                            'btw:none'), null);
     }.bind(this));
