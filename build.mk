@@ -22,6 +22,13 @@ BEHAVE_PARAMS?=
 TEI?=/usr/share/xml/tei/stylesheet
 
 #
+# Whether or not to include in the final build the optimized version
+# of wed.
+#
+WED_OPTIMIZED?=1
+
+
+#
 # End of customizable variables.
 #
 
@@ -54,9 +61,8 @@ XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 JQUERY_GROWL_URL:=https://github.com/ksylvest/jquery-growl/archive/v1.2.3.zip
 JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
 
-
 WED_PATH:=$(PWD)/node_modules/wed
-WED_BUILD:=$(WED_PATH)/standalone-optimized
+WED_BUILD:=$(WED_PATH)/standalone$(and $(WED_OPTIMIZED),-optimized)
 WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
 WED_HTML_TO_XML_PATH:=$(WED_BUILD)/lib/wed/html-to-xml.xsl
 WED_LESS_INC_PATH:=$(WED_BUILD)/lib/wed/less-inc/
@@ -70,7 +76,10 @@ SOURCES:=$(shell find static-src -type f)
 BUILD_DEST:=$(BUILD_DIR)/static-build
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
-
+# Local sources that need to be process by specialized recipes.
+GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/requirejs-config-dev.js
+# Local sources that are merely copied.
+COPIED_LOCAL_SOURCES:=$(filter-out $(GENERATED_LOCAL_SOURCES),$(LOCAL_SOURCES))
 
 DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
 
@@ -111,9 +120,25 @@ $(BUILD_DEST)/lib/btw/btw-storage-doc: utils/schemas/out/btw-storage-doc
 	cp -rp $< $@
 
 
-$(filter-out %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%: static-src/%
+$(COPIED_LOCAL_SOURCES): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
+
+define WED_OPTIMIZED_ADDITION
+  "lodash": ["lodash/modern/utilities/template"],\n\
+  "wed/wed": ["wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation"],
+endef
+
+$(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/requirejs-config-dev.js
+	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
+ifneq ($(WED_OPTIMIZED),)
+# This is an ad hoc way of modifying the configuration for the sake of
+# an optimized build. This basically exports all the modules that are
+# going to be needed from outside the bundle that contains wed.
+	sed -e'/^ *bundles *: *{ *$$/ a $(WED_OPTIMIZED_ADDITION)'  $< > $@
+else
+	cp $< $@
+endif
 
 btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less node_modules/wed/standalone/lib/wed/less-inc/*.less
 btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less
