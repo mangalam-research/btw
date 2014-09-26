@@ -796,5 +796,33 @@ The procedure to use it is:
              the database is left in an intermediary state. Recover by
              performing a database restore.
 
+=================
+Various Internals
+=================
+
+This section discusses some of the internals of BTW and why they are
+the way they are.
+
+Version Control
+===============
+
+The ``lexicography`` app performs its own version control: an article
+has one ``Entry`` object and a series of ``ChangeRecord`` objects that
+represent its history: ``Entry`` is the latest version whereas
+``ChangeRecord`` contains the previous versions. Why not use something
+like ``django-reversion``? At the time of writing, the following
+problems come to mind:
+
+* ``django-reversion`` stores the revisions as JSON data. So it seems
+  these versions are not first-class citizens of the database. BTW
+  needs to be able to have the recorded changes be first-class
+  citizens so as to be able to search through them (for instance).
+
+* The fact is that BTW has some very specific semantics regarding how
+  various versions are created and used, and it is not clear that
+  ``django-reversion`` would be able to handle these semantics
+  neatly. (Note that it is *possible* ``django-reversion`` could do
+  it, but it would take a significant time investment to find out.)
+
 ..  LocalWords:  uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth
