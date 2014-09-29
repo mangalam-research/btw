@@ -29,6 +29,9 @@
   <thead>
     <tr>
       <th>Headword</th>
+      <th>Published</th>
+      <th>Edition Time</th>
+      <th>User</th>
     </tr>
   </thead>
   <tbody>
@@ -41,6 +44,7 @@
     var $table = $(document.getElementById("search-table"));
     st($table, {
       ajax_source_url: "{% url 'lexicography_search_table' %}",
+      can_author: {{ can_author|yesno:"true,false" }},
     });
   });
 </script>

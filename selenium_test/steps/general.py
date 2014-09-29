@@ -285,7 +285,8 @@ def step_impl(context, what):
                              "iSortCol_0": 0,
                              "sSortDir_0": "asc",
                              "iSortingCols": 1,
-                             "bHeadwordsOnly": "true"
+                             "bHeadwordsOnly": "true",
+                             "sPublicationStatus": "both",
                          },
                          cookies={
                              "sessionid":
@@ -301,7 +302,14 @@ def step_impl(context, what):
         setup_editor(context)
         btw_util.record_document_features(context)
     else:
-        driver.get(context.selenic.SERVER + hits[title]["view_url"])
+        driver.get(context.selenic.SERVER + hits[title]["hits"][0]["view_url"])
+        # We must ensure jQuery is loaded because the test suite depends on it.
+        driver.execute_async_script("""
+        var done = arguments[0];
+        require(["jquery"], function () {
+            done();
+        });
+        """)
 
 
 @Given("^a document that has no (?P<what>.*)$")

@@ -3,38 +3,30 @@
   "pk": 1,
   "model": "lexicography.entry",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
-    "ctype": "U",
-    "datetime": "2013-09-06T19:57:52.120Z",
-    "csubtype": "M",
-    "user": 1,
-    "headword": "abcd"
+    "headword": "abcd",
+    "latest": 1
   }
 },
 {
   "pk": 2,
   "model": "lexicography.entry",
   "fields": {
-    "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
-    "c_hash": "62a0a7946ecff97649b85019fcc02b10f287c95f",
-    "ctype": "C",
-    "datetime": "2013-09-09T20:41:01.291Z",
-    "csubtype": "M",
-    "user": 1,
-    "headword": "foo"
+    "headword": "foo",
+    "latest": 2
   }
 },
 {
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
     "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
-    "ctype": "C",
-    "datetime": "2013-09-06T15:04:57.032Z",
+    "ctype": "U",
+    "datetime": "2013-09-06T19:57:52.120Z",
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "user": [
+      "admin"
+    ],
     "csubtype": "M",
-    "user": 1,
     "entry": 1,
     "headword": "abcd"
   }
@@ -43,26 +35,30 @@
   "pk": 2,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
-    "ctype": "U",
-    "datetime": "2013-09-06T15:09:43.913Z",
+    "c_hash": "62a0a7946ecff97649b85019fcc02b10f287c95f",
+    "ctype": "C",
+    "datetime": "2013-09-09T20:41:01.291Z",
+    "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
+    "user": [
+      "admin"
+    ],
     "csubtype": "M",
-    "user": 1,
-    "entry": 1,
-    "headword": "abcd"
+    "entry": 2,
+    "headword": "foo"
   }
 },
 {
   "pk": 3,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
     "c_hash": "6d6c7a163bc6529e0ee7389c65787592d60c2152",
     "ctype": "U",
     "datetime": "2013-09-06T15:09:45.344Z",
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
+    "user": [
+      "admin"
+    ],
     "csubtype": "M",
-    "user": 1,
     "entry": 1,
     "headword": "abcd"
   }
@@ -100,7 +96,9 @@
   "pk": 1,
   "model": "lexicography.userauthority",
   "fields": {
-    "user": 1
+    "user": [
+      "admin"
+    ]
   }
 }
 ]

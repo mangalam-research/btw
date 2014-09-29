@@ -20,12 +20,18 @@
              warning on this page for the reason why:
              https://docs.djangoproject.com/en/1.5/howto/deployment/wsgi/uwsgi/
 
-.. warning:: Using the sqlite3 backend with Django 1.5 and earlier can
-             result in database problems because Django does not issue
-             "BEGIN" commands to the database to explicitly begin
-             transactions. BTW relies on transactions to ensure data
-             integrity. Use Django 1.6 or use a backend other than
-             sqlite3.
+.. warning:: BTW works only with Postgresql. SQLite is too
+             primitive. MySQL could probably work, but see `the
+             complications with using UTF8
+             <https://docs.djangoproject.com/en/1.6/ref/databases/#collation-settings>`__. See
+             also `this discussion
+             <https://news.ycombinator.com/item?id=7317519>`__ for
+             just how likely MySQL is to bite you in the ass if you
+             try to do anything serious with Unicode. Unicode support
+             is straightforward with Postgresql, so we settled on
+             Postgresql. The following instructions are for Postgresql
+             9.1, 9.3. If you deploy on MySQL and it breaks, you've
+             been warned.
 
 Server Setup
 ============
@@ -175,10 +181,7 @@ Installing
 Database
 --------
 
-BTW needs to have its own database. We do not use MySQL/MariaDB due to
-`complications with using UTF8
-<https://docs.djangoproject.com/en/1.6/ref/databases/#collation-settings>`__.
-The following instructions are for Postgresql 9.1, 9.3.
+BTW needs to have its own database.
 
 1. Create a user for it::
 
@@ -588,9 +591,7 @@ tests). The procedure to follow is::
 Use git to make sure that the changes you wanted are there. Among
 other things, you might want to prevent locking records and handles
 from being added to the new fixture.  When this is done, you can
-restore your database::
-
-    $ mv btw.sqlite3.real btw.sqlite3
+restore your database to what it was.
 
 Before doing anything more, it is wise to run the Django tests and the
 Selenium tests to make sure that the new fixture does not break
@@ -803,6 +804,15 @@ Various Internals
 This section discusses some of the internals of BTW and why they are
 the way they are.
 
+Some principles:
+
+* Don't spread the object manipulation logic to the database
+  code. This also means avoiding the use of triggers, views, etc. Why?
+  This obviates the need for maintainers to possess substantial
+  database-specific knowledge. If they know Django, they can follow
+  the code. Sure, triggers might make some of the Python code nicer,
+  but there's the maintenance cost to consider.
+
 Version Control
 ===============
 
@@ -824,5 +834,60 @@ problems come to mind:
   neatly. (Note that it is *possible* ``django-reversion`` could do
   it, but it would take a significant time investment to find out.)
 
-..  LocalWords:  uwsgi sqlite backend Django init py env config btw
+Denormalized Data
+=================
+
+At the time of writing (20140927), the ``Entry`` model contains a
+``latest`` field that appears redundant. After all, this field is
+computable from searching through ``ChangeRecord`` objects, no?
+
+Yes. For any given ``Entry`` object ``latest`` is::
+
+    Entry.objects.get(id=2).changerecord_set.latest('datetime');
+
+(The ``id`` 2 is just for the sake of example.) So we could have::
+
+    @property
+    def latest(self):
+        return self.changerecord_set.latest('datetime')
+
+However, queries like this
+``active_entries.filter(latest__c_hash=chunks)`` are not possible with
+a property because ``latest`` is not a field. There are ways to work
+around this but they involve having to handle the "non-fieldness" of
+``latest`` in each location.
+
+Moreover, getting the list of all the latest change records cannot be
+done through Django without multiple queries and in a cross-platform
+way. This SQL query gets all the latest change records::
+
+    select cr1 from lexicography_changerecord cr1
+      join (select entry_id, max(datetime) as datetime
+            from lexicography_changerecord group by entry_id) as cr2
+           on cr1.entry_id = cr2.entry_id and cr1.datetime = cr2.datetime;
+
+In Django 1.6, with Postgresql we can do::
+
+    ChangeRecord.objects.order_by('entry', 'datetime').distinct('entry')
+
+This gives us the list of latest change records and so is equivalent
+to the previous SQL query. (Order is irrelevant to what we are trying
+to achieve here, but is required by our use of ``distinct``.) The
+``distinct`` call with a parameter is Postgresql-specific.
+
+The subquery in the SQL query can be generated with::
+
+    ChangeRecord.objects.values('entry').annotate(datetime=Max('datetime'))
+
+However, there does not seem to be a way to join on multiple fields in
+Django 1.6. Ultimately, there does not seem to be cross-platform
+method to get Django to generate **in one query** something
+functionally equivalent to the SQL query shown above.
+
+Some attempts were made to avoid having a ``latest`` field but they
+ran into the issues mentioned above or ran smack dab into Django
+bugs. (Like `this one
+<https://code.djangoproject.com/ticket/20600>`__.)
+
+..  LocalWords: uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth

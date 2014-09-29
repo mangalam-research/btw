@@ -91,8 +91,7 @@ WARNING: in general, this operation cannot be reliably undone without
 
         self.stdout.write("Transforming all entries.")
         chunk_mapping = {}
-        for data in itertools.chain(Entry.objects.all(),
-                                    ChangeRecord.objects.all()):
+        for data in ChangeRecord.objects.all():
             initially_invalid = False
 
             chunk = data.c_hash

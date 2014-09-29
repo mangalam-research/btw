@@ -5,58 +5,11 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.utils.decorators import method_decorator
 from django.db import transaction
 
 from lib import util
-
-
-class ChangeInfo(models.Model):
-
-    class Meta(object):
-        abstract = True
-
-    CREATE = 'C'
-    UPDATE = 'U'
-    DELETE = 'D'
-    REVERT = 'R'
-    TYPE_CHOICES = (
-        (CREATE, "Create"),
-        (UPDATE, "Update"),
-        (DELETE, "Delete"),
-        (REVERT, "Revert"),
-    )
-
-    AUTOMATIC = 'A'
-    MANUAL = 'M'
-    RECOVERY = 'R'
-    SUBTYPE_CHOICES = (
-        (AUTOMATIC, "Automatic"),
-        (MANUAL, "Manual"),
-        (RECOVERY, "Recovery")
-    )
-
-    # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
-    # could use TextField() but the flexibility there comes at a cost.
-    headword = models.CharField(max_length=1024)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.PROTECT)
-    datetime = models.DateTimeField()
-    session = models.CharField(max_length=100, null=True)
-    ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
-    csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
-    c_hash = models.ForeignKey('Chunk', on_delete=models.PROTECT)
-
-    def copy_to(self, to):
-        if not isinstance(to, ChangeInfo):
-            raise ValueError("to is not of the right class")
-        for i in ChangeInfo._meta.get_all_field_names():
-            setattr(to, i, getattr(self, i))
-
-    @property
-    def etag(self):
-        return self.c_hash.c_hash
+from . import usermod
 
 
 class EntryManager(models.Manager):
@@ -77,8 +30,17 @@ class EntryManager(models.Manager):
 
         return [entry for entry in qs if entry.is_locked()]
 
+    def active_entries(self):
+        """
+        Active entries are those that have not been deleted from the
+        system.
+        """
+        # An entry is inactive if the latest change record for it is a
+        # deletion.
+        return self.exclude(latest__ctype=ChangeRecord.DELETE)
 
-class Entry(ChangeInfo):
+
+class Entry(models.Model):
     objects = EntryManager()
 
     class Meta(object):
@@ -89,11 +51,55 @@ class Entry(ChangeInfo):
         permissions = (('garbage_collect', "Perform a garbage collection."),
                        )
 
+    headword = models.CharField(max_length=1024)
+    # This field must be allowed to be null because there is a
+    # circular reference between ``Entry`` and ``ChangeRecord``.
+    latest = models.ForeignKey('ChangeRecord', related_name='+', null=True)
+    latest_published = models.ForeignKey('ChangeRecord', related_name="+",
+                                         null=True)
+
     def __unicode__(self):
         return self.headword
 
     def get_absolute_url(self):
         return reverse('lexicography_entry_details', args=[str(self.id)])
+
+    @method_decorator(transaction.atomic)
+    def update(self, user, session_key, chunk, headword, ctype, subtype):
+        if self.id is None and ctype != ChangeRecord.CREATE:
+            raise ValueError("The Entry has no id but the ctype is not CREATE")
+
+        cr = ChangeRecord(
+            entry=self,
+            headword=headword,
+            user=user,
+            datetime=util.utcnow(),
+            session=session_key,
+            ctype=ctype,
+            csubtype=subtype,
+            c_hash=chunk)
+
+        self.headword = headword
+        # save() first. So that if we have an integrity error, there is no
+        # stale ChangeRecord to remove.
+        self.save()
+
+        # We need to do this in case the entry just acquired its id when
+        # ``save()`` was called.
+        cr.entry = self
+        cr.save()
+        # We can't set latest before we've saved cr.
+        self.latest = cr
+        self.save()
+
+    @method_decorator(transaction.atomic)
+    def _update_latest_published(self):
+        try:
+            self.latest_published = self.changerecord_set.filter(
+                published=True).latest('datetime')
+        except ChangeRecord.DoesNotExist:
+            self.latest_published = None
+        self.save()
 
     def is_locked(self):
         """
@@ -129,14 +135,8 @@ class Entry(ChangeInfo):
                 """
 
         # Superusers have all permissions so we don't check them.
-        if not user.is_superuser:
-            # To be able to edit, the user must have the permissions
-            # given to authors.
-            author = Group.objects.get(name='author')
-            for perm in author.permissions.all():
-                if not user.has_perm("{0.content_type.app_label}.{0.codename}"
-                                     .format(perm)):
-                    return False
+        if not user.is_superuser and not usermod.can_author(user):
+            return False
 
         owner = self.is_locked()
         if owner is None:
@@ -145,8 +145,74 @@ class Entry(ChangeInfo):
         return owner.pk == user.pk
 
 
-class ChangeRecord(ChangeInfo):
+class ChangeRecord(models.Model):
+
+    CREATE = 'C'
+    UPDATE = 'U'
+    DELETE = 'D'
+    REVERT = 'R'
+    TYPE_CHOICES = (
+        (CREATE, "Create"),
+        (UPDATE, "Update"),
+        (DELETE, "Delete"),
+        (REVERT, "Revert"),
+    )
+
+    AUTOMATIC = 'A'
+    MANUAL = 'M'
+    RECOVERY = 'R'
+    SUBTYPE_CHOICES = (
+        (AUTOMATIC, "Automatic"),
+        (MANUAL, "Manual"),
+        (RECOVERY, "Recovery")
+    )
+
     entry = models.ForeignKey(Entry)
+    # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
+    # could use TextField() but the flexibility there comes at a cost.
+    headword = models.CharField(max_length=1024)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.PROTECT)
+    datetime = models.DateTimeField()
+    session = models.CharField(max_length=100, null=True)
+    ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
+    c_hash = models.ForeignKey('Chunk', on_delete=models.PROTECT)
+    published = models.BooleanField(default=False)
+
+    def get_absolute_url(self):
+        return reverse('lexicography_changerecord_details',
+                       args=[str(self.id)])
+
+    @property
+    def etag(self):
+        return self.c_hash.c_hash
+
+    @method_decorator(transaction.atomic)
+    def publish(self, user):
+        if not self.published:
+            self.published = True
+            self.save()
+            pc = PublicationChange(changerecord=self,
+                                   ctype=PublicationChange.PUBLISH,
+                                   user=user,
+                                   datetime=util.utcnow())
+            pc.save()
+            # pylint: disable=protected-access
+            self.entry._update_latest_published()
+
+    @method_decorator(transaction.atomic)
+    def unpublish(self, user):
+        if self.published:
+            self.published = False
+            self.save()
+            pc = PublicationChange(changerecord=self,
+                                   ctype=PublicationChange.UNPUBLISH,
+                                   user=user,
+                                   datetime=util.utcnow())
+            pc.save()
+            # pylint: disable=protected-access
+            self.entry._update_latest_published()
 
     class Meta(object):
         unique_together = (("entry", "datetime", "ctype"), )
@@ -168,10 +234,18 @@ class ChunkManager(models.Manager):
         :rtype: class:`Chunk`
         """
         # A SQL DELETE will not delete anything if any of the records
-        # to be deleted are protected, so we retry until it works.
+        # to be deleted are protected, so we retry until it works. How
+        # could it happen? After the list is acquired but before the
+        # delete operation, a user creates a new entry, which happens
+        # to have the same contents as one of the chunks which was no
+        # longer being referenced when we acquired our list. (This is
+        # possible because we do not prevent writing to Chunk objects
+        # while we collect.) The delete will fail with a
+        # ProtectedError. The next iteration of the loop would
+        # probably get a clean list. (Or it can retry if it fails
+        # again.)
         while True:
-            chunks = Chunk.objects.filter(
-                entry__isnull=True, changerecord__isnull=True)
+            chunks = Chunk.objects.filter(changerecord__isnull=True)
             try:
                 chunks.delete()
                 break
@@ -200,6 +274,20 @@ class Chunk(models.Model):
         self.clean()
         super(Chunk, self).save(*args, **kwargs)
 
+
+class PublicationChange(models.Model):
+    PUBLISH = 'P'
+    UNPUBLISH = 'U'
+    TYPE_CHOICES = (
+        (PUBLISH, "Publish"),
+        (UNPUBLISH, "Unpublish")
+    )
+
+    changerecord = models.ForeignKey(ChangeRecord)
+    ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.PROTECT)
+    datetime = models.DateTimeField()
 
 if getattr(settings, 'LEXICOGRAPHY_LOCK_EXPIRY') is None:
     raise ImproperlyConfigured('LEXICOGRAPHY_LOCK_EXPIRY not set')

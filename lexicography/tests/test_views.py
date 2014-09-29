@@ -10,9 +10,10 @@ import requests
 import lxml.etree
 
 from .. import models
-from ..models import Entry, EntryLock, ChangeRecord, ChangeInfo, Chunk
+from ..models import Entry, EntryLock, ChangeRecord, Chunk
 from ..views import REQUIRED_WED_VERSION
 from . import util as test_util
+from . import funcs
 import lib.util as util
 
 dirname = os.path.dirname(__file__)
@@ -40,36 +41,31 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(type(a), type(b))
         self.assertEqual(a.pk, b.pk)
 
-    def search_table_search(self, title, user):
-        return self.app.get(reverse("lexicography_search_table"),
-                            params={
-                                "sEcho": 1,
-                                "iColumns": 1,
-                                "iDisplayStart": 0,
-                                "iDisplayLength": -1,
-                                "mDataProp_0": 0,
-                                "bSearchable_0": "true",
-                                "bSortable_0": "true",
-                                "sSearch": "abcd",
-                                "bRegex": "false",
-                                "iSortCol_0": 0,
-                                "sSortDir_0": "asc",
-                                "iSortingCols": 1,
-                                "bHeadwordsOnly": "true"},
-                            user=user)
-
-    def test_main(self):
-        """
-        Tests that a logged in user can view the main page.
-        """
-        self.app.get(reverse("lexicography_main"), user=self.foo)
-
-    def test_search_table(self):
-        """
-        Tests that the search table ajax calls can go through for a logged
-        in user.
-        """
-        self.search_table_search("abcd", self.foo)
+    def search_table_search(self, title, user,
+                            headwords_only=True,
+                            publication_status="both",
+                            search_all=False):
+        return self.app.get(
+            reverse("lexicography_search_table"),
+            params={
+                "sEcho": 1,
+                "iColumns": 1,
+                "iDisplayStart": 0,
+                "iDisplayLength": -1,
+                "mDataProp_0": 0,
+                "bSearchable_0": "true",
+                "bSortable_0": "true",
+                "sSearch": title,
+                "bRegex": "false",
+                "iSortCol_0": 0,
+                "sSortDir_0": "asc",
+                "iSortingCols": 1,
+                "bHeadwordsOnly":
+                "true" if headwords_only else "false",
+                "sPublicationStatus": publication_status,
+                "bSearchAll": "true" if search_all else "false"
+            },
+            user=user)
 
     def open_abcd(self, user):
         #
@@ -96,6 +92,244 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(response.form['logurl'].value,
                          reverse('lexicography_log'))
         return response, entry
+
+
+class MainTestCase(ViewsTestCase):
+
+    def test_main(self):
+        """
+        Tests that a logged in user can view the main page.
+        """
+        self.app.get(reverse("lexicography_main"), user=self.foo)
+
+    def test_search_table(self):
+        """
+        Tests that the search table ajax calls can go through.
+        """
+        self.search_table_search("abcd", self.foo)
+
+    def test_search_by_non_author_gets_no_edit_link_on_locked_articles(self):
+        """
+        Tests that when an article is already locked by user X and user Y
+        does a search, and user Y is not able to edit articles, then
+        user Y is not going to see any information about locking.
+        """
+        response, entry = self.open_abcd('foo')
+
+        entry = Entry.objects.get(headword="abcd")
+        entry.latest.publish(self.foo)
+        response = self.search_table_search("abcd", self.noperm)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(len(hits["abcd"]["hits"]), 1)
+
+        # Check that the edit option is not available
+        url = reverse('lexicography_entry_update', args=(entry.id, ))
+        self.assertNotIn(url, response)
+
+        # And the user is *NOT* told that the article is locked.
+        self.assertNotIn("Locked by", response)
+
+    def test_search_by_non_author_does_not_return_unpublished_articles(self):
+        """
+        Someone who is not an author cannot see unpublished articles.
+        """
+        entry = Entry.objects.get(headword="abcd")
+        self.assertIsNone(entry.latest_published,
+                          "Our entry must not have been published already")
+        response = self.search_table_search("abcd", self.noperm)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 0)
+
+        # Simulate a case where the user manually adds the search
+        # parameters to a URL.
+        response = self.search_table_search("abcd", self.noperm,
+                                            publication_status="both")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 0)
+
+    def test_search_by_non_author_does_not_return_deleted_articles(self):
+        """
+        Someone who is not an author cannot see deleted articles.
+        """
+        entry = Entry.objects.get(headword="abcd")
+        # Publish this entry so that it would be visible to random users.
+        entry.latest.publish(self.foo)
+        response = self.search_table_search("abcd", self.noperm)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        # But delete it.
+        entry.update(
+            self.foo,
+            "q",
+            entry.latest.c_hash,
+            entry.headword,
+            ChangeRecord.DELETE,
+            ChangeRecord.MANUAL)
+        response = self.search_table_search("abcd", self.noperm)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 0)
+
+        # Simulate a case where the user manually adds the search
+        # parameters to a URL.
+        response = self.search_table_search("abcd", self.noperm,
+                                            search_all=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 0)
+
+    def test_search_headword_by_author_can_return_unpublished_articles(self):
+        """
+        Someone who is an author can see unpublished articles.
+        """
+        entry = Entry.objects.get(headword="abcd")
+        self.assertIsNone(entry.latest_published,
+                          "Our entry must not have been published already")
+
+        # Try with "both"
+        response = self.search_table_search("abcd", self.foo,
+                                            publication_status="both")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(len(hits["abcd"]["hits"]), 1)
+
+        # And "unpublished"
+        response = self.search_table_search("abcd", self.foo,
+                                            publication_status="unpublished")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(len(hits["abcd"]["hits"]), 1)
+
+    def test_search_headword_by_author_can_return_deleted_articles(self):
+        """
+        Someone who is an author can see unpublished articles.
+        """
+        entry = Entry.objects.get(headword="abcd")
+        self.assertIsNone(entry.latest_published,
+                          "Our entry must not have been published already")
+        # Delete it.
+        entry.update(
+            self.foo,
+            "q",
+            entry.latest.c_hash,
+            entry.headword,
+            ChangeRecord.DELETE,
+            ChangeRecord.MANUAL)
+
+        response = self.search_table_search("abcd", self.foo,
+                                            publication_status="both",
+                                            search_all=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(len(hits["abcd"]["hits"]), 2)
+
+    def test_search_by_author_can_return_unpublished_articles(self):
+        """
+        Someone who is an author can see unpublished articles.
+        """
+        # This just ensures that there **are** unpublished entries.
+        self.assertTrue(
+            Entry.objects.filter(latest_published__isnull=True).count() > 0)
+        count = Entry.objects.active_entries().count()
+
+        # We publish one.
+        entry = Entry.objects.get(headword="abcd")
+        self.assertIsNone(entry.latest_published)
+        entry.latest.publish(self.foo)
+
+        # Try with "both"
+        response = self.search_table_search("", self.foo,
+                                            publication_status="both")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits), count)
+
+        # And "unpublished"
+        response = self.search_table_search("", self.foo,
+                                            publication_status="unpublished")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits),
+                         Entry.objects.active_entries()
+                         .filter(latest_published__isnull=True).count())
+
+    def test_search_by_author_can_return_deleted_articles(self):
+        """
+        Someone who is an author can see deleted articles.
+        """
+        # We delete one.
+        entry = Entry.objects.get(headword="abcd")
+        count = Entry.objects.active_entries().count()
+        # Delete it.
+        entry.update(
+            self.foo,
+            "q",
+            entry.latest.c_hash,
+            entry.headword,
+            ChangeRecord.DELETE,
+            ChangeRecord.MANUAL)
+
+        response = self.search_table_search("", self.foo,
+                                            publication_status="both")
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits), count - 1)
+
+        # And "unpublished"
+        response = self.search_table_search("", self.foo,
+                                            publication_status="unpublished",
+                                            search_all=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits),
+                         ChangeRecord.objects.filter(published=False)
+                         .values_list("entry").count())
+        self.assertEqual(funcs.count_hits(hits),
+                         ChangeRecord.objects.filter(published=False).count())
+
+    def test_search_link_to_old_records_show_old_records(self):
+        """
+        The view links to old records show the old data, and not the
+        latest version of the article.
+        """
+        response = self.search_table_search("old and new records", self.foo,
+                                            publication_status="both",
+                                            search_all=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        hits = hits["old and new records"]["hits"]
+        self.assertEqual(len(hits), 3)
+        hits.sort(lambda a, b: -cmp(a["datetime"], b["datetime"]))
+        # We load the newest version and inspect it. It should contain
+        # a paragraph with "Newer" in it.
+        response = self.app.get(hits[0]["view_url"])
+        tree = response.lxml
+        data = tree.xpath("//script[@id='wed-data']")[0].text
+        self.assertTrue(data.find("<p>Newer<p>"))
+
+        # The previous version should not have "Newer" in it.
+        response = self.app.get(hits[1]["view_url"])
+        tree = response.lxml
+        data = tree.xpath("//script[@id='wed-data']")[0].text
+        self.assertEqual(data.find("<p>Newer<p>"), -1)
+
+    def test_search_old_records_do_not_have_edit_links(self):
+        """
+        Only the latest change record of an entry should have an edit
+        link. Old ones should not have edit links.
+        """
+        response = self.search_table_search("old and new records", self.foo,
+                                            publication_status="both",
+                                            search_all=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        hits = hits["old and new records"]["hits"]
+        self.assertEqual(len(hits), 3)
+        hits.sort(lambda a, b: -cmp(a["datetime"], b["datetime"]))
+        self.assertTrue(hits[0]["edit_url"],
+                        "The most recent entry should have an edit link")
+        self.assertIsNone(hits[1]["edit_url"],
+                          "Older entries should not have an edit link")
+        self.assertIsNone(hits[2]["edit_url"],
+                          "Older entries should not have an edit link")
+
+
+class EditingTestCase(ViewsTestCase):
 
     def open_new(self, user):
         #
@@ -187,25 +421,19 @@ class ViewsTestCase(TransactionWebTest):
 
         # Check that we recorded the right thing.
         entry = Entry.objects.get(pk=old_entry.pk)
-        self.assertEqual(entry.user, self.foo)
+        self.assertEqual(entry.latest.user, self.foo)
         # The delay used here is arbitrary
         self.assertTrue(util.utcnow() -
-                        entry.datetime <= datetime.timedelta(minutes=1))
-        self.assertEqual(entry.session, self.app.session.session_key)
-        self.assertEqual(entry.ctype, entry.UPDATE)
-        self.assertEqual(entry.csubtype, entry.MANUAL)
+                        entry.latest.datetime <= datetime.timedelta(minutes=1))
+        self.assertEqual(entry.latest.session, self.app.session.session_key)
+        self.assertEqual(entry.latest.ctype, ChangeRecord.UPDATE)
+        self.assertEqual(entry.latest.csubtype, ChangeRecord.MANUAL)
 
         # Check the chunk
-        self.assertEqual(entry.c_hash.data, data)
-        self.assertTrue(entry.c_hash.is_normal)
+        self.assertEqual(entry.latest.c_hash.data, data)
+        self.assertTrue(entry.latest.c_hash.is_normal)
 
-        # Check that the lastest ChangeRecord corresponds to the old_entry
-        change = ChangeRecord.objects.filter(entry=old_entry) \
-                                     .order_by('-datetime')[0]
-
-        # pylint: disable=W0212
-        for i in ChangeInfo._meta.get_all_field_names():
-            self.assertEqual(getattr(old_entry, i), getattr(change, i))
+        self.assertNotEqual(old_entry.latest.pk, entry.latest.pk)
 
     def test_edit_corrupted(self):
         """
@@ -385,23 +613,6 @@ class ViewsTestCase(TransactionWebTest):
 
         # Conversely the user is told that the article is locked.
         self.assertIn("Locked by foo (Foo Bwip).", response)
-
-    def test_search_by_non_editor(self):
-        """
-        Tests that when an article is already locked by user X and user Y
-        does a search, and user Y is not able to edit articles, then
-        user Y is not going to see any information about locking.
-        """
-        response, entry = self.open_abcd('foo')
-
-        response = self.search_table_search("abcd", self.noperm)
-
-        # Check that the edit option is not available
-        url = reverse('lexicography_entry_update', args=(entry.id, ))
-        self.assertNotIn(url, response)
-
-        # And the user is *NOT* told that the article is locked.
-        self.assertNotIn("Locked by", response)
 
     def test_lock_expires(self):
         """
@@ -592,25 +803,19 @@ class ViewsTestCase(TransactionWebTest):
 
         # Check that we recorded the right thing.
         entry = Entry.objects.get(pk=old_entry.pk)
-        self.assertEqual(entry.user, self.foo)
+        self.assertEqual(entry.latest.user, self.foo)
         # The delay used here is arbitrary
         self.assertTrue(util.utcnow() -
-                        entry.datetime <= datetime.timedelta(minutes=1))
-        self.assertEqual(entry.session, self.app.session.session_key)
-        self.assertEqual(entry.ctype, entry.UPDATE)
-        self.assertEqual(entry.csubtype, entry.RECOVERY)
+                        entry.latest.datetime <= datetime.timedelta(minutes=1))
+        self.assertEqual(entry.latest.session, self.app.session.session_key)
+        self.assertEqual(entry.latest.ctype, ChangeRecord.UPDATE)
+        self.assertEqual(entry.latest.csubtype, ChangeRecord.RECOVERY)
 
         # Check the chunk
-        self.assertEqual(entry.c_hash.data, data)
-        self.assertTrue(entry.c_hash.is_normal)
+        self.assertEqual(entry.latest.c_hash.data, data)
+        self.assertTrue(entry.latest.c_hash.is_normal)
 
-        # Check that the lastest ChangeRecord corresponds to the old_entry
-        change = ChangeRecord.objects.filter(entry=old_entry) \
-                                     .order_by('-datetime')[0]
-
-        # pylint: disable=W0212
-        for i in ChangeInfo._meta.get_all_field_names():
-            self.assertEqual(getattr(old_entry, i), getattr(change, i))
+        self.assertNotEqual(old_entry.latest.pk, entry.latest.pk)
 
     def test_autosave(self):
         """
@@ -631,25 +836,19 @@ class ViewsTestCase(TransactionWebTest):
 
         # Check that we recorded the right thing.
         entry = Entry.objects.get(pk=old_entry.pk)
-        self.assertEqual(entry.user, self.foo)
+        self.assertEqual(entry.latest.user, self.foo)
         # The delay used here is arbitrary
         self.assertTrue(util.utcnow() -
-                        entry.datetime <= datetime.timedelta(minutes=1))
-        self.assertEqual(entry.session, self.app.session.session_key)
-        self.assertEqual(entry.ctype, entry.UPDATE)
-        self.assertEqual(entry.csubtype, entry.AUTOMATIC)
+                        entry.latest.datetime <= datetime.timedelta(minutes=1))
+        self.assertEqual(entry.latest.session, self.app.session.session_key)
+        self.assertEqual(entry.latest.ctype, ChangeRecord.UPDATE)
+        self.assertEqual(entry.latest.csubtype, ChangeRecord.AUTOMATIC)
 
         # Check the chunk
-        self.assertEqual(entry.c_hash.data, data)
-        self.assertTrue(entry.c_hash.is_normal)
+        self.assertEqual(entry.latest.c_hash.data, data)
+        self.assertTrue(entry.latest.c_hash.is_normal)
 
-        # Check that the lastest ChangeRecord corresponds to the old_entry
-        change = ChangeRecord.objects.filter(entry=old_entry) \
-                                     .order_by('-datetime')[0]
-
-        # pylint: disable=W0212
-        for i in ChangeInfo._meta.get_all_field_names():
-            self.assertEqual(getattr(old_entry, i), getattr(change, i))
+        self.assertNotEqual(old_entry.latest.pk, entry.latest.pk)
 
     def test_check(self):
         """

@@ -3,299 +3,204 @@
   "pk": 1,
   "model": "lexicography.entry",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
-    "ctype": "U",
-    "datetime": "2013-09-06T19:57:52.120Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "abcd"
+    "headword": "abcd",
+    "latest_published": null,
+    "latest": 1
   }
 },
 {
   "pk": 2,
   "model": "lexicography.entry",
   "fields": {
-    "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
-    "c_hash": "f7140d095e6b4d42692b340a7ac223779143f2f3",
-    "ctype": "C",
-    "datetime": "2013-09-09T20:41:01.291Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "foo"
+    "headword": "foo",
+    "latest_published": null,
+    "latest": 2
   }
 },
 {
   "pk": 3,
   "model": "lexicography.entry",
   "fields": {
-    "session": "x5sxno7s4mhdkii8t2n2mhbpq72sx1xt",
-    "c_hash": "87e2eec4174f20bd59eb905a3ebf447d73bd91dd",
-    "ctype": "U",
-    "datetime": "2013-11-18T20:02:23.385Z",
-    "csubtype": "M",
-    "user": [
-      "foo"
-    ],
-    "headword": "one sense, one subsense"
+    "headword": "one sense, one subsense",
+    "latest_published": 3,
+    "latest": 3
   }
 },
 {
   "pk": 4,
   "model": "lexicography.entry",
   "fields": {
-    "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
-    "c_hash": "0de8e7737e7fddb4da56f87f9179cab5c5eaf7ae",
-    "ctype": "C",
-    "datetime": "2014-05-14T20:27:55.611Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "pali example"
+    "headword": "pali example",
+    "latest_published": null,
+    "latest": 4
   }
 },
 {
   "pk": 5,
   "model": "lexicography.entry",
   "fields": {
-    "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
-    "c_hash": "90245c48aa64c206f3f5e6bb4c614107ee51435e",
-    "ctype": "C",
-    "datetime": "2014-05-21T13:39:26.454Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "non-pali example"
+    "headword": "non-pali example",
+    "latest_published": null,
+    "latest": 5
   }
 },
 {
   "pk": 6,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "da1e4c7ba0de661c01cfd0adf6dc5b684b5d5104",
-    "ctype": "C",
-    "datetime": "2014-05-22T19:24:50.790Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "pali explained example"
+    "headword": "pali explained example",
+    "latest_published": null,
+    "latest": 6
   }
 },
 {
   "pk": 7,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "da8511a6111250bd85bf7d61d2c49ff28dc50b4c",
-    "ctype": "C",
-    "datetime": "2014-05-22T20:04:34.494Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "non-pali explained example"
+    "headword": "non-pali explained example",
+    "latest_published": null,
+    "latest": 7
   }
 },
 {
   "pk": 8,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
-    "ctype": "C",
-    "datetime": "2014-05-23T19:01:52.759Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "definition filled"
+    "headword": "definition filled",
+    "latest_published": null,
+    "latest": 8
   }
 },
 {
   "pk": 9,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "3a16724b8ea4b94c69f04b45a7fa1e4a6a51cc90",
-    "ctype": "C",
-    "datetime": "2014-05-26T12:44:06.487Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "definition with formatted text"
+    "headword": "definition with formatted text",
+    "latest_published": null,
+    "latest": 9
   }
 },
 {
   "pk": 10,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "95a6a98b9b2c4238b28fb5b2756fc21c3caafc63",
-    "ctype": "U",
-    "datetime": "2014-06-04T14:52:13.118Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "senses and subsenses"
+    "headword": "senses and subsenses",
+    "latest_published": 10,
+    "latest": 10
   }
 },
 {
   "pk": 11,
   "model": "lexicography.entry",
   "fields": {
-    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
-    "c_hash": "411b587eb5e9854e0b8fbb26fd69b323b64f478b",
-    "ctype": "C",
-    "datetime": "2014-06-09T20:08:31.629Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "some semantic fields"
+    "headword": "some semantic fields",
+    "latest_published": null,
+    "latest": 11
   }
 },
 {
   "pk": 12,
   "model": "lexicography.entry",
   "fields": {
-    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "b63f633f8dcaea1ad502e8bc9128430bfab2e4a0",
-    "ctype": "C",
-    "datetime": "2014-06-17T13:48:15.004Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "antonym with citations"
+    "headword": "antonym with citations",
+    "latest_published": null,
+    "latest": 12
   }
 },
 {
   "pk": 13,
   "model": "lexicography.entry",
   "fields": {
-    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "64bfff9555e116a78e7b495f6fd2ae04eb54e436",
-    "ctype": "C",
-    "datetime": "2014-06-17T14:21:16.188Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "cognate with citations"
+    "headword": "cognate with citations",
+    "latest_published": null,
+    "latest": 13
   }
 },
 {
   "pk": 14,
   "model": "lexicography.entry",
   "fields": {
-    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "361e67c5f4b634531b4c571d48e72f4f74ad07d7",
-    "ctype": "C",
-    "datetime": "2014-06-17T14:45:47.819Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "conceptual proximate with citations"
+    "headword": "conceptual proximate with citations",
+    "latest_published": null,
+    "latest": 14
   }
 },
 {
   "pk": 15,
   "model": "lexicography.entry",
   "fields": {
-    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
-    "c_hash": "356eb601fa611883a6361ccc4135a24acb0a7c84",
-    "ctype": "U",
-    "datetime": "2014-06-18T13:01:33.472Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "senses, subsenses and hyperlinks"
+    "headword": "senses, subsenses and hyperlinks",
+    "latest_published": 15,
+    "latest": 15
   }
 },
 {
   "pk": 16,
   "model": "lexicography.entry",
   "fields": {
-    "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
-    "c_hash": "8ca99fdc686b7deb537be65747696f70a1f156a3",
-    "ctype": "C",
-    "datetime": "2014-07-13T15:17:11.845Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "sense with explanation"
+    "headword": "sense with explanation",
+    "latest_published": null,
+    "latest": 16
   }
 },
 {
   "pk": 17,
   "model": "lexicography.entry",
   "fields": {
-    "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
-    "c_hash": "02dcad56758d94d733cb902d570acb2413e83c84",
-    "ctype": "U",
-    "datetime": "2014-07-13T18:08:06.613Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "contrastive elements with one child"
+    "headword": "contrastive elements with one child",
+    "latest_published": null,
+    "latest": 17
   }
 },
 {
   "pk": 18,
   "model": "lexicography.entry",
   "fields": {
-    "session": "z00mmvhp9mezbkd6ygfxrlbpuunm7mla",
-    "c_hash": "aa77988c068b8e24771da810169b7fbe30d04d4d",
-    "ctype": "U",
-    "datetime": "2014-07-23T13:43:49.359Z",
-    "csubtype": "M",
-    "user": [
-      "admin"
-    ],
-    "headword": "sense with citations"
+    "headword": "sense with citations",
+    "latest_published": null,
+    "latest": 18
   }
 },
 {
   "pk": 19,
   "model": "lexicography.entry",
   "fields": {
-    "session": "zxk1lh81piph2nwiansxx08o5e1c1fzx",
-    "c_hash": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
-    "ctype": "U",
-    "datetime": "2014-09-23T15:18:30.245Z",
-    "csubtype": "M",
-    "user": [
-      "foo"
-    ],
-    "headword": "non-pali example, with ref and ptr"
+    "headword": "non-pali example, with ref and ptr",
+    "latest_published": 19,
+    "latest": 19
+  }
+},
+{
+  "pk": 20,
+  "model": "lexicography.entry",
+  "fields": {
+    "headword": "old and new records",
+    "latest_published": null,
+    "latest": 22
+  }
+},
+{
+  "pk": 21,
+  "model": "lexicography.entry",
+  "fields": {
+    "headword": "deleted article",
+    "latest_published": null,
+    "latest": 24
   }
 },
 {
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
     "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
-    "ctype": "C",
-    "datetime": "2013-09-06T15:04:57.032Z",
-    "csubtype": "M",
+    "ctype": "U",
+    "datetime": "2013-09-06T19:57:52.120Z",
+    "session": "5d11233110b1b6387ec4b67504a98ef5",
     "user": [
       "admin"
     ],
+    "published": false,
+    "csubtype": "M",
     "entry": 1,
     "headword": "abcd"
   }
@@ -304,48 +209,391 @@
   "pk": 2,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
-    "ctype": "U",
-    "datetime": "2013-09-06T15:09:43.913Z",
-    "csubtype": "M",
+    "c_hash": "f7140d095e6b4d42692b340a7ac223779143f2f3",
+    "ctype": "C",
+    "datetime": "2013-09-09T20:41:01.291Z",
+    "session": "xurn7ygnika5d9nefnvlgezb1dn9kdki",
     "user": [
       "admin"
     ],
-    "entry": 1,
-    "headword": "abcd"
+    "published": false,
+    "csubtype": "M",
+    "entry": 2,
+    "headword": "foo"
   }
 },
 {
   "pk": 3,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "c_hash": "ac7bf40c0555992c9f179127dd0b26ab5bb7d07d",
+    "c_hash": "87e2eec4174f20bd59eb905a3ebf447d73bd91dd",
     "ctype": "U",
-    "datetime": "2013-09-06T15:09:45.344Z",
-    "csubtype": "M",
+    "datetime": "2013-11-18T20:02:23.385Z",
+    "session": "x5sxno7s4mhdkii8t2n2mhbpq72sx1xt",
     "user": [
-      "admin"
+      "foo"
     ],
-    "entry": 1,
-    "headword": "abcd"
+    "published": true,
+    "csubtype": "M",
+    "entry": 3,
+    "headword": "one sense, one subsense"
   }
 },
 {
   "pk": 4,
   "model": "lexicography.changerecord",
   "fields": {
-    "session": "x5sxno7s4mhdkii8t2n2mhbpq72sx1xt",
-    "c_hash": "0cf827fe832e4ba7f73dd821170625fb78ddac1e",
+    "c_hash": "0de8e7737e7fddb4da56f87f9179cab5c5eaf7ae",
     "ctype": "C",
-    "datetime": "2013-11-18T20:02:15.722Z",
+    "datetime": "2014-05-14T20:27:55.611Z",
+    "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
+    "user": [
+      "admin"
+    ],
+    "published": false,
     "csubtype": "M",
+    "entry": 4,
+    "headword": "pali example"
+  }
+},
+{
+  "pk": 5,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "90245c48aa64c206f3f5e6bb4c614107ee51435e",
+    "ctype": "C",
+    "datetime": "2014-05-21T13:39:26.454Z",
+    "session": "u8txenmiiwwqza7wkh0l1v6mugtn7ga3",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 5,
+    "headword": "non-pali example"
+  }
+},
+{
+  "pk": 6,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "da1e4c7ba0de661c01cfd0adf6dc5b684b5d5104",
+    "ctype": "C",
+    "datetime": "2014-05-22T19:24:50.790Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 6,
+    "headword": "pali explained example"
+  }
+},
+{
+  "pk": 7,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "da8511a6111250bd85bf7d61d2c49ff28dc50b4c",
+    "ctype": "C",
+    "datetime": "2014-05-22T20:04:34.494Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 7,
+    "headword": "non-pali explained example"
+  }
+},
+{
+  "pk": 8,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
+    "ctype": "C",
+    "datetime": "2014-05-23T19:01:52.759Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 8,
+    "headword": "definition filled"
+  }
+},
+{
+  "pk": 9,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "3a16724b8ea4b94c69f04b45a7fa1e4a6a51cc90",
+    "ctype": "C",
+    "datetime": "2014-05-26T12:44:06.487Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 9,
+    "headword": "definition with formatted text"
+  }
+},
+{
+  "pk": 10,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "95a6a98b9b2c4238b28fb5b2756fc21c3caafc63",
+    "ctype": "U",
+    "datetime": "2014-06-04T14:52:13.118Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": true,
+    "csubtype": "M",
+    "entry": 10,
+    "headword": "senses and subsenses"
+  }
+},
+{
+  "pk": 11,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "411b587eb5e9854e0b8fbb26fd69b323b64f478b",
+    "ctype": "C",
+    "datetime": "2014-06-09T20:08:31.629Z",
+    "session": "3jf3wqhz83yfoxt6w3jo8f32xo2t40on",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 11,
+    "headword": "some semantic fields"
+  }
+},
+{
+  "pk": 12,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "b63f633f8dcaea1ad502e8bc9128430bfab2e4a0",
+    "ctype": "C",
+    "datetime": "2014-06-17T13:48:15.004Z",
+    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 12,
+    "headword": "antonym with citations"
+  }
+},
+{
+  "pk": 13,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "64bfff9555e116a78e7b495f6fd2ae04eb54e436",
+    "ctype": "C",
+    "datetime": "2014-06-17T14:21:16.188Z",
+    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 13,
+    "headword": "cognate with citations"
+  }
+},
+{
+  "pk": 14,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "361e67c5f4b634531b4c571d48e72f4f74ad07d7",
+    "ctype": "C",
+    "datetime": "2014-06-17T14:45:47.819Z",
+    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 14,
+    "headword": "conceptual proximate with citations"
+  }
+},
+{
+  "pk": 15,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "356eb601fa611883a6361ccc4135a24acb0a7c84",
+    "ctype": "U",
+    "datetime": "2014-06-18T13:01:33.472Z",
+    "session": "zsvk1w3ugsaubati2586v0avvuhlgz33",
+    "user": [
+      "admin"
+    ],
+    "published": true,
+    "csubtype": "M",
+    "entry": 15,
+    "headword": "senses, subsenses and hyperlinks"
+  }
+},
+{
+  "pk": 16,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "8ca99fdc686b7deb537be65747696f70a1f156a3",
+    "ctype": "C",
+    "datetime": "2014-07-13T15:17:11.845Z",
+    "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 16,
+    "headword": "sense with explanation"
+  }
+},
+{
+  "pk": 17,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "02dcad56758d94d733cb902d570acb2413e83c84",
+    "ctype": "U",
+    "datetime": "2014-07-13T18:08:06.613Z",
+    "session": "ytcuntt3gdeogdveq8axbxpobozackt3",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 17,
+    "headword": "contrastive elements with one child"
+  }
+},
+{
+  "pk": 18,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "aa77988c068b8e24771da810169b7fbe30d04d4d",
+    "ctype": "U",
+    "datetime": "2014-07-23T13:43:49.359Z",
+    "session": "z00mmvhp9mezbkd6ygfxrlbpuunm7mla",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 18,
+    "headword": "sense with citations"
+  }
+},
+{
+  "pk": 19,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
+    "ctype": "U",
+    "datetime": "2014-09-23T15:18:30.245Z",
+    "session": "zxk1lh81piph2nwiansxx08o5e1c1fzx",
     "user": [
       "foo"
     ],
-    "entry": 3,
-    "headword": "one sense, one subsense"
+    "published": true,
+    "csubtype": "M",
+    "entry": 19,
+    "headword": "non-pali example, with ref and ptr"
+  }
+},
+{
+  "pk": 20,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "edd4b1fecd6c13ca75b39d75502d1e8179d90cdb",
+    "ctype": "C",
+    "datetime": "2014-10-01T14:48:04.811Z",
+    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
+    "user": [
+      "foo"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 20,
+    "headword": "old and new records"
+  }
+},
+{
+  "pk": 21,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "f6e6f400b3d4ffce31900e7d3959feec5fdd93f6",
+    "ctype": "U",
+    "datetime": "2014-10-01T14:48:19.396Z",
+    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
+    "user": [
+      "foo"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 20,
+    "headword": "old and new records"
+  }
+},
+{
+  "pk": 22,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "f6e6f400b3d4ffce31900e7d3959feec5fdd93f6",
+    "ctype": "U",
+    "datetime": "2014-10-01T14:48:30.950Z",
+    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
+    "user": [
+      "foo"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 20,
+    "headword": "old and new records"
+  }
+},
+{
+  "pk": 23,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "972e2a5bbd85f95c6499aa171a62765520fe3a50",
+    "ctype": "C",
+    "datetime": "2014-10-01T14:49:10.938Z",
+    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
+    "user": [
+      "foo"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 21,
+    "headword": "deleted article"
+  }
+},
+{
+  "pk": 24,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "972e2a5bbd85f95c6499aa171a62765520fe3a50",
+    "ctype": "D",
+    "datetime": "2014-10-01T14:51:34.511Z",
+    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
+    "user": [
+      "foo"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 21,
+    "headword": "deleted article"
   }
 },
 {
@@ -405,6 +653,14 @@
   }
 },
 {
+  "pk": "5a3e986414d5a15c9bb35ebedd8c7ed9c61003f7",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/\"><btw:lemma><btw:todo>Fill lemma.</btw:todo></btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
   "pk": "64bfff9555e116a78e7b495f6fd2ae04eb54e436",
   "model": "lexicography.chunk",
   "fields": {
@@ -453,6 +709,22 @@
   }
 },
 {
+  "pk": "972e2a5bbd85f95c6499aa171a62765520fe3a50",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/2\"><btw:lemma>deleted article</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>non-pali example, with ref and ptr</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example xml:id=\"E.0\"><btw:cit><ref target=\"/bibliography/1\"/>foo</btw:cit><btw:tr/></btw:example><btw:example><btw:cit>bar</btw:cit><btw:tr/></btw:example><ptr target=\"#E.0\"/></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term/><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
   "pk": "aa77988c068b8e24771da810169b7fbe30d04d4d",
   "model": "lexicography.chunk",
   "fields": {
@@ -493,6 +765,22 @@
   }
 },
 {
+  "pk": "edd4b1fecd6c13ca75b39d75502d1e8179d90cdb",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/2\"><btw:lemma>old and new records</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
+  "pk": "f6e6f400b3d4ffce31900e7d3959feec5fdd93f6",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/2\"><btw:lemma>old and new records</btw:lemma><btw:overview><btw:definition><p>Newer</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "is_normal": true
+  }
+},
+{
   "pk": "f7140d095e6b4d42692b340a7ac223779143f2f3",
   "model": "lexicography.chunk",
   "fields": {
@@ -501,19 +789,62 @@
   }
 },
 {
-  "pk": "9e28fc85e450ce4cb679bbde37ba20174ac70b3c",
-  "model": "lexicography.chunk",
+  "pk": 1,
+  "model": "lexicography.publicationchange",
   "fields": {
-    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>non-pali example, with ref and ptr</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations><btw:example xml:id=\"E.0\"><btw:cit><ref target=\"/bibliography/1\"/>foo</btw:cit><btw:tr/></btw:example><btw:example><btw:cit>bar</btw:cit><btw:tr/></btw:example><ptr target=\"#E.0\"/></btw:citations><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term/><btw:semantic-fields><btw:sf/></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:explanation/><btw:citations/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
-    "is_normal": true
+    "changerecord": 3,
+    "user": [
+      "foo"
+    ],
+    "ctype": "P",
+    "datetime": "2014-09-30T17:49:27.828Z"
   }
 },
 {
-  "pk": "7bd0e1fe778e6267f4e9456e5e2c7e6a183866d9",
-  "model": "lexicography.chunk",
+  "pk": 2,
+  "model": "lexicography.publicationchange",
   "fields": {
-    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" authority=\"/authority/1\"><btw:lemma>definition filled</btw:lemma><btw:overview><btw:definition><p>Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</p><p>In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
-    "is_normal": true
+    "changerecord": 10,
+    "user": [
+      "admin"
+    ],
+    "ctype": "P",
+    "datetime": "2014-09-30T19:20:52.656Z"
+  }
+},
+{
+  "pk": 3,
+  "model": "lexicography.publicationchange",
+  "fields": {
+    "changerecord": 15,
+    "user": [
+      "admin"
+    ],
+    "ctype": "P",
+    "datetime": "2014-09-30T19:28:06.505Z"
+  }
+},
+{
+  "pk": 4,
+  "model": "lexicography.publicationchange",
+  "fields": {
+    "changerecord": 19,
+    "user": [
+      "foo"
+    ],
+    "ctype": "P",
+    "datetime": "2014-09-30T19:29:35.633Z"
+  }
+},
+{
+  "pk": 2,
+  "model": "lexicography.entrylock",
+  "fields": {
+    "owner": [
+      "foo"
+    ],
+    "entry": 21,
+    "datetime": "2014-10-01T14:49:10.941Z"
   }
 },
 {

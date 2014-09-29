@@ -21,6 +21,20 @@ def parse_search_results(data):
 
     :param data: The whole JSON data.
     :type data: :class:`str`.
+    :returns: A :class:`dict` that has for keys the headwords and for
+              values a :class:`dict` with the keys: ``"headword"``
+              which has for value the headword, ``"edit_url"`` which
+              has for value the edit URL related to this headword
+              (there can be only one per headword), ``"hits"`` which
+              is a list of each individual hits encountered. Each item
+              in the ``"hits"`` list is a dictionary with two keys:
+              ``"edit_url"`` is the edit URL that was found in this
+              hit and ``"view_url"`` is the URL for viewing the entry
+              that was found in this hit. Note: the ``len(..)`` of the
+              return value gives the number of different headwords
+              that were found. The total number of rows found in the
+              table is obtained by adding the ``len(..)`` of each
+              ``hits`` list.
     """
     payload = json.loads(data)
     rows = payload["aaData"]
@@ -28,7 +42,7 @@ def parse_search_results(data):
 
     ret = {}
     for row in rows:
-        assert len(row) == 1, "unexpected row length"
+        assert len(row) == 4, "unexpected row length"
         cell = row[0]
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
@@ -43,13 +57,30 @@ def parse_search_results(data):
 
         headword = view_link.text
         hit = {
-            "headword": headword,
             # Must test with "is not None" to satisfy lxml.
             "edit_url": edit_link.get("href") if edit_link is not None
             else None,
-            "view_url": view_link.get("href")
+            "view_url": view_link.get("href"),
+            "datetime": row[2]
         }
-        assert headword not in ret, "headword already defined: " + headword
-        ret[headword] = hit
+        headword_rec = ret.get(headword)
+        if headword_rec:
+            if hit["edit_url"]:
+                assert headword_rec["edit_url"] is None, \
+                    "can't have two edit urls"
+                headword_rec["edit_url"] = hit["edit_url"]
+        else:
+            headword_rec = {
+                "headword": headword,
+                "edit_url": hit["edit_url"],
+                "hits": []
+            }
+            ret[headword] = headword_rec
+
+        headword_rec["hits"].append(hit)
 
     return ret
+
+
+def count_hits(hits):
+    return sum(len(hit["hits"]) for hit in hits.itervalues())

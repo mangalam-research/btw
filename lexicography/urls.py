@@ -9,6 +9,8 @@ urlpatterns = patterns(
     url(r'^collect$', 'collect'),
     url(r'^entry/(?P<entry_id>\d+)/$', 'entry_details',
         name='lexicography_entry_details'),
+    url(r'^changerecord/(?P<changerecord_id>\d+)/$', 'changerecord_details',
+        name='lexicography_changerecord_details'),
     url(r'^entry/(?P<entry_id>\d+)/update$', 'entry_update',
         name="lexicography_entry_update"),
     url(r'^handle/(?P<handle_or_entry_id>.+)/update$', 'handle_update',

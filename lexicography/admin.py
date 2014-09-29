@@ -11,12 +11,11 @@ from django.contrib.admin.templatetags.admin_modify import register, submit_row
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from django.http import HttpResponseRedirect
-from django import forms
 
 from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
-    OtherAuthority, Authority, EntryLock, Handle
+    OtherAuthority, Authority, EntryLock, Handle, PublicationChange
 from .xml import XMLTree
 from .views import try_updating_entry
 
@@ -63,8 +62,8 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
         }
 
     model = ChangeRecord
-    fields = ('headword', 'user', 'datetime', 'session', 'ctype', 'csubtype',
-              'c_hash', 'revert')
+    fields = ('headword', 'entry', 'user', 'datetime', 'session', 'ctype',
+              'csubtype', 'c_hash', 'revert')
     readonly_fields = ('revert', )
     ordering = ('-datetime', )
 
@@ -73,10 +72,7 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
 
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('headword', 'user', 'datetime', 'session', 'ctype',
-                    'csubtype', 'edit_raw', 'view', 'chunk_link')
-
-    chunk_link = make_link_method('c_hash', "Chunk")
+    list_display = ('headword', 'latest')
 
     inlines = (ChangeRecordInline, )
 
@@ -111,7 +107,7 @@ class EntryAdmin(admin.ModelAdmin):
 
                 entry = Entry()
                 try_updating_entry(request, entry, chunk, xmltree,
-                                   Entry.CREATE, Entry.MANUAL)
+                                   ChangeRecord.CREATE, ChangeRecord.MANUAL)
                 release_entry_lock(entry, request.user)
                 return HttpResponseRedirect(
                     reverse('admin:lexicography_entry_changelist'))
@@ -135,14 +131,14 @@ class EntryAdmin(admin.ModelAdmin):
 
                 xmltree = XMLTree(chunk.data.encode("utf-8"))
                 try_updating_entry(
-                    request, entry, chunk, xmltree, Entry.UPDATE,
-                    Entry.MANUAL)
+                    request, entry, chunk, xmltree, ChangeRecord.UPDATE,
+                    ChangeRecord.MANUAL)
                 release_entry_lock(entry, request.user)
                 return HttpResponseRedirect(
                     reverse('admin:lexicography_entry_changelist'))
 
         else:
-            form = RawSaveForm(instance=entry.c_hash)
+            form = RawSaveForm(instance=entry.latest.c_hash)
 
             opts = self.model._meta
             return self.render_raw_form(
@@ -214,6 +210,7 @@ class HandleAdmin(admin.ModelAdmin):
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(Chunk)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
+admin.site.register(PublicationChange)
 admin.site.register(UserAuthority)
 admin.site.register(OtherAuthority)
 admin.site.register(Authority)

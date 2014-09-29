@@ -5,7 +5,7 @@
 
 """
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, \
@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods, etag
 from django.template import RequestContext
 from django.db import IntegrityError
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, F
 from django.conf import settings
 from django.db import transaction
 from django.utils.http import quote_etag
@@ -37,8 +37,9 @@ from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
 from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
-from .forms import SearchForm, SaveForm
+from .forms import SaveForm
 from bibliography.views import targets_to_dicts
+from . import usermod
 
 logger = logging.getLogger("lexicography")
 
@@ -50,43 +51,104 @@ schemas_dirname = os.path.join(dirname, "../utils/schemas")
 def main(request):
     return render(request, 'lexicography/main.html',
                   {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
-                   'form': SearchForm()})
+                   'can_author': usermod.can_author(request.user)})
 
 
 class SearchTable(BaseDatatableView):
-    model = Entry
-    columns = ['headword']
-    order_columns = ['headword']
+    model = ChangeRecord
+    columns = ['headword', 'published', 'datetime', 'user']
+    order_columns = ['headword', 'published', 'datetime', 'user']
 
     def render_column(self, row, column):
+        if column == "published":
+            return "Yes" if row.published else "No"
+        elif column == "datetime":
+            return row.datetime
+        elif column == "user":
+            return row.user.username
+
         ret = super(SearchTable, self).render_column(row, column)
+        #
         # We check the permission because for people who cannot edit
         # entries, we do not want to show anything. (They are not
         # affected by locking.)
+        #
+        # Also we don't put edit buttons for change records that are
+        # not the latest.
+        #
         if column == 'headword' and \
-           self.request.user.has_perm("lexicography.change_entry"):
-            if row.is_editable_by(self.request.user):
+           self.request.user.has_perm("lexicography.change_entry") and \
+           row.entry.latest == row:
+            if row.entry.is_editable_by(self.request.user):
                 ret = mark_safe(
                     ('<a class="btn btn-xs btn-default" href="%s">Edit</a> ') %
-                    reverse("lexicography_entry_update", args=(row.id, ))) + \
+                    reverse("lexicography_entry_update", args=(row.entry.id, ))) + \
                     ret
-            elif row.is_locked():
+            elif row.entry.is_locked():
                 ret = mark_safe('Locked by ' +
-                                util.nice_name(row.is_locked()) + '. ') + ret
+                                util.nice_name(row.entry.is_locked()) + '. ') \
+                    + ret
         return ret
+
+    def get_initial_queryset(self):
+        # Random users search only what is published and cannot
+        # search history. If we set their initial queryset to all
+        # ChangeRecord then they'll see a count ("filtered down
+        # from...)" which does not make sense from their point of
+        # view. So for them, the initial queryset must be restricted
+        # rather than let filtering do the job.
+        qs = ChangeRecord.objects.all()
+        if not usermod.can_author(self.request.user):
+            qs = qs.filter(entry__in=Entry.objects.active_entries()) \
+                   .filter(entry__latest_published=F('pk'))
+        return qs
 
     def filter_queryset(self, qs):
         sSearch = self.request.GET.get('sSearch', None)
         bHeadwordsOnly = self.request.GET.get('bHeadwordsOnly', "false") == \
             "true"
-        # Remove deleted entries from the set.
-        active = qs.exclude(ctype=Entry.DELETE)
+
+        if usermod.can_author(self.request.user):
+            sPublicationStatus = self.request.GET.get('sPublicationStatus',
+                                                      "published")
+            bSearchAll = self.request.GET.get('bSearchAll', "false") == "true"
+            if not bSearchAll:
+                # Remove deleted entries from the set.
+                active = qs.filter(entry__in=Entry.objects.active_entries())
+                if sPublicationStatus == "published":
+                    active = active.filter(entry__latest_published=F('pk'))
+                elif sPublicationStatus == "unpublished":
+                    active = active.filter(entry__latest=F('pk')) \
+                                   .exclude(entry__latest_published=F('pk'))
+                elif sPublicationStatus == "both":
+                    active = active.filter(entry__latest=F('pk'))
+                else:
+                    raise ValueError("unknown value for sPublicationStatus: " +
+                                     sPublicationStatus)
+            else:
+                if sPublicationStatus == "published":
+                    active = qs.filter(published=True)
+                elif sPublicationStatus == "unpublished":
+                    active = qs.filter(published=False)
+                elif sPublicationStatus == "both":
+                    active = qs
+                else:
+                    raise ValueError("unknown value for sPublicationStatus: " +
+                                     sPublicationStatus)
+        else:
+            # If the user cannot author, then our queryset is already
+            # reduced to what the user can see: the latest version of
+            # published articles.
+            active = qs
+
         if sSearch:
             qs = active.filter(util.get_query(sSearch, ['headword']))
             if not bHeadwordsOnly:
                 chunks = Chunk.objects.filter(
                     util.get_query(sSearch, ['data']))
                 qs |= active.filter(c_hash=chunks)
+        else:
+            qs = active
 
         return qs
 
@@ -105,14 +167,14 @@ def search(request):
     if query_string is not None and query_string.strip():
         entry_query = util.get_query(query_string, ['headword'])
 
-        active_entries = Entry.objects.exclude(ctype=Entry.DELETE)
+        active_entries = Entry.objects.active_entries()
 
         found_entries = active_entries.filter(entry_query)
         if not headwords_only:
             chunk_query = util.get_query(query_string, ['data'])
             chunks = Chunk.objects.filter(chunk_query)
 
-            found_entries |= active_entries.filter(c_hash=chunks)
+            found_entries |= active_entries.filter(latest__c_hash=chunks)
 
     data = {}
     for entry in found_entries:
@@ -131,60 +193,73 @@ def search(request):
 
 @require_GET
 def entry_details(request, entry_id):
+    """
+    For random users, showing the entry will show the latest published
+    version of the entry for random users. For users who can author,
+    showing the entry will show the latest version.
+    """
     entry = Entry.objects.get(id=entry_id)
-    data = entry.c_hash.data
+
+    can_author = usermod.can_author(request.user)
+
+    # Random users cannot view records that have not been published.
+    if not can_author and not entry.latest_published:
+        raise PermissionDenied
+
+    cr = entry.latest if can_author else entry.latest_published
+    return _show_changerecord(request, cr)
+
+
+@require_GET
+def changerecord_details(request, changerecord_id):
+    cr = ChangeRecord.objects.get(id=changerecord_id)
+
+    # Random users cannot view records that have not been published.
+    if not usermod.can_author(request.user) and not cr.published:
+        raise PermissionDenied
+
+    return _show_changerecord(request, cr)
+
+
+def _show_changerecord(request, cr):
+
+    data = cr.c_hash.data
 
     xml = XMLTree(data.encode("utf-8"))
     targets = xml.get_bibilographical_targets()
     bibl_data = targets_to_dicts(targets)
+
+    # We want an edit opton only if this record is the latest and if
+    # the user can edit it.
+    edit_url = (reverse("lexicography_entry_update", args=(cr.entry.id, ))
+                if (cr.entry.latest == cr and
+                    cr.entry.is_editable_by(request.user)) else None)
 
     return render_to_response(
         'lexicography/details.html',
         {
             'data': data,
             'bibl_data': json.dumps(bibl_data),
-            'edit_url': reverse("lexicography_entry_update",
-                                args=(entry.id, ))
-            if entry.is_editable_by(request.user) else None
+            'edit_url': edit_url
         },
         context_instance=RequestContext(request))
 
 
-def update_entry(request, entry, chunk, xmltree, ctype, subtype):
-    cr = ChangeRecord()
-    cr.entry = entry
-    entry.copy_to(cr)
-    entry.headword = xmltree.extract_headword()
-    entry.user = request.user
-    entry.datetime = util.utcnow()
-    entry.session = request.session.session_key
-    entry.ctype = ctype
-    entry.csubtype = subtype
-    entry.c_hash = chunk
-    # entry.save() first. So that if we have an integrity error, there is no
-    # stale ChangeRecord to remove.
-    entry.save()
-    cr.save()
-
-
 def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     chunk.save()
+    user = request.user
+    session_key = request.session.session_key
+    headword = xmltree.extract_headword()
     if entry.id is None:
-        entry.headword = xmltree.extract_headword()
-        entry.user = request.user
-        entry.datetime = util.utcnow()
-        entry.session = request.session.session_key
-        entry.ctype = Entry.CREATE
-        entry.csubtype = subtype
-        entry.c_hash = chunk
-        entry.save()
+        entry.update(user, session_key, chunk, headword, ChangeRecord.CREATE,
+                     subtype)
         if try_acquiring_lock(entry, request.user) is None:
             raise Exception("unable to acquire the lock of an entry "
                             "that was just created but not committed!")
     else:
         if try_acquiring_lock(entry, request.user) is None:
             return False
-        update_entry(request, entry, chunk, xmltree, ctype, subtype)
+        entry.update(user, session_key, chunk, headword, ctype, subtype)
     return True
 
 
@@ -227,7 +302,7 @@ def handle_update(request, handle_or_entry_id):
         return HttpResponseRedirect(reverse("lexicography_main"))
 
     if entry is not None:
-        chunk = entry.c_hash
+        chunk = entry.latest.c_hash
     else:
         chunk = Chunk()
         chunk.data = clean_xml(
@@ -238,7 +313,8 @@ def handle_update(request, handle_or_entry_id):
                     initial={"saveurl":
                              reverse('lexicography_handle_save',
                                      args=(handle_or_entry_id,)),
-                             "initial_etag": entry.c_hash if entry else None})
+                             "initial_etag":
+                             entry.latest.c_hash if entry else None})
 
     return render(request, 'lexicography/new.html', {
         'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
@@ -290,7 +366,7 @@ def get_etag(request, entry_id, handle):
     if entry_id is None:
         return None
 
-    return Entry.objects.get(id=entry_id).etag
+    return Entry.objects.get(id=entry_id).latest.etag
 
 
 def save_login_required(view):
@@ -335,15 +411,15 @@ def handle_save(request, entry_id, handle):
     # etag decorator will actually set it to the value it had before the
     # request was processed!
     if entry:
-        response['ETag'] = quote_etag(entry.etag)
+        response['ETag'] = quote_etag(entry.latest.etag)
 
     return response
 
 
 _COMMAND_TO_ENTRY_TYPE = {
-    "save": Entry.MANUAL,
-    "recover": Entry.RECOVERY,
-    "autosave": Entry.AUTOMATIC
+    "save": ChangeRecord.MANUAL,
+    "recover": ChangeRecord.RECOVERY,
+    "autosave": ChangeRecord.AUTOMATIC
 }
 
 
@@ -392,7 +468,7 @@ def _save_command(request, entry_id, handle, command, messages):
     try:
         with transaction.atomic():
             if not try_updating_entry(request, entry, chunk, xmltree,
-                                      Entry.UPDATE, subtype):
+                                      ChangeRecord.UPDATE, subtype):
                 # Update failed due to locking
                 lock = EntryLock.objects.get(entry=entry)
                 messages.append(
@@ -507,7 +583,7 @@ def change_revert(request, change_id):
     chunk = change.c_hash
     xmltree = XMLTree(chunk.data.encode("utf-8"))
     if not try_updating_entry(request, change.entry, chunk, xmltree,
-                              Entry.REVERT, Entry.MANUAL):
+                              ChangeRecord.REVERT, ChangeRecord.MANUAL):
         return HttpResponse("Entry locked!", status=409)
     return HttpResponse("Reverted.")
 
@@ -551,16 +627,16 @@ def handle_background_mod(request, entry_id, handle):
     request.user = get_user_model().objects.get(username="admin")
     messages = []
     from .tests import util as test_util
-    tree = test_util.set_lemma(entry.c_hash.data, "Glerbl")
+    tree = test_util.set_lemma(entry.latest.c_hash.data, "Glerbl")
     old_post = request.POST
     request.POST = QueryDict('', mutable=True)
     request.POST.update(old_post)
     request.POST["data"] = test_util.stringify_etree(tree)
 
-    logger.debug(entry.etag)
+    logger.debug(entry.latest.etag)
     _save_command(request, entry_id, handle, "save", messages)
     entry = Entry.objects.get(id=entry_id)
-    logger.debug(entry.etag)
+    logger.debug(entry.latest.etag)
 
     if len(messages) != 1:
         raise Exception("there should be only one message")

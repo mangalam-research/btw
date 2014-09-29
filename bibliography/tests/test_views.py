@@ -31,6 +31,7 @@ class _BaseTest(WebTest):
     __metaclass__ = TestMeta
 
     url = None
+    xhr = False
 
     def __init__(self, *args, **kwargs):
         super(_BaseTest, self).__init__(*args, **kwargs)
@@ -48,11 +49,16 @@ class _BaseTest(WebTest):
     def tearDown(self):
         self.user.delete()
 
+
+class LoginMixin(object):
+
     def test_not_logged(self):
         """
         Test that the response is 403 when the user is not logged in.
         """
-        response = self.client.get(self.url)
+        response = self.client.get(
+            self.url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest' if self.xhr else None)
         assert_equal(response.status_code, 403)
 
     def test_logged(self):
@@ -67,7 +73,7 @@ class _BaseTest(WebTest):
                      "the request should be successful")
 
 
-class TestSearchView(_BaseTest):
+class TestSearchView(_BaseTest, LoginMixin):
 
     """
     Tests for the search view.
@@ -207,7 +213,7 @@ class TestItemsView(_PatchZoteroTest):
             args=(Item.objects.get(item_key="1").pk,))
 
     def test_correct_data(self):
-        response = self.app.get(self.url, user=u'test')
+        response = self.app.get(self.url, user=u'test', xhr=True)
         data = json.loads(response.body)
         assert_equal(data["title"], "Title 1")
         assert_equal(data["date"], "Date 1")
@@ -216,7 +222,7 @@ class TestItemsView(_PatchZoteroTest):
         assert_equal(data["pk"], Item.objects.get(item_key="1").pk)
 
 
-class TestManageView(_PatchZoteroTest):
+class TestManageView(_PatchZoteroTest, LoginMixin):
 
     """
     Tests for the manage view.
@@ -288,7 +294,7 @@ class TestManageView(_PatchZoteroTest):
                      "all items should have been cached as ``Item``")
 
 
-class TestItemTableView(_PatchZoteroTest):
+class TestItemTableView(_PatchZoteroTest, LoginMixin):
 
     """
     Tests for the ItemTable view.
@@ -301,7 +307,7 @@ class TestItemTableView(_PatchZoteroTest):
     url = item_table_url
 
 
-class TestItemPrimarySourcesView(_PatchZoteroTest):
+class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):
 
     """
     Tests for the item_primary_sources view.
@@ -450,7 +456,8 @@ class PrimarySourceMixin(object):
             status_code=400)
 
 
-class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
+class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin,
+                                LoginMixin):
 
     """
     Tests for the new_primary_sources view.
@@ -490,7 +497,7 @@ class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
         assert_equal(PrimarySource.objects.all().count(), count_before + 1)
 
 
-class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin):
+class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin, LoginMixin):
 
     """
     Tests for the primary_sources view.
