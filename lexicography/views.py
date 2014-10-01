@@ -154,44 +154,6 @@ class SearchTable(BaseDatatableView):
 
 
 @require_GET
-def search(request):
-    """
-    This is a view meant only for testing. It allows bypassing
-    ``SearchTable`` to talk directly to the backend rather than having
-    to emulate the AJAX talk between a ``DataTable`` instance in the
-    client and the ``SearchTable`` view.
-    """
-    found_entries = None
-    query_string = request.GET.get('q', None)
-    headwords_only = request.GET.get('headwords_only', None)
-    if query_string is not None and query_string.strip():
-        entry_query = util.get_query(query_string, ['headword'])
-
-        active_entries = Entry.objects.active_entries()
-
-        found_entries = active_entries.filter(entry_query)
-        if not headwords_only:
-            chunk_query = util.get_query(query_string, ['data'])
-            chunks = Chunk.objects.filter(chunk_query)
-
-            found_entries |= active_entries.filter(latest__c_hash=chunks)
-
-    data = {}
-    for entry in found_entries:
-        data[entry.headword] = {
-            "headword": entry.headword,
-            "id": entry.id,
-            "edit_url":
-            reverse("lexicography_entry_update", args=(entry.id, ))
-            if entry.is_editable_by(request.user) else None,
-            "view_url": reverse("lexicography_entry_details",
-                                args=(entry.id, ))
-        }
-    resp = json.dumps(data, ensure_ascii=False)
-    return HttpResponse(resp, content_type="application/json")
-
-
-@require_GET
 def entry_details(request, entry_id):
     """
     For random users, showing the entry will show the latest published

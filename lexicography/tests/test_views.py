@@ -75,16 +75,13 @@ class ViewsTestCase(TransactionWebTest):
         # object that the user is editing.
         #
         headword = 'abcd'
-        response = self.app.get(reverse("lexicography_search"),
-                                params={"q": headword},
-                                user=user)
-        data = response.json
-        self.assertEqual(
-            Entry.objects.filter(headword=headword).count(),
-            len(data))
-        response = self.app.get(data[headword]["edit_url"]).follow()
+        response = self.search_table_search(
+            headword, user, headwords_only=True)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(len(hits), 1)
+        response = self.app.get(hits[headword]["edit_url"]).follow()
         # Check that a lock as been acquired.
-        entry = Entry.objects.get(id=data[headword]["id"])
+        entry = Entry.objects.get(headword=headword)
         lock = EntryLock.objects.get(entry=entry)
         self.assertSameDBRecord(lock.entry, entry)
 

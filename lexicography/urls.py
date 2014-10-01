@@ -38,6 +38,5 @@ if settings.BTW_TESTING:
         'lexicography.views',
         url(r'^handle/(?P<handle_or_entry_id>.+)/mod$',
             'handle_background_mod',
-            name='lexicography_handle_background_mod'),
-        url(r'^search$', 'search', name="lexicography_search"),
+            name='lexicography_handle_background_mod')
     )
