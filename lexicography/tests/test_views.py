@@ -218,6 +218,7 @@ class MainTestCase(ViewsTestCase):
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["abcd"]["hits"]), 2)
+        self.assertEqual(hits["abcd"]["hits"][0]["deleted"], "Yes")
 
     def test_search_by_author_can_return_unpublished_articles(self):
         """

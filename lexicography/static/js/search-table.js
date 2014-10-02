@@ -11,6 +11,21 @@ return function ($table, options) {
             bSortable: false,
             bVisible: false
         });
+        aoColumnDefs.push({
+            aTargets: [2],
+            bSortable: false,
+            bVisible: false
+        });
+    }
+    else {
+        aoColumnDefs.push({
+            aTargets: [2],
+            mRender: function (data, type, row_data) {
+                var deleted = row_data[2];
+                return deleted === "Yes" ?
+                    '<span style="color: red">Yes</span>' : deleted;
+            }
+        });
     }
     var record_name = options.can_author ? "change records" : "articles";
     var table = $table.dataTable({

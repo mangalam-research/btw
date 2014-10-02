@@ -42,7 +42,7 @@ def parse_search_results(data):
 
     ret = {}
     for row in rows:
-        assert len(row) == 4, "unexpected row length"
+        assert len(row) == 5, "unexpected row length"
         cell = row[0]
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
@@ -61,7 +61,8 @@ def parse_search_results(data):
             "edit_url": edit_link.get("href") if edit_link is not None
             else None,
             "view_url": view_link.get("href"),
-            "datetime": row[2]
+            "deleted": row[2],
+            "datetime": row[3]
         }
         headword_rec = ret.get(headword)
         if headword_rec:
