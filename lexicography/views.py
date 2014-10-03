@@ -56,8 +56,9 @@ def main(request):
 
 class SearchTable(BaseDatatableView):
     model = ChangeRecord
-    columns = ['headword', 'published', 'deleted', 'datetime', 'user']
-    order_columns = ['headword', 'published', 'deleted', 'datetime', 'user']
+    columns = ['headword', 'published', 'entry__deleted', 'datetime', 'user']
+    order_columns = ['headword', 'published',
+                     'entry__deleted', 'datetime', 'user']
 
     def render_column(self, row, column):
         if column == "published":
@@ -66,8 +67,8 @@ class SearchTable(BaseDatatableView):
             return row.datetime
         elif column == "user":
             return row.user.username
-        elif column == "deleted":
-            return "Yes" if row.deleted else "No"
+        elif column == "entry__deleted":
+            return "Yes" if row.entry.deleted else "No"
 
         ret = super(SearchTable, self).render_column(row, column)
         #
@@ -102,22 +103,8 @@ class SearchTable(BaseDatatableView):
 
         qs = ChangeRecord.objects
         if not usermod.can_author(self.request.user):
-            # The extra is constant to `false` because we don't ever
-            # return deleted records for non authors.
             qs = qs.filter(entry__in=Entry.objects.active_entries()) \
-                   .filter(entry__latest_published=F('pk')) \
-                   .extra(select={"deleted": "false"})
-        else:
-            # The extra call adds a "deleted" field to all the
-            # records. This enables sorting on the deleted status of a
-            # record. There does not seem to be any mechanism in Django to
-            # generate this information without using `extra`.
-            qs = qs.extra(select={
-                "deleted": """
-exists(select * from lexicography_entry as e, lexicography_changerecord as cr
-                where e.id = lexicography_changerecord.entry_id and
-                      cr.id = e.latest_id and cr.ctype = '{0}')
-""".format(ChangeRecord.DELETE)})
+                   .filter(entry__latest_published=F('pk'))
 
         return qs
 

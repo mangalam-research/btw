@@ -106,8 +106,8 @@ class EntryTestCase(TransactionTestCase):
         # We change one record to be deleted. This is not how it
         # happens in the real application but for our purpose here
         # this is fine.
-        self.entry.latest.ctype = ChangeRecord.DELETE
-        self.entry.latest.save()
+        self.entry.deleted = True
+        self.entry.save()
         self.assertEqual(Entry.objects.active_entries().count(),
                          original_count - 1)
 

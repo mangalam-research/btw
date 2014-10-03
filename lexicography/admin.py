@@ -4,20 +4,24 @@ from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.shortcuts import render
+from django.views.decorators.http import require_http_methods, require_POST
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.contrib.admin.templatetags.admin_modify import register, submit_row
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.exceptions import PermissionDenied
+
 
 from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
-    OtherAuthority, Authority, EntryLock, Handle, PublicationChange
+    OtherAuthority, Authority, EntryLock, Handle, PublicationChange, \
+    DeletionChange
 from .xml import XMLTree
 from .views import try_updating_entry
+from . import usermod
 
 
 def make_link_method(field_name, display_name=None):
@@ -62,19 +66,29 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
         }
 
     model = ChangeRecord
-    fields = ('headword', 'entry', 'user', 'datetime', 'session', 'ctype',
+    fields = ('headword', 'user', 'datetime', 'session', 'ctype',
               'csubtype', 'c_hash', 'revert')
-    readonly_fields = ('revert', )
+    readonly_fields = fields
     ordering = ('-datetime', )
 
     def has_add_permission(self, _request):
         return False
 
+    def has_delete_permission(self, _request, _obj=None):
+        return False
+
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('headword', 'latest')
+    list_display = ('headword', 'nice_deleted', 'latest', 'latest_published',
+                    'edit_raw')
+    readonly_fields = ('delete_undelete', )
+    exclude = ('deleted', )
 
     inlines = (ChangeRecordInline, )
+
+    def nice_deleted(self, obj):
+        return "Yes" if obj.deleted else "No"
+    nice_deleted.short_description = "Deleted"
 
     def edit_raw(self, obj):
         return mark_safe('<a href="%s">Edit raw XML</a>' %
@@ -86,18 +100,37 @@ class EntryAdmin(admin.ModelAdmin):
                          (reverse('lexicography_entry_details',
                                   args=(obj.id, ))))
 
+    def delete_undelete(self, obj):
+        return mark_safe(
+            '<a class="{2}" href="{0}">{1}</a>'
+            .format(reverse('admin:lexicography_entry_undelete' if obj.deleted
+                            else 'admin:lexicography_entry_mark_deleted',
+                            args=(obj.id, )),
+                    "Undelete" if obj.deleted else "Delete",
+                    "lexicography-undelete" if obj.deleted
+                    else "lexicography-delete"))
+    delete_undelete.allow_tags = True
+    delete_undelete.short_description = ""
+
     def get_urls(self):
         return [
             url(r'^add_raw/$', self.raw_new,
                 name='lexicography_entry_rawnew'),
             url(r'^(?P<entry_id>\d+)/raw_update$', self.raw_update,
-                name="lexicography_entry_rawupdate")
+                name="lexicography_entry_rawupdate"),
+            url(r'^(?P<entry_id>\d+)/mark_deleted$', self.mark_deleted,
+                name="lexicography_entry_mark_deleted"),
+            url(r'^(?P<entry_id>\d+)/undelete$', self.undelete,
+                name="lexicography_entry_undelete"),
         ] + \
             super(EntryAdmin, self).get_urls()
 
     @method_decorator(login_required)
     @method_decorator(require_http_methods(["GET", "POST"]))
     def raw_new(self, request):
+        if not usermod.can_author(request.user):
+            raise PermissionDenied
+
         if request.method == 'POST':
             form = RawSaveForm(request.POST)
             if form.is_valid():
@@ -123,6 +156,9 @@ class EntryAdmin(admin.ModelAdmin):
     @method_decorator(require_http_methods(["GET", "POST"]))
     @method_decorator(entry_lock_required)
     def raw_update(self, request, entry_id):
+        if not usermod.can_author(request.user):
+            raise PermissionDenied
+
         entry = Entry.objects.get(id=entry_id)
         if request.method == 'POST':
             form = RawSaveForm(request.POST)
@@ -144,6 +180,24 @@ class EntryAdmin(admin.ModelAdmin):
             return self.render_raw_form(
                 request, form, _('Change %s') % force_text(opts.verbose_name),
                 entry)
+
+    @method_decorator(login_required)
+    @method_decorator(require_POST)
+    @method_decorator(entry_lock_required)
+    def mark_deleted(self, request, entry_id):
+        if not usermod.can_author(request.user):
+            raise PermissionDenied
+        Entry.objects.get(id=entry_id).mark_deleted(request.user)
+        return HttpResponse("Deleted.")
+
+    @method_decorator(login_required)
+    @method_decorator(require_POST)
+    @method_decorator(entry_lock_required)
+    def undelete(self, request, entry_id):
+        if not usermod.can_author(request.user):
+            raise PermissionDenied
+        Entry.objects.get(id=entry_id).undelete(request.user)
+        return HttpResponse("Undeleted.")
 
     def render_raw_form(self, request, form, title, entry=None):
         opts = self.model._meta
@@ -211,6 +265,7 @@ admin.site.register(Entry, EntryAdmin)
 admin.site.register(Chunk)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
 admin.site.register(PublicationChange)
+admin.site.register(DeletionChange)
 admin.site.register(UserAuthority)
 admin.site.register(OtherAuthority)
 admin.site.register(Authority)

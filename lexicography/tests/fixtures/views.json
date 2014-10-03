@@ -3,6 +3,7 @@
   "pk": 1,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "abcd",
     "latest_published": null,
     "latest": 1
@@ -12,6 +13,7 @@
   "pk": 2,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "foo",
     "latest_published": null,
     "latest": 2
@@ -21,6 +23,7 @@
   "pk": 3,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "one sense, one subsense",
     "latest_published": 3,
     "latest": 3
@@ -30,6 +33,7 @@
   "pk": 4,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "pali example",
     "latest_published": null,
     "latest": 4
@@ -39,6 +43,7 @@
   "pk": 5,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "non-pali example",
     "latest_published": null,
     "latest": 5
@@ -48,6 +53,7 @@
   "pk": 6,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "pali explained example",
     "latest_published": null,
     "latest": 6
@@ -57,6 +63,7 @@
   "pk": 7,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "non-pali explained example",
     "latest_published": null,
     "latest": 7
@@ -66,6 +73,7 @@
   "pk": 8,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "definition filled",
     "latest_published": null,
     "latest": 8
@@ -75,6 +83,7 @@
   "pk": 9,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "definition with formatted text",
     "latest_published": null,
     "latest": 9
@@ -84,6 +93,7 @@
   "pk": 10,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "senses and subsenses",
     "latest_published": 10,
     "latest": 10
@@ -93,6 +103,7 @@
   "pk": 11,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "some semantic fields",
     "latest_published": null,
     "latest": 11
@@ -102,6 +113,7 @@
   "pk": 12,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "antonym with citations",
     "latest_published": null,
     "latest": 12
@@ -111,6 +123,7 @@
   "pk": 13,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "cognate with citations",
     "latest_published": null,
     "latest": 13
@@ -120,6 +133,7 @@
   "pk": 14,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "conceptual proximate with citations",
     "latest_published": null,
     "latest": 14
@@ -129,6 +143,7 @@
   "pk": 15,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "senses, subsenses and hyperlinks",
     "latest_published": 15,
     "latest": 15
@@ -138,6 +153,7 @@
   "pk": 16,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "sense with explanation",
     "latest_published": null,
     "latest": 16
@@ -147,6 +163,7 @@
   "pk": 17,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "contrastive elements with one child",
     "latest_published": null,
     "latest": 17
@@ -156,6 +173,7 @@
   "pk": 18,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "sense with citations",
     "latest_published": null,
     "latest": 18
@@ -165,6 +183,7 @@
   "pk": 19,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "non-pali example, with ref and ptr",
     "latest_published": 19,
     "latest": 19
@@ -174,6 +193,7 @@
   "pk": 20,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": false,
     "headword": "old and new records",
     "latest_published": null,
     "latest": 22
@@ -183,9 +203,10 @@
   "pk": 21,
   "model": "lexicography.entry",
   "fields": {
+    "deleted": true,
     "headword": "deleted article",
     "latest_published": null,
-    "latest": 24
+    "latest": 23
   }
 },
 {
@@ -580,23 +601,6 @@
   }
 },
 {
-  "pk": 24,
-  "model": "lexicography.changerecord",
-  "fields": {
-    "c_hash": "972e2a5bbd85f95c6499aa171a62765520fe3a50",
-    "ctype": "D",
-    "datetime": "2014-10-01T14:51:34.511Z",
-    "session": "4w19bevhbcsjowbipoaex1krvis2fl1g",
-    "user": [
-      "foo"
-    ],
-    "published": false,
-    "csubtype": "M",
-    "entry": 21,
-    "headword": "deleted article"
-  }
-},
-{
   "pk": "02dcad56758d94d733cb902d570acb2413e83c84",
   "model": "lexicography.chunk",
   "fields": {
@@ -834,6 +838,18 @@
     ],
     "ctype": "P",
     "datetime": "2014-09-30T19:29:35.633Z"
+  }
+},
+{
+  "pk": 1,
+  "model": "lexicography.deletionchange",
+  "fields": {
+    "entry": 21,
+    "user": [
+      "foo"
+    ],
+    "ctype": "D",
+    "datetime": "2014-10-01T14:51:34.511Z"
   }
 },
 {

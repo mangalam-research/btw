@@ -37,7 +37,7 @@ class EntryManager(models.Manager):
         """
         # An entry is inactive if the latest change record for it is a
         # deletion.
-        return self.exclude(latest__ctype=ChangeRecord.DELETE)
+        return self.exclude(deleted=True)
 
 
 class Entry(models.Model):
@@ -57,6 +57,7 @@ class Entry(models.Model):
     latest = models.ForeignKey('ChangeRecord', related_name='+', null=True)
     latest_published = models.ForeignKey('ChangeRecord', related_name="+",
                                          null=True)
+    deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.headword
@@ -90,6 +91,30 @@ class Entry(models.Model):
         cr.save()
         # We can't set latest before we've saved cr.
         self.latest = cr
+        self.save()
+
+    @method_decorator(transaction.atomic)
+    def mark_deleted(self, user):
+        dr = DeletionChange(
+            entry=self,
+            user=user,
+            ctype=DeletionChange.DELETE,
+            datetime=util.utcnow()
+        )
+        dr.save()
+        self.deleted = True
+        self.save()
+
+    @method_decorator(transaction.atomic)
+    def undelete(self, user):
+        dr = DeletionChange(
+            entry=self,
+            user=user,
+            ctype=DeletionChange.UNDELETE,
+            datetime=util.utcnow()
+        )
+        dr.save()
+        self.deleted = False
         self.save()
 
     @method_decorator(transaction.atomic)
@@ -149,12 +174,10 @@ class ChangeRecord(models.Model):
 
     CREATE = 'C'
     UPDATE = 'U'
-    DELETE = 'D'
     REVERT = 'R'
     TYPE_CHOICES = (
         (CREATE, "Create"),
         (UPDATE, "Update"),
-        (DELETE, "Delete"),
         (REVERT, "Revert"),
     )
 
@@ -182,7 +205,7 @@ class ChangeRecord(models.Model):
 
     def get_absolute_url(self):
         return reverse('lexicography_changerecord_details',
-                       args=[str(self.id)])
+                       args=(self.id, ))
 
     @property
     def etag(self):
@@ -284,6 +307,21 @@ class PublicationChange(models.Model):
     )
 
     changerecord = models.ForeignKey(ChangeRecord)
+    ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.PROTECT)
+    datetime = models.DateTimeField()
+
+
+class DeletionChange(models.Model):
+    DELETE = 'D'
+    UNDELETE = 'U'
+    TYPE_CHOICES = (
+        (DELETE, "Delete"),
+        (UNDELETE, "Undelete")
+    )
+
+    entry = models.ForeignKey(Entry)
     ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)

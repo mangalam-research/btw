@@ -156,13 +156,8 @@ class MainTestCase(ViewsTestCase):
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
         # But delete it.
-        entry.update(
-            self.foo,
-            "q",
-            entry.latest.c_hash,
-            entry.headword,
-            ChangeRecord.DELETE,
-            ChangeRecord.MANUAL)
+        entry.deleted = True
+        entry.save()
         response = self.search_table_search("abcd", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
@@ -204,20 +199,15 @@ class MainTestCase(ViewsTestCase):
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
         # Delete it.
-        entry.update(
-            self.foo,
-            "q",
-            entry.latest.c_hash,
-            entry.headword,
-            ChangeRecord.DELETE,
-            ChangeRecord.MANUAL)
+        entry.deleted = True
+        entry.save()
 
         response = self.search_table_search("abcd", self.foo,
                                             publication_status="both",
                                             search_all=True)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
-        self.assertEqual(len(hits["abcd"]["hits"]), 2)
+        self.assertEqual(len(hits["abcd"]["hits"]), 1)
         self.assertEqual(hits["abcd"]["hits"][0]["deleted"], "Yes")
 
     def test_search_by_author_can_return_unpublished_articles(self):
@@ -256,13 +246,8 @@ class MainTestCase(ViewsTestCase):
         entry = Entry.objects.get(headword="abcd")
         count = Entry.objects.active_entries().count()
         # Delete it.
-        entry.update(
-            self.foo,
-            "q",
-            entry.latest.c_hash,
-            entry.headword,
-            ChangeRecord.DELETE,
-            ChangeRecord.MANUAL)
+        entry.deleted = True
+        entry.save()
 
         response = self.search_table_search("", self.foo,
                                             publication_status="both")
