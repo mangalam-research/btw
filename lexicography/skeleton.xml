@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.9" authority="/">
   <btw:lemma><btw:todo>Fill lemma.</btw:todo></btw:lemma>
   <btw:overview>
     <btw:definition>

@@ -271,9 +271,10 @@ def handle_update(request, handle_or_entry_id):
     if entry is not None:
         chunk = entry.latest.c_hash
     else:
-        chunk = Chunk()
-        chunk.data = clean_xml(
-            open(os.path.join(dirname, "skeleton.xml"), 'r').read())
+        chunk = Chunk(data=clean_xml(
+            open(os.path.join(dirname, "skeleton.xml"), 'r').read()))
+        chunk.schema_version = XMLTree(
+            chunk.data.encode("utf-8")).extract_version()
         chunk.save()
 
     form = SaveForm(instance=chunk,
@@ -281,7 +282,7 @@ def handle_update(request, handle_or_entry_id):
                              reverse('lexicography_handle_save',
                                      args=(handle_or_entry_id,)),
                              "initial_etag":
-                             entry.latest.c_hash if entry else None})
+                             entry.latest.etag if entry else None})
 
     return render(request, 'lexicography/new.html', {
         'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
@@ -333,7 +334,8 @@ def get_etag(request, entry_id, handle):
     if entry_id is None:
         return None
 
-    return Entry.objects.get(id=entry_id).latest.etag
+    ret = Entry.objects.get(id=entry_id).latest.etag
+    return ret
 
 
 def save_login_required(view):
@@ -398,7 +400,9 @@ def _save_command(request, entry_id, handle, command, messages):
 
     unclean = xmltree.is_data_unclean()
     if unclean:
-        chunk = Chunk(data=data, is_normal=False)
+        chunk = Chunk(data=data, is_normal=False,
+                      # Unclean data, no version...
+                      schema_version="")
         chunk.save()
         logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
         # Yes, we want to commit...
@@ -422,7 +426,7 @@ def _save_command(request, entry_id, handle, command, messages):
             authority.save()
         data = set_authority(data, "/authority/" + str(authority.id))
 
-    chunk = Chunk(data=data)
+    chunk = Chunk(data=data, schema_version=xmltree.extract_version())
     chunk.save()
 
     if entry_id is not None:

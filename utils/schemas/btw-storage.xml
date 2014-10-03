@@ -7,7 +7,7 @@
     <fileDesc>
       <titleStmt>
         <title>Schema for BTW Entries</title>
-        <author>Louis-Dominique Dubeau</author>
+        <author xml:id="LDD">Louis-Dominique Dubeau</author>
       </titleStmt>
       <publicationStmt>
         <availability>
@@ -25,6 +25,14 @@
         <p>No source; originally written in digital form.</p>
       </sourceDesc>
     </fileDesc>
+    <profileDesc>
+      <creation when="2013-04"/>
+    </profileDesc>
+    <revisionDesc>
+      <change n="0.9" when="2014-10-03" who="#LDD">
+        Added @version on entry.
+      </change>
+    </revisionDesc>
   </teiHeader>
   <text>
     <body>
@@ -113,6 +121,10 @@
             <rng:ref name="btw_historico-semantical-data"/>
           </content>
           <attList>
+            <attDef ident="version" usage="req">
+	      <desc>The version of the BTW storage schema that should validate
+	      this document.</desc>
+	    </attDef>
             <attDef ident="authority" usage="req">
 	      <desc>The person responsible for this entry.</desc>
 	    </attDef>

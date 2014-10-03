@@ -281,12 +281,28 @@ class ChunkManager(models.Manager):
 class Chunk(models.Model):
     objects = ChunkManager()
 
-    c_hash = models.CharField(max_length=40, primary_key=True)
-    is_normal = models.BooleanField(default=True)
+    c_hash = models.CharField(
+        max_length=40,
+        primary_key=True,
+        help_text="This is the primary key for chunks. It is a hash of "
+        "the <code>data</code> field."
+    )
+    is_normal = models.BooleanField(
+        default=True,
+        help_text="A 'normal' chunk is one that is well-formed XML"
+    )
+    # Yep, arbitrary 10 char limit. This field can contain an empty
+    # string if the version is somehow not computable. For instance if
+    # the data is "abnormal".
+    schema_version = models.CharField(
+        max_length=10,
+        help_text="This is the version of the btw-storage schema that ought "
+        "to be used to validate this chunk."
+    )
     data = models.TextField()
 
     def __unicode__(self):
-        return self.c_hash
+        return self.c_hash + " Schema version: " + self.schema_version
 
     def clean(self):
         sha1 = hashlib.sha1()

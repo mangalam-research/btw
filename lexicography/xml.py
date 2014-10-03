@@ -109,6 +109,19 @@ authority attribute on the top element.
 
         return authority.strip()
 
+    def extract_version(self):
+        """
+Extracts the version from the XML tree.
+
+:returns: The version
+:rtype: str
+"""
+        version = self.tree.get('version')
+        if version is None:
+            raise ValueError("can't find the version in the data passed")
+
+        return version.strip()
+
 _auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
 _new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")
 

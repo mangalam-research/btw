@@ -8,6 +8,7 @@ from optparse import make_option
 
 from lexicography.models import Entry, Chunk, ChangeRecord
 from lib import util
+from lexicography import xml
 
 
 class Command(BaseCommand):
@@ -101,17 +102,26 @@ WARNING: in general, this operation cannot be reliably undone without
                         as before:
                     before.write(chunk.data.encode('utf-8'))
 
-                if not util.validate(before_rng, chunk.data):
-                    self.stdout.write(
-                        "Invalid initial chunk data for chunk: " +
-                        chunk.pk)
-                    self.stdout.write(
-                        "Won't validate chunk after transformation.")
-                    initially_invalid = True
+                if chunk.is_normal:
+                    if not util.validate(before_rng, chunk.data):
+                        self.stdout.write(
+                            "Invalid initial chunk data for chunk: " +
+                            chunk.pk)
+                        self.stdout.write(
+                            "Won't validate chunk after transformation.")
+                        initially_invalid = True
 
-                converted = util.run_saxon(xsl_path, chunk.data)
-                new_chunk = Chunk()
-                new_chunk.data = converted
+                    converted = util.run_saxon(xsl_path, chunk.data)
+                    new_chunk = Chunk()
+                    new_chunk.data = converted
+                    new_chunk.schema_version = \
+                        xml.XMLTree(
+                            converted.encode('utf-8')).extract_version()
+                else:
+                    # Abnormal chunk. We won't try to validate and convert.
+                    initially_invalid = True
+                    converted = chunk.data
+                    new_chunk = chunk
 
                 with open(os.path.join(log_dir, chunk.pk, "after.xml"), 'w') \
                         as after:
