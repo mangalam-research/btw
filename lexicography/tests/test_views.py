@@ -10,7 +10,7 @@ import requests
 import lxml.etree
 
 from .. import models
-from ..models import Entry, EntryLock, ChangeRecord, Chunk
+from ..models import Entry, EntryLock, ChangeRecord, Chunk, PublicationChange
 from ..views import REQUIRED_WED_VERSION
 from . import util as test_util
 from . import funcs
@@ -48,22 +48,11 @@ class ViewsTestCase(TransactionWebTest):
         return self.app.get(
             reverse("lexicography_search_table"),
             params={
-                "sEcho": 1,
-                "iColumns": 1,
-                "iDisplayStart": 0,
-                "iDisplayLength": -1,
-                "mDataProp_0": 0,
-                "bSearchable_0": "true",
-                "bSortable_0": "true",
-                "sSearch": title,
-                "bRegex": "false",
-                "iSortCol_0": 0,
-                "sSortDir_0": "asc",
-                "iSortingCols": 1,
-                "bHeadwordsOnly":
-                "true" if headwords_only else "false",
-                "sPublicationStatus": publication_status,
-                "bSearchAll": "true" if search_all else "false"
+                "length": -1,
+                "search[value]": title,
+                "headwords_only": "true" if headwords_only else "false",
+                "publication_status": publication_status,
+                "search_all": "true" if search_all else "false"
             },
             user=user)
 
@@ -114,7 +103,6 @@ class MainTestCase(ViewsTestCase):
         response, entry = self.open_abcd('foo')
 
         entry = Entry.objects.get(headword="abcd")
-        entry.latest.publish(self.foo)
         response = self.search_table_search("abcd", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
@@ -131,16 +119,16 @@ class MainTestCase(ViewsTestCase):
         """
         Someone who is not an author cannot see unpublished articles.
         """
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(headword="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
-        response = self.search_table_search("abcd", self.noperm)
+        response = self.search_table_search("foo", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
 
         # Simulate a case where the user manually adds the search
         # parameters to a URL.
-        response = self.search_table_search("abcd", self.noperm,
+        response = self.search_table_search("foo", self.noperm,
                                             publication_status="both")
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
@@ -150,8 +138,6 @@ class MainTestCase(ViewsTestCase):
         Someone who is not an author cannot see deleted articles.
         """
         entry = Entry.objects.get(headword="abcd")
-        # Publish this entry so that it would be visible to random users.
-        entry.latest.publish(self.foo)
         response = self.search_table_search("abcd", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
@@ -173,42 +159,42 @@ class MainTestCase(ViewsTestCase):
         """
         Someone who is an author can see unpublished articles.
         """
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(headword="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
 
         # Try with "both"
-        response = self.search_table_search("abcd", self.foo,
+        response = self.search_table_search("foo", self.foo,
                                             publication_status="both")
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
-        self.assertEqual(len(hits["abcd"]["hits"]), 1)
+        self.assertEqual(len(hits["foo"]["hits"]), 1)
 
         # And "unpublished"
-        response = self.search_table_search("abcd", self.foo,
+        response = self.search_table_search("foo", self.foo,
                                             publication_status="unpublished")
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
-        self.assertEqual(len(hits["abcd"]["hits"]), 1)
+        self.assertEqual(len(hits["foo"]["hits"]), 1)
 
     def test_search_headword_by_author_can_return_deleted_articles(self):
         """
         Someone who is an author can see unpublished articles.
         """
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(headword="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
         # Delete it.
         entry.deleted = True
         entry.save()
 
-        response = self.search_table_search("abcd", self.foo,
+        response = self.search_table_search("foo", self.foo,
                                             publication_status="both",
                                             search_all=True)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
-        self.assertEqual(len(hits["abcd"]["hits"]), 1)
-        self.assertEqual(hits["abcd"]["hits"][0]["deleted"], "Yes")
+        self.assertEqual(len(hits["foo"]["hits"]), 1)
+        self.assertEqual(hits["foo"]["hits"][0]["deleted"], "Yes")
 
     def test_search_by_author_can_return_unpublished_articles(self):
         """
@@ -218,11 +204,6 @@ class MainTestCase(ViewsTestCase):
         self.assertTrue(
             Entry.objects.filter(latest_published__isnull=True).count() > 0)
         count = Entry.objects.active_entries().count()
-
-        # We publish one.
-        entry = Entry.objects.get(headword="abcd")
-        self.assertIsNone(entry.latest_published)
-        entry.latest.publish(self.foo)
 
         # Try with "both"
         response = self.search_table_search("", self.foo,
@@ -861,3 +842,145 @@ class EditingTestCase(ViewsTestCase):
         messages = test_util.parse_response_to_wed(response.json)
 
         self.assertEqual(len(messages), 0)
+
+
+class CommonPublishUnpublishCases(object):
+
+    def test_not_allowed(self):
+        """
+        A user who does not have the proper credentials cannot publish.
+        """
+        cr = ChangeRecord.objects.get(pk=1)
+        response = self.app.post(reverse(self.name, args=(cr.id, )),
+                                 expect_errors=True)
+        self.assertEqual(response.status_code, 403)
+
+    def perform(self, cr):
+        # We need to get a token ...
+        self.app.get(reverse('lexicography_main'), user=self.foo)
+        headers = {
+            'X-REQUESTED-WITH': 'XMLHttpRequest',
+            'X-CSRFToken': self.app.cookies['csrftoken']
+        }
+
+        return self.app.post(reverse(self.name, args=(cr.id, )),
+                             headers=headers,
+                             user=self.foo)
+
+
+class PublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
+
+    name = "lexicography_changerecord_publish"
+
+    def test_publish(self):
+        """
+        A user can publish a valid version of an article.
+        """
+        old_count = PublicationChange.objects.count()
+
+        cr = ChangeRecord.objects.get(headword="foo")
+        # THIS IS A LIE, for testing purposes.
+        cr.c_hash._valid = True
+        cr.c_hash.save()
+
+        response = self.perform(cr)
+
+        self.assertTrue(ChangeRecord.objects.get(pk=cr.pk).published)
+        self.assertEqual(PublicationChange.objects.count(), old_count + 1,
+                         "There should be a new publication change.")
+        self.assertEqual(response.text,
+                         "This change record was published.")
+
+    def test_noop(self):
+        """
+        A user can publish an already published version of an article.
+        """
+        cr = ChangeRecord.objects.get(headword="foo")
+        # THIS IS A LIE, for testing purposes.
+        cr.c_hash._valid = True
+        cr.c_hash.save()
+
+        self.perform(cr)
+
+        old_count = PublicationChange.objects.count()
+
+        # And again
+        response = self.perform(cr)
+        self.assertEqual(response.text,
+                         "This change record was already published.")
+
+        self.assertEqual(PublicationChange.objects.count(), old_count,
+                         "There should not be a new publication change.")
+
+    def test_publish_fails(self):
+        """
+        A user cannot publish an invalid version of an article.
+        """
+        cr = ChangeRecord.objects.get(headword="foo")
+
+        # We need to get a token ...
+        self.app.get(reverse('lexicography_main'), user=self.foo)
+        headers = {
+            'X-REQUESTED-WITH': 'XMLHttpRequest',
+            'X-CSRFToken': self.app.cookies['csrftoken']
+        }
+
+        old_count = PublicationChange.objects.count()
+        response = self.app.post(reverse('lexicography_changerecord_publish',
+                                         args=(cr.id, )),
+                                 headers=headers,
+                                 user=self.foo,
+                                 expect_errors=True)
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.text,
+                         "This change record cannot be published.")
+
+        self.assertFalse(ChangeRecord.objects.get(pk=cr.pk).published)
+        self.assertEqual(PublicationChange.objects.count(), old_count,
+                         "There should not be a new publication change.")
+
+
+class UnpublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
+    name = "lexicography_changerecord_unpublish"
+
+    def test_unpublish(self):
+        """
+        A user can unpublish an article.
+        """
+
+        cr = ChangeRecord.objects.get(headword="foo")
+        # THIS IS A LIE, for testing purposes.
+        cr.c_hash._valid = True
+        cr.c_hash.save()
+        self.assertTrue(cr.publish(self.foo))
+
+        old_count = PublicationChange.objects.count()
+        response = self.perform(cr)
+
+        self.assertFalse(ChangeRecord.objects.get(pk=cr.pk).published)
+        self.assertEqual(PublicationChange.objects.count(), old_count + 1,
+                         "There should be a new publication change.")
+        self.assertEqual(response.text,
+                         "This change record was unpublished.")
+
+    def test_noop(self):
+        """
+        A user can publish an already published version of an article.
+        """
+        cr = ChangeRecord.objects.get(headword="foo")
+        # THIS IS A LIE, for testing purposes.
+        cr.c_hash._valid = True
+        cr.c_hash.save()
+        self.assertTrue(cr.publish(self.foo))
+
+        self.perform(cr)
+
+        old_count = PublicationChange.objects.count()
+
+        # And again
+        response = self.perform(cr)
+        self.assertEqual(response.text,
+                         "This change record was already unpublished.")
+
+        self.assertEqual(PublicationChange.objects.count(), old_count,
+                         "There should not be a new publication change.")

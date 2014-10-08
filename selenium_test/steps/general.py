@@ -200,6 +200,15 @@ def step_impl(context, user_desc):
         driver.get(selenic.SERVER)
     context.is_logged_in = True
 
+@when("^the user logs out$")
+def step_impl(context):
+    driver = context.driver
+    selenic = context.selenic
+    driver.get(selenic.SERVER + "/logout")
+    button = driver.find_element_by_css_selector("button[type='submit']")
+    button.click()
+
+
 WHAT_TO_TITLE = {
     u"a single sense that has a subsense": "one sense, one subsense",
     u"a Pāli example": "pali example",
@@ -271,22 +280,10 @@ def step_impl(context, what):
         r = requests.get(context.selenic.SERVER +
                          "/lexicography/search-table/",
                          params={
-                             "sEcho": 1,
-                             "iColumns": 1,
-                             "iDisplayStart": 0,
-                             "iDisplayLength": 10,
-                             "mDataProp_0": 0,
-                             "sSearch_0": "",
-                             "bRegex_0": "false",
-                             "bSearchable_0": "true",
-                             "bSortable_0": "true",
-                             "sSearch": title.encode("utf8"),
-                             "bRegex": "false",
-                             "iSortCol_0": 0,
-                             "sSortDir_0": "asc",
-                             "iSortingCols": 1,
-                             "bHeadwordsOnly": "true",
-                             "sPublicationStatus": "both",
+                             "length": -1,
+                             "search[value]": title.encode("utf-8"),
+                             "headwords_only": "true",
+                             "publication_status": "both",
                          },
                          cookies={
                              "sessionid":

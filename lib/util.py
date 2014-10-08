@@ -60,10 +60,12 @@ def run_xsltproc(xsl_path, input_data):
         return ret
 
 
-def validate(rng_path, input_data):
+def validate(rng_path, input_data, silent=True):
     with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
-        return subprocess.call(
-            ["xmllint", "--noout", "--relaxng", rng_path, tmpinput_path]) == 0
+
+        out = open("/dev/null", 'w') if silent else None
+        return subprocess.call(["jing", rng_path, tmpinput_path],
+                               stdout=out, stderr=out) == 0
 
 
 def utcnow():

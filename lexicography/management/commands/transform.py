@@ -16,11 +16,10 @@ class Command(BaseCommand):
     help = """\
 Perform an XSLT transformation on all entries.
 
-dir    The directory that contains the files that drive the transformation,
-       and the resulting logs. The XSLT transformation must be in a file named
-       ``transform.xsl``. The schema to validate the data before
-       transformation must be in a file named ``before.rng``. The schema
-       to validate after must be in a file named ``after.rng``. The
+dir The directory that contains the files that drive the
+       transformation, and the resulting logs. The XSLT transformation
+       must be in a file named ``transform.xsl``. The schema to
+       validate after must be in a file named ``after.rng``. The
        transformations are logged into the ``log`` subdirectory.
 """
 
@@ -53,15 +52,11 @@ WARNING: in general, this operation cannot be reliably undone without
 
         mydir = args[0]
         xsl_path = os.path.join(mydir, "transform.xsl")
-        before_rng = os.path.join(mydir, "before.rng")
         after_rng = os.path.join(mydir, "after.rng")
         log_dir = os.path.join(mydir, "log")
 
         if not os.path.exists(xsl_path):
             raise CommandError(xsl_path + " does not exist.")
-
-        if not os.path.exists(before_rng):
-            raise CommandError(before_rng + " does not exist.")
 
         if not os.path.exists(after_rng):
             raise CommandError(after_rng + " does not exist.")
@@ -103,10 +98,7 @@ WARNING: in general, this operation cannot be reliably undone without
                     before.write(chunk.data.encode('utf-8'))
 
                 if chunk.is_normal:
-                    if not util.validate(before_rng, chunk.data):
-                        self.stdout.write(
-                            "Invalid initial chunk data for chunk: " +
-                            chunk.pk)
+                    if not chunk.valid:
                         self.stdout.write(
                             "Won't validate chunk after transformation.")
                         initially_invalid = True
@@ -117,6 +109,7 @@ WARNING: in general, this operation cannot be reliably undone without
                     new_chunk.schema_version = \
                         xml.XMLTree(
                             converted.encode('utf-8')).extract_version()
+                    new_chunk.valid = util.validate(after_rng, converted)
                 else:
                     # Abnormal chunk. We won't try to validate and convert.
                     initially_invalid = True
@@ -130,11 +123,7 @@ WARNING: in general, this operation cannot be reliably undone without
                 new_chunk.clean()  # Generate the pk
                 chunk_mapping[chunk.pk] = new_chunk.pk
 
-                if not initially_invalid and \
-                   not util.validate(after_rng, converted):
-                    self.stderr.write(
-                        "Invalid transformation result for chunk: " +
-                        chunk.pk)
+                if not initially_invalid and not new_chunk.valid:
                     with open(os.path.join(log_dir, chunk.pk,
                                            "BECAME_INVALID"), 'w'):
                         pass

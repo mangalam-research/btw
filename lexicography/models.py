@@ -3,13 +3,14 @@ import datetime
 
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.db import transaction
 
 from lib import util
 from . import usermod
+from . import xml
 
 
 class EntryManager(models.Manager):
@@ -212,8 +213,31 @@ class ChangeRecord(models.Model):
         return self.c_hash.c_hash
 
     @method_decorator(transaction.atomic)
+    def can_publish(self, user):
+        """
+        Returns a boolean indicating whether the user can publish this
+        ``ChangeRecord``. If the user cannot author, then the user
+        cannot publish anything.
+        """
+        return usermod.can_author(user)
+
+    @method_decorator(transaction.atomic)
+    def can_be_published(self):
+        """
+        Returns a boolean indicating whether this record can be published
+        at all, by anyone. For instance, a ``ChangeRecord`` that
+        encodes an invalid state of an article cannot be published.
+        """
+        return self.c_hash.valid
+
+    @method_decorator(transaction.atomic)
     def publish(self, user):
         if not self.published:
+            if not self.can_be_published():
+                return False
+
+            if not self.can_publish(user):
+                raise PermissionDenied
             self.published = True
             self.save()
             pc = PublicationChange(changerecord=self,
@@ -223,10 +247,15 @@ class ChangeRecord(models.Model):
             pc.save()
             # pylint: disable=protected-access
             self.entry._update_latest_published()
+            return True
+        return False
 
     @method_decorator(transaction.atomic)
     def unpublish(self, user):
         if self.published:
+            if not self.can_publish(user):
+                raise PermissionDenied
+
             self.published = False
             self.save()
             pc = PublicationChange(changerecord=self,
@@ -236,6 +265,8 @@ class ChangeRecord(models.Model):
             pc.save()
             # pylint: disable=protected-access
             self.entry._update_latest_published()
+            return True
+        return False
 
     class Meta(object):
         unique_together = (("entry", "datetime", "ctype"), )
@@ -299,7 +330,34 @@ class Chunk(models.Model):
         help_text="This is the version of the btw-storage schema that ought "
         "to be used to validate this chunk."
     )
+    _valid = models.NullBooleanField(
+        null=True,
+        db_column="valid",
+        help_text="Whether this chunk is valid when validated against the "
+        "schema version specified in the <code>schema_version</code> "
+        "field. You do not normally access this field through "
+        "<code>valid</code>."
+    )
     data = models.TextField()
+
+    @property
+    def valid(self):
+        """
+        Whether or not the chunk is valid. Use this rather than the
+        ``_valid`` field.
+        """
+        if self._valid is not None:
+            return self._valid
+
+        if not self.is_normal:
+            self._valid = False
+        else:
+            self._valid = util.validate(
+                xml.schema_for_version(self.schema_version),
+                self.data)
+        self.save()
+
+        return self._valid
 
     def __unicode__(self):
         return self.c_hash + " Schema version: " + self.schema_version

@@ -167,6 +167,14 @@ def after_scenario(context, _scenario):
     // Overwrite onbeforeunload to prevent the dialog from showing up.
     if (window.wed_editor)
         window.onbeforeunload = function () {};
+
+    //
+    // We want each test to start with a blank slate. This is required
+    // because some DataTables use localStorage or sessionStorage to
+    // record data.
+    //
+    localStorage.clear()
+    sessionStorage.clear()
     """)
     driver.delete_all_cookies()
 

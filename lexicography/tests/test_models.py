@@ -3,9 +3,10 @@ import datetime
 
 from django.test import TransactionTestCase
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 
 
-from ..models import Entry, ChangeRecord, PublicationChange
+from ..models import Entry, ChangeRecord, PublicationChange, Chunk
 from .. import locking
 import lib.util as util
 
@@ -162,6 +163,12 @@ class EntryTestCase(TransactionTestCase):
         self.assertEqual(latest.csubtype, ChangeRecord.MANUAL)
         self.assertFalse(latest.published)
 
+from .test_xml import as_editable
+from .. import xml
+valid_editable = as_editable(os.path.join(xml.schemas_dirname, "prasada.xml"))
+xmltree = xml.XMLTree(valid_editable)
+schema_version = xmltree.extract_version()
+
 
 class ChangeRecordTestCase(TransactionTestCase):
     fixtures = ["initial_data.json"] + local_fixtures
@@ -169,14 +176,25 @@ class ChangeRecordTestCase(TransactionTestCase):
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
+        self.noperm = user_model.objects.get(username="noperm")
         self.entry = Entry.objects.get(id=1)
+        c = Chunk(data=valid_editable.decode('utf-8'),
+                  schema_version=schema_version)
+        c.save()
+        self.valid = Entry()
+        self.valid.update(self.foo,
+                          "q",
+                          c,
+                          xmltree.extract_version(),
+                          ChangeRecord.CREATE,
+                          ChangeRecord.MANUAL)
 
     def test_publish_new(self):
         """
         Publishing the latest change record updates the latest_published
         field.
         """
-        entry = self.entry
+        entry = self.valid
         old_latest = entry.latest
         entry.update(
             self.foo,
@@ -186,7 +204,7 @@ class ChangeRecordTestCase(TransactionTestCase):
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         latest = entry.latest
-        latest.publish(self.foo)
+        self.assertTrue(latest.publish(self.foo))
         self.assertEqual(Entry.objects.get(id=entry.id).latest_published,
                          latest)
 
@@ -195,7 +213,7 @@ class ChangeRecordTestCase(TransactionTestCase):
         Publishing an old change record updates the latest_published
         field.
         """
-        entry = self.entry
+        entry = self.valid
         old_latest = entry.latest
         entry.update(
             self.foo,
@@ -204,7 +222,7 @@ class ChangeRecordTestCase(TransactionTestCase):
             entry.headword,
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
-        old_latest.publish(self.foo)
+        self.assertTrue(old_latest.publish(self.foo))
         self.assertEqual(Entry.objects.get(id=entry.id).latest_published,
                          old_latest)
 
@@ -213,12 +231,12 @@ class ChangeRecordTestCase(TransactionTestCase):
         Unpublishing the only change that was published sets
         latest_published to None.
         """
-        entry = self.entry
+        entry = self.valid
         latest = entry.latest
-        latest.publish(self.foo)
+        self.assertTrue(latest.publish(self.foo))
         self.assertEqual(Entry.objects.get(id=entry.id).latest_published,
                          latest)
-        latest.unpublish(self.foo)
+        self.assertTrue(latest.unpublish(self.foo))
         self.assertIsNone(Entry.objects.get(id=entry.id).latest_published)
 
     def test_unpublish_newest(self):
@@ -226,7 +244,7 @@ class ChangeRecordTestCase(TransactionTestCase):
         Unpublishing the newest published version updates latest_published to
         the previous published version.
         """
-        entry = self.entry
+        entry = self.valid
         old_latest = entry.latest
         entry.update(
             self.foo,
@@ -236,11 +254,11 @@ class ChangeRecordTestCase(TransactionTestCase):
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         latest = entry.latest
-        old_latest.publish(self.foo)
-        latest.publish(self.foo)
+        self.assertTrue(old_latest.publish(self.foo))
+        self.assertTrue(latest.publish(self.foo))
         self.assertEqual(Entry.objects.get(id=entry.id).latest_published,
                          latest)
-        latest.unpublish(self.foo)
+        self.assertTrue(latest.unpublish(self.foo))
         self.assertEqual(Entry.objects.get(id=entry.id).latest_published,
                          old_latest)
 
@@ -248,14 +266,14 @@ class ChangeRecordTestCase(TransactionTestCase):
         """
         Publishing a change record creates a new PublicationChange.
         """
-        entry = self.entry
+        entry = self.valid
         latest = entry.latest
         old_count = PublicationChange.objects.filter(
             changerecord=latest).count()
         self.assertFalse(latest.published,
                          "The change record we are about to use must not be "
                          "published yet.")
-        latest.publish(self.foo)
+        self.assertTrue(latest.publish(self.foo))
         self.assertEqual(
             PublicationChange.objects.filter(changerecord=latest).count(),
             old_count + 1)
@@ -267,16 +285,38 @@ class ChangeRecordTestCase(TransactionTestCase):
         self.assertTrue(util.utcnow() -
                         latest_pc.datetime <= datetime.timedelta(seconds=5))
 
+    def test_republish_is_a_noop(self):
+        """
+        Republishing a change record (when it is already published) does
+        not create a new PublicationChange.
+        """
+        entry = self.valid
+        latest = entry.latest
+        old_count = PublicationChange.objects.filter(
+            changerecord=latest).count()
+        self.assertFalse(latest.published,
+                         "The change record we are about to use must not be "
+                         "published yet.")
+        self.assertTrue(latest.publish(self.foo))
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count + 1)
+        self.assertFalse(latest.publish(self.foo),
+                         "the return value should be False, indicating a noop")
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count + 1, "the count should not have changed")
+
     def test_unpublish_creates_publication_change(self):
         """
         Unpublishing a change record creates a new PublicationChange.
         """
-        entry = self.entry
+        entry = self.valid
         latest = entry.latest
-        latest.publish(self.foo)
+        self.assertTrue(latest.publish(self.foo))
         old_count = PublicationChange.objects.filter(
             changerecord=latest).count()
-        latest.unpublish(self.foo)
+        self.assertTrue(latest.unpublish(self.foo))
         self.assertEqual(
             PublicationChange.objects.filter(changerecord=latest).count(),
             old_count + 1)
@@ -287,6 +327,73 @@ class ChangeRecordTestCase(TransactionTestCase):
         # The timedelta is arbitrary.
         self.assertTrue(util.utcnow() -
                         latest_pc.datetime <= datetime.timedelta(seconds=5))
+
+    def test_unpublish_again_is_a_noop(self):
+        """
+        Unpublishing a change record again (when it is still unpublished)
+        does not creates a new PublicationChange.
+        """
+        entry = self.valid
+        latest = entry.latest
+        self.assertTrue(latest.publish(self.foo))
+        old_count = PublicationChange.objects.filter(
+            changerecord=latest).count()
+        self.assertTrue(latest.unpublish(self.foo))
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count + 1)
+        self.assertFalse(latest.unpublish(self.foo),
+                         "the return value should be False, indicating a noop")
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count + 1, "the count should not have changed")
+
+    def test_publish_invalid_is_a_noop(self):
+        """
+        Publishing a change record that encode an invalid state of an
+        article is a noop.
+        """
+        entry = self.entry
+        latest = entry.latest
+        old_count = PublicationChange.objects.filter(
+            changerecord=latest).count()
+        self.assertFalse(latest.publish(self.foo))
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count)
+
+    def test_publish_without_permission_raises_permission_denied(self):
+        """
+        Trying to publish without the necessary permissions results in a
+        ``PermissionDenied`` exception and does not create a new
+        ``PublicationChange``.
+        """
+        entry = self.valid
+        latest = entry.latest
+        old_count = PublicationChange.objects.filter(
+            changerecord=latest).count()
+        with self.assertRaises(PermissionDenied):
+            latest.publish(self.noperm)
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count)
+
+    def test_unpublishing_without_permission_raises_permission_denied(self):
+        """
+        Trying to unpublish without the necessary permissions results in a
+        ``PermissionDenied`` exception and does not create a new
+        ``PublicationChange``.
+        """
+        entry = self.valid
+        latest = entry.latest
+        latest.publish(self.foo)
+        old_count = PublicationChange.objects.filter(
+            changerecord=latest).count()
+        with self.assertRaises(PermissionDenied):
+            latest.unpublish(self.noperm)
+        self.assertEqual(
+            PublicationChange.objects.filter(changerecord=latest).count(),
+            old_count)
 
 
 class EntryLockTestCase(TransactionTestCase):
@@ -301,3 +408,32 @@ class EntryLockTestCase(TransactionTestCase):
         lock = locking.try_acquiring_lock(entry, self.foo)
         lock._force_expiry()
         self.assertTrue(lock.expirable)
+
+
+class ChunkTestCase(TransactionTestCase):
+    fixtures = ["initial_data.json"] + local_fixtures
+
+    def test_abnormal_is_invalid(self):
+        """
+        Checks that an abnormal chunk is invalid, and that its validity is
+        saved after being computed.
+        """
+        c = Chunk(data="", is_normal=False)
+        c.save()
+        self.assertIsNone(c._valid)
+        self.assertFalse(c.valid)
+        self.assertFalse(Chunk.objects.get(pk=c.pk)._valid,
+                         "_valid was saved.")
+
+    def test_valid(self):
+        """
+        Checks that an normal chunk can be valid, and that its validity is
+        saved after being computed.
+        """
+        c = Chunk(data=valid_editable.decode('utf-8'),
+                  schema_version=schema_version)
+        c.save()
+        self.assertIsNone(c._valid)
+        self.assertTrue(c.valid)
+        self.assertTrue(Chunk.objects.get(pk=c.pk)._valid,
+                        "_valid was saved.")

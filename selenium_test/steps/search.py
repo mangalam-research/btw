@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from behave import step_matcher  # pylint: disable=E0611
 
+from selenic.util import Result, Condition
+
 step_matcher('re')
 
 
@@ -39,10 +41,18 @@ test();
 def step_impl(context, query):
     util = context.util
     driver = context.driver
-    controls = util.find_elements((By.CSS_SELECTOR,
-                                   "#search-table_filter input"))
+
+    def cond(driver):
+        controls = driver.find_elements_by_css_selector(
+            "#search-table_filter input")
+        return Result(len(controls) == 2, controls)
+
+    controls = util.wait(cond).payload
+
     controls[1].click()
-    controls[0].send_keys(query[:-1])
+    driver.execute_script("""
+    arguments[0].value = arguments[1];
+    """, controls[0], query[:-1])
     driver.execute_script(_REDRAW_SETUP_SNIPPET)
     controls[0].send_keys(query[-1])
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
@@ -109,7 +119,8 @@ def step_impl(context, kind):
         var rows = table.querySelectorAll("tbody>tr");
         for (var i = 0, row; !finished() && (row = rows[i]); ++i) {
             var cells = row.querySelectorAll("td");
-            switch (cells[1].textContent) {
+            var status = cells[1].textContent.split(/\s+/, 1)[0];
+            switch (status) {
             case "No":
                 unpublished = true;
                 break;
@@ -117,7 +128,7 @@ def step_impl(context, kind):
                 published = true;
                 break;
             default:
-                throw new Error("unknown value: " + cells[1].textContent);
+                throw new Error("unknown value: " + status);
             }
             testfn();
         }
@@ -175,3 +186,57 @@ def step_impl(context):
     control = util.find_element((By.CLASS_NAME, "btw-search-all-history"))
     control.click()
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
+
+
+@then('^there is (?P<existence>no|a) "(?P<name>.*?)" column visible$')
+def step_impl(context, existence, name):
+    util = context.util
+
+    def check(driver):
+        # We must wait until the wrapper is present because the table
+        # won't be ready for examination until then.
+        ret = driver.execute_script("""
+        var name = arguments[0];
+        var check_for_existence = arguments[1];
+        var ths = document.querySelectorAll(
+            "#search-table_wrapper #search-table thead th");
+        if (ths.length == 0)
+            return [false, "no headings"];
+
+        if (check_for_existence) {
+            for (var i = 0, th; (th = ths[i]); ++i) {
+                if (th.textContent.trim() === name)
+                    return [true, undefined];
+            }
+            return [false, name + " is not present"];
+        }
+
+        for (var i = 0, th; (th = ths[i]); ++i) {
+            if (th.textContent.trim() === name)
+                return [false, name + " is present"];
+        }
+
+        return [true, undefined];
+        """, name, existence == "a")
+
+        return Result(ret[0], ret[1])
+
+    result = Condition(util, check).wait()
+    assert_true(result, result.payload)
+
+
+@then('^the search box is empty and the headwords only box is unchecked$')
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    def cond(driver):
+        controls = driver.find_elements_by_css_selector(
+            "#search-table_filter input")
+        return Result(len(controls) == 2, controls)
+
+    controls = util.wait(cond).payload
+
+    assert_true(driver.execute_script("""
+    return arguments[0].value.length === 0 && !arguments[1].checked;
+     """, controls[0], controls[1]))

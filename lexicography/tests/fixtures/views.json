@@ -5,7 +5,7 @@
   "fields": {
     "deleted": false,
     "headword": "abcd",
-    "latest_published": null,
+    "latest_published": 1,
     "latest": 1
   }
 },
@@ -220,7 +220,7 @@
     "user": [
       "admin"
     ],
-    "published": false,
+    "published": true,
     "csubtype": "M",
     "entry": 1,
     "headword": "abcd"
@@ -839,6 +839,18 @@
   "model": "lexicography.publicationchange",
   "fields": {
     "changerecord": 19,
+    "user": [
+      "foo"
+    ],
+    "ctype": "P",
+    "datetime": "2014-09-30T19:29:35.633Z"
+  }
+},
+{
+  "pk": 5,
+  "model": "lexicography.publicationchange",
+  "fields": {
+    "changerecord": 1,
     "user": [
       "foo"
     ],

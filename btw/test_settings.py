@@ -10,8 +10,8 @@ CSRF_COOKIE_SECURE = False
 
 __SILENT = True
 
-LOGGING['loggers'] = {}
 if __SILENT:
+    LOGGING['loggers'] = {}
     LOGGING['disable_existing_loggers'] = True
 else:
     LOGGING['loggers'][''] = {

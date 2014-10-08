@@ -37,7 +37,7 @@ def parse_search_results(data):
               ``hits`` list.
     """
     payload = json.loads(data)
-    rows = payload["aaData"]
+    rows = payload["data"]
     parser = lxml.etree.HTMLParser()
 
     ret = {}
@@ -53,7 +53,13 @@ def parse_search_results(data):
             view_link = els[1]
             edit_link = els[0]
         else:
-            raise ValueError("unexpected number of links: " + len(els))
+            raise ValueError("unexpected number of links in first cell: "
+                             + str(len(els)))
+
+        cell = row[1]
+        tree = lxml.etree.parse(StringIO(cell), parser)
+        els = tree.xpath("//a")
+        publish_link = els[0] if len(els) == 1 else None
 
         headword = view_link.text
         hit = {
@@ -61,6 +67,7 @@ def parse_search_results(data):
             "edit_url": edit_link.get("href") if edit_link is not None
             else None,
             "view_url": view_link.get("href"),
+            "publish_url": publish_link and publish_link.get("href"),
             "deleted": row[2],
             "datetime": row[3]
         }

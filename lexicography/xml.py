@@ -15,9 +15,17 @@ schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
 
+def schema_for_version(version):
+    if version == "0.9":
+        return os.path.join(schemas_dirname, "out/btw-storage.rng")
+
+    raise ValueError("unknown version: " + version)
+
 # 20140912: No longer needed as part of normal operations but we are
 # keeping it here in case some old data needs conversion. It should
 # probably be removed after a few versions of BTW have been released.
+
+
 def editable_to_storage(data):
     return util.run_saxon(os.path.join(xsl_dirname, "out/html-to-xml.xsl"),
                           data)

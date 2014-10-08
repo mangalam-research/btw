@@ -36,7 +36,8 @@ from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
 from .locking import release_entry_lock, entry_lock_required, \
     try_acquiring_lock
-from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
+from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml, \
+    schema_for_version
 from .forms import SaveForm
 from bibliography.views import targets_to_dicts
 from . import usermod
@@ -62,12 +63,32 @@ class SearchTable(BaseDatatableView):
 
     def render_column(self, row, column):
         if column == "published":
-            return "Yes" if row.published else "No"
-        elif column == "datetime":
+            if row.published:
+                if not usermod.can_author(self.request.user):
+                    return "Yes"
+
+                return "Yes " + mark_safe(
+                    ('<a class="btw-unpublish-btn btn btn-xs btn-default" '
+                     'href="%s">Unpublish</a> ') %
+                    reverse("lexicography_changerecord_unpublish",
+                            args=(row.id, )))
+
+            if not usermod.can_author(self.request.user):
+                return "No"
+
+            return "No " + mark_safe(
+                ('<a class="btw-publish-btn btn btn-xs btn-default" '
+                 'href="%s">Publish</a> ') %
+                reverse("lexicography_changerecord_publish",
+                        args=(row.id, )))
+
+        if column == "datetime":
             return row.datetime
-        elif column == "user":
+
+        if column == "user":
             return row.user.username
-        elif column == "entry__deleted":
+
+        if column == "entry__deleted":
             return "Yes" if row.entry.deleted else "No"
 
         ret = super(SearchTable, self).render_column(row, column)
@@ -109,48 +130,48 @@ class SearchTable(BaseDatatableView):
         return qs
 
     def filter_queryset(self, qs):
-        sSearch = self.request.GET.get('sSearch', None)
-        bHeadwordsOnly = self.request.GET.get('bHeadwordsOnly', "false") == \
+        search_value = self.request.GET.get('search[value]', None)
+        headwords_only = self.request.GET.get('headwords_only', "false") == \
             "true"
 
         if usermod.can_author(self.request.user):
-            sPublicationStatus = self.request.GET.get('sPublicationStatus',
+            publication_status = self.request.GET.get('publication_status',
                                                       "published")
-            bSearchAll = self.request.GET.get('bSearchAll', "false") == "true"
-            if not bSearchAll:
+            search_all = self.request.GET.get('search_all', "false") == "true"
+            if not search_all:
                 # Remove deleted entries from the set.
                 active = qs.filter(entry__in=Entry.objects.active_entries())
-                if sPublicationStatus == "published":
+                if publication_status == "published":
                     active = active.filter(entry__latest_published=F('pk'))
-                elif sPublicationStatus == "unpublished":
+                elif publication_status == "unpublished":
                     active = active.filter(entry__latest=F('pk')) \
                                    .exclude(entry__latest_published=F('pk'))
-                elif sPublicationStatus == "both":
+                elif publication_status == "both":
                     active = active.filter(entry__latest=F('pk'))
                 else:
-                    raise ValueError("unknown value for sPublicationStatus: " +
-                                     sPublicationStatus)
+                    raise ValueError("unknown value for publication_status: " +
+                                     publication_status)
             else:
-                if sPublicationStatus == "published":
+                if publication_status == "published":
                     active = qs.filter(published=True)
-                elif sPublicationStatus == "unpublished":
+                elif publication_status == "unpublished":
                     active = qs.filter(published=False)
-                elif sPublicationStatus == "both":
+                elif publication_status == "both":
                     active = qs
                 else:
-                    raise ValueError("unknown value for sPublicationStatus: " +
-                                     sPublicationStatus)
+                    raise ValueError("unknown value for publication_status: " +
+                                     publication_status)
         else:
             # If the user cannot author, then our queryset is already
             # reduced to what the user can see: the latest version of
             # published articles.
             active = qs
 
-        if sSearch:
-            qs = active.filter(util.get_query(sSearch, ['headword']))
-            if not bHeadwordsOnly:
+        if search_value:
+            qs = active.filter(util.get_query(search_value, ['headword']))
+            if not headwords_only:
                 chunks = Chunk.objects.filter(
-                    util.get_query(sSearch, ['data']))
+                    util.get_query(search_value, ['data']))
                 qs |= active.filter(c_hash=chunks)
         else:
             qs = active
@@ -186,6 +207,29 @@ def changerecord_details(request, changerecord_id):
         raise PermissionDenied
 
     return _show_changerecord(request, cr)
+
+
+@require_POST
+def changerecord_publish(request, changerecord_id):
+    cr = ChangeRecord.objects.get(id=changerecord_id)
+
+    if not cr.publish(request.user):
+        if not cr.can_be_published():
+            return HttpResponse("This change record cannot be published.",
+                                status=409)
+        return HttpResponse("This change record was already published.")
+
+    return HttpResponse("This change record was published.")
+
+
+@require_POST
+def changerecord_unpublish(request, changerecord_id):
+    cr = ChangeRecord.objects.get(id=changerecord_id)
+
+    if not cr.unpublish(request.user):
+        return HttpResponse("This change record was already unpublished.")
+
+    return HttpResponse("This change record was unpublished.")
 
 
 def _show_changerecord(request, cr):
@@ -293,7 +337,7 @@ def handle_update(request, handle_or_entry_id):
 # not something which someone installing BTW should have the
 # opportunity to change. The Django **code** depends on wed being at a
 # certain version. Changing this is a recipe for disaster.
-REQUIRED_WED_VERSION = "0.17.1"
+REQUIRED_WED_VERSION = "0.18.1"
 
 
 def version_check(version):
@@ -400,8 +444,9 @@ def _save_command(request, entry_id, handle, command, messages):
 
     unclean = xmltree.is_data_unclean()
     if unclean:
-        chunk = Chunk(data=data, is_normal=False,
-                      # Unclean data, no version...
+        chunk = Chunk(data=data,
+                      is_normal=False,
+                      # Unclean data, no version ...
                       schema_version="")
         chunk.save()
         logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
@@ -426,7 +471,8 @@ def _save_command(request, entry_id, handle, command, messages):
             authority.save()
         data = set_authority(data, "/authority/" + str(authority.id))
 
-    chunk = Chunk(data=data, schema_version=xmltree.extract_version())
+    schema_version = xmltree.extract_version()
+    chunk = Chunk(data=data, schema_version=schema_version)
     chunk.save()
 
     if entry_id is not None:
@@ -567,10 +613,6 @@ def collect(request):
     resp = "<br>".join(str(c) for c in chunks)
     return HttpResponse(resp + "<br>collected.")
 
-#  LocalWords:  html btwtmp utf saxon xsl btw tei teitohtml xml xhtml
-#  LocalWords:  profiledir lxml xmlns
-
-
 # Yes, we use GET instead of POST for this view. Yes, we are breaking
 # the rules. This is used only by the test suite.
 @login_required
@@ -618,3 +660,25 @@ def handle_background_mod(request, entry_id, handle):
     release_entry_lock(entry, request.user)
 
     return HttpResponse()
+
+
+# Yes, we use GET instead of POST for this view. Yes, we are breaking
+# the rules. This is used only by the test suite.
+@login_required
+@require_GET
+def entry_testing_mark_valid(request, headword):
+    """
+    This is a view that exists only in testing. It marks the latest
+    version of an entry as valid, unconditionally.
+    """
+    if not settings.BTW_TESTING:
+        raise Exception("BTW_TESTING not on!")
+
+    entry = Entry.objects.get(headword=headword)
+    entry.latest.c_hash._valid = True
+    entry.latest.c_hash.save()
+
+    return HttpResponse()
+
+#  LocalWords:  html btwtmp utf saxon xsl btw tei teitohtml xml xhtml
+#  LocalWords:  profiledir lxml xmlns

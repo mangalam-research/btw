@@ -246,11 +246,17 @@ class ChangeRecordAdmin(admin.ModelAdmin, ChangeRecordMixin):
               '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
 
     list_display = ('entry', 'headword', 'user', 'datetime', 'session',
-                    'ctype', 'csubtype', 'revert', 'chunk_link')
+                    'ctype', 'csubtype', 'published', 'revert', 'chunk_link')
 
-    list_filter = ('entry', 'headword', 'user', 'session', 'ctype', 'csubtype')
+    list_filter = ('entry', 'headword', 'published',
+                   'user', 'session', 'ctype', 'csubtype')
 
     chunk_link = make_link_method('c_hash', "Chunk")
+
+
+class ChunkAdmin(admin.ModelAdmin):
+    list_display = ('c_hash', 'is_normal', 'schema_version', '_valid')
+    list_filter = ('is_normal', 'schema_version', '_valid')
 
 
 class EntryLockAdmin(admin.ModelAdmin):
@@ -262,7 +268,7 @@ class HandleAdmin(admin.ModelAdmin):
     list_display = ('handle', 'entry', 'session')
 
 admin.site.register(Entry, EntryAdmin)
-admin.site.register(Chunk)
+admin.site.register(Chunk, ChunkAdmin)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
 admin.site.register(PublicationChange)
 admin.site.register(DeletionChange)
