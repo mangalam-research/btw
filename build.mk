@@ -109,13 +109,13 @@ $(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage.js
+$(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage-latest.js
 	cp $< $@
 
-$(BUILD_DEST)/lib/btw/btw-storage-metadata.json: utils/schemas/out/btw-storage-metadata.json
+$(BUILD_DEST)/lib/btw/btw-storage-metadata.json: utils/schemas/out/btw-storage-metadata-latest.json
 	cp $< $@
 
-$(BUILD_DEST)/lib/btw/btw-storage-doc: utils/schemas/out/btw-storage-doc
+$(BUILD_DEST)/lib/btw/btw-storage-doc: utils/schemas/out/btw-storage-doc-latest
 	rm -rf $@
 	cp -rp $< $@
 

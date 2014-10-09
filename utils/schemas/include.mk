@@ -1,50 +1,83 @@
-define UTIL_SCHEMAS_TEMPLATE
-$(1)_include_mk_DIR=$(2)
-$(1)_outdir=$$($(1)_include_mk_DIR)/out
+#
+# Identifier for this include fragment. We use his to create local
+# variables of sorts by naming out local variables $(ME)_...
+#
+ME:=UTIL_SCHEMAS
+
+$(ME)_include_mk_DIR=$(patsubst %/,%,$(or $(dir $(lastword $(MAKEFILE_LIST))),.))
+$(ME)_outdir:=$($(ME)_include_mk_DIR)/out
 
 # Top of tei hierarchy
-$(1)_TEI?=$(TEI)
-$(1)_CONVERT?=$(WED_PATH)/node_modules/.bin/salve-convert
-$(1)_ODD2HTML?=$$($(1)_TEI)/odds/odd2html.xsl
-$(1)_SAXON?=saxon
-$(1)_ROMA?=roma
+$(ME)_TEI?=$(TEI)
+$(ME)_CONVERT?=$(WED_PATH)/node_modules/.bin/salve-convert
+$(ME)_ODD2HTML?=$($(ME)_TEI)/odds/odd2html.xsl
+$(ME)_SAXON?=saxon
+$(ME)_ROMA?=roma
+
+# ls -rv sorts in reverse order by version number. (Yep, ls can do this!)
+$(ME)_VERSIONS:=$(shell ls -rv $($(ME)_include_mk_DIR)/btw-storage-*.xml)
+
+# We want to produce RNG targets for all version because we at least
+# want to be able to **display** old version. We need RNG for this.
+$(ME)_RNG_TARGETS:=$($(ME)_VERSIONS:$($(ME)_include_mk_DIR)/%.xml=$($(ME)_outdir)/%/btw-storage.rng)
+$(ME)_LATEST_RNG_TARGET:=$(firstword $($(ME)_RNG_TARGETS))
+
+# We need only the latest for these because we only edit the latest version.
+$(ME)_LATEST_METADATA_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-metadata.json)
+$(ME)_LATEST_DOC_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-doc)
+$(ME)_LATEST_JS_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=.js)
+
+.PHONY: btw-schema-targets
+btw-schema-targets: $($(ME)_RNG_TARGETS) $($(ME)_LATEST_DOC_TARGET) $($(ME)_LATEST_METADATA_TARGET) $($(ME)_LATEST_JS_TARGET)
+
+$($(ME)_outdir)/btw-storage-latest.rng: $($(ME)_LATEST_RNG_TARGET)
+$($(ME)_outdir)/btw-storage-metadata-latest.json: $($(ME)_LATEST_METADATA_TARGET)
+$($(ME)_outdir)/btw-storage-doc-latest: $($(ME)_LATEST_DOC_TARGET)
+$($(ME)_outdir)/btw-storage-latest.js: $($(ME)_LATEST_JS_TARGET)
+
+
+$($(ME)_outdir)/btw-storage-latest.rng $($(ME)_outdir)/btw-storage-metadata-latest.json $($(ME)_outdir)/btw-storage-doc-latest $($(ME)_outdir)/btw-storage-latest.js:
+	cp -rp $< $@
+
+$($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)/%.xml
+	$($(ME)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --dochtml --noxsd --nodtd \
+		$< $(dir $@)
 
 #
 # This funky path:
 #
-# $$($(1)_outdir)/utils/schemas/btw-storage.xml.compiled
+# $($(ME)_outdir)/utils/schemas/btw-storage.xml.compiled
 #
 # is due to a bug in roma. (https://github.com/TEIC/Roma/pull/2)
 #
-$$($(1)_outdir)/btw-storage.rng: $$($(1)_include_mk_DIR)/btw-storage.xml
-	$$($(1)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --dochtml --noxsd --nodtd \
-		$$< $$($(1)_outdir)
-
-$$($(1)_outdir)/utils/schemas/btw-storage.xml.compiled: $$($(1)_include_mk_DIR)/btw-storage.xml
+.SECONDEXPANSION:
+$(ME)_MAKE_COMPILED_NAME=$($(1)_outdir)/$(2)/utils/schemas/$(2).xml.compiled
+define $(ME)_MAKE_COMPILED_RULE
+$$(call $(1)_MAKE_COMPILED_NAME,$(1),$(2)): $$($(1)_include_mk_DIR)/$(2).xml
 	$$($(1)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --compile \
-		$$< $$($(1)_outdir)
+		$$< $$($(1)_outdir)/$(2)
+endef # MAKE_COMPILED_RULE
 
-$$($(1)_outdir)/btw-storage.json: $$($(1)_outdir)/utils/schemas/btw-storage.xml.compiled
-	$$($(1)_SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$$< -o:$$@ callback=''
+$(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(ME),$(t:$($(ME)_include_mk_DIR)/%.xml=%))))
 
-$$($(1)_outdir)/btw-storage-metadata.json: $$($(1)_outdir)/btw-storage.json $$($(1)_outdir)/btw-storage-doc
+$($(ME)_LATEST_RNG_TARGET:.rng=.json): $($(ME)_outdir)/%/btw-storage.json: $$(call $(ME)_MAKE_COMPILED_NAME,$(ME),%)
+	$($(ME)_SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$< -o:$@ callback=''
+
+$($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $($(ME)_outdir)/%/btw-storage.json $($(ME)_outdir)/%/btw-storage-doc
 	$(WED_PATH)/bin/tei-to-generic-meta-json \
 		--dochtml "../../../btw/btw-storage-doc/" \
 		--ns tei=http://www.tei-c.org/ns/1.0 \
 	        --ns btw=http://mangalamresearch.org/ns/btw-storage \
-		$$< $$@
+		$< $@
 
 
-$$($(1)_outdir)/btw-storage.js: $$($(1)_outdir)/btw-storage.rng
-	$$($(1)_CONVERT) $$($(1)_RNG_TO_JS) $$< $$@
+$($(ME)_outdir)/%/btw-storage.js: $($(ME)_outdir)/%/btw-storage.rng
+	$($(ME)_CONVERT) $($(ME)_RNG_TO_JS) $< $@
 
-$$($(1)_outdir)/btw-storage-doc: $$($(1)_outdir)/utils/schemas/btw-storage.xml.compiled
-	-rm -rf $$@
-	-mkdir $$@
-	$$($(1)_SAXON) -s:$$< -xsl:$$($(1)_ODD2HTML) STDOUT=false splitLevel=0 outputDir=$$@
+$($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,$(ME),%)
+	-rm -rf $@
+	-mkdir $@
+	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 outputDir=$@
 
 clean::
-	rm -rf $$($(1)_outdir)
-endef # UTIL_SCHEMAS_TEMPLATE
-
-$(eval $(call UTIL_SCHEMAS_TEMPLATE,UTIL_SCHEMAS_TEMPLATE,$(patsubst %/,%,$(or $(dir $(lastword $(MAKEFILE_LIST))),.))))
+	rm -rf $($(ME)_outdir)
