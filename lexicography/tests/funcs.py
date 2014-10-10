@@ -67,7 +67,8 @@ def parse_search_results(data):
             "edit_url": edit_link.get("href") if edit_link is not None
             else None,
             "view_url": view_link.get("href"),
-            "publish_url": publish_link and publish_link.get("href"),
+            "publish_url":
+            publish_link.get("href") if publish_link is not None else None,
             "deleted": row[2],
             "datetime": row[3]
         }

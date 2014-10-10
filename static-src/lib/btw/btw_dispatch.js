@@ -123,9 +123,9 @@ DispatchMixin.prototype.explanationDecorator = function (root, el) {
             child = next;
         }
 
-        var cit = el.nextElementSibling;
+        var cit = domutil.siblingByClass(el, "btw:cit");
         // If the next btw:cit element contains Pāli text.
-        if (cit.classList.contains("btw:cit") &&
+        if (cit &&
             cit.querySelector("*[" + util.encodeAttrName("xml:lang") +
                               "='pi-Latn']")) {
             div = el.ownerDocument.createElement("div");

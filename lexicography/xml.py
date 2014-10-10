@@ -16,10 +16,13 @@ xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
 
 def schema_for_version(version):
-    if version == "0.9":
-        return os.path.join(schemas_dirname, "out/btw-storage.rng")
+    path = os.path.join(schemas_dirname,
+                        "out/btw-storage-%s/btw-storage.rng" % version)
 
-    raise ValueError("unknown version: " + version)
+    if not os.path.exists(path):
+        raise ValueError("unknown version: " + version)
+
+    return path
 
 # 20140912: No longer needed as part of normal operations but we are
 # keeping it here in case some old data needs conversion. It should

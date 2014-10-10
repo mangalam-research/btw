@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.9" authority="/">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.10" authority="/">
   <btw:lemma><btw:todo>Fill lemma.</btw:todo></btw:lemma>
   <btw:overview>
     <btw:definition>
@@ -16,9 +16,6 @@
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
-      <btw:semantic-fields>
-        <btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf>
-      </btw:semantic-fields>
       <btw:contrastive-section>
         <btw:antonyms>
           <btw:none/>

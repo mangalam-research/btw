@@ -99,8 +99,8 @@ function BTWDecorator(mode, meta) {
         {
             parent: domutil.toGUISelector("btw:sense"),
             children: ["btw:subsense", "btw:explanation",
-                       "btw:semantic-fields", "btw:citations",
-                       "btw:other-citations", "btw:contrastive-section"]
+                       "btw:citations", "btw:other-citations",
+                       "btw:contrastive-section"]
         },
         {
             parent: domutil.toGUISelector("btw:citations"),
@@ -111,6 +111,10 @@ function BTWDecorator(mode, meta) {
                 "btw:subsense, btw:antonym, btw:cognate, "+
                     "btw:conceptual-proximate"),
             children: ["btw:other-citations"]
+        },
+        {
+            parent: domutil.toGUISelector("btw:example, btw:example-explained"),
+            children: ["btw:semantic-fields"]
         }
     ];
 
