@@ -148,6 +148,9 @@ def before_scenario(context, scenario):
     # Each scenario means logging in again.
     context.is_logged_in = False
 
+    # The valid document is not initially present.
+    context.valid_document_created = False
+
 
 def after_scenario(context, _scenario):
     driver = context.driver

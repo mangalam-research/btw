@@ -22,6 +22,7 @@ var btw_meta = require("./btw_meta");
 var domutil = require("wed/domutil");
 var btw_tr = require("./btw_tr");
 var btw_actions = require("./btw_actions");
+var Validator = require("./btw_validator").Validator;
 require("jquery.cookie");
 
 /**
@@ -577,6 +578,9 @@ BTWMode.prototype.getStylesheets = function () {
     return [require.toUrl("./btw-mode.css")];
 };
 
+BTWMode.prototype.getValidator = function () {
+    return new Validator(this._editor.gui_root, this._editor.data_root);
+};
 exports.Mode = BTWMode;
 
 });

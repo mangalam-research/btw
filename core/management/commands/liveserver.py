@@ -12,6 +12,7 @@ from south.management.commands import patch_for_test_db_setup
 import mock
 
 from bibliography.tests import mock_zotero
+from lib import util
 
 
 mock_records = mock_zotero.Records([
@@ -103,6 +104,33 @@ class SeleniumTest(LiveServerTestCase):
                 s.save()
                 with open(self.__control_write, 'w') as out:
                     out.write(s.session_key + "\n")
+            elif command == "create valid article\n":
+                from django.core.urlresolvers import reverse
+                add_raw_url = reverse("admin:lexicography_entry_rawnew")
+                data = open("utils/schemas/prasada.xml").read().decode("utf-8")
+                # Clean it for raw edit.
+                data = util.run_xsltproc("utils/xsl/strip.xsl",
+                                         data)
+
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                admin = User.objects.get(username='admin')
+                admin.set_password('foo')
+                admin.save()
+
+                now = util.utcnow()
+
+                from django.test.client import Client
+                client = Client()
+                assert client.login(username='admin', password='foo')
+                response = client.post(add_raw_url,
+                                       {"data": data})
+                assert response.status_code == 302
+                from lexicography.models import Entry
+                entry = Entry.objects.get(latest__datetime__gte=now)
+                assert entry.latest.publish(admin)
+                with open(self.__control_write, 'w') as out:
+                    out.write(entry.headword.encode('utf-8') + "\n")
             else:
                 print "Unknown command: ", command
 

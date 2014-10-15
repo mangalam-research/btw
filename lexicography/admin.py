@@ -136,7 +136,7 @@ class EntryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 chunk = form.save(commit=False)
 
-                xmltree = XMLTree(chunk.data)
+                xmltree = XMLTree(chunk.data.encode('utf-8'))
 
                 entry = Entry()
                 try_updating_entry(request, entry, chunk, xmltree,

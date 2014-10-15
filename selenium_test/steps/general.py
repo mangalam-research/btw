@@ -240,7 +240,7 @@ WHAT_TO_TITLE = {
 
 href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
-
+@Given(ur"^(?P<what>a valid document)$")
 @Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
     feature = context.feature
@@ -254,6 +254,7 @@ def step_impl(context, what):
     # to edit the document.
     name = os.path.splitext(os.path.basename(feature.filename))[0]
     edit = name not in ("view", "view_structure")
+
     if edit:
         if what in ("a single sense",
                     "a single sense that does not have a subsense"):
@@ -274,7 +275,18 @@ def step_impl(context, what):
         Given the user has logged in
         """)
 
-    title = WHAT_TO_TITLE[what]
+    title = None
+    if what == "a valid document" and not context.valid_document_created:
+        assert edit, "must be in edit mode"
+        with open(context.server_write_fifo, 'w') as fifo:
+            fifo.write("create valid article\n")
+        with open(context.server_read_fifo, 'r') as fifo:
+            title = fifo.read().strip().decode('utf-8')
+        context.valid_document_created = True
+
+    if title is None:
+        title = WHAT_TO_TITLE[what]
+
     # We simulate an AJAX query on the search table.
     while True:
         r = requests.get(context.selenic.SERVER +
