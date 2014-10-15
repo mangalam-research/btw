@@ -16,11 +16,15 @@ $(ME)_ROMA?=roma
 
 # ls -rv sorts in reverse order by version number. (Yep, ls can do this!)
 $(ME)_VERSIONS:=$(shell ls -rv $($(ME)_include_mk_DIR)/btw-storage-*.xml)
+$(ME)_SCH_VERSIONS:=$(shell ls -rv $($(ME)_include_mk_DIR)/btw-storage-*.sch)
 
 # We want to produce RNG targets for all version because we at least
 # want to be able to **display** old version. We need RNG for this.
 $(ME)_RNG_TARGETS:=$($(ME)_VERSIONS:$($(ME)_include_mk_DIR)/%.xml=$($(ME)_outdir)/%/btw-storage.rng)
 $(ME)_LATEST_RNG_TARGET:=$(firstword $($(ME)_RNG_TARGETS))
+
+$(ME)_XSL_TARGETS:=$($(ME)_SCH_VERSIONS:$($(ME)_include_mk_DIR)/%.sch=$($(ME)_outdir)/%.xsl)
+$(ME)_LATEST_XSL_TARGET:=$(firstword $($(ME)_XSL_TARGETS))
 
 # We need only the latest for these because we only edit the latest version.
 $(ME)_LATEST_METADATA_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-metadata.json)
@@ -28,7 +32,7 @@ $(ME)_LATEST_DOC_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-doc)
 $(ME)_LATEST_JS_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=.js)
 
 .PHONY: btw-schema-targets
-btw-schema-targets: $($(ME)_RNG_TARGETS) $($(ME)_LATEST_DOC_TARGET) $($(ME)_LATEST_METADATA_TARGET) $($(ME)_LATEST_JS_TARGET)
+btw-schema-targets: $($(ME)_RNG_TARGETS) $($(ME)_LATEST_DOC_TARGET) $($(ME)_LATEST_METADATA_TARGET) $($(ME)_LATEST_JS_TARGET) $($(ME)_XSL_TARGETS)
 
 $($(ME)_outdir)/btw-storage-latest.rng: $($(ME)_LATEST_RNG_TARGET)
 $($(ME)_outdir)/btw-storage-metadata-latest.json: $($(ME)_LATEST_METADATA_TARGET)
@@ -42,6 +46,9 @@ $($(ME)_outdir)/btw-storage-latest.rng $($(ME)_outdir)/btw-storage-metadata-late
 $($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)/%.xml
 	$($(ME)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --dochtml --noxsd --nodtd \
 		$< $(dir $@)
+
+$($(ME)_XSL_TARGETS): $($(ME)_outdir)/%.xsl: $($(ME)_include_mk_DIR)/%.sch
+	saxon -s:$< -o:$@ -xsl:$(SCHEMATRON_TO_XSL) allow-foreign=true generate-fired-rule=false
 
 #
 # This funky path:

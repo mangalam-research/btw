@@ -12,7 +12,7 @@ Then there is a message indicating failure to publish
 # of an article in the database is expensive. We use a step that marks
 # the article as valid, this lie will be undone for the next scenario
 # so there's no leak here.
-Scenario: An author publishes an valid version of an article
+Scenario: An author publishes a valid version of an article
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
 When the article with headword "foo" can be published

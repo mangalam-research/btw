@@ -4,6 +4,7 @@ import datetime
 import tempfile
 import os
 import subprocess
+import lxml.etree
 
 
 import semver
@@ -67,6 +68,15 @@ def validate(rng_path, input_data, silent=True):
         return subprocess.call(["jing", rng_path, tmpinput_path],
                                stdout=out, stderr=out) == 0
 
+
+def schematron(xsl, input_data):
+    output = run_saxon(xsl, input_data)
+    tree = lxml.etree.fromstring(output.encode("utf-8"))
+    found = tree.xpath("//svrl:failed-assert",
+                       namespaces={
+                           'svrl': 'http://purl.oclc.org/dsdl/svrl'
+                       })
+    return len(found) == 0
 
 def utcnow():
     """

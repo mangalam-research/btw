@@ -21,6 +21,11 @@ BEHAVE_PARAMS?=
 # Debian-type systems.
 TEI?=/usr/share/xml/tei/stylesheet
 
+# The schematron stylesheet. We rely on the TEI one since we already
+# depend on TEI being present.
+SCHEMATRON_TO_XSL?=/usr/share/xml/tei/odd/Utilities/iso_svrl_for_xslt2.xsl
+
+
 #
 # Whether or not to include in the final build the optimized version
 # of wed.
@@ -92,7 +97,7 @@ FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST
 
 .DELETE_ON_ERROR:
 
-TARGETS:= javascript
+TARGETS:= javascript btw-schema-targets
 .PHONY: all
 all: _all
 	./manage.py collectstatic --noinput

@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from django.utils import unittest
+import unittest
 import os
 import lib.util as util
 from .. import xml

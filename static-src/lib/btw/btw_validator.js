@@ -24,7 +24,13 @@ oop.inherit(Validator, ModeValidator);
 Validator.prototype.validateDocument = function () {
     //
     // ATTENTION: The logic here must be duplicated server-side to
-    // check whether an article is deemed valid. We've thought about having some sort of validation done in Node.js in the server which could perhaps resuse this code but the problem is that
+    // check whether an article is deemed valid. We've thought about
+    // having some sort of validation done in Node.js in the server
+    // which could perhaps resuse this code but the problem is that
+    // there is no lightweight solution yet.
+    //
+    // Changes here must be mirrored in the btw-storage-[version].sch
+    // file.
     //
 
     var ret = [];

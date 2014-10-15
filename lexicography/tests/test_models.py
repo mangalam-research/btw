@@ -4,7 +4,7 @@ import datetime
 from django.test import TransactionTestCase
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
-
+import lxml.etree
 
 from ..models import Entry, ChangeRecord, PublicationChange, Chunk
 from .. import locking
@@ -437,3 +437,68 @@ class ChunkTestCase(TransactionTestCase):
         self.assertTrue(c.valid)
         self.assertTrue(Chunk.objects.get(pk=c.pk)._valid,
                         "_valid was saved.")
+
+    def test_valid(self):
+        """
+        Checks that an normal chunk can be valid, and that its validity is
+        saved after being computed.
+        """
+        c = Chunk(data=valid_editable.decode('utf-8'),
+                  schema_version=schema_version)
+        c.save()
+        self.assertIsNone(c._valid)
+        self.assertTrue(c.valid)
+        self.assertTrue(Chunk.objects.get(pk=c.pk)._valid,
+                        "_valid was saved.")
+
+    def test_invalid(self):
+        """
+        Checks that data that is invalid is recognized as invalid, and the
+        the validity is saved after being computed.
+        """
+
+        # This data is just flat out invalid...
+        data = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" version="0.10"\
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+        """
+
+        c = Chunk(data=data,
+                  schema_version=schema_version)
+        c.save()
+        self.assertIsNone(c._valid)
+        self.assertFalse(c.valid)
+        self.assertFalse(Chunk.objects.get(pk=c.pk)._valid,
+                         "_valid was saved.")
+
+    def test_invalid_schematron(self):
+        """
+        Checks that data that is invalid only due to the schematron check
+        is recognized as invalid, and the the validity is saved after
+        being computed.
+        """
+        tree = lxml.etree.fromstring(valid_editable)
+        sfs = tree.xpath("//btw:example/btw:semantic-fields | "
+                         "//btw:example-explained/btw:semantic-fields",
+                         namespaces={
+                             "btw":
+                             "http://mangalamresearch.org/ns/btw-storage"
+                         })
+        for el in sfs:
+            el.getparent().remove(el)
+        data = lxml.etree.tostring(
+            tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        self.assertTrue(util.validate(xml.schema_for_version(schema_version),
+                                      data), "the data should validate")
+        self.assertFalse(util.schematron(
+            xml.schematron_for_version(schema_version),
+            data), "the data should not pass the schematron check")
+        c = Chunk(data=data,
+                  schema_version=schema_version)
+        c.save()
+        self.assertIsNone(c._valid)
+        self.assertFalse(c.valid)
+        self.assertFalse(Chunk.objects.get(pk=c.pk)._valid,
+                         "_valid was saved.")

@@ -24,6 +24,25 @@ def schema_for_version(version):
 
     return path
 
+_NO_SCHEMATRON = {
+    "0.9": True
+}
+
+def schematron_for_version(version):
+    # Some version do not have a schematron check. Testing the
+    # presence of a path and assume that an absent file means we don't
+    # expect a schematron check is error prone, ergo this check:
+    if version in _NO_SCHEMATRON:
+        return None
+
+    path = os.path.join(schemas_dirname, "out/btw-storage-%s.xsl" % version)
+
+    if not os.path.exists(path):
+        raise ValueError("missing schematron version: " + version)
+
+    return path
+
+
 # 20140912: No longer needed as part of normal operations but we are
 # keeping it here in case some old data needs conversion. It should
 # probably be removed after a few versions of BTW have been released.

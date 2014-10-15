@@ -355,6 +355,13 @@ class Chunk(models.Model):
             self._valid = util.validate(
                 xml.schema_for_version(self.schema_version),
                 self.data)
+
+            if self._valid:
+                # We must perform the schematron checks to see whether it is
+                # actually valid.
+                sch = xml.schematron_for_version(self.schema_version)
+                if sch:
+                    self._valid = util.schematron(sch, self.data)
         self.save()
 
         return self._valid
