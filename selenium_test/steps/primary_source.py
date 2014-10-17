@@ -6,9 +6,7 @@ from behave import given, then, when, step_matcher
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import Select
 
 from nose.tools import assert_equal
 
@@ -294,7 +292,13 @@ def desired_row_state(driver, row, state):
     var row = arguments[0];
     var $next = jQuery("table#bibliography-table>tbody>tr")
     .filter(".odd, .even").eq(row).next();
-    return ($next[0] && !$next.is(".odd, .even"));
+    if (!$next[0] || $next.is(".odd, .even"))
+        return false;
+    var $proc = $next.find("div.dataTables_processing");
+    // If it is not present, the table is not even initialized.
+    if (!$proc[0])
+        return false;
+    return ($proc[0].style.display === "none");
     """, int(row))
     return ret if state == "open" else not ret
 
@@ -306,7 +310,7 @@ def step_impl(context, action, row):
 
     desired_state = "open" if action == "opens" else "closed"
     # We are already in the desired state
-    if desired_row_state(context.driver, row,  desired_state):
+    if desired_row_state(context.driver, row, desired_state):
         return
 
     def button_clicked(driver):
