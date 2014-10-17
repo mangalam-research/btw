@@ -11,12 +11,12 @@ CSRF_COOKIE_SECURE = False
 __SILENT = True
 
 if __SILENT:
-    LOGGING['loggers'] = {}
-    LOGGING['disable_existing_loggers'] = True
+    LOGGING_CONFIG = False
 else:
-    LOGGING['loggers'][''] = {
+    loggers = LOGGING['loggers']
+    loggers[''] = {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'NOTSET',
         'propagate': True,
     }
 
