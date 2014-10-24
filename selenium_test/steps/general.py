@@ -279,7 +279,6 @@ def step_impl(context, what):
 
     title = None
     if what == "a valid document" and not context.valid_document_created:
-        assert edit, "must be in edit mode"
         with open(context.server_write_fifo, 'w') as fifo:
             fifo.write("create valid article\n")
         with open(context.server_read_fifo, 'r') as fifo:
@@ -295,7 +294,7 @@ def step_impl(context, what):
                          "/lexicography/search-table/",
                          params={
                              "length": -1,
-                             "search[value]": title.encode("utf-8"),
+                             "search[value]": title,
                              "headwords_only": "true",
                              "publication_status": "both",
                          },
@@ -380,10 +379,11 @@ def step_impl(context):
     driver = context.driver
 
     driver.execute_script("""
-    delete window.wed_editor;
+    // Overwrite onbeforeunload to prevent the dialog from showing up.
+    if (window.wed_editor)
+        window.onbeforeunload = function () {};
     """)
     driver.get(driver.current_url)
-    driver.switch_to.alert.accept()
     setup_editor(context)
 
 
