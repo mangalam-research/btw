@@ -169,16 +169,19 @@ README.html: README.rst
 	$(RST2HTML) $< $@
 
 .PHONY: selenium-test
-selenium-test: build-config
-	python utils/check_selenium_config.py
-	$(MAKE) -f build.mk all
-	behave $(BEHAVE_PARAMS) selenium_test
+selenium-test: selenium_test
 
-.PHONY: selenium_test/%.feature
-selenium_test/%.feature: build-config
+.PHONY: selenium_test/%.feature selenium_test
+selenium_test/*.feature selenium_test: build-config
 	python utils/check_selenium_config.py
 	$(MAKE) -f build.mk all
-	behave $(BEHAVE_PARAMS) $@
+	(STAMP=$$(date -Iseconds); \
+	behave -f plain $(BEHAVE_PARAMS) -o test_logs/$$STAMP.log $@; \
+	ln -s -f $$STAMP.log test_logs/LATEST)
+
+.PHONY: keep-latest
+keep-latest:
+	find test_logs -type f -not -name $$(realpath --relative-to=test_logs test_logs/LATEST) -delete
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
