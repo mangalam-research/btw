@@ -273,7 +273,7 @@ class ChangeRecord(models.Model):
 
     def __unicode__(self):
         return self.entry.headword + " " + self.user.username + " " + \
-            str(self.datetime) + " " + (self.session or "")
+            str(self.datetime)
 
 
 class ChunkManager(models.Manager):
