@@ -162,10 +162,6 @@ def after_scenario(context, _scenario):
             driver.close()
     driver.switch_to_window(context.initial_window_handle)
 
-    # Reset the server between scenarios.
-    with open(context.server_write_fifo, 'w') as fifo:
-        fifo.write("restart\n")
-
     driver.execute_script("""
     // Overwrite onbeforeunload to prevent the dialog from showing up.
     if (window.wed_editor)
@@ -178,8 +174,24 @@ def after_scenario(context, _scenario):
     //
     localStorage.clear()
     sessionStorage.clear()
+
+    // Find all datatable instances and cancel their Ajax operations.
+    if (typeof jQuery !== "undefined" && jQuery.fn.dataTable) {
+        var settings_ar =
+            jQuery(jQuery.fn.dataTable.tables()).DataTable().settings();
+        for (var i = 0, settings; (settings = settings_ar[i]); ++i) {
+            if (settings.jqXHR) {
+                // console.log("aborting a datatable's ajax");
+                settings.jqXHR.abort();
+            }
+        }
+    }
     """)
     driver.delete_all_cookies()
+
+    # Reset the server between scenarios.
+    with open(context.server_write_fifo, 'w') as fifo:
+        fifo.write("restart\n")
 
 
 def before_step(context, _step):
