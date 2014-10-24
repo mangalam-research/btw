@@ -40,8 +40,8 @@ caps = {
     "nativeEvents": True,
     "name": name,
     # As of 2014-06-30 2.42.2 fails to load on Saucelabs...
-    "selenium-version": "2.41.0",
-    "chromedriver-version": "2.10",
+    "selenium-version": "2.43.0",
+    "chromedriver-version": "2.11",
     "build": describe
 }
 
@@ -52,26 +52,23 @@ if not LOGS:
     caps["sauce-advisor"] = "false"
 
 
-config = Config("Linux", "FIREFOX", "28")
-config = Config("Linux", "CHROME", "36")
+config = Config("Linux", "FIREFOX", "31")
+config = Config("Linux", "CHROME", "38")
 
-config = Config("Windows 8.1", "CHROME", "36", caps, remote=True)
-config = Config("Windows 8.1", "CHROME", "35", caps, remote=True)
-config = Config("Windows 8.1", "CHROME", "34", caps, remote=True)
+config = Config("Windows 8.1", "CHROME", "38", caps, remote=True)
+config = Config("Windows 8.1", "CHROME", "37", caps, remote=True)
 
-config = Config("Windows 8.1", "FIREFOX", "28", caps, remote=True)
-config = Config("Windows 8.1", "FIREFOX", "27", caps, remote=True)
+# ESR
+config = Config("Windows 8.1", "FIREFOX", "31", caps, remote=True)
+# Previous ESR
+config = Config("Windows 8.1", "FIREFOX", "24", caps, remote=True)
 
 config = Config("Windows 8", "INTERNETEXPLORER", "10", caps, remote=True)
 config = Config("Windows 8.1", "INTERNETEXPLORER", "11", caps, remote=True)
-#
-#
-# As of 07292014 Chrome 36 is not yet available on OS X from
-# Saucelabs.
-#
-# config = Config("OS X 10.6", "CHROME", "35", caps, remote=True)
-# config = Config("OS X 10.6", "CHROME", "34", caps, remote=True)
-#
+
+
+config = Config("OS X 10.9", "CHROME", "38", caps, remote=True)
+config = Config("OS X 10.9", "CHROME", "37", caps, remote=True)
 #
 # FAILING COMBINATIONS
 #
