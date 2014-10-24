@@ -12,7 +12,8 @@ def global_context_processor(request):
             'btw_fontawesome_css_path': settings.BTW_FONTAWESOME_CSS_PATH,
             'btw_datatables_css_path': settings.BTW_DATATABLES_CSS_PATH,
             'btw_bootstrap_editable_css_path':
-            settings.BTW_BOOTSTRAP_EDITABLE__CSS_PATH
+            settings.BTW_BOOTSTRAP_EDITABLE__CSS_PATH,
+            'wed_polyfills': settings.BTW_WED_POLYFILLS
         },
         'settings': {
             'DEBUG': settings.DEBUG

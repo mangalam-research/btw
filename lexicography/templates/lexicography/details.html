@@ -3,6 +3,9 @@
 {% block extrahead %}
 <link href="{% static "lib/wed/wed.css" %}" media="screen" rel="stylesheet" />
 <link href="{% static "lib/btw/btw-view.css" %}" media="screen" rel="stylesheet" />
+{% for polyfill in btw_globals.wed_polyfills %}
+<script type="text/javascript" src="{{ polyfill }}"></script>
+{% endfor %}
 {{ block.super }}
 <script id="wed-data" type="text/xml">{% autoescape off %}{{ data }}{% endautoescape %}</script>
 <script>
