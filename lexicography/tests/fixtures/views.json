@@ -614,7 +614,7 @@
   "pk": 24,
   "model": "lexicography.changerecord",
   "fields": {
-    "c_hash": "9e2e5cc5cc42c8376dec5e5d855f2b40880c5f7f",
+    "c_hash": "030f11f6675d733792867ee97ba648c53fb5de3d",
     "ctype": "U",
     "datetime": "2014-10-21T22:43:18.448Z",
     "session": "t1u9pab3pq6lwek61go9mmua279es1w9",
@@ -848,10 +848,10 @@
   }
 },
 {
-  "pk": "9e2e5cc5cc42c8376dec5e5d855f2b40880c5f7f",
+  "pk": "030f11f6675d733792867ee97ba648c53fb5de3d",
   "model": "lexicography.chunk",
   "fields": {
-    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>antonym with citations, followed by another antonym</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term>antonym 1</btw:term><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example></btw:citations></btw:antonym><btw:antonym><btw:term>antonym 2</btw:term><btw:citations/></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>antonym with citations, followed by another antonym</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term>antonym 1</btw:term><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example><btw:example><btw:cit/><btw:tr/></btw:example></btw:citations></btw:antonym><btw:antonym><btw:term>antonym 2</btw:term><btw:citations/></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "_valid": null,
     "schema_version": "0.10",
     "is_normal": true

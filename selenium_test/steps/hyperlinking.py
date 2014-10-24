@@ -37,7 +37,10 @@ def step_impl(context):
     return jQuery(".modal.in .modal-body input").next("span").toArray();
     """)
 
-    for (row, choice) in zip(context.table, choices):
+    assert_equal(len(choices), len(context.table.rows),
+                 "there should be {0} choices but found {1}"
+                 .format(len(context.table.rows), len(choices)))
+    for (row, choice) in zip(context.table.rows, choices):
         assert_equal(row['choice'], choice.text)
 
 
@@ -87,7 +90,7 @@ def step_impl(context):
 
 __LINK_RE1 = \
     (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
-     ur'points to the (?P<term>first) example\.?$')
+     ur'points to the (?P<term>first|second) example\.?$')
 __LINK_RE2 = \
     (ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
      ur'to "(?P<term>.*?)"\.?$')
@@ -154,9 +157,11 @@ def step_impl(context, example, label, term):
             desc = actual_term + " should match " + term;
         }
         else if (target.matches(".btw\\:example, .btw\\:example-explained")) {
-            test = document.querySelector(
-                ".btw\\:example, .btw\\:example-explained") === target;
-            desc = "link should point to " + term + " example";
+            var order = { "first": 0, "second": 1}[term];
+            var examples = document.querySelectorAll(
+                ".btw\\:example, .btw\\:example-explained");
+            test = examples[order] === target;
+            desc = "link should point to the " + term + " example";
         }
         else
             return [false,

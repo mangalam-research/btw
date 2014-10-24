@@ -43,7 +43,7 @@ Scenario: deleting a subsense that has a hyperlink deletes the subsense hyperlin
   And the user clicks the context menu option "Delete this element"
   Then there is no hyperlink with the label "[a1]".
 
-Scenario: hyperlinks are saved
+Scenario: sense hyperlinks are saved
   Given a document with senses and subsenses
   When the user brings up a context menu in the text in the definition
   And the user clicks the context menu option "Insert a new hyperlink to a sense"
@@ -189,6 +189,23 @@ Scenario: creating a hyperlink to an earlier example in an antonym
   And the user clicks the context menu option "Insert a new hyperlink to an example"
   Then the hyperlinkig modal dialog comes up
   And the hyperlinking choices are
-    | (Foo) foo |
+    | choice |
+    | (Foo) citation |
   When the user clicks the hyperlinking choice for "citation"
-  Then the example hyperlink with label "See Foo quoted above in [citations], antonym 1." points to the first example.
+  Then the example hyperlink with label "See Foo quoted above in [citations], antonym 2." points to the first example.
+
+Scenario: example hyperlinks are saved
+  Given a document with an antonym with citations, followed by another antonym
+  When the user adds a reference to an item to the second example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu in the last btw:citations
+  And the user clicks the context menu option "Insert a new hyperlink to an example"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | choice    |
+    | (Foo) |
+  When the user clicks the hyperlinking choice for "Foo"
+  Then the example hyperlink with label "See Foo quoted above in [citations], antonym 2." points to the second example.
+  When the user saves the file
+  And the user reloads the file
+  Then the example hyperlink with label "See Foo quoted above in [citations], antonym 2." points to the second example.
