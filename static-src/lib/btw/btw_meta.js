@@ -66,7 +66,7 @@ BTWMeta.prototype.getNamespaceMappings = function () {
         return cached_mapping;
 
     var ret = TEIMeta.prototype.getNamespaceMappings.call(this);
-    $.extend({}, ret, {
+    ret = $.extend({}, ret, {
         "btw": "http://mangalamresearch.org/ns/btw-storage"
     });
     cached_mapping = ret;
