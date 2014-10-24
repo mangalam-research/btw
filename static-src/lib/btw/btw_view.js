@@ -20,6 +20,7 @@ var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
 var btw_refmans = require("./btw_refmans");
 var DispatchMixin = require("./btw_dispatch").DispatchMixin;
 var id_manager = require("./id_manager");
+var name_resolver = require("salve/name_resolver");
 var $ = require("jquery");
 
 var _slice = Array.prototype.slice;
@@ -51,6 +52,12 @@ function Viewer(root, data, bibl_data) {
     this._refmans = new btw_refmans.WholeDocumentManager();
     this._meta = new btw_meta.Meta();
     this._bibl_data = bibl_data;
+
+    this._resolver = new name_resolver.NameResolver();
+    var mappings = this._meta.getNamespaceMappings();
+    Object.keys(mappings).forEach(function (key) {
+        this._resolver.definePrefix(key, mappings[key]);
+    }.bind(this));
 
     //
     // We provide minimal objects that are used by some of the logic
@@ -446,8 +453,8 @@ Viewer.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
 };
 
 Viewer.prototype.makeElement = function (name, attrs) {
-    var e = transformation.makeElement.call(undefined, this._data_doc,
-                                            name, attrs);
+    var ename = this._resolver.resolveName(name);
+    var e = transformation.makeElement(this._data_doc, ename.ns, name, attrs);
     return convert.toHTMLTree(this._doc, e);
 };
 

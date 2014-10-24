@@ -453,6 +453,8 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
     // rather than the domlistener because otherwise we would trigger
     // a data update from a GUI update, which is likely to result in
     // issues. (Crash, infinite loop, etc.)
+
+    var none_ename = this._resolver.resolveName('btw:none');
     this._editor.data_updater.addEventListener("deleteNode",
                                                function (ev) {
         var el = ev.node;
@@ -464,7 +466,8 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
             this._editor.data_updater.insertBefore(
                 ev.former_parent,
                 transformation.makeElement(el.ownerDocument,
-                                           'btw:none'), null);
+                                           none_ename.ns, 'btw:none'),
+                null);
     }.bind(this));
     return obj;
 };

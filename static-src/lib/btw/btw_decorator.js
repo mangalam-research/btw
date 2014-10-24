@@ -427,7 +427,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                 var div = clone.ownerDocument.createElement("div");
                 div.appendChild(clone);
                 clone.insertBefore(
-                    transformation.makeElement(clone.ownerDocument, spec),
+                    transformation.makeElement(clone.ownerDocument,
+                                               ename.ns, spec),
                     clone.childNodes[l] || null);
 
                 var errors =

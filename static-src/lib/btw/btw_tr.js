@@ -32,8 +32,10 @@ function insert_ptr(editor, data) {
     target.setAttribute(util.encodeAttrName("xml:id"), data_id);
     $.data(target, "wed_mirror_node").setAttribute("xml:id", data_id);
 
+    var ename = editor.mode.getAbsoluteResolver().resolveName('ptr');
+
     var ptr = makeElement(parent.ownerDocument,
-                          'ptr', {'target': "#" + data_id});
+                          ename.ns, 'ptr', {'target': "#" + data_id});
     editor.data_updater.insertAt(parent, index, ptr);
 
     // The original parent and index information are no necessarily
@@ -49,7 +51,9 @@ function insert_ref(editor, data) {
     var parent = caret.node;
     var index = caret.offset;
 
-    var ptr = makeElement(parent.ownerDocument, 'ref', {'target': data.target});
+    var ename = editor.mode.getAbsoluteResolver().resolveName('ref');
+    var ptr = makeElement(parent.ownerDocument, ename.ns, 'ref',
+                          {'target': data.target});
     editor.data_updater.insertAt(parent, index, ptr);
     var gui_node = editor.fromDataLocation(ptr, 0).node;
 
@@ -127,8 +131,9 @@ function set_language_handler(editor, data) {
                 "foreign language element");
     }
 
+    var ename = editor.mode.getAbsoluteResolver().resolveName('foreign');
     var foreign = makeElement(container.ownerDocument,
-                              'foreign', {'xml:lang': lang_code});
+                              ename.ns, 'foreign', {'xml:lang': lang_code});
     var cut_ret = editor.data_updater.cut(
         makeDLoc(editor.data_root, range.startContainer, range.startOffset),
         makeDLoc(editor.data_root, range.endContainer, range.endOffset));
