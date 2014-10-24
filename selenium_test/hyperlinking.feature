@@ -180,3 +180,15 @@ Scenario: deleting a hyperlinked example deletes the hyperlink
   Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example
   When the user deletes the first example
   Then there are no example hyperlinks
+
+Scenario: creating a hyperlink to an earlier example in an antonym
+  Given a document with an antonym with citations, followed by another antonym
+  When the user adds a reference to an item to the first example
+  Then the new reference contains the reference title.
+  When the user brings up a context menu in the last btw:citations
+  And the user clicks the context menu option "Insert a new hyperlink to an example"
+  Then the hyperlinkig modal dialog comes up
+  And the hyperlinking choices are
+    | (Foo) foo |
+  When the user clicks the hyperlinking choice for "citation"
+  Then the example hyperlink with label "See Foo quoted above in [citations], antonym 1." points to the first example.

@@ -438,54 +438,6 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
     }
 };
 
-/**
- * This function works exactly like the one in {@link
- * module:btw_dispatch~DispatchMixin DispatchMixin} except that it
- * takes the additional ``final_`` parameter.
- *
- * @param {boolean} final_ Whether there will be any more changes to
- * this ptr or not.
- */
-Viewer.prototype.linkingDecorator = function (root, el, is_ptr, final_) {
-    DispatchMixin.prototype.linkingDecorator.call(this, root, el, is_ptr);
-
-    // What we are doing here is taking care of updating links to
-    // examples when the reference to the bibliographical source they
-    // contain is updated. These updates happen asynchronously.
-    if (is_ptr && !final_) {
-        var doc = el.ownerDocument;
-        var orig_target = el.getAttribute(util.encodeAttrName("target"));
-        if (!orig_target)
-            orig_target = "";
-
-        orig_target = orig_target.trim();
-
-        if (orig_target.lastIndexOf("#", 0) !== 0)
-            return;
-
-        // Internal target
-        // Add BTW in front because we want the target used by wed.
-        var target_id = orig_target.replace(/#(.*)$/,'#BTW-$1');
-
-        // Find the referred element. Slice to drop the #.
-        var target = doc.getElementById(target_id.slice(1));
-
-        if (!(target.classList.contains("btw:example") ||
-              target.classList.contains("btw:example-explained")))
-            return;
-
-        // Get the ref element that olds the reference to the
-        // bibliographical item, and set an event handler to make sure
-        // we update *this* ptr, when the ref changes.
-        var ref =
-                target.querySelector(domutil.toGUISelector("btw:cit>ref"));
-
-        $(ref).on("wed-refresh", function () {
-            this.linkingDecorator(root, el, is_ptr);
-        }.bind(this));
-    }
-};
-
 Viewer.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
     var data = this._bibl_data[target_id];
     if (!data)

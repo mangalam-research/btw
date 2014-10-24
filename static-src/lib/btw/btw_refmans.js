@@ -136,18 +136,20 @@ ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
 
         ret += " in " + head.textContent;
 
-        var term;
-        parent= ptr.parentNode;
+        var gui_term;
+        parent= gui_target.parentNode;
         while (parent) {
-            term = domutil.childByClass(parent, "term");
-            if (term)
+            gui_term = domutil.childByClass(parent, "btw:term");
+            if (gui_term)
                 break;
 
             parent = parent.parentNode;
         }
 
-        if (term)
+        if (gui_term) {
+            var term = $.data(gui_term, "wed_mirror_node");
             ret += ", " + term.textContent;
+        }
     }
 
     ret += ".";
