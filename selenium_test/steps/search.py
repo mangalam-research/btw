@@ -16,14 +16,27 @@ def step_impl(context):
     util.find_element((By.ID, "search-table_next"))
 
 
-_REDRAW_SETUP_SNIPPET = """
-(function () {
+_REDRAW_SETUP_FUNCTION = """
+function redrawSetup(done) {
     window.__selenium_test_redrawn = false;
+    var processing = document.getElementById("search-table_processing");
     var table = document.getElementById("search-table");
-    jQuery(table).on("draw.dt", function () {
-        window.__selenium_test_redrawn = true;
-    });
-})();
+    function check() {
+        if (processing.style.display !== "none") {
+            setTimeout(check, 100);
+            return;
+        }
+        jQuery(table).one("draw.dt", function () {
+            window.__selenium_test_redrawn = true;
+        });
+        done();
+    }
+    check();
+};
+"""
+
+_REDRAW_SETUP_SNIPPET = _REDRAW_SETUP_FUNCTION + """
+redrawSetup(arguments[arguments.length - 1]);
 """
 
 _REDRAW_CHECK_SNIPPET = """
@@ -53,7 +66,7 @@ def step_impl(context, query):
     driver.execute_script("""
     arguments[0].value = arguments[1];
     """, controls[0], query[:-1])
-    driver.execute_script(_REDRAW_SETUP_SNIPPET)
+    driver.execute_async_script(_REDRAW_SETUP_SNIPPET)
     controls[0].send_keys(query[-1])
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
 
@@ -154,12 +167,16 @@ def step_impl(context, kind):
 def step_impl(context, kind):
     util = context.util
     driver = context.driver
-    driver.execute_script("""
+    driver.execute_async_script("""
+    var done = arguments[0];
     {0}
-    var collapse = document.getElementById("advanced-search-collapse");
-    if (!collapse.classList.contains("in"))
-        document.querySelector("a[href='#advanced-search-collapse']").click();
-    """.format(_REDRAW_SETUP_SNIPPET))
+    redrawSetup(function () {{
+        var collapse = document.getElementById("advanced-search-collapse");
+        if (!collapse.classList.contains("in"))
+            document.querySelector("a[href='#advanced-search-collapse']").click();
+        done();
+    }});
+    """.format(_REDRAW_SETUP_FUNCTION))
     # We have to wait until the element is in ...
     util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
 
@@ -174,12 +191,16 @@ def step_impl(context, kind):
 def step_impl(context):
     util = context.util
     driver = context.driver
-    driver.execute_script("""
+    driver.execute_async_script("""
+    var done = arguments[0];
     {0}
-    var collapse = document.getElementById("advanced-search-collapse");
-    if (!collapse.classList.contains("in"))
-        document.querySelector("a[href='#advanced-search-collapse']").click();
-    """.format(_REDRAW_SETUP_SNIPPET))
+    redrawSetup(function () {{
+        var collapse = document.getElementById("advanced-search-collapse");
+        if (!collapse.classList.contains("in"))
+            document.querySelector("a[href='#advanced-search-collapse']").click();
+        done();
+    }});
+    """.format(_REDRAW_SETUP_FUNCTION))
     # We have to wait until the element is in ...
     util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
 
