@@ -1,3 +1,4 @@
+/test_logs
 /cache
 /logs
 /sitestatic
@@ -15,3 +16,5 @@ local_config
 .glerbl/local_conf.py
 local.mk
 /transformations
+/TODO.private
+/*.sql.gz
