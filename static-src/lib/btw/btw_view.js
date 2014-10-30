@@ -14,6 +14,9 @@ var util = require("wed/util");
 var domutil = require("wed/domutil");
 var oop = require("wed/oop");
 var dloc = require("wed/dloc");
+var SimpleEventEmitter =
+        require("wed/lib/simple_event_emitter").SimpleEventEmitter;
+var Conditioned = require("wed/lib/conditioned").Conditioned;
 var transformation = require("wed/transformation");
 var btw_meta = require("./btw_meta");
 var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
@@ -39,6 +42,8 @@ var closest = domutil.closest;
  * complete. Otherwise, it is an internal error.
  */
 function Viewer(root, data, bibl_data) {
+    SimpleEventEmitter.call(this);
+    Conditioned.call(this);
     var doc = root.ownerDocument;
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");
@@ -116,6 +121,14 @@ function Viewer(root, data, bibl_data) {
     });
     this._heading_decorator.addSpec({
         selector: "btw:antonym>btw:citations",
+        heading: null
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:cognate>btw:citations",
+        heading: null
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:conceptual-proximate>btw:citations",
         heading: null
     });
     this._heading_decorator.addSpec({
@@ -300,9 +313,12 @@ function Viewer(root, data, bibl_data) {
 
     // Create part 2, which does not exist as such in the file we store.
     this.createPartTwo(root);
+    this._setCondition("done", this);
 }
 
 oop.implement(Viewer, DispatchMixin);
+oop.implement(Viewer, SimpleEventEmitter);
+oop.implement(Viewer, Conditioned);
 
 Viewer.prototype.process = function (root, el) {
     this.dispatch(root, el);
@@ -382,7 +398,8 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
             var wrapper = doc.createElement("div");
             wrapper.classList.add("btw:" + name + "-term-item");
             wrapper.classList.add("_real");
-            wrapper.textContent = name + " " + (t_ix + 1) + ": ";
+            wrapper.textContent = name.replace("-", " ") + " " +
+                (t_ix + 1) + ": ";
             wrapper.appendChild(clone);
             div.appendChild(wrapper);
 
@@ -409,7 +426,7 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
             // of a btw:antonym, btw:cognate, etc. element. At this
             // point, that's only btw:citations elements plus
             // btw:...-term-item elements.
-            html.push(item.innerHTML);
+            html.push(item.outerHTML);
             item.parentNode.removeChild(item);
         }
         var coll = doc.createElement("div");
@@ -422,7 +439,7 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         //
         // If there are btw:sematic-fields elements, combine them.
         //
-        var cits = domutil.childrenByClass(coll, "btw:citations");
+        var cits = coll.getElementsByClassName("btw:citations");
         for (var cit_ix = 0, cit; (cit = cits[cit_ix]); ++cit_ix) {
             var secats = cit.getElementsByClassName("btw:semantic-fields");
             if (secats.length) {
@@ -458,32 +475,54 @@ Viewer.prototype.makeElement = function (name, attrs) {
     return convert.toHTMLTree(this._doc, e);
 };
 
+/**
+ * Recursively removes all ids from an element and its children.
+ *
+ * @private
+ * @param {Element} el The element to process.
+ * @returns {Element} The value of ``el``.
+ */
+function cleanIDs(el) {
+    el.id = null;
+    if (!el.children)
+        return el;
 
-function cleanIDs(node) {
-    node.id = null;
-    if (!node.children)
-        return node;
-
-    var child = node.firstElementChild;
+    var child = el.firstElementChild;
     while (child) {
         cleanIDs(child);
         child = child.nextElementSibling;
     }
 
-    return node;
+    return el;
 }
 
+/**
+ * Prepare all citations in an element for inclusion in Part 2 of an
+ * article.
+ *
+ * @private
+ *
+ * @param {Element} el The element from part 1.
+ * @param {Element} p2_el The element that we are currently populating
+ * in part 2. This element is modified by this method.
+ * @param {string} which Which of "btw:citations" or
+ * "btw:other-citations" we are processing.
+ */
 function prepareCitations(el, p2_el, which) {
     var doc = el.ownerDocument;
     var citations = domutil.childByClass(el, which);
     if (citations) {
         var p2_citations = citations.cloneNode(true);
+
+        // Drop the head, as it is useless here.
         var head = domutil.childByClass(p2_citations, "head");
         if (head)
             p2_citations.removeChild(head);
+
         // Replace links to examples with the actual example.
         var ptrs = domutil.childrenByClass(p2_citations, "ptr");
-        for (var i = 0, ptr; (ptr = ptrs[i]); ++i) {
+        var i, ptr;
+        for (i = 0; (ptr = ptrs[i]); ++i) {
             var a = ptr.getElementsByTagName("a")[0];
             var target = doc.getElementById(a.attributes.href.value.slice(1));
             if (!target)
@@ -594,6 +633,14 @@ Viewer.prototype.createPartTwo = function (root) {
     }
 
     this._gui_updater.insertBefore(root.firstElementChild, part_two);
+
+    // Add tooltips to the references. We must do this after part two
+    // has been added because linkingDecorator depends on the nodes
+    // being in the tree.
+    var refs = part_two.getElementsByClassName("ref");
+    var ref;
+    for (i = 0; (ref = refs[i]); ++i)
+        this.process(root, ref);
 };
 
 

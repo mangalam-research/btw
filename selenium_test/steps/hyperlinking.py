@@ -90,7 +90,8 @@ def step_impl(context):
 
 __LINK_RE1 = \
     (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
-     ur'points to the (?P<term>first|second) example\.?$')
+     ur'points to the (?P<term>first|second|third) example(?: under head '
+     ur'"(?P<head>.*?)")?\.?$')
 __LINK_RE2 = \
     (ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
      ur'to "(?P<term>.*?)"\.?$')
@@ -100,7 +101,7 @@ __LINK_RE2 = \
 @given(__LINK_RE2)
 @then(__LINK_RE1)
 @then(__LINK_RE2)
-def step_impl(context, example, label, term):
+def step_impl(context, example, label, term, head=None):
 
     id_selector = "#BTW-E." if example else "#BTW-S."
 
@@ -109,13 +110,15 @@ def step_impl(context, example, label, term):
         var label = arguments[0];
         var term = arguments[1];
         var id_selector = arguments[2];
+        var head_spec = arguments[3];
         var $ = jQuery;
 
         var links = Array.prototype.slice.call(document.querySelectorAll(
             ".wed-document a[href^='" + id_selector + "']")).filter(
-            function (x) { return x.textContent === label; });
+            function (x) {
+                return x.textContent.replace(/\s+/g, " ") === label; });
         if (!links[0])
-            return [false, "there should be a link"];
+            return [false, "there should be a link with text " + label];
 
         var target = document.getElementById(links[0].attributes["href"]
             .value.slice(1));
@@ -128,9 +131,11 @@ def step_impl(context, example, label, term):
         // work with.
 
         function cleanup(node) {
-            var heads = node.getElementsByClassName("head");
-            while (heads.length)
-                heads[0].parentNode.removeChild(heads[0]);
+            if (!node.classList.contains("head")) {
+                var heads = node.getElementsByClassName("head");
+                while (heads.length)
+                    heads[0].parentNode.removeChild(heads[0]);
+            }
             var phantom = node.getElementsByClassName("_phantom");
             while (phantom.length)
                 phantom[0].parentNode.removeChild(phantom[0]);
@@ -157,18 +162,42 @@ def step_impl(context, example, label, term):
             desc = actual_term + " should match " + term;
         }
         else if (target.matches(".btw\\:example, .btw\\:example-explained")) {
-            var order = { "first": 0, "second": 1}[term];
-            var examples = document.querySelectorAll(
-                ".btw\\:example, .btw\\:example-explained");
-            test = examples[order] === target;
-            desc = "link should point to the " + term + " example";
+            var order = { "first": 0, "second": 1, "third":2 }[term];
+            var scope = document;
+            test = true;
+            if (head_spec) {
+                var heads = document.getElementsByClassName("head");
+                var candidates = [];
+                for (var i = 0, head; (head = heads[i]); ++i) {
+                    var cleaned_head = cleanup(head.cloneNode(true));
+                    if (cleaned_head.textContent === head_spec)
+                        candidates.push(head);
+                }
+                if (candidates.length > 1) {
+                    test = false;
+                    desc = "the head specification should not be ambiguous";
+                }
+                else if (candidates.length === 0) {
+                    test = false;
+                    desc = "can't find the head";
+                }
+                else
+                    scope = candidates[0].parentNode;
+            }
+
+            if (test) {
+                var examples = scope.querySelectorAll(
+                    ".btw\\:example, .btw\\:example-explained");
+                test = examples[order] === target;
+                desc = "link should point to the " + term + " example";
+            }
         }
         else
             return [false,
                     "unexpected target (tagName: " + target.tagName + ")"];
 
         return [test, desc];
-        """, label, term, id_selector)
+        """, label, term, id_selector, head)
 
         return Result(ret[0], ret)
 

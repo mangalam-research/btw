@@ -129,7 +129,6 @@ Scenario: creating a hyperlink to an earlier example
   And the hyperlinking choices are
     | choice    |
     | (Foo) foo |
-    | bar       |
   When the user clicks the hyperlinking choice for "foo"
   Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example.
 
@@ -143,7 +142,6 @@ Scenario: creating a hyperlink to a later example
   And the hyperlinking choices are
     | choice    |
     | (Foo) foo |
-    | bar       |
   When the user clicks the hyperlinking choice for "foo"
   Then the example hyperlink with label "See Foo quoted below in [citations for sense a]." points to the first example.
 
@@ -157,7 +155,6 @@ Scenario: modifying the reference of a hyperlinked example changes the hyperlink
   And the hyperlinking choices are
     | choice    |
     | (Foo) foo |
-    | bar       |
   When the user clicks the hyperlinking choice for "foo"
   Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example.
   When the user adds custom text to the first reference
@@ -175,7 +172,6 @@ Scenario: deleting a hyperlinked example deletes the hyperlink
   And the hyperlinking choices are
     | choice    |
     | (Foo) foo |
-    | bar       |
   When the user clicks the hyperlinking choice for "foo"
   Then the example hyperlink with label "See Foo quoted above in [citations for sense a]." points to the first example
   When the user deletes the first example

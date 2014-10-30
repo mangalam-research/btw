@@ -47,7 +47,7 @@ Validator.prototype.validateDocument = function () {
         var found = false;
         for (var sfs_ix = 0, sf; !found && (sf = sfs[sfs_ix]); ++sfs_ix) {
             // The contrastive section may not exist yet.
-            if (!contrastive || !contrastive.contains(sfs))
+            if (!contrastive || !contrastive.contains(sf))
                 found = true;
         }
 

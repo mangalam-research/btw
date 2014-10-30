@@ -15,22 +15,25 @@ WHICH_TO_TITLE = {
 
 
 @when(ur'^the user adds a reference to an item$')
-@when(ur'^the user adds a reference to an item( to the first example)?$')
+@when(ur'^the user adds a reference to an item'
+      ur'(?P<which> to the (?:first|second) example)?$')
 @when(ur'^the user adds a reference to an item (?P<which>with|without) a '
       ur'reference title$')
 def step_impl(context, which=None):
     driver = context.driver
     util = context.util
-    seek_etymology = True
 
+    order = None
     if which == " to the first example":
+        order = 0
         which = "with"
-        seek_etymology = False
-
-    if which is None:
+    elif which == " to the second example":
+        order = 1
+        which = "with"
+    elif which is None:
         which = "with"
 
-    if seek_etymology:
+    if order is None:
         # Obtain the first placeholder after "[etymology]".
         ph = driver.execute_script("""
         var $ = jQuery;
@@ -54,12 +57,15 @@ def step_impl(context, which=None):
         # By doing it this way, we avoid being thrown off by possible
         # error markers that could show in front of it.
         driver.execute_script(ur"""
-        var $text = jQuery(".btw\\:cit").contents().filter(function () {
-            return this.nodeType === Node.TEXT_NODE;
-        });
-        var text_node = $text[0];
-        wed_editor.setGUICaret(text_node, 0);
-        """)
+        var order = arguments[0];
+        var cits = document.getElementsByClassName("btw:cit");
+        var node = cits[order];
+        var data_node = jQuery.data(node, "wed_mirror_node");
+        if (data_node.childNodes.length) {
+            data_node = data_node.firstChild;
+        }
+        wed_editor.setDataCaret(data_node, 0);
+        """, order)
 
         util.ctrl_equivalent_x("/")
 

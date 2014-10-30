@@ -136,10 +136,22 @@ ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
 
         ret += " in " + head.textContent;
 
+        //
+        // This seems a bit backwards at first but what we want here
+        // is not the term under which the *referred* example (the
+        // target of the pointer) appears but the term under which the
+        // *pointer* to the example appears.
+        //
+        // Basically, the text of the link means "See [referred work]
+        // quoted [above/below] in [this heading], [and in the quote
+        // look for this term]." The term to look for is the term
+        // under which the pointer is located, not the term under
+        // which the example (the target of the pointer) is located.
+        //
         var gui_term;
-        parent= gui_target.parentNode;
+        parent= $.data(ptr, "wed_mirror_node").parentNode;
         while (parent) {
-            gui_term = domutil.childByClass(parent, "btw:term");
+            gui_term = parent.querySelector(".btw\\:term");
             if (gui_term)
                 break;
 

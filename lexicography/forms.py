@@ -4,6 +4,7 @@ from django import forms
 
 from wed import WedWidget
 from .models import Chunk
+from .xml import XMLTree
 
 
 class RawSaveForm(forms.ModelForm):
@@ -11,6 +12,15 @@ class RawSaveForm(forms.ModelForm):
     class Meta(object):
         model = Chunk
         fields = ('data', )
+
+    _xmltree = None
+
+    def clean_data(self):
+        data = self.cleaned_data['data']
+        self._xmltree = XMLTree(data.encode('utf-8'))
+        if self._xmltree.is_data_unclean():
+            raise forms.ValidationError('The XML passed is unclean!')
+        return data
 
 
 class SaveForm(forms.ModelForm):

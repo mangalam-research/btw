@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.admin.templatetags.admin_modify import register, submit_row
 from django.utils.translation import ugettext as _
@@ -23,6 +23,8 @@ from .xml import XMLTree
 from .views import try_updating_entry
 from . import usermod
 
+def make_link(url, text):
+    return mark_safe(u'<a href="{0}">{1}</a>'.format(url, escape(text)))
 
 def make_link_method(field_name, display_name=None):
     if display_name is None:
@@ -32,11 +34,9 @@ def make_link_method(field_name, display_name=None):
         field = getattr(obj, field_name)
         # pylint: disable-msg=W0212
         model_name = field._meta.model_name
-        return mark_safe(u'<a href="%s">%s</a>' %
-                         (reverse("admin:lexicography_" +
-                                  model_name + "_change",
-                                  args=(field, )),
-                          escape(str(field))))
+        return make_link(reverse("admin:lexicography_" +
+                                 model_name + "_change", args=(field, )),
+                         escape(str(field)))
     method.allow_tags = True
     method.short_description = display_name
     return method
@@ -78,9 +78,16 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
         return False
 
 
+def changerecord_to_str(cr):
+    return make_link(reverse('admin:lexicography_changerecord_change',
+                             args=(cr.id, )),
+                     cr.user.username + " " + str(cr.datetime)) \
+        if cr is not None else None
+
+
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('headword', 'nice_deleted', 'latest', 'latest_published',
-                    'edit_raw')
+    list_display = ('headword', 'view', 'nice_deleted', 'nice_latest',
+                    'nice_latest_published', 'edit_raw')
     readonly_fields = ('delete_undelete', )
     exclude = ('deleted', )
 
@@ -90,15 +97,21 @@ class EntryAdmin(admin.ModelAdmin):
         return "Yes" if obj.deleted else "No"
     nice_deleted.short_description = "Deleted"
 
+    def nice_latest(self, obj):
+        return changerecord_to_str(obj.latest)
+    nice_latest.short_description = "Latest"
+
+    def nice_latest_published(self, obj):
+        return changerecord_to_str(obj.latest_published)
+    nice_latest_published.short_description = "Latest published"
+
     def edit_raw(self, obj):
-        return mark_safe('<a href="%s">Edit raw XML</a>' %
-                         (reverse('admin:lexicography_entry_rawupdate',
-                                  args=(obj.id, ))))
+        return make_link(reverse('admin:lexicography_entry_rawupdate',
+                                 args=(obj.id, )), "Edit raw XML")
 
     def view(self, obj):
-        return mark_safe('<a href="%s">View</a>' %
-                         (reverse('lexicography_entry_details',
-                                  args=(obj.id, ))))
+        return make_link(reverse('lexicography_entry_details',
+                                 args=(obj.id, )), "View")
 
     def delete_undelete(self, obj):
         return mark_safe(
@@ -135,9 +148,12 @@ class EntryAdmin(admin.ModelAdmin):
             form = RawSaveForm(request.POST)
             if form.is_valid():
                 chunk = form.save(commit=False)
+                xmltree = form._xmltree
+                if xmltree.is_data_unclean():
+                    raise ValueError(
+                        "got unclean data where we don't expect it!")
 
-                xmltree = XMLTree(chunk.data.encode('utf-8'))
-
+                chunk.schema_version = xmltree.extract_version()
                 entry = Entry()
                 try_updating_entry(request, entry, chunk, xmltree,
                                    ChangeRecord.CREATE, ChangeRecord.MANUAL)

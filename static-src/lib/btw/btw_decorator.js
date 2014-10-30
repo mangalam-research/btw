@@ -574,6 +574,9 @@ BTWDecorator.prototype.linkingDecorator = function (root, el, is_ptr, final_) {
         // Find the referred element. Slice to drop the #.
         var target = doc.getElementById(target_id.slice(1));
 
+        if (!target)
+            return;
+
         if (!(target.classList.contains("btw:example") ||
               target.classList.contains("btw:example-explained")))
             return;

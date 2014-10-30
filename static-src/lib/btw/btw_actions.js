@@ -135,15 +135,18 @@ ExamplePtrDialogAction.prototype.execute = function (data) {
         }
 
         var abbr = example.querySelector(util.classFromOriginalName("ref"));
-        if (abbr) {
-            abbr = abbr.cloneNode(true);
-            child = abbr.firstElementChild;
-            while(child) {
-                var next = child.nextElementSibling;
-                if (child.classList.contains("_gui"))
-                    abbr.removeChild(child);
-                child = next;
-            }
+        // We skip those examples that do not have a ref in them yet,
+        // as links to them are meaningless.
+        if (!abbr)
+            continue;
+
+        abbr = abbr.cloneNode(true);
+        child = abbr.firstElementChild;
+        while(child) {
+            var next = child.nextElementSibling;
+            if (child.classList.contains("_gui"))
+                abbr.removeChild(child);
+            child = next;
         }
 
         var span = doc.createElement("span");
