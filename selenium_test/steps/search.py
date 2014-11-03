@@ -50,7 +50,7 @@ test();
 """
 
 
-@when('^the user searches for headword "(?P<query>.*?)"')
+@when('^the user searches for lemma "(?P<query>.*?)"')
 def step_impl(context, query):
     util = context.util
     driver = context.driver
@@ -72,8 +72,8 @@ def step_impl(context, query):
 
 
 @then(r'^the search results show (?P<count>one entry|(?:\d+) entries) for '
-      r'"(?P<headword>.*?)"')
-def step_impl(context, count, headword):
+      r'"(?P<lemma>.*?)"')
+def step_impl(context, count, lemma):
     if count == "one entry":
         count = 1
     elif count.endswith("entries"):
@@ -83,11 +83,11 @@ def step_impl(context, count, headword):
 
     driver = context.driver
     hits = driver.execute_script("""
-    var headword = arguments[0];
+    var lemma = arguments[0];
     var table = document.getElementById("search-table");
     var links = Array.prototype.slice.call(table.getElementsByTagName("a"));
-    return links.filter(function (x) { return x.textContent === headword; });
-    """, headword)
+    return links.filter(function (x) { return x.textContent === lemma; });
+    """, lemma)
     assert_equal(len(hits), count, "there should be " +
                  str(count) + " results")
 
@@ -246,7 +246,7 @@ def step_impl(context, existence, name):
     assert_true(result, result.payload)
 
 
-@then('^the search box is empty and the headwords only box is unchecked$')
+@then('^the search box is empty and the lemmata only box is unchecked$')
 def step_impl(context):
     util = context.util
     driver = context.driver

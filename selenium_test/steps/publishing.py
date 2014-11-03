@@ -11,14 +11,14 @@ step_matcher('re')
 def step_impl(context, name):
     driver = context.driver
     link = driver.execute_script("""
-    var headword = arguments[0];
+    var lemma = arguments[0];
     var table = document.getElementById("search-table");
     var rows = Array.prototype.slice.call(table.getElementsByTagName("tr"));
     rows = rows.filter(function (x) {
         var links = Array.prototype.slice.call(
             x.querySelectorAll("td:first-of-type>a"));
         return links.filter(function (l) { return l.textContent ===
-                                           headword; })
+                                           lemma; })
             .length;
     });
     if (rows.length !== 1)
@@ -49,7 +49,7 @@ def step_impl(context):
     assert_equal(text, "This change record was published.")
 
 
-@when('^the article with headword "foo" can be published$')
+@when('^the article with lemma "foo" can be published$')
 def step_impl(context):
     driver = context.driver
     r = requests.get(context.selenic.SERVER +

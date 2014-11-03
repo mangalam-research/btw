@@ -295,7 +295,7 @@ def step_impl(context, what):
                          params={
                              "length": -1,
                              "search[value]": title,
-                             "headwords_only": "true",
+                             "lemmata_only": "true",
                              "publication_status": "both",
                          },
                          cookies={

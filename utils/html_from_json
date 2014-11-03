@@ -34,13 +34,13 @@ var entries = _.filter(json, {model: "lexicography.entry"});
 if (!args.expression) {
     console.log("Available entries:\n");
     console.log(_.map(entries, function (x) {
-        return x.fields.headword;
+        return x.fields.lemma;
     }).join("\n"));
 }
 else {
     var re = RegExp(args.expression);
     var matches = _.filter(entries, function (x) {
-        return re.test(x.fields.headword);
+        return re.test(x.fields.lemma);
     });
     if (matches.length === 0)
         throw new Error("no match!");

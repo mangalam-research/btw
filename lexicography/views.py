@@ -57,8 +57,8 @@ def main(request):
 
 class SearchTable(BaseDatatableView):
     model = ChangeRecord
-    columns = ['headword', 'published', 'entry__deleted', 'datetime', 'user']
-    order_columns = ['headword', 'published',
+    columns = ['lemma', 'published', 'entry__deleted', 'datetime', 'user']
+    order_columns = ['lemma', 'published',
                      'entry__deleted', 'datetime', 'user']
 
     def render_column(self, row, column):
@@ -100,7 +100,7 @@ class SearchTable(BaseDatatableView):
         # Also we don't put edit buttons for change records that are
         # not the latest.
         #
-        if column == 'headword' and \
+        if column == 'lemma' and \
            self.request.user.has_perm("lexicography.change_entry") and \
            row.entry.latest == row:
             if row.entry.is_editable_by(self.request.user):
@@ -131,7 +131,7 @@ class SearchTable(BaseDatatableView):
 
     def filter_queryset(self, qs):
         search_value = self.request.GET.get('search[value]', None)
-        headwords_only = self.request.GET.get('headwords_only', "false") == \
+        lemmata_only = self.request.GET.get('lemmata_only', "false") == \
             "true"
 
         if usermod.can_author(self.request.user):
@@ -168,8 +168,8 @@ class SearchTable(BaseDatatableView):
             active = qs
 
         if search_value:
-            qs = active.filter(util.get_query(search_value, ['headword']))
-            if not headwords_only:
+            qs = active.filter(util.get_query(search_value, ['lemma']))
+            if not lemmata_only:
                 chunks = Chunk.objects.filter(
                     util.get_query(search_value, ['data']))
                 qs |= active.filter(c_hash=chunks)
@@ -260,9 +260,9 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     chunk.save()
     user = request.user
     session_key = request.session.session_key
-    headword = xmltree.extract_headword()
+    lemma = xmltree.extract_lemma()
     if entry.id is None:
-        entry.update(user, session_key, chunk, headword, ChangeRecord.CREATE,
+        entry.update(user, session_key, chunk, lemma, ChangeRecord.CREATE,
                      subtype)
         if try_acquiring_lock(entry, request.user) is None:
             raise Exception("unable to acquire the lock of an entry "
@@ -270,7 +270,7 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     else:
         if try_acquiring_lock(entry, request.user) is None:
             return False
-        entry.update(user, session_key, chunk, headword, ctype, subtype)
+        entry.update(user, session_key, chunk, lemma, ctype, subtype)
     return True
 
 
@@ -454,7 +454,7 @@ def _save_command(request, entry_id, handle, command, messages):
         messages.append({'type': 'save_fatal_error'})
         return None
 
-    if xmltree.extract_headword() is None:
+    if xmltree.extract_lemma() is None:
         messages.append(
             {'type': 'save_transient_error',
              'msg': 'Please specify a lemma for your entry.'})
@@ -512,14 +512,14 @@ def _save_command(request, entry_id, handle, command, messages):
             pass
         # Try to determine what the problem is. If there is an
         # IntegrityError it is possible that it is *not* due to a
-        # duplicate headword.
-        others = Entry.objects.filter(headword=entry.headword)
+        # duplicate lemma.
+        others = Entry.objects.filter(lemma=entry.lemma)
         if len(others) > 1 or (others and others[0].id != entry.id):
-            # Duplicate headword
+            # Duplicate lemma
             messages.append(
                 {'type': 'save_transient_error',
                  'msg': 'There is another entry with the lemma "{0}".'
-                 .format(entry.headword)})
+                 .format(entry.lemma)})
             return None
 
         # Can't figure it out.
@@ -666,7 +666,7 @@ def handle_background_mod(request, entry_id, handle):
 # the rules. This is used only by the test suite.
 @login_required
 @require_GET
-def entry_testing_mark_valid(request, headword):
+def entry_testing_mark_valid(request, lemma):
     """
     This is a view that exists only in testing. It marks the latest
     version of an entry as valid, unconditionally.
@@ -674,7 +674,7 @@ def entry_testing_mark_valid(request, headword):
     if not settings.BTW_TESTING:
         raise Exception("BTW_TESTING not on!")
 
-    entry = Entry.objects.get(headword=headword)
+    entry = Entry.objects.get(lemma=lemma)
     entry.latest.c_hash._valid = True
     entry.latest.c_hash.save()
 

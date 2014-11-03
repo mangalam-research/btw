@@ -7,10 +7,10 @@ Feature: Searching through articles.
 # the Django unit tests.
 #
 
-Scenario: Author performs a basic headword search.
+Scenario: Author performs a basic lemma search.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
-When the user searches for headword "foo"
+When the user searches for lemma "foo"
 Then the search results show one entry for "foo".
 And there is a "Published" column visible
 And there is a "Deleted" column visible
@@ -38,7 +38,7 @@ Then the search results show published entries
 Scenario: An author can switch the search to search all records.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
-When the user searches for headword "old and new records"
+When the user searches for lemma "old and new records"
 Then the search results show one entry for "old and new records".
 When the user sets the search to search all records
 Then the search results show 3 entries for "old and new records".
@@ -51,10 +51,10 @@ Scenario: A user that cannot author cannot see the deletion status
 Given that the user has loaded the top page of the lexicography app
 Then there is no "Deleted" column visible
 
-Scenario: When the user reloads the page, the filter and headword settings remains the same.
+Scenario: When the user reloads the page, the filter and lemma settings remains the same.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
-When the user searches for headword "foo"
+When the user searches for lemma "foo"
 Then the search results show one entry for "foo"
 Given that the user has loaded the top page of the lexicography app
 And the search table is loaded
@@ -63,7 +63,7 @@ Then the search results show one entry for "foo"
 Scenario: When the user reloads the page, the all records settings remain the same.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
-When the user searches for headword "old and new records"
+When the user searches for lemma "old and new records"
 And the user sets the search to search all records
 Then the search results show 3 entries for "old and new records".
 Given that the user has loaded the top page of the lexicography app
@@ -93,8 +93,8 @@ Then there is no "Published" column visible
 Scenario: When the user logs out, the search info is cleared.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
-When the user searches for headword "foo"
+When the user searches for lemma "foo"
 When the user logs out
 Given that the user has loaded the top page of the lexicography app
 And the search table is loaded
-Then the search box is empty and the headwords only box is unchecked
+Then the search box is empty and the lemmata only box is unchecked

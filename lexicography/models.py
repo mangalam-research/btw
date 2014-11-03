@@ -46,13 +46,13 @@ class Entry(models.Model):
 
     class Meta(object):
         verbose_name_plural = "Entries"
-        unique_together = (("headword"), )
+        unique_together = (("lemma", ), )
         # This is really application-wide but Django insists that permissions
         # be associated with specific models.
         permissions = (('garbage_collect', "Perform a garbage collection."),
                        )
 
-    headword = models.CharField(max_length=1024)
+    lemma = models.CharField(max_length=1024)
     # This field must be allowed to be null because there is a
     # circular reference between ``Entry`` and ``ChangeRecord``.
     latest = models.ForeignKey('ChangeRecord', related_name='+', null=True)
@@ -61,19 +61,19 @@ class Entry(models.Model):
     deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.headword
+        return self.lemma
 
     def get_absolute_url(self):
         return reverse('lexicography_entry_details', args=[str(self.id)])
 
     @method_decorator(transaction.atomic)
-    def update(self, user, session_key, chunk, headword, ctype, subtype):
+    def update(self, user, session_key, chunk, lemma, ctype, subtype):
         if self.id is None and ctype != ChangeRecord.CREATE:
             raise ValueError("The Entry has no id but the ctype is not CREATE")
 
         cr = ChangeRecord(
             entry=self,
-            headword=headword,
+            lemma=lemma,
             user=user,
             datetime=util.utcnow(),
             session=session_key,
@@ -81,7 +81,7 @@ class Entry(models.Model):
             csubtype=subtype,
             c_hash=chunk)
 
-        self.headword = headword
+        self.lemma = lemma
         # save() first. So that if we have an integrity error, there is no
         # stale ChangeRecord to remove.
         self.save()
@@ -194,7 +194,7 @@ class ChangeRecord(models.Model):
     entry = models.ForeignKey(Entry)
     # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
     # could use TextField() but the flexibility there comes at a cost.
-    headword = models.CharField(max_length=1024)
+    lemma = models.CharField(max_length=1024)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
     datetime = models.DateTimeField()
@@ -272,7 +272,7 @@ class ChangeRecord(models.Model):
         unique_together = (("entry", "datetime", "ctype"), )
 
     def __unicode__(self):
-        return self.entry.headword + " " + self.user.username + " " + \
+        return self.entry.lemma + " " + self.user.username + " " + \
             str(self.datetime)
 
 

@@ -3,7 +3,7 @@
   "pk": 1,
   "model": "lexicography.entry",
   "fields": {
-    "headword": "abcd",
+    "lemma": "abcd",
     "latest": 1
   }
 },
@@ -11,7 +11,7 @@
   "pk": 2,
   "model": "lexicography.entry",
   "fields": {
-    "headword": "foo",
+    "lemma": "foo",
     "latest": 2
   }
 },
@@ -28,7 +28,7 @@
     ],
     "csubtype": "M",
     "entry": 1,
-    "headword": "abcd"
+    "lemma": "abcd"
   }
 },
 {
@@ -44,7 +44,7 @@
     ],
     "csubtype": "M",
     "entry": 2,
-    "headword": "foo"
+    "lemma": "foo"
   }
 },
 {
@@ -60,7 +60,7 @@
     ],
     "csubtype": "M",
     "entry": 1,
-    "headword": "abcd"
+    "lemma": "abcd"
   }
 },
 {

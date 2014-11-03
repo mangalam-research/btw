@@ -71,7 +71,7 @@ WARNING: in general, this operation cannot be reliably undone without
         locked = Entry.objects.locked()
         if locked:
             self.stderr.write("These entries are locked:")
-            self.stderr.write("\n".join([e.headword for e in locked]))
+            self.stderr.write("\n".join([e.lemma for e in locked]))
             raise CommandError("Some entries are locked; aborting.")
 
         expected = 'Yes, I want to do this.'

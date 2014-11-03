@@ -34,19 +34,19 @@ class XMLTreeTestCase(unittest.TestCase):
         data = '<div'
         self.assertTrue(xml.XMLTree(data).is_data_unclean())
 
-    def test_extract_headword_passes(self):
+    def test_extract_lemma_passes(self):
         editable = as_editable(os.path.join(xml.schemas_dirname,
                                             "prasada.xml"))
-        self.assertEqual(xml.XMLTree(editable).extract_headword(),
+        self.assertEqual(xml.XMLTree(editable).extract_lemma(),
                          u"prasāda")
 
-    def test_extract_headword_returns_none_when_no_headword(self):
+    def test_extract_lemma_returns_none_when_no_lemma(self):
         data = '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
-        self.assertIsNone(xmltree.extract_headword())
+        self.assertIsNone(xmltree.extract_lemma())
 
-    def test_extract_headword_returns_none_when_empty_lemma(self):
+    def test_extract_lemma_returns_none_when_empty_lemma(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
   xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
@@ -55,9 +55,9 @@ class XMLTreeTestCase(unittest.TestCase):
         """
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
-        self.assertIsNone(xmltree.extract_headword())
+        self.assertIsNone(xmltree.extract_lemma())
 
-    def test_extract_headword_returns_none_when_whitespace_lemma(self):
+    def test_extract_lemma_returns_none_when_whitespace_lemma(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
   xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
@@ -66,7 +66,7 @@ class XMLTreeTestCase(unittest.TestCase):
         """
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
-        self.assertIsNone(xmltree.extract_headword())
+        self.assertIsNone(xmltree.extract_lemma())
 
     def test_extract_authority_passes(self):
         editable = as_editable(os.path.join(xml.schemas_dirname,
@@ -74,7 +74,7 @@ class XMLTreeTestCase(unittest.TestCase):
         self.assertEqual(xml.XMLTree(editable).extract_authority(),
                          "LL")
 
-    def test_extract_headword_fails_when_no_authority(self):
+    def test_extract_lemma_fails_when_no_authority(self):
         data = '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())

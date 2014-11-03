@@ -25,8 +25,8 @@ class LockingTestCase(TestCase):
         user_model = get_user_model()
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
-        self.entry_abcd = models.Entry.objects.get(headword="abcd")
-        self.entry_foo = models.Entry.objects.get(headword="foo")
+        self.entry_abcd = models.Entry.objects.get(lemma="abcd")
+        self.entry_foo = models.Entry.objects.get(lemma="foo")
 
     def tearDown(self):
         self.logger.removeHandler(self.handler)
@@ -44,20 +44,20 @@ class LockingTestCase(TestCase):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
     def test_try_acquiring_lock_failure(self):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
         # Foo2 tries to acquire a lock on the entry already locked by foo.
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
             r"^foo2 failed to expire lock \d+ on entry \d+ "
-            r"\(headword: abcd\)$")
+            r"\(lemma: abcd\)$")
 
     def test_try_acquiring_lock_on_two_entries(self):
         # Same user acquires lock on two different entries.
@@ -72,25 +72,25 @@ class LockingTestCase(TestCase):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
         lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo2 acquired lock \d+ on entry \d+ \(headword: foo\)$")
+            r"^foo2 acquired lock \d+ on entry \d+ \(lemma: foo\)$")
 
     def test_try_acquiring_lock_refreshes(self):
         # A user acquires a lock on an entry already locked by this user.
         first = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(first)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
         time.sleep(1)
         second = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(second)
         self.assertTrue(second.datetime > first.datetime)
         self.assertLogRegexp(
-            r"^foo refreshed lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo refreshed lock \d+ on entry \d+ \(lemma: abcd\)$")
 
     def test_release_entry_lock_releases(self):
         # We do this to prevent the lock id and the entry id from
@@ -103,17 +103,17 @@ class LockingTestCase(TestCase):
                                                    self.foo)
         self.assertIsNotNone(acquired_lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: foo\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: foo\)$")
 
         lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNone(lock)
         self.assertLogRegexp(
             r"^foo2 failed to expire lock \d+ on entry \d+ "
-            r"\(headword: foo\)$")
+            r"\(lemma: foo\)$")
 
         locking.release_entry_lock(self.entry_foo, self.foo)
         self.assertLogRegexp(
-            r"^foo released lock \d+ on entry \d+ \(headword: foo\)$")
+            r"^foo released lock \d+ on entry \d+ \(lemma: foo\)$")
         self.assertEqual(
             models.EntryLock.objects.filter(id=acquired_lock.id).count(),
             0)
@@ -122,13 +122,13 @@ class LockingTestCase(TestCase):
         lock = locking.try_acquiring_lock(self.entry_foo, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo2 acquired lock \d+ on entry \d+ \(headword: foo\)$")
+            r"^foo2 acquired lock \d+ on entry \d+ \(lemma: foo\)$")
 
     def test_try_acquiring_lock_expire_success(self):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
         lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
             datetime.timedelta(seconds=1)
         lock.save()
@@ -138,15 +138,15 @@ class LockingTestCase(TestCase):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo2)
         self.assertIsNotNone(lock)
         self.assertLogRegexp(
-            r"^foo2 expired lock \d+ on entry \d+ \(headword: abcd\)\n"
-            r"foo2 acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo2 expired lock \d+ on entry \d+ \(lemma: abcd\)\n"
+            r"foo2 acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
     def test_release_entry_lock_fails_on_wrong_user(self):
         acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
                                                    self.foo)
         self.assertIsNotNone(acquired_lock)
         self.assertLogRegexp(
-            r"^foo acquired lock \d+ on entry \d+ \(headword: abcd\)$")
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
         self.assertRaisesRegexp(
             ValueError,

@@ -2,5 +2,5 @@
 {% load url from future %}
 {% load libcore %}
 {% block content %}
-<p>The {{ lock.entry.headword }} entry is locked by {{ lock.owner|nice_name }}.</p>
+<p>The {{ lock.entry.lemma }} entry is locked by {{ lock.owner|nice_name }}.</p>
 {% endblock %}

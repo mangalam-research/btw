@@ -123,7 +123,7 @@ class EntryTestCase(TransactionTestCase):
             self.foo,
             "q",
             old_latest.c_hash,
-            entry.headword,
+            entry.lemma,
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         self.assertEqual(entry.changerecord_set.count(),
@@ -134,7 +134,7 @@ class EntryTestCase(TransactionTestCase):
         self.assertEqual(latest.user, self.foo)
         self.assertEqual(latest.session, "q")
         self.assertEqual(latest.c_hash, old_latest.c_hash)
-        self.assertEqual(latest.headword, old_latest.headword)
+        self.assertEqual(latest.lemma, old_latest.lemma)
         self.assertEqual(latest.ctype, ChangeRecord.UPDATE)
         self.assertEqual(latest.csubtype, ChangeRecord.MANUAL)
         self.assertFalse(latest.published)
@@ -148,7 +148,7 @@ class EntryTestCase(TransactionTestCase):
             self.foo,
             "q",
             self.entry.latest.c_hash,
-            self.entry.headword + " copy",
+            self.entry.lemma + " copy",
             ChangeRecord.CREATE,
             ChangeRecord.MANUAL)
         self.assertEqual(entry.changerecord_set.count(), 1,
@@ -158,7 +158,7 @@ class EntryTestCase(TransactionTestCase):
         self.assertEqual(latest.user, self.foo)
         self.assertEqual(latest.session, "q")
         self.assertEqual(latest.c_hash, self.entry.latest.c_hash)
-        self.assertEqual(latest.headword, entry.headword)
+        self.assertEqual(latest.lemma, entry.lemma)
         self.assertEqual(latest.ctype, ChangeRecord.CREATE)
         self.assertEqual(latest.csubtype, ChangeRecord.MANUAL)
         self.assertFalse(latest.published)
@@ -200,7 +200,7 @@ class ChangeRecordTestCase(TransactionTestCase):
             self.foo,
             "q",
             old_latest.c_hash,
-            entry.headword,
+            entry.lemma,
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         latest = entry.latest
@@ -219,7 +219,7 @@ class ChangeRecordTestCase(TransactionTestCase):
             self.foo,
             "q",
             old_latest.c_hash,
-            entry.headword,
+            entry.lemma,
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         self.assertTrue(old_latest.publish(self.foo))
@@ -250,7 +250,7 @@ class ChangeRecordTestCase(TransactionTestCase):
             self.foo,
             "q",
             old_latest.c_hash,
-            entry.headword,
+            entry.lemma,
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
         latest = entry.latest

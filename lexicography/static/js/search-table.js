@@ -69,8 +69,8 @@ return function ($table, options) {
     var doc = $table[0].ownerDocument;
 
     var label = doc.createElement("label");
-    label.innerHTML = 'Headwords only: <input type="checkbox" class="form-control input-sm"></input>';
-    var headword_checkbox = label.lastElementChild;
+    label.innerHTML = 'Lemmata only: <input type="checkbox" class="form-control input-sm"></input>';
+    var lemma_checkbox = label.lastElementChild;
 
     var advanced = doc.createElement("div");
     advanced.className = "panel-group";
@@ -126,7 +126,7 @@ return function ($table, options) {
 
         }
 
-        $([headword_checkbox, publication_selector, search_all])
+        $([lemma_checkbox, publication_selector, search_all])
             .change(function () {
                 table.fnDraw();
             });
@@ -148,7 +148,7 @@ return function ($table, options) {
         stateSaveParams: function (settings, data) {
             var params = this.api().ajax.params();
             data.btw_token = token;
-            data.headwords_only = params.headwords_only;
+            data.lemmata_only = params.lemmata_only;
             data.publication_status = params.publication_status;
             data.search_all = params.search_all;
         },
@@ -161,14 +161,14 @@ return function ($table, options) {
             return undefined;
         },
         stateLoaded: function (settings, data) {
-            headword_checkbox.checked = data.headwords_only;
+            lemma_checkbox.checked = data.lemmata_only;
             publication_selector.value = data.publication_status;
             search_all.checked = data.search_all;
         },
         ajax: {
             url: options.ajax_source_url,
             data: function (params) {
-                params.headwords_only = headword_checkbox.checked;
+                params.lemmata_only = lemma_checkbox.checked;
                 params.publication_status = publication_selector.value;
                 params.search_all = search_all.checked;
             }

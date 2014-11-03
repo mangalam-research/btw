@@ -21,17 +21,17 @@ def parse_search_results(data):
 
     :param data: The whole JSON data.
     :type data: :class:`str`.
-    :returns: A :class:`dict` that has for keys the headwords and for
-              values a :class:`dict` with the keys: ``"headword"``
-              which has for value the headword, ``"edit_url"`` which
-              has for value the edit URL related to this headword
-              (there can be only one per headword), ``"hits"`` which
+    :returns: A :class:`dict` that has for keys the lemmata and for
+              values a :class:`dict` with the keys: ``"lemma"``
+              which has for value the lemma, ``"edit_url"`` which
+              has for value the edit URL related to this lemma
+              (there can be only one per lemma), ``"hits"`` which
               is a list of each individual hits encountered. Each item
               in the ``"hits"`` list is a dictionary with two keys:
               ``"edit_url"`` is the edit URL that was found in this
               hit and ``"view_url"`` is the URL for viewing the entry
               that was found in this hit. Note: the ``len(..)`` of the
-              return value gives the number of different headwords
+              return value gives the number of different lemmata
               that were found. The total number of rows found in the
               table is obtained by adding the ``len(..)`` of each
               ``hits`` list.
@@ -61,7 +61,7 @@ def parse_search_results(data):
         els = tree.xpath("//a")
         publish_link = els[0] if len(els) == 1 else None
 
-        headword = view_link.text
+        lemma = view_link.text
         hit = {
             # Must test with "is not None" to satisfy lxml.
             "edit_url": edit_link.get("href") if edit_link is not None
@@ -72,21 +72,21 @@ def parse_search_results(data):
             "deleted": row[2],
             "datetime": row[3]
         }
-        headword_rec = ret.get(headword)
-        if headword_rec:
+        lemma_rec = ret.get(lemma)
+        if lemma_rec:
             if hit["edit_url"]:
-                assert headword_rec["edit_url"] is None, \
+                assert lemma_rec["edit_url"] is None, \
                     "can't have two edit urls"
-                headword_rec["edit_url"] = hit["edit_url"]
+                lemma_rec["edit_url"] = hit["edit_url"]
         else:
-            headword_rec = {
-                "headword": headword,
+            lemma_rec = {
+                "lemma": lemma,
                 "edit_url": hit["edit_url"],
                 "hits": []
             }
-            ret[headword] = headword_rec
+            ret[lemma] = lemma_rec
 
-        headword_rec["hits"].append(hit)
+        lemma_rec["hits"].append(hit)
 
     return ret
 

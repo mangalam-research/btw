@@ -42,7 +42,7 @@ class ViewsTestCase(TransactionWebTest):
         self.assertEqual(a.pk, b.pk)
 
     def search_table_search(self, title, user,
-                            headwords_only=True,
+                            lemmata_only=True,
                             publication_status="both",
                             search_all=False):
         return self.app.get(
@@ -50,7 +50,7 @@ class ViewsTestCase(TransactionWebTest):
             params={
                 "length": -1,
                 "search[value]": title,
-                "headwords_only": "true" if headwords_only else "false",
+                "lemmata_only": "true" if lemmata_only else "false",
                 "publication_status": publication_status,
                 "search_all": "true" if search_all else "false"
             },
@@ -58,19 +58,19 @@ class ViewsTestCase(TransactionWebTest):
 
     def open_abcd(self, user):
         #
-        # User opens for editing the entry with headword "abcd".
+        # User opens for editing the entry with lemma "abcd".
         #
         # Returns the response which has the editing page and the entry
         # object that the user is editing.
         #
-        headword = 'abcd'
+        lemma = 'abcd'
         response = self.search_table_search(
-            headword, user, headwords_only=True)
+            lemma, user, lemmata_only=True)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
-        response = self.app.get(hits[headword]["edit_url"]).follow()
+        response = self.app.get(hits[lemma]["edit_url"]).follow()
         # Check that a lock as been acquired.
-        entry = Entry.objects.get(headword=headword)
+        entry = Entry.objects.get(lemma=lemma)
         lock = EntryLock.objects.get(entry=entry)
         self.assertSameDBRecord(lock.entry, entry)
 
@@ -102,7 +102,7 @@ class MainTestCase(ViewsTestCase):
         """
         response, entry = self.open_abcd('foo')
 
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(lemma="abcd")
         response = self.search_table_search("abcd", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
@@ -119,7 +119,7 @@ class MainTestCase(ViewsTestCase):
         """
         Someone who is not an author cannot see unpublished articles.
         """
-        entry = Entry.objects.get(headword="foo")
+        entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
         response = self.search_table_search("foo", self.noperm)
@@ -137,7 +137,7 @@ class MainTestCase(ViewsTestCase):
         """
         Someone who is not an author cannot see deleted articles.
         """
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(lemma="abcd")
         response = self.search_table_search("abcd", self.noperm)
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 1)
@@ -155,11 +155,11 @@ class MainTestCase(ViewsTestCase):
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
 
-    def test_search_headword_by_author_can_return_unpublished_articles(self):
+    def test_search_lemma_by_author_can_return_unpublished_articles(self):
         """
         Someone who is an author can see unpublished articles.
         """
-        entry = Entry.objects.get(headword="foo")
+        entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
 
@@ -177,11 +177,11 @@ class MainTestCase(ViewsTestCase):
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["foo"]["hits"]), 1)
 
-    def test_search_headword_by_author_can_return_deleted_articles(self):
+    def test_search_lemma_by_author_can_return_deleted_articles(self):
         """
         Someone who is an author can see unpublished articles.
         """
-        entry = Entry.objects.get(headword="foo")
+        entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
         # Delete it.
@@ -224,7 +224,7 @@ class MainTestCase(ViewsTestCase):
         Someone who is an author can see deleted articles.
         """
         # We delete one.
-        entry = Entry.objects.get(headword="abcd")
+        entry = Entry.objects.get(lemma="abcd")
         count = Entry.objects.active_entries().count()
         # Delete it.
         entry.deleted = True
@@ -512,11 +512,11 @@ class EditingTestCase(ViewsTestCase):
         # The new entry now exists.
         self.assertEqual(nr_entries + 1, Entry.objects.count(),
                          "number of entries after save")
-        self.assertEqual(Entry.objects.get(headword='Glerbl').is_locked(),
+        self.assertEqual(Entry.objects.get(lemma='Glerbl').is_locked(),
                          self.foo, "new entry locked by correct user")
-        self.assertEqual(len(Entry.objects.filter(headword='Glerbl')),
+        self.assertEqual(len(Entry.objects.filter(lemma='Glerbl')),
                          1,
-                         "number of entries with this headword after save")
+                         "number of entries with this lemma after save")
 
         # Save a second time.
         messages, _ = self.save(
@@ -525,8 +525,8 @@ class EditingTestCase(ViewsTestCase):
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
 
-        self.assertEqual(len(Entry.objects.filter(headword='Glerbl')),
-                         1, "same number of entries with this headword")
+        self.assertEqual(len(Entry.objects.filter(lemma='Glerbl')),
+                         1, "same number of entries with this lemma")
 
     def test_new(self):
         """
@@ -550,7 +550,7 @@ class EditingTestCase(ViewsTestCase):
         # The new entry now exists.
         self.assertEqual(nr_entries + 1, Entry.objects.count(),
                          "number of entries after save")
-        self.assertEqual(Entry.objects.get(headword='Glerbl').is_locked(),
+        self.assertEqual(Entry.objects.get(lemma='Glerbl').is_locked(),
                          self.foo, "new entry locked by correct user")
 
     def test_new_without_permissions(self):
@@ -878,7 +878,7 @@ class PublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
         """
         old_count = PublicationChange.objects.count()
 
-        cr = ChangeRecord.objects.get(headword="foo")
+        cr = ChangeRecord.objects.get(lemma="foo")
         # THIS IS A LIE, for testing purposes.
         cr.c_hash._valid = True
         cr.c_hash.save()
@@ -895,7 +895,7 @@ class PublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
         """
         A user can publish an already published version of an article.
         """
-        cr = ChangeRecord.objects.get(headword="foo")
+        cr = ChangeRecord.objects.get(lemma="foo")
         # THIS IS A LIE, for testing purposes.
         cr.c_hash._valid = True
         cr.c_hash.save()
@@ -916,7 +916,7 @@ class PublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
         """
         A user cannot publish an invalid version of an article.
         """
-        cr = ChangeRecord.objects.get(headword="foo")
+        cr = ChangeRecord.objects.get(lemma="foo")
 
         # We need to get a token ...
         self.app.get(reverse('lexicography_main'), user=self.foo)
@@ -948,7 +948,7 @@ class UnpublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
         A user can unpublish an article.
         """
 
-        cr = ChangeRecord.objects.get(headword="foo")
+        cr = ChangeRecord.objects.get(lemma="foo")
         # THIS IS A LIE, for testing purposes.
         cr.c_hash._valid = True
         cr.c_hash.save()
@@ -967,7 +967,7 @@ class UnpublishTestCase(ViewsTestCase, CommonPublishUnpublishCases):
         """
         A user can publish an already published version of an article.
         """
-        cr = ChangeRecord.objects.get(headword="foo")
+        cr = ChangeRecord.objects.get(lemma="foo")
         # THIS IS A LIE, for testing purposes.
         cr.c_hash._valid = True
         cr.c_hash.save()

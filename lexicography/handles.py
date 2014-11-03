@@ -26,9 +26,9 @@ class HandleManager(object):
     some similar non-explicit action, these preemptively created
     articles would then be left over on the system. Entry validation
     would also be problematic because the Entry objects for these
-    prospective articles would have a headword which is NULL or would
-    have a placeholder headword which would be duplicated or some
-    nonsense string. Or we'd have to ask the user for a headword ahead
+    prospective articles would have a lemma which is NULL or would
+    have a placeholder lemma which would be duplicated or some
+    nonsense string. Or we'd have to ask the user for a lemma ahead
     of time. None of these solutions are pain-free.
 
     The handle->id mapping allows the system to give a handle that is not

@@ -4,7 +4,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "abcd",
+    "lemma": "abcd",
     "latest_published": 1,
     "latest": 1
   }
@@ -14,7 +14,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "foo",
+    "lemma": "foo",
     "latest_published": null,
     "latest": 2
   }
@@ -24,7 +24,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "one sense, one subsense",
+    "lemma": "one sense, one subsense",
     "latest_published": 3,
     "latest": 3
   }
@@ -34,7 +34,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "pali example",
+    "lemma": "pali example",
     "latest_published": null,
     "latest": 4
   }
@@ -44,7 +44,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "non-pali example",
+    "lemma": "non-pali example",
     "latest_published": null,
     "latest": 5
   }
@@ -54,7 +54,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "pali explained example",
+    "lemma": "pali explained example",
     "latest_published": null,
     "latest": 6
   }
@@ -64,7 +64,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "non-pali explained example",
+    "lemma": "non-pali explained example",
     "latest_published": null,
     "latest": 7
   }
@@ -74,7 +74,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "definition filled",
+    "lemma": "definition filled",
     "latest_published": null,
     "latest": 8
   }
@@ -84,7 +84,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "definition with formatted text",
+    "lemma": "definition with formatted text",
     "latest_published": null,
     "latest": 9
   }
@@ -94,7 +94,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "senses and subsenses",
+    "lemma": "senses and subsenses",
     "latest_published": 10,
     "latest": 10
   }
@@ -104,7 +104,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "some semantic fields",
+    "lemma": "some semantic fields",
     "latest_published": null,
     "latest": 11
   }
@@ -114,7 +114,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "antonym with citations",
+    "lemma": "antonym with citations",
     "latest_published": null,
     "latest": 12
   }
@@ -124,7 +124,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "cognate with citations",
+    "lemma": "cognate with citations",
     "latest_published": null,
     "latest": 13
   }
@@ -134,7 +134,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "conceptual proximate with citations",
+    "lemma": "conceptual proximate with citations",
     "latest_published": null,
     "latest": 14
   }
@@ -144,7 +144,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "senses, subsenses and hyperlinks",
+    "lemma": "senses, subsenses and hyperlinks",
     "latest_published": 15,
     "latest": 15
   }
@@ -154,7 +154,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "sense with explanation",
+    "lemma": "sense with explanation",
     "latest_published": null,
     "latest": 16
   }
@@ -164,7 +164,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "contrastive elements with one child",
+    "lemma": "contrastive elements with one child",
     "latest_published": null,
     "latest": 17
   }
@@ -174,7 +174,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "sense with citations",
+    "lemma": "sense with citations",
     "latest_published": null,
     "latest": 18
   }
@@ -184,7 +184,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "non-pali example, with ref and ptr",
+    "lemma": "non-pali example, with ref and ptr",
     "latest_published": 19,
     "latest": 19
   }
@@ -194,7 +194,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "old and new records",
+    "lemma": "old and new records",
     "latest_published": null,
     "latest": 22
   }
@@ -204,7 +204,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": true,
-    "headword": "deleted article",
+    "lemma": "deleted article",
     "latest_published": null,
     "latest": 23
   }
@@ -214,7 +214,7 @@
   "model": "lexicography.entry",
   "fields": {
     "deleted": false,
-    "headword": "antonym with citations, followed by another antonym",
+    "lemma": "antonym with citations, followed by another antonym",
     "latest_published": null,
     "latest": 24
   }
@@ -233,7 +233,7 @@
     "published": true,
     "csubtype": "M",
     "entry": 1,
-    "headword": "abcd"
+    "lemma": "abcd"
   }
 },
 {
@@ -250,7 +250,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 2,
-    "headword": "foo"
+    "lemma": "foo"
   }
 },
 {
@@ -267,7 +267,7 @@
     "published": true,
     "csubtype": "M",
     "entry": 3,
-    "headword": "one sense, one subsense"
+    "lemma": "one sense, one subsense"
   }
 },
 {
@@ -284,7 +284,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 4,
-    "headword": "pali example"
+    "lemma": "pali example"
   }
 },
 {
@@ -301,7 +301,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 5,
-    "headword": "non-pali example"
+    "lemma": "non-pali example"
   }
 },
 {
@@ -318,7 +318,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 6,
-    "headword": "pali explained example"
+    "lemma": "pali explained example"
   }
 },
 {
@@ -335,7 +335,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 7,
-    "headword": "non-pali explained example"
+    "lemma": "non-pali explained example"
   }
 },
 {
@@ -352,7 +352,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 8,
-    "headword": "definition filled"
+    "lemma": "definition filled"
   }
 },
 {
@@ -369,7 +369,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 9,
-    "headword": "definition with formatted text"
+    "lemma": "definition with formatted text"
   }
 },
 {
@@ -386,7 +386,7 @@
     "published": true,
     "csubtype": "M",
     "entry": 10,
-    "headword": "senses and subsenses"
+    "lemma": "senses and subsenses"
   }
 },
 {
@@ -403,7 +403,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 11,
-    "headword": "some semantic fields"
+    "lemma": "some semantic fields"
   }
 },
 {
@@ -420,7 +420,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 12,
-    "headword": "antonym with citations"
+    "lemma": "antonym with citations"
   }
 },
 {
@@ -437,7 +437,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 13,
-    "headword": "cognate with citations"
+    "lemma": "cognate with citations"
   }
 },
 {
@@ -454,7 +454,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 14,
-    "headword": "conceptual proximate with citations"
+    "lemma": "conceptual proximate with citations"
   }
 },
 {
@@ -471,7 +471,7 @@
     "published": true,
     "csubtype": "M",
     "entry": 15,
-    "headword": "senses, subsenses and hyperlinks"
+    "lemma": "senses, subsenses and hyperlinks"
   }
 },
 {
@@ -488,7 +488,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 16,
-    "headword": "sense with explanation"
+    "lemma": "sense with explanation"
   }
 },
 {
@@ -505,7 +505,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 17,
-    "headword": "contrastive elements with one child"
+    "lemma": "contrastive elements with one child"
   }
 },
 {
@@ -522,7 +522,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 18,
-    "headword": "sense with citations"
+    "lemma": "sense with citations"
   }
 },
 {
@@ -539,7 +539,7 @@
     "published": true,
     "csubtype": "M",
     "entry": 19,
-    "headword": "non-pali example, with ref and ptr"
+    "lemma": "non-pali example, with ref and ptr"
   }
 },
 {
@@ -556,7 +556,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 20,
-    "headword": "old and new records"
+    "lemma": "old and new records"
   }
 },
 {
@@ -573,7 +573,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 20,
-    "headword": "old and new records"
+    "lemma": "old and new records"
   }
 },
 {
@@ -590,7 +590,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 20,
-    "headword": "old and new records"
+    "lemma": "old and new records"
   }
 },
 {
@@ -607,7 +607,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 21,
-    "headword": "deleted article"
+    "lemma": "deleted article"
   }
 },
 {
@@ -624,7 +624,7 @@
     "published": false,
     "csubtype": "M",
     "entry": 22,
-    "headword": "antonym with citations, followed by another antonym"
+    "lemma": "antonym with citations, followed by another antonym"
   }
 },
 {

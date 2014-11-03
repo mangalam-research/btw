@@ -43,7 +43,7 @@ if settings.BTW_TESTING:
         url(r'^handle/(?P<handle_or_entry_id>.+)/mod$',
             'handle_background_mod',
             name='lexicography_handle_background_mod'),
-        url(r'^entry/(?P<headword>.+)/testing-mark-valid$',
+        url(r'^entry/(?P<lemma>.+)/testing-mark-valid$',
             'entry_testing_mark_valid',
             name='lexicography_entry_testing_mark_valid')
     )

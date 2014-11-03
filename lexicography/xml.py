@@ -96,12 +96,12 @@ Ensure that the tree parses as XML.
         return [target for target in [ref.get('target') for ref in refs]
                 if target.startswith('/bibliography/')]
 
-    def extract_headword(self):
+    def extract_lemma(self):
         """
-Extracts the headword from the XML tree. This is the contents of the
+Extracts the lemma from the XML tree. This is the contents of the
 btw:lemma element.
 
-:returns: The headword.
+:returns: The lemma.
 :rtype: str
 """
         lemma = self.tree.xpath(

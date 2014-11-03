@@ -66,7 +66,7 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
         }
 
     model = ChangeRecord
-    fields = ('headword', 'user', 'datetime', 'session', 'ctype',
+    fields = ('lemma', 'user', 'datetime', 'session', 'ctype',
               'csubtype', 'c_hash', 'revert')
     readonly_fields = fields
     ordering = ('-datetime', )
@@ -86,7 +86,7 @@ def changerecord_to_str(cr):
 
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('headword', 'view', 'nice_deleted', 'nice_latest',
+    list_display = ('lemma', 'view', 'nice_deleted', 'nice_latest',
                     'nice_latest_published', 'edit_raw')
     readonly_fields = ('delete_undelete', )
     exclude = ('deleted', )
@@ -261,10 +261,10 @@ class ChangeRecordAdmin(admin.ModelAdmin, ChangeRecordMixin):
               settings.BTW_REQUIREJS_CONFIG_PATH,
               '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
 
-    list_display = ('entry', 'headword', 'user', 'datetime', 'session',
+    list_display = ('entry', 'lemma', 'user', 'datetime', 'session',
                     'ctype', 'csubtype', 'published', 'revert', 'chunk_link')
 
-    list_filter = ('entry', 'headword', 'published',
+    list_filter = ('entry', 'lemma', 'published',
                    'user', 'session', 'ctype', 'csubtype')
 
     chunk_link = make_link_method('c_hash', "Chunk")

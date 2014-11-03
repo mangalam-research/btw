@@ -130,7 +130,7 @@ class SeleniumTest(LiveServerTestCase):
                 entry = Entry.objects.get(latest__datetime__gte=now)
                 assert entry.latest.publish(admin)
                 with open(self.__control_write, 'w') as out:
-                    out.write(entry.headword.encode('utf-8') + "\n")
+                    out.write(entry.lemma.encode('utf-8') + "\n")
             else:
                 print "Unknown command: ", command
 
