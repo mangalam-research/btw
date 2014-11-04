@@ -16,19 +16,35 @@ xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
 
 def schema_for_version(version):
+    path = schema_for_version_unsafe(version)
+    if path is None:
+        raise ValueError("unknown version: " + version)
+
+    return path
+
+def schema_for_version_unsafe(version):
     path = os.path.join(schemas_dirname,
                         "out/btw-storage-%s/btw-storage.rng" % version)
 
     if not os.path.exists(path):
-        raise ValueError("unknown version: " + version)
+        return None
 
     return path
+
 
 _NO_SCHEMATRON = {
     "0.9": True
 }
 
 def schematron_for_version(version):
+    path = schematron_for_version_unsafe(version)
+    if isinstance(path, ValueError):
+        raise path  # pylint: disable=raising-bad-type
+
+    return path
+
+
+def schematron_for_version_unsafe(version):
     # Some version do not have a schematron check. Testing the
     # presence of a path and assume that an absent file means we don't
     # expect a schematron check is error prone, ergo this check:
@@ -38,7 +54,7 @@ def schematron_for_version(version):
     path = os.path.join(schemas_dirname, "out/btw-storage-%s.xsl" % version)
 
     if not os.path.exists(path):
-        raise ValueError("missing schematron version: " + version)
+        path = ValueError("missing schematron version: " + version)
 
     return path
 
@@ -146,11 +162,23 @@ Extracts the version from the XML tree.
 :returns: The version
 :rtype: str
 """
-        version = self.tree.get('version')
+        version = self.extract_version_unsafe()
         if version is None:
             raise ValueError("can't find the version in the data passed")
 
-        return version.strip()
+        return version
+
+    def extract_version_unsafe(self):
+        """
+        Extracts the version from the XML tree.
+
+:returns: The version, if it is present. ``None`` if the version is
+          not present.
+:rtype: str
+        """
+        version = self.tree.get('version')
+        return version.strip() if version is not None else None
+
 
 _auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
 _new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")

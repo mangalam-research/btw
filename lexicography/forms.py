@@ -3,7 +3,8 @@ from django.conf import settings
 from django import forms
 
 from wed import WedWidget
-from .models import Chunk
+from .models import Chunk, Entry
+from . import xml
 from .xml import XMLTree
 
 
@@ -17,11 +18,32 @@ class RawSaveForm(forms.ModelForm):
 
     def clean_data(self):
         data = self.cleaned_data['data']
-        self._xmltree = XMLTree(data.encode('utf-8'))
+        xmltree = XMLTree(data.encode('utf-8'))
+        self._xmltree = xmltree
         if self._xmltree.is_data_unclean():
             raise forms.ValidationError('The XML passed is unclean!')
+        else:
+            version = xmltree.extract_version_unsafe()
+            if version is None:
+                raise forms.ValidationError('The XML has no version!')
+            elif xml.schema_for_version_unsafe(version) is None:
+                raise forms.ValidationError(
+                    'No schema able to handle schema version: ' + version)
+            elif isinstance(xml.schematron_for_version_unsafe(version),
+                            ValueError):
+                raise forms.ValidationError(
+                    'No schematron able to handle schema version: ' + version)
         return data
 
+    def clean(self, *args, **kwargs):
+        cleaned_data = super(RawSaveForm, self).clean(*args, **kwargs)
+        xmltree = self._xmltree
+        if not xmltree.is_data_unclean():
+            version = xmltree.extract_version_unsafe()
+            if version is not None:
+                cleaned_data['schema_version'] = version
+                self.instance.schema_version = version
+        return cleaned_data
 
 class SaveForm(forms.ModelForm):
     # This form is a left-over from the initial version of BTW. It has

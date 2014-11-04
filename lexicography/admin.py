@@ -149,24 +149,30 @@ class EntryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 chunk = form.save(commit=False)
                 xmltree = form._xmltree
-                if xmltree.is_data_unclean():
-                    raise ValueError(
-                        "got unclean data where we don't expect it!")
+                lemma = xmltree.extract_lemma()
 
-                chunk.schema_version = xmltree.extract_version()
-                entry = Entry()
-                try_updating_entry(request, entry, chunk, xmltree,
-                                   ChangeRecord.CREATE, ChangeRecord.MANUAL)
-                release_entry_lock(entry, request.user)
-                return HttpResponseRedirect(
-                    reverse('admin:lexicography_entry_changelist'))
+                if Entry.objects.filter(lemma=lemma).count() > 0:
+                    # From Django 1.7 onwards this should use:
+                    # form.add_error('data', ...)
+                    errors = form.errors.setdefault(
+                        'data', form.error_class())
+                    errors.append(
+                        'Lemma already present in database: ' + lemma)
+                else:
+                    entry = Entry()
+                    try_updating_entry(request, entry, chunk, xmltree,
+                                       ChangeRecord.CREATE,
+                                       ChangeRecord.MANUAL)
+                    release_entry_lock(entry, request.user)
+                    return HttpResponseRedirect(
+                        reverse('admin:lexicography_entry_changelist'))
         else:
             form = RawSaveForm()
 
-            opts = self.model._meta
-            return self.render_raw_form(
-                request, form,
-                _('Add %s') % force_text(opts.verbose_name))
+        opts = self.model._meta
+        return self.render_raw_form(
+            request, form,
+            _('Add %s') % force_text(opts.verbose_name))
 
     @method_decorator(login_required)
     @method_decorator(require_http_methods(["GET", "POST"]))
@@ -192,10 +198,10 @@ class EntryAdmin(admin.ModelAdmin):
         else:
             form = RawSaveForm(instance=entry.latest.c_hash)
 
-            opts = self.model._meta
-            return self.render_raw_form(
-                request, form, _('Change %s') % force_text(opts.verbose_name),
-                entry)
+        opts = self.model._meta
+        return self.render_raw_form(
+            request, form, _('Change %s') % force_text(opts.verbose_name),
+            entry)
 
     @method_decorator(login_required)
     @method_decorator(require_POST)
