@@ -50,24 +50,17 @@ $($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)
 $($(ME)_XSL_TARGETS): $($(ME)_outdir)/%.xsl: $($(ME)_include_mk_DIR)/%.sch
 	saxon -s:$< -o:$@ -xsl:$(SCHEMATRON_TO_XSL) allow-foreign=true generate-fired-rule=false
 
-#
-# This funky path:
-#
-# $($(ME)_outdir)/utils/schemas/btw-storage.xml.compiled
-#
-# is due to a bug in roma. (https://github.com/TEIC/Roma/pull/2)
-#
 .SECONDEXPANSION:
-$(ME)_MAKE_COMPILED_NAME=$($(1)_outdir)/$(2)/utils/schemas/$(2).xml.compiled
+$(ME)_MAKE_COMPILED_NAME=$($(ME)_outdir)/$(1)/btw-storage.compiled
 define $(ME)_MAKE_COMPILED_RULE
-$$(call $(1)_MAKE_COMPILED_NAME,$(1),$(2)): $$($(1)_include_mk_DIR)/$(2).xml
-	$$($(1)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --compile \
-		$$< $$($(1)_outdir)/$(2)
+$$(call $(ME)_MAKE_COMPILED_NAME,$(1)): $$($(ME)_include_mk_DIR)/$(1).xml
+	$$($(ME)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --compile \
+		$$< $($(ME)_outdir)/$(1)
 endef # MAKE_COMPILED_RULE
 
-$(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(ME),$(t:$($(ME)_include_mk_DIR)/%.xml=%))))
+$(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(t:$($(ME)_include_mk_DIR)/%.xml=%))))
 
-$($(ME)_LATEST_RNG_TARGET:.rng=.json): $($(ME)_outdir)/%/btw-storage.json: $$(call $(ME)_MAKE_COMPILED_NAME,$(ME),%)
+$($(ME)_LATEST_RNG_TARGET:.rng=.json): $($(ME)_outdir)/%/btw-storage.json: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	$($(ME)_SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$< -o:$@ callback=''
 
 $($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $($(ME)_outdir)/%/btw-storage.json $($(ME)_outdir)/%/btw-storage-doc
@@ -81,7 +74,7 @@ $($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $(
 $($(ME)_outdir)/%/btw-storage.js: $($(ME)_outdir)/%/btw-storage.rng
 	$($(ME)_CONVERT) $($(ME)_RNG_TO_JS) $< $@
 
-$($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,$(ME),%)
+$($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	-rm -rf $@
 	-mkdir $@
 	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 outputDir=$@
