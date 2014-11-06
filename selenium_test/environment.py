@@ -98,7 +98,7 @@ def before_all(context):
 
     context.server = subprocess.Popen(
         ["utils/start_nginx", context.server_write_fifo,
-         context.server_read_fifo])
+         context.server_read_fifo], close_fds=True)
 
     context.selenium_logs = os.environ.get("SELENIUM_LOGS", False)
 
@@ -167,14 +167,6 @@ def after_scenario(context, _scenario):
     if (window.wed_editor)
         window.onbeforeunload = function () {};
 
-    //
-    // We want each test to start with a blank slate. This is required
-    // because some DataTables use localStorage or sessionStorage to
-    // record data.
-    //
-    localStorage.clear()
-    sessionStorage.clear()
-
     // Find all datatable instances and cancel their Ajax operations.
     if (typeof jQuery !== "undefined" && jQuery.fn.dataTable) {
         var settings_ar =
@@ -186,6 +178,22 @@ def after_scenario(context, _scenario):
             }
         }
     }
+
+    // This pre-aborts all new queries generated after this code runs.
+    if (typeof jQuery !== "undefined") {
+        jQuery(document).ajaxSend(function (event, jqXHR, settings) {
+            jqXHR.abort();
+        });
+    }
+
+    //
+    // We want each test to start with a blank slate. This is required
+    // because some DataTables use localStorage or sessionStorage to
+    // record data.
+    //
+    localStorage.clear()
+    sessionStorage.clear()
+
     """)
     driver.delete_all_cookies()
 

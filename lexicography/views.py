@@ -274,10 +274,18 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
     return True
 
 
+# entry_new and entry_update do not call the handle_update directly
+# but send back a redirection response. Why? This is so that from the
+# user's point of view the urls that edit articles are consistently
+# pointing to the same place.
+
 @login_required
 @require_GET
 def entry_new(request):
     hm = handles.get_handle_manager(request.session)
+    # What we are doing here is indicating to the next view that it is
+    # being invoked for a *new* article.
+    request.session['BTW_HANDLE_UPDATE_NEW'] = True
     return HttpResponseRedirect(
         reverse('lexicography_handle_update',
                 args=("h:" + str(hm.make_unassociated()),)))
@@ -294,6 +302,15 @@ def entry_update(request, entry_id):
 @login_required
 @require_http_methods(["GET", "POST"])
 def handle_update(request, handle_or_entry_id):
+    # We determine through the session whether this is for a new
+    # article.
+    new_entry = request.session.get('BTW_HANDLE_UPDATE_NEW', False)
+    # This is a once only setting.
+    try:
+        del request.session['BTW_HANDLE_UPDATE_NEW']
+    except KeyError:
+        pass
+
     if handle_or_entry_id.startswith("h:"):
         hm = handles.get_handle_manager(request.session)
         handle = handle_or_entry_id[2:]
@@ -331,6 +348,7 @@ def handle_update(request, handle_or_entry_id):
     return render(request, 'lexicography/new.html', {
         'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
         'form': form,
+        'new_entry': new_entry
     })
 
 # This is purposely not set through the settings. Why? Because this is
