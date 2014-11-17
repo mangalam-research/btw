@@ -32,11 +32,14 @@
                     }
                 };
                 options.save = {
-                    url: $parentform.find("#id_saveurl").val(),
-                    headers: {
-                        'X-CSRFToken': csrftoken
-                    },
-                    initial_etag: $parentform.find("#id_initial_etag").val()
+                    path: 'wed/savers/ajax',
+                    options: {
+                        url: $parentform.find("#id_saveurl").val(),
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        },
+                        initial_etag: $parentform.find("#id_initial_etag").val()
+                    }
                 };
 
                 var wed_editor = new wed.Editor();

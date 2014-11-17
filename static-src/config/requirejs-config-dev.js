@@ -15,7 +15,8 @@ require.config({
    xregexp: 'external/xregexp',
    'jquery.growl': 'external/jquery-growl/js/jquery.growl',
      // For bibliography
-   'modules': '/static/scripts/modules'
+   'modules': '/static/scripts/modules',
+   localforage: 'external/localforage'
  },
  packages: [
      {

@@ -355,7 +355,7 @@ def handle_update(request, handle_or_entry_id):
 # not something which someone installing BTW should have the
 # opportunity to change. The Django **code** depends on wed being at a
 # certain version. Changing this is a recipe for disaster.
-REQUIRED_WED_VERSION = "0.19.1"
+REQUIRED_WED_VERSION = "0.20.0"
 
 
 def version_check(version):
