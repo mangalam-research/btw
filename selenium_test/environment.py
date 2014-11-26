@@ -12,6 +12,7 @@ from nose.tools import assert_true
 import selenic.util
 from selenic import Builder
 from behave import step_registry
+from pyvirtualdisplay import Display
 
 _dirname = os.path.dirname(__file__)
 
@@ -30,6 +31,10 @@ from selenium_test import btw_util
 def cleanup(context, failed):
     driver = context.driver
 
+    selenium_quit = context.selenium_quit
+    actually_quit = not ((selenium_quit == "never") or
+                         (context.failed and selenium_quit ==
+                          "on-success"))
     if driver:
         try:
             builder.set_test_status(
@@ -37,11 +42,19 @@ def cleanup(context, failed):
         except httplib.HTTPException:
             # Ignore cases where we can't set the status.
             pass
-        selenium_quit = os.environ.get("SELENIUM_QUIT")
-        if not ((selenium_quit == "never") or
-                (context.failed and selenium_quit == "on-success")):
+        if actually_quit:
             driver.quit()
+
         context.driver = None
+
+    if actually_quit:
+        if context.wm:
+            context.wm.kill()
+            context.wm = None
+
+        if context.display:
+            context.display.stop()
+            context.display = None
 
     if context.server:
         context.server.terminate()
@@ -55,6 +68,18 @@ def cleanup(context, failed):
 def before_all(context):
 
     atexit.register(cleanup, context, True)
+
+    context.selenium_quit = os.environ.get("SELENIUM_QUIT")
+
+    if not builder.remote:
+        visible = context.selenium_quit in ("never", "on-success")
+        context.display = Display(visible=visible, size=(1024, 600))
+        context.display.start()
+        builder.update_ff_binary_env('DISPLAY')
+        context.wm = subprocess.Popen(["openbox", "--sm-disable"])
+    else:
+        context.display = None
+        context.wm = None
 
     driver = builder.get_driver()
     context.driver = driver
