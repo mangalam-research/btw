@@ -22,6 +22,8 @@ function Toolbar(editor) {
          action: new btw_tr.SetTextLanguageTr(editor, "Pāli")},
         {name: "latin",
          action: new btw_tr.SetTextLanguageTr(editor, 'Latin')},
+        {name: "quitnosave", action: new QuitWithoutSavingAction(editor),
+         extraClass: "pull-right"}
     ];
 
     this._name_to_action = Object.create(null);
@@ -36,7 +38,8 @@ function Toolbar(editor) {
         var action = spec.action;
         var icon = action.getIcon();
         var button = document.createElement("button");
-        button.className = "btn btn-default";
+        button.className = "btn btn-default" +
+            (spec.extraClass ? " " + spec.extraClass: "");
         button.name = name;
         button.innerHTML = icon || action.getAbbreviatedDescription();
         var $button = $(button);
@@ -103,7 +106,7 @@ RedoAction.prototype.execute = function (data) {
 
 function QuitAction(editor) {
     action.Action.call(this, editor, "Save and quit", "Save and quit",
-                       "<i class='fa fa-ban' style='color: red'></i>");
+                       "<i class='fa fa-sign-out' style='color: green'></i>");
 }
 
 oop.inherit(QuitAction, action.Action);
@@ -115,6 +118,20 @@ QuitAction.prototype.execute = function (data) {
             $form.submit();
     });
 };
+
+function QuitWithoutSavingAction(editor) {
+    action.Action.call(this, editor, "Quit without saving",
+                       "Quit without saving",
+                       "<i class='fa fa-ban' style='color: red'></i>");
+}
+
+oop.inherit(QuitWithoutSavingAction, action.Action);
+
+QuitWithoutSavingAction.prototype.execute = function (data) {
+    var $form = this._editor.$gui_root.parents("form").first();
+    $form.submit();
+};
+
 
 function SaveAction(editor) {
     action.Action.call(this, editor, "Save", "Save",
