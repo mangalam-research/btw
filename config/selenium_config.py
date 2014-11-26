@@ -1,5 +1,6 @@
 import os
 import subprocess
+import re
 
 from selenium.webdriver.firefox.webdriver import FirefoxProfile, FirefoxBinary
 from selenium.webdriver.chrome.options import Options
@@ -95,26 +96,33 @@ config = Config("OS X 10.9", "CHROME", "37", caps, remote=True)
 # The config is obtained from the TEST_BROWSER environment variable.
 #
 browser_env = os.environ.get("TEST_BROWSER", None)
-parts = browser_env.split(",")
-CONFIG = selenic.get_config(
-    platform=parts[0] or None, browser=parts[1] or None,
-    version=parts[2] or None)
+if browser_env:
+    # When invoked from a Jenkins setup, the spaces that would
+    # normally appear in names like "Windows 8.1" will appear as
+    # underscores instead. And the separators will be "-" rather than
+    # ",".
+    parts = re.split(r"[,-]", browser_env.replace("_", " "))
+    CONFIG = selenic.get_config(
+        platform=parts[0] or None, browser=parts[1] or None,
+        version=parts[2] or None)
 
-if config.browser == "CHROME":
-    CHROME_OPTIONS = Options()
-    #
-    # This prevents getting message shown in Chrome about
-    # --ignore-certificate-errors
-    #
-    # --test-type is an **experimental** option. Reevaluate this
-    # --use.
-    #
-    CHROME_OPTIONS.add_argument("test-type")
+    if config.browser == "CHROME":
+        CHROME_OPTIONS = Options()
+        #
+        # This prevents getting message shown in Chrome about
+        # --ignore-certificate-errors
+        #
+        # --test-type is an **experimental** option. Reevaluate this
+        # --use.
+        #
+        CHROME_OPTIONS.add_argument("test-type")
 
-profile = FirefoxProfile()
-# profile.set_preference("webdriver.log.file", "/tmp/firefox_webdriver.log")
-# profile.set_preference("webdriver.firefox.logfile", "/tmp/firefox.log")
-FIREFOX_PROFILE = profile
+    profile = FirefoxProfile()
+    # profile.set_preference("webdriver.log.file",
+    #                        "/tmp/firefox_webdriver.log")
+    # profile.set_preference("webdriver.firefox.logfile",
+    #                         "/tmp/firefox.log")
+    FIREFOX_PROFILE = profile
 
 # May be required to get native events.
 # FIREFOX_BINARY = FirefoxBinary("/home/ldd/src/firefox-24/firefox")

@@ -97,7 +97,7 @@ FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST
 
 .DELETE_ON_ERROR:
 
-TARGETS:= javascript btw-schema-targets
+TARGETS:= javascript btw-schema-targets build/jenkins-matrix.properties
 .PHONY: all
 all: _all
 	./manage.py collectstatic --noinput
@@ -106,6 +106,9 @@ include $(shell find . -name "include.mk")
 
 .PHONY: _all
 _all: $(TARGETS) build-config
+
+build/jenkins-matrix.properties: build/config/selenium_config.py utils/dump_selenium_configs.py
+	python ./utils/dump_selenium_configs.py --jenkins > $@
 
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
