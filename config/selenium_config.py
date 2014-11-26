@@ -53,7 +53,7 @@ if not LOGS:
 
 
 config = Config("Linux", "FIREFOX", "31")
-config = Config("Linux", "CHROME", "38")
+config = Config("Linux", "CHROME", "39")
 
 config = Config("Windows 8.1", "CHROME", "38", caps, remote=True)
 config = Config("Windows 8.1", "CHROME", "37", caps, remote=True)
