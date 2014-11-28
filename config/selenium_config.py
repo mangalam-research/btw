@@ -1,6 +1,10 @@
 import os
 import subprocess
 import re
+import inspect
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+dirname = os.path.dirname(os.path.abspath(filename))
 
 from selenium.webdriver.firefox.webdriver import FirefoxProfile, FirefoxBinary
 from selenium.webdriver.chrome.options import Options
@@ -52,45 +56,20 @@ if not LOGS:
     caps["record-logs"] = "false"
     caps["sauce-advisor"] = "false"
 
-
-config = Config("Linux", "FIREFOX", "31")
-config = Config("Linux", "CHROME", "39")
-
-config = Config("Windows 8.1", "CHROME", "38", caps, remote=True)
-config = Config("Windows 8.1", "CHROME", "37", caps, remote=True)
-
-# ESR
-config = Config("Windows 8.1", "FIREFOX", "31", caps, remote=True)
-# Previous ESR
-config = Config("Windows 8.1", "FIREFOX", "24", caps, remote=True)
-
-config = Config("Windows 8", "INTERNETEXPLORER", "10", caps, remote=True)
-config = Config("Windows 8.1", "INTERNETEXPLORER", "11", caps, remote=True)
-
-
-config = Config("OS X 10.9", "CHROME", "38", caps, remote=True)
-config = Config("OS X 10.9", "CHROME", "37", caps, remote=True)
-#
-# FAILING COMBINATIONS
-#
-# No support for native events yet:
-#
-# config = Config("Windows 8.1", "FIREFOX", "29", caps, remote=True)
-#
-# Fails due to a resizing bug in Selenium:
-#
-# config = Config("Windows 8.1", "FIREFOX", "26", caps, remote=True)
-#
-# FF does not support native events in OS X.
-#
-# config = Config("OS X 10.6", "FIREFOX", "26", caps, remote=True)
-# config = Config("OS X 10.6", "FIREFOX", "27", caps, remote=True)
-#
-# Just fails:
-#
-# config = Config("Windows 7", "INTERNETEXPLORER", "9",
-#                 caps, remote=True)
-#
+with open(os.path.join(dirname, "./browsers.txt")) as browsers:
+    for line in browsers.readlines():
+        line = line.strip()
+        if line.startswith("#") or len(line) == 0:
+            continue  # Skip comments and blank lines
+        parts = line.split(",")
+        if len(parts) == 3:
+            Config(*parts)
+        elif len(parts) == 4:
+            assert parts[-1].upper() == "REMOTE"
+            parts = parts[:-1] + [caps, True]
+            Config(*parts)
+        else:
+            raise ValueError("bad line: " + line)
 
 #
 # The config is obtained from the TEST_BROWSER environment variable.
@@ -106,7 +85,7 @@ if browser_env:
         platform=parts[0] or None, browser=parts[1] or None,
         version=parts[2] or None)
 
-    if config.browser == "CHROME":
+    if CONFIG.browser == "CHROME":
         CHROME_OPTIONS = Options()
         #
         # This prevents getting message shown in Chrome about
