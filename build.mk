@@ -148,7 +148,7 @@ else
 	cp $< $@
 endif
 
-btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less node_modules/wed/standalone/lib/wed/less-inc/*.less
+btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less $(WED_LESS_INC_PATH)/*.less
 btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less
 
 .SECONDEXPANSION:
