@@ -8,6 +8,13 @@ from .settings import *
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
+#
+# This must be off so that Selenium tests that run in IE can
+# manipulate the session cookie.
+#
+
+SESSION_COOKIE_HTTPONLY = False
+
 __SILENT = True
 
 if __SILENT:
