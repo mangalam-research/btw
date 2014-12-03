@@ -17,6 +17,15 @@ WGET?=wget
 # Parameters to pass to behave
 BEHAVE_PARAMS?=
 
+# Whether to save the test results produced by behave.
+#
+# BEHAVE_SAVE?=
+#
+# *If not otherwise specified*, it is set to an empty string if the
+# makefile is invoked in a "build system" like Buildbot or Jenkins. It
+# is otherwise set to 1.
+#
+
 # The TEI hierarchy to use. This is the default location on
 # Debian-type systems.
 TEI?=/usr/share/xml/tei/stylesheet
@@ -76,6 +85,12 @@ ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
 endif
 
+# Whether we are running in a builder like Jenkins or Buildbot.
+# Normalized to the value 1 when true or empty string when false.
+# JENKINS_HOME is set by Jenkins. Our buildbot setup must be
+# configured to set BUILDBOT.
+BUILD_ENV:=$(and $(or $(JENKINS_HOME),$(BUILDBOT)),1)
+BEHAVE_SAVE?=$(if $(BUILD_ENV),,1)
 
 SOURCES:=$(shell find static-src -type f)
 BUILD_DEST:=$(BUILD_DIR)/static-build
@@ -178,9 +193,13 @@ selenium-test: selenium_test
 selenium_test/*.feature selenium_test: build-config
 	python utils/check_selenium_config.py
 	$(MAKE) -f build.mk all
+ifneq ($(strip $(BEHAVE_SAVE)),)
 	(STAMP=$$(date -Iseconds); \
 	behave -f plain $(BEHAVE_PARAMS) -o test_logs/$$STAMP.log $@; \
 	ln -s -f $$STAMP.log test_logs/LATEST)
+else
+	behave $(BEHAVE_PARAMS) $@
+endif # BEHAVE_SAVE
 
 .PHONY: keep-latest
 keep-latest:
