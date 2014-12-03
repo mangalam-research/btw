@@ -32,7 +32,7 @@ def cleanup(context, failed):
     driver = context.driver
 
     selenium_quit = context.selenium_quit
-    actually_quit = not ((selenium_quit == "never") or
+    actually_quit = not ((selenium_quit in ("never", "on-enter")) or
                          (context.failed and selenium_quit ==
                           "on-success"))
     if driver:
@@ -43,6 +43,9 @@ def cleanup(context, failed):
             # Ignore cases where we can't set the status.
             pass
         if actually_quit:
+            driver.quit()
+        elif selenium_quit == "on-enter":
+            raw_input("Hit enter to quit")
             driver.quit()
 
         context.driver = None
