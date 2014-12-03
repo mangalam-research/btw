@@ -2,6 +2,8 @@
 from nose.tools import assert_equal, assert_true
 import wedutil
 
+from selenic.util import Condition, Result
+
 step_matcher('re')
 
 OPTION_TO_ID = {
@@ -21,19 +23,27 @@ def step_impl(context, page):
 def step_impl(context, page):
     driver = context.driver
     parts = page.split("/")
-    active = driver.execute_script("""
-    var actives = document.querySelectorAll("#btw-site-navigation .active>a");
-    return Array.prototype.map.call(actives, function (active) {
-        var ret = [];
-        Array.prototype.forEach.call(active.childNodes, function (node) {
-            if (node.nodeType === Node.TEXT_NODE)
-                ret.push(node.textContent.trim());
+
+    def check(driver):
+        active = driver.execute_script("""
+        var actives = document.querySelectorAll(
+            "#btw-site-navigation .active>a");
+        return Array.prototype.map.call(actives, function (active) {
+            var ret = [];
+            Array.prototype.forEach.call(active.childNodes,
+            function (node) {
+                if (node.nodeType === Node.TEXT_NODE)
+                    ret.push(node.textContent.trim());
+            });
+            return ret.join('');
         });
-        return ret.join('');
-    });
-    """)
-    assert_true(len(active), len(parts))
-    assert_equal(active, parts)
+        """)
+        return Result(active == parts, [active, parts])
+
+    result = Condition(context.util, check).wait()
+    if not result:
+        active, parts = result.payload
+        assert_equal(active, parts)
 
     # We need this, otherwise the page will be reloaded too fast.
     if page == "Lexicography/New Article":
