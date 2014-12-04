@@ -107,4 +107,4 @@ if browser_env:
 # FIREFOX_BINARY = FirefoxBinary("/home/ldd/src/firefox-24/firefox")
 
 # Location of the BTW server.
-SERVER = "http://localhost:8080"
+SERVER = "http://localhost"

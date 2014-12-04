@@ -1,34 +1,84 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-fifo_to_server=$1
-shift
+import sys
+import tempfile
+import os
+import subprocess
+import atexit
+import shutil
+import signal
+from selenic import outil
 
-fifo_from_server=$1
-shift
+fifo_to_server = sys.argv[1]
+fifo_from_server = sys.argv[2]
+nginx_port = sys.argv[3]
 
-dead () {
-    exit 1
-}
+server = None
+tmpdir = None
+tmpconf = None
 
-cleanup () {
-    local jobs
-    nginx -c `pwd`/build/config/nginx.conf -s stop
-    jobs=`jobs -pr`
-    if [ -n "$jobs" ]; then
-        kill -9 `jobs -pr`
-    fi
-    exit
-}
+def cleanup(*_whatever):
+    global server
+    global tmpdir
+    global tmpconf
 
-trap dead SIGCHLD
-trap cleanup EXIT
-trap cleanup ERR
+    if server:
+        if server.poll() is None:
+            server.kill()
+        server = None
 
-mkdir -p var/run || true
-mkdir -p var/log || true
-mkdir -p var/lib/nginx || true
-mkdir -p var/log/btw || true
+    if tmpconf:
+        subprocess.call(["nginx", "-c", tmpconf, "-s", "stop"])
+        tmpconf = None
 
-BTW_ENV=selenium ./manage.py liveserver --settings=btw.test_settings localhost:7777 $fifo_to_server $fifo_from_server & nginx -c `pwd`/build/config/nginx.conf
+    if tmpdir:
+        shutil.rmtree(tmpdir)
+        tmpdir = None
 
-wait
+atexit.register(cleanup)
+signal.signal(signal.SIGINT, cleanup)
+signal.signal(signal.SIGTERM, cleanup)
+
+tmpdir = tempfile.mkdtemp(prefix='btw-nginx-tmp')
+tmpconf = os.path.join(tmpdir, "nginx.conf")
+
+for d in ["var/run", "var/log", "var/lib/nginx", "var/log/btw"]:
+    os.makedirs(os.path.join(tmpdir, d))
+
+local_conf_path = os.path.join("local_config", "nginx.conf")
+conf_path = os.path.join("config", "nginx.conf")
+
+read_from = local_conf_path if os.path.exists(local_conf_path) \
+    else conf_path
+
+server_port = str(outil.get_unused_port())
+with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
+    tmpcfg.write(cfg.read().replace('@PWD@', os.getcwd())
+                 .replace('@TMPDIR@', tmpdir)
+                 .replace('@PORT@', nginx_port)
+                 .replace('@SERVER_PORT@', server_port))
+
+pid_to_name = {}
+env = os.environ.copy()
+env['BTW_ENV'] = 'selenium'
+server = subprocess.Popen(["./manage.py", "liveserver",
+                           "--settings=btw.test_settings",
+                           "localhost:" + server_port, fifo_to_server,
+                           fifo_from_server],
+                          env=env)
+pid_to_name[server.pid] = "liveserver"
+
+# nginx spawns a master and immediately returns
+subprocess.check_call(["nginx", "-c", tmpconf])
+
+while True:
+    try:
+        pid, status = os.wait()
+    except OSError:  # Will be raised when there are no child.
+        break
+
+    if status:
+        raise Exception(pid_to_name[pid] + " failed with status " +
+                        str(status))
+
+print "Terminating..."

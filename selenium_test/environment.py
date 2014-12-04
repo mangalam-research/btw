@@ -10,7 +10,7 @@ import atexit
 # pylint: disable=E0611
 from nose.tools import assert_true
 import selenic.util
-from selenic import Builder
+from selenic import Builder, outil
 from behave import step_registry
 from pyvirtualdisplay import Display
 
@@ -124,9 +124,13 @@ def before_all(context):
         context.server_tempdir, "fifo_from_server")
     os.mkfifo(context.server_read_fifo)
 
+    nginx_port = str(outil.get_unused_sauce_port())
     context.server = subprocess.Popen(
         ["utils/start_nginx", context.server_write_fifo,
-         context.server_read_fifo], close_fds=True)
+         context.server_read_fifo, nginx_port], close_fds=True)
+
+    # We must add the port to the server
+    context.selenic.SERVER += ":" + nginx_port
 
     context.selenium_logs = os.environ.get("SELENIUM_LOGS", False)
 
