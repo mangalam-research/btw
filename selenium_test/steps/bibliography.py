@@ -60,6 +60,7 @@ def step_impl(context, which=None):
         var order = arguments[0];
         var cits = document.getElementsByClassName("btw:cit");
         var node = cits[order];
+        node.scrollIntoView();
         var data_node = jQuery.data(node, "wed_mirror_node");
         if (data_node.childNodes.length) {
             data_node = data_node.firstChild;
