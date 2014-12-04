@@ -75,7 +75,8 @@ def before_all(context):
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
 
     if not builder.remote:
-        visible = context.selenium_quit in ("never", "on-success")
+        visible = context.selenium_quit in ("never", "on-success",
+                                            "on-enter")
         context.display = Display(visible=visible, size=(1024, 600))
         context.display.start()
         builder.update_ff_binary_env('DISPLAY')
