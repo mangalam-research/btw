@@ -21,7 +21,15 @@ Windows 8.1,IE,11,Remote
 # want to find problems early.
 #
 OS X 10.9,CH,38,Remote
-OS X 10.9,CH,37,Remote
+#
+# On CH 37, Selenium fails to perform:
+# Scenario: removing a paragraph with backspace
+# Scenario: removing a paragraph with delete
+# The issue seems to be that it cannot click at the start of the
+# paragraph.
+# OS X 10.9,CH,37,Remote
+#
+OS X 10.9,CH,36,Remote
 # wed definitely breaks on Chrome 34.
 # OS X 10.6,CH,34,Remote
 
