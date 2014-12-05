@@ -22,6 +22,8 @@ function redrawSetup(done) {
     var processing = document.getElementById("search-table_processing");
     var table = document.getElementById("search-table");
     function check() {
+        // We do this to make sure that the table is not currently
+        // refreshing when we put in our event handler.
         if (processing.style.display !== "none") {
             setTimeout(check, 100);
             return;
