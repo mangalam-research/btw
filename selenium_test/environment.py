@@ -43,10 +43,18 @@ def cleanup(context, failed):
             # Ignore cases where we can't set the status.
             pass
         if actually_quit:
-            driver.quit()
+            # Yes, we trap every possible exception. There is not much
+            # we can do if the driver refuses to stop.
+            try:
+                driver.quit()
+            except:
+                pass
         elif selenium_quit == "on-enter":
             raw_input("Hit enter to quit")
-            driver.quit()
+            try:
+                driver.quit()
+            except:
+                pass
 
         context.driver = None
 
