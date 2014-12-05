@@ -43,7 +43,7 @@ def setup_editor(context):
     util = context.util
     driver = context.driver
 
-    wedutil.wait_for_editor(util)
+    wedutil.wait_for_editor(util, 60)
 
     # Turning off tooltips makes the tests much easier to handle.
     driver.execute_script("""
@@ -302,7 +302,6 @@ def step_impl(context, what):
                              "sessionid":
                              driver.get_cookie("sessionid")["value"]
                          } if edit else None)
-
         hits = funcs.parse_search_results(r.text)
         if title in hits:
             break
