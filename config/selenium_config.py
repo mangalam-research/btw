@@ -17,6 +17,13 @@ import selenic
 if "LOGS" not in globals():
     LOGS = False
 
+# If we are running in something like Buildbot or Jenkins, we don't
+# want to have the logs be turned on because we forgot to turn them
+# off. So unless FORCE_SELENIUM_LOGS is set, we turn off the logs when
+# running in that environment.
+if (os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')) \
+   and not os.environ.get('FORCE_SELENIUM_LOGS'):
+    LOGS = False
 
 class Config(selenic.Config):
 
