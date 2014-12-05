@@ -30,7 +30,8 @@ function insert_ptr(editor, data) {
     var target = editor.gui_root.ownerDocument.getElementById(data.target);
     var data_id = data.target.slice(4);
     target.setAttribute(util.encodeAttrName("xml:id"), data_id);
-    $.data(target, "wed_mirror_node").setAttribute("xml:id", data_id);
+    $.data(target, "wed_mirror_node").setAttributeNS(
+        "http://www.w3.org/XML/1998/namespace", "xml:id", data_id);
 
     var ename = editor.mode.getAbsoluteResolver().resolveName('ptr');
 
