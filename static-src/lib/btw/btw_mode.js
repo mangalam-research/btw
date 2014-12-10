@@ -250,7 +250,7 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
-              "ref": true
+              "ref": ["insert"]
           },
           substitute: [
               { tag: "ref",
@@ -280,7 +280,7 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
-              "ref": true
+              "ref": ["insert"]
           },
           substitute: [
               { tag: "ref",
@@ -311,7 +311,7 @@ BTWMode.prototype.init = function (editor) {
               "btw:lemma-instance": true,
               "p": true,
               "lg": true,
-              "ref": true
+              "ref": ["insert"]
           },
           substitute: [
               { tag: "ref",
