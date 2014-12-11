@@ -24,7 +24,7 @@ def cleanup(*_whatever):
 
     if server:
         if server.poll() is None:
-            server.kill()
+            server.terminate()
         server = None
 
     if tmpconf:

@@ -6,6 +6,7 @@ import subprocess
 import shutil
 import httplib
 import atexit
+import signal
 
 # pylint: disable=E0611
 from nose.tools import assert_true
@@ -58,9 +59,17 @@ def cleanup(context, failed):
 
         context.driver = None
 
+    if context.sc_tunnel:
+        context.sc_tunnel.send_signal(signal.SIGTERM)
+        context.sc_tunnel = None
+
+    if context.sc_tunnel_tempdir:
+        shutil.rmtree(context.sc_tunnel_tempdir, True)
+        context.sc_tunnel_tempdir = None
+
     if actually_quit:
         if context.wm:
-            context.wm.kill()
+            context.wm.send_signal(signal.SIGTERM)
             context.wm = None
 
         if context.display:
@@ -82,6 +91,9 @@ def before_all(context):
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
 
+    context.sc_tunnel = None
+    context.sc_tunnel_tempdir = None
+    desired_capabilities = {}
     if not builder.remote:
         visible = context.selenium_quit in ("never", "on-success",
                                             "on-enter")
@@ -93,7 +105,15 @@ def before_all(context):
         context.display = None
         context.wm = None
 
-    driver = builder.get_driver()
+        sc_tunnel_id = os.environ.get("SC_TUNNEL_ID")
+        if not sc_tunnel_id:
+            user, key = builder.SAUCELABS_CREDENTIALS.split(":")
+            context.sc_tunnel, sc_tunnel_id, \
+                context.sc_tunnel_tempdir = \
+                outil.start_sc(builder.SC_TUNNEL_PATH, user, key)
+        desired_capabilities["tunnel-identifier"] = sc_tunnel_id
+
+    driver = builder.get_driver(desired_capabilities)
     context.driver = driver
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
