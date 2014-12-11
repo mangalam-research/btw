@@ -469,6 +469,41 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
                                            none_ename.ns, 'btw:none'),
                 null);
     }.bind(this));
+
+    this._editor.data_updater.addEventListener("insertNodeAt",
+                                               function (ev) {
+        var ed = this._editor;
+
+        function processNode(node) {
+            if (!node.childNodes.length)
+                ed.data_updater.insertBefore(
+                    node,
+                    transformation.makeElement(node.ownerDocument,
+                                               none_ename.ns,
+                                               'btw:none'), null);
+        }
+        function processList(nodes) {
+            for (var i = 0, node; (node = nodes[i]); ++i) {
+                processNode(node);
+            }
+        }
+
+        var node = ev.node;
+        var antonyms = node.getElementsByTagName("btw:antonyms");
+        var cognates = node.getElementsByTagName("btw:cognates");
+        var cps = node.getElementsByTagName("btw:conceptual-proximates");
+        processList(antonyms);
+        processList(cognates);
+        processList(cps);
+
+        if (node.tagName === "btw:antonyms" ||
+            node.tagName === "btw:cognates" ||
+            node.tagName === "btw:conceptual-proximates")
+            processNode(node);
+
+    }.bind(this));
+
+
     return obj;
 };
 

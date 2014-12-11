@@ -12,6 +12,7 @@ from nose.tools import assert_equal, assert_raises, assert_true
 from behave import then, when, step_matcher  # pylint: disable=E0611
 
 from selenium_test import btw_util
+from selenic.util import Result, Condition
 
 import wedutil
 
@@ -199,7 +200,11 @@ def step_impl(context, what, inside=None):
     if (inside)
         selector = "." + inside.replace(":", "\\:") + " " + selector;
 
-    return jQuery(selector)[0];
+    var ret = jQuery(selector)[0];
+    // For some unfathomable reason, we need to scroll into view
+    // on FF, *before* clicking.
+    ret.scrollIntoView();
+    return ret;
     """, what, inside)
     ActionChains(driver) \
         .click(button) \
@@ -537,7 +542,7 @@ def step_impl(context):
 
 
 @when(ur'^the user deletes all (?P<what>btw:antonym|btw:cognate|'
-      ur'btw:conceptual-proximate) elements$')
+      ur'btw:conceptual-proximate|btw:contrastive-section) elements$')
 def step_impl(context, what):
     driver = context.driver
     util = context.util
@@ -559,6 +564,54 @@ def step_impl(context, what):
         antonym_lbls = driver.find_elements_by_css_selector(
             r".__start_label" + label_class)
 
+@when(ur'^the user deletes the contrastive section$')
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    util.find_element(
+        (By.CLASS_NAME, r"btw\:contrastive-section")).click()
+
+    driver.execute_script("""
+    var sec =
+        document.getElementsByClassName("btw:contrastive-section")[0];
+    var sec_data = jQuery.data(sec, "wed_mirror_node");
+    wed_editor.setDataCaret(sec_data, 0);
+    """)
+
+    context.execute_steps(u"""
+    When the user brings up the context menu
+    And the user clicks the context menu option \
+"Delete btw:contrastive-section"
+    """)
+
+    selector = (By.CSS_SELECTOR, r".btw\:contrastive-section .head")
+    util.wait_until_not(lambda driver: driver.find_element(selector))
+
+@then(ur'^the contrastive section has btw:none in all its subsections$')
+def step_impl(context):
+    util = context.util
+
+    def check(driver):
+        ret = driver.execute_script(r"""
+        var cont =
+            document.getElementsByClassName("btw:contrastive-section");
+        if (cont.length !== 1)
+            return [false,
+                    "There is not exactly one contrastive section"];
+        var nones = cont[0].querySelectorAll(
+            ".btw\\:contrastive-section>*>.btw\\:none");
+        if (nones.length !== 3)
+            return [false, "There aren't 3 btw:none elements that " +
+                           "are grand-children of " +
+                           "btw:contrastive-section"];
+        return [true, ''];
+        """)
+
+        return Result(ret[0], ret[1])
+
+    result = Condition(util, check).wait()
+    assert_true(result, result.payload)
 
 @then(ur'^a btw:none element is created$')
 def step_impl(context):

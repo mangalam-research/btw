@@ -323,3 +323,11 @@ Scenario: creating an conceptual proximate-instance in a translation
   And the document has no btw:conceptual-proximate-instance
   When the user wraps the text "translation" in a btw:conceptual-proximate-instance in btw:tr
   Then the text "translation" is wrapped in a btw:conceptual-proximate-instance
+
+Scenario: creating a new contrastive section
+  Given a document with contrastive elements with one child
+  When the user deletes the contrastive section
+  And the user clicks on the visible absence for btw:explanation
+  And the user clicks on the visible absence for btw:citations
+  And the user clicks on the visible absence for btw:contrastive-section
+  Then the contrastive section has btw:none in all its subsections
