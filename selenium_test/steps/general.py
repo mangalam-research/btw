@@ -238,7 +238,9 @@ WHAT_TO_TITLE = {
     u"and no btw:none":
     "contrastive elements with one child",
     u"an antonym with citations, followed by another antonym":
-    u"antonym with citations, followed by another antonym"
+    u"antonym with citations, followed by another antonym",
+    u"citations everywhere possible (subsense)":
+    u"citations everywhere possible (subsense)"
 }
 
 

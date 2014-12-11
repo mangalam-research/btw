@@ -177,6 +177,24 @@ BTWMode.prototype.init = function (editor) {
      * array of transformations to add.
      */
 
+    var pass_in_cit = {
+        "btw:lemma-instance": true,
+        "btw:antonym-instance": true,
+        "btw:cognate-instance": true,
+        "btw:conceptual-proximate-instance": true,
+        "p": true,
+        "lg": true,
+        "ref": ["insert"]
+    };
+
+    var pass_in_tr = $.extend({}, pass_in_cit);
+    delete pass_in_tr.ref;
+
+    var pass_in_foreign = $.extend({}, pass_in_tr);
+    delete pass_in_foreign.p;
+    delete pass_in_foreign.lg;
+    pass_in_foreign.foreign = ["delete-parent", "unwrap"];
+
     /**
      * @private
      * @property {Array.<TransformationFilter>} transformation_filters
@@ -221,98 +239,11 @@ BTWMode.prototype.init = function (editor) {
                actions: [this.insert_example_ptr_action] }
           ]
         },
-        { selector: domutil.toGUISelector("btw:sense>btw:citations btw:tr, " +
-                                          "btw:subsense>btw:citations btw:tr"),
-          pass: {
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true
-          }
+        { selector: domutil.toGUISelector("btw:tr"),
+          pass: pass_in_tr
         },
-        { selector: domutil.toGUISelector("btw:sense>btw:citations btw:cit, " +
-                                          "btw:subsense>btw:citations btw:cit"),
-          pass: {
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true,
-              "ref": true
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
-        },
-        { selector: domutil.toGUISelector("btw:antonym>btw:citations btw:cit"),
-          pass: {
-              "btw:antonym-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true,
-              "ref": ["insert"]
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
-        },
-        { selector: domutil.toGUISelector("btw:antonym>btw:citations btw:tr"),
-          pass: {
-              "btw:antonym-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true
-          }
-        },
-        { selector: domutil.toGUISelector("btw:antonym>btw:citations foreign"),
-          pass: {
-              "foreign": ["delete-parent", "unwrap"],
-              "btw:antonym-instance": true,
-              "btw:lemma-instance": true
-          }
-        },
-        { selector: domutil.toGUISelector("btw:cognate>btw:citations btw:cit"),
-          pass: {
-              "btw:cognate-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true,
-              "ref": ["insert"]
-          },
-          substitute: [
-              { tag: "ref",
-                type: "insert",
-                actions: [ this.insert_bibl_ptr]
-              }
-          ]
-        },
-        { selector: domutil.toGUISelector("btw:cognate>btw:citations btw:tr"),
-          pass: {
-              "btw:cognate-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true
-          }
-        },
-        { selector: domutil.toGUISelector("btw:cognate>btw:citations foreign"),
-          pass: {
-              "foreign": ["delete-parent", "unwrap"],
-              "btw:cognate-instance": true,
-              "btw:lemma-instance": true
-          }
-        },
-        { selector: domutil.toGUISelector(
-            "btw:conceptual-proximate>btw:citations btw:cit"),
-          pass: {
-              "btw:conceptual-proximate-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true,
-              "ref": ["insert"]
-          },
+        { selector: domutil.toGUISelector("btw:cit"),
+          pass: pass_in_cit,
           substitute: [
               { tag: "ref",
                 type: "insert",
@@ -321,27 +252,8 @@ BTWMode.prototype.init = function (editor) {
           ]
         },
         { selector: domutil.toGUISelector(
-            "btw:conceptual-proximate>btw:citations btw:tr"),
-          pass: {
-              "btw:conceptual-proximate-instance": true,
-              "btw:lemma-instance": true,
-              "p": true,
-              "lg": true
-          }
-        },
-        { selector: domutil.toGUISelector(
-            "btw:conceptual-proximate>btw:citations foreign"),
-          pass: {
-              "foreign": ["delete-parent", "unwrap"],
-              "btw:conceptual-proximate-instance": true,
-              "btw:lemma-instance": true
-          }
-        },
-        { selector: domutil.toGUISelector("btw:citations foreign"),
-          pass: {
-              "foreign": ["delete-parent", "unwrap"],
-              "btw:lemma-instance": true
-          }
+            "btw:citations foreign, btw:other-citations foreign"),
+          pass: pass_in_foreign
         },
         { selector: util.classFromOriginalName("foreign"),
           pass: {
@@ -489,6 +401,10 @@ BTWMode.prototype.makeDecorator = function (domlistener) {
         }
 
         var node = ev.node;
+
+        if (node.nodeType !== Node.ELEMENT_NODE)
+            return;
+
         var antonyms = node.getElementsByTagName("btw:antonyms");
         var cognates = node.getElementsByTagName("btw:cognates");
         var cps = node.getElementsByTagName("btw:conceptual-proximates");

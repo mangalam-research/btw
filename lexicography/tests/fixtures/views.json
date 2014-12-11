@@ -220,6 +220,16 @@
   }
 },
 {
+  "pk": 23,
+  "model": "lexicography.entry",
+  "fields": {
+    "deleted": false,
+    "lemma": "citations everywhere possible (subsense)",
+    "latest_published": null,
+    "latest": 25
+  }
+},
+{
   "pk": 1,
   "model": "lexicography.changerecord",
   "fields": {
@@ -628,6 +638,23 @@
   }
 },
 {
+  "pk": 25,
+  "model": "lexicography.changerecord",
+  "fields": {
+    "c_hash": "f37bb2d3ef4da13f9fdf0e5a52ef0814871f3af0",
+    "ctype": "U",
+    "datetime": "2014-12-11T15:39:08.547Z",
+    "lemma": "citations everywhere possible (subsense)",
+    "session": "4w03okq29bloereojyii5wa9zgobjbhx",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 23
+  }
+},
+{
   "pk": "24467c1ee6bd3124f31b4ee191f72b170bb0dc18",
   "model": "lexicography.chunk",
   "fields": {
@@ -852,6 +879,16 @@
   "model": "lexicography.chunk",
   "fields": {
     "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>antonym with citations, followed by another antonym</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term>antonym 1</btw:term><btw:citations><btw:example><btw:cit>citation</btw:cit><btw:tr>translation</btw:tr></btw:example><btw:example><btw:cit/><btw:tr/></btw:example></btw:citations></btw:antonym><btw:antonym><btw:term>antonym 2</btw:term><btw:citations/></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "_valid": null,
+    "schema_version": "0.10",
+    "is_normal": true
+  }
+},
+{
+  "pk": "f37bb2d3ef4da13f9fdf0e5a52ef0814871f3af0",
+  "model": "lexicography.chunk",
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>citations everywhere possible (subsense)</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation/><btw:citations><btw:example><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit><btw:tr/></btw:example></btw:citations><btw:other-citations><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit></btw:other-citations></btw:subsense><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term/><btw:citations><btw:example><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit><btw:tr/></btw:example></btw:citations><btw:other-citations><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit></btw:other-citations></btw:antonym></btw:antonyms><btw:cognates><btw:cognate><btw:term/><btw:citations><btw:example><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit><btw:tr/></btw:example></btw:citations><btw:other-citations><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit></btw:other-citations></btw:cognate></btw:cognates><btw:conceptual-proximates><btw:conceptual-proximate><btw:term/><btw:citations><btw:example><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit><btw:tr/></btw:example></btw:citations><btw:other-citations><btw:cit><ref target=\"/bibliography/2\"/><foreign xml:lang=\"sa-Latn\">foo</foreign></btw:cit></btw:other-citations></btw:conceptual-proximate></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "_valid": null,
     "schema_version": "0.10",
     "is_normal": true
