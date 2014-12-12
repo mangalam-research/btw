@@ -47,6 +47,7 @@ logger = logging.getLogger("lexicography")
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 
+JSON_TYPE = "application/json; charset=utf-8"
 
 @require_GET
 def main(request):
@@ -384,7 +385,7 @@ def uses_handle_or_entry_id(view):
                 resp = json.dumps(
                     {'messages': [{'type': 'save_fatal_error'}]},
                     ensure_ascii=False)
-                return HttpResponse(resp, content_type="application/json")
+                return HttpResponse(resp, content_type=JSON_TYPE)
         else:
             entry_id = handle_or_entry_id
 
@@ -411,7 +412,7 @@ def save_login_required(view):
                      'Perhaps you logged out from BTW in another tab?'}]
 
         resp = json.dumps({'messages': messages}, ensure_ascii=False)
-        return HttpResponse(resp, content_type="application/json")
+        return HttpResponse(resp, content_type=JSON_TYPE)
 
     return wrapper
 
@@ -436,7 +437,7 @@ def handle_save(request, entry_id, handle):
         else:
             return HttpResponseBadRequest("unrecognized command")
     resp = json.dumps({'messages': messages}, ensure_ascii=False)
-    response = HttpResponse(resp, content_type="application/json")
+    response = HttpResponse(resp, content_type=JSON_TYPE)
 
     # We want to set ETag ourselves to the correct value because the
     # etag decorator will actually set it to the value it had before the
@@ -536,7 +537,7 @@ def _save_command(request, entry_id, handle, command, messages):
             # Duplicate lemma
             messages.append(
                 {'type': 'save_transient_error',
-                 'msg': 'There is another entry with the lemma "{0}".'
+                 'msg': u'There is another entry with the lemma "{0}".'
                  .format(entry.lemma)})
             return None
 

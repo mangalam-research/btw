@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django_webtest import TransactionWebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
@@ -6,7 +7,6 @@ import cookielib as http_cookiejar
 import os
 import datetime
 
-import requests
 import lxml.etree
 
 from .. import models
@@ -464,22 +464,32 @@ class EditingTestCase(ViewsTestCase):
         to save an entry that duplicates another entry's lemma, and
         that nothing is saved.
         """
-        response, entry = self.open_abcd('foo')
+        response = self.open_new("foo")
 
+        data_tree = set_lemma(response.lxml, u"prasāda")
+
+        messages, _ = self.save(
+            response, "foo", test_util.stringify_etree(data_tree))
+
+        self.assertEqual(len(messages), 1)
+        self.assertIn("save_successful", messages)
+
+        entry = Entry.objects.get(lemma=u"prasāda")
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
-        # There is a foo entry already
-        data_tree = set_lemma(response.lxml, "foo")
+        response = self.open_new("foo")
 
+        data_tree = set_lemma(response.lxml, u"prasāda")
         messages, _ = self.save(
             response, "foo", test_util.stringify_etree(data_tree))
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
         self.assertEqual(len(messages["save_transient_error"]), 1)
-        self.assertEqual(messages["save_transient_error"][0]["msg"],
-                         'There is another entry with the lemma "foo".')
+        self.assertEqual(
+            messages["save_transient_error"][0]["msg"],
+            u'There is another entry with the lemma "prasāda".')
 
         # Check that no new data was recorded
         self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
