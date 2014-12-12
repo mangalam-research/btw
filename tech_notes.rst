@@ -321,7 +321,14 @@ Upgrade Proper
 
 Generally:
 
-1. Run::
+1. Make sure all your changes are pushed to the repository.
+
+2. Make sure you have tagged the current release with ``git tag
+   v... -a`` The ``-a`` is important to create an annotated tag.
+
+3. Make sure you have a current backup of the database.
+
+4. Run::
 
     $ git fetch origin --tags
     $ git pull origin
@@ -333,6 +340,10 @@ Generally:
     $ npm outdated
     [Upgrade anything that needs upgrading.]
     $ make
+
+5. Reload uwsgi::
+
+     $ sudo service uwsgi reload
 
 See below for specific upgrade cases.
 
