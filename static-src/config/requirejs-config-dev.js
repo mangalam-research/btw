@@ -7,7 +7,7 @@ require.config({
    'jquery.bootstrap-growl': 'external/jquery.bootstrap-growl',
    'font-awesome': 'external/font-awesome',
    'jquery.cookie': 'external/jquery.cookie',
-   datatables: 'external/datatables/js/jquery.dataTables',
+   datatables: 'external/datatables/js/jquery.dataTables.min',
    'datatables.bootstrap': 'external/datatables/js/dataTables.bootstrap',
    "bootstrap-editable": 'external/bootstrap3-editable/js/bootstrap-editable',
    qunit: 'external/qunit-1.12.0',
