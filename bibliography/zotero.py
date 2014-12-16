@@ -265,13 +265,14 @@ class Zotero(object):
         headers = {'If-Modified-Since-Version': version}
 
         fetch_from_cache = False
+        res = None
         try:
             res = self.__request(url=url, headers=headers)
         except urllib2.URLError as e:
             logger.debug('search url not working: ' + str(e))
             fetch_from_cache = True
 
-        if res.code == 304:
+        if res is not None and res.code == 304:
             logger.debug("got 'not modified' for key: %s", cache_key)
             fetch_from_cache = True
 
