@@ -80,14 +80,22 @@ function Viewer(root, data, bibl_data) {
 
     // Override the head specs with those required for
     // viewing.
-    this._heading_decorator = new HeadingDecorator(this._refmans, gui_updater);
+    this._heading_decorator = new HeadingDecorator(this._refmans, gui_updater, false /* implied_brackets */);
+
+    // We don't have unit headings.
+    this._heading_decorator.unitHeadingDecorator = function () {};
+
+    this._heading_decorator.addSpec({selector: "btw:definition",
+                                     heading: null});
     this._heading_decorator.addSpec({selector: "btw:english-rendition",
+                                     heading: null});
+    this._heading_decorator.addSpec({selector: "btw:english-renditions",
                                      heading: null});
     this._heading_decorator.addSpec({selector: "btw:semantic-fields",
                                      heading: null});
     this._heading_decorator.addSpec(
         {selector: "btw:english-renditions>btw:semantic-fields-collection",
-         heading: "semantic categories of possible English renditions"});
+         heading: "semantic fields"});
     this._heading_decorator.addSpec(
         {selector: "btw:cognates>btw:semantic-fields-collection",
          heading: "semantic categories of cognates related to sense",
