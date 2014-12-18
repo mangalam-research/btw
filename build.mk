@@ -52,6 +52,9 @@ BUILD_DIR:=build
 
 QUNIT_VERSION:=1.12.0
 
+BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.1.1.zip
+BOOTSTRAP_BASE=bootstrap-3.1.1.zip
+
 JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # This creates a file name that a) identifies what it is an b) happens
 # to correspond to the top directory of the zip that github creates.
@@ -94,6 +97,9 @@ BEHAVE_SAVE?=$(if $(BUILD_ENV),,1)
 
 SOURCES:=$(shell find static-src -type f)
 BUILD_DEST:=$(BUILD_DIR)/static-build
+EXPANDED_DEST:=$(BUILD_DIR)/expanded
+EXPANDED_VERSIONED_BOOTSTRAP:=$(EXPANDED_DEST)/$(BOOTSTRAP_BASE:.zip=)
+EXPANDED_BOOTSTRAP:=$(EXPANDED_DEST)/bootstrap
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 # Local sources that need to be process by specialized recipes.
@@ -164,7 +170,7 @@ else
 endif
 
 btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less $(WED_LESS_INC_PATH)/*.less
-btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less
+btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less $(EXPANDED_BOOTSTRAP)/less/variables.less
 
 .SECONDEXPANSION:
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)
@@ -219,6 +225,19 @@ $(BUILD_CONFIG)/%:
 
 $(BUILD_CONFIG)/nginx.conf:
 	sed -e's;@PWD@;$(PWD);'g $< > $@
+
+$(EXPANDED_DEST):
+	-mkdir $@
+
+$(EXPANDED_BOOTSTRAP)/%: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
+	unzip -DD -d $(EXPANDED_DEST) $<
+	(cd $(EXPANDED_DEST); ln -sf $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
+# Check
+	@diff $(EXPANDED_BOOTSTRAP)/dist/css/bootstrap.css \
+	  $(WED_BUILD)/lib/external/bootstrap/css/bootstrap.css || \
+	  echo "There appear to be a difference between the \
+	  boostrap downloaded by BTW and the one in wed." && exit 1
+
 
 $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).%: node_modules/qunitjs/qunit/qunit.%
 	cp $< $@
@@ -284,6 +303,9 @@ downloads/$(XEDITABLE_BASE): downloads
 
 downloads/$(JQUERY_GROWL_BASE): downloads
 	$(WGET) -O $@ $(JQUERY_GROWL_URL)
+
+downloads/$(BOOTSTRAP_BASE): | downloads
+	$(WGET) -O $@ '$(BOOTSTRAP_URL)'
 
 .PHONY: clean
 clean::
