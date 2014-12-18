@@ -4,10 +4,13 @@ import sys
 HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw")
 ETC_CONFIG = "/etc/btw"
 
+CURDIR = os.path.dirname(os.path.abspath(__file__))
+TOPDIR = os.path.dirname(os.path.dirname(CURDIR))
+
 # Determine the name of our environment.
 env = os.environ.get("BTW_ENV", None)
 if env is None:
-    for path in (HOME_CONFIG, ETC_CONFIG):
+    for path in (TOPDIR, HOME_CONFIG, ETC_CONFIG):
         env_path = os.path.join(path, "env")
         env = open(env_path, 'r').read().strip() \
             if os.path.exists(env_path) else None
