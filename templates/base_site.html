@@ -19,7 +19,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">BTW</a>
+      <a class="navbar-brand" href="#">{{btw_globals.site_name }}</a>
     </div>
     <div class="collapse navbar-collapse" id="btw-site-navigation-collapse">
       <ul class="nav navbar-nav">
@@ -67,6 +67,11 @@
       </ul>
     </div>
   </div>
+  {% if btw_globals.demo %}
+  <div class="alert alert-danger" role="alert">
+    You are on the demo site. Do not save any work here.
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
 

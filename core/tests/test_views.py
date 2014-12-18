@@ -23,6 +23,48 @@ class ViewTestCase(TransactionWebTest):
         self.lexicography_url = reverse("lexicography_main")
 
 
+class GeneralTestCase(ViewTestCase):
+
+    brand_xpath = '//a[@class="navbar-brand"]'
+    alert_xpath = \
+        '//div[@id="btw-site-navigation"]/div[@role="alert"]'
+
+    def test_defaults(self):
+        """
+        Tests the default values that affect the appearance of
+        the site.
+        """
+
+        response = self.app.get('/')
+        brand = response.lxml.xpath(self.brand_xpath)[0]
+        self.assertEqual(brand.text, "BTW")
+
+        self.assertEqual(len(response.lxml.xpath(self.alert_xpath)),
+                         0, "there should be no alert")
+
+    @override_settings(BTW_SITE_NAME='foo')
+    def test_site_name(self):
+        """
+        Tests that the site name should be determined by the setting
+        BTW_SITE_NAME.
+        """
+        response = self.app.get('/')
+        brand = response.lxml.xpath(self.brand_xpath)[0]
+        self.assertEqual(brand.text, "foo")
+
+    @override_settings(BTW_DEMO=True)
+    def test_demo_alert(self):
+        """
+        Tests that a demo alert shows up if the site is a demo.
+        """
+        response = self.app.get('/')
+        alerts = response.lxml.xpath(self.alert_xpath)
+        self.assertEqual(len(alerts), 1, "there should be one alert")
+        self.assertEqual(
+            alerts[0].text.strip(),
+            "You are on the demo site. Do not save any work here.")
+
+
 # Turn off the requirement for emails just for this test.
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
 class LoginTestCase(ViewTestCase):
