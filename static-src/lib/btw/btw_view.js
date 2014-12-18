@@ -25,6 +25,7 @@ var DispatchMixin = require("./btw_dispatch").DispatchMixin;
 var id_manager = require("./id_manager");
 var name_resolver = require("salve/name_resolver");
 var $ = require("jquery");
+var btw_util = require("./btw_util");
 
 var _slice = Array.prototype.slice;
 var _indexOf = Array.prototype.indexOf;
@@ -49,6 +50,7 @@ function Viewer(root, data, bibl_data) {
     var data_doc = parser.parseFromString(data, "text/xml");
     root.appendChild(convert.toHTMLTree(doc, data_doc.firstChild));
 
+    new dloc.DLocRoot(root);
     var gui_updater = new TreeUpdater(root);
 
     this._doc = doc;
@@ -94,8 +96,41 @@ function Viewer(root, data, bibl_data) {
     this._heading_decorator.addSpec({selector: "btw:semantic-fields",
                                      heading: null});
     this._heading_decorator.addSpec(
+        {selector: "btw:sense>btw:explanation",
+         heading: null});
+    this._heading_decorator.addSpec(
+        {selector: "btw:subsense>btw:explanation",
+         heading: null});
+    this._heading_decorator.addSpec(
         {selector: "btw:english-renditions>btw:semantic-fields-collection",
-         heading: "semantic fields"});
+         heading: "semantic fields",
+         collapse: "info"
+        });
+
+    this._heading_decorator.addSpec({
+        selector: "btw:contrastive-section",
+        heading: "contrastive section",
+        collapse: {
+            kind: "default",
+            additional_heading_classes: "contrastive-collapse"
+        }
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:antonyms",
+        heading: "antonyms",
+        collapse: "default"
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:cognates",
+        heading: "cognates",
+        collapse: "default"
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:conceptual-proximates",
+        heading: "conceptual proximates",
+        collapse: "default"
+    });
+
     this._heading_decorator.addSpec(
         {selector: "btw:cognates>btw:semantic-fields-collection",
          heading: "semantic categories of cognates related to sense",
@@ -105,27 +140,21 @@ function Viewer(root, data, bibl_data) {
          heading: null});
     this._heading_decorator.addSpec(
         {selector: "btw:sense>btw:semantic-fields",
-         heading: "semantic categories for sense",
-         label_f: this._heading_decorator._bound_getSenseLabel});
+         heading: "semantic fields",
+         collapse: "info"});
     this._heading_decorator.addSpec(
         {selector: "btw:overview>btw:semantic-fields",
          heading: "all semantic fields"});
     this._heading_decorator.addSpec({selector: "btw:semantic-fields",
-                                     heading: "semantic categories"});
+                                     heading: "semantic fields",
+                                     collapse: "info"});
     this._heading_decorator.addSpec({
-        selector: "btw:antonyms>btw:citations-collection",
-        heading: "citations for antonyms related to sense",
-        label_f: this._heading_decorator._bound_getSenseLabel
+        selector: "btw:subsense>btw:citations",
+        heading: null
     });
     this._heading_decorator.addSpec({
-        selector: "btw:cognates>btw:citations-collection",
-        heading: "citations for cognates related to sense",
-        label_f: this._heading_decorator._bound_getSenseLabel
-    });
-    this._heading_decorator.addSpec({
-        selector: "btw:conceptual-proximates>btw:citations-collection",
-        heading: "citations for conceptual-proximates related to sense",
-        label_f: this._heading_decorator._bound_getSenseLabel
+        selector: "btw:sense>btw:citations",
+        heading: null
     });
     this._heading_decorator.addSpec({
         selector: "btw:antonym>btw:citations",
@@ -308,8 +337,6 @@ function Viewer(root, data, bibl_data) {
     for(i = 0; (with_id = with_ids[i]) !== undefined; ++i)
         this.idDecorator(root, with_id);
 
-    new dloc.DLocRoot(root);
-
     // We want to process all ref elements earlier so that hyperlinks
     // to examples are created properly.
     var refs = root.getElementsByClassName("ref");
@@ -442,7 +469,6 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         coll.classList.add("_real");
         coll.innerHTML = html.join("");
         group.appendChild(coll);
-        this._heading_decorator.sectionHeadingDecorator(coll);
 
         //
         // If there are btw:sematic-fields elements, combine them.
@@ -640,6 +666,20 @@ Viewer.prototype.createPartTwo = function (root) {
         part_two.appendChild(p2_sense);
     }
 
+    var collapse_heading_id_manager =
+        new id_manager.IDManager("part2-collapse-heading-");
+    var collapse_id_manager =
+        new id_manager.IDManager("part2-collapse-");
+
+
+    // Update all the collapsible sections to use new IDs.
+    var collapsibles = part_two.getElementsByClassName("panel-group");
+    var collapsible;
+    for (i = 0, collapsible; (collapsible = collapsibles[i]); ++i)
+        btw_util.updateCollapsible(
+            collapsible, collapse_heading_id_manager.generate(),
+            collapse_id_manager.generate());
+
     this._gui_updater.insertBefore(root.firstElementChild, part_two);
 
     // Add tooltips to the references. We must do this after part two
@@ -649,6 +689,7 @@ Viewer.prototype.createPartTwo = function (root) {
     var ref;
     for (i = 0; (ref = refs[i]); ++i)
         this.process(root, ref);
+
 };
 
 

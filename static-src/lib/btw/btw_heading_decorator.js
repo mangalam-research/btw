@@ -8,10 +8,20 @@ define(function (require, exports, module) {
 
 var util = require("wed/util");
 var domutil = require("wed/domutil");
+var IDManager = require("./id_manager").IDManager;
+var btw_util = require("./btw_util");
 
-function HeadingDecorator(refmans, gui_updater) {
+function HeadingDecorator(refmans, gui_updater, implied_brackets) {
     this._refmans = refmans;
     this._gui_updater = gui_updater;
+    if (implied_brackets === undefined)
+        implied_brackets = true;
+    this._implied_brackets = implied_brackets;
+
+    this._collapse_heading_id_manager =
+        new IDManager("collapse-heading-");
+    this._collapse_id_manager =
+        new IDManager("collapse-");
 
     // We bind them here so that we have a unique function to use.
     this._bound_getSenseLabel =
@@ -136,8 +146,9 @@ HeadingDecorator.prototype.unitHeadingDecorator = function (el) {
 HeadingDecorator.prototype.sectionHeadingDecorator = function (
     el, specs, head_str) {
     var child = el.firstElementChild;
+    var next;
     while(child) {
-        var next = child.nextElementSibling;
+        next = child.nextElementSibling;
         if (child.classList.contains("head")) {
             this._gui_updater.removeNode(child);
             break; // There's only one.
@@ -145,6 +156,7 @@ HeadingDecorator.prototype.sectionHeadingDecorator = function (
         child = next;
     }
 
+    var collapse = false;
     if (head_str === undefined) {
         var name = util.getOriginalName(el);
         for(var s_ix = 0, spec; (spec = this._specs[s_ix]) !== undefined;
@@ -159,14 +171,45 @@ HeadingDecorator.prototype.sectionHeadingDecorator = function (
             var label_f = spec.label_f;
             head_str = (label_f) ? spec.heading + " " + label_f(el) : spec.heading;
         }
+
+        collapse = spec.collapse;
     }
 
     if (head_str !== undefined) {
-        var head = el.ownerDocument.createElement("div");
-        head.className = "head _phantom _start_wrapper";
-        head.textContent = "[" + head_str + "]";
-        head.id = allocateHeadID();
-        this._gui_updater.insertNodeAt(el, 0, head);
+        if (!collapse) {
+            var head = el.ownerDocument.createElement("div");
+            head.className = "head _phantom _start_wrapper";
+            head.textContent = this._implied_brackets ?
+                ("[" + head_str + "]") : head_str;
+            head.id = allocateHeadID();
+            this._gui_updater.insertNodeAt(el, 0, head);
+        }
+        else {
+            // If collapse is a string, it is shorthand for a collapse
+            // object with the field `kind` set to the value of the
+            // string.
+            if (typeof collapse === "string") {
+                collapse = {
+                    kind: collapse
+                };
+            }
+            var collapsible = btw_util.makeCollapsible(
+                el.ownerDocument,
+                collapse.kind,
+                this._collapse_heading_id_manager.generate(),
+                this._collapse_id_manager.generate(),
+                collapse.additional_heading_classes);
+            var group = collapsible.group;
+            var panel_body = collapsible.content;
+            collapsible.heading.textContent = head_str;
+
+            next = el.nextSibling;
+            var parent = el.parentNode;
+            this._gui_updater.removeNode(el);
+            panel_body.appendChild(el);
+            this._gui_updater.insertBefore(parent,
+                                           group, next);
+        }
     }
 };
 

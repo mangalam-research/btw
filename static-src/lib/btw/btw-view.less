@@ -63,5 +63,22 @@ div.wed-frame {
             }
         }
 
+        *[data-toggle='collapse']:before {
+            content: "▾ ";
+            margin-right: 0px;
+        }
+
+        *[data-toggle='collapse'].collapsed:before {
+            content: "▸ ";
+            margin-right: 0px;
+        }
+
+        .panel-info .panel-body {
+            background-color: @panel-info-heading-bg;
+        }
+
+        .contrastive-collapse>.panel-heading>.panel-title {
+            font-size: 150%;
+        }
     }
 }
