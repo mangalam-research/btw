@@ -9,6 +9,9 @@
 	<script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
 	<script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
         <script>
+          require.config({
+              baseUrl: '{% static 'lib/' %}'
+          });
           require(["bootstrap"]);
         </script>
         <link href="{{ btw_globals.btw_bootstrap_css_path }}" type="text/css" media="screen" rel="stylesheet" />
