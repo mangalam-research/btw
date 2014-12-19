@@ -155,7 +155,7 @@ $(COPIED_LOCAL_SOURCES): $(BUILD_DEST)/%: static-src/%
 
 define WED_OPTIMIZED_ADDITION
   "lodash": ["lodash/modern/utilities/template"],\n\
-  "wed/wed": ["wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation"],
+  "wed/wed": ["wed/convert", "wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation", "wed/lib/simple_event_emitter", "wed/lib/conditioned", "salve/name_resolver", "salve/validate", "wed/gui/tooltip", "wed/modes/generic/metas/tei_meta"],
 endef
 
 $(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/requirejs-config-dev.js
@@ -232,11 +232,13 @@ $(EXPANDED_DEST):
 $(EXPANDED_BOOTSTRAP)/%: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
 	unzip -DD -d $(EXPANDED_DEST) $<
 	(cd $(EXPANDED_DEST); ln -sf $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
-# Check
+# Check we are using the same version of bootstrap in both places, we
+# check against the non-optimized version because the optimized
+# version is modified during optimization.
 	@diff $(EXPANDED_BOOTSTRAP)/dist/css/bootstrap.css \
-	  $(WED_BUILD)/lib/external/bootstrap/css/bootstrap.css || \
-	  echo "There appear to be a difference between the \
-	  boostrap downloaded by BTW and the one in wed." && exit 1
+	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
+	  { echo "There appear to be a difference between the \
+	  boostrap downloaded by BTW and the one in wed." && exit 1; }
 
 
 $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).%: node_modules/qunitjs/qunit/qunit.%
