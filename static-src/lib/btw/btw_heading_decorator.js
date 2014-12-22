@@ -172,6 +172,9 @@ HeadingDecorator.prototype.sectionHeadingDecorator = function (
             head_str = (label_f) ? spec.heading + " " + label_f(el) : spec.heading;
         }
 
+        if (spec.suffix)
+            head_str += spec.suffix;
+
         collapse = spec.collapse;
     }
 

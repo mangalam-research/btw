@@ -96,6 +96,13 @@ function Viewer(root, data, bibl_data) {
     this._heading_decorator.addSpec({selector: "btw:semantic-fields",
                                      heading: null});
     this._heading_decorator.addSpec(
+    {
+        selector: "btw:sense",
+        heading: "",
+        label_f: this._refmans.getSenseLabelForHead.bind(this._refmans),
+        suffix: "."
+    });
+    this._heading_decorator.addSpec(
         {selector: "btw:sense>btw:explanation",
          heading: null});
     this._heading_decorator.addSpec(

@@ -13,3 +13,6 @@
   - Moved the edit button which appears only to people with authoring
     privilege to a position above the article. [This was required due
     to other layout changes.]
+
+  - Removed the "SENSE" labels from the sense headings. Added a period
+    after the letter.
