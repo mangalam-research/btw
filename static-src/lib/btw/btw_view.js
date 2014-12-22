@@ -144,9 +144,13 @@ function Viewer(root, data, bibl_data) {
     });
 
     this._heading_decorator.addSpec(
-        {selector: "btw:cognates>btw:semantic-fields-collection",
-         heading: "semantic categories of cognates related to sense",
-         label_f: this._heading_decorator._bound_getSenseLabel});
+        {selector: "btw:cognate-term-list>btw:semantic-fields-collection",
+         heading: "semantic fields",
+         collapse: {
+             kind: "default",
+             additional_classes: "sf-collapse"
+         }
+        });
     this._heading_decorator.addSpec(
         {selector: "btw:semantic-fields-collection>btw:semantic-fields",
          heading: null});
@@ -492,26 +496,29 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         group.appendChild(coll);
 
         //
-        // If there are btw:sematic-fields elements, combine them.
+        // If there are btw:sematic-fields elements, combine them. But
+        // only for cognates.
         //
-        var cits = coll.getElementsByClassName("btw:citations");
-        for (var cit_ix = 0, cit; (cit = cits[cit_ix]); ++cit_ix) {
-            var secats = cit.getElementsByClassName("btw:semantic-fields");
-            if (secats.length) {
-                secats = _slice.call(secats);
-                html = [];
-                var term_item = cit.previousElementSibling;
-                html.push(term_item.outerHTML);
-                for(var sc_ix = 0, secat; (secat = secats[sc_ix]); ++sc_ix) {
-                    html.push(secat.outerHTML);
-                }
+        if (name === "cognate") {
+            var cits = coll.getElementsByClassName("btw:citations");
+            for (var cit_ix = 0, cit; (cit = cits[cit_ix]); ++cit_ix) {
+                var secats = cit.getElementsByClassName("btw:semantic-fields");
+                if (secats.length) {
+                    secats = _slice.call(secats);
+                    html = [];
+                    for(var sc_ix = 0, secat; (secat = secats[sc_ix]);
+                        ++sc_ix) {
+                        html.push(secat.outerHTML);
+                    }
 
-                var sfs = doc.createElement("div");
-                sfs.classList.add("btw:semantic-fields-collection");
-                sfs.classList.add("_real");
-                sfs.innerHTML = html.join("");
-                group.appendChild(sfs);
-                this._heading_decorator.sectionHeadingDecorator(sfs);
+                    var sfs = doc.createElement("div");
+                    sfs.classList.add("btw:semantic-fields-collection");
+                    sfs.classList.add("_real");
+                    sfs.innerHTML = html.join("");
+                    var wrapper = wrappers[cit_ix];
+                    wrapper.parentNode.insertBefore(sfs, wrapper.nextSibling);
+                    this._heading_decorator.sectionHeadingDecorator(sfs);
+                }
             }
         }
     }
