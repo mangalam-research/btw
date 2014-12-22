@@ -11,7 +11,8 @@ var domutil = require("wed/domutil");
 var IDManager = require("./id_manager").IDManager;
 var btw_util = require("./btw_util");
 
-function HeadingDecorator(refmans, gui_updater, implied_brackets) {
+function HeadingDecorator(refmans, gui_updater, heading_map,
+                          implied_brackets) {
     this._refmans = refmans;
     this._gui_updater = gui_updater;
     if (implied_brackets === undefined)
@@ -28,6 +29,14 @@ function HeadingDecorator(refmans, gui_updater, implied_brackets) {
         this._refmans.getSenseLabel.bind(this._refmans);
     this._bound_getSubsenseLabel =
         this._refmans.getSubsenseLabel.bind(this._refmans);
+
+    this._unit_heading_map = heading_map || {
+    "btw:overview": "UNIT 1: OVERVIEW",
+    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
+    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA"
+    };
+
+
 
     this._specs = [ {
         selector: "btw:definition",
@@ -105,12 +114,6 @@ function allocateHeadID() {
     return "BTW-H-" + ++next_head;
 }
 
-var unit_heading_map = {
-    "btw:overview": "UNIT 1: OVERVIEW",
-    "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
-    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA"
-};
-
 HeadingDecorator.prototype.addSpec = function(spec) {
     this._specs = this._specs.filter(function (x) {
         return x.selector !== spec.selector;
@@ -131,7 +134,7 @@ HeadingDecorator.prototype.unitHeadingDecorator = function (el) {
     }
 
     var name = util.getOriginalName(el);
-    var head_str = unit_heading_map[name];
+    var head_str = this._unit_heading_map[name];
     if (head_str === undefined)
         throw new Error("found an element with name " + name +
                         ", which is not handled");
@@ -201,7 +204,7 @@ HeadingDecorator.prototype.sectionHeadingDecorator = function (
                 collapse.kind,
                 this._collapse_heading_id_manager.generate(),
                 this._collapse_id_manager.generate(),
-                collapse.additional_heading_classes);
+                collapse.additional_classes);
             var group = collapsible.group;
             var panel_body = collapsible.content;
             collapsible.heading.textContent = head_str;

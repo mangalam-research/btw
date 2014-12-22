@@ -80,12 +80,17 @@ function Viewer(root, data, bibl_data) {
         }
     };
 
+    var heading_map = {
+        "btw:overview": "OVERVIEW",
+        "btw:sense-discrimination": "SENSE DISCRIMINATION",
+        "btw:historico-semantical-data": "HISTORICO-SEMANTICAL DATA"
+    };
+
     // Override the head specs with those required for
     // viewing.
-    this._heading_decorator = new HeadingDecorator(this._refmans, gui_updater, false /* implied_brackets */);
-
-    // We don't have unit headings.
-    this._heading_decorator.unitHeadingDecorator = function () {};
+    this._heading_decorator = new HeadingDecorator(
+        this._refmans, gui_updater,
+        heading_map, false /* implied_brackets */);
 
     this._heading_decorator.addSpec({selector: "btw:definition",
                                      heading: null});
@@ -111,16 +116,16 @@ function Viewer(root, data, bibl_data) {
     this._heading_decorator.addSpec(
         {selector: "btw:english-renditions>btw:semantic-fields-collection",
          heading: "semantic fields",
-         collapse: "info"
+         collapse: {
+             kind: "default",
+             additional_classes: "sf-collapse"
+         }
         });
 
     this._heading_decorator.addSpec({
         selector: "btw:contrastive-section",
         heading: "contrastive section",
-        collapse: {
-            kind: "default",
-            additional_heading_classes: "contrastive-collapse"
-        }
+        collapse: "default"
     });
     this._heading_decorator.addSpec({
         selector: "btw:antonyms",
@@ -148,13 +153,22 @@ function Viewer(root, data, bibl_data) {
     this._heading_decorator.addSpec(
         {selector: "btw:sense>btw:semantic-fields",
          heading: "semantic fields",
-         collapse: "info"});
+         collapse: {
+             kind: "default",
+             additional_classes: "sf-collapse"
+         }
+        });
     this._heading_decorator.addSpec(
         {selector: "btw:overview>btw:semantic-fields",
          heading: "all semantic fields"});
-    this._heading_decorator.addSpec({selector: "btw:semantic-fields",
-                                     heading: "semantic fields",
-                                     collapse: "info"});
+    this._heading_decorator.addSpec(
+        {selector: "btw:semantic-fields",
+         heading: "semantic fields",
+         collapse: {
+             kind: "default",
+             additional_classes: "sf-collapse"
+         }
+        });
     this._heading_decorator.addSpec({
         selector: "btw:subsense>btw:citations",
         heading: null

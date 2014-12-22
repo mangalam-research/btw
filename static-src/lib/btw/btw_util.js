@@ -64,7 +64,7 @@ function htmlToElements(document, html) {
 var collapsible_template =
 '\
 <div class="_phantom_wrap panel-group" role="tablist" aria-multiselectable="true">\
- <div class="_phantom_wrap panel panel-<%= kind %><%= heading_classes %>">\
+ <div class="_phantom_wrap panel panel-<%= kind %><%= classes %>">\
   <div class="_phantom_wrap panel-heading" role="tab" id="<%= heading_id %>">\
    <h4 class="_phantom_wrap panel-title">\
     <a class="_phantom collapsed" data-toggle="collapse" href="#<%= collapse_id %>" aria-expanded="true" aria-controls="<%= collapse_id %>">\
@@ -89,8 +89,7 @@ var collapsible_template =
  * be unique.
  * @param {string} collapse_id The new id to use for the collapsible
  * element. Must be unique.
- * @param {string} additional_heading_classes A list of classes to add
- * to the heading.
+ * @param {string} additional_classes A list of classes to add.
  * @returns {{group: Element, heading: Element, content: Element}} The
  * ``group`` key contains the top level element of the collapsible
  * structure. The ``heading`` key contains the innermost element
@@ -101,16 +100,15 @@ var collapsible_template =
  * calling code.
  */
 function makeCollapsible(document, kind, heading_id, collapse_id,
-                         additional_heading_classes) {
-    additional_heading_classes =
-        additional_heading_classes ?
-        " " + additional_heading_classes : "";
+                         additional_classes) {
+    additional_classes =
+        additional_classes ? " " + additional_classes : "";
 
     var el = htmlToElements(
         document,
         _.template(collapsible_template, {
             kind: kind,
-            heading_classes: additional_heading_classes,
+            classes: additional_classes,
             heading_id: heading_id,
             collapse_id: collapse_id
         }))[0];

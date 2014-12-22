@@ -1,12 +1,7 @@
 @import "btw-mode.less";
 @import (reference) "../../../build/expanded/bootstrap/less/variables.less";
 
-body>.container {
-    background-color: @panel-success-heading-bg;
-}
-
 div.wed-frame {
-    background-color: white;
     div.wed-document {
 
         .btw\:english-term {
@@ -15,27 +10,51 @@ div.wed-frame {
 
         div {
             &.head {
-                margin-left: 0px;
-                margin-bottom: 0px;
-                margin-top: 5px;
+                margin-top: 1em;
+                //background: linear-gradient(to bottom right,
+                //                            #CCCCCC,
+                //                            #FFFFFF);
             }
 
-            div.btw\:overview>* {
-                margin-left: 0px;
-            }
-
-            div.part-two {
+            &.part-two {
 
                 .sense {
                     margin-left: 0px;
                 }
 
                 >.head,.subsense>.head {
-                text-align: center;
+                    text-align: center;
                 }
 
             }
 
+            &.btw\:lemma {
+                font-size: 200%;
+            }
+
+
+            &.btw\:entry {
+                // background-color: @panel-success-heading-bg;
+                // We use this to ensure that the margin of the last child
+                // element of the entry does not collapse with the margin
+                // of the entry.
+                padding-bottom: 1px;
+            }
+
+            &.btw\:entry>* {
+                background-color: white;
+            }
+
+            &.btw\:overview, &.btw\:sense-discrimination,
+            &.btw\:historico-semantical-data, &.part-two {
+                margin: 1em;
+            }
+
+            &.btw\:overview>.head, &.btw\:sense-discrimination>.head,
+            &.btw\:historico-semantical-data>.head {
+                text-align: left;
+                font-size: larger;
+            }
 
             &._decoration_text {
                 display: inline;
@@ -73,12 +92,10 @@ div.wed-frame {
             margin-right: 0px;
         }
 
-        .panel-info .panel-body {
-            background-color: @panel-info-heading-bg;
-        }
-
-        .contrastive-collapse>.panel-heading>.panel-title {
-            font-size: 150%;
+        .sf-collapse {
+            >.panel-heading>.panel-title, .panel-body {
+                font-size: 90%;
+            }
         }
     }
 }
