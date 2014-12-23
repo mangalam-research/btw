@@ -77,7 +77,17 @@ def cleanup(context, failed):
             context.display = None
 
     if context.server:
-        context.server.terminate()
+        # Must read started before quitting...
+        with open(context.server_read_fifo, 'r') as fifo:
+            read = fifo.read().strip()
+            if read != 'started':
+                raise ValueError("did not get the 'started' string")
+        with open(context.server_write_fifo, 'w') as fifo:
+            fifo.write("quit\n")
+        try:
+            context.server.wait()
+        except KeyboardInterrupt:
+            pass
         context.server = None
 
     if context.server_tempdir:

@@ -7,7 +7,7 @@ from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
 from django.test import LiveServerTestCase
-from django.test.simple import DjangoTestSuiteRunner
+from django.test.runner import DiscoverRunner
 from south.management.commands import patch_for_test_db_setup
 import mock
 
@@ -56,6 +56,8 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 class SeleniumTest(LiveServerTestCase):
 
+    reset_sequences = True
+
     def setUp(self):
         from bibliography.models import Item, PrimarySource
         item = Item(item_key="3")
@@ -68,7 +70,6 @@ class SeleniumTest(LiveServerTestCase):
         self.__control_read = control_read
         self.__control_write = control_write
         super(SeleniumTest, self).__init__(*args, **kwargs)
-        self.__control_thread = threading.Thread(target=self.control)
         from django.conf import settings
         self.fixtures = \
             [os.path.join(settings.TOPDIR, "lexicography", "fixtures",
@@ -78,29 +79,34 @@ class SeleniumTest(LiveServerTestCase):
             list(os.path.join(settings.TOPDIR, "lexicography", "tests",
                               "fixtures", x)
                  for x in ("users.json", "views.json", "allauth.json"))
+        self.next = None
+
+    def log(self, msg):
+        if False:
+            print repr(self), hex(id(self)) + ":", msg
+
+    def run(self, result=None):
+        super(SeleniumTest, self).run(result)
+        if self.next == "restart":
+            self.log("restarting...")
+        else:
+            self.log("stopping...")
+            result.stop()
 
     def runTest(self):
-        self.__control_thread.start()
-
-        # This effectively causes the test to stop and wait for the
-        # server to die.
-
-        # Yep we call it this way to avoid the idiotic redefinition of
-        # join present in django/test/testcases.py (present in version
-        # 1.5, maybe 1.6)
-        threading.Thread.join(self.server_thread)
-
-    def control(self):
+        finished = False
         with open(self.__control_write, 'w') as out:
             out.write('started\n')
-        while True:
+        while not finished:
             command = open(self.__control_read, 'r').read()
+            self.log("got command: " + command)
             args = command.split()
-            if args[0] == "restart":
-                self.server_thread.join()
-                self.server_thread.httpd.socket.close()
-                print "Restarting..."
-                os.execl(sys.executable, sys.executable, *sys.argv)
+            if args[0] == "quit":
+                finished = True
+            elif args[0] == "restart":
+                self.next = "restart"
+                # Stop reading the control pipe.
+                finished = True
             elif args[0] == "login":
                 username = args[1]
                 password = args[2]
@@ -114,7 +120,8 @@ class SeleniumTest(LiveServerTestCase):
             elif command == "create valid article\n":
                 from django.core.urlresolvers import reverse
                 add_raw_url = reverse("admin:lexicography_entry_rawnew")
-                data = open("utils/schemas/prasada.xml").read().decode("utf-8")
+                data = open(
+                    "utils/schemas/prasada.xml").read().decode("utf-8")
                 # Clean it for raw edit.
                 data = util.run_xsltproc("utils/xsl/strip.xsl",
                                          data)
@@ -141,8 +148,22 @@ class SeleniumTest(LiveServerTestCase):
             else:
                 print "Unknown command: ", command
 
+    def __unicode__(self):
+        return hex(id(self))
 
-class Runner(DjangoTestSuiteRunner):
+class Suite(TestSuite):
+
+    def __init__(self, control_read, control_write, *args, **kwargs):
+        self.__control_read = control_read
+        self.__control_write = control_write
+
+        super(Suite, self).__init__(*args, **kwargs)
+
+    def __iter__(self):
+        while True:
+            yield SeleniumTest(self.__control_read, self.__control_write)
+
+class Runner(DiscoverRunner):
 
     def __init__(self, control_read, control_write, *args, **kwargs):
         self.__control_read = control_read
@@ -151,8 +172,7 @@ class Runner(DjangoTestSuiteRunner):
 
     # Override build_suite to just provide what we want.
     def build_suite(self, *args, **kwargs):
-        return TestSuite([SeleniumTest(self.__control_read,
-                                       self.__control_write)])
+        return Suite(self.__control_read, self.__control_write)
 
 
 class Command(BaseCommand):

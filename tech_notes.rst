@@ -445,6 +445,30 @@ Tests are of three types:
 Django Tests
 ============
 
+Create the Test Database
+------------------------
+
+To speed up testing, we set things up so that the test database is not
+recreated with each run of the test suite. This means that you must
+create the database yourself and maintain it. First you must create a
+database::
+
+  $ sudo -u postgres createdb -O btw_develop test_btw_develop
+
+[Verify in your own configuration the name of the user and the name of
+the database you should create. ``test_settings`` adds ``test_`` to
+whatever name you use for the development database.]
+
+Create the tables::
+
+  $ ./manage syncdb --settings=btw.test_settings
+  $ ./manage migrate --settings=btw.test_settings
+  $ ./manage.py createcachetable bibliography_cache --settings=btw.test_settings
+
+
+Running the Tests
+-----------------
+
 ::
     $ ./manage.py test
 

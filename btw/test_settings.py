@@ -27,6 +27,13 @@ else:
         'propagate': True,
     }
 
+for name in DATABASES.keys():
+    db = DATABASES[name]
+    db['NAME'] = 'test_' + db['NAME']
+    if 'TEST_MIRROR' in db:
+        raise ValueError("TEST_MIRROR already set for " + name)
+    db['TEST_MIRROR'] = name
+
 # We use the environment variable JENKINS_HOME to detect whether we
 # are runnning in a Jenkins environment. (Seems safer than some of the
 # other environment variables that Jenkins exports.) We use 'BUILDBOT'
