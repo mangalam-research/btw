@@ -1,17 +1,3 @@
-TODO: 
-
-* Explore how much we want to use string expansions. It seems to
-me there is not much gain in defining "fem.". We can just as well type
-"feminine" and be done.
-
-* Do we want to use <choice><sic><corr><reg><orig>?
-
-* Do we want to use <date><time>?
-
-* Do we want to use <name>?
-
-
-
 Roles
 =====
 
@@ -57,7 +43,7 @@ BTW does **not** provide the following functionality:
 Zotero and BTW Q&A
 ==================
 
-**Why not implement our own bibliographical management module?** 
+**Why not implement our own bibliographical management module?**
 
 We're avoiding reinventing the wheel. The folks who produced Zotero
 think about bibliographies day in and day out. We, on the other hand,
@@ -164,7 +150,7 @@ abbreviation might have to change. Consider this scenario:
 
 * We need to refer to Smith's edition of the AKBh so we write AKBh.S.
 
-* Later, Stone releases an edition of the AKBh that we want to use in the same article as Smith's. We can't use AKBh.S for both. 
+* Later, Stone releases an edition of the AKBh that we want to use in the same article as Smith's. We can't use AKBh.S for both.
 
 It would be possible to keep AKBh.S for Smith and have AKBh.St for
 Stone, but cognitively there has to be an extra effort to realize that
