@@ -126,7 +126,9 @@ Deploying Experimental Code
 If you are deploying some sort of experimental version and you do not
 want to push to a public server you can do the following::
 
-1. ::
+1. Create a repository on the site. You need this repository because
+   when you push to it it will be populated with repository files
+   rather than a working tree::
 
     $ cd /srv/www/<site>
     $ mkdir btw_repo
@@ -144,7 +146,7 @@ want to push to a public server you can do the following::
 
     $ git push [name]
 
-5. On the server, clone::
+5. On the server, clone (this will create the working tree)::
 
     $ git clone btw_repo btw
 
@@ -269,11 +271,8 @@ Answer all questions negatively. Create a database::
    So you must ensure that ``STATIC_ROOT`` and ``MEDIA_ROOT`` are set
    to point to these directories which are **above** ``TOPDIR``.
 
-13. Run::
-
-    $ ./manage.py collectstatic
-
-14. Make sure the following environment variables are set as follows::
+13. Make sure the following environment variables are set as follows
+    in the uwsgi configuration::
 
     HTTPS=on
     wsgi.url_scheme=https
@@ -286,7 +285,37 @@ This needs to be done last because the ``Makefile`` may use
 
 Run make::
 
-    $ make
+  $ make
+
+Demo Site
+---------
+
+Make sure that BTW_SITE_NAME is properly set. Make sure that anything
+that depends on the location of STATIC_URL is properly set.
+
+If you are going to move over users then:
+
+1. Go to the regular site and run::
+
+     $ ./manage.py dumpdata --natural auth allauth > [dump]
+
+2. Go to the demo site and run::
+
+     $ ./manage.py loaddata [dump]
+
+If you are going to move over articles from the dev site the
+bibliographical data must be moved over first:
+
+1. Go to the dev site and run::
+
+     $ ./manage.py dumpdata --natural bibliography > [dump]
+
+2. Go to the demo site and run::
+
+     $ ./manage.py loaddata [dump]
+
+
+
 
 Upgrades
 --------
@@ -642,6 +671,8 @@ To allow for changing configurations easily BTW gets an environment
 name from the following sources:
 
 * the ``BTW_ENV`` environment variable
+
+* An ``env`` file at the top of the Django project hierarchy.
 
 * ``~/.config/btw/env``
 
