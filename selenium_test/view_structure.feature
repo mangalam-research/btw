@@ -16,7 +16,7 @@ Scenario: sense hyperlinks are correct
 Scenario: example hyperlinks are correct
   Given a document with a non-Pāli example with a bibliographical reference and a link to the example
   And the view has finished rendering
-  Then the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3 quoted above in [citations for sense a]." points to the first example.
+  Then the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3 quoted above in A." points to the example with the citation that starts with "foo"
 
 Scenario: a valid document has a correct structure
   Given a valid document
@@ -25,6 +25,6 @@ Scenario: a valid document has a correct structure
   And the antonyms are reformatted in the correct structure
   And the cognates are reformatted in the correct structure
   And the conceptual proximates are reformatted in the correct structure
-  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake AkośBh ad VIII,9, 440 4-12 quoted above in [citations for cognates related to sense a], saṃprasāda." points to the second example under head "[citations for cognates related to sense a]"
-  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake AkośBh ad VIII,9, 440 4-12 quoted above in [citations for cognates related to sense a], foo." points to the second example under head "[citations for cognates related to sense a]"
-  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake Vimalakīrti 116 quoted below in [citations for cognates related to sense b], aprasanna." points to the third example under head "[citations for cognates related to sense b]"
+  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake AkośBh ad VIII,9, 440 4-12 quoted above in A, saṃprasāda." points to the example with the citation that starts with "adhyātmasaṃprasādo"
+  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake AkośBh ad VIII,9, 440 4-12 quoted above in A, foo." points to the example with the citation that starts with "adhyātmasaṃprasādo"
+  And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake Vimalakīrti 116 quoted below in B, aprasanna." points to the example with the citation that starts with "aprasannānāṃ"

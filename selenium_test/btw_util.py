@@ -276,7 +276,7 @@ sense_re = re.compile(r"sense (.).?\b")
 subsense_re = re.compile(r"sense (..)\b")
 
 
-def assert_senses_in_order(util):
+def assert_senses_in_order(util, viewing=False):
     """
     Verifies that all senses are properly labeled and that all
     occurrences of the word "sense" in headers that appear in a sense
@@ -311,33 +311,39 @@ def assert_senses_in_order(util):
     for sense in senses:
         saw_main_head = False
         assert_true(len(sense["heads"]) > 0, "there should be heads")
-        for head in sense["heads"]:
-            if head.startswith("[SENSE"):
-                saw_main_head = True
-                assert_equal(head.strip(),
-                             "[SENSE {0}]".format(chr(sense_label_ix)),
-                             "the head text should be correct")
-            elif "sense" in head:
-                # This test in effect tests the heads that appear
-                # inside subsenses twice, but that's okay. (Here it
-                # tests that it is of the form "sense [abcdef]" and
-                # may have a number after it. The later test checks
-                # for the letter and the number.)
-                match = sense_re.search(head)
-                assert_equal(
-                    match and match.group(1), chr(sense_label_ix).lower(),
-                    "the subhead text should be correct for head " + head)
-        subsense_label_ix = 1
-        assert_true(saw_main_head, "should have seen the main head")
-        for subsense in sense["subsenses"]:
-            assert_true(len(subsense) > 0, "there should be heads in the "
-                        "subsense")
-            for head in subsense:
-                if "sense" in head:
-                    match = subsense_re.search(head)
-                    assert_equal(match and match.group(1),
-                                 chr(sense_label_ix).lower() +
-                                 str(subsense_label_ix),
-                                 "subsense head text")
-            subsense_label_ix += 1
+        if viewing:
+            head = sense["heads"][0]
+            assert_equal(head.strip(),
+                         chr(sense_label_ix) + ".",
+                         "the head label of the sense should be correct")
+        else:
+            for head in sense["heads"]:
+                if head.startswith("[SENSE"):
+                    saw_main_head = True
+                    assert_equal(head.strip(),
+                                 "[SENSE {0}]".format(chr(sense_label_ix)),
+                                 "the head text should be correct")
+                elif "sense" in head:
+                    # This test in effect tests the heads that appear
+                    # inside subsenses twice, but that's okay. (Here it
+                    # tests that it is of the form "sense [abcdef]" and
+                    # may have a number after it. The later test checks
+                    # for the letter and the number.)
+                    match = sense_re.search(head)
+                    assert_equal(
+                        match and match.group(1), chr(sense_label_ix).lower(),
+                        "the subhead text should be correct for head " + head)
+            subsense_label_ix = 1
+            assert_true(saw_main_head, "should have seen the main head")
+            for subsense in sense["subsenses"]:
+                assert_true(len(subsense) > 0, "there should be heads in the "
+                            "subsense")
+                for head in subsense:
+                    if "sense" in head:
+                        match = subsense_re.search(head)
+                        assert_equal(match and match.group(1),
+                                     chr(sense_label_ix).lower() +
+                                     str(subsense_label_ix),
+                                     "subsense head text")
+                subsense_label_ix += 1
         sense_label_ix += 1

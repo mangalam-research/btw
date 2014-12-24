@@ -90,8 +90,8 @@ def step_impl(context):
 
 __LINK_RE1 = \
     (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
-     ur'points to the (?P<term>first|second|third) example(?: under head '
-     ur'"(?P<head>.*?)")?\.?$')
+     ur'points to the(?: (?P<term>first|second|third))? example'
+     ur'(?: with the citation that starts with "(?P<citation>.*?)")?\.?$')
 __LINK_RE2 = \
     (ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
      ur'to "(?P<term>.*?)"\.?$')
@@ -101,7 +101,7 @@ __LINK_RE2 = \
 @given(__LINK_RE2)
 @then(__LINK_RE1)
 @then(__LINK_RE2)
-def step_impl(context, example, label, term, head=None):
+def step_impl(context, example, label, term=None, citation=None):
 
     id_selector = "#BTW-E." if example else "#BTW-S."
 
@@ -110,7 +110,7 @@ def step_impl(context, example, label, term, head=None):
         var label = arguments[0];
         var term = arguments[1];
         var id_selector = arguments[2];
-        var head_spec = arguments[3];
+        var citation = arguments[3];
         var $ = jQuery;
 
         var links = Array.prototype.slice.call(document.querySelectorAll(
@@ -162,34 +162,30 @@ def step_impl(context, example, label, term, head=None):
             desc = actual_term + " should match " + term;
         }
         else if (target.matches(".btw\\:example, .btw\\:example-explained")) {
-            var order = { "first": 0, "second": 1, "third":2 }[term];
-            var scope = document;
-            test = true;
-            if (head_spec) {
-                var heads = document.getElementsByClassName("head");
-                var candidates = [];
-                for (var i = 0, head; (head = heads[i]); ++i) {
-                    var cleaned_head = cleanup(head.cloneNode(true));
-                    if (cleaned_head.textContent === head_spec)
-                        candidates.push(head);
-                }
-                if (candidates.length > 1) {
-                    test = false;
-                    desc = "the head specification should not be ambiguous";
-                }
-                else if (candidates.length === 0) {
-                    test = false;
-                    desc = "can't find the head";
-                }
-                else
-                    scope = candidates[0].parentNode;
-            }
-
-            if (test) {
-                var examples = scope.querySelectorAll(
+            if (term) {
+                var order = { "first": 0, "second": 1, "third":2 }[term];
+                var examples = document.querySelectorAll(
                     ".btw\\:example, .btw\\:example-explained");
                 test = examples[order] === target;
                 desc = "link should point to the " + term + " example";
+            }
+            else {
+                var cit = target.getElementsByClassName("btw:cit")[0];
+                var data_cit = jQuery.data(cit, "wed_mirror_node");
+                var clone = data_cit.cloneNode(true);
+                var child = clone.firstElementChild;
+                while (child) {
+                    var next = child.nextElementSibling;
+                    if (child.classList.contains("ref"))
+                        clone.removeChild(child);
+                    child = child.next;
+                }
+                var text = clone.textContent.trim();
+
+                test = text.lastIndexOf(citation, 0) === 0;
+                desc = "link should point to the example that has a " +
+                    'citation that starts with "' + citation +
+                    '" but points to "' + text + '"';
             }
         }
         else
@@ -197,7 +193,7 @@ def step_impl(context, example, label, term, head=None):
                     "unexpected target (tagName: " + target.tagName + ")"];
 
         return [test, desc];
-        """, label, term, id_selector, head)
+        """, label, term, id_selector, citation)
 
         return Result(ret[0], ret)
 

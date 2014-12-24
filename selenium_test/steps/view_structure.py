@@ -19,7 +19,7 @@ def step_impl(context):
 
     def cond(*_):
         try:
-            btw_util.assert_senses_in_order(util)
+            btw_util.assert_senses_in_order(util, True)
             return True
         except AssertionError:
             return False
@@ -28,7 +28,7 @@ def step_impl(context):
         util.wait(cond)
     except TimeoutException:
         # This is more useful than a timeout error.
-        btw_util.assert_senses_in_order(util)
+        btw_util.assert_senses_in_order(util, True)
 
 @given("^the view has finished rendering$")
 def step_impl(context):
