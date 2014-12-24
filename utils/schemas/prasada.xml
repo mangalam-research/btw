@@ -342,7 +342,7 @@
           <btw:example>
             <btw:semantic-fields>
               <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02.</btw:sf>
+              <btw:sf>02.01.13.02.02</btw:sf>
               <btw:sf>02.01.13.08.11</btw:sf>
               <btw:sf>02.01.13.08.11.01.01</btw:sf>
               <btw:sf>02.01.14</btw:sf>
@@ -364,7 +364,7 @@
           <btw:example>
             <btw:semantic-fields>
               <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02.</btw:sf>
+              <btw:sf>02.01.13.02.02</btw:sf>
               <btw:sf>02.01.13.08.11</btw:sf>
               <btw:sf>02.01.13.08.11.01.01</btw:sf>
               <btw:sf>02.01.14</btw:sf>
@@ -381,7 +381,7 @@
           <btw:example>
             <btw:semantic-fields>
               <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02.</btw:sf>
+              <btw:sf>02.01.13.02.02</btw:sf>
               <btw:sf>02.01.13.08.11</btw:sf>
               <btw:sf>02.01.13.08.11.01.01</btw:sf>
               <btw:sf>02.01.14</btw:sf>
@@ -398,7 +398,7 @@
           <btw:example>
             <btw:semantic-fields>
               <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02.</btw:sf>
+              <btw:sf>02.01.13.02.02</btw:sf>
               <btw:sf>02.01.13.08.11</btw:sf>
               <btw:sf>02.01.13.08.11.01.01</btw:sf>
               <btw:sf>02.01.14</btw:sf>
