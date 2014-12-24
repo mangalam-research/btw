@@ -160,11 +160,17 @@ ExampleReferenceManager.prototype.getPositionalLabel = function (ptr, target,
 
         if (gui_term) {
             var term = $.data(gui_term, "wed_mirror_node");
+
+            // Drop the period, since we're adding a comma.
+            if (ret[ret.length - 1] === ".")
+                ret = ret.slice(0, -1);
             ret += ", " + term.textContent;
         }
     }
 
-    ret += ".";
+    // Don't duplicate the period.
+    if (ret[ret.length - 1] !== ".")
+        ret += ".";
 
     return ret;
 };
