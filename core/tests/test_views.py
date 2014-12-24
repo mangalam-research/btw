@@ -37,7 +37,7 @@ class GeneralTestCase(ViewTestCase):
 
         response = self.app.get('/')
         brand = response.lxml.xpath(self.brand_xpath)[0]
-        self.assertEqual(brand.text, "BTW")
+        self.assertEqual(brand.text, "BTW dev")
 
         self.assertEqual(len(response.lxml.xpath(self.alert_xpath)),
                          0, "there should be no alert")
