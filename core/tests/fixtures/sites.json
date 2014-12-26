@@ -4,7 +4,7 @@
   "model": "sites.site",
   "fields": {
     "domain": "btw.tilaa.nl",
-    "name": "BTW"
+    "name": "BTW dev"
   }
 }
 ]

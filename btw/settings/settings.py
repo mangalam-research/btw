@@ -295,7 +295,6 @@ BTW_QUNIT_CSS_PATH = None
 BTW_JQUERY_GROWL_CSS_PATH = \
     '/static/lib/external/jquery-growl/css/jquery.growl.css'
 
-BTW_SITE_NAME = "BTW"
 BTW_DEMO = False
 BTW_TESTING = False
 

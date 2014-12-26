@@ -290,8 +290,9 @@ Run make::
 Demo Site
 ---------
 
-Make sure that BTW_SITE_NAME is properly set. Make sure that anything
-that depends on the location of STATIC_URL is properly set.
+Make sure that the site name in the sites table is properly set. Make
+sure that anything that depends on the location of STATIC_URL is
+properly set.
 
 If you are going to move over users then:
 

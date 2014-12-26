@@ -52,7 +52,7 @@ JSON_TYPE = "application/json; charset=utf-8"
 @require_GET
 def main(request):
     return render(request, 'lexicography/main.html',
-                  {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
+                  {'page_title': "Lexicography",
                    'can_author': usermod.can_author(request.user)})
 
 
@@ -347,7 +347,7 @@ def handle_update(request, handle_or_entry_id):
                              entry.latest.etag if entry else None})
 
     return render(request, 'lexicography/new.html', {
-        'page_title': settings.BTW_SITE_NAME + " | Lexicography | Edit",
+        'page_title': "Lexicography | Edit",
         'form': form,
         'new_entry': new_entry
     })

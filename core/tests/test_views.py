@@ -3,6 +3,7 @@ import os
 from django_webtest import TransactionWebTest
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
+from django.contrib.sites.models import Site
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_true, assert_equal, assert_false, \
@@ -25,6 +26,9 @@ class ViewTestCase(TransactionWebTest):
 
 class GeneralTestCase(ViewTestCase):
 
+    fixtures = ["initial_data.json",
+                os.path.join("core", "tests", "fixtures", "sites.json")]
+
     brand_xpath = '//a[@class="navbar-brand"]'
     alert_xpath = \
         '//div[@id="btw-site-navigation"]/div[@role="alert"]'
@@ -42,12 +46,15 @@ class GeneralTestCase(ViewTestCase):
         self.assertEqual(len(response.lxml.xpath(self.alert_xpath)),
                          0, "there should be no alert")
 
-    @override_settings(BTW_SITE_NAME='foo')
     def test_site_name(self):
         """
-        Tests that the site name should be determined by the setting
-        BTW_SITE_NAME.
+        Tests that the site name should be determined by the name of the
+        site in the database.
         """
+        site = Site.objects.get_current()
+        site.name = "foo"
+        site.save()
+
         response = self.app.get('/')
         brand = response.lxml.xpath(self.brand_xpath)[0]
         self.assertEqual(brand.text, "foo")

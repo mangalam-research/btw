@@ -60,7 +60,8 @@ class SeleniumTest(LiveServerTestCase):
     fixtures = [os.path.join("lexicography", "fixtures",
                              "initial_data.json")] + \
         list(os.path.join("lexicography", "tests", "fixtures", x)
-             for x in ("users.json", "views.json", "allauth.json"))
+             for x in ("users.json", "views.json", "allauth.json")) + \
+        [os.path.join("core", "tests", "fixtures", "sites.json")]
 
     def setUp(self):
         from bibliography.models import Item, PrimarySource

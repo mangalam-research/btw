@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block page_title %}
   {% if page_title %}
-    {{ page_title }}
+    {{ globals.site_name }} | {{ page_title }}
   {% else %}
     {{ block.super }}
   {% endif %}
@@ -19,7 +19,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">{{btw_globals.site_name }}</a>
+      <a class="navbar-brand" href="#">{{ globals.site_name }}</a>
     </div>
     <div class="collapse navbar-collapse" id="btw-site-navigation-collapse">
       <ul class="nav navbar-nav">

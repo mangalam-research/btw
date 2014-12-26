@@ -1,8 +1,11 @@
 from django.conf import settings
+from django.contrib.sites.models import get_current_site
+from django.utils.functional import SimpleLazyObject
 
 
 def global_context_processor(request):
     return {
+        # These originate from the settings but are specific to BTW.
         'btw_globals': {
             'requirejs_path': settings.BTW_REQUIREJS_PATH,
             'requirejs_config_path': settings.BTW_REQUIREJS_CONFIG_PATH,
@@ -14,10 +17,15 @@ def global_context_processor(request):
             'btw_bootstrap_editable_css_path':
             settings.BTW_BOOTSTRAP_EDITABLE__CSS_PATH,
             'wed_polyfills': settings.BTW_WED_POLYFILLS,
-            'site_name': settings.BTW_SITE_NAME,
             'demo': settings.BTW_DEMO,
         },
+        # Vanilla Django settings.
         'settings': {
             'DEBUG': settings.DEBUG
+        },
+        # Other globals that do not come from settings.
+        'globals': {
+            'site_name': SimpleLazyObject(
+                lambda: get_current_site(request).name)
         }
     }

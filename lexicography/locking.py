@@ -184,7 +184,7 @@ back.
             else:
                 return TemplateResponse(
                     request, 'lexicography/locked.html',
-                    {'page_title': settings.BTW_SITE_NAME + " | Lexicography",
+                    {'page_title': "Lexicography",
                      'lock': lock})
         return view(request, *args, **kwargs)
     return wrapper
