@@ -93,6 +93,7 @@ class SeleniumTest(LiveServerTestCase):
             args = command.split()
             if args[0] == "restart":
                 self.server_thread.join()
+                self.server_thread.httpd.socket.close()
                 print "Restarting..."
                 os.execl(sys.executable, sys.executable, *sys.argv)
             elif args[0] == "login":
