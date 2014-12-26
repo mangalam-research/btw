@@ -46,6 +46,8 @@ function Viewer(root, data, bibl_data) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
+    var win = doc.defaultView;
+
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");
     root.appendChild(convert.toHTMLTree(doc, data_doc.firstChild));
@@ -374,6 +376,45 @@ function Viewer(root, data, bibl_data) {
     // Create part 2, which does not exist as such in the file we store.
     this.createPartTwo(root);
     this._setCondition("done", this);
+
+    function showTarget() {
+        var hash = win.location.hash;
+        if (!hash)
+            return;
+
+        var target = doc.getElementById(hash.slice(1));
+        if (!target)
+            return;
+
+        var parents = [];
+        var parent = closest(target, ".collapse:not(.in)");
+        while (parent) {
+            parents.unshift(parent);
+            parent = parent.parentNode;
+            parent = parent && closest(parent, ".collapse:not(.in)");
+        }
+
+        function next(parent) {
+            var $parent = $(parent);
+            $parent.one('shown.bs.collapse', function () {
+                if (parents.length) {
+                    next(parents.shift());
+                    return;
+                }
+                // We get here only once all sections have been expanded.
+                target.scrollIntoView(true);
+            });
+            $parent.collapse('show');
+        }
+        next(parents.shift());
+    }
+    win.addEventListener('popstate', showTarget);
+    // This also catches hitting the Enter key on a link.
+    $(root).on('click', 'a[href]:not([data-toggle], [href="#"])',
+               function (ev) {
+        setTimeout(showTarget, 0);
+    });
+    showTarget();
 }
 
 oop.implement(Viewer, DispatchMixin);
