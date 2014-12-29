@@ -25,6 +25,7 @@ var DispatchMixin = require("./btw_dispatch").DispatchMixin;
 var id_manager = require("./id_manager");
 var name_resolver = require("salve/name_resolver");
 var $ = require("jquery");
+var _ = require("lodash");
 var btw_util = require("./btw_util");
 
 var _slice = Array.prototype.slice;
@@ -34,6 +35,8 @@ var closest = domutil.closest;
 /**
  * @param {Element} root The element of ``wed-document`` class that is
  * meant to hold the viewed document.
+ * @param {string} edit_url The url through which the document may be
+ * edited.
  * @param {string} data The document, as XML.
  * @param {string} bibl_data The bibliographical data. This is a
  * mapping of targets (i.e. the targets given to the ``ref`` tags that
@@ -42,11 +45,20 @@ var closest = domutil.closest;
  * these targets individually. This mapping must be
  * complete. Otherwise, it is an internal error.
  */
-function Viewer(root, data, bibl_data) {
+function Viewer(root, edit_url, data, bibl_data) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
     var win = doc.defaultView;
+
+    if (edit_url) {
+        var a = btw_util.htmlToElements(doc, _.template(
+'<a class="wed-edit-button btn btn-default" title="Edit"\
+            href="<%= edit_url %>"><i class="fa fa-pencil-square-o"></i>\
+</a>', { edit_url: edit_url }))[0];
+        var frame = doc.getElementsByClassName("wed-frame")[0];
+        frame.insertBefore(a, frame.firstChild);
+    }
 
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");

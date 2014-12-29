@@ -13,19 +13,13 @@ require(['btw/btw_view'], function(Viewer) {
   var wed_document = document.getElementsByClassName("wed-document")[0];
   var data = document.getElementById("wed-data").textContent;
   // Purposely leak it for testing.
-  window.btw_viewer = new Viewer(wed_document, data,
+  window.btw_viewer = new Viewer(wed_document, "{{edit_url}}", data,
              {% autoescape off %}{{ bibl_data }}{% endautoescape %});
 });
 </script>
 {% endblock %}
 {% block content %}
 <div class="wed-frame">
-  {% if edit_url %}
-    <a class="wed-edit-button btn btn-default" title="Edit"
-       href="{{edit_url}}">
-      <i class="fa fa-pencil-square-o"></i>
-    </a>
-  {% endif %}
   <div class="wed-document">
   </div>
 </div>
