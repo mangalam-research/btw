@@ -198,13 +198,11 @@ def before_scenario(context, scenario):
         btw_util.require_subsense_recording.get_senses_for_functions(
             matching_funcs)
 
-    found = False
-    while not found:
-        try:
-            f = urllib2.urlopen(context.selenic.SERVER + "/login")
-            found = f.getcode() == 200
-        except urllib2.URLError:
-            time.sleep(0.1)
+    # This will block until the server is started.
+    with open(context.server_read_fifo, 'r') as fifo:
+        read = fifo.read().strip()
+        if read != 'started':
+            raise ValueError("did not get the 'started' string")
 
     # Each scenario means logging in again.
     context.is_logged_in = False

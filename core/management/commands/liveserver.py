@@ -54,14 +54,7 @@ mock_records = mock_zotero.Records([
 get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
-
 class SeleniumTest(LiveServerTestCase):
-
-    fixtures = [os.path.join("lexicography", "fixtures",
-                             "initial_data.json")] + \
-        list(os.path.join("lexicography", "tests", "fixtures", x)
-             for x in ("users.json", "views.json", "allauth.json")) + \
-        [os.path.join("core", "tests", "fixtures", "sites.json")]
 
     def setUp(self):
         from bibliography.models import Item, PrimarySource
@@ -76,18 +69,30 @@ class SeleniumTest(LiveServerTestCase):
         self.__control_write = control_write
         super(SeleniumTest, self).__init__(*args, **kwargs)
         self.__control_thread = threading.Thread(target=self.control)
+        from django.conf import settings
+        self.fixtures = \
+            [os.path.join(settings.TOPDIR, "lexicography", "fixtures",
+                          "initial_data.json"),
+             os.path.join(settings.TOPDIR, "core", "tests", "fixtures",
+                          "sites.json")] + \
+            list(os.path.join(settings.TOPDIR, "lexicography", "tests",
+                              "fixtures", x)
+                 for x in ("users.json", "views.json", "allauth.json"))
 
     def runTest(self):
+        self.__control_thread.start()
+
         # This effectively causes the test to stop and wait for the
         # server to die.
 
         # Yep we call it this way to avoid the idiotic redefinition of
         # join present in django/test/testcases.py (present in version
         # 1.5, maybe 1.6)
-        self.__control_thread.start()
         threading.Thread.join(self.server_thread)
 
     def control(self):
+        with open(self.__control_write, 'w') as out:
+            out.write('started\n')
         while True:
             command = open(self.__control_read, 'r').read()
             args = command.split()
