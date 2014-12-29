@@ -271,7 +271,7 @@ function Viewer(root, data, bibl_data) {
             while (clone.firstElementChild)
                 sense_sfss.appendChild(clone.firstElementChild);
         }
-        sense.insertBefore(sense_sfss, contrastive);
+        sense.insertBefore(sense_sfss, contrastive || null);
     }
 
 

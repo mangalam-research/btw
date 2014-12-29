@@ -50,7 +50,8 @@ def clean_tree(tree):
     # We want only the first class token.
     for el in tree.iter():
         class_ = el.get("class")
-        el.set("class", class_.split(None, 1)[0] if len(class_) else "")
+        if class_ is not None:
+            el.set("class", class_.split(None, 1)[0] if len(class_) else "")
 
     # Remove all heads
     for head in [el for el in tree.iter() if el.get("class") == "head"]:
