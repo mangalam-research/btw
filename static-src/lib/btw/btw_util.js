@@ -137,11 +137,11 @@ function updateCollapsible(structure, heading_id, collapse_id) {
     heading.id = heading_id;
     var a = heading.getElementsByTagName("a")[0];
     a.href = "#" + collapse_id;
-    a.attributes["aria-controls"] = collapse_id;
+    a.setAttribute("aria-controls", collapse_id);
 
     var collapse =
             structure.getElementsByClassName("panel-collapse")[0];
-    collapse.attributes["aria-labelledby"] = heading_id;
+    collapse.setAttribute("aria-labelledby", heading_id);
     collapse.id = collapse_id;
 }
 
