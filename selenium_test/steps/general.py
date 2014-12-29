@@ -268,10 +268,17 @@ def step_impl(context, what):
             Given a new document
             """)
 
-            sense = util.find_element((By.CSS_SELECTOR, r".btw\:sense"))
-            assert_raises(NoSuchElementException,
-                          sense.find_element,
-                          (By.CSS_SELECTOR, r".btw\:subsense"))
+            result = driver.execute_script("""
+            var senses =  \
+                wed_editor.gui_root.getElementsByClassName("btw:sense");
+            if (senses.length !== 1)
+                return [false, "the document should have exactly one sense"];
+            var sub = senses[0].getElementsByClassName("btw:subsense");
+            if (sub.length !== 0)
+                return [false, "the sense should not contain a subsense"];
+            return [true, ""];
+            """)
+            assert_true(result[0], result[1])
             return
 
         # For editing we must be logged in. If we are just viewing,
