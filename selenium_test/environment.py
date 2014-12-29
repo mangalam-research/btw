@@ -214,12 +214,10 @@ def before_scenario(context, scenario):
 def after_scenario(context, _scenario):
     driver = context.driver
 
-    # Close all extra tabs.
-    for handle in driver.window_handles:
-        if handle != context.initial_window_handle:
-            driver.switch_to_window(handle)
-            driver.close()
-    driver.switch_to_window(context.initial_window_handle)
+    handles = driver.window_handles
+
+    if len(handles) > 1:
+        driver.switch_to_window(context.initial_window_handle)
 
     driver.execute_script("""
     // Overwrite onbeforeunload to prevent the dialog from showing up.
@@ -254,11 +252,19 @@ def after_scenario(context, _scenario):
     sessionStorage.clear()
 
     """)
-    driver.delete_all_cookies()
 
     # Reset the server between scenarios.
     with open(context.server_write_fifo, 'w') as fifo:
         fifo.write("restart\n")
+
+    # Close all extra tabs.
+    if len(handles) > 1:
+        for handle in handles:
+            if handle != context.initial_window_handle:
+                driver.switch_to_window(handle)
+                driver.close()
+        driver.switch_to_window(context.initial_window_handle)
+    driver.delete_all_cookies()
 
 
 def before_step(context, _step):
