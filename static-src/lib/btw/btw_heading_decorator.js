@@ -204,7 +204,7 @@ HeadingDecorator.prototype.sectionHeadingDecorator = function (
                 collapse.kind,
                 this._collapse_heading_id_manager.generate(),
                 this._collapse_id_manager.generate(),
-                collapse.additional_classes);
+                { panel: collapse.additional_classes });
             var group = collapsible.group;
             var panel_body = collapsible.content;
             collapsible.heading.textContent = head_str;

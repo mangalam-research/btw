@@ -1,7 +1,45 @@
 @import "btw-mode.less";
 @import (reference) "../../../build/expanded/bootstrap/less/variables.less";
 
+.collapsing.width {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    overflow: hidden;
+    height: auto;
+    -webkit-transition: width .35s ease;
+    transition: width .35s ease;
+}
+
+.collapse.width.in {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+
 div.wed-frame {
+    .horizontal {
+        .panel-heading {
+            display: inline-block;
+            vertical-align: middle;
+            padding-left: 5px;
+            padding-right: 5px;
+            .panel-title {
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+
+        .panel-body {
+            padding: 0px;
+            vertical-align: middle;
+            // We need this so that the icons are not broken on
+            // multiple lines wrapped.
+            white-space: nowrap;
+        }
+
+    }
+
     div.wed-document {
 
         .btw\:english-term {

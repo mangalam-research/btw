@@ -63,8 +63,8 @@ function htmlToElements(document, html) {
 
 var collapsible_template =
 '\
-<div class="_phantom_wrap panel-group" role="tablist" aria-multiselectable="true">\
- <div class="_phantom_wrap panel panel-<%= kind %><%= classes %>">\
+<div class="_phantom_wrap panel-group<%= group_classes %>" role="tablist" aria-multiselectable="true">\
+ <div class="_phantom_wrap panel panel-<%= kind %><%= panel_classes %>">\
   <div class="_phantom_wrap panel-heading" role="tab" id="<%= heading_id %>">\
    <h4 class="_phantom_wrap panel-title">\
     <a class="_phantom collapsed" data-toggle="collapse" href="#<%= collapse_id %>" aria-expanded="true" aria-controls="<%= collapse_id %>">\
@@ -89,7 +89,8 @@ var collapsible_template =
  * be unique.
  * @param {string} collapse_id The new id to use for the collapsible
  * element. Must be unique.
- * @param {string} additional_classes A list of classes to add.
+ * @param {object} additional_classes A list of classes to add
+ * to the elements.
  * @returns {{group: Element, heading: Element, content: Element}} The
  * ``group`` key contains the top level element of the collapsible
  * structure. The ``heading`` key contains the innermost element
@@ -101,14 +102,22 @@ var collapsible_template =
  */
 function makeCollapsible(document, kind, heading_id, collapse_id,
                          additional_classes) {
-    additional_classes =
-        additional_classes ? " " + additional_classes : "";
+    additional_classes = additional_classes || {};
+    var additional_group_classes = additional_classes.group;
+    var additional_panel_classes = additional_classes.panel;
+
+    additional_panel_classes =
+        additional_panel_classes ? " " + additional_panel_classes : "";
+
+    additional_group_classes =
+        additional_group_classes ? " " + additional_group_classes : "";
 
     var el = htmlToElements(
         document,
         _.template(collapsible_template, {
             kind: kind,
-            classes: additional_classes,
+            group_classes: additional_group_classes,
+            panel_classes: additional_panel_classes,
             heading_id: heading_id,
             collapse_id: collapse_id
         }))[0];

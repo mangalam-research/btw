@@ -51,14 +51,57 @@ function Viewer(root, edit_url, data, bibl_data) {
     var doc = root.ownerDocument;
     var win = doc.defaultView;
 
+    var collapse = btw_util.makeCollapsible(doc, "default",
+                                            "toolbar-heading",
+                                            "toolbar-collapse", {
+                                                group: "horizontal"
+                                            });
+    var frame = doc.getElementsByClassName("wed-frame")[0];
+    collapse.heading.innerHTML = "<span class='fa fa-bars' style='width: 0.4em; overflow: hidden'></span>";
+
+    var buttons = '<span>';
     if (edit_url) {
-        var a = btw_util.htmlToElements(doc, _.template(
-'<a class="wed-edit-button btn btn-default" title="Edit"\
-            href="<%= edit_url %>"><i class="fa fa-pencil-square-o"></i>\
-</a>', { edit_url: edit_url }))[0];
-        var frame = doc.getElementsByClassName("wed-frame")[0];
-        frame.insertBefore(a, frame.firstChild);
+        buttons += _.template(
+'<a class="btw-edit-btn btn btn-default" title="Edit"\
+      href="<%= edit_url %>"><i class="fa fa-fw fa-pencil-square-o"></i>\
+  </a>', { edit_url: edit_url });
     }
+    buttons +=
+'<a class="btw-expand-all-btn btn btn-default" title="Expand All" href="#">\
+        <i class="fa fa-fw fa-caret-down"></i></a>\
+<a class="btw-collapse-all-btn btn btn-default" title="Collapse All" \
+    href="#">\
+        <i class="fa fa-fw fa-caret-right"></i></a></span>';
+
+    collapse.content.innerHTML = buttons;
+
+    // Make it so that it floats above everything else.
+    collapse.group.style.position = 'fixed';
+    collapse.group.style.zIndex = "10";
+
+    // This is necessary so that it collapses horizontally.
+    collapse.content.parentNode.classList.add("width");
+
+    frame.insertBefore(collapse.group, frame.firstChild);
+
+    var expand_all = collapse.content
+            .getElementsByClassName("btw-expand-all-btn")[0];
+    $(expand_all).on('click', function (ev) {
+        var to_open = doc.querySelectorAll(
+            ".wed-document .collapse:not(.in)");
+        $(to_open).collapse('show');
+        $(collapse.content.parentNode).collapse('hide');
+        ev.preventDefault();
+    });
+
+    var collapse_all = collapse.content
+            .getElementsByClassName("btw-collapse-all-btn")[0];
+    $(collapse_all).on('click', function (ev) {
+        var to_close = doc.querySelectorAll(".wed-document .collapse.in");
+        $(to_close).collapse('hide');
+        $(collapse.content.parentNode).collapse('hide');
+        ev.preventDefault();
+    });
 
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");
