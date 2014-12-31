@@ -106,7 +106,8 @@ def step_impl(context, example, label, term=None, citation=None):
     id_selector = "#BTW-E." if example else "#BTW-S."
 
     def cond(driver):
-        ret = driver.execute_script(ur"""
+        ret = driver.execute_script(btw_util.GET_CITATION_TEXT +
+                                    ur"""
         var label = arguments[0];
         var term = arguments[1];
         var id_selector = arguments[2];
@@ -171,16 +172,7 @@ def step_impl(context, example, label, term=None, citation=None):
             }
             else {
                 var cit = target.getElementsByClassName("btw:cit")[0];
-                var data_cit = jQuery.data(cit, "wed_mirror_node");
-                var clone = data_cit.cloneNode(true);
-                var child = clone.firstElementChild;
-                while (child) {
-                    var next = child.nextElementSibling;
-                    if (child.classList.contains("ref"))
-                        clone.removeChild(child);
-                    child = child.next;
-                }
-                var text = clone.textContent.trim();
+                var text = getCitationText(cit);
 
                 test = text.lastIndexOf(citation, 0) === 0;
                 desc = "link should point to the example that has a " +
@@ -299,3 +291,54 @@ def step_impl(context):
         return ret
 
     context.util.wait(cond)
+
+GET_HYPERLINKS_WITH_LABEL = ur"""
+function getHyperlinksWithLabel(label) {
+  return Array.prototype.slice.call(document.querySelectorAll(
+    ".wed-document a")).filter(
+      function (x) {
+        return x.textContent.replace(/\s+/g, " ") === label; });
+}
+"""
+
+@when(ur'^the user makes the hyperlink with label "(?P<label>.*?)" visible$')
+def step_impl(context, label):
+    driver = context.driver
+    ret = driver.execute_async_script(GET_HYPERLINKS_WITH_LABEL + ur"""
+    var $ = jQuery;
+    var label = arguments[0];
+    var done = arguments[1];
+    var link = getHyperlinksWithLabel(label)[0];
+    if (!link)
+      done([undefined, "there should be a link"]);
+    var parents = [];
+    var parent = link.parentNode;
+    while (parent && parent.classList) {
+      if (parent.classList.contains("collapse") &&
+          !parent.classList.contains("in"))
+        parents.unshift(parent);
+      parent = parent.parentNode;
+    }
+    function next(parent) {
+      var $parent = $(parent);
+      $parent.one('shown.bs.collapse', function () {
+        if (parents.length) {
+          next(parents.shift());
+          return;
+        }
+        link.scrollIntoView(true);
+        done([link, undefined]);
+      });
+      $parent.collapse('show');
+    }
+    next(parents.shift());
+    """, label)
+
+    assert_true(ret[0] is not None, ret[1])
+
+    context.shown_link = ret[0]
+
+@when(ur'^the user clicks the hyperlink$')
+def step_impl(context):
+    context.shown_link.click()
+    del context.shown_link

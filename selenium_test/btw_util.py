@@ -9,6 +9,21 @@ import wedutil
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
 
+GET_CITATION_TEXT = ur"""
+function getCitationText(cit) {
+  var data_cit = jQuery.data(cit, "wed_mirror_node");
+  var clone = data_cit.cloneNode(true);
+  var child = clone.firstElementChild;
+  while (child) {
+    var next = child.nextElementSibling;
+    if (child.classList.contains("ref"))
+      clone.removeChild(child);
+    child = next;
+  }
+  return clone.textContent.trim();
+}
+"""
+
 
 class PlainRecorder(dict):
 

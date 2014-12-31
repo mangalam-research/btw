@@ -5,8 +5,11 @@ import re
 import lxml.etree
 
 from selenium.webdriver.support.wait import TimeoutException
+import selenium.webdriver.support.expected_conditions as EC
+from selenium.webdriver.common.by import By
 from nose.tools import assert_equal, assert_true
 from behave import step_matcher  # pylint: disable=E0611
+from selenic.util import Result, Condition
 
 from selenium_test import btw_util
 
@@ -135,3 +138,84 @@ def step_impl(context, what):
         assert_true(number.startswith(str(seq) + ": "),
                     "the label should have a the sequence number " + str(seq))
         seq += 1
+
+@then(ur'^the citation that starts with "(?P<citation>.*?)" is'
+      ur'(?P<not_op> not)? in a collapsed section$')
+def step_impl(context, citation, not_op=None):
+    def check(driver):
+        ret = driver.execute_script(btw_util.GET_CITATION_TEXT + ur"""
+    var start = arguments[0];
+    var not_op = arguments[1];
+    var citations = document.getElementsByClassName("btw:cit");
+    var cits = Array.prototype.filter.call(citations, function (cit) {
+      var text = getCitationText(cit);
+      return text.lastIndexOf(start, 0) === 0;
+    });
+    if (cits.length !== 1)
+      return [false, "there should be exactly one citation"];
+    var cit = cits[0];
+    var parent = cit.parentNode;
+    while (parent && parent.classList) {
+      if (parent.classList.contains("collapse") &&
+          !parent.classList.contains("in"))
+        return [!not_op, "should not be in a collapsed section"];
+      if (parent.classList.contains("collapsing"))
+        return [false, "should not be in a section that is in the "+
+                        "midst of collapsing or expanding"];
+      parent = parent.parentNode;
+    }
+    return [not_op, "should be in a collapsed section"];
+        """, citation, not_op is not None)
+        return Result(ret[0], ret[1])
+
+    result = Condition(context.util, check).wait()
+    assert_true(result, result.payload)
+
+@then(ur'^all collapsible sections are (?P<state>collapsed|expanded)$')
+def step_impl(context, state):
+    driver = context.driver
+
+    driver.execute_script("""
+    var collapsed_desired = arguments[0];
+    var collapsing = document.getElementsByClassName("collapsing");
+    if (collapsing.length)
+      return [false, "no element should be collapsing"];
+    var collapse = document.getElementsByClassName("collapse");
+    var not_collapsed = Array.prototype.filter.call(collapse, function (x) {
+        return x.classList.contains("in");
+    });
+    return collapsed_desired ?
+        [not_collapsed.length === 0, "all sections should be collapsed"] :
+        [not_collapsed.length !== collapse.length,
+            "all sections should be expanded"];
+    """, state == "collapsed")
+
+@when(ur'^the user clicks the (?P<which>expand all|collapse all) button$')
+def step_impl(context, which):
+    util = context.util
+
+    def check(driver):
+        return driver.execute_script(ur"""
+        var collapse = document.getElementById("toolbar-collapse");
+        // We want to wait until it is collapsed.
+        if (collapse.classList.contains("in") ||
+            collapse.classList.contains("collapsing"))
+           return undefined;
+        return document.getElementById("toolbar-heading");
+        """)
+
+    toolbar = util.wait(check)
+
+    toolbar.click()
+
+    which = which.replace(" ", "-")
+
+    # We use the .in class to make sure the toolbar is fully expanded
+    # before clicking. On FF, not doing this *will* result in Selenium
+    # considering the element clickable *but* will fail on the click
+    # operation itself complaining that the element cannot be scrolled
+    # into view!
+    button = util.wait(EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, "#toolbar-collapse.in .btw-{0}-btn"
+         .format(which))))
+    button.click()

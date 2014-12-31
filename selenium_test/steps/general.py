@@ -397,6 +397,17 @@ def step_impl(context):
     setup_editor(context)
 
 
+@When("^the user reloads the page$")
+def step_impl(context):
+    driver = context.driver
+
+    driver.execute_script("""
+    // Overwrite onbeforeunload to prevent the dialog from showing up.
+    if (window.wed_editor)
+        window.onbeforeunload = function () {};
+    """)
+    driver.get(driver.current_url)
+
 @when(ur"^the user clicks the (?P<what>save) button in the toolbar$")
 def step_impl(context, what):
     button = context.driver.execute_script(u"""
