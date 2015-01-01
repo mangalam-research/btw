@@ -2,6 +2,7 @@ Feature: editing primary sources of the bibliographical items.
 
 Background: the user is on the page for editing primary sources
   Given the user has logged in
+  When the user navigates to page "Home"
   Then the user has the "Bibliography/Manage" navigation option
   Given that the user is on the page for editing primary sources
 

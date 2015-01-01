@@ -16,6 +16,7 @@ def step_impl(context, page):
     if page == "Home":
         driver.get(context.selenic.SERVER)
     else:
+        driver.get(context.selenic.SERVER)
         for part in page.split("/"):
             driver.find_element_by_link_text(part).click()
 

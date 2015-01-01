@@ -197,7 +197,13 @@ def step_impl(context, user_desc):
                                'value': session_key})
             driver.add_cookie({'name': 'csrftoken',
                                'value': 'foo'})
-        driver.get(selenic.SERVER)
+        #
+        # There is no need to reload the page right here. If a test
+        # fails because the page needs reloading after the credential
+        # change, then reload the page **THERE**. Having it be
+        # reloaded here impacts performance negatively.
+        #
+        # driver.get(selenic.SERVER)
     context.is_logged_in = True
 
 @when("^the user logs out$")
