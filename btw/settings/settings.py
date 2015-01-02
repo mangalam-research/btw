@@ -297,6 +297,7 @@ BTW_JQUERY_GROWL_CSS_PATH = \
 
 BTW_DEMO = False
 BTW_TESTING = False
+BTW_SELENIUM_TESTS = False
 
 # Execute the env specific overrides
 exec _env.find_config("btw") in globals()  # pylint: disable=exec-used

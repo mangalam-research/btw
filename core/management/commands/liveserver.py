@@ -1,6 +1,4 @@
-import threading
 import os
-import sys
 from unittest import TestSuite
 
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
@@ -185,7 +183,6 @@ class Command(BaseCommand):
 
         print "Starting server at:", server_address
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
-        os.environ["DJANGO_SETTINGS_MODULE"] = "btw.test_settings"
 
         with mock.patch.multiple("bibliography.zotero.Zotero",
                                  get_all=get_all_mock,

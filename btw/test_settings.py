@@ -27,12 +27,13 @@ else:
         'propagate': True,
     }
 
-for name in DATABASES.keys():
-    db = DATABASES[name]
-    db['NAME'] = 'test_' + db['NAME']
-    if 'TEST_MIRROR' in db:
-        raise ValueError("TEST_MIRROR already set for " + name)
-    db['TEST_MIRROR'] = name
+if BTW_SELENIUM_TESTS:
+    for name in DATABASES.keys():
+        db = DATABASES[name]
+        db['NAME'] = 'test_' + db['NAME']
+        if 'TEST_MIRROR' in db:
+            raise ValueError("TEST_MIRROR already set for " + name)
+        db['TEST_MIRROR'] = name
 
 # We use the environment variable JENKINS_HOME to detect whether we
 # are runnning in a Jenkins environment. (Seems safer than some of the
@@ -42,8 +43,15 @@ build_env = os.environ.get('JENKINS_HOME', None) or \
     os.environ.get('BUILDBOT', None)
 
 if build_env:
-    build_id = os.environ['BUILD_TAG']
+    builder = os.environ['BUILDER']
     for db in DATABASES.itervalues():
-        db['TEST_NAME'] = 'test_' + db['NAME'] + '_' + build_id
+        test_name = 'test_' + db['NAME'] + '_' + builder
+        # If we are using TEST_MIRROR then TEST_NAME is not used and thus
+        # NAME itself must be altered.
+        if not db.get('TEST_MIRROR'):
+            db['TEST_NAME'] = test_name
+        else:
+            db['NAME'] = test_name
+
 
 BTW_TESTING = True

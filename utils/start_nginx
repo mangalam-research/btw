@@ -7,25 +7,56 @@ import subprocess
 import atexit
 import shutil
 import signal
+import argparse
 from selenic import outil
 
-fifo_to_server = sys.argv[1]
-fifo_from_server = sys.argv[2]
-nginx_port = sys.argv[3]
+os.environ['BTW_ENV'] = 'selenium'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'btw.test_settings'
+# Necessary to find the settings...
+sys.path.append(".")
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--dump-database-names', action='store_true',
+                    help='dump the database names and associated user '
+                    'names and exit')
+parser.add_argument("fifo_to_server")
+parser.add_argument("fifo_from_server")
+parser.add_argument("nginx_port")
+options = parser.parse_args()
+
+from django.conf import settings
+name_users = [(db.get('TEST_NAME') or db.get('NAME'), db['USER'])
+              for db in settings.DATABASES.itervalues()]
+
+if options.dump_database_names:
+    for name, user in name_users:
+        print name, db['USER']
+    exit(0)
+
+fifo_to_server = options.fifo_to_server
+fifo_from_server = options.fifo_from_server
+nginx_port = options.nginx_port
 
 server = None
 tmpdir = None
 tmpconf = None
+clean_databases = False
 
 def cleanup(*_whatever):
     global server
     global tmpdir
     global tmpconf
+    global clean_databases
 
     if server:
         if server.poll() is None:
             server.terminate()
         server = None
+
+    if clean_databases:
+        for name, _ in name_users:
+            subprocess.check_call(['dropdb', name])
+        clean_databases = False
 
     if tmpconf:
         subprocess.call(["nginx", "-c", tmpconf, "-s", "stop"])
@@ -58,14 +89,21 @@ with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
                  .replace('@PORT@', nginx_port)
                  .replace('@SERVER_PORT@', server_port))
 
+for name, user in name_users:
+    subprocess.check_call(['createdb', name])
+    clean_databases = True
+    subprocess.check_call(
+        ['psql', '-c', 'GRANT ALL ON ALL TABLES IN SCHEMA public TO ' + user, name])
+    subprocess.check_call(['./manage.py', 'syncdb', '--noinput'])
+    subprocess.check_call(['./manage.py', 'migrate'])
+    subprocess.check_call(['./manage.py', 'createcachetable',
+                           'bibliography_cache'])
+
+
 pid_to_name = {}
-env = os.environ.copy()
-env['BTW_ENV'] = 'selenium'
 server = subprocess.Popen(["./manage.py", "liveserver",
-                           "--settings=btw.test_settings",
                            "localhost:" + server_port, fifo_to_server,
-                           fifo_from_server],
-                          env=env)
+                           fifo_from_server])
 pid_to_name[server.pid] = "liveserver"
 
 # nginx spawns a master and immediately returns
@@ -74,7 +112,7 @@ subprocess.check_call(["nginx", "-c", tmpconf])
 while True:
     try:
         pid, status = os.wait()
-    except OSError:  # Will be raised when there are no child.
+    except OSError:  # Will be raised when there are no children.
         break
 
     if status:
