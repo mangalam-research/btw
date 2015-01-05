@@ -2,9 +2,7 @@ Feature: editing primary sources of the bibliographical items.
 
 Background: the user is on the page for editing primary sources
   Given the user has logged in
-  When the user navigates to page "Home"
-  Then the user has the "Bibliography/Manage" navigation option
-  Given that the user is on the page for editing primary sources
+  And that the user is on the page for editing primary sources
 
 Scenario: the user sees the items
   Then the items are sorted by ascending creators.
