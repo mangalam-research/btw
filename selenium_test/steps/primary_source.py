@@ -121,11 +121,21 @@ def step_impl(context, row_n):
             button = driver.execute_script("""
             var row = arguments[0];
             var column = arguments[1];
+            var proc = document.getElementById(
+                "bibliography-table_processing");
+
+            // Still processing...
+            if (proc.style.display !== "none")
+                return undefined;
             return jQuery("table#bibliography-table>tbody>tr")
                 .filter(".odd, .even").eq(row).children("td")
                 .eq(column).children("div.add-button")[0];
 
             """, int(row_n), column)
+
+            if button is None:
+                return False
+
             ActionChains(driver) \
                 .click(button) \
                 .perform()
