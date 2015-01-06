@@ -138,9 +138,9 @@ function Viewer(root, edit_url, data, bibl_data) {
     };
 
     var heading_map = {
-        "btw:overview": "OVERVIEW",
-        "btw:sense-discrimination": "SENSE DISCRIMINATION",
-        "btw:historico-semantical-data": "HISTORICO-SEMANTICAL DATA"
+        "btw:overview": "• OVERVIEW",
+        "btw:sense-discrimination": "• SENSE DISCRIMINATION",
+        "btw:historico-semantical-data": "• HISTORICO-SEMANTICAL DATA"
     };
 
     // Override the head specs with those required for
