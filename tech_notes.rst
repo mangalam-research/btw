@@ -315,9 +315,6 @@ bibliographical data must be moved over first:
 
      $ ./manage.py loaddata [dump]
 
-
-
-
 Upgrades
 --------
 
@@ -376,6 +373,13 @@ Generally:
      $ sudo service uwsgi reload
 
 See below for specific upgrade cases.
+
+0.7.1 to 0.8.0(???)
+-------------------
+
+1. Issue the management command:
+
+   $ ./manage.py btwdb mark_all_bibliographical_items_stale
 
 0.0.2 to 0.1.0
 --------------
@@ -802,11 +806,11 @@ Management Commands
 transform
 =========
 
-This command is used to perform a batch transformation on all
-articles. This is a very powerfull tool but can severely damage your
-database if misused. It would be used, for instance, if there is a
-need to change the schema under which articles are stored and here is
-no plan for backward compatibility.
+This ``lexicography`` command is used to perform a batch
+transformation on all articles. This is a very powerfull tool but can
+severely damage your database if misused. It would be used, for
+instance, if there is a need to change the schema under which articles
+are stored and here is no plan for backward compatibility.
 
 .. warning:: This command has not been thorougly tested yet.
 
@@ -864,6 +868,16 @@ The procedure to use it is:
              the database is left in an intermediary state. Recover by
              performing a database restore.
 
+btwdb
+=====
+
+This is used to perform miscellaneous administrative operations on the
+database. Rather than spread the commands among multiple applications,
+they are grouped under this ``core`` command.
+
+* mark_all_bibliographical_items_stale: marks all bibliographical
+  items (``bibliography.models.Item``) as stale.
+
 =================
 Various Internals
 =================
@@ -885,10 +899,9 @@ Version Control
 
 The ``lexicography`` app performs its own version control: an article
 has one ``Entry`` object and a series of ``ChangeRecord`` objects that
-represent its history: ``Entry`` is the latest version whereas
-``ChangeRecord`` contains the previous versions. Why not use something
-like ``django-reversion``? At the time of writing, the following
-problems come to mind:
+represent its history. Why not use something like
+``django-reversion``? At the time of writing, the following problems
+come to mind:
 
 * ``django-reversion`` stores the revisions as JSON data. So it seems
   these versions are not first-class citizens of the database. BTW
@@ -955,6 +968,33 @@ Some attempts were made to avoid having a ``latest`` field but they
 ran into the issues mentioned above or ran smack dab into Django
 bugs. (Like `this one
 <https://code.djangoproject.com/ticket/20600>`__.)
+
+Zotero and Caching
+==================
+
+To avoid hitting the Zotero server with frequent requests, and to
+allow BTW to perform its work with relative ease, the bibliographical
+data is laid out as follows:
+
+* ``Item`` objects in Django's ORM. These are the objects which which
+  the rest of BTW interacts. These objects have a MINIMUM_FRESHNESS
+  (currently 30 minutes). Objects that are not within this freshness
+  specification are refreshed by querying the cache discussed next.
+
+  Note that this table is a cache of sorts. **However, it must be
+  saved with the rest of the BTW database when backing up the
+  database.** There is no (easy and) reliable way to recreate this
+  data if it is ever lost. **This table is not designed to allow for
+  modifications of the bibliographical data.**
+
+* A cache named ``bibliography``, which is used by ``zotero.py``. This
+  is a cache of responses from the Zotero database. There is no expiry
+  on this cache. Whenever a request is made to the cache, it fetches
+  the item from the Zotero server only if necessary. **Each request to
+  this cache entails a query to the server**, because (at a minimum)
+  the cache checks with the server whether the item has changed.
+
+  This cache can be destroyed safely.
 
 ..  LocalWords: uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth

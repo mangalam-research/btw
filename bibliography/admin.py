@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # module imports
-from .models import ZoteroUser, PrimarySource
+from .models import ZoteroUser, PrimarySource, Item
 
 # register the zotero profile to admin,
 # there is no other way to enter local zotero profile details.
@@ -10,3 +10,5 @@ from .models import ZoteroUser, PrimarySource
 admin.site.register(ZoteroUser)
 
 admin.site.register(PrimarySource)
+
+admin.site.register(Item)

@@ -107,6 +107,17 @@ class ZoteroUser(models.Model):
 class ItemManager(models.Manager):
     zotero = Zotero(zotero_settings(), 'BTW Library')
 
+    def mark_all_stale(self):
+        """
+        Mark all records as stale. This does not cause an immediate
+        refresh from the Zotero cache or from the server. However,
+        next time the records are read, they will all be refreshed.
+        """
+
+        # Reminder: this kind of update does not trigger signals, does
+        # not call .save().
+        self.update(freshness=None)
+
 MINIMUM_FRESHNESS = datetime.timedelta(minutes=30)
 
 
@@ -179,8 +190,8 @@ class Item(models.Model):
         that cache this data.
         """
         if self._refresh():
-            self.date = self._item.get("date", None)
-            self.title = self._item.get("title", None)
+            self.date = self._item["data"].get("date", None)
+            self.title = self._item["data"].get("title", None)
             self.creators = self._creators()
             self.save()
 
@@ -199,7 +210,8 @@ class Item(models.Model):
         now = util.utcnow()
 
         if not (super(Item, self).__getattribute__("item") is None or
-           self.freshness is None or now - self.freshness > MINIMUM_FRESHNESS):
+                self.freshness is None or now - self.freshness >
+                MINIMUM_FRESHNESS):
             return False
 
         self._item = Item.objects.zotero.get_item(self.item_key)
@@ -208,8 +220,18 @@ class Item(models.Model):
         self.save()
         return True
 
+    def mark_stale(self):
+        """
+        Mark this entry as stale. Note that this does not automatically
+        refresh **this** object. However, next time the record is
+        fetched from the database, it will be refreshed from the local
+        Zotero cache, and perhaps from the Zotero server.
+        """
+        self.freshness = None
+        self.save()
+
     def _creators(self):
-        creators = self._item.get("creators", None)
+        creators = self._item["data"].get("creators", None)
 
         ret = None
         if creators is not None:
@@ -233,6 +255,17 @@ class Item(models.Model):
     def url(self):
         return reverse('bibliography_items', args=(self.pk, ))
 
+    @property
+    def zotero_url(self):
+        # We purposely do not cause a refresh. The URL should not ever
+        # change once an entry is created. The URL is based on the
+        # entry key which is immutable and on the library id (user id
+        # or group id), which should not change in a BTW installation,
+        # short of a major restructuring which should entail a flush
+        # of the cache.
+        item = json.loads(self.item)
+
+        return item["links"]["alternate"]["href"]
 
 class PrimarySource(models.Model):
     SUTRA = "SU"

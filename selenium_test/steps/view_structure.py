@@ -219,3 +219,22 @@ def step_impl(context, which):
         (By.CSS_SELECTOR, "#toolbar-collapse.in .btw-{0}-btn"
          .format(which))))
     button.click()
+
+@then(ur'^the bibliography hyperlink with label "(?P<label>.*)" points '
+      ur'to "(?P<url>.*)"$')
+def step_impl(context, label, url):
+    driver = context.driver
+
+    driver.execute_script("""
+    var label = arguments[0];
+    var url = arguments[1];
+    var as = document.querySelectorAll(".wed-document .ref>a");
+    var a;
+    for (var i = 0; (a = as[i]); ++i) {
+        if (a.textContent.trim() === label)
+            break;
+    }
+    if (!a)
+        return [false, "there should be a link with label " + label];
+    return [a.href === url, "the link should point to " + url];
+    """)

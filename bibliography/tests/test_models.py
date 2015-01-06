@@ -5,7 +5,8 @@ import datetime
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_is_not_none, \
-    assert_not_equal, assert_raises
+    assert_not_equal, assert_raises, assert_not_regexp_matches, \
+    assert_regexp_matches
 from django.core.exceptions import ValidationError
 
 from ..models import Item, PrimarySource
@@ -15,24 +16,42 @@ from . import mock_zotero
 
 mock_records = mock_zotero.Records([
     {
-        "itemKey": "1",
-        "title": "Title 1",
-        "date": "Date 1",
-        "creators": [
-            {"name": "Name 1 for Title 1"},
-            {"firstName": "FirstName 2 for Title 1",
-             "lastName": "LastName 2 for Title 1"},
-        ]
+        "data":
+        {
+            "itemKey": "1",
+            "title": "Title 1",
+            "date": "Date 1",
+            "creators": [
+                {"name": "Name 1 for Title 1"},
+                {"firstName": "FirstName 2 for Title 1",
+                 "lastName": "LastName 2 for Title 1"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo.com",
+                "type": "text/html"
+            }
+        }
     },
     {
-        "itemKey": "2",
-        "title": "Title 2",
-        "date": "Date 2",
-        "creators": [
-            {"name": "Name 1 for Title 2"},
-            {"firstName": "FirstName 2 for Title 2",
-             "lastName": "LastName 2 for Title 2"},
-        ]
+        "data":
+        {
+            "itemKey": "2",
+            "title": "Title 2",
+            "date": "Date 2",
+            "creators": [
+                {"name": "Name 1 for Title 2"},
+                {"firstName": "FirstName 2 for Title 2",
+                 "lastName": "LastName 2 for Title 2"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo2.com",
+                "type": "text/html"
+            }
+        }
     }
 ])
 
@@ -49,6 +68,13 @@ class ItemTestCase(TestCase):
 
     def setUp(self):
         mock_records.reset()
+
+    def alter_record(self, record):
+        data = record["data"]
+        for key in ("title", "date"):
+            data[key] += " (bis)"
+
+        data["creators"][0]["name"] += " (bis)"
 
     def test_create(self):
         """
@@ -82,12 +108,10 @@ class ItemTestCase(TestCase):
         assert_equal(item.creators,
                      "Name 1 for Title 1, LastName 2 for Title 1")
 
-        for key in ("title", "date"):
-            mock_records.values[0][key] += " (bis)"
+        self.alter_record(mock_records.values[0])
 
-        mock_records.values[0]["creators"][0]["name"] += " (bis)"
-
-        # This forces refreshing.
+        # This forces refreshing. We don't use mark_stale so that we
+        # can test the time computation.
         item.freshness -= models.MINIMUM_FRESHNESS + \
             datetime.timedelta(seconds=1)
         item.save()
@@ -112,11 +136,7 @@ class ItemTestCase(TestCase):
         assert_equal(item.creators,
                      "Name 1 for Title 1, LastName 2 for Title 1")
 
-        # We are modifying the fake Zotero database.
-        for key in ("title", "date"):
-            mock_records.values[0][key] += " (bis)"
-
-        mock_records.values[0]["creators"][0]["name"] += " (bis)"
+        self.alter_record(mock_records.values[0])
 
         # This item should be the same as the first.
         item2 = Item.objects.get(id=item.id)
@@ -128,6 +148,48 @@ class ItemTestCase(TestCase):
 
         assert_equal(item.freshness, item2.freshness)
 
+    def test_mark_stale(self):
+        """
+        Test that mark_stale causes a refresh.
+        """
+        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+
+        assert_equal(item.title, "Title 1")
+        assert_equal(item.date, "Date 1")
+        assert_equal(item.creators,
+                     "Name 1 for Title 1, LastName 2 for Title 1")
+
+        self.alter_record(mock_records.values[0])
+
+        item.mark_stale()
+
+        item2 = Item.objects.get(id=item.id)
+
+        assert_equal(item2.title, "Title 1 (bis)")
+        assert_equal(item2.date, "Date 1 (bis)")
+        assert_equal(item2.creators,
+                     "Name 1 for Title 1 (bis), LastName 2 for Title 1")
+
+        assert_not_equal(item.freshness, item2.freshness)
+
+    def test_mark_all_stale(self):
+        """
+        Test that mark_all_stale causes refreshing all records.
+        """
+        items = Item.objects.all()
+
+        for item in items:
+            assert_not_regexp_matches(item.title, ur" \(bis\)$")
+
+        for record in mock_records.values:
+            self.alter_record(record)
+
+        Item.objects.mark_all_stale()
+
+        items2 = Item.objects.all()
+
+        for item in items2:
+            assert_regexp_matches(item.title, ur" \(bis\)$")
 
 class PrimarySourceTestCase(TestCase):
 

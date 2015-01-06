@@ -116,57 +116,102 @@ class TestSearchView(_BaseTest, LoginMixin):
 
 mock_records = mock_zotero.Records([
     {
-        "itemKey": "1",
-        "title": "Title 1",
-        "date": "Date 1",
-        "creators": [
-            {"name": "Name 1 for Title 1"},
-            {"firstName": "FirstName 2 for Title 1",
-             "lastName": "LastName 2 for Title 1"},
-        ]
+        "data":
+        {
+            "itemKey": "1",
+            "title": "Title 1",
+            "date": "Date 1",
+            "creators": [
+                {"name": "Name 1 for Title 1"},
+                {"firstName": "FirstName 2 for Title 1",
+                 "lastName": "LastName 2 for Title 1"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo.com",
+                "type": "text/html"
+            }
+        }
     },
     {
-        "itemKey": "2",
-        "title": "Title 2",
-        "date": "Date 2",
-        "creators": [
-            {"name": "Name 1 for Title 2"},
-            {"firstName": "FirstName 2 for Title 2",
-             "lastName": "LastName 2 for Title 2"},
-        ]
+        "data":
+        {
+            "itemKey": "2",
+            "title": "Title 2",
+            "date": "Date 2",
+            "creators": [
+                {"name": "Name 1 for Title 2"},
+                {"firstName": "FirstName 2 for Title 2",
+                 "lastName": "LastName 2 for Title 2"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo2.com",
+                "type": "text/html"
+            }
+        }
     }
 ])
 
 new_values = [
     {
-        "itemKey": "3",
-        "title": "Title 3",
-        "date": "Date 3",
-        "creators": [
-            {"name": "Name 1 for Title 3"},
-            {"firstName": "FirstName 2 for Title 3",
-             "lastName": "LastName 2 for Title 3"},
-        ]
+        "data":
+        {
+            "itemKey": "3",
+            "title": "Title 3",
+            "date": "Date 3",
+            "creators": [
+                {"name": "Name 1 for Title 3"},
+                {"firstName": "FirstName 2 for Title 3",
+                 "lastName": "LastName 2 for Title 3"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo3.com",
+                "type": "text/html"
+            }
+        }
     },
     {
-        "itemKey": "4",
-        "title": "Title 4",
-        "date": "Date 4",
-        "creators": [
-            {"name": "Name 1 for Title 4"},
-            {"firstName": "FirstName 2 for Title 4",
-             "lastName": "LastName 2 for Title 4"},
-        ]
+        "data":
+        {
+            "itemKey": "4",
+            "title": "Title 4",
+            "date": "Date 4",
+            "creators": [
+                {"name": "Name 1 for Title 4"},
+                {"firstName": "FirstName 2 for Title 4",
+                    "lastName": "LastName 2 for Title 4"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo4.com",
+                "type": "text/html"
+            }
+        }
     },
     {
-        "itemKey": "5",
-        "title": "Title 5",
-        "date": "Date 5",
-        "creators": [
-            {"name": "Name 1 for Title 5"},
-            {"firstName": "FirstName 2 for Title 5",
-             "lastName": "LastName 2 for Title 5"},
-        ]
+        "data":
+        {
+            "itemKey": "5",
+            "title": "Title 5",
+            "date": "Date 5",
+            "creators": [
+                {"name": "Name 1 for Title 5"},
+                {"firstName": "FirstName 2 for Title 5",
+                 "lastName": "LastName 2 for Title 5"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo5.com",
+                "type": "text/html"
+            }
+        }
     }
 ]
 
@@ -174,7 +219,7 @@ new_values = [
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
-get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 

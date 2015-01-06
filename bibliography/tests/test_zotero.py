@@ -83,9 +83,8 @@ class ZoteroTest(TestCase):
     @replay
     def test_search_no_hit(self, mock_cache):
         """Tests a search with no hits."""
-        results, extras = self.zotero.search("%%%$$$%%%")
+        results = self.zotero.search("%%%$$$%%%")
         assert_equal(len(results), 0)
-        assert_equal(len(extras), 0)
 
         self.assert_miss(mock_cache, 1)
 
@@ -94,10 +93,9 @@ class ZoteroTest(TestCase):
         """
         Tests a search with hits saves results in the cache.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
@@ -106,18 +104,16 @@ class ZoteroTest(TestCase):
         """
         Search gets results from the cache.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
         # We repeat the search and check that the results are obtained
         # from the cache.
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         assert_equal(mock_cache.__contains__.call_count, 2,
                      "the cache should have been checked")
@@ -139,10 +135,9 @@ class ZoteroTest(TestCase):
         data. If it is older than the latest version, the data is
         purged from the cache.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
@@ -157,9 +152,8 @@ class ZoteroTest(TestCase):
 
         # We repeat the search and check that the results are obtained
         # from the cache.
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         assert_equal(mock_cache.__contains__.call_count, 2,
                      "the cache should have been checked")
@@ -183,10 +177,9 @@ class ZoteroTest(TestCase):
         entry to consist of a tuple. If it is not a tuple, it deems
         the data corrupt and purges it from the cache.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
@@ -199,9 +192,8 @@ class ZoteroTest(TestCase):
 
         # We repeat the search and check that the results are obtained
         # from the cache.
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         assert_equal(mock_cache.__contains__.call_count, 2,
                      "the cache should have been checked")
@@ -222,10 +214,9 @@ class ZoteroTest(TestCase):
         Tests that if the data has been modified at the Zotero server, new
         data is fetched.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
@@ -244,10 +235,9 @@ class ZoteroTest(TestCase):
 
         with mock.patch("bibliography.zotero.urllib2.urlopen",
                         new=mock.Mock(side_effect=se)):
-            results, extras = self.zotero.search("dharma")
+            results = self.zotero.search("dharma")
 
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         assert_equal(mock_cache.__contains__.call_count, 2,
                      "the cache should have been checked")
@@ -268,14 +258,13 @@ class ZoteroTest(TestCase):
         Tests that if the a get_item seeks an item which has been returned
         by a previous search, this item is taken from the cache.
         """
-        results, extras = self.zotero.search("dharma")
+        results = self.zotero.search("dharma")
         nr_hits = 5
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
-        item = self.zotero.get_item(results[0]["itemKey"])
+        item = self.zotero.get_item(results[0]["data"]["itemKey"])
         assert_equal(item, results[0])
 
         assert_equal(mock_cache.__contains__.values_returned,
@@ -292,9 +281,8 @@ class ZoteroTest(TestCase):
         """
         Tests that get_all gets all records.
         """
-        results, extras = self.zotero.get_all()
+        results = self.zotero.get_all()
         nr_hits = 47
         assert_equal(len(results), nr_hits)
-        assert_equal(len(extras), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)

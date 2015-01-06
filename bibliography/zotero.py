@@ -13,7 +13,7 @@ from django.core.cache import get_cache
 
 logger = logging.getLogger(__name__)
 
-CACHED_DATA_VERSION = 2
+CACHED_DATA_VERSION = 3
 
 cache = get_cache('bibliography')
 
@@ -172,9 +172,9 @@ class Zotero(object):
         search_url = self.__build_item_search_url(itemKey)
         logger.debug("getting item: %s", _url_for_logging(search_url))
 
-        results_list, _extra_data_dict = self.__get_search_results(search_url)
-        assert len(results_list) <= 1
-        return results_list[0] if len(results_list) > 0 else None
+        results = self.__get_search_results(search_url)
+        assert len(results) <= 1
+        return results[0] if len(results) > 0 else None
 
     def __build_item_search_url(self, itemKey):
         return self.basic_item_url + "&itemKey=" + itemKey
@@ -211,12 +211,8 @@ class Zotero(object):
 
         :param url: The URL to use for the request.
         :type url: :class:`str`
-        :returns: A tuple of the form `(list, extras)` the list is the
-                  list of entries returned by the server as Python
-                  dictionaries converted from JSON. The extras is a
-                  dictionary whose keys are item keys and values are a
-                  dictionary of information not present at the server
-                  but added by this library.
+        :returns: The list of entries returned by the server as Python
+                  dictionaries converted from JSON.
 
         """
         # 2. perform search
@@ -234,7 +230,7 @@ class Zotero(object):
 
         cache_key = _make_cache_key(url)
 
-        results_list = version = extras = None
+        results = version = None
 
         reason = "cache miss"
         if cache_key in cache:
@@ -242,24 +238,23 @@ class Zotero(object):
             cached_data = cache.get(cache_key)
             reason = "cache stale"
 
-            if type(cached_data) == tuple:
-                cached_data_version, results_list, version, extras = \
-                    cached_data
-                if cached_data_version != CACHED_DATA_VERSION:
-                    logger.debug("old data format for key: %s", cache_key)
-                    logger.debug("deleting key: %s", cache_key)
-
-                    cache.delete(cache_key)
-                    results_list = None
-                    version = None
-                    extras = None
-                    reason = "cache held obsolete format"
-            else:
+            try:
+                cached_data_version, results, version = cached_data
+            except (ValueError, TypeError):
                 # Corrupt data in the cache is an error.
                 logger.error("cache corrupted for key: %s", cache_key)
                 logger.debug("deleting key: %s", cache_key)
                 cache.delete(cache_key)
                 reason = "cache is corrupt"
+            else:
+                if cached_data_version != CACHED_DATA_VERSION:
+                    logger.debug("old data format for key: %s", cache_key)
+                    logger.debug("deleting key: %s", cache_key)
+
+                    cache.delete(cache_key)
+                    results = None
+                    version = None
+                    reason = "cache held obsolete format"
 
         # alway search the modification status.
         headers = {'If-Modified-Since-Version': version}
@@ -277,9 +272,9 @@ class Zotero(object):
             fetch_from_cache = True
 
         if fetch_from_cache:
-            if results_list:
+            if results:
                 logger.debug('serving cached')
-                return results_list, extras
+                return results
             logger.debug('serving empty')
             return [], {}
 
@@ -297,7 +292,7 @@ class Zotero(object):
 
         data = res.read()
         dom_object = minidom.parseString(data)
-        json_list = []
+        results = []
         version_key = None
         if 'Last-Modified-Version' in res.headers:
             version_key = res.headers['Last-Modified-Version']
@@ -308,30 +303,45 @@ class Zotero(object):
 
         for entry in dom_object.getElementsByTagName('entry'):
             content_node = entry.getElementsByTagName('content')[0]
-            updated_node = entry.getElementsByTagName('updated')[0]
+            alternates = [x for x in entry.getElementsByTagName('link')
+                          if x.getAttribute('rel') == 'alternate'
+                          and x.getAttribute('type') == 'text/html']
+            if len(alternates) == 0:
+                raise ValueError("no alternates found for " + entry)
+            elif len(alternates) > 1:
+                raise ValueError("ambiguous text/html alternate for " + entry)
 
-            json_string_tuple = (content_node.childNodes[0].data,
-                                 updated_node.childNodes[0].data,)
+            alternate = alternates[0]
 
-            json_list.append(json_string_tuple)
+            complete_dict = {
+                'data': json.loads(content_node.childNodes[0].data),
+                'links': {
+                    # Although in theory multiple alternate text/html
+                    # links would be *possible* it seems that v3 of
+                    # the protocol won't ever return a list of
+                    # alternates. We're essentially emulating what v3
+                    # would return here, so... no list.
+                    "alternate": {
+                        "href": alternate.getAttribute("href"),
+                        "type": "text/html"
+                    }
+                }
+            }
 
-        # return list of json string objects
-        results_list, extra_data_dict = self.__process_data(json_list)
+            results.append(complete_dict)
 
         # We cache the result of the query in a single cache entry.
         if version_key:
-            cache.set(cache_key,
-                      (CACHED_DATA_VERSION, results_list, version_key,
-                       extra_data_dict))
+            cache.set(cache_key, (CACHED_DATA_VERSION, results, version_key))
             logger.debug("cache set for key: %s", cache_key)
 
         if not for_single_item:
             # Also take care to update the per-item entries in the cache.
-            self.__cache_items(results_list, extra_data_dict, version_key)
+            self.__cache_items(results, version_key)
 
-        return results_list, extra_data_dict
+        return results
 
-    def __cache_items(self, results_list, extra_data_dict, version_key):
+    def __cache_items(self, results, version_key):
         """
         This method takes the results obtained when performing any request
         that returns a collection of items and unpacks these results
@@ -342,53 +352,11 @@ class Zotero(object):
         for the query that would ask for A, for a query that would ask
         for B and for a query that would ask for C.
         """
-        for item in results_list:
-            key = item["itemKey"]
-            url = self.__build_item_search_url(key)
+        for item in results:
+            url = self.__build_item_search_url(item["data"]["itemKey"])
             cache_key = _make_cache_key(url)
-            new_results_list = [item]
-            new_extra_data_dict = {key: extra_data_dict[key]}
-            cache.set(cache_key, (CACHED_DATA_VERSION,
-                                  new_results_list,
-                                  version_key,
-                                  new_extra_data_dict))
+            cache.set(cache_key, (CACHED_DATA_VERSION, [item], version_key))
             logger.debug("cache set for key: %s", cache_key)
-
-    def __process_data(self, json_list):
-        """Utility function to iterate over raw results to:
-
-        1) Add the scope of search results ( coming from which account ?)
-        2) Add published date as it is not available in raw json.
-        3) Add additional helpful data to the cache."""
-        processed_json_list = []
-        extra_data_dict = {}
-
-        for list_item in json_list:
-
-            # model to store the item json for a particular user
-            # only a subset of returned json items are being stored
-
-            json_dict = json.loads(list_item[0])
-
-            # REMEMBER TO INCREMENT CACHED_DATA_VERSION WHENEVER YOU
-            # CHANGE THIS DICTIONARY.
-            #
-            # extra_data_dict contains additional data missing from
-            # the JSON object: 1. object_type: the scope of the search
-            # result ( global/ local)
-            #
-            # 2. sync_status: the sync status:
-            #  -1 means no operation performed (default),
-            #  0 means copy successful
-            #  1 means duplicate
-            extra_data_dict[json_dict['itemKey']] = {
-                'object_type': self.object_type,
-                'sync_status': -1,
-            }
-
-            processed_json_list.append(json_dict)
-
-        return processed_json_list, extra_data_dict
 
     def set_item(self, data_dict):
         """ Saves the data_dict of local item to BTW account

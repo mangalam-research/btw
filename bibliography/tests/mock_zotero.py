@@ -8,7 +8,7 @@ class Records(object):
         self.reset()
 
     def get_item(self, itemKey):
-        return [x for x in self.values if x["itemKey"] == itemKey][0]
+        return [x for x in self.values if x["data"]["itemKey"] == itemKey][0]
 
     def __len__(self):
         return len(self.values)

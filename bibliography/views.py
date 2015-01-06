@@ -46,9 +46,9 @@ def _ajax_search(request):
 
 
 def _cache_all():
-    search_results, _extra_vars = btw_zotero.get_all()
+    search_results = btw_zotero.get_all()
     for result in search_results:
-        key = result["itemKey"]
+        key = result["data"]["itemKey"]
         if not Item.objects.filter(item_key=key).exists():
             t = Item(item_key=key, uid=btw_zotero.full_uid)
             t.save()
@@ -86,7 +86,7 @@ def _item_to_dict(item):
     :returns: The dictionary of values.
     """
     return {k: getattr(item, k)
-            for k in ("pk", "date", "title", "creators")}
+            for k in ("pk", "date", "title", "creators", "zotero_url")}
 
 
 @require_GET

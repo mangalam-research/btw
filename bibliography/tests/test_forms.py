@@ -10,24 +10,42 @@ from . import mock_zotero
 
 mock_records = mock_zotero.Records([
     {
-        "itemKey": "1",
-        "title": "Title 1",
-        "date": "Date 1",
-        "creators": [
-            {"name": "Name 1 for Title 1"},
-            {"firstName": "FirstName 2 for Title 1",
-             "lastName": "LastName 2 for Title 1"},
-        ]
+        "data":
+        {
+            "itemKey": "1",
+            "title": "Title 1",
+            "date": "Date 1",
+            "creators": [
+                {"name": "Name 1 for Title 1"},
+                {"firstName": "FirstName 2 for Title 1",
+                 "lastName": "LastName 2 for Title 1"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo.com",
+                "type": "text/html"
+            }
+        }
     },
     {
-        "itemKey": "2",
-        "title": "Title 2",
-        "date": "Date 2",
-        "creators": [
-            {"name": "Name 1 for Title 2"},
-            {"firstName": "FirstName 2 for Title 2",
-             "lastName": "LastName 2 for Title 2"},
-        ]
+        "data":
+        {
+            "itemKey": "2",
+            "title": "Title 2",
+            "date": "Date 2",
+            "creators": [
+                {"name": "Name 1 for Title 2"},
+                {"firstName": "FirstName 2 for Title 2",
+                 "lastName": "LastName 2 for Title 2"},
+            ]
+        },
+        "links": {
+            "alternate": {
+                "href": "https://www.foo2.com",
+                "type": "text/html"
+            }
+        }
     }
 ])
 
@@ -117,7 +135,7 @@ class PrimarySourceFormTestCase(TestCase):
         }
         form = PrimarySourceForm(data)
         assert_equal(form.errors,
-                     {'item':  ['This field is required.']})
+                     {'item': ['This field is required.']})
 
     def test_item_must_be_real(self):
         """The item field must refer to an existing record."""
@@ -128,8 +146,8 @@ class PrimarySourceFormTestCase(TestCase):
         }
         form = PrimarySourceForm(data)
         assert_equal(form.errors,
-                     {'item':  ['Select a valid choice. That choice is not '
-                                'one of the available choices.']})
+                     {'item': ['Select a valid choice. That choice is not '
+                               'one of the available choices.']})
 
     def test_no_duplicate_reference_titles(self):
         """A duplicate reference title is invalid."""

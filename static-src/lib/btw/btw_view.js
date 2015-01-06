@@ -627,6 +627,53 @@ Viewer.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
     this.fillBiblData(el, abbr, data);
 };
 
+Viewer.prototype.refDecorator = function (root, el) {
+    var orig_target = el.getAttribute(util.encodeAttrName("target"));
+    if (!orig_target)
+        orig_target = "";
+
+    orig_target = orig_target.trim();
+
+    var bibl_prefix = "/bibliography/";
+    if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
+        // We want to remove any possible a element before we give control
+        // to the overriden function.
+        var a = domutil.childByClass(el, 'a');
+        var child;
+        if (a) {
+            child = a.firstChild;
+            while (child) {
+                el.insertBefore(child, a);
+                child = a.firstChild;
+            }
+            el.removeChild(a);
+        }
+
+        DispatchMixin.prototype.refDecorator.call(this, root, el);
+
+        // Bibliographical reference...
+        var target_id = orig_target;
+
+        var data = this._bibl_data[target_id];
+        if (!data)
+            throw new Error("missing bibliographical data");
+
+        // We also want a hyperlink into the Zotero library.
+        a = el.ownerDocument.createElement("a");
+        a.className = "a _phantom_wrap";
+        a.href = data.zotero_url;
+        a.setAttribute("target", "_blank");
+        child = el.firstChild;
+        el.appendChild(a);
+        while (child && child !== a) {
+            a.appendChild(child);
+            child = el.firstChild;
+        }
+    }
+    else
+        DispatchMixin.prototype.refDecorator.call(this, root, el);
+};
+
 Viewer.prototype.makeElement = function (name, attrs) {
     var ename = this._resolver.resolveName(name);
     var e = transformation.makeElement(this._data_doc, ename.ns, name, attrs);
