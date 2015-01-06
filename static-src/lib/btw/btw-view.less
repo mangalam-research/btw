@@ -47,11 +47,19 @@ div.wed-frame {
         }
 
         div {
+            &._real {
+                margin-left: 1em;
+            }
+
             &.head {
                 margin-top: 1em;
                 //background: linear-gradient(to bottom right,
                 //                            #CCCCCC,
                 //                            #FFFFFF);
+            }
+
+            &.panel-group {
+                margin-top: 1em;
             }
 
             &.part-two {
@@ -68,6 +76,7 @@ div.wed-frame {
 
             &.btw\:lemma {
                 font-size: 200%;
+                margin-left: 0px;
             }
 
 
@@ -94,6 +103,10 @@ div.wed-frame {
                 font-size: larger;
             }
 
+            &.btw\:overview>.panel-group {
+                margin-left: 1em;
+            }
+
             &._decoration_text {
                 display: inline;
             }
@@ -106,7 +119,8 @@ div.wed-frame {
                 padding-top: 1em;
             }
 
-            &.btw\:example, &.btw\:example-explained, &.btw\:citations>.ptr {
+            &.btw\:example, &.btw\:example-explained, &.btw\:citations>.ptr,
+            &.btw\:explanation {
                 margin-bottom: 1em;
             }
 
