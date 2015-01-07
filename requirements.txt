@@ -15,3 +15,4 @@ django-forms-bootstrap>=3.0.0,<4
 requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
 selenium==2.43.0
+pebble>=3.1.8,<4

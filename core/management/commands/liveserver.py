@@ -1,4 +1,5 @@
 import os
+import mock
 from unittest import TestSuite
 
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
@@ -6,10 +7,14 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
 from django.test import LiveServerTestCase
 from django.test.runner import DiscoverRunner
+from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
+from django.test.client import Client
 from south.management.commands import patch_for_test_db_setup
-import mock
+from pebble import process
 
 from bibliography.tests import mock_zotero
+from lexicography.models import Entry
 from lib import util
 
 
@@ -72,6 +77,36 @@ mock_records = mock_zotero.Records([
         }
     }
 ])
+
+#
+# What we are doing here is running the code that reads and processes
+# the data necessary to create a valid document in *parallel* with the
+# rest of the code. When a test actually requires the code, it
+# probably will not have to wait for the read + process operation
+# because it will already have been done.
+#
+
+@process.concurrent
+def fetch():
+    with open("utils/schemas/prasada.xml") as f:
+        data = f.read().decode("utf-8")
+
+    # Clean it for raw edit.
+    data = util.run_xsltproc("utils/xsl/strip.xsl", data)
+    return data
+
+fetch_task = fetch()
+
+def get_valid_document_data():
+    if get_valid_document_data.data is not None:
+        return get_valid_document_data.data
+
+    data = fetch_task.get()
+
+    get_valid_document_data.data = data
+    return data
+
+get_valid_document_data.data = None
 
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
@@ -143,31 +178,19 @@ class SeleniumTest(LiveServerTestCase):
                 with open(self.__control_write, 'w') as out:
                     out.write(s.session_key + "\n")
             elif command == "create valid article\n":
-                from django.core.urlresolvers import reverse
                 add_raw_url = reverse("admin:lexicography_entry_rawnew")
-                data = open(
-                    "utils/schemas/prasada.xml").read().decode("utf-8")
-                # Clean it for raw edit.
-                data = util.run_xsltproc("utils/xsl/strip.xsl",
-                                         data)
-
-                from django.contrib.auth import get_user_model
+                data = get_valid_document_data()
                 User = get_user_model()
-                admin = User.objects.get(username='admin')
-                admin.set_password('foo')
-                admin.save()
+                foo = User.objects.get(username='foo')
 
                 now = util.utcnow()
 
-                from django.test.client import Client
                 client = Client()
-                assert client.login(username='admin', password='foo')
-                response = client.post(add_raw_url,
-                                       {"data": data})
+                assert client.login(username='foo', password='foo')
+                response = client.post(add_raw_url, {"data": data})
                 assert response.status_code == 302
-                from lexicography.models import Entry
                 entry = Entry.objects.get(latest__datetime__gte=now)
-                assert entry.latest.publish(admin)
+                assert entry.latest.publish(foo)
                 with open(self.__control_write, 'w') as out:
                     out.write(entry.lemma.encode('utf-8') + "\n")
             else:
