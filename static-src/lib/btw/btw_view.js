@@ -221,7 +221,12 @@ function Viewer(root, edit_url, data, bibl_data) {
         });
     this._heading_decorator.addSpec(
         {selector: "btw:overview>btw:semantic-fields",
-         heading: "all semantic fields"});
+         heading: "all semantic fields",
+         collapse: {
+             kind: "default",
+             additional_classes: "sf-collapse"
+         }
+        });
     this._heading_decorator.addSpec(
         {selector: "btw:semantic-fields",
          heading: "semantic fields",
