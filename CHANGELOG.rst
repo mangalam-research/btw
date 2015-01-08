@@ -36,3 +36,6 @@
     semantic fields in this sense".
 
   - Display: headings that are not otherwise decorated now get bullets.
+
+  - Display: the "other citations" section now appear in sections
+    named "more citations".

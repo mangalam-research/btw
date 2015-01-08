@@ -259,6 +259,17 @@ function Viewer(root, edit_url, data, bibl_data) {
         selector: "btw:citations-collection>btw:citations",
         heading: null
     });
+    this._heading_decorator.addSpec({
+        selector: "btw:sense>btw:other-citations",
+        heading: "more citations",
+        collapse: "default"
+    });
+    this._heading_decorator.addSpec({
+        selector: "btw:other-citations",
+        heading: "more citations",
+        collapse: "default"
+    });
+
     this._sense_subsense_id_manager = new id_manager.IDManager("S.");
     this._example_id_manager = new id_manager.IDManager("E.");
 
