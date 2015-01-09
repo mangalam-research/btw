@@ -18,7 +18,6 @@ Scenario: example hyperlinks are correct
   And the view has finished rendering
   Then the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3 quoted above in A." points to the example with the citation that starts with "foo"
 
-@wip
 Scenario: a valid document has a correct structure
   Given a valid document
   And the view has finished rendering
