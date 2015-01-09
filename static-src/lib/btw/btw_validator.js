@@ -34,7 +34,7 @@ Validator.prototype.validateDocument = function () {
     //
 
     var ret = [];
-    var i, sfs;
+    var i, sfs, sf;
     // Verify that all senses have some semantic fields associated
     // with them.
     var senses = this._gui_root.getElementsByClassName("btw:sense");
@@ -45,7 +45,7 @@ Validator.prototype.validateDocument = function () {
         sfs = sense.querySelectorAll(
             domutil.toGUISelector("btw:example btw:sf"));
         var found = false;
-        for (var sfs_ix = 0, sf; !found && (sf = sfs[sfs_ix]); ++sfs_ix) {
+        for (var sfs_ix = 0; !found && (sf = sfs[sfs_ix]); ++sfs_ix) {
             // The contrastive section may not exist yet.
             if (!contrastive || !contrastive.contains(sf))
                 found = true;
@@ -76,6 +76,21 @@ Validator.prototype.validateDocument = function () {
                 node: data_cognate.parentNode,
                 index: _indexOf.call(data_cognate.parentNode.childNodes,
                                      data_cognate)
+            });
+        }
+    }
+
+    // Verify that all semantic fields are of the proper format.
+    sfs = this._gui_root.getElementsByClassName("btw:sf");
+    for (i = 0; (sf = sfs[i]); ++i) {
+        var data_sf = $.data(sf, "wed_mirror_node");
+        var text = data_sf.textContent;
+        if (!/^\s*\d{2}(?:\.\d{2})*(?:\s*\|\s*\d{2}(?:\.\d{2})*)?(?:aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)?\s*$/.test(text)) {
+            ret.push({
+                error: new ValidationError(
+                    "semantic field is not in a recognized format"),
+                node: data_sf,
+                index: 0
             });
         }
     }

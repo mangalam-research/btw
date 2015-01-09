@@ -26,5 +26,10 @@
 	Cognate without semantic fields.
       </iso:assert>
     </iso:rule>
+    <iso:rule context="btw:sf">
+      <iso:assert test="matches(text(), '^\s*\d{2}(\.\d{2})*(\s*\|\s*\d{2}(\.\d{2})*)?(aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)?\s*$')">
+	Semantic field in an incorrect format.
+      </iso:assert>
+    </iso:rule>
   </iso:pattern>
 </iso:schema>

@@ -70,6 +70,11 @@ def validate(rng_path, input_data, silent=True):
 
 
 def schematron(xsl, input_data):
+    """
+    Runs the XSL file (which **must** have been produced from a
+    schematron schema) against the data and reports whether there was
+    any error.
+    """
     output = run_saxon(xsl, input_data)
     tree = lxml.etree.fromstring(output.encode("utf-8"))
     found = tree.xpath("//svrl:failed-assert",
