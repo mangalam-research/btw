@@ -14,15 +14,23 @@ import selenic
 # LOGS determines whether Selenium tests will capture logs. Turning it
 # on makes the tests much slower.
 #
+# False (or anything considered False): no logging.
+#
+# True: turns logging on but **automatically turned off in builders!**
+# (Builders = buildbot, jenkins, etc.)
+#
+# "force": turns logging on, **even when using builders**.
+#
+#
 if "LOGS" not in globals():
     LOGS = False
 
 # If we are running in something like Buildbot or Jenkins, we don't
 # want to have the logs be turned on because we forgot to turn them
-# off. So unless FORCE_SELENIUM_LOGS is set, we turn off the logs when
+# off. So unless LOGS is set to "force", we turn off the logs when
 # running in that environment.
-if (os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')) \
-   and not os.environ.get('FORCE_SELENIUM_LOGS'):
+if LOGS and LOGS != "force" and \
+   (os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')):
     LOGS = False
 
 class Config(selenic.Config):
