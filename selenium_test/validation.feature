@@ -14,3 +14,8 @@ Scenario: senses without semantic fields are reported
 Given a document with one btw:cognates with one btw:cognate and no btw:none
 And the document is completely validated
 Then there is an error reporting that a cognate is without semantic fields
+
+Scenario: invalid semantic fields are reported
+Given a document with bad semantic fields
+And the document is completely validated
+Then there are errors reporting the bad semantic fields

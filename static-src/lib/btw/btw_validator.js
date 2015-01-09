@@ -89,8 +89,9 @@ Validator.prototype.validateDocument = function () {
             ret.push({
                 error: new ValidationError(
                     "semantic field is not in a recognized format"),
-                node: data_sf,
-                index: 0
+                node: data_sf.parentNode,
+                index: _indexOf.call(data_sf.parentNode.childNodes,
+                                     data_sf)
             });
         }
     }

@@ -2,6 +2,7 @@ import os
 import mock
 from unittest import TestSuite
 
+import lxml.etree
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
@@ -14,9 +15,9 @@ from south.management.commands import patch_for_test_db_setup
 from pebble import process
 
 from bibliography.tests import mock_zotero
+from lexicography.tests.data import sf_cases
 from lexicography.models import Entry
 from lib import util
-
 
 mock_records = mock_zotero.Records([
     {
@@ -158,12 +159,12 @@ class SeleniumTest(LiveServerTestCase):
         with open(self.__control_write, 'w') as out:
             out.write('started\n')
         while not finished:
-            command = open(self.__control_read, 'r').read()
+            command = open(self.__control_read, 'r').read().strip()
             self.log("got command: " + command)
             args = command.split()
-            if args[0] == "quit":
+            if command == "quit":
                 finished = True
-            elif args[0] == "restart":
+            elif command == "restart":
                 self.next = "restart"
                 # Stop reading the control pipe.
                 finished = True
@@ -177,24 +178,55 @@ class SeleniumTest(LiveServerTestCase):
                 s.save()
                 with open(self.__control_write, 'w') as out:
                     out.write(s.session_key + "\n")
-            elif command == "create valid article\n":
-                add_raw_url = reverse("admin:lexicography_entry_rawnew")
-                data = get_valid_document_data()
-                User = get_user_model()
-                foo = User.objects.get(username='foo')
-
-                now = util.utcnow()
-
-                client = Client()
-                assert client.login(username='foo', password='foo')
-                response = client.post(add_raw_url, {"data": data})
-                assert response.status_code == 302
-                entry = Entry.objects.get(latest__datetime__gte=now)
-                assert entry.latest.publish(foo)
-                with open(self.__control_write, 'w') as out:
-                    out.write(entry.lemma.encode('utf-8') + "\n")
+            elif args[0] == "create":
+                what = " ".join(args[1:])
+                self.create_document(what)
             else:
                 print "Unknown command: ", command
+
+    def create_document(self, what):
+        add_raw_url = reverse("admin:lexicography_entry_rawnew")
+        data = get_valid_document_data()
+        publish = True
+
+        if what == "valid article":
+            pass
+        elif what == "bad semantic fields article":
+            publish = False
+            tree = lxml.etree.fromstring(data)
+            sfs = tree.xpath(
+                "//btw:sf",
+                namespaces={
+                    "btw": "http://mangalamresearch.org/ns/btw-storage"
+                })
+            ix = 0
+            for case in sf_cases:
+                sfs[ix].text = case
+                ix += 1
+            lemmas = tree.xpath(
+                "//btw:lemma",
+                namespaces={
+                    "btw": "http://mangalamresearch.org/ns/btw-storage"
+                })
+            lemmas[0].text = what
+            data = lxml.etree.tostring(
+                tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        else:
+            print "Unknown document: ", what
+        User = get_user_model()
+        foo = User.objects.get(username='foo')
+
+        now = util.utcnow()
+
+        client = Client()
+        assert client.login(username='foo', password='foo')
+        response = client.post(add_raw_url, {"data": data})
+        assert response.status_code == 302
+        entry = Entry.objects.get(latest__datetime__gte=now)
+        if publish:
+            assert entry.latest.publish(foo)
+        with open(self.__control_write, 'w') as out:
+            out.write(entry.lemma.encode('utf-8') + "\n")
 
     def __unicode__(self):
         return hex(id(self))

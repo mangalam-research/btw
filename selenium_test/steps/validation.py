@@ -1,6 +1,8 @@
 # pylint: disable=E0611
 from nose.tools import assert_equal, assert_true
 
+from lexicography.tests.data import sf_cases
+
 step_matcher('re')
 
 
@@ -66,3 +68,22 @@ def step_impl(context):
     }
     return false;
     """))
+
+@then(r'^there are errors reporting the bad semantic fields$')
+def step_impl(context):
+    driver = context.driver
+
+    assert_true(driver.execute_script("""
+    var expected_count = arguments[0];
+    var errors = wed_editor._validation_errors;
+    for (var i = 0, error; (error = errors[i]); ++i) {
+        if (error.error.toString() ===
+            "semantic field is not in a recognized format") {
+            var node = error.node.childNodes[error.index];
+            var gui_node = jQuery.data(node, "wed_mirror_node");
+            if (gui_node.classList.contains("btw:sf"))
+                return true;
+        }
+    }
+    return errors.length === expected_count;
+    """, len(sf_cases)))

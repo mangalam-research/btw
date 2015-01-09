@@ -27,6 +27,7 @@ var name_resolver = require("salve/name_resolver");
 var $ = require("jquery");
 var _ = require("lodash");
 var btw_util = require("./btw_util");
+var btw_semantic_fields = require("./btw_semantic_fields");
 
 var _slice = Array.prototype.slice;
 var _indexOf = Array.prototype.indexOf;
@@ -329,21 +330,18 @@ function Viewer(root, edit_url, data, bibl_data) {
         // There can be only one contrastive section.
         var contrastive =
                 sense.getElementsByClassName("btw:contrastive-section")[0];
-        // We get all semantic-fields elements that are outside the
+        // We get all btw:sf elements that are outside the
         // contrastive section.
         /* jshint loopfunc:true */
-        var sfss = _slice.call(sense.querySelectorAll(
-            domutil.toGUISelector("btw:example btw:semantic-fields")))
+        sfs = _slice.call(sense.querySelectorAll(
+            domutil.toGUISelector("btw:citations btw:sf, "+
+                                  "btw:other-citations btw:sf")))
                 .filter(function (x) {
                 return !contrastive.contains(x);
             });
+
         var sense_sfss = this.makeElement("btw:semantic-fields");
-        // sfs is already defined
-        for (var sfss_ix = 0; (sfs = sfss[sfss_ix]); ++sfss_ix) {
-            clone = sfs.cloneNode(true);
-            while (clone.firstElementChild)
-                sense_sfss.appendChild(clone.firstElementChild);
-        }
+        this.combineSemanticFieldsInto(sfs, sense_sfss);
         sense.insertBefore(sense_sfss, contrastive || null);
     }
 
@@ -351,12 +349,9 @@ function Viewer(root, edit_url, data, bibl_data) {
     // Create the "all semantic fields" section from the semantic
     // fields of each sense.
     var all_sfs = this.makeElement("btw:semantic-fields");
-    for(i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
-        var sense_ssfs = domutil.childByClass(sense, "btw:semantic-fields");
-        clone = sense_ssfs.cloneNode(true);
-        while (clone.firstElementChild)
-            all_sfs.appendChild(clone.firstElementChild);
-    }
+    sfs = root.querySelectorAll(domutil.toGUISelector(
+        "btw:sense>btw:semantic-fields>btw:sf"));
+    this.combineSemanticFieldsInto(sfs, all_sfs, 3);
     var overview = root.getElementsByClassName("btw:overview")[0];
     overview.appendChild(all_sfs);
 
@@ -601,9 +596,7 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
             html.push(item.outerHTML);
             item.parentNode.removeChild(item);
         }
-        var coll = doc.createElement("div");
-        coll.classList.add("btw:citations-collection");
-        coll.classList.add("_real");
+        var coll = this.makeElement("btw:citations-collection");
         coll.innerHTML = html.join("");
         group.appendChild(coll);
 
@@ -614,23 +607,11 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         if (name === "cognate") {
             var cits = coll.getElementsByClassName("btw:citations");
             for (var cit_ix = 0, cit; (cit = cits[cit_ix]); ++cit_ix) {
-                var secats = cit.getElementsByClassName("btw:semantic-fields");
-                if (secats.length) {
-                    secats = _slice.call(secats);
-                    html = [];
-                    for(var sc_ix = 0, secat; (secat = secats[sc_ix]);
-                        ++sc_ix) {
-                        html.push(secat.outerHTML);
-                    }
-
-                    var sfs = doc.createElement("div");
-                    sfs.classList.add("btw:semantic-fields-collection");
-                    sfs.classList.add("_real");
-                    sfs.innerHTML = html.join("");
-                    var wrapper = wrappers[cit_ix];
-                    wrapper.parentNode.insertBefore(sfs, wrapper.nextSibling);
-                    this._heading_decorator.sectionHeadingDecorator(sfs);
-                }
+                var sfs = cit.getElementsByClassName("btw:sf");
+                var sfss = this.makeElement("btw:semantic-fields");
+                var wrapper = wrappers[cit_ix];
+                wrapper.parentNode.insertBefore(sfss, wrapper.nextSibling);
+                this.combineSemanticFieldsInto(sfs, sfss);
             }
         }
     }
@@ -879,6 +860,19 @@ Viewer.prototype.createPartTwo = function (root) {
 
 };
 
+
+Viewer.prototype.combineSemanticFieldsInto = function (sfs, into, depth) {
+    var texts = [];
+    for (var sfs_ix = 0, sf; (sf = sfs[sfs_ix]); ++sfs_ix)
+        texts.push(sf.textContent.trim());
+
+    var combined = btw_semantic_fields.combineSemanticFields(texts, depth);
+    for (var ix = 0, text; (text = combined[ix]); ++ix) {
+        sf = this.makeElement("btw:sf");
+        sf.textContent = text;
+        into.appendChild(sf);
+    }
+};
 
 return Viewer;
 
