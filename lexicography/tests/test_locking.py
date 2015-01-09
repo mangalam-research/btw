@@ -160,3 +160,15 @@ class LockingTestCase(TestCase):
             "EntryLock matching query does not exist.",
             locking.release_entry_lock,
             self.entry_abcd, self.foo2)
+
+    def test_drop_entry_lock_does_not_fail_if_not_locked(self):
+        locking.drop_entry_lock(self.entry_abcd, self.foo2)
+
+    def test_drop_entry_lock_does_not_fail_on_wrong_user(self):
+        acquired_lock = locking.try_acquiring_lock(self.entry_abcd,
+                                                   self.foo)
+        self.assertIsNotNone(acquired_lock)
+        self.assertLogRegexp(
+            r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
+
+        locking.drop_entry_lock(self.entry_abcd, self.foo2)

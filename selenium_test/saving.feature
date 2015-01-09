@@ -34,3 +34,10 @@ Scenario: saving after someone else has modified the document
   When someone else modifies the file
   When the user saves the file using the keyboard
   Then the user gets a dialog that the file has been modified by another user
+
+Scenario: abandoning after someone else has modified the document
+  # The transform is a bit random. We just need something to
+  # save.
+  When someone else modifies the file
+  And the user clicks the quit without saving button in the toolbar
+  Then the user gets the top page of the lexicography app

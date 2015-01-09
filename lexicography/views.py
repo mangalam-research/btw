@@ -34,10 +34,9 @@ import lib.util as util
 from . import handles
 from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
-from .locking import release_entry_lock, entry_lock_required, \
-    try_acquiring_lock
-from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml, \
-    schema_for_version
+from .locking import release_entry_lock, drop_entry_lock, \
+    entry_lock_required, try_acquiring_lock
+from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
 from .forms import SaveForm
 from bibliography.views import targets_to_dicts
 from . import usermod
@@ -327,7 +326,11 @@ def handle_update(request, handle_or_entry_id):
         # We don't actually save anything here because saves are done
         # through AJAX. We get here if the user decided to quit editing.
         if entry is not None:
-            release_entry_lock(entry, request.user)
+            # The lock could have expired or been removed while we
+            # were not doing anything. Or it could even have been
+            # acquired by another user: so we **drop** it rather than
+            # **release** it.
+            drop_entry_lock(entry, request.user)
         return HttpResponseRedirect(reverse("lexicography_main"))
 
     if entry is not None:

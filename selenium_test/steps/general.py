@@ -414,8 +414,13 @@ def step_impl(context):
     """)
     driver.get(driver.current_url)
 
-@when(ur"^the user clicks the (?P<what>save) button in the toolbar$")
+@when(ur"^the user clicks the (?P<what>save|quit without saving) button "
+      ur"in the toolbar$")
 def step_impl(context, what):
+    what = {
+        "save": "save",
+        "quit without saving": "quitnosave"
+    }[what]
     button = context.driver.execute_script(u"""
     return jQuery("#toolbar .btn[name='{0}']")[0];
     """.format(what))

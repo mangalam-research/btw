@@ -63,6 +63,39 @@ on the entry before calling this function.
     return lock
 
 
+def _release_entry_lock(entry, user, strict):
+    """
+Release the lock on an entry.
+
+:param entry: The entry for which we want to release the lock.
+:type entry: :class:`.Entry`
+:param user: The user requesting the release.
+:type user: The value of :attr:`settings.AUTH_USER_MODEL` determines
+            the class.
+:param strict: Whether or not to perform the check strictly. If
+               ``True``, the function will fail if the entry is not
+               locked or if the lock does not belong to
+               ``user``. Otherwise, a missing lock or a lock owned by
+               another user results in a noop.
+
+"""
+    try:
+        lock = EntryLock.objects.select_for_update().get(entry=entry)
+    except EntryLock.DoesNotExist:
+        if strict:
+            raise
+        return
+
+    if lock.owner != user:
+        if strict:
+            raise ValueError("the user releasing the lock is not the one who "
+                             "owns it")
+        return
+
+    lock_id = lock.id
+    lock.delete()
+    _report(lock, "released", lock_id=lock_id)
+
 @transaction.atomic
 def release_entry_lock(entry, user):
     """
@@ -75,14 +108,20 @@ passed to the function.
 :param user: The user requesting the release.
 :type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
 """
-    lock = EntryLock.objects.select_for_update().get(entry=entry)
-    if lock.owner != user:
-        raise ValueError("the user releasing the lock is not the one who owns "
-                         "it")
+    _release_entry_lock(entry, user, True)
 
-    lock_id = lock.id
-    lock.delete()
-    _report(lock, "released", lock_id=lock_id)
+@transaction.atomic
+def drop_entry_lock(entry, user):
+    """
+Drops the lock on an entry. If the lock does not exist or does not
+belong to the user requesting the drop, this is a noop.
+
+:param entry: The entry for which we want to release the lock.
+:type entry: :class:`.Entry`
+:param user: The user requesting the release.
+:type user: The value of :attr:`settings.AUTH_USER_MODEL` determines the class.
+    """
+    _release_entry_lock(entry, user, False)
 
 
 def _refresh_entry_lock(lock):
