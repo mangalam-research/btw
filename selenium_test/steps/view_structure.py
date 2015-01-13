@@ -290,3 +290,26 @@ def step_impl(context, what, title=None):
     assert_true(result[0], result[1])
     assert_equal(result[0], context.text.strip(),
                  "the semantic fields should be equal")
+
+@then(ur'^the navigation link "(?P<text>.*?)" points to the fourth subsense$')
+def step_impl(context, text):
+    driver = context.driver
+
+    result = driver.execute_script("""
+    var text = arguments[0];
+    var link = Array.prototype.filter.call(
+        document.querySelectorAll("#btw-article-affix a"), function (x) {
+        return x.textContent === text;
+    })[0];
+    if (!link)
+        return [false, "there should be a link"];
+
+    var subsense = document.getElementsByClassName("btw:subsense")[3];
+    if (!subsense)
+        return [false, "there should be a fourth subsense"];
+    return [link.getAttribute("href").slice(1) === subsense.id,
+        "the link should point to the right subsense (" +
+        link.getAttribute("href").slice(1) + " !== " + subsense.id + ")"];
+    """, text)
+
+    assert_true(result[0], result[1])

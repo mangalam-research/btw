@@ -1,6 +1,11 @@
 @import "btw-mode.less";
 @import (reference) "../../../build/expanded/bootstrap/less/variables.less";
 
+// For the scrollspy...
+body {
+    position: relative;
+}
+
 .collapsing.width {
     display: inline-block;
     vertical-align: middle;
@@ -16,8 +21,38 @@
     display: inline-block;
 }
 
+.affix-bottom {
+    position: absolute;
+}
+
+.affix {
+    top: 20px;
+}
+
+#btw-article-affix {
+    .active {
+        border-left: 1px solid;
+    }
+
+    .overflow {
+        overflow-y: auto;
+    }
+
+    .nav>li>a {
+        color: black;
+        padding: 5px;
+        font-size: 16px;
+    }
+
+    .nav li {
+        padding-left: 0.5em;
+        margin-left: 0.5em;
+    }
+}
+
 
 div.wed-frame {
+    font-size: 18px;
     .horizontal {
         .panel-heading {
             display: inline-block;

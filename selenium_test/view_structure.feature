@@ -41,6 +41,7 @@ Scenario: a valid document has a correct structure
     """
     01.02.11; 01.04.04; 01.04.08; 01.05.05; 01.06.07; 02.01.13; 02.01.14; 02.01.17; 02.02.12; 02.02.13; 02.02.14; 02.02.18; 02.02.19; 02.02.22; 03.05.01; 03.07; 03.07.00; 03.07.03
     """
+  And the navigation link "2. absolute confidence derived from understanding, typically compounded with avetya or abhedya" points to the fourth subsense
 
 Scenario: clicking the expand all button expands all sections
   Given a valid document

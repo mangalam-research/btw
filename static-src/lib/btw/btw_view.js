@@ -439,7 +439,126 @@ function Viewer(root, edit_url, data, bibl_data) {
 
     this.process(root, root.firstElementChild);
 
-    this._setCondition("done", this);
+    // Work around a bug in Bootstrap. Bootstrap's scrollspy (at least
+    // up to 3.3.1) can't handle a period in a URL's hash. It passes
+    // the has to jQuery as a CSS selector and jQuery silently fails
+    // to find the object.
+    var targets = doc.querySelectorAll("[id]");
+    for (var target_ix = 0, target; (target = targets[target_ix]);
+        ++target_ix) {
+        target.id = target.id.replace(/\./g, "_");
+    }
+
+    var links = doc.getElementsByTagName("a");
+    for (var link_ix = 0, link; (link = links[link_ix]); ++link_ix) {
+        if (link.attributes.href &&
+            link.attributes.href.value.lastIndexOf("#", 0) !== 0)
+            continue;
+        link.attributes.href.value =
+            link.attributes.href.value.replace(/\./g, "_");
+    }
+
+    // Create the affix
+    var affix = doc.getElementById("btw-article-affix");
+    var top_ul = affix.getElementsByTagName("ul")[0];
+    var anchors = root.querySelectorAll(
+        domutil.toGUISelector("btw:subsense, .head"));
+    var ul_stack = [top_ul];
+    var container_stack = [];
+    var prev_container;
+    var ul;
+    for (var anchor_ix = 0, anchor; (anchor = anchors[anchor_ix]); ++anchor_ix) {
+        if (prev_container && prev_container.contains(anchor)) {
+            container_stack.unshift(prev_container);
+            ul = doc.createElement("ul");
+            ul.className = "nav";
+            ul_stack[0].lastElementChild.appendChild(ul);
+            ul_stack.unshift(ul);
+        }
+        else {
+            while(container_stack[0] &&
+                  !container_stack[0].contains(anchor)) {
+                container_stack.shift();
+                ul_stack.shift();
+            }
+            if (ul_stack.length === 0)
+                ul_stack = [top_ul];
+        }
+
+
+        var orig = util.getOriginalName(anchor);
+
+        var heading;
+        switch(orig) {
+        case 'head':
+            heading = anchor.textContent.replace("•", "").trim();
+            // Special cases
+            var parent = anchor.parentNode;
+            var parent_orig = util.getOriginalName(parent);
+            switch(parent_orig) {
+            case 'btw:sense':
+                var terms = parent.querySelector(
+                    domutil.toGUISelector("btw:english-term-list"));
+                heading += " " + (terms ? terms.textContent : "");
+                break;
+            }
+            prev_container = anchor.parentNode;
+            break;
+        case 'btw:subsense':
+            heading = anchor.getElementsByClassName("btw:explanation")[0]
+                .textContent;
+            prev_container = anchor;
+            break;
+        default:
+            throw new Error("unknown element type: " + orig);
+        }
+
+        var li = btw_util.htmlToElements(doc, _.template(
+            '<li><a href="#<%= target %>"><%= heading %></a></li>',
+            { target: anchor.id, heading: heading}))[0];
+        ul_stack[0].appendChild(li);
+    }
+
+    $(affix).affix({
+        offset: {
+            top: 1,
+            bottom: 1
+        }
+    });
+
+    $(doc.body).scrollspy({target: "#btw-article-affix"});
+
+    var affix_constrainer = domutil.closest(affix, "div");
+    var affix_overflow = affix.getElementsByClassName("overflow")[0];
+    function resizeHandler() {
+        // This prevents the affix from popping wider when we scroll
+        // the window. Because a "detached" affix has "position:
+        // fixed", it is taken out of the flow and thus its "width" is
+        // no longer constrained by its parent.
+        affix.style.width = affix_constrainer.offsetWidth + "px";
+
+        var rect = affix_overflow.getBoundingClientRect();
+        var style = window.getComputedStyle(affix);
+        affix_overflow.style.height =
+            (window.innerHeight - rect.top -
+             parseInt(style.marginBottom) - 5) + "px";
+    }
+    win.addEventListener("resize", resizeHandler);
+    win.addEventListener("scroll", resizeHandler);
+    resizeHandler();
+
+    $(doc.body).on("activate.bs.scrollspy", function (ev) {
+        // Scroll the affix if needed.
+        var actives = affix.querySelectorAll(".active>a");
+        var affix_rect = affix_overflow.getBoundingClientRect();
+        for (var i = 0, active; (active = actives[i]); ++i) {
+            if (active.getElementsByClassName("active").length)
+                continue;
+            var active_rect = active.getBoundingClientRect();
+            affix_overflow.scrollTop = Math.floor(active_rect.top - affix_rect.top);
+        }
+    });
+
 
     function showTarget() {
         var hash = win.location.hash;
@@ -470,7 +589,10 @@ function Viewer(root, edit_url, data, bibl_data) {
             });
             $parent.collapse('show');
         }
-        next(parents.shift());
+        if (parents.length)
+            next(parents.shift());
+        else
+            target.scrollIntoView(true);
     }
     win.addEventListener('popstate', showTarget);
     // This also catches hitting the Enter key on a link.
@@ -479,6 +601,8 @@ function Viewer(root, edit_url, data, bibl_data) {
         setTimeout(showTarget, 0);
     });
     showTarget();
+
+    this._setCondition("done", this);
 }
 
 oop.implement(Viewer, DispatchMixin);

@@ -19,8 +19,15 @@ require(['btw/btw_view'], function(Viewer) {
 </script>
 {% endblock %}
 {% block content %}
-<div class="wed-frame">
-  <div class="wed-document">
+<div class="wed-frame row">
+  <div class="wed-document col-lg-9">
+  </div>
+  <div class="col-lg-3">
+    <nav id="btw-article-affix" class="well">
+        <div class="overflow">
+          <ul class="nav nav-stacked"></ul>
+        </div>
+    </nav>
   </div>
 </div>
 {% endblock %}

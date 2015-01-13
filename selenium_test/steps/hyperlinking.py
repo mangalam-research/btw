@@ -1,3 +1,5 @@
+import os
+
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
@@ -88,6 +90,17 @@ def step_impl(context):
 
     assert_equal(expect, [], "all expected links should have been found")
 
+
+def sanitize_id_selector(context, selector):
+    # Due to a Bootstrap bug, when we are testing the viewing of
+    # articles the IDs have a different form, so...
+    name = os.path.splitext(os.path.basename(
+        context.feature.filename))[0]
+    view = name in ("view", "view_structure")
+
+    return selector if not view else selector.replace(".", "_")
+
+
 __LINK_RE1 = \
     (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
      ur'points to the(?: (?P<term>first|second|third))? example'
@@ -103,7 +116,9 @@ __LINK_RE2 = \
 @then(__LINK_RE2)
 def step_impl(context, example, label, term=None, citation=None):
 
-    id_selector = "#BTW-E." if example else "#BTW-S."
+    id_selector = sanitize_id_selector(
+        context,
+        "#BTW-E." if example else "#BTW-S.")
 
     def cond(driver):
         ret = driver.execute_script(btw_util.GET_CITATION_TEXT +
@@ -197,7 +212,7 @@ def step_impl(context, example, label, term=None, citation=None):
       ur'that says "(?P<tooltip>.*)"')
 def step_impl(context, label, tooltip):
 
-    id_selector = "#BTW-S."
+    id_selector = sanitize_id_selector(context, "#BTW-S.")
 
     def cond(driver):
         ret = driver.execute_script(ur"""
@@ -278,7 +293,7 @@ def step_impl(context):
 @then(ur"^there are no example hyperlinks")
 def step_impl(context):
 
-    id_selector = "#BTW-E."
+    id_selector = sanitize_id_selector(context, "#BTW-E.")
 
     def cond(driver):
         ret = driver.execute_script(ur"""
