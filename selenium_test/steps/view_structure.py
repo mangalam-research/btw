@@ -238,3 +238,55 @@ def step_impl(context, label, url):
         return [false, "there should be a link with label " + label];
     return [a.href === url, "the link should point to " + url];
     """)
+
+@then(ur'^the (?P<what>first collapsible section) titled '
+      ur'"(?P<title>.*?)" contains$')
+@then(ur'^the (?P<what>cognate) "(?P<title>.*?)" has the semantic '
+      ur'fields$')
+@then(ur'^the (?P<what>article) has the semantic '
+      ur'fields$')
+def step_impl(context, what, title=None):
+    driver = context.driver
+
+    if what == "article":
+        what = "first collapsible section"
+        title = "all semantic fields"
+
+    result = driver.execute_script(ur"""
+    var what = arguments[0];
+    var title = arguments[1];
+
+    var panel_title;
+    switch(what) {
+    case "cognate":
+        var cognate = Array.prototype.slice.call(
+          document.querySelectorAll(
+          ".btw\\:cognate-term-list>.btw\\:cognate-term-item>" +
+          ".btw\\:term"))
+         .filter(function (x) {
+            return x.textContent.trim() === title;
+        })[0];
+        if (cognate)
+            panel_title = cognate.parentNode.nextElementSibling
+                .getElementsByClassName("panel-title")[0];
+        break;
+    case "first collapsible section":
+        panel_title = Array.prototype.slice.call(
+          document.getElementsByClassName("panel-title"))
+          .filter(function (x) {
+            return x.textContent.trim() === title;
+        })[0];
+        break;
+    default:
+        return [false, "invalid value for 'what'"];
+    }
+    if (!panel_title)
+        return [false, "there should be a collapsible section"];
+
+    var panel = panel_title.parentNode.parentNode;
+    var collapse = panel.getElementsByClassName("collapse")[0];
+    return [collapse.textContent.trim(), ""];
+    """, what, title)
+    assert_true(result[0], result[1])
+    assert_equal(result[0], context.text.strip(),
+                 "the semantic fields should be equal")

@@ -214,7 +214,7 @@ function Viewer(root, edit_url, data, bibl_data) {
          heading: null});
     this._heading_decorator.addSpec(
         {selector: "btw:sense>btw:semantic-fields",
-         heading: "all semantic fields in this sense",
+         heading: "all semantic fields in the citations of this sense",
          collapse: {
              kind: "default",
              additional_classes: "sf-collapse"

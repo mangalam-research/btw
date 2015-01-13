@@ -207,6 +207,10 @@ else
 	behave $(BEHAVE_PARAMS) $@
 endif # BEHAVE_SAVE
 
+.PHONY: test
+test: all
+	./manage.py test
+
 .PHONY: keep-latest
 keep-latest:
 	find test_logs -type f -not -name $$(realpath --relative-to=test_logs test_logs/LATEST) -delete
