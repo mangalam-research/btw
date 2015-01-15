@@ -72,6 +72,12 @@
             <btw:tr>Faith has the defining characteristic of trusting and its manifestation is commitment. <btw:lemma-instance>Confidence</btw:lemma-instance> has the defining characteristic of being clear and its manifestation is assurance.</btw:tr>
           </btw:example>
         </btw:citations>
+        <btw:other-citations>
+          <btw:semantic-fields>
+            <btw:sf>03.05.01</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+        </btw:other-citations>
       </btw:subsense>
       <btw:subsense xml:id="S.a-2"> <!-- a2 -->
         <btw:explanation>in the sense of pleasurable emotion, serenity.</btw:explanation>
@@ -103,6 +109,12 @@
             <btw:tr>Then, the four assemblies saw that great stūpa studded with jewels suspended in mid-air and were taken by rapturous joy and filled with blissful pleasure, delight and <btw:lemma-instance>serenity</btw:lemma-instance>. At that [sight], they rose from their seats, salutated [it] reverently, and remained [respectfully] standing. </btw:tr>
           </btw:example>
         </btw:citations>
+        <btw:other-citations>
+          <btw:semantic-fields>
+            <btw:sf>03.05.01</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+        </btw:other-citations>
       </btw:subsense>
       <btw:contrastive-section> <!-- [contrastive section for sense a] -->
         <btw:antonyms>
@@ -114,10 +126,12 @@
                 <btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr>
               </btw:example>
             </btw:citations>
-            <!--
-            [other citations]
-            ø
-            -->
+            <btw:other-citations>
+              <btw:semantic-fields>
+                <btw:sf>03.05.01</btw:sf>
+              </btw:semantic-fields>
+              <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+            </btw:other-citations>
           </btw:antonym>
           <btw:antonym>
             <btw:term><foreign xml:lang="sa-Latn">kāluṣya</foreign></btw:term>
@@ -127,10 +141,12 @@
                 <btw:tr>XXX Placeholder due to changes in template. We no longer cite translations by others.</btw:tr>
               </btw:example>
             </btw:citations>
-            <!--
-            [other citations]
-            ø
-            -->
+            <btw:other-citations>
+              <btw:semantic-fields>
+                <btw:sf>03.05.01</btw:sf>
+              </btw:semantic-fields>
+              <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+            </btw:other-citations>
           </btw:antonym>
         </btw:antonyms>
         <btw:cognates>
@@ -151,10 +167,12 @@
                 <btw:tr>For example, Venerable One, the water-<btw:cognate-instance>clearing</btw:cognate-instance> mineral clears up all mud. Likewise, Venerable One, the jewel of bodhisatvas’ understanding <btw:cognate-instance>clears</btw:cognate-instance> all impurities and defilements of sentient beings</btw:tr>
               </btw:example>
             </btw:citations>
-            <!--
-                [other citations]
-                ø
-            -->
+            <btw:other-citations>
+              <btw:semantic-fields>
+                <btw:sf>03.05.01</btw:sf>
+              </btw:semantic-fields>
+              <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+            </btw:other-citations>
           </btw:cognate>
           <btw:cognate>
             <btw:term><foreign xml:lang="sa-Latn">saṃprasāda</foreign></btw:term>
@@ -234,11 +252,13 @@
                 <btw:cit><ref target="/bibliography/1">, XXX fake AkośBhV, 376</ref><foreign xml:lang="sa-Latn">praśāntavāhitāvasthā cittasyādhyātma<btw:cognate-instance>saṃprasāda</btw:cognate-instance> iti</foreign></btw:cit>
                 <btw:tr>The inner <btw:cognate-instance>tranquillity</btw:cognate-instance> of thought (<foreign xml:lang="sa-Latn">citta</foreign>) is the state brought about by calm.</btw:tr>
               </btw:example>
-              <!--
-                  [other citations]
-                  ø
-              -->
             </btw:citations>
+            <btw:other-citations>
+              <btw:semantic-fields>
+                <btw:sf>03.05.01</btw:sf>
+              </btw:semantic-fields>
+              <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+            </btw:other-citations>
           </btw:cognate>
         </btw:cognates>
         <btw:conceptual-proximates>
@@ -250,6 +270,12 @@
           [selected citations contrasting near-synonyms for sense a]
           See AkośBh ad VIII,9, 440 [already quoted in  [citations for cognates related to sense a], saṃprasāda -->
             </btw:citations>
+            <btw:other-citations>
+              <btw:semantic-fields>
+                <btw:sf>03.05.01</btw:sf>
+              </btw:semantic-fields>
+              <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
+            </btw:other-citations>
           </btw:conceptual-proximate>
           <btw:conceptual-proximate>
             <btw:term><foreign xml:lang="sa-Latn">foo</foreign></btw:term>
