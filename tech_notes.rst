@@ -473,12 +473,11 @@ Create the tables::
 Running the Tests
 -----------------
 
-::
-    $ ./manage.py test
+You should be using ``make`` to run the tests rather than
+``./manage.py test`` because some of the tests are dependent on files
+that are generated with ``make``::
 
-.. warning:: Running this command does not rebuild the software. So if
-             you make changes that must propagate to your live version
-             of the server then you must run ``make`` first.
+    $ make test
 
 Zotero Tests
 ------------
@@ -615,11 +614,10 @@ Running the Suite
 
 To run the suite issue::
 
-    $ make selenium-test
+    $ make selenium-test TEST_BROWSER='OS,BROWSER,VERSION'
 
-To run the suite while using the SauceLab servers, run::
-
-    $ make SELENIUM_SAUCELABS=1 selenium-test
+where ``OS,BROWSER,VERSION`` is a combination of
+``OS,BROWSER,VERSION`` present in ``config/browser.txt``.
 
 Behind the scenes, this will launch behave. See `<Makefile>`_ to see
 how behave is run.
