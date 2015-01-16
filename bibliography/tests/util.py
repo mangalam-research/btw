@@ -127,9 +127,12 @@ def _proxify(file_name, f):
             if not hasattr(f, "proxy"):
                 port = get_port()
 
-                cmd = ["mitmdump", "-a", "-q", "-p", str(port)]
+                cmd = ["mitmdump",
+                       "--noapp",  # Disable web app
+                       "-q",  # Quiet
+                       "-p", str(port)]  # Port to use
                 if hasattr(f, "record"):
-                    cmd += ["-w", temp[1]]
+                    cmd += ["-w", temp[1]]  # Write to file
                 else:
                     #
                     # The X-BTW-Sequence thing is to work around an
@@ -138,10 +141,11 @@ def _proxify(file_name, f):
                     # will be able to get rid of this when mitmproxy
                     # 0.11 is released.
                     #
-                    cmd += ["--no-upstream-cert", "--no-pop",
-                            "--rheader", "X-BTW-Sequence",
-                            "-s", os.path.join(dirname, "proxy_rewrite.py"),
-                            "-S", fname]
+                    cmd += [
+                        # Don't check upstream certs.
+                        "--no-upstream-cert",
+                        # File to read from.
+                        "-S", fname]
 
                 proxy = subprocess.Popen(cmd)
                 if proxy.poll():
