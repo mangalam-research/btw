@@ -967,6 +967,19 @@ ran into the issues mentioned above or ran smack dab into Django
 bugs. (Like `this one
 <https://code.djangoproject.com/ticket/20600>`__.)
 
+Why not pyzotero?
+=================
+
+There is a library called pyzotero which would give access to the
+Zotero v3 API "for free". Why are we not using it? Because it is under
+GPL 3.0. BTW would have to be released under this license to be
+compatible. We've selected the MPL 2.0 a long time ago and have no
+intention to change.
+
+(pyzotero was investigated early in the BTW project but it was at a
+very early stage of development then and did not seem to be worth it,
+at that time.)
+
 Zotero and Caching
 ==================
 
