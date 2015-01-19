@@ -377,9 +377,12 @@ See below for specific upgrade cases.
 0.7.1 to 0.8.0(???)
 -------------------
 
-1. Issue the management command:
+1. Issue the management command::
 
-   $ ./manage.py btwdb mark_all_bibliographical_items_stale
+     $ ./manage.py btwdb mark_all_bibliographical_items_stale
+
+2. Convert your settings to use the ``s`` object. See `Setting the
+   Settings`_.
 
 0.0.2 to 0.1.0
 --------------
@@ -656,6 +659,36 @@ will fail.
  Environment and Settings
 ==========================
 
+Setting the Settings
+====================
+
+The Django method of setting the various settings is to set a global
+in ``settings.py``, which is then used by Django's machinery. However,
+this method is very inflexible in an environment where settings can be
+set from multiple different files. Instead of using this method as-is,
+BTW sets its settings on a singleton named ``s`` that is created by
+``lib.settings`` **every file that wants to modify settings must
+import this singleton and modify the settings by setting attributes of
+the appropriate names on this object**. Doing this allows more
+flexibility in the order in which settings are set and how they may
+depend on one another. For instance ``test_settings.py`` sets
+``s.BTW_TESTING`` *first* and then loads ``settings.py``. This allows
+other settings to be set differently depending on whether or not
+``s.BTW_TESTING`` is true.
+
+It would be possible have the desired behavior by using ``exec ... in
+globals()`` but this method of doing things has downsides, like for
+instance having the linter complain about unknown variables because
+globals used in a file come from another file. It also prevents
+keeping variables truly private. For instance ``test_settings``
+currently has a ``__SILENT`` variable which would not be private if
+``exec ... in globals()`` were used. The variable would be visible to
+the executed file. It would be possible to write code to compensate
+but each new private variable would require an exception.
+
+Where Settings are Found
+========================
+
 Structure of the settings tree in BTW:
 
 * ``settings/settings.py``  BTW-wide settings
@@ -666,9 +699,7 @@ Structure of the settings tree in BTW:
 
 The ``settings.py`` file inspects INSTALLED_APPS searching for local
 applications and passes to ``exec`` all the corresponding ``<app>.py``
-files it finds. Note that because these files are executed in
-``settings.py``'s context, they can read and set variable that
-``settings.py`` sets.
+files it finds.
 
 To allow for changing configurations easily BTW gets an environment
 name from the following sources:

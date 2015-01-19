@@ -1,3 +1,3 @@
-import _env
+from lib.settings import s
 
-LEXICOGRAPHY_LOCK_EXPIRY = 48  # Locks expire after 48 hours
+s.LEXICOGRAPHY_LOCK_EXPIRY = 48  # Locks expire after 48 hours

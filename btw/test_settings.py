@@ -1,50 +1,64 @@
 # pylint: disable=W0401,W0614
-from .settings import *
+
+import os
+from lib.settings import s
+
+#
+# These settings must be set before anything else is loaded because
+# other settings may be computed on the base of these.
+#
+s.BTW_TESTING = True
+
+# We use the environment variable JENKINS_HOME to detect whether we
+# are runnning in a Jenkins environment. (Seems safer than some of the
+# other environment variables that Jenkins exports.) We use 'BUILDBOT'
+# to know whether we are operating in a buildbot environment.
+s.BTW_BUILD_ENV = os.environ.get('JENKINS_HOME', None) or \
+    os.environ.get('BUILDBOT', None)
+
+#
+# Trigger the loading of the regular settings so that they modify s
+#
+from . import settings  # pylint: disable=unused-import
 
 #
 # These must be off for WebTest based tests to run without issue.
 #
 
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+s.SESSION_COOKIE_SECURE = False
+s.CSRF_COOKIE_SECURE = False
 
 #
 # This must be off so that Selenium tests that run in IE can
 # manipulate the session cookie.
 #
 
-SESSION_COOKIE_HTTPONLY = False
+s.SESSION_COOKIE_HTTPONLY = False
 
+# Yes, we mean to have this be private.
 __SILENT = True
 
 if __SILENT:
-    LOGGING_CONFIG = False
+    s.LOGGING_CONFIG = False
 else:
-    loggers = LOGGING['loggers']
+    loggers = s.LOGGING['loggers']
     loggers[''] = {
         'handlers': ['console'],
         'level': 'NOTSET',
         'propagate': True,
     }
 
-if BTW_SELENIUM_TESTS:
-    for name in DATABASES.keys():
-        db = DATABASES[name]
+if s.BTW_SELENIUM_TESTS:
+    for name in s.DATABASES.keys():
+        db = s.DATABASES[name]
         db['NAME'] = 'test_' + db['NAME']
         if 'TEST_MIRROR' in db:
             raise ValueError("TEST_MIRROR already set for " + name)
         db['TEST_MIRROR'] = name
 
-# We use the environment variable JENKINS_HOME to detect whether we
-# are runnning in a Jenkins environment. (Seems safer than some of the
-# other environment variables that Jenkins exports.) We use 'BUILDBOT'
-# to know whether we are operating in a buildbot environment.
-build_env = os.environ.get('JENKINS_HOME', None) or \
-    os.environ.get('BUILDBOT', None)
-
-if build_env:
+if s.BTW_BUILD_ENV:
     builder = os.environ['BUILDER']
-    for db in DATABASES.itervalues():
+    for db in s.DATABASES.itervalues():
         test_name = 'test_' + db['NAME'] + '_' + builder
         # If we are using TEST_MIRROR then TEST_NAME is not used and thus
         # NAME itself must be altered.
@@ -53,5 +67,4 @@ if build_env:
         else:
             db['NAME'] = test_name
 
-
-BTW_TESTING = True
+globals().update(s.as_dict())

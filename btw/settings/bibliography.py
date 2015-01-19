@@ -1,2 +1,4 @@
+from lib.settings import s
+
 # All sensitive so init with empty dir.
-ZOTERO_SETTINGS = {}
+s.ZOTERO_SETTINGS = {}
