@@ -361,7 +361,8 @@ def step_impl(context, action):
             var column = arguments[0];
             var button_index = arguments[1];
             return jQuery("table#bibliography-table>thead>tr>th")
-                       .eq(column).children("button").eq(button_index)[0];
+                       .eq(column).children("div.btn")
+                       .eq(button_index)[0];
             """, column, 0 if action == "closes" else 1)
             button.click()
             return True

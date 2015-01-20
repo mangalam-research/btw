@@ -1,6 +1,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import selenium.webdriver.support.expected_conditions as EC
 
 import wedutil
 from behave import step_matcher
@@ -13,6 +13,43 @@ WHICH_TO_TITLE = {
     "without": "Title 1"
 }
 
+def __get_first_ph_in_etymology(driver):
+    return driver.execute_script("""
+    var $ = jQuery;
+    var etym = $(".head:contains('[etymology]')")[0];
+    var $phs = $("._placeholder");
+    var found;
+    for(var i = 0, limit = $phs.length; !found && i < limit; ++i) {
+        var ph = $phs[i];
+        if (ph.compareDocumentPosition(etym) & 2) {
+            found = ph;
+            found.scrollIntoView();
+        }
+    }
+
+    return found;
+    """)
+
+
+@when(ur"^the user opens the modal dialog to insert a reference$")
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    # Obtain the first placeholder after "[etymology]".
+    ph = __get_first_ph_in_etymology(driver)
+
+    wedutil.click_until_caret_in(util, ph)
+    util.ctrl_equivalent_x("/")
+
+    context.execute_steps(u"""
+    When the user clicks the context menu option "Insert a new \
+bibliographical reference"
+    """)
+
+    util.wait(
+        EC.visibility_of_element_located((By.ID,
+                                          "bibliography-table")))
 
 @when(ur'^the user adds a reference to an item$')
 @when(ur'^the user adds a reference to an item'
@@ -35,21 +72,7 @@ def step_impl(context, which=None):
 
     if order is None:
         # Obtain the first placeholder after "[etymology]".
-        ph = driver.execute_script("""
-        var $ = jQuery;
-        var etym = $(".head:contains('[etymology]')")[0];
-        var $phs = $("._placeholder");
-        var found;
-        for(var i = 0, limit = $phs.length; !found && i < limit; ++i) {
-            var ph = $phs[i];
-            if (ph.compareDocumentPosition(etym) & 2) {
-                found = ph;
-                found.scrollIntoView();
-            }
-        }
-
-        return found;
-        """)
+        ph = __get_first_ph_in_etymology(driver)
 
         wedutil.click_until_caret_in(util, ph)
         util.ctrl_equivalent_x("/")

@@ -1,47 +1,60 @@
 * ?.?.?:
 
-  - Display and editing: use the purple to color btw:antonym-instance.
+  + New features:
 
-  - Display: foreign words are no longer italicized when displaying articles.
+    - Display and editing: use the purple to color
+      btw:antonym-instance.
 
-  - Display: Added a vertical space between a citation and its translation.
+    - Display: foreign words are no longer italicized when displaying
+      articles.
 
-  - Infrastructure: When the Zotero server is not accessible at all
-    due to a complete network outage, handles this situation
-    gracefully by fetching the bibliographical entries from cache.
+    - Display: Added a vertical space between a citation and its
+      translation.
 
-  - Display: removed the "SENSE" labels from the sense headings. Added
-    a period after the letter.
+    - Display: removed the "SENSE" labels from the sense
+      headings. Added a period after the letter.
 
-  - Display: semantic fields sections are now collapsible.
+    - Display: semantic fields sections are now collapsible.
 
-  - Display: the contrastive sections are now collapsible. Same for their
-    immediate subsections.
+    - Display: the contrastive sections are now collapsible. Same
+      for their immediate subsections.
 
-  - Display: clicking a hyperlink that happens to target a destination inside
-    a collapsed section will automatically expand the section.
+    - Display: clicking a hyperlink that happens to target a
+      destination inside a collapsed section will automatically
+      expand the section.
 
-  - Display: reloading an article while a specific element is targeted
-    will automatically expand the sections necessary to view the
-    article.
+    - Display: reloading an article while a specific element is
+      targeted will automatically expand the sections necessary to
+      view the article.
 
-  - Display: added a toolbar that contains the edit button (which appears only
-    for authors), plus a button to expand all sections and a button to
-    collapse all sections.
+    - Display: added a toolbar that contains the edit button (which
+      appears only for authors), plus a button to expand all sections
+      and a button to collapse all sections.
 
-  - Display: bibliographical references are now hyperlinked.
+    - Display: bibliographical references are now hyperlinked.
 
-  - Display: the semantic fields that are combined to form the list of
-    all semantic fields for a section are now headed with "all
-    semantic fields in this sense".
+    - Display: the semantic fields that are combined to form the list
+      of all semantic fields for a section are now headed with "all
+      semantic fields in this sense".
 
-  - Display: headings that are not otherwise decorated now get bullets.
+    - Display: headings that are not otherwise decorated now get
+      bullets.
 
-  - Display: the "other citations" section now appear in sections
-    named "more citations".
+    - Display: the "other citations" section now appear in sections
+      named "more citations".
 
-  - Display: the semantic fields are now combined according to
-  specifications.
+    - Display: the semantic fields are now combined according to
+      specifications.
 
-  - Display: a bug that prevented the display of primary source
-    references has been fixed.
+  + Bug fixes:
+
+    - Display: a bug that prevented the display of primary source
+      references has been fixed.
+
+    - Infrastructure: When the Zotero server is not accessible at all
+      due to a complete network outage, handles this situation
+      gracefully by fetching the bibliographical entries from cache.
+
+    - Editing: in the modal dialog created to insert bibliographical
+      references, clicking the buttons to show or hide all primary
+      sources would take the user out of editing. This has been fixed.

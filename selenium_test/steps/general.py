@@ -2,17 +2,14 @@
 import requests
 import re
 import os
-import urllib
 # pylint: disable=E0611
-from nose.tools import assert_equal, assert_raises, \
-    assert_true
+from nose.tools import assert_equal, assert_true
 
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from behave import then, when, given, Given, \
     step_matcher  # pylint: disable=E0611
-from selenium.common.exceptions import NoSuchElementException
 
 import lexicography.tests.funcs as funcs
 import wedutil
@@ -469,3 +466,11 @@ def step_impl(context):
     header = context.util.find_element((By.CSS_SELECTOR,
                                         ".modal.in .modal-header h3"))
     assert_equal(header.text, "Edited by another!")
+
+@then('^the editor is present$')
+def step_impl(context):
+    # This is deliberately brief. This should be used on a page where
+    # some work has already been done with the editor. We're just
+    # checking that we are still there.
+    assert_true(context.driver.execute_script(
+        "return window.wed_editor !== undefined"))
