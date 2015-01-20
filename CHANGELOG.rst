@@ -39,3 +39,9 @@
 
   - Display: the "other citations" section now appear in sections
     named "more citations".
+
+  - Display: the semantic fields are now combined according to
+  specifications.
+
+  - Display: a bug that prevented the display of primary source
+    references has been fixed.
