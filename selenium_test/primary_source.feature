@@ -150,3 +150,17 @@ Scenario: the user can correct an error in the form
   And the modal dialog shows the error "This field is required." for the reference title field
   When the user submits the dialog with reference title of "ZZZ" and a genre of "Literary Text"
   Then row 0 shows there is 1 primary source
+
+Scenario: a user getting a search hit on a secondary source will see the associated primary sources
+  Given that the items are sorted by ascending creators
+  When the user clicks on the button to add a primary source of row 0
+  When the user submits the dialog with reference title of "AAAA" and a genre of "Literary Text"
+  Then the modal dialog to add a primary source disappears
+  And row 0 shows there is 1 primary source
+  And row 0 shows a primary source in subtable row 0 with reference title of "AAAA" and a genre of "Literary Text"
+  When the user closes all rows
+  And the user clicks on the filtering field
+  And the user types "Abelard"
+  Then there is 1 row
+  And row 0 shows there is 1 primary source
+  And row 0 shows a primary source in subtable row 0 with reference title of "AAAA" and a genre of "Literary Text"

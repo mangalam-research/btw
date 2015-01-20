@@ -110,6 +110,14 @@ def targets_to_dicts(targets):
     return ret
 
 
+def _narrow_to_matching_items(qs, text, primary_sources=True):
+    q = Q(creators__icontains=text) | Q(title__icontains=text)
+
+    if primary_sources:
+        q = q | Q(primary_sources__reference_title__icontains=text)
+
+    return qs.filter(q).distinct()
+
 class ItemTable(BaseDatatableView):
     columns = ['url', 'primary_sources_url', 'primary_sources',
                'new_primary_source_url', 'creators', 'title', 'date']
@@ -129,11 +137,7 @@ class ItemTable(BaseDatatableView):
     def filter_queryset(self, qs):
         sSearch = self.request.GET.get('sSearch', None)
         if sSearch:
-            qs = qs.filter(
-                Q(creators__icontains=sSearch) |
-                Q(title__icontains=sSearch) |
-                Q(primary_sources__reference_title__icontains=sSearch)) \
-                .distinct()
+            qs = _narrow_to_matching_items(qs, sSearch)
 
         return qs
 
@@ -190,7 +194,12 @@ class PrimarySourceTable(BaseDatatableView):
 
     def filter_queryset(self, qs):
         sSearch = self.request.GET.get('sSearch', None)
-        if sSearch:
+        # We want to narrow the list *only* if the search
+        # does not match our parent
+        if sSearch and \
+            not _narrow_to_matching_items(
+                Item.objects.filter(pk=self.item.pk), sSearch,
+                False).count():
             qs = qs.filter(Q(reference_title__icontains=sSearch) |
                            Q(genre__icontains=sSearch))
 

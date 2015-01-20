@@ -2,7 +2,7 @@
 
   + New features:
 
-    - Display and editing: use the purple to color
+    - Display/Editing: use the purple to color
       btw:antonym-instance.
 
     - Display: foreign words are no longer italicized when displaying
@@ -46,13 +46,24 @@
     - Display: the semantic fields are now combined according to
       specifications.
 
+    - Editing/Bibliography: previously, the filtering of
+      bibliographical entries would perform a match on secondary
+      sources and primary sources independently. So it was possible to
+      have a match on a secondary source and have none of its
+      associated primary sources match. Showing the primary sources of
+      such a secondary source, after filtering, would show no primary
+      source. It turns out this does not mesh well with the way the
+      authors work, so the search is now changed so that if a
+      secondary source matches, then all of its primary sources are
+      also considered to match.
+
   + Bug fixes:
 
     - Display: a bug that prevented the display of primary source
       references has been fixed.
 
     - Infrastructure: When the Zotero server is not accessible at all
-      due to a complete network outage, handles this situation
+      due to a complete network outage, handle this situation
       gracefully by fetching the bibliographical entries from cache.
 
     - Editing: in the modal dialog created to insert bibliographical
