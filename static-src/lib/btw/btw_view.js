@@ -780,7 +780,11 @@ Viewer.prototype.refDecorator = function (root, el) {
         // We also want a hyperlink into the Zotero library.
         a = el.ownerDocument.createElement("a");
         a.className = "a _phantom_wrap";
-        a.href = data.zotero_url;
+        // When the item is a secondary source, ``zotero_url`` is at the
+        // top level. If it is a secondary source, ``zotero_url`` is
+        // inside the ``item`` field.
+        a.href = (data.zotero_url ?
+                  data.zotero_url : data.item.zotero_url);
         a.setAttribute("target", "_blank");
         child = el.firstChild;
         el.appendChild(a);

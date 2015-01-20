@@ -73,22 +73,6 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
     return HttpResponse(template.render(context))
 
 
-def _item_to_dict(item):
-    """
-    Converts a database item to a dictionary of values. The set of
-    values included in the dictionary is limited to what we want to
-    expose from the database.
-
-    We expose ``pk``, ``date``, ``title``, and ``creators``.
-
-    :param item: The item.
-    :type item: :class:`models.Item`
-    :returns: The dictionary of values.
-    """
-    return {k: getattr(item, k)
-            for k in ("pk", "date", "title", "creators", "zotero_url")}
-
-
 @require_GET
 def items(request, pk):
     if not request.is_ajax():
@@ -99,7 +83,7 @@ def items(request, pk):
         return HttpResponseBadRequest("unknown content type: " + fmt)
     # This narrows down the set of fields we are sending back to a
     # limited set.
-    return HttpResponse(json.dumps(_item_to_dict(Item.objects.get(pk=pk))),
+    return HttpResponse(json.dumps(Item.objects.get(pk=pk).as_dict()),
                         content_type="application/json")
 
 
@@ -109,10 +93,21 @@ def targets_to_dicts(targets):
     :type target: An iteratable structure.
     :returns: A dictionary that maps targets to a dictionary of values.
     """
-    return dict([(target,
-                  _item_to_dict(Item.objects.get(pk=resolve(target)
-                                                 .kwargs['pk'])))
-                 for target in targets])
+    ret = {}
+    for target in targets:
+        resolved = resolve(target)
+        try:
+            class_ = {
+                "bibliography_primary_sources": PrimarySource,
+                "bibliography_items": Item
+            }[resolved.url_name]
+        except KeyError:
+            raise ValueError("cannot determine where this target "
+                             "comes from: " + target)
+        ret[target] = class_.objects.get(pk=resolved.kwargs['pk']) \
+                                    .as_dict()
+
+    return ret
 
 
 class ItemTable(BaseDatatableView):
@@ -220,10 +215,7 @@ def primary_sources(request, pk):
             return render(request, 'bibliography/add_primary_source.html',
                           {'form': form})
         elif fmt == "application/json":
-            ret = {k: getattr(instance, k)
-                   for k in ("reference_title", "genre", "pk")}
-            ret["item"] = _item_to_dict(instance.item)
-            return HttpResponse(json.dumps(ret),
+            return HttpResponse(json.dumps(instance.as_dict()),
                                 content_type="application/json")
     elif request.method == "PUT":
         ctype = request.META["CONTENT_TYPE"]

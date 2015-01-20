@@ -267,6 +267,21 @@ class Item(models.Model):
 
         return item["links"]["alternate"]["href"]
 
+    def as_dict(self):
+        """
+        Converts a database item to a dictionary of values. The set of
+        values included in the dictionary is limited to what we want to
+        expose from the database.
+
+        We expose ``pk``, ``date``, ``title``, ``creators``, and
+        ``zotero_url``.
+
+        :returns: The dictionary of values.
+        """
+        return {k: getattr(self, k)
+                for k in ("pk", "date", "title", "creators",
+                          "zotero_url")}
+
 class PrimarySource(models.Model):
     SUTRA = "SU"
     SHASTRA = "SH"
@@ -317,3 +332,18 @@ class PrimarySource(models.Model):
     @property
     def url(self):
         return reverse('bibliography_primary_sources', args=(self.pk, ))
+
+    def as_dict(self):
+        """
+        Converts a primary source to a dictionary of values. The set of
+        values included in the dictionary is limited to what we want
+        to expose from the database.
+
+        We expose ``pk``, ``reference_title``, ``genre`` and ``item``.
+
+        :returns: The dictionary of values.
+        """
+        ret = {k: getattr(self, k)
+               for k in ("reference_title", "genre", "pk")}
+        ret["item"] = self.item.as_dict()
+        return ret

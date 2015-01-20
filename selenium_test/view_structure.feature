@@ -29,6 +29,7 @@ Scenario: a valid document has a correct structure
   And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake AkośBh ad VIII,9, 440 4-12 quoted above in A, foo." points to the example with the citation that starts with "adhyātmasaṃprasādo"
   And the example hyperlink with label "See Zeno (Name 1 for Title 3), Date 3, XXX fake Vimalakīrti 116 quoted below in B, aprasanna." points to the example with the citation that starts with "aprasannānāṃ"
   And the bibliography hyperlink with label "Zeno (Name 1 for Title 3), Date 3" points to "https://www.foo3.com"
+  And the bibliography hyperlink with label "Foo" points to "https://www.foo3.com"
   And the first collapsible section titled "all semantic fields in the citations of this sense" contains
     """
     01.02.11; 01.04.04; 01.04.08; 01.05.05.09.01; 01.06.07.03; 02.02.18; 02.02.19; 03.05.01

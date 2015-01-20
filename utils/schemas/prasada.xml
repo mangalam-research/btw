@@ -92,7 +92,7 @@
               <btw:sf>01.05.05.09.01</btw:sf>
               <btw:sf>03.05.01</btw:sf>
             </btw:semantic-fields>
-            <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">sarvāvavādakaśreṣṭhaṁ śakrabrahmeśānayamavarūṇakuveravā[va]sava-somādityādibhir apyapratihataśāsanaṁ kandarpadarpāpamardanaśūraṁ mahātmānam atimaharddhikaṁ sthaviropaguptamārabhya kāñcideva vibudhajanamanaḥ<btw:lemma-instance>prasāda</btw:lemma-instance>kārīṁ dharmyāṁ kathāṁ samanusmariṣyāmaḥ|</foreign></btw:cit>
+            <btw:cit><ref target="/bibliography/primary-sources/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">sarvāvavādakaśreṣṭhaṁ śakrabrahmeśānayamavarūṇakuveravā[va]sava-somādityādibhir apyapratihataśāsanaṁ kandarpadarpāpamardanaśūraṁ mahātmānam atimaharddhikaṁ sthaviropaguptamārabhya kāñcideva vibudhajanamanaḥ<btw:lemma-instance>prasāda</btw:lemma-instance>kārīṁ dharmyāṁ kathāṁ samanusmariṣyāmaḥ|</foreign></btw:cit>
             <btw:tr>We shall recall a docrinal tale capable of <btw:lemma-instance>brightnening</btw:lemma-instance> the mind of gods and men. It starts with Upagupta, the best of all preachers, whose teaching was irresistible (<foreign xml:lang="sa-Latn">apratihata</foreign>) even for Śākra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, the Ādityas and the other gods, an eminent person, a hero capable of crushing the Kandarpa’s pride, endowed with enourmous yogic powers.</btw:tr>
           </btw:example>
           <btw:example>
