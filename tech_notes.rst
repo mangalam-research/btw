@@ -47,7 +47,7 @@ adapt the instructions so as to not use virtualenv.
 
 1. Install necessary packages::
 
-    $ apt-get install uwsgi postgresql-9.1 postgresqlgit python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc
+    $ apt-get install uwsgi postgresql-9.1 postgresqlgit python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc redis-server
 
    We need the following packages from backports::
 
@@ -240,9 +240,23 @@ Answer all questions negatively. Create a database::
    from the settings, and a correct domain name and display name. In
    SQL, the command to do this would be something like::
 
-    => update django_site set domain = '<name>', name='BTW' where id=<id>;
+     => update django_site set domain = '<name>', name='BTW' where id=<id>;
 
-8. When deploying make sure the following Django settings are set as
+Redis
+-----
+
+1. Install Debian's ``redis-server`` package.
+
+2. Generate a password for redis. Edit ``/etc/redis/redis.conf`` to
+   set ``requirepass`` to the password.
+
+3. Edit the local BTW configuration so that redis connections use the
+   password.
+
+Settings
+--------
+
+1. When deploying make sure the following Django settings are set as
    follows::
 
     SESSION_COOKIE_SECURE = True
@@ -250,17 +264,17 @@ Answer all questions negatively. Create a database::
 
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
-9. Make sure that the ``DEFAULT_FROM_EMAIL`` Django setting is set to
+2. Make sure that the ``DEFAULT_FROM_EMAIL`` Django setting is set to
    the value you want to use as the ``From:`` field of emails sent for
    invitations to register to the site. Same with the ``SERVER_EMAIL``
    field. Note that they are probably not going to be the same value.
 
-10. Make sure that the ``ADMINS`` Django setting is set properly.
+3. Make sure that the ``ADMINS`` Django setting is set properly.
 
-11. Make sure that the ``BTW_WED_LOGGING_PATH`` and that any custom
+4. Make sure that the ``BTW_WED_LOGGING_PATH`` and that any custom
     logging is done in ``/var/log/`` rather than in ``/srv``.
 
-12. The file structure is::
+5. The file structure is::
 
     btw_env      The virtualenv environment created earlier.
     btw_repo     Possible repository you use if you are deploying experimental code.
@@ -271,7 +285,7 @@ Answer all questions negatively. Create a database::
    So you must ensure that ``STATIC_ROOT`` and ``MEDIA_ROOT`` are set
    to point to these directories which are **above** ``TOPDIR``.
 
-13. Make sure the following environment variables are set as follows
+6. Make sure the following environment variables are set as follows
     in the uwsgi configuration::
 
     HTTPS=on
@@ -383,6 +397,8 @@ See below for specific upgrade cases.
 
 2. Convert your settings to use the ``s`` object. See `Setting the
    Settings`_.
+
+3. Move to Redis for the session cache and the Zotero cache.
 
 0.0.2 to 0.1.0
 --------------
