@@ -402,7 +402,7 @@ See below for specific upgrade cases.
 ~~~~~~~~~~~~~~~~~~~
 
 1. Update the site configuration to configure the caches named
-   `session` and `page`.
+   `session`, `page` and `article_display`.
 
 2. Force an update of the documentation so that ``tei.css`` and
    ``tei-print.css`` are loaded from a local copy. You must::
@@ -997,6 +997,22 @@ come to mind:
   ``django-reversion`` would be able to handle these semantics
   neatly. (Note that it is *possible* ``django-reversion`` could do
   it, but it would take a significant time investment to find out.)
+
+Version Control in Caches
+=========================
+
+Django presents a system by which keys have a version number
+associated with them. But BTW does not use it. Why?
+
+The version system that Django provides does not lend itself to the
+usage pattern of BTW. BTW typically wants to get **whatever version of
+the data is available**. What Django provides does not do this simply
+because there is no method for "give me a key with any version". You
+have to first search for the key with the current version. If not
+found, then search for older keys. This means multiple accesses to the
+cache. BTW instead puts the version information in the data stored
+with a key and gets whatever it is going to get in one operation and
+then acts depending on the version found.
 
 Denormalized Data
 =================

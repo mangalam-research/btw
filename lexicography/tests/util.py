@@ -4,13 +4,17 @@
 
 """
 import logging
+from contextlib import contextmanager
 from StringIO import StringIO
 
+from django.test.client import Client
+from django.core.urlresolvers import reverse
 import lxml.etree
 from pebble import process
 
 from .. import xml
 from lib import util
+from ..models import Entry
 
 def setup_logger_for_StringIO(logger):
     """
@@ -31,6 +35,28 @@ outputs to a :class:`StringIO` object.
     handler = logging.StreamHandler(stream)
     logger.addHandler(handler)
     return stream, handler
+
+@contextmanager
+def WithStringIO(logger):
+    """
+Add a :class:`logging.StreamHandler` to the logger so that it
+outputs to a :class:`StringIO` object.
+
+:param logger: The logger to manipulate.
+
+:type logger: :class:`str` or :class:`logging.Logger`.
+
+:return: The StringIO object and the handler that were created.
+
+:rtype: (:class:`StringIO`, :class:`logging.StreamHandler`)
+"""
+    if type(logger) is str:
+        logger = logging.getLogger(logger)
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    logger.addHandler(handler)
+    yield stream, handler
+    logger.removeHandler(handler)
 
 
 def parse_response_to_wed(json_response):
@@ -143,3 +169,40 @@ def get_valid_document_data():
     return data
 
 get_valid_document_data.data = None
+
+def create_valid_article():
+    data = get_valid_document_data()
+
+    now = util.utcnow()
+
+    client = Client()
+    add_raw_url = reverse("admin:lexicography_entry_rawnew")
+    assert client.login(username='foo', password='foo')
+    response = client.post(add_raw_url, {"data": data})
+    assert response.status_code == 302
+    return Entry.objects.get(latest__datetime__gte=now)
+def extract_inter_article_links(tree):
+    """
+    Extracts all the inter-article links from the XML tree of an
+    article. This function will raise an error if the same term gets
+    different links. However, it will not detect a term which is
+    linked in one place but not another.
+
+    :param xml: The XML tree from which to extract links.
+    :type xml: An ``lxml`` tree.
+    :returns: The links.
+    :rtype: :class:`dict` with the keys being the lemmas for which
+            links are created and the values being the values of the
+            links.
+    :raises ValueError: If the links are inconsistent.
+    """
+    refs = tree.xpath(
+        "//*[self::btw:antonym or self::btw:cognate "
+        "or self::btw:conceptual-proximate]/btw:term/tei:ref | "
+        "/btw:entry/btw:overview/btw:definition/tei:p/"
+        "tei:foreign[@xml:lang='sa-Latn']/tei:ref",
+        namespaces={
+            "btw":
+            "http://mangalamresearch.org/ns/btw-storage",
+            "tei": "http://www.tei-c.org/ns/1.0",
+        })

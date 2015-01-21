@@ -12,8 +12,10 @@
 require(['btw/btw_view'], function(Viewer) {
   var wed_document = document.getElementsByClassName("wed-document")[0];
   var data = document.getElementById("wed-data").textContent;
-  // Purposely leak it for testing.
-  window.btw_viewer = new Viewer(wed_document, "{{edit_url}}", data,
+
+  // Purposely leak it.
+  window.btw_viewer = new Viewer(wed_document, "{{edit_url}}",
+                                 "{{ fetch_url }}", data,
              {% autoescape off %}{{ bibl_data }}{% endautoescape %});
 });
 </script>
@@ -21,6 +23,9 @@ require(['btw/btw_view'], function(Viewer) {
 {% block content %}
 <div class="wed-frame row">
   <div class="wed-document col-lg-9">
+    <div class="alert alert-info loading" style="display: none">
+      Loading the document... <i class="fa fa-spinner fa-spin"></i>
+    </div>
   </div>
   <div class="col-lg-3">
     <nav id="btw-article-affix" class="well">

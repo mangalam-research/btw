@@ -28,6 +28,12 @@ class EntryTestCase(TransactionTestCase):
         self.foo2 = user_model.objects.get(username="foo2")
         self.entry = Entry.objects.get(id=1)
 
+    def test_dependency_key(self):
+        """
+        Tests that the dependency key is properly generated.
+        """
+        self.assertEqual(self.entry.dependency_key, "abcd")
+
     def test_is_locked_returns_none(self):
         """
         Tests that Entry.is_locked returns None when the entry is not
@@ -185,9 +191,49 @@ class ChangeRecordTestCase(TransactionTestCase):
         self.valid.update(self.foo,
                           "q",
                           c,
-                          xmltree.extract_version(),
+                          "foo2",
                           ChangeRecord.CREATE,
                           ChangeRecord.MANUAL)
+
+    def test_article_display_key_unpublished(self):
+        """
+        Tests that the article display key is properly generated for an
+        unpublished change record.
+        """
+        cr = self.valid.latest
+        self.assertEqual(cr.article_display_key(),
+                         "{0}_False".format(cr.c_hash.c_hash))
+
+    def test_article_display_key_published(self):
+        """
+        Tests that the article display key is properly generated for a
+        published change record.
+        """
+        cr = self.valid.latest
+        cr.publish(self.foo)
+        self.assertEqual(cr.article_display_key(),
+                         "{0}_True".format(cr.c_hash.c_hash))
+
+    def test_article_display_key_force_published(self):
+        """
+        Tests that the article display key is properly generated for an
+        unpublished change record when the published status is forced
+        ``True``.
+        """
+        cr = self.valid.latest
+        self.assertEqual(cr.article_display_key(True),
+                         "{0}_True".format(cr.c_hash.c_hash))
+
+    def test_article_display_key_force_unpublished(self):
+        """
+        Tests that the article display key is properly generated for a
+        published change record when the published status is forced
+        ``False``.
+        """
+        cr = self.valid.latest
+        cr.publish(self.foo)
+        self.assertEqual(cr.article_display_key(False),
+                         "{0}_False".format(cr.c_hash.c_hash))
 
     def test_publish_new(self):
         """

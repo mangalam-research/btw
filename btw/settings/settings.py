@@ -47,6 +47,10 @@ s.CACHES = {
     'page': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'session'
+    },
+    'article_display': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'article_display'
     }
 }
 
@@ -292,6 +296,12 @@ s.LOGGING = {
 s.SOUTH_TESTS_MIGRATE = False
 
 
+s.CELERY_ACCEPT_CONTENT = ['json']
+s.CELERY_TASK_SERIALIZER = 'json'
+s.CELERY_RESULT_SERIALIZER = 'json'
+# We need this to be able to check workers in btwcheck
+s.CELERY_WORKER_DIRECT = True
+
 s.BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'
 s.BTW_FONTAWESOME_CSS_PATH = \
@@ -325,6 +335,7 @@ s.BTW_DEMO = False
 if not hasattr(s, "BTW_TESTING"):
     s.BTW_TESTING = False
 s.BTW_SELENIUM_TESTS = False
+
 
 exec _env.find_config("btw")  # pylint: disable=exec-used
 

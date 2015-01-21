@@ -38,6 +38,9 @@ var closest = domutil.closest;
  * meant to hold the viewed document.
  * @param {string} edit_url The url through which the document may be
  * edited.
+ * @param {string} fetch_url The url through which the document may be
+ * fetched for displaying. If set, it is a URL from which to get the
+ * XML, and ``data`` is ignored.
  * @param {string} data The document, as XML.
  * @param {string} bibl_data The bibliographical data. This is a
  * mapping of targets (i.e. the targets given to the ``ref`` tags that
@@ -46,11 +49,44 @@ var closest = domutil.closest;
  * these targets individually. This mapping must be
  * complete. Otherwise, it is an internal error.
  */
-function Viewer(root, edit_url, data, bibl_data) {
+function Viewer(root, edit_url, fetch_url, data, bibl_data) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
     var win = doc.defaultView;
+
+    this._root = root;
+    this._doc = doc;
+    this._win = win;
+    this._refmans = new btw_refmans.WholeDocumentManager();
+    this._meta = new btw_meta.Meta();
+    this._load_timeout = 30000;
+
+    this._resolver = new name_resolver.NameResolver();
+    var mappings = this._meta.getNamespaceMappings();
+    Object.keys(mappings).forEach(function (key) {
+        this._resolver.definePrefix(key, mappings[key]);
+    }.bind(this));
+
+    //
+    // We provide minimal objects that are used by some of the logic
+    // which is shared with btw_decorator.
+    //
+    this._editor = {
+        toDataNode: function (node) { return node; }
+    };
+
+    this._mode = {
+        nodesAroundEditableContents: function (el) {
+            return [null, null];
+        }
+    };
+
+    this._sense_subsense_id_manager = new id_manager.IDManager("S.");
+    this._example_id_manager = new id_manager.IDManager("E.");
+
+    this._sense_tooltip_selector =
+        "btw:english-term-list>btw:english-term";
 
     var collapse = btw_util.makeCollapsible(doc, "default",
                                             "toolbar-heading",
@@ -104,39 +140,72 @@ function Viewer(root, edit_url, data, bibl_data) {
         ev.preventDefault();
     });
 
+    // If we are passed a fetch_url, then we have to fetch the
+    // data from the site.
+    if (fetch_url) {
+        // Show the loading alert.
+        var loading = document.querySelector(".wed-document>.loading");
+        loading.style.display = '';
+        var start = Date.now();
+        var fetch = function () {
+            $.ajax({
+                url: fetch_url,
+                headers: {
+                    Accept: "application/json"
+                }
+            })
+                .done(function (data) {
+                    this.processData(data.xml, data.bibl_data);
+                }.bind(this))
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 404) {
+                        if (Date.now() - start > this._load_timeout) {
+                            this.failedLoading(
+                                loading,
+                                "The server has not sent the required " +
+                                "data within a reasonable time frame.");
+                        }
+                        else
+                            window.setTimeout(fetch, 200);
+                    }
+                    else
+                        this.failedLoading(loading);
+                }.bind(this));
+        }.bind(this);
+        fetch();
+    }
+    else
+        this.processData(data, bibl_data);
+}
+
+Viewer.prototype.failedLoading = function (loading, msg) {
+    loading.classList.remove("alert-info");
+    loading.classList.add("alert-danger");
+    loading.innerHTML = msg || "Cannot load the document.";
+    this._setCondition("done", this);
+};
+
+Viewer.prototype.processData = function (data, bibl_data) {
+    this._bibl_data = bibl_data;
+
+    var doc = this._doc;
+    var win = this._win;
+    var root = this._root;
+
+    // Clear the root.
+    root.innerHTML = '';
+
+
     var parser = new doc.defaultView.DOMParser();
     var data_doc = parser.parseFromString(data, "text/xml");
+
     root.appendChild(convert.toHTMLTree(doc, data_doc.firstChild));
 
     new dloc.DLocRoot(root);
     var gui_updater = new TreeUpdater(root);
 
-    this._doc = doc;
     this._data_doc = data_doc;
     this._gui_updater = gui_updater;
-    this._refmans = new btw_refmans.WholeDocumentManager();
-    this._meta = new btw_meta.Meta();
-    this._bibl_data = bibl_data;
-
-    this._resolver = new name_resolver.NameResolver();
-    var mappings = this._meta.getNamespaceMappings();
-    Object.keys(mappings).forEach(function (key) {
-        this._resolver.definePrefix(key, mappings[key]);
-    }.bind(this));
-
-    //
-    // We provide minimal objects that are used by some of the logic
-    // which is shared with btw_decorator.
-    //
-    this._editor = {
-        toDataNode: function (node) { return node; }
-    };
-
-    this._mode = {
-        nodesAroundEditableContents: function (el) {
-            return [null, null];
-        }
-    };
 
     var heading_map = {
         "btw:overview": "• OVERVIEW",
@@ -270,11 +339,6 @@ function Viewer(root, edit_url, data, bibl_data) {
         heading: "more citations",
         collapse: "default"
     });
-
-    this._sense_subsense_id_manager = new id_manager.IDManager("S.");
-    this._example_id_manager = new id_manager.IDManager("E.");
-
-    this._sense_tooltip_selector = "btw:english-term-list>btw:english-term";
 
     var i, limit, id;
     var senses_subsenses = root.querySelectorAll(domutil.toGUISelector(
@@ -754,11 +818,12 @@ Viewer.prototype.refDecorator = function (root, el) {
     orig_target = orig_target.trim();
 
     var bibl_prefix = "/bibliography/";
+    var entry_prefix = "/lexicography/entry/";
+    var a, child;
     if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
-        // We want to remove any possible a element before we give control
-        // to the overriden function.
-        var a = domutil.childByClass(el, 'a');
-        var child;
+        // We want to remove any possible a element before we give
+        // control to the overriden function.
+        a = domutil.childByClass(el, 'a');
         if (a) {
             child = a.firstChild;
             while (child) {
@@ -786,6 +851,30 @@ Viewer.prototype.refDecorator = function (root, el) {
         a.href = (data.zotero_url ?
                   data.zotero_url : data.item.zotero_url);
         a.setAttribute("target", "_blank");
+
+        child = el.firstChild;
+        el.appendChild(a);
+        while (child && child !== a) {
+            a.appendChild(child);
+            child = el.firstChild;
+        }
+    }
+    else if (orig_target.lastIndexOf(entry_prefix, 0) === 0) {
+        a = domutil.childByClass(el, 'a');
+        if (a) {
+            child = a.firstChild;
+            while (child) {
+                el.insertBefore(child, a);
+                child = a.firstChild;
+            }
+            el.removeChild(a);
+        }
+
+        a = el.ownerDocument.createElement("a");
+        a.className = "a _phantom_wrap";
+        a.href = orig_target;
+        a.setAttribute("target", "_blank");
+
         child = el.firstChild;
         el.appendChild(a);
         while (child && child !== a) {

@@ -193,6 +193,21 @@ def version():
 
     return describe
 
+class DirectCons(object):
+
+    def __init__(self):
+        self.map = {}
+
+    def __getitem__(self, key):
+        try:
+            return self.map[key]
+        except KeyError:
+            con = django_redis.get_redis_connection()
+            self.map[key] = con
+            return con
+
+con_by_name = DirectCons()
+
 def delete_own_keys(name):
     """
     Deletes the keys that are prefixed with the cache's prefix.
@@ -202,7 +217,28 @@ def delete_own_keys(name):
     """
     cache = get_cache(name)
     prefix = cache.key_prefix
-    con = django_redis.get_redis_connection(name)
+    con = con_by_name[name]
     keys = con.keys(prefix + ':*')
     if keys:
         con.delete(*keys)
+
+
+def add_to_set(name, key, member):
+    cache = get_cache(name)
+    con = con_by_name[name]
+    con.sadd(cache.make_key(key), member)
+
+def remove_from_set(name, key, member):
+    cache = get_cache(name)
+    con = con_by_name[name]
+    con.srem(cache.make_key(key), member)
+
+def get_set(name, key):
+    cache = get_cache(name)
+    con = con_by_name[name]
+    return con.smembers(cache.make_key(key))
+
+def get_set_union(name, iterator):
+    cache = get_cache(name)
+    con = con_by_name[name]
+    return con.sunion([cache.make_key(i) for i in iterator])

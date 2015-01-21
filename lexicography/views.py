@@ -4,6 +4,14 @@
 .. moduleauthor:: Louis-Dominique Dubeau <ldd@lddubeau.com>
 
 """
+from functools import wraps
+import os
+import datetime
+import semver
+import json
+import urllib
+import logging
+
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
@@ -22,14 +30,7 @@ from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.views.decorators.cache import never_cache
-
-from functools import wraps
-import os
-import datetime
-import semver
-import json
-import urllib
-import logging
+from django.core.cache import get_cache
 
 import lib.util as util
 from . import handles
@@ -39,8 +40,10 @@ from .locking import release_entry_lock, drop_entry_lock, \
     entry_lock_required, try_acquiring_lock
 from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
 from .forms import SaveForm
-from bibliography.views import targets_to_dicts
 from . import usermod
+from . import tasks
+
+article_display_cache = get_cache('article_display')
 
 logger = logging.getLogger("lexicography")
 
@@ -181,11 +184,12 @@ class SearchTable(BaseDatatableView):
 
 
 @require_GET
+@never_cache
 def entry_details(request, entry_id):
     """
     For random users, showing the entry will show the latest published
-    version of the entry for random users. For users who can author,
-    showing the entry will show the latest version.
+    version of the entry. For users who can author, showing the entry
+    will show the latest version.
     """
     entry = Entry.objects.get(id=entry_id)
 
@@ -200,8 +204,23 @@ def entry_details(request, entry_id):
 
 
 @require_GET
+@never_cache
 def changerecord_details(request, changerecord_id):
-    cr = ChangeRecord.objects.get(id=changerecord_id)
+    cr = ChangeRecord.objects.get(pk=changerecord_id)
+
+    if request.is_ajax():
+        published = not usermod.can_author(request.user)
+        prepared = article_display_cache.get(
+            cr.article_display_key(published))
+
+        # If there is something in the cache but it contains a `task`
+        # field, this means that a task is currently processing the
+        # article.
+        if prepared is None or 'task' in prepared:
+            raise Http404
+
+        return HttpResponse(json.dumps(prepared),
+                            content_type=JSON_TYPE)
 
     # Random users cannot view records that have not been published.
     if not usermod.can_author(request.user) and not cr.published:
@@ -235,23 +254,42 @@ def changerecord_unpublish(request, changerecord_id):
 
 def _show_changerecord(request, cr):
 
-    data = cr.c_hash.data
+    published = not usermod.can_author(request.user)
 
-    xml = XMLTree(data.encode("utf-8"))
-    targets = xml.get_bibilographical_targets()
-    bibl_data = targets_to_dicts(targets)
+    key = cr.article_display_key(published)
+    prepared = article_display_cache.get(key)
 
-    # We want an edit opton only if this record is the latest and if
+    if prepared is None or 'task' in prepared:
+        if prepared is None:
+            logger.debug("%s is missing from article_display, launching task",
+                         key)
+            tasks.prepare_changerecord_for_display.delay(cr.pk, published)
+        else:
+            logger.debug("%s is being computed by task %s",
+                         key, prepared["task"])
+
+        data = None
+        bibl_data = '{}'
+    else:
+        logger.debug("%s is present in article_display, reusing", key)
+        data = prepared["xml"]
+        bibl_data = json.dumps(prepared["bibl_data"])
+
+    # We want an edit option only if this record is the latest and if
     # the user can edit it.
     edit_url = (reverse("lexicography_entry_update", args=(cr.entry.id, ))
                 if (cr.entry.latest == cr and
                     cr.entry.is_editable_by(request.user)) else None)
+    fetch_url = '' if data is not None else \
+                reverse('lexicography_changerecord_details',
+                        args=(cr.pk, ))
 
     return render_to_response(
         'lexicography/details.html',
         {
+            'fetch_url': fetch_url,
             'data': data,
-            'bibl_data': json.dumps(bibl_data),
+            'bibl_data': bibl_data,
             'edit_url': edit_url
         },
         context_instance=RequestContext(request))

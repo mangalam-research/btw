@@ -191,6 +191,10 @@ class Entry(models.Model):
 
         return owner.pk == user.pk
 
+    @property
+    def dependency_key(self):
+        return self.lemma
+
 
 class ChangeRecord(models.Model):
 
@@ -288,6 +292,25 @@ class ChangeRecord(models.Model):
             self.entry._update_latest_published()
             return True
         return False
+
+    def article_display_key(self, published=None):
+        """
+        Retuns the key to be used in the article_display cache for this
+        ChangeRecord. The key is built from the publication status of
+        the record (which may be overriden) and from the hash of the
+        Chunk corresponding to the record. If it so happens that two
+        ChangeRecords share the same Chunk (which may happen) then
+        they will share the same pair of possible keys (published and
+        unpublished), which is what we want.
+
+        :param published: Override the publication status of this
+                          record for the sake of computing the key.
+        :type published: :class:`bool`
+        """
+        if published is None:
+            published = self.published
+
+        return "{0}_{1}".format(self.c_hash.c_hash, published)
 
     class Meta(object):
         unique_together = (("entry", "datetime", "ctype"), )
