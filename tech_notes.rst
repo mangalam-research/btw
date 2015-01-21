@@ -388,8 +388,8 @@ Generally:
 
 See below for specific upgrade cases.
 
-0.7.1 to 0.8.0(???)
--------------------
+0.7.x to 0.8.0
+--------------
 
 1. Issue the management command::
 
@@ -398,7 +398,12 @@ See below for specific upgrade cases.
 2. Convert your settings to use the ``s`` object. See `Setting the
    Settings`_.
 
-3. Move to Redis for the session cache and the Zotero cache.
+3. Install django-redis in the virtualenv for btw.
+
+4. Move to Redis for the session cache (the default cache normally set
+   in the ``btw_<env>.py`` file and the Zotero cache (the cache named
+   ``"bibliography"``, which is normally set in the
+   ``bibliography_<env>.py`` settings file).
 
 0.0.2 to 0.1.0
 --------------
