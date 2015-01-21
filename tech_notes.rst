@@ -7,7 +7,7 @@
   BTW2013_ldd_Reply".
 
 * Support for Paul Hackett's AIBS API. See email from Jack circa
-2013-06-09.
+  2013-06-09.
 
 * Determine how to use X-Zotero-Write-Token. What constitutes a *same*
   transaction?
@@ -124,16 +124,16 @@ Deploying Experimental Code
 ---------------------------
 
 If you are deploying some sort of experimental version and you do not
-want to push to a public server you can do the following::
+want to push to a public server you can do the following:
 
 1. Create a repository on the site. You need this repository because
    when you push to it it will be populated with repository files
    rather than a working tree::
 
-    $ cd /srv/www/<site>
-    $ mkdir btw_repo
-    $ cd btw_repo
-    $ git init --bare
+     $ cd /srv/www/<site>
+     $ mkdir btw_repo
+     $ cd btw_repo
+     $ git init --bare
 
 2. Add your public key into the ``~/.ssh/authorized_keys`` of the project
    account.
@@ -272,7 +272,7 @@ Settings
 3. Make sure that the ``ADMINS`` Django setting is set properly.
 
 4. Make sure that the ``BTW_WED_LOGGING_PATH`` and that any custom
-    logging is done in ``/var/log/`` rather than in ``/srv``.
+   logging is done in ``/var/log/`` rather than in ``/srv``.
 
 5. The file structure is::
 
@@ -286,10 +286,10 @@ Settings
    to point to these directories which are **above** ``TOPDIR``.
 
 6. Make sure the following environment variables are set as follows
-    in the uwsgi configuration::
+   in the uwsgi configuration::
 
-    HTTPS=on
-    wsgi.url_scheme=https
+     HTTPS=on
+     wsgi.url_scheme=https
 
 Finalizing
 ----------
@@ -362,10 +362,10 @@ Upgrade Proper
 
 Generally:
 
-1. Make sure all your changes are pushed to the repository.
-
-2. Make sure you have tagged the current release with ``git tag
+1. Make sure you have tagged the current release with ``git tag
    v... -a`` The ``-a`` is important to create an annotated tag.
+
+2. Make sure all your changes are pushed to the repository.
 
 3. Make sure you have a current backup of the database.
 
@@ -376,11 +376,15 @@ Generally:
     $ git describe
     [Make sure the description shows what you expect.]
     $ ../btw_env/bin/activate
+    $ pip install -r requirements.txt
     $ ./manage.py syncdb
     $ ./manage.py migrate
     $ npm outdated
     [Upgrade anything that needs upgrading.]
     $ make
+    $ ./manage.py test
+    [The Zotero tests will necessarily fail because the server is set
+     to connect to the production database.]
 
 5. Reload uwsgi::
 
@@ -389,7 +393,7 @@ Generally:
 See below for specific upgrade cases.
 
 0.7.x to 0.8.0
---------------
+~~~~~~~~~~~~~~
 
 1. Issue the management command::
 
@@ -406,12 +410,28 @@ See below for specific upgrade cases.
    ``bibliography_<env>.py`` settings file).
 
 0.0.2 to 0.1.0
---------------
+~~~~~~~~~~~~~~
 
 1. Delete the database table ``biblliography_item``. This is okay
    because the BTW software has not yet been used in production.
 
 2. Perform the general steps.
+
+Notes from Actual Upgrades
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- 0.7.1 to 0.8.0: The upgrade window was scheduled for 2015/01/21 at
+  8:00-9:00 EST. I began preparing at around 7:30 EST because a few of
+  the upgrade steps (installing new packages, updating the settings of
+  the Django project) could be performed before putting the server
+  down. At 8:00 EST, I put the server in maintenance mode. A little
+  before 8:30EST, the server was out of maintenance mode. I tested the
+  server with ``./manage.py test``, by going to ``Bibliography /
+  Manage`` and by viewing some articles. The later test failed. It was
+  due to ``build/static-build/config/requirejs-config-dev.js`` which
+  was out of date. The contents of this file changed when Makefile is
+  edited, which is not currently picked up by the way the make file is
+  organized. Deleting the file and recreating it solved the issue.
 
 Nginx
 -----
@@ -627,7 +647,7 @@ How to Modify Fixtures
 
 There is no direct way to modify the fixtures used by the Django tests
 (this includes the live server tests which is used to run the Selenium
-tests). The procedure to follow is::
+tests). The procedure to follow is:
 
 1. Move your development database to a different location
    temporariy. **Or** modify the development environment so that the
@@ -789,7 +809,7 @@ BTW Mode
 ========
 
 Visible Absence
----------------
+===============
 
 A "visible absence" is an absence of an element which is represented
 as a *presence* in the edited document. If ``<foo>`` might contain
@@ -802,7 +822,7 @@ A "visible absence instantiator" is a visible absence which is also a
 control able to instantiate the absent element.
 
 IDs
----
+===
 
 For hyperlinking purposes, elements have to be assigned unique
 IDs. There are two types of IDs:
