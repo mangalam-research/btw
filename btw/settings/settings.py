@@ -55,6 +55,14 @@ s.LANGUAGE_CODE = 'en-us'
 
 s.SITE_ID = 1
 
+# This is a BTW-ony variable which must match the site name set for
+# the SITE_ID set above in the database table created by the Site
+# framework. It is not possible to query the value from the database
+# here because Django is not guaranteed to be up yet. But we need the
+# value to set some other values later. So the solution is to set the
+# value here and have a check later.
+s.BTW_SITE_NAME = ''
+
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 s.USE_I18N = True

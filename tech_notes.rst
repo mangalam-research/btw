@@ -297,9 +297,14 @@ Finalizing
 This needs to be done last because the ``Makefile`` may use
 ``manage.py``, which may require a complete configuration.
 
-Run make::
+Run::
 
   $ make
+  $ ./manage.py btwcheck
+  $ ./manage.py test
+  [The Zotero tests will necessarily fail because the server is set
+   to connect to the production database.]
+
 
 Demo Site
 ---------
@@ -382,6 +387,7 @@ Generally:
     $ npm outdated
     [Upgrade anything that needs upgrading.]
     $ make
+    $ ./manage.py btwcheck
     $ ./manage.py test
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
