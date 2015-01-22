@@ -14,6 +14,7 @@ import mock
 from .util import TestMeta, replay
 from . import mock_zotero
 from ..models import Item, PrimarySource
+import lib.util
 
 User = get_user_model()
 
@@ -237,7 +238,7 @@ class _PatchZoteroTest(_BaseTest):
 
     def tearDown(self):
         self.patch.stop()
-
+        super(_PatchZoteroTest, self).tearDown()
 
 class TestItemsView(_PatchZoteroTest):
 
@@ -327,6 +328,10 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
 
         # Simulate a change on the server.
         mock_records.values = new_values
+
+        # We must flush the page cache so that the fetching is
+        # triggered again.
+        lib.util.delete_own_keys('page')
 
         response = self.client.get(self.url)
         assert_equal(response.status_code, 200,

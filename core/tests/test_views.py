@@ -11,6 +11,7 @@ from nose.tools import assert_true, assert_equal, assert_false, \
 
 from invitation.tests.util import BAD_KEY
 from invitation.models import Invitation
+import lib.util
 
 dirname = os.path.dirname(__file__)
 
@@ -23,6 +24,9 @@ class ViewTestCase(TransactionWebTest):
         self.verification_sent = reverse("account_email_verification_sent")
         self.lexicography_url = reverse("lexicography_main")
 
+    def tearDown(self):
+        # We must clear the page cache to make sure tests are working.
+        lib.util.delete_own_keys('page')
 
 class GeneralTestCase(ViewTestCase):
 

@@ -398,6 +398,12 @@ Generally:
 
 See below for specific upgrade cases.
 
+0.8.x to x.x.x(???)
+~~~~~~~~~~~~~~~~~~~
+
+1. Update the site configuration to configure the caches named
+   `session` and `page`.
+
 0.7.x to 0.8.0
 ~~~~~~~~~~~~~~
 

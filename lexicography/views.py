@@ -21,6 +21,7 @@ from django.utils.http import quote_etag
 from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.views.decorators.cache import never_cache
 
 from functools import wraps
 import os
@@ -279,6 +280,7 @@ def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
 # user's point of view the urls that edit articles are consistently
 # pointing to the same place.
 
+@never_cache
 @login_required
 @require_GET
 def entry_new(request):
@@ -291,6 +293,7 @@ def entry_new(request):
                 args=("h:" + str(hm.make_unassociated()),)))
 
 
+@never_cache
 @login_required
 @require_GET
 @entry_lock_required
@@ -299,6 +302,7 @@ def entry_update(request, entry_id):
                                         args=(entry_id,)))
 
 
+@never_cache
 @login_required
 @require_http_methods(["GET", "POST"])
 def handle_update(request, handle_or_entry_id):
@@ -555,6 +559,8 @@ def _save_command(request, entry_id, handle, command, messages):
     return entry
 
 
+# This is a debug view only so we don't cache.
+@never_cache
 @login_required
 @require_GET
 def editing_data(request):
@@ -637,6 +643,7 @@ def collect(request):
 
 # Yes, we use GET instead of POST for this view. Yes, we are breaking
 # the rules. This is used only by the test suite.
+@never_cache
 @login_required
 @require_GET
 @uses_handle_or_entry_id
@@ -686,6 +693,7 @@ def handle_background_mod(request, entry_id, handle):
 
 # Yes, we use GET instead of POST for this view. Yes, we are breaking
 # the rules. This is used only by the test suite.
+@never_cache
 @login_required
 @require_GET
 def entry_testing_mark_valid(request, lemma):

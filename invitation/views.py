@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.dispatch import receiver
+from django.views.decorators.cache import never_cache
 
 from allauth.account.signals import user_signed_up
 
@@ -29,7 +30,7 @@ def _send(request, invitation, note):
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
               [invitation.recipient])
 
-
+@never_cache
 @login_required
 @permission_required('invitation.add_invitation', raise_exception=True)
 def invite(request):
@@ -46,6 +47,7 @@ def invite(request):
     return render(request, "invitation/invite.html", {"form": form})
 
 
+@never_cache
 def use(request, key):
     invitation = Invitation.objects.get_active_invitation(key)
 

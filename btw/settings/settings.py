@@ -40,8 +40,17 @@ s.CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'default'
     },
+    'session': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'session'
+    },
+    'page': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'session'
+    }
 }
 
+s.SESSION_CACHE_ALIAS = 'session'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -124,13 +133,19 @@ s.TEMPLATE_LOADERS = (
 )
 
 s.MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
+
+s.CACHE_MIDDLEWARE_KEY_PREFIX = s.BTW_SITE_NAME
+
+s.CACHE_MIDDLEWARE_ALIAS = 'page'
 
 s.ATOMIC_REQUESTS = True
 

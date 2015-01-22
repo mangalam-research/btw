@@ -11,7 +11,8 @@ import semver
 from django.db.models import Q
 from django.utils.timezone import utc
 from django.conf import settings
-
+from django.core.cache import get_cache
+import django_redis
 
 class WithTmpFiles(object):
 
@@ -191,3 +192,17 @@ def version():
     _cached_version = describe
 
     return describe
+
+def delete_own_keys(name):
+    """
+    Deletes the keys that are prefixed with the cache's prefix.
+
+    .. warning:: This method is Redis-specific and will fail if used
+                 on a cache that is not backed by redis.
+    """
+    cache = get_cache(name)
+    prefix = cache.key_prefix
+    con = django_redis.get_redis_connection(name)
+    keys = con.keys(prefix + ':*')
+    if keys:
+        con.delete(*keys)

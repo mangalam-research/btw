@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.core.urlresolvers import resolve
+from django.views.decorators.cache import never_cache
 
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
@@ -36,6 +37,7 @@ def search(request):
         manage(request, submenu="btw-bibliography-general-sub")
 
 
+@never_cache
 @ajax_login_required
 @require_GET
 def _ajax_search(request):
@@ -72,7 +74,7 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
         })
     return HttpResponse(template.render(context))
 
-
+@never_cache
 @require_GET
 def items(request, pk):
     if not request.is_ajax():
@@ -147,7 +149,7 @@ class ItemTable(BaseDatatableView):
             d[2] = d[2].all().count()
         return data
 
-
+@never_cache
 @ajax_login_required
 @permission_required('bibliography.add_primarysource')
 @require_http_methods(["GET", "POST"])
@@ -212,6 +214,7 @@ def item_primary_sources(request, pk):
     return PrimarySourceTable.as_view(item_pk=pk)(request)
 
 
+@never_cache
 @ajax_login_required
 @permission_required('bibliography.change_primarysource')
 @require_http_methods(["GET", "PUT"])
