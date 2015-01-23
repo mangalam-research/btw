@@ -221,7 +221,8 @@ s.INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.vimeo',
     # 'allauth.socialaccount.providers.vk',
     # 'allauth.socialaccount.providers.weibo',
-    'django_forms_bootstrap'
+    'django_forms_bootstrap',
+    'django_cache_management'
 )
 
 s.ACCOUNT_AUTHENTICATION_METHOD = "username"
