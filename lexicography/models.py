@@ -11,7 +11,7 @@ from django.db import transaction
 from lib import util
 from . import usermod
 from . import xml
-
+from . import signals
 
 class EntryManager(models.Manager):
 
@@ -60,6 +60,12 @@ class Entry(models.Model):
                                          null=True)
     deleted = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        was_nonexistent = self.pk is None
+        super(Entry, self).save(*args, **kwargs)
+        if was_nonexistent:
+            self._send(signals.entry_available)
+
     def __unicode__(self):
         return self.lemma
 
@@ -103,8 +109,11 @@ class Entry(models.Model):
             datetime=util.utcnow()
         )
         dr.save()
+        was_deleted = self.deleted
         self.deleted = True
         self.save()
+        if not was_deleted:
+            self._send(signals.entry_unavailable)
 
     @method_decorator(transaction.atomic)
     def undelete(self, user):
@@ -115,17 +124,29 @@ class Entry(models.Model):
             datetime=util.utcnow()
         )
         dr.save()
+        was_deleted = self.deleted
         self.deleted = False
         self.save()
+        if was_deleted:
+            self._send(signals.entry_available)
 
     @method_decorator(transaction.atomic)
     def _update_latest_published(self):
+        was_published = self.latest_published is not None
         try:
             self.latest_published = self.changerecord_set.filter(
                 published=True).latest('datetime')
         except ChangeRecord.DoesNotExist:
             self.latest_published = None
         self.save()
+        if self.latest_published is not None:
+            if not was_published:
+                self._send(signals.entry_newly_published)
+        elif was_published:
+            self._send(signals.entry_unpublished)
+
+    def _send(self, signal):
+        signal.send(self.__class__, instance=self)
 
     def is_locked(self):
         """
