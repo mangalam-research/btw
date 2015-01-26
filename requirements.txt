@@ -2,7 +2,7 @@ Django>=1.6
 # The south doc recommends not automatically upgrading beyond 0.8.
 South>=0.8.1,<0.8.99
 semver>=0.0.2
-django-nose>=1.2
+django-nose>=1.3,<2
 django-webtest>=1.7.5
 webtest>=2.0.15
 django-less>=0.7.2
