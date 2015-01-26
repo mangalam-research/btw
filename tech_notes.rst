@@ -404,6 +404,14 @@ See below for specific upgrade cases.
 1. Update the site configuration to configure the caches named
    `session` and `page`.
 
+2. Force an update of the documentation so that ``tei.css`` and
+   ``tei-print.css`` are loaded from a local copy. You must::
+
+      rm -rf utils/schemas/out/btw-storage-0.10/btw-storage-doc/
+
+   A subsequent ``make`` should redo everything but check that the
+   final files have the right contents.
+
 0.7.x to 0.8.0
 ~~~~~~~~~~~~~~
 

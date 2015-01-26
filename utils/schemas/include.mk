@@ -41,6 +41,7 @@ $($(ME)_outdir)/btw-storage-latest.js: $($(ME)_LATEST_JS_TARGET)
 
 
 $($(ME)_outdir)/btw-storage-latest.rng $($(ME)_outdir)/btw-storage-metadata-latest.json $($(ME)_outdir)/btw-storage-doc-latest $($(ME)_outdir)/btw-storage-latest.js:
+	rm -rf $@
 	cp -rp $< $@
 
 $($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)/%.xml
@@ -77,7 +78,9 @@ $($(ME)_outdir)/%/btw-storage.js: $($(ME)_outdir)/%/btw-storage.rng
 $($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	-rm -rf $@
 	-mkdir $@
-	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 outputDir=$@
+	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 cssFile="./tei.css" cssPrintFile="./tei-print.css" outputDir=$@
+	cp -rp $($(ME)_TEI)/tei-print.css $($(ME)_TEI)/tei.css $@/
 
 clean::
 	rm -rf $($(ME)_outdir)
+	touch $@
