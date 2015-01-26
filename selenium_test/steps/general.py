@@ -206,10 +206,16 @@ def step_impl(context, user_desc):
 @when("^the user logs out$")
 def step_impl(context):
     driver = context.driver
+    util = context.util
     selenic = context.selenic
-    driver.get(selenic.SERVER + "/logout")
+    logout_url = selenic.SERVER + "/logout"
+    driver.get(logout_url)
     button = driver.find_element_by_css_selector("button[type='submit']")
     button.click()
+
+    # We wait until the logout is processed. Otherwise, the next
+    # operation may *cancel* the submit we just started.
+    util.wait(lambda driver: driver.current_url != logout_url)
 
 
 WHAT_TO_TITLE = {
