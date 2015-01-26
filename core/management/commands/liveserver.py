@@ -12,12 +12,13 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from south.management.commands import patch_for_test_db_setup
-from pebble import process
 
 from bibliography.tests import mock_zotero
 from lexicography.tests.data import sf_cases
 from lexicography.models import Entry
 from lib import util
+from lexicography.tests.util import get_valid_document_data, \
+    launch_fetch_task
 
 mock_records = mock_zotero.Records([
     {
@@ -79,41 +80,15 @@ mock_records = mock_zotero.Records([
     }
 ])
 
-#
-# What we are doing here is running the code that reads and processes
-# the data necessary to create a valid document in *parallel* with the
-# rest of the code. When a test actually requires the code, it
-# probably will not have to wait for the read + process operation
-# because it will already have been done.
-#
-
-@process.concurrent
-def fetch():
-    with open("utils/schemas/prasada.xml") as f:
-        data = f.read().decode("utf-8")
-
-    # Clean it for raw edit.
-    data = util.run_xsltproc("utils/xsl/strip.xsl", data)
-    return data
-
-fetch_task = fetch()
-
-def get_valid_document_data():
-    if get_valid_document_data.data is not None:
-        return get_valid_document_data.data
-
-    data = fetch_task.get()
-
-    get_valid_document_data.data = data
-    return data
-
-get_valid_document_data.data = None
-
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
 get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
+
+# Start getting the valid document data now, in parallel with the
+# rest.
+launch_fetch_task()
 
 class SeleniumTest(LiveServerTestCase):
 

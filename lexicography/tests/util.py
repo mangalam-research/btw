@@ -7,9 +7,10 @@ import logging
 from StringIO import StringIO
 
 import lxml.etree
+from pebble import process
 
 from .. import xml
-
+from lib import util
 
 def setup_logger_for_StringIO(logger):
     """
@@ -88,3 +89,57 @@ def set_lemma(data, new_lemma):
             lemma.text = new_lemma
 
     return data_tree
+
+#
+# What we are doing here is running the code that reads and processes
+# the data necessary to create a valid document in *parallel* with the
+# rest of the code. When a test actually requires the code, it
+# probably will not have to wait for the read + process operation
+# because it will already have been done.
+#
+
+@process.concurrent
+def fetch():
+    with open("utils/schemas/prasada.xml") as f:
+        data = f.read().decode("utf-8")
+
+    # Clean it for raw edit.
+    data = util.run_xsltproc("utils/xsl/strip.xsl", data)
+
+    tree = xml.XMLTree(data)
+    version = tree.extract_version()
+
+    if not util.validate(xml.schema_for_version(version),
+                         data):
+        raise ValueError("the file is not actually valid!")
+
+    sch = xml.schematron_for_version(version)
+    if sch and not util.schematron(sch, data):
+        raise ValueError("the file does not pass schematron validation!")
+
+    return data
+
+fetch_task = None
+
+def launch_fetch_task():
+    """
+    Calling this method will start the fetch task so that
+    get_valid_document_data can return a value.
+    """
+    global fetch_task  # pylint: disable=global-statement
+    if fetch_task is None:
+        fetch_task = fetch()
+
+def get_valid_document_data():
+    if get_valid_document_data.data is not None:
+        return get_valid_document_data.data
+
+    if fetch_task is None:
+        raise Exception("forgot to call launch_fetch_task")
+
+    data = fetch_task.get()
+
+    get_valid_document_data.data = data
+    return data
+
+get_valid_document_data.data = None
