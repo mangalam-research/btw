@@ -69,6 +69,7 @@ class ZoteroTest(TestCase):
 
     def setUp(self):
         get_cache('bibliography').clear()
+        super(ZoteroTest, self).setUp()
 
     def assert_miss(self, mock_cache, number_of_sets):
         assert_equal(mock_cache.__contains__.call_count, 1,
