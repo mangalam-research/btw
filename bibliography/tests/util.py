@@ -135,15 +135,19 @@ def _proxify(file_name, f):
                     cmd += ["-w", temp[1]]  # Write to file
                 else:
                     #
-                    # The X-BTW-Sequence thing is to work around an
-                    # sequencing issue. See the tech_notes.rst file
-                    # section on testing the Zotero code. We probably
-                    # will be able to get rid of this when mitmproxy
-                    # 0.11 is released.
+                    # The X-BTW-Sequence thing and --no-pop are to
+                    # work around an sequencing issue. See the
+                    # tech_notes.rst file section on testing the
+                    # Zotero code.
                     #
                     cmd += [
                         # Don't check upstream certs.
                         "--no-upstream-cert",
+                        "--no-pop",
+                        "--rheader", "X-BTW-Sequence",
+                        # Get rid of some sensitive information.
+                        "-s",
+                        os.path.join(dirname, "proxy_rewrite.py"),
                         # File to read from.
                         "-S", fname]
 
