@@ -104,13 +104,20 @@ Ensure that the tree parses as XML.
         return False
 
     def get_bibilographical_targets(self):
+        """
+Get all targets that point to bibliographical references.
+
+:returns: The targets.
+:rtype: :class:`set` of strings.
+"""
         refs = self.tree.xpath("//tei:ref",
                                namespaces={
                                    'tei': 'http://www.tei-c.org/ns/1.0'
                                })
 
-        return [target for target in [ref.get('target') for ref in refs]
-                if target.startswith('/bibliography/')]
+        return set([target for target in
+                    [ref.get('target') for ref in refs]
+                    if target.startswith('/bibliography/')])
 
     def extract_lemma(self):
         """

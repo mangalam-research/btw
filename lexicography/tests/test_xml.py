@@ -90,10 +90,11 @@ class XMLTreeTestCase(unittest.TestCase):
   <p>
   <ref target="/bibliography/1">foo</ref>
   <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
   </p>
 </btw:entry>
         """
         xmltree = xml.XMLTree(data)
         self.assertFalse(xmltree.is_data_unclean())
         self.assertEqual(xmltree.get_bibilographical_targets(),
-                         ["/bibliography/1", "/bibliography/2"])
+                         set(["/bibliography/1", "/bibliography/2"]))
