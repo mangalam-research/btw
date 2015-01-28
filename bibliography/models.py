@@ -12,6 +12,7 @@ from django.core.validators import RegexValidator
 from south.modelsinspector import add_introspection_rules
 
 from .zotero import Zotero, zotero_settings
+from . import signals
 from lib import util
 
 # This is an arbitrary limit on the size of a Zotero URL fragment that
@@ -181,6 +182,10 @@ class Item(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Item, self).__init__(*args, **kwargs)
+        # We use as_dict as a convenient way to record the values that
+        # matter for signaling. It also records ``pk`` and
+        # ``zotero_url`` but these are immutable.
+        self._orig_dict = self.as_dict()
         self.refresh()
 
     def refresh(self):
@@ -217,7 +222,10 @@ class Item(models.Model):
         self._item = Item.objects.zotero.get_item(self.item_key)
         self.item = json.dumps(self._item)
         self.freshness = now
-        self.save()
+        # No, we don't save here. It is the responsibility of the
+        # caller to issue a save call.
+        #
+        # self.save()
         return True
 
     def mark_stale(self):
@@ -263,9 +271,35 @@ class Item(models.Model):
         # or group id), which should not change in a BTW installation,
         # short of a major restructuring which should entail a flush
         # of the cache.
+        if self.item is None:
+            return None
+
         item = json.loads(self.item)
 
         return item["links"]["alternate"]["href"]
+
+    def save(self, *args, **kwargs):
+        pk = self.pk
+        new_dict = self.as_dict()
+
+        ret = super(Item, self).save(*args, **kwargs)
+
+        # If pk is None, we did not exist before this save so we don't
+        # want to emit a signal marking a *change*.
+        if pk is not None and new_dict != self._orig_dict:
+            signals.item_updated.send(self.__class__, instance=self)
+
+            # We also have to signal all the primary sources that
+            # depend on this item.
+            if self.primary_sources.exists():
+                signals.primary_source_updated.send(
+                    self.__class__,
+                    instances=list(self.primary_sources.all()))
+
+        # The item could still be changed, so...
+        self._orig_dict = new_dict
+
+        return ret
 
     def as_dict(self):
         """
@@ -299,12 +333,29 @@ class PrimarySource(models.Model):
     class Meta(object):
         verbose_name_plural = "Primary sources"
 
+    def __init__(self, *args, **kwargs):
+        super(PrimarySource, self).__init__(*args, **kwargs)
+        self._original_reference_title = self.reference_title
+
     def __unicode__(self):
         return self.reference_title
 
     def save(self, *args, **kwargs):
+        pk = self.pk
         self.full_clean()
-        return super(PrimarySource, self).save(*args, **kwargs)
+        ret = super(PrimarySource, self).save(*args, **kwargs)
+
+        # If pk is None, we have not been saved yet so we don't
+        # want to emit a signal marking a *change*.
+        if pk is not None and self.reference_title != \
+           self._original_reference_title:
+            signals.primary_source_updated.send(self.__class__,
+                                                instances=[self])
+
+        # The item could be updated again, so...
+        self._original_reference_title = self.reference_title
+
+        return ret
 
     def clean(self):
         if self.reference_title is not None:
