@@ -12,6 +12,10 @@ from lib import util
 from . import usermod
 from . import xml
 from . import signals
+# This is just to make sure that caching is loaded whenever models are
+# loaded. Django 1.6 does not have a neat way to do this. We could
+# load caching in __init__.py but it has side-effects.
+from . import caching as _
 
 class EntryManager(models.Manager):
 

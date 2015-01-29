@@ -14,7 +14,7 @@ from pebble import process
 
 from .. import xml
 from lib import util
-from ..models import Entry
+from ..models import Entry, Chunk, ChangeRecord
 
 def setup_logger_for_StringIO(logger):
     """
@@ -181,6 +181,29 @@ def create_valid_article():
     response = client.post(add_raw_url, {"data": data})
     assert response.status_code == 302
     return Entry.objects.get(latest__datetime__gte=now)
+
+def copy_entry(src):
+    src_chunk = src.latest.c_hash
+    data = src_chunk.data
+    lemma = src.lemma + " copy"
+    data = stringify_etree(set_lemma(data, lemma))
+    chunk = Chunk(
+        data=data,
+        schema_version=src_chunk.schema_version,
+        _valid=True  # Yes, we lie.
+    )
+    chunk.save()
+    entry = Entry()
+    entry.update(
+        src.latest.user,
+        "q",
+        chunk,
+        lemma,
+        ChangeRecord.CREATE,
+        ChangeRecord.MANUAL)
+    entry.save()
+    return entry
+
 def extract_inter_article_links(tree):
     """
     Extracts all the inter-article links from the XML tree of an
@@ -206,3 +229,36 @@ def extract_inter_article_links(tree):
             "http://mangalamresearch.org/ns/btw-storage",
             "tei": "http://www.tei-c.org/ns/1.0",
         })
+
+    refs_by_term = {}
+    for ref in refs:
+        term = ''.join(ref.itertext()).strip()
+        target = ref.get("target")
+        if term in refs_by_term and refs_by_term[term] != target:
+            raise ValueError(
+                "inconsistent hyperlinks for term {0}: {1} != {2}"
+                .format(term, target, refs_by_term[term]))
+        refs_by_term[term] = target
+
+    return refs_by_term
+
+def extract_unlinked_terms(tree):
+    """
+    Extracts the unlinked terms from the XML tree of an article.
+
+    :param xml: The XML tree from which to extract links.
+    :type xml: An ``lxml`` tree.
+    :returns: The links.
+    :rtype: :class:`list` of strings. Terms may be repeated.
+    """
+    terms = tree.xpath(
+        "//*[self::btw:antonym or self::btw:cognate "
+        "or self::btw:conceptual-proximate]/"
+        "btw:term[not(/tei:ref)]",
+        namespaces={
+            "btw":
+            "http://mangalamresearch.org/ns/btw-storage",
+            "tei": "http://www.tei-c.org/ns/1.0",
+        })
+
+    return [''.join(t.itertext()).strip() for t in terms]
