@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 from optparse import make_option
+from django.contrib.sites.models import Site
 
 
 class Command(BaseCommand):
@@ -20,5 +21,10 @@ from the server.
             from bibliography.models import Item
             Item.objects.mark_all_stale()
             print "All items marked stale..."
+        elif command == "set_site_name":
+            site = Site.objects.get_current()
+            site.name = settings.BTW_SITE_NAME
+            site.save()
+            print "Set the site name..."
         else:
             raise ValueError("unknown command: " + command)
