@@ -67,33 +67,61 @@ def cleanup(context, failed):
         shutil.rmtree(context.sc_tunnel_tempdir, True)
         context.sc_tunnel_tempdir = None
 
-    if actually_quit:
-        if context.wm:
-            context.wm.send_signal(signal.SIGTERM)
-            context.wm = None
+    if context.wm:
+        context.wm.send_signal(signal.SIGTERM)
+        context.wm = None
 
-        if context.display:
-            context.display.stop()
-            context.display = None
+    if context.display:
+        context.display.stop()
+        context.display = None
 
     if context.server:
         # Must read started before quitting...
-        with open(context.server_read_fifo, 'r') as fifo:
-            read = fifo.read().strip()
+        try:
+            read = server_read(context)
             if read != 'started':
                 raise ValueError("did not get the 'started' string")
-        with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("quit\n")
-        try:
-            context.server.wait()
-        except KeyboardInterrupt:
-            pass
+            server_write(context, "quit\n")
+            try:
+                context.server.wait()
+            except KeyboardInterrupt:
+                pass
+        except DeadServer:
+            pass  # It is already dead...
         context.server = None
 
     if context.server_tempdir:
         shutil.rmtree(context.server_tempdir, True)
         context.server_tempdir = None
 
+class DeadServer(Exception):
+    pass
+
+def server_alive(context):
+    if context.server is None:
+        return
+    status = context.server.poll()
+    if status is not None:
+        context.server = None
+        if status >= 0:
+            raise DeadServer("server already exited with: " + str(status))
+        else:
+            raise DeadServer(
+                "server already terminated with signal: " + str(-status))
+
+
+def server_write(context, text):
+    server_alive(context)
+    with open(context.server_write_fifo, 'w') as fifo:
+        fifo.write(text)
+
+def server_read(context):
+    server_alive(context)
+    with open(context.server_read_fifo, 'r') as fifo:
+        return fifo.read().strip()
+
+def sigchld(context):
+    server_alive(context)
 
 def before_all(context):
 
@@ -167,6 +195,7 @@ def before_all(context):
     context.server = subprocess.Popen(
         ["utils/start_nginx", context.server_write_fifo,
          context.server_read_fifo, nginx_port], close_fds=True)
+    signal.signal(signal.SIGCHLD, lambda *_: sigchld(context))
 
     # We must add the port to the server
     context.selenic.SERVER += ":" + nginx_port
@@ -177,6 +206,9 @@ def before_all(context):
 def after_all(context):
     cleanup(context, False)
 
+
+CLEARCACHE = "clearcache:"
+FAIL = "fail:"
 
 def before_scenario(context, scenario):
     driver = context.driver
@@ -209,10 +241,9 @@ def before_scenario(context, scenario):
             matching_funcs)
 
     # This will block until the server is started.
-    with open(context.server_read_fifo, 'r') as fifo:
-        read = fifo.read().strip()
-        if read != 'started':
-            raise ValueError("did not get the 'started' string")
+    read = server_read(context)
+    if read != 'started':
+        raise ValueError("did not get the 'started' string")
 
     # Each scenario means logging in again.
     context.is_logged_in = False
@@ -220,6 +251,36 @@ def before_scenario(context, scenario):
     # These documents are not initially present.
     context.valid_document_created = False
     context.bad_semantic_fields_document_created = False
+
+    #
+    # This allows tags like:
+    #
+    # @clearcache:article_display
+    # @fail:on_ajax
+    # etc...
+    #
+    #
+    caches = []
+    for tag in scenario.tags:
+        if tag.startswith(CLEARCACHE):
+            caches.append(tag[len(CLEARCACHE):])
+        elif tag.startswith(FAIL):
+            what = tag[len(FAIL):]
+            if what == "on_ajax":
+                server_write(context,
+                             "patch changerecord_details to fail on ajax\n")
+                server_read(context)
+            else:
+                raise Exception("unknown failure type: " + what)
+        elif tag == "wip":
+            pass
+        else:
+            raise Exception("unknown tag")
+
+    if caches:
+        server_write(context, 'clearcache ' + ' '.join(caches) + "\n")
+        server_read(context)
+
 
 def after_scenario(context, _scenario):
     driver = context.driver
@@ -264,8 +325,7 @@ def after_scenario(context, _scenario):
     """)
 
     # Reset the server between scenarios.
-    with open(context.server_write_fifo, 'w') as fifo:
-        fifo.write("restart\n")
+    server_write(context, "restart\n")
 
     # Close all extra tabs.
     if len(handles) > 1:
@@ -278,11 +338,13 @@ def after_scenario(context, _scenario):
 
 
 def before_step(context, _step):
+    server_alive(context)
     if context.behave_wait:
         time.sleep(context.behave_wait)
 
 
 def after_step(context, _step):
+    server_alive(context)
     driver = context.driver
     # Perform this query only if SELENIUM_LOGS is on.
     if context.selenium_logs:

@@ -38,6 +38,16 @@ okay.
         except IOError as e:
             self.error("cannot connect to Celery's backend: " + str(e))
 
+        prefix = settings.BTW_CELERY_WORKER_PREFIX
+        if prefix.find(".") >= 0:
+            self.error(
+                "BTW_CELERY_WORKER_PREFIX contains a period: " + prefix)
+        prefix += "." if prefix else ""
+
+        myworkers = [w for w in d if w.startswith(prefix)]
+        if not myworkers:
+            self.error("cannot find workers with prefix " + prefix)
+
         if not settings.CELERY_WORKER_DIRECT:
             # We need CELERY_WORKER_DIRECT so that the next test will work.
             self.error("CELERY_WORKER_DIRECT must be True")
@@ -48,7 +58,7 @@ okay.
                      # We send the task directly to the worker so that we
                      # are sure *that* worker handles the request.
                      get_btw_env.apply_async((), queue=worker + ".dq").get())
-                    for worker in d]:
+                    for worker in myworkers]:
                 if result != btw_env:
                     self.error(
                         "{0} is not using BTW_ENV={1} (uses BTW_ENV={2})"

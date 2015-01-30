@@ -12,6 +12,7 @@ from behave import step_matcher  # pylint: disable=E0611
 from selenic.util import Result, Condition
 
 from selenium_test import btw_util
+from ..environment import server_write, server_read
 
 step_matcher("re")
 
@@ -36,16 +37,39 @@ def step_impl(context):
 @given("^the view has finished rendering$")
 def step_impl(context):
     driver = context.driver
+    timeout_test = getattr(context, 'ajax_timeout_test', None)
     driver.execute_async_script("""
-    var done = arguments[0];
+    var timeout_test = arguments[0];
+    var done = arguments[1];
     function check() {
         if (!window.btw_viewer)
             setTimeout(check, 100);
-        else
-            btw_viewer.whenCondition('done', done);
+        else {
+            // We force the timeout to happen immediately.
+            if (timeout_test)
+                btw_viewer._load_timeout = 0;
+
+            btw_viewer.whenCondition('done', function () {
+                done();
+            });
+        }
     }
     check();
-    """)
+    """, timeout_test)
+
+@given(ur"^that the next document will be loaded by a "
+       ur"(?P<condition>failing|timing-out) AJAX call$")
+def step_impl(context, condition):
+    server_write(context, 'clearcache article_display\n')
+    server_read(context)
+    cmd = {
+        "failing": "fail on ajax",
+        "timing-out": "time out on ajax"
+    }[condition]
+    server_write(context, 'patch changerecord_details to {0}\n'.format(cmd))
+    server_read(context)
+    if condition == "timing-out":
+        context.ajax_timeout_test = True
 
 head_re = re.compile("\bhead\b")
 
@@ -313,3 +337,17 @@ def step_impl(context, text):
     """, text)
 
     assert_true(result[0], result[1])
+
+@then(ur"^the (?P<what>loading|time out) error message is visible$")
+def step_impl(context, what):
+    util = context.util
+
+    alert = util.wait(
+        EC.visibility_of_element_located((By.CSS_SELECTOR,
+                                          ".alert.alert-danger")))
+    msg = {
+        "loading": "Cannot load the document.",
+        "time out": "The server has not sent the required data within "
+        "a reasonable time frame."
+    }[what]
+    assert_equal(alert.text.strip(), msg)

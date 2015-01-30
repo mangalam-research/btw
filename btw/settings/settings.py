@@ -301,6 +301,11 @@ s.CELERY_TASK_SERIALIZER = 'json'
 s.CELERY_RESULT_SERIALIZER = 'json'
 # We need this to be able to check workers in btwcheck
 s.CELERY_WORKER_DIRECT = True
+# This is a prefix by which the worker names for this instance of BTW
+# must use. The full name must be <prefix>.<suffix> where suffix is
+# whatever is needed.
+s.BTW_CELERY_WORKER_PREFIX = s.BTW_SITE_NAME.lower().replace(" ", "_")
+s.CELERY_DEFAULT_QUEUE = s.BTW_CELERY_WORKER_PREFIX + ".default"
 
 s.BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'

@@ -79,3 +79,15 @@ Scenario: reloading a page that points to a target in a section that would be co
   And the user reloads the page
   Given the view has finished rendering
   Then the citation that starts with "adhyātmasaṃprasādo" is not in a collapsed section
+
+Scenario: a document that fails to load
+  Given that the next document will be loaded by a failing AJAX call
+  And a valid document
+  And the view has finished rendering
+  Then the loading error message is visible
+
+Scenario: a document that times out
+  Given that the next document will be loaded by a timing-out AJAX call
+  And a valid document
+  And the view has finished rendering
+  Then the time out error message is visible

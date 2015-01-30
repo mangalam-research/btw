@@ -6,9 +6,15 @@ import logging.config
 from celery import Celery
 
 from django.conf import settings
+from core.tests.common_zotero_patch import patch
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'btw.settings')
+
+if settings.BTW_SELENIUM_TESTS:
+    # If we are testing, the live server is patched so as to not
+    # access the Zotero server. We must apply the same patch here.
+    patch.start()
 
 from celery.signals import after_setup_logger
 @after_setup_logger.connect

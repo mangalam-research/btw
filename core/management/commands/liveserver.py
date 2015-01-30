@@ -1,94 +1,51 @@
 import os
-import mock
 from unittest import TestSuite
 
 import lxml.etree
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
+from django.core.management import execute_from_command_line
 from django.test import LiveServerTestCase
 from django.test.runner import DiscoverRunner
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.test.client import Client
+from django.http import Http404, HttpResponse
+
 from south.management.commands import patch_for_test_db_setup
 
-from bibliography.tests import mock_zotero
+from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import sf_cases
-from lexicography.models import Entry
 from lib import util
-from lexicography.tests.util import get_valid_document_data, \
-    launch_fetch_task
 
-mock_records = mock_zotero.Records([
-    {
-        "data":
-        {
-            "itemKey": "1",
-            "title": "Title 1",
-            "date": "Date 1",
-            "creators": [
-                {"name": "Abelard (Name 1 for Title 1)"},
-                {"firstName": "FirstName 2 for Title 1",
-                 "lastName": "LastName 2 for Title 1"},
-            ]
-        },
-        "links": {
-            "alternate": {
-                "href": "https://www.foo.com",
-                "type": "text/html"
-            }
-        }
-    },
-    {
-        "data":
-        {
-            "itemKey": "2",
-            "title": "Title 2",
-            "date": "Date 2",
-            "creators": [
-                {"name": "Beth (Name 1 for Title 2)"},
-                {"firstName": "FirstName 2 for Title 2",
-                 "lastName": "LastName 2 for Title 2"},
-            ]
-        },
-        "links": {
-            "alternate": {
-                "href": "https://www.foo2.com",
-                "type": "text/html"
-            }
-        }
-    },
-    {
-        "data":
-        {
-            "itemKey": "3",
-            "title": "Title 3",
-            "date": "Date 3",
-            "creators": [
-                {"name": "Zeno (Name 1 for Title 3)"},
-                {"firstName": "FirstName 2 for Title 3",
-                 "lastName": "LastName 2 for Title 3"},
-            ]
-        },
-        "links": {
-            "alternate": {
-                "href": "https://www.foo3.com",
-                "type": "text/html"
-            }
-        }
-    }
-])
+class LexicographyPatcher(object):
 
-# We use ``side_effect`` for this mock because we need to refetch
-# ``mock_records.values`` at run time since we change it for some
-# tests.
-get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
-get_item_mock = mock.Mock(side_effect=mock_records.get_item)
+    def __init__(self):
+        self.old_changerecord_details = None
+        self.reset()
 
-# Start getting the valid document data now, in parallel with the
-# rest.
-launch_fetch_task()
+    def reset(self):
+        self.fail_on_ajax = False
+        self.timeout_on_ajax = False
+
+    def patch(self):
+        import lexicography.views
+        self.old_changerecord_details = \
+            lexicography.views.changerecord_details
+
+        setattr(lexicography.views, 'changerecord_details',
+                self.changerecord_details)
+
+    def changerecord_details(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if self.fail_on_ajax:
+                return HttpResponse("failing on ajax", status=400)
+            elif self.timeout_on_ajax:
+                raise Http404
+
+        return self.old_changerecord_details(request, *args, **kwargs)
+
 
 class SeleniumTest(LiveServerTestCase):
 
@@ -96,15 +53,17 @@ class SeleniumTest(LiveServerTestCase):
 
     def setUp(self):
         from bibliography.models import Item, PrimarySource
+        # Id 1
         item = Item(item_key="3")
         item.uid = Item.objects.zotero.full_uid
         item.save()
         ps = PrimarySource(item=item, reference_title="Foo", genre="SU")
         ps.save()
 
-    def __init__(self, control_read, control_write, *args, **kwargs):
+    def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
         self.__control_write = control_write
+        self._patcher = patcher
         super(SeleniumTest, self).__init__(*args, **kwargs)
         from django.conf import settings
         self.fixtures = \
@@ -124,6 +83,7 @@ class SeleniumTest(LiveServerTestCase):
     def run(self, result=None):
         super(SeleniumTest, self).run(result)
         if self.next == "restart":
+            self._patcher.reset()
             self.log("restarting...")
         else:
             self.log("stopping...")
@@ -156,11 +116,24 @@ class SeleniumTest(LiveServerTestCase):
             elif args[0] == "create":
                 what = " ".join(args[1:])
                 self.create_document(what)
+            elif args[0] == "clearcache":
+                self.clearcache(args[1:])
+                with open(self.__control_write, 'w') as out:
+                    out.write("\n")
+            elif command == "patch changerecord_details to fail on ajax":
+                self._patcher.fail_on_ajax = True
+                with open(self.__control_write, 'w') as out:
+                    out.write("\n")
+            elif command == "patch changerecord_details to time out on ajax":
+                self._patcher.timeout_on_ajax = True
+                with open(self.__control_write, 'w') as out:
+                    out.write("\n")
             else:
                 print "Unknown command: ", command
 
     def create_document(self, what):
         add_raw_url = reverse("admin:lexicography_entry_rawnew")
+        from lexicography.tests.util import get_valid_document_data
         data = get_valid_document_data()
         publish = True
 
@@ -197,11 +170,15 @@ class SeleniumTest(LiveServerTestCase):
         assert client.login(username='foo', password='foo')
         response = client.post(add_raw_url, {"data": data})
         assert response.status_code == 302
+        from lexicography.models import Entry
         entry = Entry.objects.get(latest__datetime__gte=now)
         if publish:
             assert entry.latest.publish(foo)
         with open(self.__control_write, 'w') as out:
             out.write(entry.lemma.encode('utf-8') + "\n")
+
+    def clearcache(self, args):
+        execute_from_command_line(['liveserver', 'clearcache'] + args)
 
     def __unicode__(self):
         return hex(id(self))
@@ -211,12 +188,15 @@ class Suite(TestSuite):
     def __init__(self, control_read, control_write, *args, **kwargs):
         self.__control_read = control_read
         self.__control_write = control_write
+        self._patcher = LexicographyPatcher()
+        self._patcher.patch()
 
         super(Suite, self).__init__(*args, **kwargs)
 
     def __iter__(self):
         while True:
-            yield SeleniumTest(self.__control_read, self.__control_write)
+            yield SeleniumTest(self.__control_read, self.__control_write,
+                               self._patcher)
 
 class Runner(DiscoverRunner):
 
@@ -229,7 +209,6 @@ class Runner(DiscoverRunner):
     def build_suite(self, *args, **kwargs):
         return Suite(self.__control_read, self.__control_write)
 
-
 class Command(BaseCommand):
     help = 'Starts a live server for testing.'
     args = "address control_read control_write"
@@ -241,8 +220,12 @@ class Command(BaseCommand):
         print "Starting server at:", server_address
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
 
-        with mock.patch.multiple("bibliography.zotero.Zotero",
-                                 get_all=get_all_mock,
-                                 get_item=get_item_mock):
-            runner = Runner(control_read, control_write, interactive=False)
-            runner.run_tests(test_labels=None)
+        zotero_patch.start()
+
+        # Start getting the valid document data now, in parallel with the
+        # rest.
+        from lexicography.tests.util import launch_fetch_task
+        launch_fetch_task()
+
+        runner = Runner(control_read, control_write, interactive=False)
+        runner.run_tests(test_labels=None)

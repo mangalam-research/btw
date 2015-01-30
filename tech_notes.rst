@@ -387,6 +387,7 @@ Generally:
     $ npm outdated
     [Upgrade anything that needs upgrading.]
     $ make
+    $ ./manage.py btwworker start
     $ ./manage.py btwcheck
     $ ./manage.py test
     [The Zotero tests will necessarily fail because the server is set
