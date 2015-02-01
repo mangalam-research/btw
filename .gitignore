@@ -19,3 +19,5 @@ local.mk
 /TODO.private
 /*.sql.gz
 /env
+/*.log
+/*.pid
