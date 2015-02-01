@@ -1,4 +1,13 @@
-* ?.?.?:
+* 1.0.0:
+
+  + New features:
+
+    - Hyperlinking between articles. BTW now automatically creates
+      hyperlinks to other articles. Hyperlinks are created for
+      antonyms, cognates and conceptual proximates or for sanskrit
+      terms that appear in the overview of the article.
+
+* 0.8.0:
 
   + New features:
 
