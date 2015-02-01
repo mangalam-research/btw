@@ -4,16 +4,19 @@
 <script>
   var django_active_menu = "btw-home-menu";
 </script>
+<style>
+.container {
+    font-size: 18px;
+}
+</style>
 {% endblock %}
 {% block content %}
 <div class="row">
   <h3>Buddhist Translators Workbench</h3>
 
-  <p>Welcome to the Buddhist Translators Workbench.
-    {% if not user.is_authenticated %}
-    If you have an account, please <a href="{% url 'login' %}">log in</a>.
-    {% endif %}
-  </p>
+  <p>Welcome to the Buddhist Translators Workbench.</p>
+  <p>A user guide is
+  available <a href="https://www.dropbox.com/sh/73kureptrpp5qjr/AAAbXJ8lLh4__EuAS1aBQILha?dl=0">here</a>.</p>
   <div class="col-lg-12 well well-sm">
     <div class="col-lg-6">
       <p>
