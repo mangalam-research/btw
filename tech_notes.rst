@@ -300,11 +300,12 @@ This needs to be done last because the ``Makefile`` may use
 Run::
 
   $ make
+  $ ./manage.py btwworker start
   $ ./manage.py btwcheck
   $ ./manage.py test
   [The Zotero tests will necessarily fail because the server is set
    to connect to the production database.]
-
+  $ sudo monit monitor btw_worker
 
 Demo Site
 ---------
@@ -382,6 +383,8 @@ Generally:
     [Make sure the description shows what you expect.]
     $ ../btw_env/bin/activate
     $ pip install -r requirements.txt
+    $ sudo monit unmonitor btw_worker
+    $ ./manage.py btwworker stop
     $ ./manage.py syncdb
     $ ./manage.py migrate
     $ npm outdated
@@ -392,6 +395,7 @@ Generally:
     $ ./manage.py test
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
+    $ sudo monit monitor btw_worker
 
 5. Reload uwsgi::
 
@@ -399,8 +403,8 @@ Generally:
 
 See below for specific upgrade cases.
 
-0.8.x to x.x.x(???)
-~~~~~~~~~~~~~~~~~~~
+0.8.x to 1.0.0
+~~~~~~~~~~~~~~
 
 1. Update the site configuration to configure the caches named
    `session`, `page` and `article_display`.
