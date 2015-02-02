@@ -458,6 +458,19 @@ Notes from Actual Upgrades
   edited, which is not currently picked up by the way the make file is
   organized. Deleting the file and recreating it solved the issue.
 
+- 0.8.0 to 1.0.1: The upgrade window was scheduled for 2015/02/01 at
+  9:00-10:00 EST. I spent about 45 minutes before the upgrade window
+  to perform changes to the server. This upgrade required a new monit
+  configuration to send alarms. I had to modify monit for this, which
+  entailed reading documentation. After performing the upgrade, I got
+  some 500 status responses. This was due to the ``.log`` and ``.pid``
+  files created by the worker. They caused the tree to be unclean and
+  BTW dutifully raised an exception. While testing the site, there was
+  an issue with viewing articles. It seemed that the communication
+  between browser and system did not work. Clearing the caches and
+  restarting the worker seems to have cleared it up. The site was back
+  up and running at 10:15 EST.
+
 Nginx
 -----
 
