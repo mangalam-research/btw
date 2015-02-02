@@ -595,17 +595,24 @@ Viewer.prototype.processData = function (data, bibl_data) {
     var affix_constrainer = domutil.closest(affix, "div");
     var affix_overflow = affix.getElementsByClassName("overflow")[0];
     function resizeHandler() {
-        // This prevents the affix from popping wider when we scroll
-        // the window. Because a "detached" affix has "position:
-        // fixed", it is taken out of the flow and thus its "width" is
-        // no longer constrained by its parent.
-        affix.style.width = affix_constrainer.offsetWidth + "px";
+        var constrainer_style = window.getComputedStyle(affix_constrainer);
+        if (constrainer_style.left !== "auto") {
+            // This prevents the affix from popping wider when we scroll
+            // the window. Because a "detached" affix has "position:
+            // fixed", it is taken out of the flow and thus its "width" is
+            // no longer constrained by its parent.
+            affix.style.width = affix_constrainer.offsetWidth + "px";
 
-        var rect = affix_overflow.getBoundingClientRect();
-        var style = window.getComputedStyle(affix);
-        affix_overflow.style.height =
-            (window.innerHeight - rect.top -
-             parseInt(style.marginBottom) - 5) + "px";
+            var rect = affix_overflow.getBoundingClientRect();
+            var style = window.getComputedStyle(affix);
+            affix_overflow.style.height =
+                (window.innerHeight - rect.top -
+                 parseInt(style.marginBottom, 10) - 5) + "px";
+        }
+        else {
+            affix.style.width = "auto";
+            affix_overflow.style.height = "auto";
+        }
     }
     win.addEventListener("resize", resizeHandler);
     win.addEventListener("scroll", resizeHandler);

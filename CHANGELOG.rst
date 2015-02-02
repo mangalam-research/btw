@@ -1,3 +1,11 @@
+* 1.0.2:
+
+  + Bug fixes:
+
+    - Display: prevent the navigation menu in article display from
+      popping out of its place. This is a temporary measure. A fuller
+      solution is upcoming.
+
 * 1.0.0:
 
   + New features:

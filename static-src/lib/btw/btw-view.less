@@ -21,15 +21,9 @@ body {
     display: inline-block;
 }
 
-.affix-bottom {
-    position: absolute;
-}
-
-.affix {
-    top: 20px;
-}
-
 #btw-article-affix {
+    position: relative;
+
     .active {
         border-left: 1px solid;
     }
@@ -50,6 +44,19 @@ body {
     }
 }
 
+@media (min-width: @screen-lg-min) {
+    .affix-bottom {
+        position: absolute;
+    }
+
+    .affix {
+        top: 20px;
+    }
+
+    #btw-article-affix {
+        position: fixed;
+    }
+}
 
 div.wed-frame {
     font-size: 18px;

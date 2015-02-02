@@ -22,17 +22,17 @@ require(['btw/btw_view'], function(Viewer) {
 {% endblock %}
 {% block content %}
 <div class="wed-frame row">
-  <div class="wed-document col-lg-9">
-    <div class="alert alert-info loading" style="display: none">
-      Loading the document... <i class="fa fa-spinner fa-spin"></i>
-    </div>
-  </div>
-  <div class="col-lg-3">
+  <div class="col-lg-3 col-lg-push-9">
     <nav id="btw-article-affix" class="well">
         <div class="overflow">
           <ul class="nav nav-stacked"></ul>
         </div>
     </nav>
+  </div>
+  <div class="wed-document col-lg-9 col-lg-pull-3">
+    <div class="alert alert-info loading" style="display: none">
+      Loading the document... <i class="fa fa-spinner fa-spin"></i>
+    </div>
   </div>
 </div>
 {% endblock %}
