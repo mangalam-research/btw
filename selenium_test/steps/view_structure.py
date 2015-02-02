@@ -17,6 +17,54 @@ from ..environment import server_write, server_read
 step_matcher("re")
 
 
+@then(r"^the table of contents is (?P<state>expandable|non-expandable)$")
+def step_impl(context, state):
+    driver = context.driver
+
+    expandable = state == "expandable"
+
+    selector = "#btw-article-affix" + \
+               ".expandable" if expandable else ":not(.expandable)"
+
+    els = driver.find_elements_by_css_selector(selector)
+
+    assert_true(len(els) > 0, "the table of contents should "
+                "{0} expandable".format("be" if expandable else "not be"))
+
+
+@then(r"^the table of contents is (?P<state>expanded|collapsed)$")
+def step_impl(context, state):
+    util = context.util
+
+    expanded = state == "expanded"
+
+    selector = "#btw-article-affix" + \
+               ".expanded" if expanded else ":not(.expanded)"
+
+    try:
+        util.find_element((By.CSS_SELECTOR, selector))
+    except TimeoutException:
+        assert_true(False, "the table of contents should be " + state)
+
+
+@when(r"^the user clicks on the button to toggle the table of contents$")
+def step_impl(context):
+    driver = context.driver
+    button = driver.find_element_by_css_selector(
+        "#btw-article-affix>.expandable-heading .btn")
+
+    button.click()
+
+
+@when(r"^the user clicks a link in the table of contents$")
+def step_impl(context):
+    driver = context.driver
+    link = driver.find_element_by_css_selector(
+        "#btw-article-affix .nav a")
+
+    link.click()
+
+
 @then("^the senses and subsenses are properly numbered$")
 def step_impl(context):
     util = context.util

@@ -113,6 +113,14 @@ def step_impl(context, x):
 step_matcher('re')
 
 
+@given(r'^the window is sized so that the table of contents is '
+       r'expandable$')
+def step_impl(context):
+    driver = context.driver
+    driver.set_window_size(683, 741)
+    context.execute_steps(u"Then the table of contents is expandable")
+
+
 @when("^(?:the user )?scrolls the editor pane (?P<choice>completely )?down$")
 def step_impl(context, choice):
     driver = context.driver

@@ -21,7 +21,8 @@ Scenario: example hyperlinks are correct
 Scenario: a valid document has a correct structure
   Given a valid document
   And the view has finished rendering
-  Then the english renditions are reformatted in the correct structure
+  Then the table of contents is non-expandable
+  And the english renditions are reformatted in the correct structure
   And the antonyms are reformatted in the correct structure
   And the cognates are reformatted in the correct structure
   And the conceptual proximates are reformatted in the correct structure
@@ -91,3 +92,31 @@ Scenario: a document that times out
   And a valid document
   And the view has finished rendering
   Then the time out error message is visible
+
+Scenario: the user can expand the table of contents
+  Given a valid document
+  And the view has finished rendering
+  And the window is sized so that the table of contents is expandable
+  Then the table of contents is collapsed
+  When the user clicks on the button to toggle the table of contents
+  Then the table of contents is expanded
+
+Scenario: the user can collapse the table of contents
+  Given a valid document
+  And the view has finished rendering
+  And the window is sized so that the table of contents is expandable
+  Then the table of contents is collapsed
+  When the user clicks on the button to toggle the table of contents
+  Then the table of contents is expanded
+  When the user clicks on the button to toggle the table of contents
+  Then the table of contents is collapsed
+
+Scenario: clicking a link in the table of contents collapses it
+  Given a valid document
+  And the view has finished rendering
+  And the window is sized so that the table of contents is expandable
+  Then the table of contents is collapsed
+  When the user clicks on the button to toggle the table of contents
+  Then the table of contents is expanded
+  When the user clicks a link in the table of contents
+  Then the table of contents is collapsed

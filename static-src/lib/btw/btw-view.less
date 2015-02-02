@@ -21,9 +21,15 @@ body {
     display: inline-block;
 }
 
-#btw-article-affix {
-    position: relative;
+.affix-bottom {
+    position: absolute;
+}
 
+.affix {
+    top: 20px;
+}
+
+#btw-article-affix {
     .active {
         border-left: 1px solid;
     }
@@ -42,19 +48,45 @@ body {
         padding-left: 0.5em;
         margin-left: 0.5em;
     }
-}
 
-@media (min-width: @screen-lg-min) {
-    .affix-bottom {
-        position: absolute;
+    .expandable-heading {
+        display: none;
     }
 
-    .affix {
-        top: 20px;
-    }
+    &.expandable {
+        position: relative;
 
-    #btw-article-affix {
-        position: fixed;
+        &.affix {
+            position: fixed;
+        }
+
+        &.expanding, &.expanded {
+            position: fixed;
+            z-index: 10;
+
+            .overflow {
+                visibility: visible;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+        }
+
+        .overflow {
+            visibility: hidden;
+            overflow: hidden;
+        }
+
+        .expandable-heading {
+            display: block;
+            position: relative;
+            margin: 0 auto;
+
+            .btn {
+                max-width: 2em;
+                min-width: 5px;
+                overflow: hidden;
+            }
+        }
     }
 }
 

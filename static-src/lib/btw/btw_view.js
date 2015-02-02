@@ -592,27 +592,88 @@ Viewer.prototype.processData = function (data, bibl_data) {
 
     $(doc.body).scrollspy({target: "#btw-article-affix"});
 
+    var expandable_toggle = affix.querySelector(".expandable-heading .btn");
+    var $expandable_toggle = $(expandable_toggle);
     var affix_constrainer = domutil.closest(affix, "div");
     var affix_overflow = affix.getElementsByClassName("overflow")[0];
+    var $affix = $(affix);
+
+    var frame = doc.getElementsByClassName("wed-frame")[0];
+    function expandHandler(ev) {
+        if (affix.classList.contains("expanding"))
+            return;
+
+        var frame_rect = frame.getBoundingClientRect();
+        var constrainer_rect = affix_constrainer.getBoundingClientRect();
+
+        if (!affix.classList.contains("expanded")) {
+            affix.classList.add("expanding");
+            affix.style.left = constrainer_rect.left + "px";
+            affix.style.width = affix_constrainer.offsetWidth + "px";
+            $affix.animate({
+                left: frame_rect.left,
+                width: frame_rect.width
+            }, 1000, function () {
+                affix.classList.remove("expanding");
+                affix.classList.add("expanded");
+            });
+        }
+        else {
+            var constrainer_style =
+                    window.getComputedStyle(affix_constrainer);
+            $affix.animate({
+                left: constrainer_rect.left +
+                    parseInt(constrainer_style.paddingLeft, 10),
+                width: $(affix_constrainer).innerWidth() -
+                    parseInt(constrainer_style.paddingLeft, 10)
+            }, 1000, function () {
+                affix.style.left = "";
+                affix.style.top = "";
+                affix.classList.remove("expanded");
+            });
+        }
+        ev.stopPropagation();
+    }
+
+    var container = doc.getElementsByClassName("container")[0];
     function resizeHandler() {
-        var constrainer_style = window.getComputedStyle(affix_constrainer);
-        if (constrainer_style.left !== "auto") {
+        $expandable_toggle.off("click");
+        $affix.off("click");
+        var container_rect = container.getBoundingClientRect();
+        var constrainer_rect = affix_constrainer.getBoundingClientRect();
+        if (constrainer_rect.width < container_rect.width / 4) {
+            $expandable_toggle.on("click", expandHandler);
+            $affix.on("click", "a", expandHandler);
+            affix.classList.add("expandable");
+        }
+        else {
+            affix.classList.remove("expanded");
+            affix.classList.remove("expanding");
+            affix.classList.remove("expandable");
+            affix.style.left = "";
+        }
+
+        var style = window.getComputedStyle(affix);
+        var constrainer_style =
+                window.getComputedStyle(affix_constrainer);
+        if (affix.classList.contains("expanded")) {
+            var frame_rect = frame.getBoundingClientRect();
+            affix.style.width = frame_rect.width + "px";
+            affix.style.left = frame_rect.left + "px";
+        }
+        else {
             // This prevents the affix from popping wider when we scroll
             // the window. Because a "detached" affix has "position:
             // fixed", it is taken out of the flow and thus its "width" is
             // no longer constrained by its parent.
-            affix.style.width = affix_constrainer.offsetWidth + "px";
 
-            var rect = affix_overflow.getBoundingClientRect();
-            var style = window.getComputedStyle(affix);
-            affix_overflow.style.height =
-                (window.innerHeight - rect.top -
-                 parseInt(style.marginBottom, 10) - 5) + "px";
+            affix.style.width = $(affix_constrainer).innerWidth() -
+                parseInt(constrainer_style.paddingLeft, 10) + "px";
         }
-        else {
-            affix.style.width = "auto";
-            affix_overflow.style.height = "auto";
-        }
+        var rect = affix_overflow.getBoundingClientRect();
+        affix_overflow.style.height =
+            (window.innerHeight - rect.top -
+             parseInt(style.marginBottom, 10) - 5) + "px";
     }
     win.addEventListener("resize", resizeHandler);
     win.addEventListener("scroll", resizeHandler);
