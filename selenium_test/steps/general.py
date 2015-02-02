@@ -24,8 +24,8 @@ def user_load_lexicography(context):
 
 @then("the user gets the top page of the lexicography app")
 def step_impl(context):
-    driver = context.driver
-    assert_equal(driver.title, "BTW dev | Lexicography")
+    util = context.util
+    util.wait(lambda driver: driver.title == "BTW dev | Lexicography")
 
 
 @given("that the user has loaded the top page of the lexicography app")
