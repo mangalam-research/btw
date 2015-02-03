@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E0611
 import re
+from StringIO import StringIO
 
 import lxml.etree
 
@@ -145,7 +146,8 @@ def step_impl(context):
     return document.querySelector(
         ".btw\\:sense .btw\\:english-renditions").outerHTML;
     """)
-    tree = lxml.etree.fromstring(html)
+    parser = lxml.etree.HTMLParser()
+    tree = lxml.etree.parse(StringIO(html), parser)
     clean_tree(tree)
 
     term_list_terms = tree.xpath(
@@ -171,7 +173,8 @@ def step_impl(context, what):
     return document.querySelector(
         ".btw\\:sense ." + class_).outerHTML;
     """, class_)
-    tree = lxml.etree.fromstring(html)
+    parser = lxml.etree.HTMLParser()
+    tree = lxml.etree.parse(StringIO(html), parser)
     clean_tree(tree)
 
     singular = what[:-1]

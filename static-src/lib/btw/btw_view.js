@@ -803,8 +803,12 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
 
         // This div will contain the list of all terms in the group.
         var div = doc.createElement("div");
-        div.classList.add("btw:" + name + "-term-list");
-        div.classList.add("_real");
+        div.className = "btw:" + name + "-term-list _real";
+
+        var head = doc.createElement("div");
+        head.className = "head _phantom";
+        head.textContent = "Terms in this section:";
+        div.appendChild(head);
 
         // Slicing it prevents this list from growing as we add the clones.
         var terms = _slice.call(group.getElementsByClassName("btw:term"));
@@ -833,7 +837,12 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
             parent.removeChild(term);
             wrappers.push(wrapper);
         }
-        group.insertBefore(div, group.querySelector(".btw\\:" + name));
+
+        var first_term = group.querySelector(".btw\\:" + name);
+        group.insertBefore(div, first_term);
+        var hr = document.createElement("hr");
+        hr.className = "hr _phantom";
+        group.insertBefore(hr, first_term);
 
         //
         // Combine the contents of all of the items into one

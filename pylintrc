@@ -1,3 +1,6 @@
+[MASTER]
+extension-pkg-whitelist=lxml
+
 [MESSAGES CONTROL]
 #
 # - E1101 is the check that verifies whether object members exist. When using
@@ -27,7 +30,9 @@
 # And reevaluate when new versions of pylint are released.
 
 disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter
+
 [REPORTS]
 include-ids=y
+
 [VARIABLES]
 dummy-variables-rgx=_.*|dummy
