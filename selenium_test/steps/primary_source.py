@@ -360,10 +360,22 @@ def step_impl(context, action):
             button = driver.execute_script("""
             var column = arguments[0];
             var button_index = arguments[1];
+
+            var proc = document.getElementById(
+                "bibliography-table_processing");
+
+            // Still processing...
+            if (proc.style.display !== "none")
+                return undefined;
+
             return jQuery("table#bibliography-table>thead>tr>th")
                        .eq(column).children("div.btn")
                        .eq(button_index)[0];
             """, column, 0 if action == "closes" else 1)
+
+            if button is None:
+                return False
+
             button.click()
             return True
         except StaleElementReferenceException:
