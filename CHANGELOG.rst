@@ -1,3 +1,21 @@
+* 1.0.3:
+
+  + Bug fixes:
+
+    - Display: prevent the navigation menu in article display from
+      popping out of place if the display is resized too small. When
+      the display is resized beyond a certain limit, the navigation
+      menu collapses on the right of the screen and has to be expanded
+      for use.
+
+  + New features:
+
+    - Display: better demarcation between the list of contrastive
+      terms that appear in the sections for each kind of contrastive
+      term (antonyms, cognates, conceptual proximates). The list is
+      now introduced by a heading ("Terms in this section:") and
+      separated from the terms by a horizontal rule.
+
 * 1.0.2:
 
   + Bug fixes:
