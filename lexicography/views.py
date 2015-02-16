@@ -400,8 +400,9 @@ def handle_update(request, handle_or_entry_id):
 # This is purposely not set through the settings. Why? Because this is
 # not something which someone installing BTW should have the
 # opportunity to change. The Django **code** depends on wed being at a
-# certain version. Changing this is a recipe for disaster.
-REQUIRED_WED_VERSION = "0.20.4"
+# certain version. Changing this in the settings file would be a
+# recipe for disaster.
+REQUIRED_WED_VERSION = "0.21.0"
 
 
 def version_check(version):

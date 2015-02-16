@@ -5,6 +5,16 @@
    - Prevents the "Terms in this section:" heading from appearing in
      the table of contents of articles.
 
+  + New features:
+
+   - Filter the text that is entered in articles so as to remove
+     zero-width spaces and convert non-breaking spaces to normal
+     spaces.
+
+  + Miscellaneous:
+
+   - Upgrade to Bootstrap 3.3.2.
+
 * 1.0.3:
 
   + Bug fixes:
