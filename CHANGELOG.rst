@@ -1,3 +1,10 @@
+* 1.0.4:
+
+  + Bug fixes:
+
+   - Prevents the "Terms in this section:" heading from appearing in
+     the table of contents of articles.
+
 * 1.0.3:
 
   + Bug fixes:

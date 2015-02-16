@@ -366,6 +366,66 @@ def step_impl(context, what, title=None):
     assert_equal(result[0], context.text.strip(),
                  "the semantic fields should be equal")
 
+@then(ur'^the table of contents contains$')
+def step_impl(context):
+    driver = context.driver
+    text = context.text.strip()
+    expected_nav = {
+        u"text": "",
+        u"children": []
+    }
+    stack = [expected_nav]
+    for line in text.split("\n"):
+        parts = line.split(">")
+        level = len(parts) - 1
+        item = {
+            u"text": parts[-1],
+            u"children": []
+        }
+
+        stack_level = len(stack) - 2
+
+        # If the level of this item is lower than the level of
+        # item on the top of the stack, pop so that we can add this
+        # item to the right place.
+        if level < stack_level:
+            del stack[0:stack_level - level]
+            stack_level = level
+
+        if level == stack_level:
+            # The item is a child of the one which is at position 1 in
+            # the stack.
+            stack[1]["children"].append(item)
+            stack[0] = item
+        elif level > stack_level:
+            # The item is a child of the one at the top of the stack.
+            stack[0]["children"].append(item)
+            stack[0:0] = [item]
+
+    # Drop the top level element as it is useless.
+    expected_nav = expected_nav["children"]
+
+    nav = driver.execute_script("""
+    var nav = document.querySelector("#btw-article-affix ul.nav");
+    function grab(li) {
+        var a = li.querySelector("a");
+        var children = [];
+        var ret = { text: a ? a.textContent : "", children: children };
+        var lis = Array.prototype.filter.call(li.querySelectorAll("ul>li"),
+           function (el) { return el.parentNode.parentNode === li; });
+
+        for (var i = 0, child; (child = lis[i]); ++i)
+            children.push(grab(child));
+        return ret;
+    }
+    var ret = grab(nav.parentNode);
+
+    // The algorithm above returns an incorrect result for the top
+    // level element, and we actually do not need it. So...
+    return ret.children;
+    """)
+    assert_equal(nav, expected_nav)
+
 @then(ur'^the navigation link "(?P<text>.*?)" points to the fourth subsense$')
 def step_impl(context, text):
     driver = context.driver

@@ -565,6 +565,12 @@ Viewer.prototype.processData = function (data, bibl_data) {
                     domutil.toGUISelector("btw:english-term-list"));
                 heading += " " + (terms ? terms.textContent : "");
                 break;
+            case 'btw:antonym-term-list':
+            case 'btw:cognate-term-list':
+            case 'btw:conceptual-proximate-term-list':
+                // We suppress these.
+                heading = '';
+                break;
             }
             prev_container = anchor.parentNode;
             break;
@@ -577,10 +583,12 @@ Viewer.prototype.processData = function (data, bibl_data) {
             throw new Error("unknown element type: " + orig);
         }
 
-        var li = btw_util.htmlToElements(doc, _.template(
-            '<li><a href="#<%= target %>"><%= heading %></a></li>',
-            { target: anchor.id, heading: heading}))[0];
-        ul_stack[0].appendChild(li);
+        if (heading) {
+            var li = btw_util.htmlToElements(doc, _.template(
+                '<li><a href="#<%= target %>"><%= heading %></a></li>',
+                { target: anchor.id, heading: heading}))[0];
+            ul_stack[0].appendChild(li);
+        }
     }
 
     $(affix).affix({

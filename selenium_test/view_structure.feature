@@ -44,6 +44,21 @@ Scenario: a valid document has a correct structure
     01.02.11; 01.04.04; 01.04.08; 01.05.05; 01.06.07; 02.01.13; 02.01.14; 02.01.17; 02.02.12; 02.02.13; 02.02.14; 02.02.18; 02.02.19; 02.02.22; 03.05.01; 03.07; 03.07.00; 03.07.03
     """
   And the navigation link "2. absolute confidence derived from understanding, typically compounded with avetya or abhedya" points to the fourth subsense
+  And the table of contents contains
+"""
+OVERVIEW
+SENSE DISCRIMINATION
+>A. clarity, serenity
+>>1. often explicitely associated to the water metaphor
+>>2. in the sense of pleasurable emotion, serenity.
+>B. confidence, trust, faith
+>>1. faith, a form of trust not necessarily related to intellectual understanding
+>>2. absolute confidence derived from understanding, typically compounded with avetya or abhedya
+>C. favor
+>D. devotion
+HISTORICO-SEMANTICAL DATA
+>etymology
+"""
 
 Scenario: clicking the expand all button expands all sections
   Given a valid document
