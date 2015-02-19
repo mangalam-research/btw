@@ -305,53 +305,7 @@ BTWMode.prototype.init = function (editor) {
 };
 
 BTWMode.prototype._keyHandler = log.wrap(function (e) {
-    if (!e.ctrlKey && !e.altKey && e.which === 32)
-        return this._assignLanguage(e);
 }.bind(this));
-
-// XXX This function needs to be contextual: don't assign
-// languages in locations where language are already
-// assigned. e.g. citations of primary sources.
-BTWMode.prototype._assignLanguage = function (e) {
-    var caret = this._editor.getGUICaret();
-
-    if (caret === undefined)
-        return true;
-
-    // XXX we do not work with anything else than text nodes.
-    if (caret.node.nodeType !== Node.TEXT_NODE)
-        return true;
-
-    // Find the previous word
-    var offset = caret.node.nodeValue.slice(0, caret.offset).search(/\w+$/);
-
-    // This could happen if the user enters spaces at the start of
-    // an element for instance.
-    if (offset === -1)
-        return true;
-
-    var word = caret.node.nodeValue.slice(offset, caret.offset);
-
-    // XXX hardcoded
-    var $new_element;
-    if (word === "Abhidharma") {
-        $new_element = $(transformation.wrapTextInElement(
-            this._editor.data_updater,
-            caret.node, offset, caret.offset, "term", {"xml:lang": "sa-Latn"}));
-        // Simulate a link
-        if ($new_element !== undefined)
-            $new_element.contents().wrapAll("<a href='fake'>");
-    }
-
-    if ($new_element !== undefined) {
-        // Place the caret after the element we just wrapped.
-        rangy.getNativeSelection().collapse(
-            $new_element[0].nextSibling, 0);
-        this._editor._caretChangeEmitter(e);
-    }
-
-    return true;
-};
 
 BTWMode.prototype.makeDecorator = function (domlistener) {
     var obj = Object.create(BTWDecorator.prototype);
