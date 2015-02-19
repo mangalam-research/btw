@@ -150,20 +150,15 @@ $(COPIED_LOCAL_SOURCES): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-define WED_OPTIMIZED_ADDITION
-  "lodash": ["lodash/modern/utilities/template"],\n\
-  "wed/wed": ["wed/convert", "wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation", "wed/lib/simple_event_emitter", "wed/lib/conditioned", "salve/name_resolver", "salve/validate", "wed/gui/tooltip", "wed/modes/generic/metas/tei_meta"],
-endef
-
-$(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/requirejs-config-dev.js
+$(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/make-optimized-config static-src/config/requirejs-config-dev.js
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 ifneq ($(WED_OPTIMIZED),)
 # This is an ad hoc way of modifying the configuration for the sake of
 # an optimized build. This basically exports all the modules that are
 # going to be needed from outside the bundle that contains wed.
-	sed -e'/^ *bundles *: *{ *$$/ a $(WED_OPTIMIZED_ADDITION)'  $< > $@
+	$< $(word 2,$^) > $@
 else
-	cp $< $@
+	cp $(word 2,$^) $@
 endif
 
 btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less $(WED_LESS_INC_PATH)/*.less
