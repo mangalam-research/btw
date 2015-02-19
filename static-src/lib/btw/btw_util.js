@@ -53,14 +53,6 @@ function languageToLanguageCode(language) {
     return language_to_code[language];
 }
 
-function htmlToElements(document, html) {
-    var frag = document.createDocumentFragment();
-    var div = document.createElement("div");
-    frag.appendChild(div);
-    div.innerHTML = html;
-    return Array.prototype.slice.call(div.childNodes);
-}
-
 var collapsible_template =
 '\
 <div class="_phantom_wrap panel-group<%= group_classes %>" role="tablist" aria-multiselectable="true">\
@@ -112,15 +104,14 @@ function makeCollapsible(document, kind, heading_id, collapse_id,
     additional_group_classes =
         additional_group_classes ? " " + additional_group_classes : "";
 
-    var el = htmlToElements(
-        document,
+    var el = domutil.htmlToElements(
         _.template(collapsible_template, {
             kind: kind,
             group_classes: additional_group_classes,
             panel_classes: additional_panel_classes,
             heading_id: heading_id,
             collapse_id: collapse_id
-        }))[0];
+        }), document)[0];
 
     return {
         group: el,
@@ -158,7 +149,6 @@ exports.languageCodeToLabel = languageCodeToLabel;
 exports.languageToLanguageCode = languageToLanguageCode;
 
 exports.termsForSense = termsForSense;
-exports.htmlToElements = htmlToElements;
 exports.makeCollapsible = makeCollapsible;
 exports.updateCollapsible = updateCollapsible;
 

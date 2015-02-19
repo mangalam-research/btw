@@ -584,9 +584,9 @@ Viewer.prototype.processData = function (data, bibl_data) {
         }
 
         if (heading) {
-            var li = btw_util.htmlToElements(doc, _.template(
+            var li = domutil.htmlToElements(_.template(
                 '<li><a href="#<%= target %>"><%= heading %></a></li>',
-                { target: anchor.id, heading: heading}))[0];
+                { target: anchor.id, heading: heading}), doc)[0];
             ul_stack[0].appendChild(li);
         }
     }
