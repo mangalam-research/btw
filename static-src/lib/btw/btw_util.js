@@ -145,11 +145,29 @@ function updateCollapsible(structure, heading_id, collapse_id) {
     collapse.id = collapse_id;
 }
 
+function biblDataToReferenceText(data) {
+    var text = "";
+    if (data.reference_title)
+        text = data.reference_title;
+    else {
+        var creators = data.creators;
+        text = "***ITEM HAS NO CREATORS***";
+        if (creators)
+            text = creators.split(",")[0];
+
+        if (data.date)
+            text += ", " + data.date;
+    }
+    return text;
+}
+
+
 exports.languageCodeToLabel = languageCodeToLabel;
 exports.languageToLanguageCode = languageToLanguageCode;
 
 exports.termsForSense = termsForSense;
 exports.makeCollapsible = makeCollapsible;
 exports.updateCollapsible = updateCollapsible;
+exports.biblDataToReferenceText = biblDataToReferenceText;
 
 });

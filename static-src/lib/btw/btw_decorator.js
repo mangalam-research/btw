@@ -726,7 +726,7 @@ BTWDecorator.prototype.languageDecorator = function (el) {
         label = label.split("; ")[0];
         tooltip($(el), {"title": label, "container": "body"});
     }
-}
+};
 
 
 BTWDecorator.prototype._refreshNavigationHandler = function () {

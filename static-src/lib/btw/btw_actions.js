@@ -9,6 +9,9 @@ var btw_util = require("./btw_util");
 var transformation = require("wed/transformation");
 var Action = require("wed/action").Action;
 var domutil = require("wed/domutil");
+var key_constants = require("wed/key_constants");
+// Yep, Bloodhound is provided by typeahead.
+var Bloodhound = require("typeahead");
 
 function SensePtrDialogAction() {
     Action.apply(this, arguments);
@@ -192,45 +195,169 @@ ExamplePtrDialogAction.prototype.execute = function (data) {
 
 exports.ExamplePtrDialogAction = ExamplePtrDialogAction;
 
-function InsertBiblPtrDialogAction() {
+function InsertBiblPtrAction() {
     Action.apply(this, arguments);
 }
 
-oop.inherit(InsertBiblPtrDialogAction, Action);
+oop.inherit(InsertBiblPtrAction, Action);
 
-InsertBiblPtrDialogAction.prototype.execute = function (data) {
+InsertBiblPtrAction.prototype.execute = function (data) {
     var editor = this._editor;
+    var range = editor.getSelectionRange();
 
-    var modal = editor.mode._bibliography_modal;
-    var $primary = modal.getPrimary();
-    var $body = $('<div>');
-    $body.load(editor.mode._bibl_search_url, function() {
-        // The element won't exist until the load is performed so we
-        // have to put this in the callback. (Or we could use
-        // delegation but delegation is not strictly speaking
-        // necessary here.)
-        var $table = $body.find("#bibliography-table");
-        $table.on('refresh-results',
-                  function () {
-            $primary.prop('disabled', true).addClass('disabled');
-        });
-        $table.on('selected-row', function () {
-            $primary.prop('disabled', false).removeClass('disabled');
-        });
-    });
-    $primary.prop("disabled", true).addClass("disabled");
+    if (range && range.collapsed)
+        range = undefined;
 
-    modal.setBody($body);
-    modal.modal(function () {
-        var clicked = modal.getClickedAsText();
-        if (clicked === "Insert") {
-            var url = $body.find('.selected-row').data('item-url');
-            data.target = url;
-            editor.mode.insert_ref_tr.execute(data);
+    if (range) {
+        var nodes = range.getNodes();
+        var non_text = false;
+        for (var i = 0, node; !non_text && (node = nodes[i]); ++i) {
+            if (node.nodeType !== Node.TEXT_NODE)
+                non_text = true;
         }
+
+        // The selection must contain only text.
+        if (non_text) {
+            getBiblSelectionModal().modal();
+            return;
+        }
+    }
+
+    var text = range && range.toString();
+
+    var wst = Bloodhound.tokenizers.whitespace;
+    function tokenizeItem(item) {
+        return wst(item.title).concat(wst(item.creators));
+    }
+
+    function tokenizePS(ps) {
+        return tokenizeItem(ps.item).concat(wst(ps.reference_title));
+    }
+
+    function datumTokenizer(datum) {
+        return datum.item ? tokenizePS(datum) : tokenizeItem(datum);
+    }
+
+    var options = {
+        datumTokenizer: datumTokenizer,
+        queryTokenizer: wst,
+        local: []
+    };
+
+    var cited_engine = new Bloodhound(options);
+    var zotero_engine = new Bloodhound(options);
+
+    cited_engine.initialize();
+    zotero_engine.initialize();
+
+    function renderSuggestion(obj) {
+        var data = "";
+        var item = obj;
+        if (obj.reference_title) {
+            data = obj.reference_title + " --- ";
+            item = obj.item;
+        }
+
+        var creators = item.creators;
+        var first_creator = "***ITEM HAS NO CREATORS***";
+        if (creators)
+            first_creator = creators.split(",")[0];
+
+        data += first_creator + ", " + item.title;
+        var date = item.date;
+        if (date)
+            data += ", " + date;
+
+        return "<p><span style='white-space: nowrap'>" +
+            data + "</span></p>";
+    }
+
+    var ta_options = {
+        options: {
+            autoselect: true,
+            hint: true,
+            highlight: true,
+            minLength: 1
+        },
+        datasets: [{
+            name: 'cited',
+            displayKey: btw_util.biblDataToReferenceText,
+            source: cited_engine.ttAdapter(),
+            templates: {
+                header: "Cited",
+                suggestion: renderSuggestion
+            }
+        }, {
+            name: 'zotero',
+            displayKey: btw_util.biblDataToReferenceText,
+            source: zotero_engine.ttAdapter(),
+            templates: {
+                header: "Zotero",
+                suggestion: renderSuggestion
+            }
+
+        }]
+    };
+
+    var pos = editor.computeContextMenuPosition(undefined, true);
+    var ta = editor.displayTypeaheadPopup(pos.left, pos.top, "Reference",
+                                 ta_options, function (obj) {
+        if (!obj)
+            return;
+
+        data.target = obj.url;
+        if (range)
+            editor.mode.replace_selection_with_ref_tr.execute(data);
+        else
+            editor.mode.insert_ref_tr.execute(data);
+    });
+
+    editor.mode._getBibliographicalInfo().then(function (info) {
+        var all_values = [];
+        var keys = Object.keys(info);
+        var i, key;
+        for (i = 0; (key = keys[i]); ++i) {
+            all_values.push(info[key]);
+        }
+
+        var cited_values = [];
+        var refs = editor.gui_root.querySelectorAll("._real.ref");
+        var ref;
+        for (i = 0; (ref = refs[i]); ++i) {
+            var orig_target = ref.getAttribute(util.encodeAttrName("target"));
+            if (orig_target.lastIndexOf("/bibliography/", 0) !== 0)
+                continue;
+
+            cited_values.push(info[orig_target]);
+        }
+
+        zotero_engine.add(all_values);
+        cited_engine.add(cited_values);
+        if (range)
+            ta.setValue(text);
+        ta.hideSpinner();
     });
 };
 
-exports.InsertBiblPtrDialogAction = InsertBiblPtrDialogAction;
+exports.InsertBiblPtrAction = InsertBiblPtrAction;
+
+var BIBL_SELECTION_MODAL_KEY = "btw_mode.btw_actions.bibl_selection_modal";
+function getBiblSelectionModal(editor) {
+    var modal = editor.getModeData(BIBL_SELECTION_MODAL_KEY);
+    if (modal)
+        return modal;
+
+    modal = editor.makeModal();
+    modal.setTitle("Invalid Selection");
+    modal.setBody(
+        "<p>The selection should contain only text. The current " +
+            "selection contains elements.</p>");
+    modal.addButton("Ok", true);
+    editor.setModeData(BIBL_SELECTION_MODAL_KEY, modal);
+
+    return modal;
+}
+
+
 
 });

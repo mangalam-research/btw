@@ -8,7 +8,8 @@ var btw_tr = require("./btw_tr");
 var log = require("wed/log");
 var oop = require("wed/oop");
 
-function Toolbar(editor) {
+function Toolbar(mode, editor) {
+    this._mode = mode;
     this._editor = editor;
     this._buttons = [
         {name: "quit", action: new QuitAction(editor)},
@@ -22,6 +23,8 @@ function Toolbar(editor) {
          action: new btw_tr.SetTextLanguageTr(editor, "Pāli")},
         {name: "latin",
          action: new btw_tr.SetTextLanguageTr(editor, 'Latin')},
+        {name: "reference",
+         action: mode.insert_bibl_ptr},
         {name: "quitnosave", action: new QuitWithoutSavingAction(editor),
          extraClass: "pull-right"}
     ];

@@ -14,9 +14,11 @@ require.config({
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
    'jquery.growl': 'external/jquery-growl/js/jquery.growl',
+   typeahead: 'external/typeahead.bundle.min',
      // For bibliography
    'modules': '/static/scripts/modules',
-   localforage: 'external/localforage'
+   localforage: 'external/localforage',
+   'bluebird': 'external/bluebird.min'
  },
  packages: [
      {
@@ -72,6 +74,10 @@ require.config({
    'jquery.growl': {
        deps: ['jquery'],
        exports: 'jQuery.growl'
+   },
+   typeahead: {
+       deps: ['jquery'],
+       exports: 'Bloodhound'
    }
  },
  config: {
@@ -80,7 +86,7 @@ require.config({
          mode: {
              path: "btw/btw_mode",
              options: {
-                 bibl_search_url: "/bibliography/search/"
+                 bibl_url: "/bibliography/all"
              }
          }
      }

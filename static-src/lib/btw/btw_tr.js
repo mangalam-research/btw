@@ -72,6 +72,21 @@ function insert_ref(editor, data) {
     });
 }
 
+function replace_selection_with_ref(editor, data) {
+    var range = editor.getDataSelectionRange();
+    if (!domutil.isWellFormedRange(range))
+        throw new Error("malformed range");
+
+    var start_caret = makeDLoc(editor.data_root,
+                               range.startContainer, range.startOffset);
+    var end_caret = makeDLoc(editor.data_root,
+                             range.endContainer, range.endOffset);
+
+    var cut_ret = editor.data_updater.cut(start_caret, end_caret);
+    editor.setDataCaret(cut_ret[0]);
+    insert_ref(editor, data);
+}
+
 
 var NESTING_MODAL_KEY = "btw_mode.btw_tr.nesting_modal";
 function getNestingModal(editor) {
@@ -241,6 +256,7 @@ function make_replace_none(editor, replaced_with) {
 
 exports.insert_ptr = insert_ptr;
 exports.insert_ref = insert_ref;
+exports.replace_selection_with_ref = replace_selection_with_ref;
 exports.SetTextLanguageTr = SetTextLanguageTr;
 exports.RemoveMixedTr = RemoveMixedTr;
 exports.make_replace_none = make_replace_none;

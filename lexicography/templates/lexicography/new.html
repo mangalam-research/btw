@@ -1,7 +1,9 @@
 {% extends "lexicography/base.html" %}
+{% load staticfiles %}
 {% block extrahead %}
 {{ form.media }}
 {{ block.super }}
+<link href="{% static "lib/external/typeaheadjs.css" %}" media="screen" rel="stylesheet" />
 {% if new_entry %}
 <script>
   var django_active_submenu = "btw-lexicography-new-sub";

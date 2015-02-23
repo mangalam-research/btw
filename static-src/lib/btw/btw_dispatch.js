@@ -10,6 +10,7 @@ var util = require("wed/util");
 var $ = require("jquery");
 var tooltip = require("wed/gui/tooltip").tooltip;
 var domutil = require("wed/domutil");
+var btw_util = require("./btw_util");
 
 
 function DispatchMixin() {
@@ -385,40 +386,22 @@ DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
 DispatchMixin.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
     var dec = this;
     var $el = $(el);
-    $.ajax({
-        url: target_id,
-        headers: {
-            Accept: "application/json"
-        }
-    }).done(function (data) {
-        dec.fillBiblData(el, abbr, data);
-        $el.trigger("wed-refresh");
+    this._mode._getBibliographicalInfo().then(function (info) {
+        var data = info[target_id];
+        if (data)
+            dec.fillBiblData(el, abbr, data);
+        else
+            dec._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
 
-    }).fail(function () {
-        dec._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
         $el.trigger("wed-refresh");
     });
 };
 
 DispatchMixin.prototype.fillBiblData = function (el, abbr, data) {
     var $el = $(el);
-    var text = "";
-    if (data.reference_title) {
-        text = data.reference_title;
-        setTitle($el, data.item);
-    }
-    else {
-        var creators = data.creators;
-        text = "***ITEM HAS NO CREATORS***";
-        if (creators)
-            text = creators.split(",")[0];
-
-        if (data.date)
-            text += ", " + data.date;
-        setTitle($el, data);
-    }
-
-    this._gui_updater.insertText(abbr, 0, text);
+    setTitle($el, data.item ? data.item: data);
+    this._gui_updater.insertText(abbr, 0,
+                                 btw_util.biblDataToReferenceText(data));
 };
 
 

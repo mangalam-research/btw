@@ -20,9 +20,11 @@ var Toolbar = require("./btw_toolbar").Toolbar;
 var rangy = require("rangy");
 var btw_meta = require("./btw_meta");
 var domutil = require("wed/domutil");
+var key = require("wed/key");
 var btw_tr = require("./btw_tr");
 var btw_actions = require("./btw_actions");
 var Validator = require("./btw_validator").Validator;
+var Promise = require("bluebird").Promise;
 require("jquery.cookie");
 
 /**
@@ -36,8 +38,10 @@ function BTWMode (options) {
             metadata: require.toUrl('./btw-storage-metadata.json')
         }
     };
-    this._bibl_search_url = options.bibl_search_url;
-    delete options.bibl_search_url;
+    this._bibl_url = options.bibl_url;
+    delete options.bibl_url;
+    // We can initiate this right away.
+    this._getBibliographicalInfo();
     Mode.call(this, options);
     this._contextual_menu_items = [];
     this._headers = {
@@ -66,19 +70,7 @@ BTWMode.prototype.init = function (editor) {
     this._hyperlink_modal.addButton("Insert", true);
     this._hyperlink_modal.addButton("Cancel");
 
-    this._bibliography_modal = editor.makeModal();
-    this._bibliography_modal.setTitle("Insert bibliographical reference");
-    this._bibliography_modal.addButton("Insert", true);
-    this._bibliography_modal.addButton("Cancel");
-
-
     editor.setNavigationList("");
-    this._toolbar = new Toolbar(editor);
-    var toolbar_top = this._toolbar.getTopElement();
-    editor.widget.insertBefore(toolbar_top, editor.widget.firstChild);
-    $(editor.widget).on('wed-global-keydown.btw-mode',
-                        this._keyHandler.bind(this));
-    editor.excludeFromBlur(toolbar_top);
 
     this.insert_sense_ptr_action = new btw_actions.SensePtrDialogAction(
         editor, "Insert a new hyperlink to a sense",
@@ -93,6 +85,10 @@ BTWMode.prototype.init = function (editor) {
 
     this.insert_ref_tr = new transformation.Transformation(
         editor, "add", "Insert a reference", btw_tr.insert_ref);
+
+    this.replace_selection_with_ref_tr = new transformation.Transformation(
+        editor, "wrap", "Replace the selection with a reference",
+        btw_tr.replace_selection_with_ref);
 
     this.swap_with_prev_tr = new transformation.Transformation(
         editor, "swap-with-previous", "Swap with previous sibling", undefined,
@@ -131,12 +127,28 @@ BTWMode.prototype.init = function (editor) {
 
     }.bind(this));
 
-    this.insert_bibl_ptr = new btw_actions.InsertBiblPtrDialogAction(
+    this.insert_bibl_ptr = new btw_actions.InsertBiblPtrAction(
         this._editor,
         "Insert a new bibliographical reference",
         "",
-        "<i class='fa fa-plus fa-fw'></i>",
+        "<i class='fa fa-book fa-fw'></i>",
         true);
+
+    // Yes, we inherit from InsertBiblPtrAction even though we are
+    // replacing.
+    this.replace_bibl_ptr = new btw_actions.InsertBiblPtrAction(
+        this._editor,
+        "Replace the selection with a bibliographical reference",
+        "",
+        "<i class='fa fa-book fa-fw'></i>",
+        true);
+
+    this._toolbar = new Toolbar(this, editor);
+    var toolbar_top = this._toolbar.getTopElement();
+    editor.widget.insertBefore(toolbar_top, editor.widget.firstChild);
+    $(editor.widget).on('wed-global-keydown.btw-mode',
+                        this._keyHandler.bind(this));
+    editor.excludeFromBlur(toolbar_top);
 
     /**
      * @private
@@ -180,7 +192,7 @@ BTWMode.prototype.init = function (editor) {
         "btw:conceptual-proximate-instance": true,
         "p": true,
         "lg": true,
-        "ref": ["insert"]
+        "ref": ["insert", "wrap"]
     };
 
     var pass_in_tr = $.extend({}, pass_in_cit);
@@ -244,6 +256,10 @@ BTWMode.prototype.init = function (editor) {
               { tag: "ref",
                 type: "insert",
                 actions: [ this.insert_bibl_ptr]
+              },
+              { tag: "ref",
+                type: "wrap",
+                actions: [ this.replace_bibl_ptr]
               }
           ]
         },
@@ -294,14 +310,44 @@ BTWMode.prototype.init = function (editor) {
               { tag: "ref",
                 type: "insert",
                 actions: [ this.insert_bibl_ptr]
+              },
+              { tag: "ref",
+                type: "wrap",
+                actions: [ this.replace_bibl_ptr]
               }
           ]
         },
     ];
 };
 
-BTWMode.prototype._keyHandler = log.wrap(function (e) {
-}.bind(this));
+BTWMode.prototype._getBibliographicalInfo = function () {
+    if (this._getBibliographicalInfo_promise)
+        return this._getBibliographicalInfo_promise;
+
+    var promise = this._getBibliographicalInfo_promise =
+            Promise.resolve($.ajax({
+        url: this._bibl_url,
+        headers: {
+            Accept: "application/json"
+        }
+    })).bind(this)
+    .catch(function (jqXHR) {
+        throw new Error("cannot load bibliographical information");
+    }).then(function (data) {
+        var url_to_item = Object.create(null);
+        for (var i = 0, item; (item = data[i]); ++i) {
+            url_to_item[item.url] = item;
+        }
+        return url_to_item;
+    });
+
+    return promise;
+};
+
+BTWMode.prototype._keyHandler = log.wrap(function (wed_event, ev) {
+    // This is where we'd handle keys that are special to this mode if
+    // we needed them.
+});
 
 BTWMode.prototype.makeDecorator = function (domlistener) {
     var obj = Object.create(BTWDecorator.prototype);

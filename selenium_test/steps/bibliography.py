@@ -1,6 +1,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-import selenium.webdriver.support.expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 import wedutil
 from behave import step_matcher
@@ -30,26 +30,6 @@ def __get_first_ph_in_etymology(driver):
     return found;
     """)
 
-
-@when(ur"^the user opens the modal dialog to insert a reference$")
-def step_impl(context):
-    driver = context.driver
-    util = context.util
-
-    # Obtain the first placeholder after "[etymology]".
-    ph = __get_first_ph_in_etymology(driver)
-
-    wedutil.click_until_caret_in(util, ph)
-    util.ctrl_equivalent_x("/")
-
-    context.execute_steps(u"""
-    When the user clicks the context menu option "Insert a new \
-bibliographical reference"
-    """)
-
-    util.wait(
-        EC.visibility_of_element_located((By.ID,
-                                          "bibliography-table")))
 
 @when(ur'^the user adds a reference to an item$')
 @when(ur'^the user adds a reference to an item'
@@ -98,33 +78,58 @@ def step_impl(context, which=None):
 bibliographical reference"
     """)
 
+    title = WHICH_TO_TITLE[which]
+    typeahead = util.find_element((By.CSS_SELECTOR,
+                                   ".wed-typeahead-popup .tt-input"))
+    typeahead.send_keys(title)
+
     def cond(*_):
         ret = driver.execute_script("""
         var title = arguments[0];
-        var with_ = arguments[1];
+        var $suggestion = jQuery(".wed-typeahead-popup " +
+                                 ".tt-suggestion:contains('" + title + "')");
+        return $suggestion[0];
+        """, WHICH_TO_TITLE[which] if which != "with" else "Foo --- ")
+        return ret
 
-        var qs = document.querySelector.bind(document);
-        var $row = jQuery("#bibliography-table>tbody>tr:contains('" + title +
-                          "')");
-        if (with_) {
-            // Open the next row if needed.
-            var $next = $row.next("tr");
-            if (!$next[0] || $next.is(".odd, .even"))
-                $row.find(".open-close-button").click();
-            // We can't reuse $next here.
-            $row = $row.next("tr").find("table>tbody>tr").first();
-        }
-        return [$row[0], qs(".modal.in .btn-primary")];
-        """, WHICH_TO_TITLE[which], which == "with")
-        return ret if ret[0] and ret[1] else None
-
-    row, button = util.wait(cond)
+    suggestion = util.wait(cond)
 
     ActionChains(driver) \
-        .click(row) \
-        .click(button) \
+        .click(suggestion) \
         .perform()
 
+
+@when(ur"^the user replaces a selection with reference to an item with "
+      ur"a reference title$")
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    # Obtain the first placeholder after "[etymology]".
+    ph = __get_first_ph_in_etymology(driver)
+
+    wedutil.click_until_caret_in(util, ph)
+    ActionChains(driver) \
+        .send_keys("Foo") \
+        .perform()
+    wedutil.select_text_of_element_directly(util, r".btw\:etymology>.p")
+
+    util.ctrl_equivalent_x("/")
+
+    context.execute_steps(u"""
+    When the user clicks the context menu option "Replace the selection \
+with a bibliographical reference"
+    """)
+
+    util.find_element((By.CSS_SELECTOR,
+                       ".wed-typeahead-popup .tt-input"))
+
+    # We do this rather than send directly to the input element
+    # because it should have been focussed automatically.
+
+    ActionChains(driver) \
+        .send_keys(Keys.ENTER) \
+        .perform()
 
 @then(ur'^a new reference is inserted$')
 @then(ur'^the new reference contains the reference title\.?$')

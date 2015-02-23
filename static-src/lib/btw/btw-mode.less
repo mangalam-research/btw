@@ -1,5 +1,26 @@
 @import "wed-vars.less";
 
+.twitter-typeahead {
+    font-size: 18px;
+
+    .form-control {
+        font-size: 18px;
+    }
+
+    .tt-dropdown-menu {
+        background-color: white;
+        width: 100%;
+        overflow: auto;
+        font-size: 18px;
+    }
+
+    .tt-hint {
+        color: #999;
+    }
+
+
+}
+
 .wed-sidebar-panel {
     .nav-list {
         li {
@@ -100,7 +121,7 @@ div.wed-frame {
             background-color: @foreign-color;
             font-style: italic;
             &[data-wed-xml---lang|="zh"] {
-                font-syle: normal;
+                font-style: normal;
             }
             *:not(._gui, ._owns_caret){
                 background-color: inherit;
