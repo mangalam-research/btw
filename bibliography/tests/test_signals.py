@@ -44,7 +44,7 @@ mock_records = mock_zotero.Records([
     {
         "data":
         {
-            "itemKey": "1",
+            "key": "1",
             "title": "Title 1",
             "date": "Date 1",
             "creators": [
@@ -63,7 +63,7 @@ mock_records = mock_zotero.Records([
     {
         "data":
         {
-            "itemKey": "2",
+            "key": "2",
             "title": "Title 2",
             "date": "Date 2",
             "creators": [

@@ -1,4 +1,4 @@
-3316:8:response,446:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715014.122339^3:msg,2:OK,15:timestamp_start,17:1424715014.120263^7:headers,269:40:4:Date,29:Mon, 23 Feb 2015 18:10:14 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]44:12:Content-Type,24:text/html; charset=UTF-8,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,20:Nothing to see here.,4:code,3:200#}4:type,4:http,2:id,36:128c9dca-f696-428d-beb4-f3a473a1a314,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715014.079263^7:address,53:7:address,20:9:127.0.0.1,5:39530#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715013.896741^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:47941#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715013.903568^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+3315:8:response,446:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715341.877969^3:msg,2:OK,15:timestamp_start,17:1424715341.873149^7:headers,269:40:4:Date,29:Mon, 23 Feb 2015 18:15:41 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]44:12:Content-Type,24:text/html; charset=UTF-8,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,20:Nothing to see here.,4:code,3:200#}4:type,4:http,2:id,36:60fd9426-7bbd-4c85-823c-5b0af8922b8f,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,213:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,16:1424715341.84695^7:address,53:7:address,20:9:127.0.0.1,5:58081#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715341.712551^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:34397#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715341.715355^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
 MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
 FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
 NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
@@ -25,7 +25,7 @@ OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
 fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
 VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
 -----END CERTIFICATE-----
-,19:timestamp_ssl_setup,17:1424715014.032169^5:state,0:]19:timestamp_tcp_setup,16:1424715013.97185^}11:intercepted,5:false!7:request,430:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,1:/,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715014.079475^13:timestamp_end,17:1424715014.079886^}}135512:8:response,132519:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715018.928702^3:msg,2:OK,15:timestamp_start,17:1424715018.729394^7:headers,409:40:4:Date,29:Mon, 23 Feb 2015 18:10:14 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]22:13:Total-Results,2:47,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,131949:[
+,19:timestamp_ssl_setup,17:1424715341.802451^5:state,0:]19:timestamp_tcp_setup,16:1424715341.75431^}11:intercepted,5:false!7:request,430:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,1:/,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715341.847132^13:timestamp_end,17:1424715341.847564^}}59680:8:response,56690:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715344.429456^3:msg,2:OK,15:timestamp_start,17:1424715344.361943^7:headers,579:40:4:Date,29:Mon, 23 Feb 2015 18:15:42 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]22:13:Total-Results,2:47,]245:4:Link,233:<https://api.zotero.org/groups/137163/items/top?limit=20&start=20&v=3>; rel="next", <https://api.zotero.org/groups/137163/items/top?limit=20&start=40&v=3>; rel="last", <https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,55951:[
     {
         "key": "7MN7XGX8",
         "version": 22,
@@ -1775,7 +1775,35 @@ VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
             ],
             "relations": {}
         }
-    },
+    }
+],4:code,3:200#}4:type,4:http,2:id,36:352d9b34-c67f-4381-9800-32d9ea0aaec9,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715342.017524^7:address,53:7:address,20:9:127.0.0.1,5:58084#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715341.894104^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:48554#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,16:1424715341.89916^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
+FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
+NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
+BgNVBAsTCkdUMDM4MDI1NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29t
+L3Jlc291cmNlcy9jcHMgKGMpMTQxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZh
+bGlkYXRlZCAtIFJhcGlkU1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIN0FYPR+Q6mdCxwqLmG1ul26F
+PywY6mC1WdeK6IG20Y4AL9Igv0htJhud6hTR0PrafbeyaxZdnvjdYn1dPENzLg8q
+lUBSItQP739T13uS8Xr7p9PqxmTkh3BYPdVhtkpDw14xbxaRpQDLA428ONlTz9F4
+/ecqHsFjQJjAWO3kQOcDElx+LM9rtGzJStEjLOHkzzSJYQZdwTjgU2DZoJmk9VCW
+bn3SiorvngvRjvbO+GamJCbTpkYg4rhzhuDscdfhQmKkOiyDIEIbNxqVCqjMRsrW
+EPGOUypzBKJ1hH0/nPTveNMPIVZxJxgWR/pcOk810MLDYAdUGpfy0Xaduhe5AgMB
+AAGjggFUMIIBUDAfBgNVHSMEGDAWgBTDnPP800YINLvORn+gfFvz4gjLWTBXBggr
+BgEFBQcBAQRLMEkwHwYIKwYBBQUHMAGGE2h0dHA6Ly9ndi5zeW1jZC5jb20wJgYI
+KwYBBQUHMAKGGmh0dHA6Ly9ndi5zeW1jYi5jb20vZ3YuY3J0MA4GA1UdDwEB/wQE
+AwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwIwYDVR0RBBwwGoIM
+Ki56b3Rlcm8ub3Jnggp6b3Rlcm8ub3JnMCsGA1UdHwQkMCIwIKAeoByGGmh0dHA6
+Ly9ndi5zeW1jYi5jb20vZ3YuY3JsMAwGA1UdEwEB/wQCMAAwRQYDVR0gBD4wPDA6
+BgpghkgBhvhFAQc2MCwwKgYIKwYBBQUHAgEWHmh0dHBzOi8vd3d3LnJhcGlkc3Ns
+LmNvbS9sZWdhbDANBgkqhkiG9w0BAQsFAAOCAQEAmr+BLXCddLkkxdmRd9rL6TvL
+OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
+/8PECDzMSQR8RUdw5GlQ3ZC1PILpzT4uJwtmPsbMc701mQMymhnec6FeS3XsGsbi
+6b7jvQy9Exhk7eaF6515/BnvEdS+xvcLS5BUQUEWHO2SN4NGGsMR+keS4uWLJCbh
+fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
+VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
+-----END CERTIFICATE-----
+,19:timestamp_ssl_setup,17:1424715342.013651^5:state,0:]19:timestamp_tcp_setup,17:1424715341.917502^}11:intercepted,5:false!7:request,548:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,48:/groups/none/items/top?key=none&limit=20&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715342.017708^13:timestamp_end,17:1424715342.018515^}}60195:8:response,57204:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715345.869812^3:msg,2:OK,15:timestamp_start,17:1424715345.815045^7:headers,655:40:4:Date,29:Mon, 23 Feb 2015 18:15:44 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]22:13:Total-Results,2:47,]321:4:Link,309:<https://api.zotero.org/groups/137163/items/top?limit=20&v=3>; rel="first", <https://api.zotero.org/groups/137163/items/top?limit=20&start=40&v=3>; rel="next", <https://api.zotero.org/groups/137163/items/top?limit=20&start=40&v=3>; rel="last", <https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,56389:[
     {
         "key": "NK8CGZ4D",
         "version": 22,
@@ -3473,7 +3501,35 @@ VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
             ],
             "relations": {}
         }
-    },
+    }
+],4:code,3:200#}4:type,4:http,2:id,36:f3aef2e3-c4f2-4d5b-b947-e389fc9048e6,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715344.527025^7:address,53:7:address,20:9:127.0.0.1,5:58088#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715344.437913^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:34404#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715344.440446^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
+FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
+NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
+BgNVBAsTCkdUMDM4MDI1NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29t
+L3Jlc291cmNlcy9jcHMgKGMpMTQxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZh
+bGlkYXRlZCAtIFJhcGlkU1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIN0FYPR+Q6mdCxwqLmG1ul26F
+PywY6mC1WdeK6IG20Y4AL9Igv0htJhud6hTR0PrafbeyaxZdnvjdYn1dPENzLg8q
+lUBSItQP739T13uS8Xr7p9PqxmTkh3BYPdVhtkpDw14xbxaRpQDLA428ONlTz9F4
+/ecqHsFjQJjAWO3kQOcDElx+LM9rtGzJStEjLOHkzzSJYQZdwTjgU2DZoJmk9VCW
+bn3SiorvngvRjvbO+GamJCbTpkYg4rhzhuDscdfhQmKkOiyDIEIbNxqVCqjMRsrW
+EPGOUypzBKJ1hH0/nPTveNMPIVZxJxgWR/pcOk810MLDYAdUGpfy0Xaduhe5AgMB
+AAGjggFUMIIBUDAfBgNVHSMEGDAWgBTDnPP800YINLvORn+gfFvz4gjLWTBXBggr
+BgEFBQcBAQRLMEkwHwYIKwYBBQUHMAGGE2h0dHA6Ly9ndi5zeW1jZC5jb20wJgYI
+KwYBBQUHMAKGGmh0dHA6Ly9ndi5zeW1jYi5jb20vZ3YuY3J0MA4GA1UdDwEB/wQE
+AwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwIwYDVR0RBBwwGoIM
+Ki56b3Rlcm8ub3Jnggp6b3Rlcm8ub3JnMCsGA1UdHwQkMCIwIKAeoByGGmh0dHA6
+Ly9ndi5zeW1jYi5jb20vZ3YuY3JsMAwGA1UdEwEB/wQCMAAwRQYDVR0gBD4wPDA6
+BgpghkgBhvhFAQc2MCwwKgYIKwYBBQUHAgEWHmh0dHBzOi8vd3d3LnJhcGlkc3Ns
+LmNvbS9sZWdhbDANBgkqhkiG9w0BAQsFAAOCAQEAmr+BLXCddLkkxdmRd9rL6TvL
+OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
+/8PECDzMSQR8RUdw5GlQ3ZC1PILpzT4uJwtmPsbMc701mQMymhnec6FeS3XsGsbi
+6b7jvQy9Exhk7eaF6515/BnvEdS+xvcLS5BUQUEWHO2SN4NGGsMR+keS4uWLJCbh
+fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
+VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
+-----END CERTIFICATE-----
+,19:timestamp_ssl_setup,17:1424715344.523392^5:state,0:]19:timestamp_tcp_setup,17:1424715344.461338^}11:intercepted,5:false!7:request,548:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,49:/groups/none/items/top?key=none&limit=20&start=20,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:2#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,16:1424715344.52717^13:timestamp_end,17:1424715344.528016^}}23251:8:response,20260:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715346.847729^3:msg,2:OK,15:timestamp_start,17:1424715346.844944^7:headers,487:40:4:Date,29:Mon, 23 Feb 2015 18:15:46 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]22:13:Total-Results,2:47,]153:4:Link,141:<https://api.zotero.org/groups/137163/items/top?limit=20&v=3>; rel="first", <https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,19613:[
     {
         "key": "VMS46E9W",
         "version": 22,
@@ -4074,7 +4130,7 @@ VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
             "relations": {}
         }
     }
-],4:code,3:200#}4:type,4:http,2:id,36:cb9ab583-47c2-4046-a5c2-566d77aa1a5b,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715014.207689^7:address,53:7:address,20:9:127.0.0.1,5:39533#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715014.136477^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:33790#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715014.139342^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+],4:code,3:200#}4:type,4:http,2:id,36:1e3de6ca-3d8f-4aa5-b109-bdc73a031872,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715345.993417^7:address,53:7:address,20:9:127.0.0.1,5:58091#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715345.905579^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:48561#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,16:1424715345.90808^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
 MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
 FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
 NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
@@ -4101,4 +4157,4 @@ OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
 fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
 VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
 -----END CERTIFICATE-----
-,19:timestamp_ssl_setup,17:1424715014.203783^5:state,0:]19:timestamp_tcp_setup,17:1424715014.155241^}11:intercepted,5:false!7:request,549:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,49:/groups/none/items/top?key=none&limit=100&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715014.207845^13:timestamp_end,17:1424715014.208666^}}
+,19:timestamp_ssl_setup,17:1424715345.989783^5:state,0:]19:timestamp_tcp_setup,17:1424715345.930558^}11:intercepted,5:false!7:request,549:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,49:/groups/none/items/top?key=none&limit=20&start=40,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:3#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715345.993534^13:timestamp_end,17:1424715345.994317^}}

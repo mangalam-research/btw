@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from nose.tools import assert_equal, assert_true
 import mock
 
-from .util import TestMeta, replay
+from .util import TestMeta, replay, record
 from . import mock_zotero
 from ..models import Item, PrimarySource
 import lib.util
@@ -119,7 +119,7 @@ mock_records = mock_zotero.Records([
     {
         "data":
         {
-            "itemKey": "1",
+            "key": "1",
             "title": "Title 1",
             "date": "Date 1",
             "creators": [
@@ -138,7 +138,7 @@ mock_records = mock_zotero.Records([
     {
         "data":
         {
-            "itemKey": "2",
+            "key": "2",
             "title": "Title 2",
             "date": "Date 2",
             "creators": [
@@ -160,7 +160,7 @@ new_values = [
     {
         "data":
         {
-            "itemKey": "3",
+            "key": "3",
             "title": "Title 3",
             "date": "Date 3",
             "creators": [
@@ -179,7 +179,7 @@ new_values = [
     {
         "data":
         {
-            "itemKey": "4",
+            "key": "4",
             "title": "Title 4",
             "date": "Date 4",
             "creators": [
@@ -198,7 +198,7 @@ new_values = [
     {
         "data":
         {
-            "itemKey": "5",
+            "key": "5",
             "title": "Title 5",
             "date": "Date 5",
             "creators": [

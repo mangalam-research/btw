@@ -1,4 +1,4 @@
-3308:8:response,438:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1421433889.183567^3:msg,2:OK,15:timestamp_start,17:1421433889.181548^7:headers,261:40:4:Date,29:Fri, 16 Jan 2015 18:44:49 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]37:10:Keep-Alive,19:timeout=30, max=100,]28:10:Connection,10:keep-alive,]44:12:Content-Type,24:text/html; charset=UTF-8,]]7:content,20:Nothing to see here.,4:code,3:200#}4:type,4:http,2:id,36:d542c182-69b7-4efc-834d-03463ad9bcd5,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1421433889.140771^7:address,53:7:address,20:9:127.0.0.1,5:43604#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.022877^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:37647#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.025679^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+3314:8:response,443:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715027.744122^3:msg,2:OK,15:timestamp_start,14:1424715027.742^7:headers,269:40:4:Date,29:Mon, 23 Feb 2015 18:10:27 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]44:12:Content-Type,24:text/html; charset=UTF-8,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,20:Nothing to see here.,4:code,3:200#}4:type,4:http,2:id,36:62cfd43d-9ae0-4e7f-afcd-718d4c4467ff,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715027.705124^7:address,53:7:address,20:9:127.0.0.1,5:43447#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715027.559332^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:33881#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715027.574362^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
 MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
 FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
 NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
@@ -25,334 +25,439 @@ OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
 fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
 VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
 -----END CERTIFICATE-----
-,19:timestamp_ssl_setup,17:1421433889.095437^5:state,0:]19:timestamp_tcp_setup,17:1421433889.040422^}11:intercepted,5:false!7:request,429:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,1:/,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1421433889.140933^13:timestamp_end,16:1421433889.14134^}}14044:8:response,11037:11:httpversion,8:1:1#1:0#]13:timestamp_end,17:1421433889.535495^3:msg,2:OK,15:timestamp_start,17:1421433889.533223^7:headers,297:40:4:Date,29:Fri, 16 Jan 2015 18:44:49 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:2,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]22:10:Connection,5:close,]40:12:Content-Type,20:application/atom+xml,]]7:content,10580:<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xmlns:zapi="http://zotero.org/ns/api">
-  <title>Zotero / BTW Testing Group / Top-Level Items</title>
-  <id>http://zotero.org/groups/137163/items/top?content=json&amp;q=dharma</id>
-  <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="first" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="last" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/137163/items/top"/>
-  <zapi:totalResults>5</zapi:totalResults>
-  <updated>2014-01-10T19:35:22Z</updated>
-  <entry>
-    <title>Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/Q7ZDZIN8</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/Q7ZDZIN8?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/Q7ZDZIN8"/>
-    <zapi:key>Q7ZDZIN8</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Dharmapāla et al.</zapi:creatorSummary>
-    <zapi:year>1925</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "Q7ZDZIN8",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Dharmapāla"
+,19:timestamp_ssl_setup,17:1424715027.659917^5:state,0:]19:timestamp_tcp_setup,17:1424715027.596937^}11:intercepted,5:false!7:request,430:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,1:/,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715027.705288^13:timestamp_end,17:1424715027.705684^}}16886:8:response,13886:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424715028.562983^3:msg,2:OK,15:timestamp_start,17:1424715028.559935^7:headers,408:40:4:Date,29:Mon, 23 Feb 2015 18:10:27 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]21:13:Total-Results,1:5,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,13318:[
+    {
+        "key": "Q7ZDZIN8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Sylvain",
-            "lastName": "Lévi"
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/Q7ZDZIN8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/Q7ZDZIN8",
+                "type": "text/html"
+            }
         },
-        {
-            "creatorType": "author",
-            "name": "Sthiramati"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Paris",
-    "publisher": "H. Champion",
-    "date": "1925",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "Vijñaptimātratāsiddhi.",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>The Saddharma-Pundarika.</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/EDDK2GCX</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/EDDK2GCX?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/EDDK2GCX"/>
-    <zapi:key>EDDK2GCX</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Kern</zapi:creatorSummary>
-    <zapi:year>1884</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "EDDK2GCX",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "The Saddharma-Pundarika.",
-    "creators": [
-        {
-            "creatorType": "author",
-            "firstName": "Hendrik",
-            "lastName": "Kern"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Oxford",
-    "publisher": "",
-    "date": "1884",
-    "numPages": "",
-    "language": "Translated from the Sanskrit.",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Saddharmapuṇḍarīkasūtram.</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/3U6WBCAQ</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3U6WBCAQ?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/3U6WBCAQ"/>
-    <zapi:key>3U6WBCAQ</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vaidya</zapi:creatorSummary>
-    <zapi:year>1960</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "3U6WBCAQ",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Saddharmapuṇḍarīkasūtram.",
-    "creators": [
-        {
-            "creatorType": "author",
-            "firstName": "P. L",
-            "lastName": "Vaidya"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "[Darbhanga",
-    "publisher": "",
-    "date": "1960",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Abhidharmakośabhāṣyam</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/NM6FWSDK</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NM6FWSDK?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/NM6FWSDK"/>
-    <zapi:key>NM6FWSDK</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vasubandhu and La Vallée Poussin</zapi:creatorSummary>
-    <zapi:year>1988</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "NM6FWSDK",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Abhidharmakośabhāṣyam",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Vasubandhu"
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Dharmapāla et al.",
+            "parsedDate": "1925",
+            "numChildren": 0
         },
-        {
-            "creatorType": "author",
-            "firstName": "Louis de",
-            "lastName": "La Vallée Poussin"
+        "data": {
+            "key": "Q7ZDZIN8",
+            "version": 22,
+            "itemType": "book",
+            "title": "Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Dharmapāla"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sylvain",
+                    "lastName": "Lévi"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Paris",
+            "publisher": "H. Champion",
+            "date": "1925",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "Vijñaptimātratāsiddhi.",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
         }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Berkeley, Calif.",
-    "publisher": "Asian Humanities Press",
-    "date": "1988",
-    "numPages": "",
-    "language": "English",
-    "ISBN": "0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Abhidharmakośabhāṣyam of Vasubandhu</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/J2DKQ5IX</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/J2DKQ5IX?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/J2DKQ5IX"/>
-    <zapi:key>J2DKQ5IX</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vasubandhu et al.</zapi:creatorSummary>
-    <zapi:year>1975</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "J2DKQ5IX",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Abhidharmakośabhāṣyam of Vasubandhu",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Vasubandhu"
+    },
+    {
+        "key": "EDDK2GCX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Prahlad",
-            "lastName": "Pradhan"
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/EDDK2GCX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/EDDK2GCX",
+                "type": "text/html"
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Aruna",
-            "lastName": "Haldar"
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Kern",
+            "parsedDate": "1884",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "EDDK2GCX",
+            "version": 22,
+            "itemType": "book",
+            "title": "The Saddharma-Pundarika.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Hendrik",
+                    "lastName": "Kern"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Oxford",
+            "publisher": "",
+            "date": "1884",
+            "numPages": "",
+            "language": "Translated from the Sanskrit.",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
         }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Patna, India",
-    "publisher": "K.P. Jayaswal Research Institute",
-    "date": "1975",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-</feed>
-,4:code,3:200#}4:type,4:http,2:id,36:38814598-fe82-43f2-ace4-f4b1a614c272,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,213:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,16:1421433889.26986^7:address,53:7:address,20:9:127.0.0.1,5:43607#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.200311^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:37650#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.205127^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+    },
+    {
+        "key": "3U6WBCAQ",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/3U6WBCAQ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/3U6WBCAQ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vaidya",
+            "parsedDate": "1960",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3U6WBCAQ",
+            "version": 22,
+            "itemType": "book",
+            "title": "Saddharmapuṇḍarīkasūtram.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "P. L",
+                    "lastName": "Vaidya"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "[Darbhanga",
+            "publisher": "",
+            "date": "1960",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NM6FWSDK",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NM6FWSDK",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NM6FWSDK",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu and La Vallée Poussin",
+            "parsedDate": "1988",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NM6FWSDK",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Louis de",
+                    "lastName": "La Vallée Poussin"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Berkeley, Calif.",
+            "publisher": "Asian Humanities Press",
+            "date": "1988",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "J2DKQ5IX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/J2DKQ5IX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/J2DKQ5IX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu et al.",
+            "parsedDate": "1975",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "J2DKQ5IX",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam of Vasubandhu",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Prahlad",
+                    "lastName": "Pradhan"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Aruna",
+                    "lastName": "Haldar"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Patna, India",
+            "publisher": "K.P. Jayaswal Research Institute",
+            "date": "1975",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    }
+],4:code,3:200#}4:type,4:http,2:id,36:b3f25820-65b3-4c3c-bcc4-97fc3428051f,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715027.831022^7:address,53:7:address,20:9:127.0.0.1,5:43450#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715027.758622^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:48038#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715027.761283^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
 MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
 FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
 NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
@@ -379,334 +484,439 @@ OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
 fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
 VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
 -----END CERTIFICATE-----
-,19:timestamp_ssl_setup,17:1421433889.266163^5:state,0:]19:timestamp_tcp_setup,17:1421433889.220672^}11:intercepted,5:false!7:request,565:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,65:/groups/none/items/top?key=none&format=atom&content=json&q=dharma,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1421433889.270011^13:timestamp_end,17:1421433889.270937^}}14042:8:response,11036:11:httpversion,8:1:1#1:0#]13:timestamp_end,16:1421433890.15565^3:msg,2:OK,15:timestamp_start,17:1421433890.147108^7:headers,297:40:4:Date,29:Fri, 16 Jan 2015 18:44:49 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:2,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]22:10:Connection,5:close,]40:12:Content-Type,20:application/atom+xml,]]7:content,10580:<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xmlns:zapi="http://zotero.org/ns/api">
-  <title>Zotero / BTW Testing Group / Top-Level Items</title>
-  <id>http://zotero.org/groups/137163/items/top?content=json&amp;q=dharma</id>
-  <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="first" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="last" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/top?content=json&amp;q=dharma"/>
-  <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/137163/items/top"/>
-  <zapi:totalResults>5</zapi:totalResults>
-  <updated>2014-01-10T19:35:22Z</updated>
-  <entry>
-    <title>Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/Q7ZDZIN8</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/Q7ZDZIN8?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/Q7ZDZIN8"/>
-    <zapi:key>Q7ZDZIN8</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Dharmapāla et al.</zapi:creatorSummary>
-    <zapi:year>1925</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "Q7ZDZIN8",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Dharmapāla"
+,19:timestamp_ssl_setup,17:1424715027.827232^5:state,0:]19:timestamp_tcp_setup,16:1424715027.78012^}11:intercepted,5:false!7:request,558:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,58:/groups/none/items/top?key=none&q=dharma&limit=100&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715027.831155^13:timestamp_end,17:1424715027.832084^}}16882:8:response,13885:11:httpversion,8:1:1#1:1#]13:timestamp_end,16:1424715029.21542^3:msg,2:OK,15:timestamp_start,17:1424715029.199411^7:headers,408:40:4:Date,29:Mon, 23 Feb 2015 18:10:28 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]21:13:Total-Results,1:5,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,13318:[
+    {
+        "key": "Q7ZDZIN8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Sylvain",
-            "lastName": "Lévi"
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/Q7ZDZIN8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/Q7ZDZIN8",
+                "type": "text/html"
+            }
         },
-        {
-            "creatorType": "author",
-            "name": "Sthiramati"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Paris",
-    "publisher": "H. Champion",
-    "date": "1925",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "Vijñaptimātratāsiddhi.",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>The Saddharma-Pundarika.</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/EDDK2GCX</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/EDDK2GCX?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/EDDK2GCX"/>
-    <zapi:key>EDDK2GCX</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Kern</zapi:creatorSummary>
-    <zapi:year>1884</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "EDDK2GCX",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "The Saddharma-Pundarika.",
-    "creators": [
-        {
-            "creatorType": "author",
-            "firstName": "Hendrik",
-            "lastName": "Kern"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Oxford",
-    "publisher": "",
-    "date": "1884",
-    "numPages": "",
-    "language": "Translated from the Sanskrit.",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Saddharmapuṇḍarīkasūtram.</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/3U6WBCAQ</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/3U6WBCAQ?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/3U6WBCAQ"/>
-    <zapi:key>3U6WBCAQ</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vaidya</zapi:creatorSummary>
-    <zapi:year>1960</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "3U6WBCAQ",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Saddharmapuṇḍarīkasūtram.",
-    "creators": [
-        {
-            "creatorType": "author",
-            "firstName": "P. L",
-            "lastName": "Vaidya"
-        }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "[Darbhanga",
-    "publisher": "",
-    "date": "1960",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Abhidharmakośabhāṣyam</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/NM6FWSDK</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/NM6FWSDK?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/NM6FWSDK"/>
-    <zapi:key>NM6FWSDK</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vasubandhu and La Vallée Poussin</zapi:creatorSummary>
-    <zapi:year>1988</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "NM6FWSDK",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Abhidharmakośabhāṣyam",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Vasubandhu"
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Dharmapāla et al.",
+            "parsedDate": "1925",
+            "numChildren": 0
         },
-        {
-            "creatorType": "author",
-            "firstName": "Louis de",
-            "lastName": "La Vallée Poussin"
+        "data": {
+            "key": "Q7ZDZIN8",
+            "version": 22,
+            "itemType": "book",
+            "title": "Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Dharmapāla"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sylvain",
+                    "lastName": "Lévi"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Paris",
+            "publisher": "H. Champion",
+            "date": "1925",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "Vijñaptimātratāsiddhi.",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
         }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Berkeley, Calif.",
-    "publisher": "Asian Humanities Press",
-    "date": "1988",
-    "numPages": "",
-    "language": "English",
-    "ISBN": "0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-  <entry>
-    <title>Abhidharmakośabhāṣyam of Vasubandhu</title>
-    <author>
-      <name>jlwitwer</name>
-      <uri>http://zotero.org/users/1742180</uri>
-    </author>
-    <id>http://zotero.org/groups/137163/items/J2DKQ5IX</id>
-    <published>2014-01-10T19:35:22Z</published>
-    <updated>2014-01-10T19:35:22Z</updated>
-    <link rel="self" type="application/atom+xml" href="https://api.zotero.org/groups/137163/items/J2DKQ5IX?content=json"/>
-    <link rel="alternate" type="text/html" href="https://www.zotero.org/groups/btw_testing/items/J2DKQ5IX"/>
-    <zapi:key>J2DKQ5IX</zapi:key>
-    <zapi:version>22</zapi:version>
-    <zapi:lastModifiedByUser>jlwitwer</zapi:lastModifiedByUser>
-    <zapi:itemType>book</zapi:itemType>
-    <zapi:creatorSummary>Vasubandhu et al.</zapi:creatorSummary>
-    <zapi:year>1975</zapi:year>
-    <zapi:numChildren>0</zapi:numChildren>
-    <zapi:numTags>0</zapi:numTags>
-    <content zapi:type="json">{
-    "itemKey": "J2DKQ5IX",
-    "itemVersion": 22,
-    "itemType": "book",
-    "title": "Abhidharmakośabhāṣyam of Vasubandhu",
-    "creators": [
-        {
-            "creatorType": "author",
-            "name": "Vasubandhu"
+    },
+    {
+        "key": "EDDK2GCX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Prahlad",
-            "lastName": "Pradhan"
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/EDDK2GCX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/EDDK2GCX",
+                "type": "text/html"
+            }
         },
-        {
-            "creatorType": "author",
-            "firstName": "Aruna",
-            "lastName": "Haldar"
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Kern",
+            "parsedDate": "1884",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "EDDK2GCX",
+            "version": 22,
+            "itemType": "book",
+            "title": "The Saddharma-Pundarika.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Hendrik",
+                    "lastName": "Kern"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Oxford",
+            "publisher": "",
+            "date": "1884",
+            "numPages": "",
+            "language": "Translated from the Sanskrit.",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
         }
-    ],
-    "abstractNote": "",
-    "series": "",
-    "seriesNumber": "",
-    "volume": "",
-    "numberOfVolumes": "",
-    "edition": "",
-    "place": "Patna, India",
-    "publisher": "K.P. Jayaswal Research Institute",
-    "date": "1975",
-    "numPages": "",
-    "language": "Sanskrit",
-    "ISBN": "",
-    "shortTitle": "",
-    "url": "",
-    "accessDate": "",
-    "archive": "",
-    "archiveLocation": "",
-    "libraryCatalog": "Open WorldCat",
-    "callNumber": "",
-    "rights": "",
-    "extra": "",
-    "tags": [],
-    "collections": [
-        "7N2SWSDQ"
-    ],
-    "relations": {}
-}</content>
-  </entry>
-</feed>
-,4:code,3:200#}4:type,4:http,2:id,36:340e4092-c98b-4739-81f1-e1e9788c1185,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1421433889.612908^7:address,53:7:address,20:9:127.0.0.1,5:43610#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.549122^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:37653#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1421433889.551725^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+    },
+    {
+        "key": "3U6WBCAQ",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/3U6WBCAQ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/3U6WBCAQ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vaidya",
+            "parsedDate": "1960",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3U6WBCAQ",
+            "version": 22,
+            "itemType": "book",
+            "title": "Saddharmapuṇḍarīkasūtram.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "P. L",
+                    "lastName": "Vaidya"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "[Darbhanga",
+            "publisher": "",
+            "date": "1960",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NM6FWSDK",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NM6FWSDK",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NM6FWSDK",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu and La Vallée Poussin",
+            "parsedDate": "1988",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NM6FWSDK",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Louis de",
+                    "lastName": "La Vallée Poussin"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Berkeley, Calif.",
+            "publisher": "Asian Humanities Press",
+            "date": "1988",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "J2DKQ5IX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/J2DKQ5IX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/J2DKQ5IX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu et al.",
+            "parsedDate": "1975",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "J2DKQ5IX",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam of Vasubandhu",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Prahlad",
+                    "lastName": "Pradhan"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Aruna",
+                    "lastName": "Haldar"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Patna, India",
+            "publisher": "K.P. Jayaswal Research Institute",
+            "date": "1975",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    }
+],4:code,3:200#}4:type,4:http,2:id,36:7e19a5b9-26af-460b-b913-3c8b916e2b6c,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,213:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424715028.639106^7:address,53:7:address,20:9:127.0.0.1,5:43453#]8:use_ipv6,5:false!}15:timestamp_start,16:1424715028.56818^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:33887#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424715028.572847^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
 MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
 FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
 NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
@@ -733,4 +943,4 @@ OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
 fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
 VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
 -----END CERTIFICATE-----
-,19:timestamp_ssl_setup,17:1421433889.609283^5:state,0:]19:timestamp_tcp_setup,17:1421433889.565861^}11:intercepted,5:false!7:request,563:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,65:/groups/none/items/top?key=none&format=atom&content=json&q=dharma,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,222:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:2,]34:25:If-Modified-Since-Version,2:-1,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:2#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1421433889.613064^13:timestamp_end,17:1421433889.613873^}}
+,19:timestamp_ssl_setup,16:1424715028.63449^5:state,0:]19:timestamp_tcp_setup,17:1424715028.592643^}11:intercepted,5:false!7:request,556:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,58:/groups/none/items/top?key=none&q=dharma&limit=100&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,222:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]34:25:If-Modified-Since-Version,2:-1,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:2#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424715028.639291^13:timestamp_end,17:1424715028.640194^}}

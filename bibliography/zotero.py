@@ -13,7 +13,7 @@ from django.core.cache import get_cache
 
 logger = logging.getLogger(__name__)
 
-CACHED_DATA_VERSION = 3
+CACHED_DATA_VERSION = 4
 
 cache = get_cache('bibliography')
 
@@ -119,6 +119,9 @@ class Zotero(object):
 
     """
 
+    limit = 100
+    "The default limit for requests that may return more than one result."
+
     def __init__(self, api_dict, object_type='local'):
         """
         Initialize api details from `api_dict`.
@@ -144,14 +147,12 @@ class Zotero(object):
 
         # This is the appropriate URL to get a single item.
         self.basic_item_url = self.prefix + \
-            "%s/items?key=%s&format=atom&content=json" % \
-            (self.userid, self.apikey)
+            "%s/items?key=%s" % (self.userid, self.apikey)
 
         # For everything else, we want to use the /top version of the
         # URL. If not, we'll *also* get items that are in the trash.
         self.basic_top_url = self.prefix + \
-            "%s/items/top?key=%s&format=atom&content=json" % \
-            (self.userid, self.apikey)
+            "%s/items/top?key=%s" % (self.userid, self.apikey)
 
     def get_item(self, itemKey):
         # As of 2014/02/10 the server at api.zotero.org does not
@@ -172,9 +173,7 @@ class Zotero(object):
         search_url = self.__build_item_search_url(itemKey)
         logger.debug("getting item: %s", _url_for_logging(search_url))
 
-        results = self.__get_search_results(search_url)
-        assert len(results) <= 1
-        return results[0] if len(results) > 0 else None
+        return self.__get_single_search_result(search_url)
 
     def __build_item_search_url(self, itemKey):
         return self.basic_item_url + "&itemKey=" + itemKey
@@ -205,7 +204,39 @@ class Zotero(object):
         """
         return self.__get_search_results(self.basic_top_url)
 
+    def __get_single_search_result(self, url):
+        results = self.__get_search_results_chunk(url)[0]
+        assert len(results) <= 1
+        return results[0] if len(results) > 0 else None
+
     def __get_search_results(self, url):
+        ret = []
+        total_results = None
+        start = 0
+        while True:
+            current_url = url + "&limit={0}&start={1}".format(self.limit,
+                                                              start)
+            chunk, tr = self.__get_search_results_chunk(current_url)
+            ret += chunk
+
+            if tr is None or tr == 0:
+                break
+            elif total_results is None:
+                # We have not yet recorded total_results: record it.
+                total_results = tr
+
+            if total_results != tr:
+                # The number changed while we were fetching. Fetch anew.
+                return self.__get_search_results(url)
+            elif len(ret) == total_results:
+                # We fetched everything.
+                break
+
+            start += len(chunk)
+
+        return ret
+
+    def __get_search_results_chunk(self, url):
         """
         Gets all JSON objects for the given search URL.
 
@@ -239,7 +270,8 @@ class Zotero(object):
             reason = "cache stale"
 
             try:
-                cached_data_version, results, version = cached_data
+                cached_data_version, results, version, total_results = \
+                    cached_data
             except (ValueError, TypeError):
                 # Corrupt data in the cache is an error.
                 logger.error("cache corrupted for key: %s", cache_key)
@@ -254,6 +286,7 @@ class Zotero(object):
                     cache.delete(cache_key)
                     results = None
                     version = None
+                    total_results = None
                     reason = "cache held obsolete format"
 
         # alway search the modification status.
@@ -274,9 +307,9 @@ class Zotero(object):
         if fetch_from_cache:
             if results:
                 logger.debug('serving cached')
-                return results
+                return (results, total_results)
             logger.debug('serving empty')
-            return [], {}
+            return ([], 0)
 
         #
         # Run-of-the-mill connection errors should have been taken
@@ -291,57 +324,33 @@ class Zotero(object):
                      reason, cache_key)
 
         data = res.read()
-        dom_object = minidom.parseString(data)
-        results = []
-        version_key = None
-        if 'Last-Modified-Version' in res.headers:
-            version_key = res.headers['Last-Modified-Version']
+        results = json.loads(data)
+        version = None
+        total_results = None
+        try:
+            version = res.headers['Last-Modified-Version']
+        except KeyError:
+            pass
 
-        # retrieve the entry/content tags that contain the item json string
-        # for safe playing also keep the entry/published tags
-        # for overriding access date if not available in json.
-
-        for entry in dom_object.getElementsByTagName('entry'):
-            content_node = entry.getElementsByTagName('content')[0]
-            alternates = [x for x in entry.getElementsByTagName('link')
-                          if x.getAttribute('rel') == 'alternate'
-                          and x.getAttribute('type') == 'text/html']
-            if len(alternates) == 0:
-                raise ValueError("no alternates found for " + entry)
-            elif len(alternates) > 1:
-                raise ValueError("ambiguous text/html alternate for " + entry)
-
-            alternate = alternates[0]
-
-            complete_dict = {
-                'data': json.loads(content_node.childNodes[0].data),
-                'links': {
-                    # Although in theory multiple alternate text/html
-                    # links would be *possible* it seems that v3 of
-                    # the protocol won't ever return a list of
-                    # alternates. We're essentially emulating what v3
-                    # would return here, so... no list.
-                    "alternate": {
-                        "href": alternate.getAttribute("href"),
-                        "type": "text/html"
-                    }
-                }
-            }
-
-            results.append(complete_dict)
+        try:
+            total_results = int(res.headers['Total-Results'])
+        except KeyError:
+            pass
 
         # We cache the result of the query in a single cache entry.
-        if version_key:
-            cache.set(cache_key, (CACHED_DATA_VERSION, results, version_key))
+        if version:
+            cache.set(
+                cache_key, (CACHED_DATA_VERSION, results, version,
+                            total_results))
             logger.debug("cache set for key: %s", cache_key)
 
         if not for_single_item:
             # Also take care to update the per-item entries in the cache.
-            self.__cache_items(results, version_key)
+            self.__cache_items(results, version)
 
-        return results
+        return (results, total_results)
 
-    def __cache_items(self, results, version_key):
+    def __cache_items(self, results, version):
         """
         This method takes the results obtained when performing any request
         that returns a collection of items and unpacks these results
@@ -353,9 +362,9 @@ class Zotero(object):
         for B and for a query that would ask for C.
         """
         for item in results:
-            url = self.__build_item_search_url(item["data"]["itemKey"])
+            url = self.__build_item_search_url(item["data"]["key"])
             cache_key = _make_cache_key(url)
-            cache.set(cache_key, (CACHED_DATA_VERSION, [item], version_key))
+            cache.set(cache_key, (CACHED_DATA_VERSION, [item], version, None))
             logger.debug("cache set for key: %s", cache_key)
 
     def set_item(self, data_dict):
@@ -457,7 +466,7 @@ class Zotero(object):
         file_url_template = prefix + "%s/items/%s/file?key=%s"
         olditem_download_url = file_url_template % (
             local_uid,
-            data_dict['itemKey'],
+            data_dict['key'],
             local_profile_object.api_key)
 
         res = None
@@ -568,7 +577,7 @@ class Zotero(object):
         if headers is None:
             headers = {}
 
-        headers['Zotero-API-Version'] = '2'
+        headers['Zotero-API-Version'] = '3'
 
         req = urllib2.Request(url, data if rtype == 'POST' else None,
                               headers)

@@ -64,18 +64,19 @@ class ZoteroTest(TestCase):
 
     def __init__(self, *args, **kwargs):
         super(ZoteroTest, self).__init__(*args, **kwargs)
-        self.zotero = Zotero(zotero_settings(), 'BTW Library')
         self.longMessage = True
 
     def setUp(self):
+        self.zotero = Zotero(zotero_settings(), 'BTW Library')
         get_cache('bibliography').clear()
         super(ZoteroTest, self).setUp()
 
-    def assert_miss(self, mock_cache, number_of_sets):
-        assert_equal(mock_cache.__contains__.call_count, 1,
+    def assert_miss(self, mock_cache, number_of_sets, number_of_misses=1):
+        assert_equal(mock_cache.__contains__.call_count, number_of_misses,
                      "the cache should have been checked")
         assert_equal(mock_cache.__contains__.values_returned,
-                     [False], "the check should have been a miss")
+                     [False] * number_of_misses,
+                     "the check should have been a miss")
 
         assert_equal(mock_cache.get.call_count, 0, "it was a miss")
 
@@ -265,7 +266,7 @@ class ZoteroTest(TestCase):
 
         self.assert_miss(mock_cache, nr_hits + 1)
 
-        item = self.zotero.get_item(results[0]["data"]["itemKey"])
+        item = self.zotero.get_item(results[0]["data"]["key"])
         assert_equal(item, results[0])
 
         assert_equal(mock_cache.__contains__.values_returned,
@@ -287,3 +288,18 @@ class ZoteroTest(TestCase):
         assert_equal(len(results), nr_hits)
 
         self.assert_miss(mock_cache, nr_hits + 1)
+
+    @replay
+    def test_get_all_chunks(self, mock_cache):
+        """
+        Tests that get_all gets all records, when chunking is a factor.
+        """
+        self.zotero.limit = 20
+        results = self.zotero.get_all()
+        nr_hits = 47
+        assert_equal(len(results), nr_hits)
+
+        # With the limit we've set, there will be 3 chunks. Therefore
+        # 3 cache misses, and the name number of sets, plus the number
+        # of hits.
+        self.assert_miss(mock_cache, nr_hits + 3, 3)

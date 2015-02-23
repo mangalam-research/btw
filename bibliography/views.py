@@ -50,7 +50,7 @@ def _ajax_search(request):
 def _cache_all():
     search_results = btw_zotero.get_all()
     for result in search_results:
-        key = result["data"]["itemKey"]
+        key = result["data"]["key"]
         if not Item.objects.filter(item_key=key).exists():
             t = Item(item_key=key, uid=btw_zotero.full_uid)
             t.save()
