@@ -10,6 +10,7 @@ from nose.tools import assert_equal, assert_is_not_none, \
 from django.core.exceptions import ValidationError
 
 from ..models import Item, PrimarySource
+from .. import tasks
 from .. import models
 from . import mock_zotero
 
@@ -58,7 +59,7 @@ mock_records = mock_zotero.Records([
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
-get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 
@@ -69,127 +70,18 @@ class ItemTestCase(TestCase):
     def setUp(self):
         mock_records.reset()
 
-    def alter_record(self, record):
-        data = record["data"]
-        for key in ("title", "date"):
-            data[key] += " (bis)"
-
-        data["creators"][0]["name"] += " (bis)"
-
-    def test_create(self):
-        """
-        Test that we can create an item.
-        """
-        Item(item_key="1", uid=Item.objects.zotero.full_uid)
-
     def test_values(self):
         """
         Test that the values of the fields are generally correct.
         """
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        tasks.fetch_items()
+        item = Item.objects.get(item_key="1")
         assert_equal(item.title, "Title 1")
         assert_equal(item.date, "Date 1")
         assert_equal(item.creators,
                      "Name 1 for Title 1, LastName 2 for Title 1")
         assert_equal(item.item, json.dumps(mock_records.get_item("1")))
         assert_equal(item.uid, Item.objects.zotero.full_uid)
-        # pylint: disable=protected-access
-        assert_equal(item._item, mock_records.get_item("1"))
-        assert_is_not_none(item.freshness)
-
-    def test_refresh(self):
-        """
-        Test that a stale item is automatically refreshed.
-        """
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
-
-        assert_equal(item.title, "Title 1")
-        assert_equal(item.date, "Date 1")
-        assert_equal(item.creators,
-                     "Name 1 for Title 1, LastName 2 for Title 1")
-
-        self.alter_record(mock_records.values[0])
-
-        # This forces refreshing. We don't use mark_stale so that we
-        # can test the time computation.
-        item.freshness -= models.MINIMUM_FRESHNESS + \
-            datetime.timedelta(seconds=1)
-        item.save()
-
-        item2 = Item.objects.get(id=item.id)
-
-        assert_equal(item2.title, "Title 1 (bis)")
-        assert_equal(item2.date, "Date 1 (bis)")
-        assert_equal(item2.creators,
-                     "Name 1 for Title 1 (bis), LastName 2 for Title 1")
-
-        assert_not_equal(item.freshness, item2.freshness)
-
-    def test_fresh(self):
-        """
-        Test that a fresh item is not refreshed.
-        """
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
-
-        assert_equal(item.title, "Title 1")
-        assert_equal(item.date, "Date 1")
-        assert_equal(item.creators,
-                     "Name 1 for Title 1, LastName 2 for Title 1")
-
-        self.alter_record(mock_records.values[0])
-
-        # This item should be the same as the first.
-        item2 = Item.objects.get(id=item.id)
-
-        assert_equal(item2.title, "Title 1")
-        assert_equal(item2.date, "Date 1")
-        assert_equal(item2.creators,
-                     "Name 1 for Title 1, LastName 2 for Title 1")
-
-        assert_equal(item.freshness, item2.freshness)
-
-    def test_mark_stale(self):
-        """
-        Test that mark_stale causes a refresh.
-        """
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
-
-        assert_equal(item.title, "Title 1")
-        assert_equal(item.date, "Date 1")
-        assert_equal(item.creators,
-                     "Name 1 for Title 1, LastName 2 for Title 1")
-
-        self.alter_record(mock_records.values[0])
-
-        item.mark_stale()
-
-        item2 = Item.objects.get(id=item.id)
-
-        assert_equal(item2.title, "Title 1 (bis)")
-        assert_equal(item2.date, "Date 1 (bis)")
-        assert_equal(item2.creators,
-                     "Name 1 for Title 1 (bis), LastName 2 for Title 1")
-
-        assert_not_equal(item.freshness, item2.freshness)
-
-    def test_mark_all_stale(self):
-        """
-        Test that mark_all_stale causes refreshing all records.
-        """
-        items = Item.objects.all()
-
-        for item in items:
-            assert_not_regexp_matches(item.title, ur" \(bis\)$")
-
-        for record in mock_records.values:
-            self.alter_record(record)
-
-        Item.objects.mark_all_stale()
-
-        items2 = Item.objects.all()
-
-        for item in items2:
-            assert_regexp_matches(item.title, ur" \(bis\)$")
 
 class PrimarySourceTestCase(TestCase):
 
@@ -199,7 +91,8 @@ class PrimarySourceTestCase(TestCase):
             "bibliography.zotero.Zotero", get_all=get_all_mock,
             get_item=get_item_mock)
         self.patch.start()
-        self.item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        tasks.fetch_items()
+        self.item = Item.objects.get(item_key="1")
 
     def tearDown(self):
         self.patch.stop()

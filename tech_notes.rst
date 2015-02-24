@@ -377,14 +377,14 @@ Generally:
 
 4. Run::
 
+    $ sudo monit unmonitor btw_worker
+    $ ./manage.py btwworker stop
     $ git fetch origin --tags
     $ git pull origin
     $ git describe
     [Make sure the description shows what you expect.]
     $ ../btw_env/bin/activate
     $ pip install -r requirements.txt
-    $ sudo monit unmonitor btw_worker
-    $ ./manage.py btwworker stop
     $ ./manage.py syncdb
     $ ./manage.py migrate
     $ npm outdated
@@ -402,6 +402,12 @@ Generally:
      $ sudo service uwsgi reload
 
 See below for specific upgrade cases.
+
+1.0.x to 1.1.0
+~~~~~~~~~~~~~~
+
+1. Update the site configuraiton to add BTW_LOGGING_PATH and
+   BTW_RUN_PATH. Make BTW_WED_LOGGING_PATH use BTW_LOGGING_PATH.
 
 0.8.x to 1.0.0
 ~~~~~~~~~~~~~~

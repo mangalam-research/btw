@@ -311,6 +311,29 @@ s.CELERY_WORKER_DIRECT = True
 # whatever is needed.
 s.BTW_CELERY_WORKER_PREFIX = s.BTW_SITE_NAME.lower().replace(" ", "_")
 s.CELERY_DEFAULT_QUEUE = s.BTW_CELERY_WORKER_PREFIX + ".default"
+s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = s.BTW_CELERY_WORKER_PREFIX + ".bibliography"
+
+s.CELERY_DEFAULT_EXCHANGE = 'default'
+s.CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
+s.CELERY_DEFAULT_ROUTING_KEY = 'default'
+
+from kombu import Queue
+
+s.CELERY_QUEUES = (
+    Queue(s.CELERY_DEFAULT_QUEUE, routing_key='default'),
+    Queue(s.BTW_CELERY_BIBLIOGRAPHY_QUEUE, routing_key='bibliography'),
+)
+
+s.CELERY_ROUTES = {
+    'bibliography.tasks.fetch_items': {
+        'queue': s.BTW_CELERY_BIBLIOGRAPHY_QUEUE,
+        'routing_key': 'bibliography',
+    },
+    'bibliography.tasks.periodic_fetch_items': {
+        'queue': s.BTW_CELERY_BIBLIOGRAPHY_QUEUE,
+        'routing_key': 'bibliography',
+    },
+}
 
 s.BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'

@@ -235,6 +235,8 @@ class _PatchZoteroTest(_BaseTest):
                                          get_all=get_all_mock,
                                          get_item=get_item_mock)
         self.patch.start()
+        from ..tasks import fetch_items
+        fetch_items()
 
     def tearDown(self):
         self.patch.stop()
@@ -248,12 +250,6 @@ class TestItemsView(_PatchZoteroTest):
 
     def setUp(self):
         super(TestItemsView, self).setUp()
-        #
-        # When used in the app, caching should have occured due to
-        # other views.
-        #
-        from ..views import _cache_all
-        _cache_all()
         self.url = reverse(
             'bibliography_items',
             args=(Item.objects.get(item_key="1").pk,))
@@ -285,65 +281,6 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
         response = self.client.get(manage_url)
         self.assertRedirects(response, login_url + "?next=" + manage_url)
 
-    def test_caching(self):
-        """
-        Test that accessing this view caches the items we obtain from
-        Zotero.
-        """
-        response = self.client.login(username=u'test', password=u'test')
-        assert_true(response)
-
-        assert_equal(Item.objects.all().count(), 0,
-                     "no Item object should exist yet")
-
-        response = self.client.get(self.url)
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-
-        assert_equal(get_all_mock.call_count, 1,
-                     "all items should have been fetched, but only once")
-        assert_equal(Item.objects.all().count(), len(mock_records),
-                     "all items should have been cached as ``Item``")
-
-    def test_recaching(self):
-        """
-        Test that a change on the Zotero server propagates to the ``Item``
-        objects.
-        """
-        response = self.client.login(username=u'test', password=u'test')
-        assert_true(response)
-
-        assert_equal(Item.objects.all().count(), 0,
-                     "no Item object should exist yet")
-
-        response = self.client.get(self.url)
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-
-        assert_equal(get_all_mock.call_count, 1,
-                     "all items should have been fetched, but only once")
-        assert_equal(Item.objects.all().count(), len(mock_records),
-                     "all items should have been cached as ``Item``")
-        first_length = len(mock_records)
-
-        # Simulate a change on the server.
-        mock_records.values = new_values
-
-        # We must flush the page cache so that the fetching is
-        # triggered again.
-        lib.util.delete_own_keys('page')
-
-        response = self.client.get(self.url)
-        assert_equal(response.status_code, 200,
-                     "the request should be successful")
-
-        assert_equal(get_all_mock.call_count, 2,
-                     "all items should have been fetched, again")
-        assert_equal(Item.objects.all().count(), first_length +
-                     len(mock_records),
-                     "all items should have been cached as ``Item``")
-
-
 class TestItemTableView(_PatchZoteroTest, LoginMixin):
 
     """
@@ -374,8 +311,6 @@ class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):
         # When used in the app, caching should have occured due to
         # other views.
         #
-        from ..views import _cache_all
-        _cache_all()
         self.url = reverse(
             'bibliography_item_primary_sources',
             args=(Item.objects.get(item_key="1").pk,))
@@ -519,8 +454,6 @@ class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin,
         # When used in the app, caching should have occured due to
         # other views.
         #
-        from ..views import _cache_all
-        _cache_all()
         item = Item.objects.get(item_key="1")
         self.url = reverse(
             'bibliography_new_primary_sources',
@@ -559,8 +492,6 @@ class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin, LoginMixin):
         # When used in the app, caching should have occured due to
         # other views.
         #
-        from ..views import _cache_all
-        _cache_all()
         source = PrimarySource(item=Item.objects.get(item_key="1"),
                                reference_title="Blah",
                                genre="SU")

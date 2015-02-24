@@ -10,7 +10,7 @@ import os
 from django.test import TestCase
 import mock
 
-from .. import signals
+from .. import signals, tasks
 from ..models import Item, PrimarySource
 from . import mock_zotero
 
@@ -84,7 +84,7 @@ mock_records = mock_zotero.Records([
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
-get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 class TestMeta(type):
@@ -108,8 +108,6 @@ class TestMeta(type):
         return super(TestMeta, meta).__new__(meta, name, bases, dct)
 
 
-@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                     get_item=get_item_mock)
 class SignalTestCase(TestCase):
     __metaclass__ = TestMeta
 
@@ -122,6 +120,15 @@ class SignalTestCase(TestCase):
         self.signals = (signals.item_updated,
                         signals.primary_source_updated)
         super(SignalTestCase, self).setUp()
+        self.patch = mock.patch.multiple("bibliography.zotero.Zotero",
+                                         get_all=get_all_mock,
+                                         get_item=get_item_mock)
+        self.patch.start()
+        tasks.fetch_items()
+
+    def tearDown(self):
+        self.patch.stop()
+        super(SignalTestCase, self).tearDown()
 
     def alter_item(self, record, field):
         data = record["data"]
@@ -140,7 +147,9 @@ class SignalTestCase(TestCase):
 
     def test_item_creation_does_not_generate_item_updated(self):
         with SignalGrabber(self.signals) as grabber:
-            Item(item_key="1", uid=Item.objects.zotero.full_uid)
+
+            item = Item(item_key="9999", uid=Item.objects.zotero.full_uid)
+            item.save()
             self.assertSignals(grabber, {})
 
     def check_item_change(self, field):
@@ -148,8 +157,7 @@ class SignalTestCase(TestCase):
         Tests changing an item's {0} field generates an item_updated signal and
         a primary_source_updated signal.
         """
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
-        item.save()
+        item = Item.objects.get(item_key="1")
 
         pss = []
         for title in ("ps1", "ps2"):
@@ -160,7 +168,7 @@ class SignalTestCase(TestCase):
 
         with SignalGrabber(self.signals) as grabber:
             self.alter_item(mock_records.values[0], field)
-            item.mark_stale()
+            tasks.fetch_items()
             Item.objects.get(pk=item.pk)
             self.assertSignals(grabber, {
                 signals.item_updated: [{'instance': item}],
@@ -169,7 +177,7 @@ class SignalTestCase(TestCase):
 
     def test_primarysource_creation_does_not_generate_primary_source_updated(
             self):
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        item = Item.objects.get(item_key="1")
         with SignalGrabber(self.signals) as grabber:
             ps = PrimarySource(item=item, reference_title="Foo",
                                genre="SU")
@@ -177,7 +185,7 @@ class SignalTestCase(TestCase):
             self.assertSignals(grabber, {})
 
     def test_primarysource_title_change_generates_primary_source_updated(self):
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        item = Item.objects.get(item_key="1")
         ps = PrimarySource(item=item, reference_title="Foo",
                            genre="SU")
         ps.save()
@@ -189,7 +197,7 @@ class SignalTestCase(TestCase):
             })
 
     def test_ps_genre_change_does_not_generate_primary_source_updated(self):
-        item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        item = Item.objects.get(item_key="1")
         ps = PrimarySource(item=item, reference_title="Foo",
                            genre="SU")
         ps.save()

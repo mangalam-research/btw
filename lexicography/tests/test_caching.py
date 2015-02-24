@@ -11,6 +11,7 @@ from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
 from .. import tasks, depman
 from bibliography.tests import mock_zotero
+from bibliography.tasks import fetch_items
 from .util import launch_fetch_task, create_valid_article, \
     copy_entry, extract_inter_article_links, \
     extract_unlinked_terms
@@ -89,9 +90,6 @@ launch_fetch_task()
 get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
-@mock.patch.multiple("bibliography.zotero.Zotero",
-                     get_all=get_all_mock,
-                     get_item=get_item_mock)
 @override_settings(CELERY_ALWAYS_EAGER=True,
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
                    BROKER_BACKEND='memory')
@@ -102,13 +100,33 @@ class CachingTestCase(TestCase):
 
     def setUp(self):
         get_cache('article_display').clear()
+        self.patch = mock.patch.multiple("bibliography.zotero.Zotero",
+                                         get_all=get_all_mock,
+                                         get_item=get_item_mock)
+        self.patch.start()
         super(CachingTestCase, self).setUp()
 
-    def _create_bibl(self):
-        # We need these.
-        self.item = item = Item(pk=1, item_key="3",
-                                uid=Item.objects.zotero.full_uid)
+        #
+        # This ensures that pk=1 is taken out of circulation.
+        #
+        fake = Item()
+        fake.save()
+        fake.delete()
+
+        #
+        # We have to do this so that the item with pk=1 is reserved.
+        #
+        item = Item(pk=1, item_key="3",
+                    uid=Item.objects.zotero.full_uid)
         item.save()
+        fetch_items()
+        self.item = Item.objects.get(pk=1)
+
+    def tearDown(self):
+        super(CachingTestCase, self).tearDown()
+        self.patch.stop()
+
+    def _create_bibl(self):
         self.ps = ps = PrimarySource(pk=1,
                                      item=self.item, reference_title="Foo",
                                      genre="SU")

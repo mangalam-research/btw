@@ -6,6 +6,7 @@ from nose.tools import assert_true, assert_equal
 
 from ..forms import PrimarySourceForm
 from ..models import Item, PrimarySource
+from .. import tasks
 from . import mock_zotero
 
 mock_records = mock_zotero.Records([
@@ -52,12 +53,9 @@ mock_records = mock_zotero.Records([
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
-get_all_mock = mock.Mock(side_effect=lambda: (mock_records.values, {}))
+get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
-
-@mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
-                     get_item=get_item_mock)
 class PrimarySourceFormTestCase(TestCase):
 
     def setUp(self):
@@ -66,7 +64,9 @@ class PrimarySourceFormTestCase(TestCase):
             "bibliography.zotero.Zotero", get_all=get_all_mock,
             get_item=get_item_mock)
         self.patch.start()
-        self.item = Item(item_key="1", uid=Item.objects.zotero.full_uid)
+        tasks.fetch_items()
+
+        self.item = Item.objects.get(item_key="1")
 
     def tearDown(self):
         self.patch.stop()

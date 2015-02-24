@@ -1,0 +1,4131 @@
+3316:8:response,446:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424789208.512562^3:msg,2:OK,15:timestamp_start,17:1424789208.508432^7:headers,269:40:4:Date,29:Tue, 24 Feb 2015 14:46:48 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:1,]23:14:Content-Length,2:20,]44:12:Content-Type,24:text/html; charset=UTF-8,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,20:Nothing to see here.,4:code,3:200#}4:type,4:http,2:id,36:9d05d817-586c-4058-9f5a-87abf5b112d6,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424789208.482086^7:address,53:7:address,20:9:127.0.0.1,5:35488#]8:use_ipv6,5:false!}15:timestamp_start,17:1424789208.368147^}11:server_conn,2034:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:33763#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424789208.374969^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
+FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
+NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
+BgNVBAsTCkdUMDM4MDI1NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29t
+L3Jlc291cmNlcy9jcHMgKGMpMTQxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZh
+bGlkYXRlZCAtIFJhcGlkU1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIN0FYPR+Q6mdCxwqLmG1ul26F
+PywY6mC1WdeK6IG20Y4AL9Igv0htJhud6hTR0PrafbeyaxZdnvjdYn1dPENzLg8q
+lUBSItQP739T13uS8Xr7p9PqxmTkh3BYPdVhtkpDw14xbxaRpQDLA428ONlTz9F4
+/ecqHsFjQJjAWO3kQOcDElx+LM9rtGzJStEjLOHkzzSJYQZdwTjgU2DZoJmk9VCW
+bn3SiorvngvRjvbO+GamJCbTpkYg4rhzhuDscdfhQmKkOiyDIEIbNxqVCqjMRsrW
+EPGOUypzBKJ1hH0/nPTveNMPIVZxJxgWR/pcOk810MLDYAdUGpfy0Xaduhe5AgMB
+AAGjggFUMIIBUDAfBgNVHSMEGDAWgBTDnPP800YINLvORn+gfFvz4gjLWTBXBggr
+BgEFBQcBAQRLMEkwHwYIKwYBBQUHMAGGE2h0dHA6Ly9ndi5zeW1jZC5jb20wJgYI
+KwYBBQUHMAKGGmh0dHA6Ly9ndi5zeW1jYi5jb20vZ3YuY3J0MA4GA1UdDwEB/wQE
+AwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwIwYDVR0RBBwwGoIM
+Ki56b3Rlcm8ub3Jnggp6b3Rlcm8ub3JnMCsGA1UdHwQkMCIwIKAeoByGGmh0dHA6
+Ly9ndi5zeW1jYi5jb20vZ3YuY3JsMAwGA1UdEwEB/wQCMAAwRQYDVR0gBD4wPDA6
+BgpghkgBhvhFAQc2MCwwKgYIKwYBBQUHAgEWHmh0dHBzOi8vd3d3LnJhcGlkc3Ns
+LmNvbS9sZWdhbDANBgkqhkiG9w0BAQsFAAOCAQEAmr+BLXCddLkkxdmRd9rL6TvL
+OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
+/8PECDzMSQR8RUdw5GlQ3ZC1PILpzT4uJwtmPsbMc701mQMymhnec6FeS3XsGsbi
+6b7jvQy9Exhk7eaF6515/BnvEdS+xvcLS5BUQUEWHO2SN4NGGsMR+keS4uWLJCbh
+fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
+VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
+-----END CERTIFICATE-----
+,19:timestamp_ssl_setup,16:1424789208.43719^5:state,0:]19:timestamp_tcp_setup,17:1424789208.391567^}11:intercepted,5:false!7:request,430:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,1:/,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,154:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:0#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424789208.482301^13:timestamp_end,17:1424789208.482722^}}135510:8:response,132518:11:httpversion,8:1:1#1:1#]13:timestamp_end,16:1424789211.99377^3:msg,2:OK,15:timestamp_start,17:1424789211.829936^7:headers,409:40:4:Date,29:Tue, 24 Feb 2015 14:46:48 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]26:18:Zotero-API-Version,1:3,]22:13:Total-Results,2:47,]76:4:Link,65:<https://www.zotero.org/groups/137163/items/top>; rel="alternate",]30:21:Last-Modified-Version,2:24,]31:17:Transfer-Encoding,7:chunked,]36:12:Content-Type,16:application/json,]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,131949:[
+    {
+        "key": "7MN7XGX8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/7MN7XGX8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/7MN7XGX8",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Slocum",
+            "parsedDate": "2013-12-18",
+            "numChildren": 1
+        },
+        "data": {
+            "key": "7MN7XGX8",
+            "version": 22,
+            "itemType": "webpage",
+            "title": "Indo-European Lexicon: Pokorny Master PIE Etyma",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jonathan",
+                    "lastName": "Slocum"
+                }
+            ],
+            "abstractNote": "Indo-European Lexicon: Pokorny Master PIE Etyma. These Indo-European materials are intended to provide background information about early Indo-European languages, specifically the portions of their lexicons derived from the Proto-Indo-European language, which was spoken ca. 5000 - 3000 B.C. Links may be provided to web pages showing derived words in numerous Indo-European languages.",
+            "websiteTitle": "",
+            "websiteType": "Text",
+            "date": "2013-12-18",
+            "shortTitle": "Indo-European Lexicon",
+            "url": "http://www.utexas.edu/cola/centers/lrc/ielex/PokornyMaster-X.html",
+            "accessDate": "2014-01-04T20:20:46Z",
+            "language": "eng;ine",
+            "rights": "Copyright (c) 2003-2013, The University of Texas at Austin",
+            "extra": "Indo-European Lexicon: Pokorny Master PIE Etyma. These Indo-European materials are intended to provide background information about early Indo-European languages, specifically the portions of their lexicons derived from the Proto-Indo-European language, which was spoken ca. 5000 - 3000 B.C. Links may be provided to web pages showing derived words in numerous Indo-European languages.",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [
+                {
+                    "tag": "Indo-European Lexicon: Pokorny Master PIE Etyma",
+                    "type": 1
+                },
+                {
+                    "tag": "Indo-European dictionaries",
+                    "type": 1
+                },
+                {
+                    "tag": "Indo-European etymology",
+                    "type": 1
+                },
+                {
+                    "tag": "Indo-European languages",
+                    "type": 1
+                },
+                {
+                    "tag": "Indo-European languages--Etymology--Dictionaries.",
+                    "type": 1
+                },
+                {
+                    "tag": "Indo-European lexicons",
+                    "type": 1
+                },
+                {
+                    "tag": "Indogermanisches etymologisches Woerterbuch",
+                    "type": 1
+                },
+                {
+                    "tag": "Julius Pokorny",
+                    "type": 1
+                },
+                {
+                    "tag": "P 725",
+                    "type": 1
+                },
+                {
+                    "tag": "Proto-Indo-European",
+                    "type": 1
+                }
+            ],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NN9DVW38",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NN9DVW38",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NN9DVW38",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Asaṅga et al.",
+            "parsedDate": "2004",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NN9DVW38",
+            "version": 22,
+            "itemType": "book",
+            "title": "The universal vehicle discourse literature = Mahāyānasūtrālaṁkāra",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Asaṅga"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Maitreyanātha"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Robert A. F",
+                    "lastName": "Thurman"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "L",
+                    "lastName": "Jamspal"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Vasubandhu",
+                    "lastName": ""
+                },
+                {
+                    "creatorType": "author",
+                    "name": "American Institute of Buddhist Studies"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "New York",
+            "publisher": "American Institute of Buddhist Studies",
+            "date": "2004",
+            "numPages": "",
+            "language": "Translated from the Sanskrit, Tibetan, and Chinese.",
+            "ISBN": "9780975373408 0975373404",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "XZP3XVM7",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/XZP3XVM7",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/XZP3XVM7",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Tucci",
+            "parsedDate": "1936",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "XZP3XVM7",
+            "version": 22,
+            "itemType": "journalArticle",
+            "title": "The Ratnavali of Nagarjuna",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Giuseppe",
+                    "lastName": "Tucci"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "J.R. Asiat. Soc. G.B. Irel. Journal of the Royal Asiatic Society of Great Britain & Ireland",
+            "volume": "68",
+            "issue": "03",
+            "pages": "423-435",
+            "date": "1936",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "English",
+            "DOI": "",
+            "ISSN": "0035-869X",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "779XQW7M",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/779XQW7M",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/779XQW7M",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Rix",
+            "parsedDate": "2001",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "779XQW7M",
+            "version": 22,
+            "itemType": "book",
+            "title": "LIV, Lexikon der Indogermanischen Verben die Wurzeln und ihre Primärstammbildungen",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Helmut, Kümmel, Martin",
+                    "lastName": "Rix"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Wiesbaden",
+            "publisher": "L. Reichert",
+            "date": "2001",
+            "numPages": "",
+            "language": "German",
+            "ISBN": "3895002194  9783895002199",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "J8K2HIW3",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/J8K2HIW3",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/J8K2HIW3",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Sthiramati and Büscher",
+            "parsedDate": "2007",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "J8K2HIW3",
+            "version": 22,
+            "itemType": "book",
+            "title": "Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Hartmut",
+                    "lastName": "Büscher"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Wien",
+            "publisher": "Österreichische Akademie der Wissenschaften",
+            "date": "2007",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "Sthiramati's Triṃśikāvijñaptibhāṣya",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "3UXZUGFW",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/3UXZUGFW",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/3UXZUGFW",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Braarvig",
+            "parsedDate": "2006",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3UXZUGFW",
+            "version": 22,
+            "itemType": "book",
+            "title": "Buddhist manuscripts Vol. 3 Vol. 3",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Jens",
+                    "lastName": "Braarvig"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Oslo",
+            "publisher": "Hermes Publ.",
+            "date": "2006",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "8280340068 9788280340061",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "Q7ZDZIN8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/Q7ZDZIN8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/Q7ZDZIN8",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Dharmapāla et al.",
+            "parsedDate": "1925",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "Q7ZDZIN8",
+            "version": 22,
+            "itemType": "book",
+            "title": "Vijñaptimātratāsiddhi.: Deux traités de Vasubandhu: Viṁśatikā (La vingtaine) accompagnée d'une explication en prose",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Dharmapāla"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Sylvain",
+                    "lastName": "Lévi"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Paris",
+            "publisher": "H. Champion",
+            "date": "1925",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "Vijñaptimātratāsiddhi.",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "QCRJ627I",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/QCRJ627I",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/QCRJ627I",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Roy",
+            "parsedDate": "1971",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "QCRJ627I",
+            "version": 22,
+            "itemType": "book",
+            "title": "Suvarṇavarṇāvadāna; decipherment and historical study of a palm-leaf Sanskrit manuscript, an unknown Mahāyāna (avadāna) text from Tibet.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Sita Ram",
+                    "lastName": "Roy"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Patna",
+            "publisher": "K.P. Jayaswal Research Institute",
+            "date": "1971",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "PBBFNUU9",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/PBBFNUU9",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/PBBFNUU9",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Bodhi",
+            "parsedDate": "2000",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "PBBFNUU9",
+            "version": 22,
+            "itemType": "book",
+            "title": "The connected discourses of the Buddha: a translation of the Saṃyutta Nikāya ; translated from the Pāli by Bhikkhu Bodhi.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Bodhi"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Boston",
+            "publisher": "Wisdom Publications",
+            "date": "2000",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0861713311 9780861713318",
+            "shortTitle": "The connected discourses of the Buddha",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "E2N5EZVU",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/E2N5EZVU",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/E2N5EZVU",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu et al.",
+            "parsedDate": "2008",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "E2N5EZVU",
+            "version": 22,
+            "itemType": "book",
+            "title": "Vasubandhu's Pañcaskandhaka",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Steinkellner, Ernst",
+                    "lastName": "李学竹"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Tōru",
+                    "lastName": "Tomabechi"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Zhongguo Zang xue yan jiu zhong xin"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Österreichische Akademie der Wissenschaften"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Beijing; Vienna",
+            "publisher": "China Tibetology Pub. House ; Austrian Academy of Sciences Press",
+            "date": "2008",
+            "numPages": "",
+            "language": "Text in Sanskrit and in Tibetan and Chinese translations; introd. in English and Chinese.",
+            "ISBN": "9787802530331 7802530334 9783700161097 3700161093",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "QI2PXQS5",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/QI2PXQS5",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/QI2PXQS5",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nāgārjuna",
+            "parsedDate": "1961",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "QI2PXQS5",
+            "version": 22,
+            "itemType": "book",
+            "title": "Nāgārjuna: Madhyamaka Kārikā ; Le stanze del cammino di mezzo",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Gnoli, Raniero",
+                    "lastName": "Nāgārjuna"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Torino",
+            "publisher": "Paolo Boringhieri",
+            "date": "1961",
+            "numPages": "",
+            "language": "Italian",
+            "ISBN": "",
+            "shortTitle": "Nāgārjuna",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "QS2ERJ88",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/QS2ERJ88",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/QS2ERJ88",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nāgārjuna et al.",
+            "parsedDate": "2013",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "QS2ERJ88",
+            "version": 22,
+            "itemType": "book",
+            "title": "Nāgārjuna's Middle way: the Mūlamadhyamakākarikā",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Nāgārjuna"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mark",
+                    "lastName": "Siderits"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Shōryū",
+                    "lastName": "Katsura"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "",
+            "date": "2013",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "9781614290506  1614290504  9781614290612  161429061X",
+            "shortTitle": "Nāgārjuna's Middle way",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "FZIQBF67",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/FZIQBF67",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/FZIQBF67",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nagao",
+            "parsedDate": "1964",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "FZIQBF67",
+            "version": 22,
+            "itemType": "book",
+            "title": "Madhyāntavibhāga-bhāṣya: a buddhist philosophical treatise",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Gadjin M",
+                    "lastName": "Nagao"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Tokyo",
+            "publisher": "Suzuki Research Foundation",
+            "date": "1964",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "",
+            "shortTitle": "Madhyāntavibhāga-bhāṣya",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "744Z5GI4",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/744Z5GI4",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/744Z5GI4",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Tatz et al.",
+            "parsedDate": "1986",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "744Z5GI4",
+            "version": 22,
+            "itemType": "book",
+            "title": "Asanga's Chapter on ethics with the commentary of Tsong-Kha-Pa, The basic path to awakening, the complete Bodhisattva",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Mark",
+                    "lastName": "Tatz"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Asaṅga"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Tsoṅ-kha-pa Blo-bzaṅ-grags-pa"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Lewiston, N.Y.",
+            "publisher": "Edwin Mellen Press",
+            "date": "1986",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "088946054X  9780889460546",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "PDU9MH6I",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/PDU9MH6I",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/PDU9MH6I",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Ogihara",
+            "parsedDate": "1930",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "PDU9MH6I",
+            "version": 22,
+            "itemType": "book",
+            "title": "Bodhisattvabhūmi; a statement of whole course of the Bodhisattva (being fifteenth section of Yogācārabhūmi)",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Unrai",
+                    "lastName": "Ogihara"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Tokyo",
+            "publisher": "",
+            "date": "1930",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "WXMXIRC2",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/WXMXIRC2",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/WXMXIRC2",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vinītā",
+            "parsedDate": "2010",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "WXMXIRC2",
+            "version": 22,
+            "itemType": "book",
+            "title": "A unique collection of twenty Sūtras in a Sanskrit manuscript from the Potala",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vinītā"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "",
+            "date": "2010",
+            "numPages": "",
+            "language": "In English, Sanskrit, Tibetan, and Chinese",
+            "ISBN": "9783700169062  370016906X  9787802532823  7802532825",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "H9AGKUZT",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/H9AGKUZT",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/H9AGKUZT",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Mukhopadhyaya",
+            "parsedDate": "1963",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "H9AGKUZT",
+            "version": 22,
+            "itemType": "book",
+            "title": "The Aśokāvadāna.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Sujitkumar",
+                    "lastName": "Mukhopadhyaya"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "New Delhi",
+            "publisher": "Sahitya Akademi",
+            "date": "1963",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "9P7NRXMX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/9P7NRXMX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/9P7NRXMX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Samtani and Viryaśrīdatta",
+            "parsedDate": "2002",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "9P7NRXMX",
+            "version": 22,
+            "itemType": "book",
+            "title": "Gathering the meanings: the compendium of categories : the Arthaviniʹscaya sūtra and its commentary, nibandhana",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "N. H",
+                    "lastName": "Samtani"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Viryaśrīdatta"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Berkeley, CA",
+            "publisher": "Dharma Pub.",
+            "date": "2002",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "0898002680  9780898002683  0898002672  9780898002676",
+            "shortTitle": "Gathering the meanings",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "3B5ERAFI",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/3B5ERAFI",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/3B5ERAFI",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Institut de recherche bouddhique Linh-Son et al.",
+            "parsedDate": "1984",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3B5ERAFI",
+            "version": 22,
+            "itemType": "journalArticle",
+            "title": "Buddhist studies review.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Institut de recherche bouddhique Linh-Son"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Pali Buddhist Union"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "UK Association for Buddhist Studies"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "Buddhist studies review.",
+            "volume": "",
+            "issue": "",
+            "pages": "",
+            "date": "1984",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "English and French.",
+            "DOI": "",
+            "ISSN": "0265-2897",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "TNPEXD6H",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/TNPEXD6H",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/TNPEXD6H",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Tucci",
+            "parsedDate": "1936",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "TNPEXD6H",
+            "version": 22,
+            "itemType": "journalArticle",
+            "title": "The Ratnavali of Nagarjuna",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Giuseppe",
+                    "lastName": "Tucci"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "J.R. Asiat. Soc. G.B. Irel. Journal of the Royal Asiatic Society of Great Britain & Ireland",
+            "volume": "68",
+            "issue": "02",
+            "pages": "237-252",
+            "date": "1936",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "English",
+            "DOI": "",
+            "ISSN": "0035-869X",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NK8CGZ4D",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NK8CGZ4D",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NK8CGZ4D",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Mayrhofer",
+            "parsedDate": "1986",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NK8CGZ4D",
+            "version": 22,
+            "itemType": "book",
+            "title": "Etymologisches Wörterbuch des Altindoarischen",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Manfred",
+                    "lastName": "Mayrhofer"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Heidelberg",
+            "publisher": "C. Winter",
+            "date": "1986",
+            "numPages": "",
+            "language": "German",
+            "ISBN": "3825345505  9783825345501  3825305562  9783825305567  3533038262 9783533038269",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "BJA7Q9EZ",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/BJA7Q9EZ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/BJA7Q9EZ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Buck",
+            "parsedDate": "1949",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "BJA7Q9EZ",
+            "version": 22,
+            "itemType": "book",
+            "title": "A dictionary of selected synonyms in the principal Indo-European languages; a contribution to the history of ideas,",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Carl Darling",
+                    "lastName": "Buck"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Chicago",
+            "publisher": "University of Chicago Press",
+            "date": "1949",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "5CQKFSAA",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/5CQKFSAA",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/5CQKFSAA",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "宇井伯壽 and Vasubandhu",
+            "parsedDate": "1953",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "5CQKFSAA",
+            "version": 22,
+            "itemType": "book",
+            "title": "四譯對照唯識二十論硏究",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "宇井伯壽"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "東京",
+            "publisher": "岩波書店",
+            "date": "1953",
+            "numPages": "",
+            "language": "Japanese",
+            "ISBN": "4000087843 9784000087841",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NPHZKVD8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NPHZKVD8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NPHZKVD8",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Bhattacharya",
+            "parsedDate": "1971",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NPHZKVD8",
+            "version": 22,
+            "itemType": "journalArticle",
+            "title": "The dialectical method of Nāgārjuna",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Kamaleswar",
+                    "lastName": "Bhattacharya"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "J Indian Philos Journal of Indian Philosophy",
+            "volume": "1",
+            "issue": "3",
+            "pages": "217-261",
+            "date": "1971",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "English",
+            "DOI": "",
+            "ISSN": "0022-1791",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "ME6PT3GS",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/ME6PT3GS",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/ME6PT3GS",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nāgārjuna",
+            "parsedDate": "1948",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "ME6PT3GS",
+            "version": 22,
+            "itemType": "journalArticle",
+            "title": "The Vigrahavyāvartanī of Nāgārjuna, with the author's commentary. Edited by E. H. Johnston and Arnold Kunst.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Nāgārjuna"
+                }
+            ],
+            "abstractNote": "",
+            "publicationTitle": "",
+            "volume": "",
+            "issue": "",
+            "pages": "",
+            "date": "1948",
+            "series": "",
+            "seriesTitle": "",
+            "seriesText": "",
+            "journalAbbreviation": "",
+            "language": "Sanskrit",
+            "DOI": "",
+            "ISSN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "8UWVKKZH",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/8UWVKKZH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/8UWVKKZH",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Schøyen Collection et al.",
+            "parsedDate": "2000",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "8UWVKKZH",
+            "version": 22,
+            "itemType": "book",
+            "title": "Buddhist manuscripts. Volume 1 Volume 1",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Schøyen Collection"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Jens",
+                    "lastName": "Braarvig"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Mark",
+                    "lastName": "Allon"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Martin",
+                    "lastName": "Schøyen"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Oslo",
+            "publisher": "Hermes Pub.",
+            "date": "2000",
+            "numPages": "",
+            "language": "Undetermined",
+            "ISBN": "8280340017 9788280340016",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "RW9DHZTI",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/RW9DHZTI",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/RW9DHZTI",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Cheung",
+            "parsedDate": "2007",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "RW9DHZTI",
+            "version": 22,
+            "itemType": "book",
+            "title": "Etymological dictionary of the Iranian verb",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Johnny",
+                    "lastName": "Cheung"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Leiden ; Boston",
+            "publisher": "Brill",
+            "date": "2007",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "9789004154964 9004154965",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "5WXCKGMH",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/5WXCKGMH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/5WXCKGMH",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Thurman and ",
+            "parsedDate": "1976",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "5WXCKGMH",
+            "version": 22,
+            "itemType": "book",
+            "title": "The holy teaching of Vimalakīrti: a Mahāyāna scripture",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Robert A.F",
+                    "lastName": "Thurman"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "The Institute for advanced studies of world religions",
+                    "lastName": ""
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "University Park, PA; London [etc.]",
+            "publisher": "Pennsylvania State University Press, published in corporation with The Institute for advanced studies of world religions",
+            "date": "1976",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0271012099 9780271012094",
+            "shortTitle": "The holy teaching of Vimalakīrti",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "UA3ETISF",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/UA3ETISF",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/UA3ETISF",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Boin and Lamotte",
+            "parsedDate": "1994",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "UA3ETISF",
+            "version": 22,
+            "itemType": "book",
+            "title": "The teaching of Vimalakīrti: (Vimalakīrtinirdeśa)",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Sara",
+                    "lastName": "Boin"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Etienne",
+                    "lastName": "Lamotte"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "London; London",
+            "publisher": "Pali Text Society ; Distributed by Routledge and Kegan Paul",
+            "date": "1994",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "",
+            "shortTitle": "The teaching of Vimalakīrti",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "649XHTSM",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/649XHTSM",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/649XHTSM",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "VIMALA-KĪRTI-NIRDEṢA-SŪTRA and LAMOTTE",
+            "parsedDate": "1962",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "649XHTSM",
+            "version": 22,
+            "itemType": "book",
+            "title": "L'Enseignement de Vimalakīrti. Vimalakīrtinirdeśa. Traduit et annoté par Étienne Lamotte, etc. (Traduction basée sur la version tibétaine du Kandjour et la version chinoise de Hiuan-tsang.) [With facsimiles.].",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "VIMALA-KĪRTI-NIRDEṢA-SŪTRA"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Étienne",
+                    "lastName": "LAMOTTE"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Pp. xv. 488. Louvain",
+            "publisher": "",
+            "date": "1962",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "CRZT74EH",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/CRZT74EH",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/CRZT74EH",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Taisho University et al.",
+            "parsedDate": "2006",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "CRZT74EH",
+            "version": 22,
+            "itemType": "book",
+            "title": "Vimalakīrtinirdeśa: a Sanskrit edition based upon the manuscript newly found at the Potala Palace",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Taisho University"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "The Institute for Comprehensive Studies of Buddhism"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Study Group on Buddhist Sanskrit Literature"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Tokyo",
+            "publisher": "Taisho University Press",
+            "date": "2006",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "4924297348 9784924297340",
+            "shortTitle": "Vimalakīrtinirdeśa",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "JVE8IQCE",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/JVE8IQCE",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/JVE8IQCE",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Sthiramati and Büscher",
+            "parsedDate": "2007",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "JVE8IQCE",
+            "version": 22,
+            "itemType": "book",
+            "title": "Sthiramati's Triṃśikāvijñaptibhāṣya: critical editions of the Sanskrit text and its Tibetan translation",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Hartmut",
+                    "lastName": "Büscher"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Wien",
+            "publisher": "Verl. der Österreichischen Akademie der Wissenschaften",
+            "date": "2007",
+            "numPages": "",
+            "language": "Tibetan",
+            "ISBN": "9783700139263 3700139268",
+            "shortTitle": "Sthiramati's Triṃśikāvijñaptibhāṣya",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "2ICG36TJ",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/2ICG36TJ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/2ICG36TJ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nyanaponika",
+            "parsedDate": "1977",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "2ICG36TJ",
+            "version": 22,
+            "itemType": "book",
+            "title": "Sutta-Nipāta: früh-buddhist. Lehr-Dichtungen aus d. Pali-Kanon",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Nyanaponika"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Konstanz",
+            "publisher": "Christiani",
+            "date": "1977",
+            "numPages": "",
+            "language": "German",
+            "ISBN": "",
+            "shortTitle": "Sutta-Nipāta",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "EDDK2GCX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/EDDK2GCX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/EDDK2GCX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Kern",
+            "parsedDate": "1884",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "EDDK2GCX",
+            "version": 22,
+            "itemType": "book",
+            "title": "The Saddharma-Pundarika.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Hendrik",
+                    "lastName": "Kern"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Oxford",
+            "publisher": "",
+            "date": "1884",
+            "numPages": "",
+            "language": "Translated from the Sanskrit.",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "3U6WBCAQ",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/3U6WBCAQ",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/3U6WBCAQ",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vaidya",
+            "parsedDate": "1960",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "3U6WBCAQ",
+            "version": 22,
+            "itemType": "book",
+            "title": "Saddharmapuṇḍarīkasūtram.",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "P. L",
+                    "lastName": "Vaidya"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "[Darbhanga",
+            "publisher": "",
+            "date": "1960",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "KG2439XD",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/KG2439XD",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/KG2439XD",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Nāgārjuna and Hahn",
+            "parsedDate": "1982",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "KG2439XD",
+            "version": 22,
+            "itemType": "book",
+            "title": "Nāgārjuna's Ratnāvalī Vol. I, Vol. I,",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Nāgārjuna"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Michael",
+                    "lastName": "Hahn"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Bonn",
+            "publisher": "Indica et Tibetica",
+            "date": "1982",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "AC86PSP8",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/AC86PSP8",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/AC86PSP8",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Boucher",
+            "parsedDate": "2008",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "AC86PSP8",
+            "version": 22,
+            "itemType": "book",
+            "title": "Bodhisattvas of the forest and the formation of the Mahāyāna: a study and translation of the Rāṣṭrapālaparipr̥cchā-sūtra",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Daniel",
+                    "lastName": "Boucher"
+                }
+            ],
+            "abstractNote": "This volume delves into the socio religious milieu of the authors, editors, and propagators of the 'Rāṣṭrapālaparipr̥cchā-sūtra' ('Questions of Rastrapala'), a Buddhist text circulating in India during the first half of the first millennium CE.",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Honolulu",
+            "publisher": "University of Hawai'i Press",
+            "date": "2008",
+            "numPages": "",
+            "language": "Translated from the Sanskrit.",
+            "ISBN": "9780824828813  082482881X",
+            "shortTitle": "Bodhisattvas of the forest and the formation of the Mahāyāna",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "GJXGINKS",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/GJXGINKS",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/GJXGINKS",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Engle et al.",
+            "parsedDate": "2009",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "GJXGINKS",
+            "version": 22,
+            "itemType": "book",
+            "title": "The inner science of Buddhist practice: Vasubandhu's Summary of the five heaps with commentary by Sthiramati",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Artemus B",
+                    "lastName": "Engle"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Vasubandhu",
+                    "lastName": ""
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Sthiramati"
+                }
+            ],
+            "abstractNote": "\"The Inner Science of Buddhist Practice contains translations of texts by two historically important Indian Buddhist scholars: Vasubhandhu's Summary of the Five Heaps and Sthiramati's commentary on Vasubandhu's root text. These works present the traditional Buddhist analysis of ordinary experience and provide rich resources for studying Buddhist and Western interpretations of the psychology of spiritual development.\" \"According to Buddhist doctrine, the mind of an ordinary person, even at birth, holds deeply ingrained predispositions that lead us to perceive the elements of everyday experience mistakenly and to believe, for instance, that entities persist through time, that the pleasures we pursue are genuinely satisfying, that our own personal being is governed by a real self, and that all physical and mental phenomena have a distinct, independent, and real essence. Our everyday language only serves to reinforce and deepen these erring notions.\" \"Buddhist teaching reveals how to reject these flawed beliefs and replace them with a model that both more accurately represents our experience and is indispensable to the realizations that will free us from cyclic existence. The ability to accomplish this rests largely with learning the unique vocabulary and explanations found in Buddhist literature, since that is how we will discover what is mistaken about our untutored beliefs and where we will gain the intellectual skills that are needed to construct a new and more refined conceptual infrastructure.\" \"Engle's introduction explores how the material contained in the two translations can specifically improve practice of the Tibetan teaching system known as Lamrim, or \"Stages of the Path.\" Each of the levels of motivation described by the Lamrim teachings is examined in light of the doctrine of the five heaps - form, feeling, conception, formations, and consciousness - to show how greater understanding of the classical Buddhist doctrines can enhance practice of that portion of the instruction.\"--BOOK JACKET.",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Ithaca, N.Y.",
+            "publisher": "Snow Lion Publications",
+            "date": "2009",
+            "numPages": "",
+            "language": "Includes Tibetan and Sanskrit texts and translations into English.",
+            "ISBN": "9781559393225  155939322X",
+            "shortTitle": "The inner science of Buddhist practice",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "B23W3U6K",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/B23W3U6K",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/B23W3U6K",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Ñāṇamoli and Bodhi",
+            "parsedDate": "1995",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "B23W3U6K",
+            "version": 22,
+            "itemType": "book",
+            "title": "The middle length discourses of the Buddha: a new translation of the Majjhima Nik⁻aya",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Ñāṇamoli"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Bodhi"
+                }
+            ],
+            "abstractNote": "This thoughtfully translated and organized volume is the cornerstone of any Buddhist library. The Middle Length Discourses of the Buddha is a companion to the equally essential The Connected Discourses of the Buddha, The Long Discourses of the Buddha, and the 2005 anthology of Discourses of the Buddha. The 152 discourses of this major collection combine a rich variety of contextual settings with deep and comprehensive teachings. This volume of Wisdom's Teachings of the Buddha series has received Choice Magazine's 1995 Outstanding Academic Book Award and the Tricycle Prize for Excellence in Buddhist Publishing for Dharma Discourse.",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Boston",
+            "publisher": "Wisdom Publications in association with the Barre Center for Buddhist Studies",
+            "date": "1995",
+            "numPages": "",
+            "language": "Pali",
+            "ISBN": "086171072X 9780861710720",
+            "shortTitle": "The middle length discourses of the Buddha",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "URVS8UM7",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/URVS8UM7",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/URVS8UM7",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu",
+            "parsedDate": "1986",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "URVS8UM7",
+            "version": 22,
+            "itemType": "book",
+            "title": "Seven works of Vasubandhu, the Buddhist psychological doctor",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Anacker, Stefan",
+                    "lastName": "Vasubandhu"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Delhi [u.a.]",
+            "publisher": "Motilal Banarsidass",
+            "date": "1986",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "VMS46E9W",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/VMS46E9W",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/VMS46E9W",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Karashima et al.",
+            "parsedDate": "2002",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "VMS46E9W",
+            "version": 22,
+            "itemType": "book",
+            "title": "The Kāśyapaparivarta: Romanized text and facsimiles",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Seishi",
+                    "lastName": "Karashima"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Norikuki",
+                    "lastName": "Kudo"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "M. I",
+                    "lastName": "Vorobʹeva-Desi︠a︡tovskai︠a︡"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Tokyo",
+            "publisher": "International Research Institute for Advanced Buddhology, Soka University",
+            "date": "2002",
+            "numPages": "",
+            "language": "English and Sanskrit (also in romanized form).",
+            "ISBN": "4998062247  9784998062240",
+            "shortTitle": "The Kāśyapaparivarta",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "35CEXWGS",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/35CEXWGS",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/35CEXWGS",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Walshe",
+            "parsedDate": "1995",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "35CEXWGS",
+            "version": 22,
+            "itemType": "book",
+            "title": "The long discourses of the Buddha: a translation of the Dīgha Nikāya",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Maurice O'C",
+                    "lastName": "Walshe"
+                }
+            ],
+            "abstractNote": "Of the Thirty-Four Suttas -- 1. Brahmajala Sutta: The Supreme Net - What the Teaching Is Not -- 2. Samannaphala Sutta: The Fruits of the Homeless Life -- 3. Ambattha Sutta: About Ambattha - Pride Humbled -- 4. Sonadanda Sutta: About Sonadanda - The Qualities of a True Brahmin -- 5. Kutadanta Sutta: About Kutadanta - A Bloodless Sacrifice -- 6. Mahali Sutta: About Mahali - Heavenly Sights, Soul and Body -- 7. Jaliya Sutta: About Jaliya -- 8. Mahasihanada Sutta: The Great Lion's Roar -- 9. Potthapada Sutta: About Potthapada - States of Consciousness -- 10. Subha Sutta: About Subha - Morality, Concentration, Wisdom -- 11. Kevaddha Sutta: About Kevaddha - What Brahma Didn't Know",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Boston",
+            "publisher": "Wisdom Publications",
+            "date": "1995",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0861711033  9780861711031",
+            "shortTitle": "The long discourses of the Buddha",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "P9UIPQ4B",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/P9UIPQ4B",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/P9UIPQ4B",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Willis and Asaṅga",
+            "parsedDate": "1979",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "P9UIPQ4B",
+            "version": 22,
+            "itemType": "book",
+            "title": "On knowing reality: the Tattvārtha chapter of Asaṅga's Bodhisattvabhūmi",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "Janice Dean",
+                    "lastName": "Willis"
+                },
+                {
+                    "creatorType": "author",
+                    "name": "Asaṅga"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "New York",
+            "publisher": "Columbia University Press",
+            "date": "1979",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0231046049 9780231046046",
+            "shortTitle": "On knowing reality",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "5JM9BW5C",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/5JM9BW5C",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/5JM9BW5C",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Strong",
+            "parsedDate": "1983",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "5JM9BW5C",
+            "version": 22,
+            "itemType": "book",
+            "title": "The legend of King Aśoka: a study and translation of the Aśokāvadāna",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "firstName": "John",
+                    "lastName": "Strong"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Princeton, N.J.",
+            "publisher": "Princeton University Press",
+            "date": "1983",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0691065756  9780691065755",
+            "shortTitle": "The legend of King Aśoka",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "NM6FWSDK",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/NM6FWSDK",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/NM6FWSDK",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu and La Vallée Poussin",
+            "parsedDate": "1988",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "NM6FWSDK",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Louis de",
+                    "lastName": "La Vallée Poussin"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Berkeley, Calif.",
+            "publisher": "Asian Humanities Press",
+            "date": "1988",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "0895819139  9780895819130  0895819082  9780895819086  0895819104  9780895819109  9780895819093 0895819090",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "J2DKQ5IX",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/J2DKQ5IX",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/J2DKQ5IX",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Vasubandhu et al.",
+            "parsedDate": "1975",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "J2DKQ5IX",
+            "version": 22,
+            "itemType": "book",
+            "title": "Abhidharmakośabhāṣyam of Vasubandhu",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Vasubandhu"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Prahlad",
+                    "lastName": "Pradhan"
+                },
+                {
+                    "creatorType": "author",
+                    "firstName": "Aruna",
+                    "lastName": "Haldar"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "Patna, India",
+            "publisher": "K.P. Jayaswal Research Institute",
+            "date": "1975",
+            "numPages": "",
+            "language": "Sanskrit",
+            "ISBN": "",
+            "shortTitle": "",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    },
+    {
+        "key": "I7KDTADM",
+        "version": 22,
+        "library": {
+            "type": "group",
+            "id": 137163,
+            "name": "BTW Testing",
+            "links": {
+                "alternate": {
+                    "href": "https://www.zotero.org/groups/btw_testing",
+                    "type": "text/html"
+                }
+            }
+        },
+        "links": {
+            "self": {
+                "href": "https://api.zotero.org/groups/137163/items/I7KDTADM",
+                "type": "application/json"
+            },
+            "alternate": {
+                "href": "https://www.zotero.org/groups/btw_testing/items/I7KDTADM",
+                "type": "text/html"
+            }
+        },
+        "meta": {
+            "createdByUser": {
+                "id": 1742180,
+                "username": "jlwitwer",
+                "name": "",
+                "links": {
+                    "alternate": {
+                        "href": "https://www.zotero.org/jlwitwer",
+                        "type": "text/html"
+                    }
+                }
+            },
+            "creatorSummary": "Bodhi",
+            "parsedDate": "2012",
+            "numChildren": 0
+        },
+        "data": {
+            "key": "I7KDTADM",
+            "version": 22,
+            "itemType": "book",
+            "title": "The numerical discourses of the Buddha: a translation of the Aṅguttara Nikāya",
+            "creators": [
+                {
+                    "creatorType": "author",
+                    "name": "Bodhi"
+                }
+            ],
+            "abstractNote": "",
+            "series": "",
+            "seriesNumber": "",
+            "volume": "",
+            "numberOfVolumes": "",
+            "edition": "",
+            "place": "",
+            "publisher": "",
+            "date": "2012",
+            "numPages": "",
+            "language": "English",
+            "ISBN": "1614290407  9781614290407",
+            "shortTitle": "The numerical discourses of the Buddha",
+            "url": "",
+            "accessDate": "",
+            "archive": "",
+            "archiveLocation": "",
+            "libraryCatalog": "Open WorldCat",
+            "callNumber": "",
+            "rights": "",
+            "extra": "",
+            "dateAdded": "2014-01-10T19:35:22Z",
+            "dateModified": "2014-01-10T19:35:22Z",
+            "tags": [],
+            "collections": [
+                "7N2SWSDQ"
+            ],
+            "relations": {}
+        }
+    }
+],4:code,3:200#}4:type,4:http,2:id,36:5cc7e9c0-7078-4ee9-a5fb-7da6a9dbda43,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,213:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424789208.610193^7:address,53:7:address,20:9:127.0.0.1,5:35491#]8:use_ipv6,5:false!}15:timestamp_start,16:1424789208.53735^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:47845#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424789208.542272^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
+FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
+NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
+BgNVBAsTCkdUMDM4MDI1NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29t
+L3Jlc291cmNlcy9jcHMgKGMpMTQxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZh
+bGlkYXRlZCAtIFJhcGlkU1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIN0FYPR+Q6mdCxwqLmG1ul26F
+PywY6mC1WdeK6IG20Y4AL9Igv0htJhud6hTR0PrafbeyaxZdnvjdYn1dPENzLg8q
+lUBSItQP739T13uS8Xr7p9PqxmTkh3BYPdVhtkpDw14xbxaRpQDLA428ONlTz9F4
+/ecqHsFjQJjAWO3kQOcDElx+LM9rtGzJStEjLOHkzzSJYQZdwTjgU2DZoJmk9VCW
+bn3SiorvngvRjvbO+GamJCbTpkYg4rhzhuDscdfhQmKkOiyDIEIbNxqVCqjMRsrW
+EPGOUypzBKJ1hH0/nPTveNMPIVZxJxgWR/pcOk810MLDYAdUGpfy0Xaduhe5AgMB
+AAGjggFUMIIBUDAfBgNVHSMEGDAWgBTDnPP800YINLvORn+gfFvz4gjLWTBXBggr
+BgEFBQcBAQRLMEkwHwYIKwYBBQUHMAGGE2h0dHA6Ly9ndi5zeW1jZC5jb20wJgYI
+KwYBBQUHMAKGGmh0dHA6Ly9ndi5zeW1jYi5jb20vZ3YuY3J0MA4GA1UdDwEB/wQE
+AwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwIwYDVR0RBBwwGoIM
+Ki56b3Rlcm8ub3Jnggp6b3Rlcm8ub3JnMCsGA1UdHwQkMCIwIKAeoByGGmh0dHA6
+Ly9ndi5zeW1jYi5jb20vZ3YuY3JsMAwGA1UdEwEB/wQCMAAwRQYDVR0gBD4wPDA6
+BgpghkgBhvhFAQc2MCwwKgYIKwYBBQUHAgEWHmh0dHBzOi8vd3d3LnJhcGlkc3Ns
+LmNvbS9sZWdhbDANBgkqhkiG9w0BAQsFAAOCAQEAmr+BLXCddLkkxdmRd9rL6TvL
+OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
+/8PECDzMSQR8RUdw5GlQ3ZC1PILpzT4uJwtmPsbMc701mQMymhnec6FeS3XsGsbi
+6b7jvQy9Exhk7eaF6515/BnvEdS+xvcLS5BUQUEWHO2SN4NGGsMR+keS4uWLJCbh
+fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
+VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
+-----END CERTIFICATE-----
+,19:timestamp_ssl_setup,17:1424789208.606193^5:state,0:]19:timestamp_tcp_setup,17:1424789208.557848^}11:intercepted,5:false!7:request,549:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,49:/groups/none/items/top?key=none&limit=100&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,224:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]36:25:If-Modified-Since-Version,4:None,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:1#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424789208.610327^13:timestamp_end,17:1424789208.611489^}}3319:8:response,331:11:httpversion,8:1:1#1:1#]13:timestamp_end,17:1424789212.202649^3:msg,12:Not Modified,15:timestamp_start,17:1424789212.198703^7:headers,164:40:4:Date,29:Tue, 24 Feb 2015 14:46:52 GMT,]35:6:Server,22:Apache/2.4.10 (Amazon),]77:25:Strict-Transport-Security,44:max-age=31536000; includeSubDomains; preload,]]7:content,0:,4:code,3:304#}4:type,4:http,2:id,36:f8c6447d-e134-45e7-8590-4a2d1e0b1960,5:error,0:~7:version,13:1:0#2:11#1:3#]11:client_conn,214:15:ssl_established,4:true!10:clientcert,0:~13:timestamp_end,0:~19:timestamp_ssl_setup,17:1424789212.137805^7:address,53:7:address,20:9:127.0.0.1,5:35494#]8:use_ipv6,5:false!}15:timestamp_start,17:1424789212.050486^}11:server_conn,2035:15:ssl_established,4:true!14:source_address,56:7:address,23:11:192.168.0.6,5:33769#]8:use_ipv6,5:false!}13:timestamp_end,0:~7:address,57:7:address,24:14:api.zotero.org,3:443#]8:use_ipv6,5:false!}15:timestamp_start,17:1424789212.055286^3:sni,0:~4:cert,1679:-----BEGIN CERTIFICATE-----
+MIIEqjCCA5KgAwIBAgICHk8wDQYJKoZIhvcNAQELBQAwRzELMAkGA1UEBhMCVVMx
+FjAUBgNVBAoTDUdlb1RydXN0IEluYy4xIDAeBgNVBAMTF1JhcGlkU1NMIFNIQTI1
+NiBDQSAtIEczMB4XDTE0MDkzMDA2NDkyNFoXDTE2MTEwMTE0MTgyMFowgZAxEzAR
+BgNVBAsTCkdUMDM4MDI1NjIxMTAvBgNVBAsTKFNlZSB3d3cucmFwaWRzc2wuY29t
+L3Jlc291cmNlcy9jcHMgKGMpMTQxLzAtBgNVBAsTJkRvbWFpbiBDb250cm9sIFZh
+bGlkYXRlZCAtIFJhcGlkU1NMKFIpMRUwEwYDVQQDDAwqLnpvdGVyby5vcmcwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIN0FYPR+Q6mdCxwqLmG1ul26F
+PywY6mC1WdeK6IG20Y4AL9Igv0htJhud6hTR0PrafbeyaxZdnvjdYn1dPENzLg8q
+lUBSItQP739T13uS8Xr7p9PqxmTkh3BYPdVhtkpDw14xbxaRpQDLA428ONlTz9F4
+/ecqHsFjQJjAWO3kQOcDElx+LM9rtGzJStEjLOHkzzSJYQZdwTjgU2DZoJmk9VCW
+bn3SiorvngvRjvbO+GamJCbTpkYg4rhzhuDscdfhQmKkOiyDIEIbNxqVCqjMRsrW
+EPGOUypzBKJ1hH0/nPTveNMPIVZxJxgWR/pcOk810MLDYAdUGpfy0Xaduhe5AgMB
+AAGjggFUMIIBUDAfBgNVHSMEGDAWgBTDnPP800YINLvORn+gfFvz4gjLWTBXBggr
+BgEFBQcBAQRLMEkwHwYIKwYBBQUHMAGGE2h0dHA6Ly9ndi5zeW1jZC5jb20wJgYI
+KwYBBQUHMAKGGmh0dHA6Ly9ndi5zeW1jYi5jb20vZ3YuY3J0MA4GA1UdDwEB/wQE
+AwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwIwYDVR0RBBwwGoIM
+Ki56b3Rlcm8ub3Jnggp6b3Rlcm8ub3JnMCsGA1UdHwQkMCIwIKAeoByGGmh0dHA6
+Ly9ndi5zeW1jYi5jb20vZ3YuY3JsMAwGA1UdEwEB/wQCMAAwRQYDVR0gBD4wPDA6
+BgpghkgBhvhFAQc2MCwwKgYIKwYBBQUHAgEWHmh0dHBzOi8vd3d3LnJhcGlkc3Ns
+LmNvbS9sZWdhbDANBgkqhkiG9w0BAQsFAAOCAQEAmr+BLXCddLkkxdmRd9rL6TvL
+OnNeJ4bCQI7FkMlZ9EUTaSr/qDbPxbT/eKLLHgrs2OcNBNS48HBH2A4vYky09RW2
+/8PECDzMSQR8RUdw5GlQ3ZC1PILpzT4uJwtmPsbMc701mQMymhnec6FeS3XsGsbi
+6b7jvQy9Exhk7eaF6515/BnvEdS+xvcLS5BUQUEWHO2SN4NGGsMR+keS4uWLJCbh
+fyRBMi7KH+rUtet/oX2IF4kvJKM/Ya7ThgZ4ZnGxn9IwvrraPYT7Wy0nSYRdq7Fr
+VFAa422EuIIzDXpzmf+FzceytJdvjLGi+/OnhpQL3RstpP+FOV/7skB9bJFyxQ==
+-----END CERTIFICATE-----
+,19:timestamp_ssl_setup,17:1424789212.133984^5:state,0:]19:timestamp_tcp_setup,17:1424789212.069655^}11:intercepted,5:false!7:request,547:9:is_replay,5:false!4:port,3:443#6:scheme,5:https,6:method,3:GET,4:path,49:/groups/none/items/top?key=none&limit=100&start=0,8:form_out,8:relative,11:httpversion,8:1:1#1:1#]4:host,14:api.zotero.org,7:headers,222:30:15:Accept-Encoding,8:identity,]25:4:Host,14:api.zotero.org,]26:18:Zotero-Api-Version,1:3,]34:25:If-Modified-Since-Version,2:24,]22:10:Connection,5:close,]35:10:User-Agent,17:Python-urllib/2.7,]22:14:X-BTW-Sequence,1:2#]]7:content,0:,7:form_in,8:relative,15:timestamp_start,17:1424789212.137942^13:timestamp_end,17:1424789212.138696^}}

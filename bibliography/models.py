@@ -163,12 +163,6 @@ class Item(models.Model):
     editors. This is cached and processed from the Zotero data.
     """
 
-    freshness = models.DateTimeField(null=True)
-    """
-    The last date and time at which this entry was refreshed from the
-    Zotero database.
-    """
-
     item = models.TextField(null=True)
     """
     The actual item data from the Zotero database, stored as JSON.
@@ -186,57 +180,35 @@ class Item(models.Model):
         # matter for signaling. It also records ``pk`` and
         # ``zotero_url`` but these are immutable.
         self._orig_dict = self.as_dict()
-        self.refresh()
 
-    def refresh(self):
+    def refresh(self, zotero_item):
         """
-        Checks whether the item needs refreshing. If so, it will seek the
-        data anew from the Zotero database and recompute the fields
-        that cache this data.
+        Refresh this item with the Zotero item.
         """
-        if self._refresh():
+        if self._refresh(zotero_item):
             self.date = self._item["data"].get("date", None)
             self.title = self._item["data"].get("title", None)
             self.creators = self._creators()
             self.save()
 
-    def _refresh(self):
+    def _refresh(self, zotero_item):
         """
         Checks whether the item needs refreshing. If so, it will seek the
         data anew from the Zotero database.
+
+        :returns: Whether the item actually changed.
         """
+        self._item = zotero_item
+        new_json = json.dumps(self._item)
+        if new_json != self.item:
+            self.item = new_json
+            # No, we don't save here. It is the responsibility of the
+            # caller to issue a save call.
+            #
+            # self.save()
+            return True
 
-        #
-        # Don't refresh objects that are not from our current library.
-        #
-        if self.uid is not None and Item.objects.zotero.full_uid != self.uid:
-            return False
-
-        now = util.utcnow()
-
-        if not (super(Item, self).__getattribute__("item") is None or
-                self.freshness is None or now - self.freshness >
-                MINIMUM_FRESHNESS):
-            return False
-
-        self._item = Item.objects.zotero.get_item(self.item_key)
-        self.item = json.dumps(self._item)
-        self.freshness = now
-        # No, we don't save here. It is the responsibility of the
-        # caller to issue a save call.
-        #
-        # self.save()
-        return True
-
-    def mark_stale(self):
-        """
-        Mark this entry as stale. Note that this does not automatically
-        refresh **this** object. However, next time the record is
-        fetched from the database, it will be refreshed from the local
-        Zotero cache, and perhaps from the Zotero server.
-        """
-        self.freshness = None
-        self.save()
+        return False
 
     def _creators(self):
         creators = self._item["data"].get("creators", None)

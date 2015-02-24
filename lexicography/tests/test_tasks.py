@@ -12,6 +12,7 @@ from bibliography.models import Item, PrimarySource
 from .. import tasks, depman
 from lib.util import WithStringIO
 from bibliography.tests import mock_zotero
+from bibliography.tasks import fetch_items
 from .util import launch_fetch_task, create_valid_article, \
     extract_inter_article_links
 
@@ -118,6 +119,7 @@ class TasksTestCase(TestCase):
         data when there are no references to other articles
         in the change record.
         """
+        fetch_items()
         tasks.prepare_changerecord_for_display.delay(1).get()
 
         cr = ChangeRecord.objects.get(pk=1)
@@ -168,8 +170,18 @@ class TasksTestCase(TestCase):
         Tests the bibliographical results.
 
         """
-        item = Item(pk=2, item_key="1",
-                    uid=Item.objects.zotero.full_uid)
+        # This ensures that pk 2 is free when we use it next.
+        for _ in range(1, 3):
+            fake = Item(item_key="1")
+            fake.save()
+            fake.delete()
+
+        # This reserves pk=2 for our item.
+        item = Item(pk=2, item_key="1")
+        item.save()
+        fetch_items()
+        # We have to refetch it with the correct data.
+        item = Item.objects.get(pk=2)
 
         cr = Entry.objects.get(
             lemma="citations everywhere possible (subsense)").latest

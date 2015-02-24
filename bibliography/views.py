@@ -41,27 +41,14 @@ def search(request):
 @ajax_login_required
 @require_GET
 def _ajax_search(request):
-    _cache_all()
     # present a unbound form.
     template = loader.get_template('bibliography/search_form.html')
     return HttpResponse(template.render(RequestContext(request)))
 
 
-def _cache_all():
-    search_results = btw_zotero.get_all()
-    for result in search_results:
-        key = result["data"]["key"]
-        if not Item.objects.filter(item_key=key).exists():
-            t = Item(item_key=key, uid=btw_zotero.full_uid)
-            t.save()
-
-    # Items are never deleted from this cache.
-
-
 @login_required
 @require_GET
 def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
-    _cache_all()
     template = loader.get_template('bibliography/manage.html')
     context = RequestContext(
         request,

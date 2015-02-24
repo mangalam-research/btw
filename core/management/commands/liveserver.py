@@ -53,12 +53,20 @@ class SeleniumTest(LiveServerTestCase):
 
     def setUp(self):
         from bibliography.models import Item, PrimarySource
+        from bibliography.tasks import fetch_items
+
+        # Bleh... by the time we get here the workers are running so
+        # one fetch_items has already run. We need to flush the table
+        # and repopulate it as we want.
+        Item.objects.all().delete()
+
         # Id 1
         item = Item(item_key="3")
         item.uid = Item.objects.zotero.full_uid
         item.save()
         ps = PrimarySource(item=item, reference_title="Foo", genre="SU")
         ps.save()
+        fetch_items()
 
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
