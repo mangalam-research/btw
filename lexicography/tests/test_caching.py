@@ -12,7 +12,7 @@ from bibliography.models import Item, PrimarySource
 from .. import tasks, depman
 from bibliography.tests import mock_zotero
 from .util import launch_fetch_task, create_valid_article, \
-    WithStringIO, copy_entry, extract_inter_article_links, \
+    copy_entry, extract_inter_article_links, \
     extract_unlinked_terms
 
 dirname = os.path.dirname(__file__)

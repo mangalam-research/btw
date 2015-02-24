@@ -4,7 +4,6 @@
 
 """
 import logging
-from contextlib import contextmanager
 from StringIO import StringIO
 
 from django.test.client import Client
@@ -35,29 +34,6 @@ outputs to a :class:`StringIO` object.
     handler = logging.StreamHandler(stream)
     logger.addHandler(handler)
     return stream, handler
-
-@contextmanager
-def WithStringIO(logger):
-    """
-Add a :class:`logging.StreamHandler` to the logger so that it
-outputs to a :class:`StringIO` object.
-
-:param logger: The logger to manipulate.
-
-:type logger: :class:`str` or :class:`logging.Logger`.
-
-:return: The StringIO object and the handler that were created.
-
-:rtype: (:class:`StringIO`, :class:`logging.StreamHandler`)
-"""
-    if type(logger) is str:
-        logger = logging.getLogger(logger)
-    stream = StringIO()
-    handler = logging.StreamHandler(stream)
-    logger.addHandler(handler)
-    yield stream, handler
-    logger.removeHandler(handler)
-
 
 def parse_response_to_wed(json_response):
     """

@@ -4,7 +4,10 @@ import datetime
 import tempfile
 import os
 import subprocess
+from contextlib import contextmanager
+from StringIO import StringIO
 import lxml.etree
+import logging
 
 
 import semver
@@ -242,3 +245,25 @@ def get_set_union(name, iterator):
     cache = get_cache(name)
     con = con_by_name[name]
     return con.sunion([cache.make_key(i) for i in iterator])
+
+@contextmanager
+def WithStringIO(logger):
+    """
+Add a :class:`logging.StreamHandler` to the logger so that it
+outputs to a :class:`StringIO` object.
+
+:param logger: The logger to manipulate.
+
+:type logger: :class:`str` or :class:`logging.Logger`.
+
+:return: The StringIO object and the handler that were created.
+
+:rtype: (:class:`StringIO`, :class:`logging.StreamHandler`)
+"""
+    if type(logger) is str:
+        logger = logging.getLogger(logger)
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    logger.addHandler(handler)
+    yield stream, handler
+    logger.removeHandler(handler)

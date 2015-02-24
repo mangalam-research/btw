@@ -10,10 +10,10 @@ from django.contrib.auth import get_user_model
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
 from .. import tasks, depman
-import lib.util
+from lib.util import WithStringIO
 from bibliography.tests import mock_zotero
 from .util import launch_fetch_task, create_valid_article, \
-    WithStringIO, extract_inter_article_links
+    extract_inter_article_links
 
 dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
