@@ -12,6 +12,11 @@ s.PARENTDIR = os.path.dirname(s.CURDIR)
 # Top of the app hierarchy
 s.TOPDIR = os.path.dirname(s.PARENTDIR)
 
+# Basic path where to put the logs.
+s.BTW_LOGGING_PATH = None
+# Basic path where to put the run files (like PID files).
+s.BTW_RUN_PATH = None
+
 s.DEBUG = False
 s.TEMPLATE_DEBUG = s.DEBUG
 

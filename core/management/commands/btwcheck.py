@@ -1,6 +1,7 @@
 import os
 
 from django.core.management.base import BaseCommand, CommandError
+from django.core.management import call_command
 from django.conf import settings
 from django.contrib.sites.models import Site
 from btw.celery import app
@@ -15,11 +16,23 @@ okay.
 
     def handle(self, *args, **options):
 
+        self.check_paths()
         self.check_site()
         self.check_celery()
 
         if self.error_count > 0:
             raise CommandError(str(self.error_count) + " error(s)")
+
+    def check_paths(self):
+        for path in ["BTW_LOGGING_PATH", "BTW_WED_LOGGING_PATH",
+                     "BTW_RUN_PATH"]:
+            self.check_path_exists(path)
+
+    def check_path_exists(self, path):
+        value = getattr(settings, path)
+        if not os.path.exists(value):
+            self.error('settings.{0} ("{1}") does not exist'.format(path,
+                                                                    value))
 
     def check_site(self):
         site = Site.objects.get_current()
@@ -30,39 +43,7 @@ okay.
                        .format(site.name, settings.BTW_SITE_NAME))
 
     def check_celery(self):
-        i = app.control.inspect()
-        try:
-            d = i.stats()
-            if not d:
-                self.error("no Celery workers found")
-        except IOError as e:
-            self.error("cannot connect to Celery's backend: " + str(e))
-
-        prefix = settings.BTW_CELERY_WORKER_PREFIX
-        if prefix.find(".") >= 0:
-            self.error(
-                "BTW_CELERY_WORKER_PREFIX contains a period: " + prefix)
-        prefix += "." if prefix else ""
-
-        myworkers = [w for w in d if w.startswith(prefix)]
-        if not myworkers:
-            self.error("cannot find workers with prefix " + prefix)
-
-        if not settings.CELERY_WORKER_DIRECT:
-            # We need CELERY_WORKER_DIRECT so that the next test will work.
-            self.error("CELERY_WORKER_DIRECT must be True")
-        else:
-            btw_env = os.environ.get("BTW_ENV")
-            for worker, result in [
-                    (worker,
-                     # We send the task directly to the worker so that we
-                     # are sure *that* worker handles the request.
-                     get_btw_env.apply_async((), queue=worker + ".dq").get())
-                    for worker in myworkers]:
-                if result != btw_env:
-                    self.error(
-                        "{0} is not using BTW_ENV={1} (uses BTW_ENV={2})"
-                        .format(worker, btw_env, result))
+        call_command('btwworker', 'check')
 
     def error(self, msg):
         self.stderr.write(msg)
