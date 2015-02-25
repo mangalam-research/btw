@@ -328,6 +328,15 @@ def step_impl(context, action, row):
             button = driver.execute_script("""
             var row = arguments[0];
             var column = arguments[1];
+
+            var proc = document.getElementById(
+                "bibliography-table_processing");
+
+            // Not ready (i.e. element does not exist yet) or still
+            // processing...
+            if (!proc || proc.style.display !== "none")
+                return undefined;
+
             return jQuery("table#bibliography-table>tbody>tr")
                        .filter(".odd, .even").eq(row).children("td")
                        .eq(column).children("div.open-close-button")[0];
@@ -364,8 +373,8 @@ def step_impl(context, action):
             var proc = document.getElementById(
                 "bibliography-table_processing");
 
-            // Still processing...
-            if (proc.style.display !== "none")
+            // Not ready or still processing...
+            if (!proc || proc.style.display !== "none")
                 return undefined;
 
             return jQuery("table#bibliography-table>thead>tr>th")
