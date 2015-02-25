@@ -36,6 +36,9 @@ def cleanup(context, failed):
     actually_quit = not ((selenium_quit in ("never", "on-enter")) or
                          (context.failed and selenium_quit ==
                           "on-success"))
+
+    keep_tempdirs = context.behave_keep_tempdirs
+
     if driver:
         try:
             builder.set_test_status(
@@ -64,7 +67,10 @@ def cleanup(context, failed):
         context.sc_tunnel = None
 
     if context.sc_tunnel_tempdir:
-        shutil.rmtree(context.sc_tunnel_tempdir, True)
+        if keep_tempdirs:
+            print "Keeping tunnel tempdir:", context.sc_tunnel_tempdir
+        else:
+            shutil.rmtree(context.sc_tunnel_tempdir, True)
         context.sc_tunnel_tempdir = None
 
     if context.wm:
@@ -91,7 +97,10 @@ def cleanup(context, failed):
         context.server = None
 
     if context.server_tempdir:
-        shutil.rmtree(context.server_tempdir, True)
+        if keep_tempdirs:
+            print "Keeping server tempdir:", context.server_tempdir
+        else:
+            shutil.rmtree(context.server_tempdir, True)
         context.server_tempdir = None
 
 class DeadServer(Exception):
@@ -128,6 +137,7 @@ def before_all(context):
     atexit.register(cleanup, context, True)
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
+    context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
 
     context.sc_tunnel = None
     context.sc_tunnel_tempdir = None

@@ -27,8 +27,8 @@ SUBCOLUMNS = {
 
 NUMBER_OF_ROWS = 3
 
-load_re = ur'^(?:that )?the user (?:is on|reloads) the page for editing '\
-          ur'primary sources$'
+load_re = ur'^(?:that )?the user (?:is on|reloads) the page for '\
+          ur'(?:editing primary sources|managing bibliographical items)$'
 
 
 @given(load_re)

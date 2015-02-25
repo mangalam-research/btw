@@ -6,21 +6,25 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
 from django.template import loader, RequestContext
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_POST,  \
+    require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
-from django.core.urlresolvers import resolve
+from django.core.urlresolvers import resolve, reverse
 from django.views.decorators.cache import never_cache
+from django.core.cache import get_cache
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
 from .forms import PrimarySourceForm
+from . import tasks
 
 logger = logging.getLogger(__name__)
 
 btw_zotero = Zotero(zotero_settings(), 'BTW Library')
-
+cache = get_cache("bibliography")
 
 def ajax_login_required(view):
     @wraps(view)
@@ -46,6 +50,29 @@ def _ajax_search(request):
     return HttpResponse(template.render(RequestContext(request)))
 
 
+def previously_refreshed():
+    return cache.get(tasks.FETCH_DATE_KEY) or "Unknown"
+
+@ajax_login_required
+@require_POST
+def initiate_refresh(request):
+    tasks.fetch_items.delay()
+    return HttpResponse(json.dumps(previously_refreshed(),
+                                   cls=DjangoJSONEncoder),
+                        content_type="application/json")
+
+
+@never_cache
+@ajax_login_required
+@require_GET
+def check_refresh(request):
+    return HttpResponse(json.dumps(previously_refreshed(),
+                                   cls=DjangoJSONEncoder),
+                        content_type="application/json")
+
+
+# Never cache so that we can have an number for prev_refreshed.
+@never_cache
 @login_required
 @require_GET
 def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
@@ -57,7 +84,11 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
                 editable and
                 request.user.has_perm('bibliography.add_primarysource') and
                 request.user.has_perm('bibliography.change_primarysource')),
-            'submenu': submenu
+            'submenu': submenu,
+            'prev_refreshed': json.loads(json.dumps(previously_refreshed(),
+                                                    cls=DjangoJSONEncoder)),
+            'check_refresh_url': reverse('bibliography_check_refresh'),
+            'initiate_refresh_url': reverse('bibliography_initiate_refresh')
         })
     return HttpResponse(template.render(context))
 
