@@ -1,5 +1,13 @@
-# Django settings for btw project.
+# Django settings for the BTW project.
 
+#
+# You have to set all values on the ``s`` object. This object will be
+# converted to a regular settings object at the end of this
+# file. Values which are callable will be resolved to static value as
+# the ``s`` object is converted to regular settings. MAKE SURE NOT TO
+# CREATE CIRCULAR DEPENDENCIES BETWEEN SETTINGS. You'll just get a
+# stack overflow error if you do.
+#
 from lib.settings import s
 
 import os
@@ -152,7 +160,7 @@ s.MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
 
-s.CACHE_MIDDLEWARE_KEY_PREFIX = s.BTW_SITE_NAME
+s.CACHE_MIDDLEWARE_KEY_PREFIX = lambda s: s.BTW_SITE_NAME
 
 s.CACHE_MIDDLEWARE_ALIAS = 'page'
 
@@ -309,9 +317,12 @@ s.CELERY_WORKER_DIRECT = True
 # This is a prefix by which the worker names for this instance of BTW
 # must use. The full name must be <prefix>.<suffix> where suffix is
 # whatever is needed.
-s.BTW_CELERY_WORKER_PREFIX = s.BTW_SITE_NAME.lower().replace(" ", "_")
-s.CELERY_DEFAULT_QUEUE = s.BTW_CELERY_WORKER_PREFIX + ".default"
-s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = s.BTW_CELERY_WORKER_PREFIX + ".bibliography"
+s.BTW_CELERY_WORKER_PREFIX = lambda s: \
+    s.BTW_SITE_NAME.lower().replace(" ", "_")
+s.CELERY_DEFAULT_QUEUE = \
+    lambda s: s.BTW_CELERY_WORKER_PREFIX + ".default"
+s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = \
+    lambda s: s.BTW_CELERY_WORKER_PREFIX + ".bibliography"
 
 s.CELERY_DEFAULT_EXCHANGE = 'default'
 s.CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
@@ -319,12 +330,12 @@ s.CELERY_DEFAULT_ROUTING_KEY = 'default'
 
 from kombu import Queue
 
-s.CELERY_QUEUES = (
+s.CELERY_QUEUES = lambda s: (
     Queue(s.CELERY_DEFAULT_QUEUE, routing_key='default'),
     Queue(s.BTW_CELERY_BIBLIOGRAPHY_QUEUE, routing_key='bibliography'),
 )
 
-s.CELERY_ROUTES = {
+s.CELERY_ROUTES = lambda s: {
     'bibliography.tasks.fetch_items': {
         'queue': s.BTW_CELERY_BIBLIOGRAPHY_QUEUE,
         'routing_key': 'bibliography',
@@ -380,5 +391,8 @@ for app in s.INSTALLED_APPS:
             exec open(os.path.join(s.CURDIR, app + ".py"))
         exec _env.find_config(app)  # pylint: disable=exec-used
 
-# Export everything to the global space
+#
+# Export everything to the global space. This is where we convert
+# ``s`` to the regular settings.
+#
 globals().update(s.as_dict())
