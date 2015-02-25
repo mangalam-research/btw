@@ -284,7 +284,7 @@ class TasksTestCase(TestCase):
                 handler,
                 stream,
                 "^5af6712b87152507c264a550171d2045936bb64d"
-                "_True is being processed by (?:.*?); ending task.$")
+                "_True is held by (?:.*?); ending task.$")
 
     def test_prepare_changerecord_for_display_fail(self):
         """

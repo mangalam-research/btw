@@ -11,6 +11,7 @@ from .models import ChangeRecord, Entry
 from .xml import XMLTree
 from . import depman
 from bibliography.views import targets_to_dicts
+from lib.tasks import acquire_mutex
 
 logger = get_task_logger(__name__)
 
@@ -77,18 +78,7 @@ def prepare_changerecord_for_display(self, pk, published=None,
     # identifier of the task.
     #
 
-    # We attempt to claim this key for ourselves. nx=True is a feature
-    # of the Redis backend. The key will be atomically set if not yet
-    # set. A return value of True means it was set.
-    ours = cache.set(key, {"task": self.request.id}, nx=True)
-    if not ours:
-        prev = cache.get(key)
-        other = prev.get("task")
-        if other:
-            logger.debug("%s is being processed by %s; ending task.",
-                         key, other)
-        else:
-            logger.debug("%s is set; ending task.", key)
+    if not acquire_mutex(cache, key, self.request.id, logger):
         return
 
     #
