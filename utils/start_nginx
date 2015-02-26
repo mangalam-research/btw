@@ -53,6 +53,15 @@ def cleanup(*_whatever):
             server.terminate()
         server = None
 
+    # We must kill the workers first. Otherwise, it can lead to a
+    # cascading error which will cause Redis to fill up. (Basically, a
+    # task could be restarted over and over again, causing events to
+    # be stored in Redis until memory is exhausted.)
+    try:
+        subprocess.check_call(['./manage.py', 'btwworker', 'stop'])
+    except:
+        pass
+
     if clean_databases:
         for name, _ in name_users:
             subprocess.check_call(['dropdb', name])
@@ -61,11 +70,6 @@ def cleanup(*_whatever):
     if tmpconf:
         subprocess.call(["nginx", "-c", tmpconf, "-s", "stop"])
         tmpconf = None
-
-    try:
-        subprocess.check_call(['./manage.py', 'btwworker', 'stop'])
-    except:
-        pass
 
     if tmpdir:
         shutil.rmtree(tmpdir)
