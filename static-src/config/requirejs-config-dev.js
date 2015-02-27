@@ -80,9 +80,7 @@ require.config({
          mode: {
              path: "btw/btw_mode",
              options: {
-                 bibl_search_url: "/bibliography/search/",
-                 bibl_info_url: "/bibliography/<itemKey>/info",
-                 bibl_abbrev_url: "/bibliography/<itemKey>/abbrev"
+                 bibl_search_url: "/bibliography/search/"
              }
          }
      }

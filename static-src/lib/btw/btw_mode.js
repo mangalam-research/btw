@@ -37,11 +37,7 @@ function BTWMode (options) {
         }
     };
     this._bibl_search_url = options.bibl_search_url;
-    this._bibl_abbrev_url = options.bibl_abbrev_url;
-    this._bibl_info_url = options.bibl_info_url;
     delete options.bibl_search_url;
-    delete options.bibl_info_url;
-    delete options.bibl_abbrev_url;
     Mode.call(this, options);
     this._contextual_menu_items = [];
     this._headers = {
