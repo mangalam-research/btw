@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import json
 
 from django_webtest import WebTest
@@ -255,7 +256,7 @@ class TestItemsView(_PatchZoteroTest):
             args=(Item.objects.get(item_key="1").pk,))
 
     def test_correct_data(self):
-        response = self.app.get(self.url, user=u'test', xhr=True)
+        response = self.app.get(self.url, user=u'test')
         data = json.loads(response.body)
         assert_equal(data["title"], "Title 1")
         assert_equal(data["date"], "Date 1")
@@ -329,6 +330,7 @@ class PrimarySourceMixin(object):
     initial_values = None
     # This is a fake value selected to shut jslint up.
     submit_method = id
+    no_permission_failure_status = 403
 
     def make_submit_headers(self, form):
         ret = dict(self.get_headers)
@@ -338,7 +340,10 @@ class PrimarySourceMixin(object):
         return ret
 
     def submit(self, form, *args, **kwargs):
-        return self.submit_method(headers=self.make_submit_headers(form),
+        submit_headers = self.make_submit_headers(form)
+        headers = kwargs.pop("headers", {})
+        submit_headers.update(headers)
+        return self.submit_method(headers=submit_headers,
                                   *args, **kwargs)
 
     def test_no_permission(self):
@@ -351,7 +356,8 @@ class PrimarySourceMixin(object):
         assert_true(response)
 
         response = self.client.get(self.url)
-        assert_equal(response.status_code, 302, "the request should fail")
+        assert_equal(response.status_code, self.no_permission_failure_status,
+                     "the request should fail")
 
     def test_form(self):
         """
@@ -440,6 +446,33 @@ class PrimarySourceMixin(object):
             'Primary source with this Reference title already exists.</span>',
             status_code=400)
 
+    def test_post_latin1_charset(self):
+        """
+        Test that a valid form passes through, and creates an correct
+        object, even if the charset is not utf-8.
+        """
+        count_before = PrimarySource.objects.all().count()
+        response = self.app.get(
+            self.url, headers=self.get_headers, user="test")
+        assert_equal(response.status_code, 200)
+        form = response.form
+        form['reference_title'] = u'Flébble'.encode('latin-1')
+        form['genre'] = 'SH'
+        response = self.submit(
+            form, self.url, params=form.submit_fields(),
+            headers={
+                'Content-Type':
+                'application/x-www-form-urlencoded; charset=latin1'
+            }
+        )
+        assert_equal(response.status_code, 200)
+
+        source = self.element_of_interest()
+        assert_equal(source.reference_title, u"Flébble")
+        assert_equal(source.genre, "SH")
+        assert_equal(source.item.pk, Item.objects.get(item_key="1").pk)
+        self.assert_count_after_valid_post(count_before)
+
 
 class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin,
                                 LoginMixin):
@@ -447,6 +480,8 @@ class TestNewPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin,
     """
     Tests for the new_primary_sources view.
     """
+
+    no_permission_failure_status = 302
 
     def setUp(self):
         super(TestNewPrimarySourcesView, self).setUp()

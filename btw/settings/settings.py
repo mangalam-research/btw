@@ -346,6 +346,12 @@ s.CELERY_ROUTES = lambda s: {
     },
 }
 
+s.REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 s.BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'
 s.BTW_FONTAWESOME_CSS_PATH = \

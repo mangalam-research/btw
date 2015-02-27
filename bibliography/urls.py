@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
-from django.conf import settings
+from django.views.decorators.cache import never_cache
 
-from .views import ItemTable
+from .views import ItemTable, ItemViewSet, AllListView
 
 urlpatterns = patterns('bibliography.views',
                        url(r'^search/$', 'search', name='bibliography_search'),
@@ -22,6 +22,15 @@ urlpatterns = patterns('bibliography.views',
                        url(r'^primary-sources/(?P<pk>.+?)$',
                            'primary_sources',
                            name='bibliography_primary_sources'),
-                       url(r'^(?P<pk>.+?)$', 'items',
+                       url(r'^all$',
+                           never_cache(AllListView.as_view()),
+                           name="bibliography_all"),
+                       url(r'^(?P<pk>.+?)$',
+                           never_cache(ItemViewSet.as_view(
+                               {'get': 'retrieve'})),
                            name='bibliography_items'),
+                       url(r'^$',
+                           never_cache(ItemViewSet.as_view(
+                               {'get': 'list'})),
+                           name="bibliography_items_list"),
                        )

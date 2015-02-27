@@ -1,6 +1,7 @@
 import logging
 import json
 from functools import wraps
+import itertools
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
@@ -15,10 +16,15 @@ from django.core.urlresolvers import resolve, reverse
 from django.views.decorators.cache import never_cache
 from django.core.cache import get_cache
 from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework import viewsets, generics, mixins, permissions, \
+    parsers, renderers
+from rest_framework.response import Response
 
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
 from .forms import PrimarySourceForm
+from .serializers import ItemSerializer, ItemAndPrimarySourceSerializer, \
+    PrimarySourceSerializer
 from . import tasks
 
 logger = logging.getLogger(__name__)
@@ -92,20 +98,17 @@ def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
         })
     return HttpResponse(template.render(context))
 
-@never_cache
-@require_GET
-def items(request, pk):
-    if not request.is_ajax():
-        return HttpResponseBadRequest("only AJAX requests are supported")
 
-    fmt = request.META.get('HTTP_ACCEPT', 'application/json')
-    if fmt != 'application/json':
-        return HttpResponseBadRequest("unknown content type: " + fmt)
-    # This narrows down the set of fields we are sending back to a
-    # limited set.
-    return HttpResponse(json.dumps(Item.objects.get(pk=pk).as_dict()),
-                        content_type="application/json")
+class ItemViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
 
+class AllListView(generics.ListAPIView):
+
+    def get_queryset(self):
+        return itertools.chain(Item.objects.all(), PrimarySource.objects.all())
+
+    serializer_class = ItemAndPrimarySourceSerializer
 
 def targets_to_dicts(targets):
     """
@@ -231,33 +234,73 @@ class PrimarySourceTable(BaseDatatableView):
 def item_primary_sources(request, pk):
     return PrimarySourceTable.as_view(item_pk=pk)(request)
 
+class UpdateListRetrieveViewSet(mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                viewsets.GenericViewSet):
+    pass
 
-@never_cache
-@ajax_login_required
-@permission_required('bibliography.change_primarysource')
-@require_http_methods(["GET", "PUT"])
-def primary_sources(request, pk):
-    fmt = request.META.get('HTTP_ACCEPT', 'application/json')
-    instance = PrimarySource.objects.get(pk=pk)
-    if request.method == "GET":
-        if fmt == "application/x-form":
-            form = PrimarySourceForm(instance=instance)
-            return render(request, 'bibliography/add_primary_source.html',
-                          {'form': form})
-        elif fmt == "application/json":
-            return HttpResponse(json.dumps(instance.as_dict()),
-                                content_type="application/json")
-    elif request.method == "PUT":
-        ctype = request.META["CONTENT_TYPE"]
-        if ctype != "application/x-www-form-urlencoded; charset=UTF-8":
-            return HttpResponseBadRequest("content type is not supported")
-        form = PrimarySourceForm(QueryDict(request.body), instance=instance)
+class PrimarySourcePermissions(permissions.DjangoModelPermissions):
+
+    def __init__(self, *args, **kwargs):
+        # We make this very restrictive: only people who can change
+        # primary sources can access the interface.
+        self.perms_map = dict(self.perms_map)
+        for method in ("GET", "OPTIONS", "HEAD", "POST", "DELETE"):
+            self.perms_map[method] = self.perms_map["PUT"]
+        super(PrimarySourcePermissions, self).__init__(*args, **kwargs)
+
+class FormRenderer(renderers.TemplateHTMLRenderer):
+    media_type = "application/x-form"
+
+    def render(self, data, media_type=None, renderer_context=None):
+        # Allow returning an empty response when the transaction is
+        # successful.
+        if data is None:
+            return ''
+
+        return super(FormRenderer, self).render(data, media_type,
+                                                renderer_context)
+
+class PrimarySourceViewSet(UpdateListRetrieveViewSet):
+    queryset = PrimarySource.objects.all()
+    serializer_class = PrimarySourceSerializer
+    permission_classes = (PrimarySourcePermissions, )
+    parser_classes = (parsers.FormParser, )
+    renderer_classes = (renderers.JSONRenderer,
+                        FormRenderer,)
+    lookup_field = "pk"
+    template_name = 'bibliography/add_primary_source.html'
+
+    def update(self, request, pk):
+        instance = PrimarySource.objects.get(pk=pk)
+        form = PrimarySourceForm(request.data, instance=instance)
         if form.is_valid():
             form.save()
-            return HttpResponse()
-        elif fmt == "application/x-form":
-            return render(request, 'bibliography/add_primary_source.html',
-                          {'form': form}, status=400)
+            return Response()
+
+        return Response({'form': form}, status=400, content_type="text/html")
+
+    def retrieve(self, request, *args, **kwargs):
+        if request.accepted_renderer.media_type == "application/x-form":
+            pk = kwargs["pk"]
+            instance = PrimarySource.objects.get(pk=pk)
+            form = PrimarySourceForm(instance=instance)
+            return Response({'form': form}, content_type="text/html")
+
+        return super(PrimarySourceViewSet, self).retrieve(request,
+                                                          *args, **kwargs)
+
+@never_cache
+def primary_sources(request, pk):
+    # For historical reasons, we have this rather than plug the
+    # viewset directly into the urls.py configuration. Eventually,
+    # this should be reworked to use the Django REST Framework pattern
+    # of urls.
+    if request.method == "GET":
+        return PrimarySourceViewSet.as_view({'get': 'retrieve'})(request,
+                                                                 **{'pk': pk})
+    elif request.method == "PUT":
+        return PrimarySourceViewSet.as_view({'put': 'update'})(request, pk)
 
     # If we get here the query is for something still unimplemented.
     return HttpResponseBadRequest("unimplemented")
