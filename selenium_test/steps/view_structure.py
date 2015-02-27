@@ -20,14 +20,14 @@ step_matcher("re")
 
 @then(r"^the table of contents is (?P<state>expandable|non-expandable)$")
 def step_impl(context, state):
-    driver = context.driver
+    util = context.util
 
     expandable = state == "expandable"
 
     selector = "#btw-article-affix" + \
                ".expandable" if expandable else ":not(.expandable)"
 
-    els = driver.find_elements_by_css_selector(selector)
+    els = util.find_elements((By.CSS_SELECTOR, selector))
 
     assert_true(len(els) > 0, "the table of contents should "
                 "{0} expandable".format("be" if expandable else "not be"))
