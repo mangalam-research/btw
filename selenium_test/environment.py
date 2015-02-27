@@ -138,13 +138,14 @@ def before_all(context):
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
+    context.visible = os.environ.get("SELENIUM_VISIBLE")
 
     context.sc_tunnel = None
     context.sc_tunnel_tempdir = None
     desired_capabilities = {}
     if not builder.remote:
-        visible = context.selenium_quit in ("never", "on-success",
-                                            "on-enter")
+        visible = context.visible or \
+            context.selenium_quit in ("never", "on-success", "on-enter")
         context.display = Display(visible=visible, size=(1024, 600))
         context.display.start()
         builder.update_ff_binary_env('DISPLAY')
