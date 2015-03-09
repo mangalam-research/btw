@@ -4,7 +4,7 @@ import lxml.etree
 
 import lib.util as util
 from .. import xml
-from .data import sf_cases
+from .data import invalid_sf_cases, valid_sf_cases
 
 from .test_xml import as_editable
 valid_editable = as_editable(os.path.join(xml.schemas_dirname, "prasada.xml"))
@@ -87,7 +87,7 @@ class SchematronTestCase(unittest.TestCase):
             })
 
         x = 0
-        for case in sf_cases:
+        for case in invalid_sf_cases:
             sfs[x].text = case
             x += 1
 
@@ -101,4 +101,33 @@ class SchematronTestCase(unittest.TestCase):
                                   namespaces={
                                       'svrl': 'http://purl.oclc.org/dsdl/svrl'
                                   })
-        self.assertEqual(len(found), len(sf_cases))
+        self.assertEqual(len(found), len(invalid_sf_cases))
+
+    def test_correct_semantic_field_re(self):
+        """
+        Test various valid cases for semantic fields.
+        """
+        self.test_valid()
+        tree = lxml.etree.fromstring(valid_editable)
+        sfs = tree.xpath(
+            "//btw:sf",
+            namespaces={
+                "btw": "http://mangalamresearch.org/ns/btw-storage"
+            })
+
+        x = 0
+        for case in valid_sf_cases:
+            sfs[x].text = case
+            x += 1
+
+        data = lxml.etree.tostring(
+            tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        output_tree = lxml.etree.fromstring(
+            util.run_saxon(xml.schematron_for_version(schema_version),
+                           data).encode('utf-8'))
+
+        found = output_tree.xpath("//svrl:failed-assert",
+                                  namespaces={
+                                      'svrl': 'http://purl.oclc.org/dsdl/svrl'
+                                  })
+        self.assertEqual(len(found), 0)

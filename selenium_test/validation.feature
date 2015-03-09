@@ -19,3 +19,8 @@ Scenario: invalid semantic fields are reported
 Given a document with bad semantic fields
 And the document is completely validated
 Then there are errors reporting the bad semantic fields
+
+Scenario: valid semantic fields are not reported
+Given a document with good semantic fields
+And the document is completely validated
+Then there are no errors

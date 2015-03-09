@@ -16,7 +16,7 @@ from django.http import Http404, HttpResponse
 from south.management.commands import patch_for_test_db_setup
 
 from core.tests.common_zotero_patch import patch as zotero_patch
-from lexicography.tests.data import sf_cases
+from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lib import util
 
 class LexicographyPatcher(object):
@@ -147,7 +147,8 @@ class SeleniumTest(LiveServerTestCase):
 
         if what == "valid article":
             pass
-        elif what == "bad semantic fields article":
+        elif what in ("bad semantic fields article",
+                      "good semantic fields article"):
             publish = False
             tree = lxml.etree.fromstring(data)
             sfs = tree.xpath(
@@ -156,7 +157,9 @@ class SeleniumTest(LiveServerTestCase):
                     "btw": "http://mangalamresearch.org/ns/btw-storage"
                 })
             ix = 0
-            for case in sf_cases:
+            cases = invalid_sf_cases if what.startswith("bad ") \
+                else valid_sf_cases
+            for case in cases:
                 sfs[ix].text = case
                 ix += 1
             lemmas = tree.xpath(

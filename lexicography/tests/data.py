@@ -5,7 +5,7 @@
 #
 
 # Test cases for invalid sematic fields.
-sf_cases = [
+invalid_sf_cases = [
     "01x",  # Errant suffix
     "abcd",  # Junk
     "",  # Empty text
@@ -22,5 +22,9 @@ sf_cases = [
     "01.02|01.2",  # 1 digit after suffix, secondary
     "01.02|01.002",  # 3 digits after suffix, secondary
     "01.02|.01",  # Initial period after suffix
-    u"0१.002",  # Indian numeral
+    u"0१.002",  # Indian numeral,
+]
+
+valid_sf_cases = [
+    u"\u00a0 01.02",  # Leading non-breakable space
 ]

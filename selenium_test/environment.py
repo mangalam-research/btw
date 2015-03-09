@@ -262,6 +262,7 @@ def before_scenario(context, scenario):
     # These documents are not initially present.
     context.valid_document_created = False
     context.bad_semantic_fields_document_created = False
+    context.good_semantic_fields_document_created = False
 
     #
     # This allows tags like:

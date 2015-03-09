@@ -27,7 +27,11 @@
       </iso:assert>
     </iso:rule>
     <iso:rule context="btw:sf">
-      <iso:assert test="matches(text(), '^\s*\d{2}(\.\d{2})*(\s*\|\s*\d{2}(\.\d{2})*)?(aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)?\s*$')">
+      <!-- We use replace(...) to convert the \s patterns to something
+           equivalent to what \s matches in JavaScript regular expressions. -->
+           \f (#x000c) and \v (#x000b) are missing as they are not valid
+           characters in XML. -->
+      <iso:assert test="matches(text(), replace('^\s*\d{2}(\.\d{2})*(\s*\|\s*\d{2}(\.\d{2})*)?(aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)?\s*$', '\\s', '[ \\n\\r\\t&#x00a0;&#x1680;&#x180e;&#x2000;&#x2001;&#x2002;&#x2003;&#x2004;&#x2005;&#x2006;&#x2007;&#x2008;&#x2009;&#x200a;&#x2028;&#x2029;&#x202f;&#x205f;&#x3000;]'))">
 	Semantic field in an incorrect format.
       </iso:assert>
     </iso:rule>

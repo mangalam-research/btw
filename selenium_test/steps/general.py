@@ -321,6 +321,14 @@ def step_impl(context, what):
             title = fifo.read().strip().decode('utf-8')
         context.bad_semantic_fields_document_created = True
 
+    if what == "good semantic fields" \
+       and not context.good_semantic_fields_document_created:
+        with open(context.server_write_fifo, 'w') as fifo:
+            fifo.write("create good semantic fields article\n")
+        with open(context.server_read_fifo, 'r') as fifo:
+            title = fifo.read().strip().decode('utf-8')
+        context.good_semantic_fields_document_created = True
+
     if title is None:
         title = WHAT_TO_TITLE[what]
 
