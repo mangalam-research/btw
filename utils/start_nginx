@@ -43,6 +43,9 @@ tmpconf = None
 clean_databases = False
 
 def cleanup(*_whatever):
+    # Make sure that cleanup happens!
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
     global server
     global tmpdir
     global tmpconf
