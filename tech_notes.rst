@@ -302,6 +302,8 @@ Run::
   $ make
   $ ./manage.py btwredis start
   $ ./manage.py btwworker start
+  $  ./manage.py btwworker generate-monit-config
+  # Install the config generated.
   $ ./manage.py btwcheck
   $ ./manage.py test
   [The Zotero tests will necessarily fail because the server is set
@@ -378,7 +380,7 @@ Generally:
 
 4. Run::
 
-    $ sudo monit unmonitor btw_worker
+    $ sudo monit unmonitor [appropriate group name]
     $ ./manage.py btwworker stop
 
     # The next command **must** be omitted if BTW is meant to continue
@@ -403,10 +405,14 @@ Generally:
 
     $ ./manage.py btwworker start
     $ ./manage.py btwcheck
+    $ ./manage.py btwworker generate-monit-config
+    # Check the generated config against what is already installed, update
+    # if needed.
+
     $ ./manage.py test
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
-    $ sudo monit monitor btw_worker
+    $ sudo monit monitor [appropriate group name]
 
 5. Reload uwsgi::
 

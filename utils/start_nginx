@@ -62,7 +62,7 @@ def cleanup(*_whatever):
     # task could be restarted over and over again, causing events to
     # be stored in Redis until memory is exhausted.)
     try:
-        subprocess.check_call(['./manage.py', 'btwworker', 'stop'])
+        subprocess.check_call(['./manage.py', 'btwworker', 'stop', '--all'])
     except:
         sys.stderr.write("Cannot stop workers.\n")
 
@@ -118,7 +118,7 @@ for name, user in name_users:
     subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
     subprocess.check_call(['./manage.py', 'btwredis', 'start'])
     subprocess.check_call(['./manage.py', 'clearcache', '--all'])
-    subprocess.check_call(['./manage.py', 'btwworker', 'start'])
+    subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
     # Give time to the workers to start.
     import time
     time.sleep(2)
