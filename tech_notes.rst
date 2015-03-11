@@ -406,8 +406,9 @@ See below for specific upgrade cases.
 1.0.x to 1.1.0
 ~~~~~~~~~~~~~~
 
-1. Update the site configuraiton to add BTW_LOGGING_PATH and
-   BTW_RUN_PATH. Make BTW_WED_LOGGING_PATH use BTW_LOGGING_PATH.
+1. Update the site configuration to add BTW_LOGGING_PATH,
+   BTW_RUN_PATH, BTW_LOGGING_PATH_FOR_BTW, BTW_RUN_PATH_FOR_BTW. Make
+   BTW_WED_LOGGING_PATH use BTW_LOGGING_PATH_FOR_BTW.
 
 0.8.x to 1.0.0
 ~~~~~~~~~~~~~~

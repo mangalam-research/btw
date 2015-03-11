@@ -26,6 +26,11 @@ s.BTW_LOGGING_PATH = None
 # Basic path where to put the run files (like PID files).
 s.BTW_RUN_PATH = None
 
+# The path where BTW-specific logs should be stored.
+s.BTW_LOGGING_PATH_FOR_BTW = lambda s: os.path.join(s.BTW_LOGGING_PATH, "btw")
+# The path where BTW-specific run-time information should be stored.
+s.BTW_RUN_PATH_FOR_BTW = lambda s: os.path.join(s.BTW_RUN_PATH, "btw")
+
 s.DEBUG = False
 s.TEMPLATE_DEBUG = s.DEBUG
 
@@ -380,7 +385,8 @@ s.BTW_WED_POLYFILLS = tuple('/static/lib/wed/polyfills/' +
 s.BTW_WED_USE_REQUIREJS = None
 s.BTW_WED_PATH = None
 s.BTW_WED_CSS = None
-s.BTW_WED_LOGGING_PATH = None
+s.BTW_WED_LOGGING_PATH = \
+    lambda s: os.path.join(s.BTW_LOGGING_PATH_FOR_BTW, "wed")
 s.BTW_QUNIT_CSS_PATH = None
 
 s.BTW_JQUERY_GROWL_CSS_PATH = \

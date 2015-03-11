@@ -24,8 +24,8 @@ okay.
             raise CommandError(str(self.error_count) + " error(s)")
 
     def check_paths(self):
-        for path in ["BTW_LOGGING_PATH", "BTW_WED_LOGGING_PATH",
-                     "BTW_RUN_PATH"]:
+        for path in ["BTW_LOGGING_PATH_FOR_BTW", "BTW_WED_LOGGING_PATH",
+                     "BTW_RUN_PATH_FOR_BTW"]:
             self.check_path_exists(path)
 
     def check_path_exists(self, path):

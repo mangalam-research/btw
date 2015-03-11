@@ -13,8 +13,10 @@ class Worker(object):
     def __init__(self, name, queues):
         self.name = name
         self.queues = queues
-        self.logfile = os.path.join(settings.BTW_LOGGING_PATH, "%n.log")
-        self.pidfile = os.path.join(settings.BTW_RUN_PATH, "%n.pid")
+        self.logfile = os.path.join(settings.BTW_LOGGING_PATH_FOR_BTW,
+                                    "%n.log")
+        self.pidfile = os.path.join(settings.BTW_RUN_PATH_FOR_BTW,
+                                    "%n.pid")
         logfile_arg = "--logfile=" + self.logfile
         pidfile_arg = "--pidfile=" + self.pidfile
         self.start_cmd = ['celery', '-A', 'btw', 'multi', 'start',
