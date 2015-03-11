@@ -17,6 +17,9 @@ from django.conf import settings
 from django.core.cache import get_cache
 import django_redis
 
+# We effectively reexport this function here.
+from .settings import join_prefix  # pylint: disable=unused-import
+
 class WithTmpFiles(object):
 
     def __init__(self, input_data=None):

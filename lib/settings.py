@@ -31,3 +31,18 @@ class Settings(object):
         return ret
 
 s = Settings()
+
+# This is a utility function that is used when computing settings. We
+# cannot put it in util.py as the code there loads Django's settings
+# and thus we run into a circular dependency issue.
+def join_prefix(prefix, suffix):
+    """
+    Joins an optional prefix with a suffix.
+
+    :returns: The suffix if the prefix is ``None`` or the empty
+              string. Otherwise, the prefix concatenated with a period
+              and the suffix.
+    :rtype: A string of the type passed in.
+    """
+    return prefix + "." + suffix if prefix is not None and len(prefix) \
+        else suffix

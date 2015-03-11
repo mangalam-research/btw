@@ -6,6 +6,7 @@ from django.conf import settings
 
 from btw.celery import app
 from core.tasks import get_btw_env
+from lib.util import join_prefix
 from bibliography.tasks import periodic_fetch_items
 
 class Worker(object):
@@ -37,11 +38,11 @@ Start the workers we need.
         if prefix.find(".") >= 0:
             raise CommandError(
                 "BTW_CELERY_WORKER_PREFIX contains a period: " + prefix)
-        prefix += "." if prefix else ""
 
         workers = [
-            Worker(prefix + "worker", [settings.CELERY_DEFAULT_QUEUE]),
-            Worker(prefix + "bibliography.worker",
+            Worker(join_prefix(prefix, "worker"),
+                   [settings.CELERY_DEFAULT_QUEUE]),
+            Worker(join_prefix(prefix, "bibliography.worker"),
                    [settings.BTW_CELERY_BIBLIOGRAPHY_QUEUE]),
         ]
 
