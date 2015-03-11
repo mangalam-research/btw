@@ -4,8 +4,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 from django.conf import settings
 from django.contrib.sites.models import Site
-from btw.celery import app
-from core.tasks import get_btw_env
 
 class Command(BaseCommand):
     help = """\
@@ -18,6 +16,7 @@ okay.
 
         self.check_paths()
         self.check_site()
+        self.check_redis()
         self.check_celery()
 
         if self.error_count > 0:
@@ -44,6 +43,9 @@ okay.
 
     def check_celery(self):
         call_command('btwworker', 'check')
+
+    def check_redis(self):
+        call_command('btwredis', 'check')
 
     def error(self, msg):
         self.stderr.write(msg)

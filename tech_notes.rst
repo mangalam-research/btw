@@ -300,6 +300,7 @@ This needs to be done last because the ``Makefile`` may use
 Run::
 
   $ make
+  $ ./manage.py btwredis start
   $ ./manage.py btwworker start
   $ ./manage.py btwcheck
   $ ./manage.py test
@@ -379,6 +380,12 @@ Generally:
 
     $ sudo monit unmonitor btw_worker
     $ ./manage.py btwworker stop
+
+    # The next command **must** be omitted if BTW is meant to continue
+    # running. May be omitted if there is no change to how redis is
+    # configured.
+    $ ./manage.py btwredis stop
+
     $ git fetch origin --tags
     $ git pull origin
     $ git describe
@@ -390,6 +397,10 @@ Generally:
     $ npm outdated
     [Upgrade anything that needs upgrading.]
     $ make
+
+    # Execute the next command if redis is not already running.
+    $ ./manage.py btwredis start
+
     $ ./manage.py btwworker start
     $ ./manage.py btwcheck
     $ ./manage.py test
@@ -409,6 +420,14 @@ See below for specific upgrade cases.
 1. Update the site configuration to add BTW_LOGGING_PATH,
    BTW_RUN_PATH, BTW_LOGGING_PATH_FOR_BTW, BTW_RUN_PATH_FOR_BTW. Make
    BTW_WED_LOGGING_PATH use BTW_LOGGING_PATH_FOR_BTW.
+
+2. Add BTW_REDIS_SITE_PREFIX.
+
+3. Convert the local configuration file to connect to redis through
+   the local socket started by ``btwredis``.
+
+4. Use ``lib.settings.join_prefix`` in the settings file and
+   ``slugify.slugify``.
 
 0.8.x to 1.0.0
 ~~~~~~~~~~~~~~

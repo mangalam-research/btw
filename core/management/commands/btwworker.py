@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
@@ -8,6 +9,7 @@ from btw.celery import app
 from core.tasks import get_btw_env
 from lib.util import join_prefix
 from bibliography.tasks import periodic_fetch_items
+from redis.exceptions import ConnectionError
 
 class Worker(object):
 
@@ -27,6 +29,64 @@ class Worker(object):
         self.stop_cmd = ['celery', '-A', 'btw', 'multi', 'stopwait', name,
                          logfile_arg, pidfile_arg]
 
+
+def get_defined_workers():
+    if get_defined_workers._cached:
+        return get_defined_workers._cached
+
+    prefix = settings.BTW_CELERY_WORKER_PREFIX
+    if prefix.find(".") >= 0:
+        raise ImproperlyConfigured(
+            "BTW_CELERY_WORKER_PREFIX contains a period: " + prefix)
+
+    ret = [
+        Worker(join_prefix(prefix, "worker"),
+               [settings.CELERY_DEFAULT_QUEUE]),
+        Worker(join_prefix(prefix, "bibliography.worker"),
+               [settings.BTW_CELERY_BIBLIOGRAPHY_QUEUE]),
+    ]
+
+    get_defined_workers._cached = ret
+
+    return ret
+get_defined_workers._cached = None
+
+def get_running_workers(error_equals_no_worker=False):
+    workers = get_defined_workers()
+    i = app.control.inspect()
+    try:
+        d = i.stats()
+        if not d:
+            if error_equals_no_worker:
+                return []
+
+            raise CommandError("no Celery workers found")
+    except ConnectionError as e:
+        if error_equals_no_worker:
+            return []
+
+        raise CommandError(
+            "cannot connect to Celery's backend: " + str(e))
+
+    names = [w.name for w in workers]
+    full_names = get_full_names(names)
+
+    ret = []
+    for worker in workers:
+        full_name = full_names[worker.name]
+        if full_name in d:
+            ret.append(worker)
+
+    return ret
+
+
+def get_full_names(names):
+    return dict(
+        zip(names,
+            subprocess.check_output(["celery", "multi", "names"]
+                                    + names).strip().split("\n")))
+
+
 class Command(BaseCommand):
     help = """\
 Start the workers we need.
@@ -34,17 +94,7 @@ Start the workers we need.
     error_count = 0
 
     def handle(self, *args, **options):
-        prefix = settings.BTW_CELERY_WORKER_PREFIX
-        if prefix.find(".") >= 0:
-            raise CommandError(
-                "BTW_CELERY_WORKER_PREFIX contains a period: " + prefix)
-
-        workers = [
-            Worker(join_prefix(prefix, "worker"),
-                   [settings.CELERY_DEFAULT_QUEUE]),
-            Worker(join_prefix(prefix, "bibliography.worker"),
-                   [settings.BTW_CELERY_BIBLIOGRAPHY_QUEUE]),
-        ]
+        workers = get_defined_workers()
 
         if args[0] == "start":
             for worker in workers:
@@ -56,30 +106,18 @@ Start the workers we need.
             for worker in workers:
                 subprocess.check_call(worker.stop_cmd)
         elif args[0] == "check":
-            i = app.control.inspect()
-            try:
-                d = i.stats()
-                if not d:
-                    raise CommandError("no Celery workers found")
-            except IOError as e:
-                raise CommandError(
-                    "cannot connect to Celery's backend: " + str(e))
-
             if not settings.CELERY_WORKER_DIRECT:
                 # We need CELERY_WORKER_DIRECT so that the next test will work.
                 raise CommandError("CELERY_WORKER_DIRECT must be True")
 
-            names = [w.name for w in workers]
-            full_names = dict(
-                zip(names,
-                    subprocess.check_output(["celery", "multi", "names"]
-                                            + names).strip().split("\n")))
+            running_workers = get_running_workers()
+            full_names = get_full_names([w.name for w in running_workers])
 
             btw_env = os.environ.get("BTW_ENV")
             for worker in workers:
-                self.stdout.write("Checking worker %s... " % worker.name)
                 full_name = full_names[worker.name]
-                if full_name not in d:
+                self.stdout.write("Checking worker %s... " % worker.name)
+                if worker not in running_workers:
                     self.error("{0} is not started".format(worker.name))
                     continue
 

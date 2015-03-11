@@ -46,6 +46,7 @@ def cleanup(*_whatever):
     # Make sure that cleanup happens!
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
+
     global server
     global tmpdir
     global tmpconf
@@ -63,7 +64,12 @@ def cleanup(*_whatever):
     try:
         subprocess.check_call(['./manage.py', 'btwworker', 'stop'])
     except:
-        pass
+        sys.stderr.write("Cannot stop workers.\n")
+
+    try:
+        subprocess.check_call(['./manage.py', 'btwredis', 'stop'])
+    except:
+        sys.stderr.write("Cannot stop redis.\n")
 
     if clean_databases:
         for name, _ in name_users:
@@ -110,6 +116,7 @@ for name, user in name_users:
     subprocess.check_call(['./manage.py', 'syncdb', '--noinput'])
     subprocess.check_call(['./manage.py', 'migrate'])
     subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
+    subprocess.check_call(['./manage.py', 'btwredis', 'start'])
     subprocess.check_call(['./manage.py', 'clearcache', '--all'])
     subprocess.check_call(['./manage.py', 'btwworker', 'start'])
     # Give time to the workers to start.

@@ -8,7 +8,7 @@
 # CREATE CIRCULAR DEPENDENCIES BETWEEN SETTINGS. You'll just get a
 # stack overflow error if you do.
 #
-from lib.settings import s
+from lib.settings import s, join_prefix
 
 import os
 from slugify import slugify
@@ -262,7 +262,7 @@ s.ACCOUNT_SIGNUP_FORM_CLASS = 'core.forms.SignupForm'
 
 s.INVITATION_EXPIRY_DAYS = 5
 
-s.TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+s.TEST_RUNNER = 'core.runner.Runner'
 
 s.LOGGING = {
     'version': 1,
@@ -355,6 +355,21 @@ s.CELERY_ROUTES = lambda s: {
         'routing_key': 'bibliography',
     },
 }
+
+# This is used to distinguish multiple redis servers running on the
+# same machine but for different instances of BTW. For instance, one
+# redis for development and another that runs for testing.
+s.BTW_REDIS_SITE_PREFIX = lambda s: s.BTW_SLUGIFIED_SITE_NAME
+
+# Unfortunately, due to ``UNIX_MAX_PATH`` (see ``man unix``), we have
+# to be careful not to go over 108 characters (on Linux) for the
+# socket created by Redis, which means we cannot just put the socket
+# wherever we want, so...
+s.BTW_REDIS_SOCKET_DIR_PATH = os.path.join("/var", "tmp", "btw", "redis")
+s.BTW_REDIS_SOCKET = lambda s: \
+    os.path.join(s.BTW_REDIS_SOCKET_DIR_PATH,
+                 join_prefix(s.BTW_REDIS_SITE_PREFIX, "redis.sock"))
+
 
 s.REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
