@@ -11,6 +11,7 @@
 from lib.settings import s
 
 import os
+from slugify import slugify
 from . import _env
 
 # This assumes that this file is settings/__init__.py
@@ -88,6 +89,11 @@ s.SITE_ID = 1
 # value to set some other values later. So the solution is to set the
 # value here and have a check later.
 s.BTW_SITE_NAME = ''
+
+# This is used so that we can use the site name in places that put
+# restrictions on the format of names.
+s.BTW_SLUGIFIED_SITE_NAME = lambda s: slugify(s.BTW_SITE_NAME.lower(),
+                                              separator="_")
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -317,8 +323,7 @@ s.CELERY_WORKER_DIRECT = True
 # This is a prefix by which the worker names for this instance of BTW
 # must use. The full name must be <prefix>.<suffix> where suffix is
 # whatever is needed.
-s.BTW_CELERY_WORKER_PREFIX = lambda s: \
-    s.BTW_SITE_NAME.lower().replace(" ", "_")
+s.BTW_CELERY_WORKER_PREFIX = lambda s: s.BTW_SLUGIFIED_SITE_NAME
 s.CELERY_DEFAULT_QUEUE = \
     lambda s: s.BTW_CELERY_WORKER_PREFIX + ".default"
 s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = \
