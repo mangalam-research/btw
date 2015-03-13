@@ -24,7 +24,8 @@ if env is None:
 if env is None:
     raise ValueError("can't get running environment value!")
 
-sys.stderr.write("Environment is set to: " + env + "\n")
+if not os.environ.get("BTW_ENV_SUPPRESS_MESSAGE"):
+    sys.stderr.write("Environment is set to: " + env + "\n")
 
 
 def find_config(name):
