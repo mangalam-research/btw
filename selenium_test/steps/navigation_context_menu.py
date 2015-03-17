@@ -85,6 +85,39 @@ def step_impl(context, item):
     util = context.util
 
     link = util.wait(EC.element_to_be_clickable((By.LINK_TEXT, item)))
+    #
+    # The following code prevents a problem in IE 10. Without this
+    # code, the scenarios "adding custom text to a reference" and
+    # "adding custom text to a reference when there is already text"
+    # both fail in IE 10 because Selenium clicks on the menu item that
+    # shows the element's documentation.
+    #
+    # Facts:
+    #
+    # 1. The problem cannot be reproduced manually.
+    #
+    # 2. Adding time.sleep([x seconds]) before the wait call above or
+    # between the wait call and the link.click() call does not fix the
+    # issue.
+    #
+    # 3. Upgrading Selenium does not fix the issue.
+    #
+    # 4. Scrolling the editor pane all the way down before excuting
+    # this step does not fix the issue.
+    #
+    # 5. An empty execute_script or an execute_script that does not
+    # change the link does not fix the issue.
+    #
+    # We do not put borders on links. Hypothesis: the CSS modification
+    # causes IEDriver to recompute or recache the element's location
+    # so that the next click works.
+    #
+    # A bug report should be submitted for this.
+    #
+    if util.ie and context.driver.desired_capabilities["version"] == "10":
+        context.driver.execute_script("""
+        arguments[0].style.border = "0px";
+        """, link)
     link.click()
 
 
