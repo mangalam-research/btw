@@ -226,7 +226,7 @@ $(EXPANDED_DEST):
 	-mkdir $@
 
 $(EXPANDED_BOOTSTRAP)/%: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
-	unzip -DD -d $(EXPANDED_DEST) $<
+	unzip -o -DD -d $(EXPANDED_DEST) $<
 	(cd $(EXPANDED_DEST); ln -sf $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 # Check we are using the same version of bootstrap in both places, we
 # check against the non-optimized version because the optimized
