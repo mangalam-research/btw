@@ -628,7 +628,22 @@ replayed twice. We work around this issue this way:
   with each request.
 
 * At replaying time, add ``--rheader X-BTW-Sequence`` so that request
-  matching is performed on this field.
+matching is performed on this field.
+
+Mitmproxy uses a self-signed certificate to serve data. Forwarding the
+upstream certificate currently does not work. (See
+`<https://github.com/mitmproxy/netlib/issues/32>`__ .) Moreover, we'd
+rather have the suite be totally independent from a live Zotero server
+so that we can run the suite even if the Zotero server happens to be
+down or unreachable. In order to avoid certificate errors, the test
+suite has to:
+
+1. Run ``c_rehash`` on the ``~/.mitmproxy`` directory. Some of the
+   files there are not proper certificates so there will be non-fatal
+   errors.
+
+2. Set the environment variable SSL_CERT_DIR to search
+``~/.mitmproxy`` in addition to the OS directory.
 
 In-Browser Tests
 ================

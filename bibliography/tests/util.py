@@ -4,6 +4,7 @@ import urllib2
 import os
 import re
 import tempfile
+import subprocess
 
 import mock
 
@@ -14,6 +15,18 @@ dirname = os.path.dirname(__file__)
 key_re = re.compile(r"([&?]key=)[^&]+")
 id_re = re.compile(r"^(/(?:groups|users)/)\d+/")
 
+def hash_mitmproxy():
+    # Make sure we hash only once.
+    if hash_mitmproxy.hashed:
+        return
+
+    subprocess.check_call(["c_rehash",
+                           os.path.join(os.environ["HOME"], ".mitmproxy")],
+                          stdout=open("/dev/null"), stderr=open("/dev/null"))
+
+    hash_mitmproxy.hashed = True
+
+hash_mitmproxy.hashed = False
 
 def get_port():
     import socket
@@ -120,6 +133,7 @@ def _proxify(file_name, f):
                                               "https://api.zotero.org/")
         # Set the environment to proxy through mitmproxy.
         prev_https_proxy = os.environ.get('https_proxy', None)
+        prev_ssl_cert_dir = os.environ.get('SSL_CERT_DIR', None)
         proxy = None
 
         temp = tempfile.mkstemp()
@@ -160,6 +174,12 @@ def _proxify(file_name, f):
             else:
                 os.environ['https_proxy'] = f.proxy
 
+            # This is needed so that the CA for mitmproxy is found.
+            hash_mitmproxy()
+            os.environ['SSL_CERT_DIR'] = \
+                os.path.join(os.environ['HOME'], ".mitmproxy") + ":" + \
+                "/etc/ssl/certs"
+
             # This flushes the previous opener that may have been
             # installed.  We must do this so that urllib2 picks up the new
             # https_proxy configuration.
@@ -170,7 +190,7 @@ def _proxify(file_name, f):
                 try:
                     urllib2.urlopen(server)
                     ready = True
-                except urllib2.URLError:
+                except urllib2.URLError as ex:
                     if proxy.poll():
                         raise Exception("can't start mitmdump")
                     time.sleep(0.1)
@@ -188,6 +208,11 @@ def _proxify(file_name, f):
                     os.environ['https_proxy'] = prev_https_proxy
                 else:
                     del os.environ['https_proxy']
+
+                if prev_ssl_cert_dir is not None:
+                    os.environ['SSL_CERT_DIR'] = prev_ssl_cert_dir
+                else:
+                    del os.environ['SSL_CERT_DIR']
 
             if not hasattr(f, "proxy") and hasattr(f, "record"):
                 inf = os.fdopen(temp[0], 'rb')
