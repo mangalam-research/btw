@@ -1,13 +1,14 @@
 import os
 import time
-import urllib2
 import tempfile
 import subprocess
 import shutil
 import httplib
 import atexit
 import signal
+import datetime
 
+from slugify import slugify
 # pylint: disable=E0611
 from nose.tools import assert_true
 import selenic.util
@@ -132,9 +133,31 @@ def server_read(context):
 def sigchld(context):
     server_alive(context)
 
+screenshots_dir_path = os.path.join("test_logs", "screenshots")
+
+
+def setup_screenshots(context):
+    now = datetime.datetime.now().replace(microsecond=0)
+    this_screenshots_dir_path = os.path.join(screenshots_dir_path,
+                                             now.isoformat())
+
+    os.makedirs(this_screenshots_dir_path)
+    latest = os.path.join(screenshots_dir_path, "LATEST")
+    try:
+        os.unlink(latest)
+    except OSError as ex:
+        if ex.errno != 2:
+            raise
+
+    os.symlink(os.path.basename(this_screenshots_dir_path),
+               os.path.join(screenshots_dir_path, "LATEST"))
+    context.screenshots_dir_path = this_screenshots_dir_path
+
+
 def before_all(context):
 
     atexit.register(cleanup, context, True)
+    setup_screenshots(context)
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
@@ -355,9 +378,18 @@ def before_step(context, _step):
         time.sleep(context.behave_wait)
 
 
-def after_step(context, _step):
-    server_alive(context)
+def after_step(context, step):
     driver = context.driver
+    if step.status == "failed":
+        name = os.path.join(context.screenshots_dir_path,
+                            slugify(context.scenario.name + "_"
+                                    + step.name) + ".png")
+        driver.save_screenshot(name)
+        print
+        print "Captured screenshot:", name
+        print
+
+    server_alive(context)
     # Perform this query only if SELENIUM_LOGS is on.
     if context.selenium_logs:
         logs = driver.execute_script("""
