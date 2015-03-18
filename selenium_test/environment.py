@@ -127,8 +127,13 @@ def server_write(context, text):
 
 def server_read(context):
     server_alive(context)
-    with open(context.server_read_fifo, 'r') as fifo:
-        return fifo.read().strip()
+    try:
+        with open(context.server_read_fifo, 'r') as fifo:
+            return fifo.read().strip()
+    except IOError:
+        # Wait for the server to die.
+        while server_alive(context):
+            time.sleep(0.1)
 
 def sigchld(context):
     server_alive(context)
