@@ -62,6 +62,7 @@ caps = {
     # As of 2014-06-30 2.42.2 fails to load on Saucelabs...
     "selenium-version": "2.43.0",
     "chromedriver-version": "2.11",
+    "maxDuration": 2400,
     "build": describe
 }
 
