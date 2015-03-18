@@ -189,7 +189,7 @@ def before_all(context):
     context.driver = driver
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
-                                     4 if builder.remote else 2)
+                                     5 if builder.remote else 2)
     context.selenic = builder
 
     # Without this, window sizes vary depending on the actual browser
