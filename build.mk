@@ -52,8 +52,11 @@ BUILD_DIR:=build
 
 QUNIT_VERSION:=1.12.0
 
-BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.1.1.zip
-BOOTSTRAP_BASE=bootstrap-3.1.1.zip
+# This cannot be the same URL as in wed. We want to the *source*
+# version of Bootstrap, not the distribution version which does not
+# contain the less files.
+BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.3.2.zip
+BOOTSTRAP_BASE=bootstrap-3.3.2.zip
 
 JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # This creates a file name that a) identifies what it is an b) happens
@@ -121,7 +124,20 @@ FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST
 TARGETS:= javascript btw-schema-targets
 .PHONY: all
 all: _all
+# Check we are using the same version of bootstrap in both places, we
+# check against the non-optimized version because the optimized
+# version is modified during optimization. We cannot include this
+# check in the $(EXPANDED_BOOTSTRAP)/% rule because the recipe for
+# that rule is executed only if we download a new bootstrap.
+	@diff $(EXPANDED_BOOTSTRAP)/dist/css/bootstrap.css \
+	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
+	  { echo "There appear to be a difference between the \
+	  bootstrap downloaded by BTW and the one in wed." && exit 1; }
+#
 	./manage.py collectstatic --noinput
+
+
+
 
 include $(shell find . -name "include.mk")
 
@@ -225,17 +241,9 @@ $(BUILD_CONFIG)/nginx.conf:
 $(EXPANDED_DEST):
 	-mkdir $@
 
-$(EXPANDED_BOOTSTRAP)/%: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
+$(EXPANDED_BOOTSTRAP)/%:: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
 	unzip -o -DD -d $(EXPANDED_DEST) $<
-	(cd $(EXPANDED_DEST); ln -sf $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
-# Check we are using the same version of bootstrap in both places, we
-# check against the non-optimized version because the optimized
-# version is modified during optimization.
-	@diff $(EXPANDED_BOOTSTRAP)/dist/css/bootstrap.css \
-	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
-	  { echo "There appear to be a difference between the \
-	  boostrap downloaded by BTW and the one in wed." && exit 1; }
-
+	(cd $(EXPANDED_DEST); ln -sfn $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 
 $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).%: node_modules/qunitjs/qunit/qunit.%
 	cp $< $@
@@ -287,22 +295,22 @@ $(BUILD_DEST)/lib/external/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
 downloads build:
 	mkdir $@
 
-downloads/$(JQUERY_COOKIE_BASE): downloads
+downloads/$(JQUERY_COOKIE_BASE): | downloads
 	$(WGET) -O $@ $(JQUERY_COOKIE_URL)
 
 #downloads/$(CITEPROC_BASE): downloads
 #	$(WGET) -O $@ $(CITEPROC_URL)
 
-downloads/$(DATATABLES_BASE): downloads
+downloads/$(DATATABLES_BASE): | downloads
 	$(WGET) -O $@ $(DATATABLES_URL)
 
-downloads/$(DATATABLES_PLUGINS_BASE): downloads
+downloads/$(DATATABLES_PLUGINS_BASE): | downloads
 	$(WGET) -O $@ $(DATATABLES_PLUGINS_URL)
 
-downloads/$(XEDITABLE_BASE): downloads
+downloads/$(XEDITABLE_BASE): | downloads
 	$(WGET) -O $@ $(XEDITABLE_URL)
 
-downloads/$(JQUERY_GROWL_BASE): downloads
+downloads/$(JQUERY_GROWL_BASE): | downloads
 	$(WGET) -O $@ $(JQUERY_GROWL_URL)
 
 downloads/$(BOOTSTRAP_BASE): | downloads
