@@ -7,6 +7,7 @@ import httplib
 import atexit
 import signal
 import datetime
+import sys
 
 from slugify import slugify
 # pylint: disable=E0611
@@ -29,6 +30,18 @@ assert_equal.im_self.longMessage = True
 
 from selenium_test import btw_util
 
+def sig(num, _frame):
+    # Doing this ensures that cleanup will be called once before_all
+    # has registered it with atexit.
+    sys.exit("behave process received %d\n\n" % num)
+
+# We need to trap these signals because behave does not do it
+# itself. If we do not trap them, then if Buildbot sends a SIGTERM
+# signal because a test is taking too long then cleanup won't run and
+# some child processes may stay behind and cleanup actions won't be
+# done.
+signal.signal(signal.SIGTERM, sig)
+signal.signal(signal.SIGINT, sig)
 
 def cleanup(context, failed):
     driver = context.driver
