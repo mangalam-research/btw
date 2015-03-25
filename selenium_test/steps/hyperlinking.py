@@ -324,8 +324,10 @@ def step_impl(context, label):
     var label = arguments[0];
     var done = arguments[1];
     var link = getHyperlinksWithLabel(label)[0];
-    if (!link)
+    if (!link) {
       done([undefined, "there should be a link"]);
+      return;
+    }
     var parents = [];
     var parent = link.parentNode;
     while (parent && parent.classList) {

@@ -44,8 +44,10 @@ redrawSetup(arguments[arguments.length - 1]);
 _REDRAW_CHECK_SNIPPET = """
 var cb = arguments[0];
 function test() {
-    if (window.__selenium_test_redrawn)
+    if (window.__selenium_test_redrawn) {
         cb();
+        return;
+    }
     setTimeout(test, 1000);
 }
 test();
@@ -147,14 +149,18 @@ def step_impl(context, kind):
             }
             testfn();
         }
-        if (finished())
+        if (finished()) {
             cb(test);
+            return;
+        }
 
         // Get the next page and process it.
         var next = document.getElementById("search-table_next");
-        if (next.classList.contains("disabled"))
+        if (next.classList.contains("disabled")) {
             // Nothing else.
             cb(final_value);
+            return;
+        }
         $(table).on("draw.dt", function () {
             processPage();
         });

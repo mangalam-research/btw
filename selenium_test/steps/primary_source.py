@@ -534,7 +534,7 @@ def step_impl(context):
     var $ = jQuery;
     var table = document.getElementById("bibliography-table");
     // We wait until the results have refreshed.
-    $(table).on("refresh-results", function () {
+    $(table).one("refresh-results", function () {
         done();
     });
     // Switch to a 25 row display.
