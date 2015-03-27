@@ -21,6 +21,11 @@ require(['btw/btw_view'], function(Viewer) {
 </script>
 {% endblock %}
 {% block content %}
+{% if not is_published %}
+<div class="alert alert-danger" role="alert">
+  You are looking at an unpublished version of the article.
+</div>
+{% endif %}
 <div class="wed-frame row">
   <div class="wed-document col-lg-9 col-md-9 col-sm-11 col-xs-11">
     <div class="alert alert-info loading" style="display: none">

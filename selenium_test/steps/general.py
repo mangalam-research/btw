@@ -192,6 +192,7 @@ def step_impl(context, user_desc):
             .perform()
 
         form.submit()
+        context.session_id = driver.get_cookie("sessionid")["value"]
     else:
         driver.get(selenic.SERVER)
         with open(context.server_write_fifo, 'w') as fifo:
@@ -202,6 +203,7 @@ def step_impl(context, user_desc):
                                'value': session_key})
             driver.add_cookie({'name': 'csrftoken',
                                'value': 'foo'})
+        context.session_id = session_key
         #
         # There is no need to reload the page right here. If a test
         # fails because the page needs reloading after the credential
@@ -227,6 +229,7 @@ def step_impl(context):
 
 
 WHAT_TO_TITLE = {
+    u"unpublished": "pali example",
     u"a single sense that has a subsense": "one sense, one subsense",
     u"a Pāli example": "pali example",
     u"a non-Pāli example": "non-pali example",
@@ -263,7 +266,7 @@ WHAT_TO_TITLE = {
 
 href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
-@Given(ur"^(?P<what>a valid document)$")
+@Given(ur"^(?:a|an) (?P<what>valid|(?:un)?published) document$")
 @Given(ur"^a document with (?P<what>.*?)$")
 def step_impl(context, what):
     feature = context.feature
@@ -306,7 +309,8 @@ def step_impl(context, what):
         """)
 
     title = None
-    if what == "a valid document" and not context.valid_document_created:
+    if what in ("valid", "published") \
+       and not context.valid_document_created:
         with open(context.server_write_fifo, 'w') as fifo:
             fifo.write("create valid article\n")
         with open(context.server_read_fifo, 'r') as fifo:
@@ -343,9 +347,8 @@ def step_impl(context, what):
                              "publication_status": "both",
                          },
                          cookies={
-                             "sessionid":
-                             driver.get_cookie("sessionid")["value"]
-                         } if edit else None)
+                             "sessionid": context.session_id
+                         } if context.session_id else None)
         hits = funcs.parse_search_results(r.text)
         if title in hits:
             break

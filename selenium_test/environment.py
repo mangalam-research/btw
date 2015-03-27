@@ -334,6 +334,8 @@ def before_scenario(context, scenario):
         server_write(context, 'clearcache ' + ' '.join(caches) + "\n")
         server_read(context)
 
+    context.session_id = None
+
 
 def after_scenario(context, _scenario):
     driver = context.driver

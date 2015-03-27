@@ -254,16 +254,17 @@ def changerecord_unpublish(request, changerecord_id):
 
 def _show_changerecord(request, cr):
 
-    published = not usermod.can_author(request.user)
+    show_published = not usermod.can_author(request.user)
 
-    key = cr.article_display_key(published)
+    key = cr.article_display_key(show_published)
     prepared = article_display_cache.get(key)
 
     if prepared is None or 'task' in prepared:
         if prepared is None:
             logger.debug("%s is missing from article_display, launching task",
                          key)
-            tasks.prepare_changerecord_for_display.delay(cr.pk, published)
+            tasks.prepare_changerecord_for_display.delay(cr.pk,
+                                                         show_published)
         else:
             logger.debug("%s is being computed by task %s",
                          key, prepared["task"])
@@ -290,7 +291,8 @@ def _show_changerecord(request, cr):
             'fetch_url': fetch_url,
             'data': data,
             'bibl_data': bibl_data,
-            'edit_url': edit_url
+            'edit_url': edit_url,
+            'is_published': cr.published
         },
         context_instance=RequestContext(request))
 

@@ -7,6 +7,15 @@ Scenario: viewing senses and subsenses
   And the view has finished rendering
   Then the senses and subsenses are properly numbered
 
+Scenario: viewing an unpublished article
+  Given the user has logged in
+  And an unpublished document
+  Then there is an alert indicating the document is unpublished
+
+Scenario: viewing an published article
+  Given a published document
+  Then there is no alert indicating the document is unpublished
+
 Scenario: sense hyperlinks are correct
   Given a document with senses, subsenses and hyperlinks
   And the view has finished rendering

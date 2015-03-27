@@ -8,7 +8,7 @@ import lxml.etree
 from selenium.webdriver.support.wait import TimeoutException
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
-from nose.tools import assert_equal, assert_true
+from nose.tools import assert_equal, assert_true, assert_is_none
 from behave import step_matcher  # pylint: disable=E0611
 from selenic.util import Result, Condition
 
@@ -462,3 +462,23 @@ def step_impl(context, what):
         "a reasonable time frame."
     }[what]
     assert_equal(alert.text.strip(), msg)
+
+
+@then(ur"^there is (?P<exists>an|no) alert indicating the document "
+      ur"is unpublished$")
+def step_impl(context, exists):
+    util = context.util
+
+    def check(driver):
+        text = driver.execute_script("""
+        var el = document.querySelector(".alert.alert-danger");
+        return el && el.textContent;
+        """)
+
+        if exists == "an":
+            return text.strip() == ("You are looking at an unpublished "
+                                    "version of the article.")
+        else:
+            return text is None
+
+    util.wait(check)

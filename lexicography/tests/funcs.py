@@ -60,6 +60,15 @@ def parse_search_results(data):
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
         publish_link = els[0] if len(els) == 1 else None
+        published = None
+
+        if cell == "Yes" or cell.startswith("Yes "):
+            published = True
+        elif cell == "No" or cell.startswith("No "):
+            published = False
+        else:
+            raise ValueError("publication status cell "
+                             "contains unexpected text: " + cell)
 
         lemma = view_link.text
         hit = {
@@ -70,7 +79,8 @@ def parse_search_results(data):
             "publish_url":
             publish_link.get("href") if publish_link is not None else None,
             "deleted": row[2],
-            "datetime": row[3]
+            "datetime": row[3],
+            "published": published,
         }
         lemma_rec = ret.get(lemma)
         if lemma_rec:
