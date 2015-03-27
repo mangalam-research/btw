@@ -60,8 +60,10 @@ caps = {
     "nativeEvents": True,
     "name": name,
     # As of 2014-06-30 2.42.2 fails to load on Saucelabs...
-    "selenium-version": "2.43.0",
-    "chromedriver-version": "2.11",
+    "selenium-version": "2.45.0",
+    # We cannot yet use 2.14 due to the change in how an element's
+    # center is determined.
+    "chromedriver-version": "2.13",
     "maxDuration": 2400,
     "build": describe
 }
