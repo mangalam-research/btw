@@ -1,3 +1,43 @@
+* 1.1.0:
+
+  + New features:
+
+   - The insertion of bibliographical references is now done with a
+     typeahead field rather than a modal dialog.
+
+   - When viewing an unpublished article there is an alert box at the
+     top indicating that the article is unpublished.
+
+   - Updated the links on the front page. Added the link to the video
+     and the HTE logo.
+
+   - The management page for the bibliography now has a "refresh"
+     button. BTW checks the Zotero database about every 30 minutes to
+     check for changes. In a case where someone is fixing a problem in
+     the Zotero database and wants the change to appear immediately on
+     BTW, they can use the refresh button to force BTW to check the
+     Zotero database.
+
+   - Upgraded to the Zotero API version 3, which is the latest version
+     at the time of writing. (Version 2 was previously used.)
+
+   - Infrastructure: the way BTW keeps its database of bibliographical
+     information in sync with the Zotero database has been redesigned
+     to help interactivity. The old implementation could sometimes
+     cause a slowdown in the delivery of pages to users. The new
+     implementation avoids this problem.
+
+   - Infrastructure: BTW instances no longer share the Redis cache.
+
+   - Upgrade to wed 0.22.1. The salient changes are:
+
+     * Upgrade to Font Awesome 4.3.0.
+
+     * The icon for an element's documentation is now
+       fa-question-circle rather than fa-book.
+
+     * Support for typahead popups.
+
 * 1.0.4:
 
   + Bug fixes:
