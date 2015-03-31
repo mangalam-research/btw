@@ -321,22 +321,37 @@ If you are going to move over users then:
 
 1. Go to the regular site and run::
 
-     $ ./manage.py dumpdata --natural auth allauth > [dump]
+     $ ./manage.py dumpdata --natural --exclude=auth.Permission auth allauth account socialaccount invitation > [dump]
 
 2. Go to the demo site and run::
 
      $ ./manage.py loaddata [dump]
 
 If you are going to move over articles from the dev site the
-bibliographical data must be moved over first:
+bibliographical data must be moved over first. **The bibliography
+worker must not have had a chance to populate the Item table yet!!!,
+or you'll get double entries.** (If this happens, then you have to
+clear bibliography_item and bibliography_primarysource in the
+database.)
 
-1. Go to the dev site and run::
+1. Go to the main site and run::
 
-     $ ./manage.py dumpdata --natural bibliography > [dump]
+    $ ./manage.py dumpdata --natural bibliography > [dump]
 
 2. Go to the demo site and run::
 
-     $ ./manage.py loaddata [dump]
+    $ ./manage.py loaddata [dump]
+
+You may then load articles:
+
+1. Go to the main site and run::
+
+    $ ./manage.py dumpdata --natural lexicography > [dump]
+
+2. Go to the demo site and run::
+
+    $ ./manage.py loaddata [dump]
+
 
 Upgrades
 --------
@@ -392,7 +407,7 @@ Generally:
     $ git pull origin
     $ git describe
     [Make sure the description shows what you expect.]
-    $ ../btw_env/bin/activate
+    $ . ../btw_env/bin/activate
     $ pip install -r requirements.txt
     $ ./manage.py syncdb
     $ ./manage.py migrate
@@ -403,11 +418,12 @@ Generally:
     # Execute the next command if redis is not already running.
     $ ./manage.py btwredis start
 
-    $ ./manage.py btwworker start
+    $ ./manage.py btwworker start --all
     $ ./manage.py btwcheck
     $ ./manage.py btwworker generate-monit-config
     # Check the generated config against what is already installed, update
-    # if needed.
+    # if needed. Copy into /etc/monit/conf.d if update needed.
+    # Issue ``service monit reload`` to have it read its configuration.
 
     $ ./manage.py test
     [The Zotero tests will necessarily fail because the server is set
@@ -427,13 +443,22 @@ See below for specific upgrade cases.
    BTW_RUN_PATH, BTW_LOGGING_PATH_FOR_BTW, BTW_RUN_PATH_FOR_BTW. Make
    BTW_WED_LOGGING_PATH use BTW_LOGGING_PATH_FOR_BTW.
 
-2. Add BTW_REDIS_SITE_PREFIX.
+2. Perform the commands to create the log and run directories for
+   BTW. For intance, it could be::
+
+    mkdir -p var/log/btw
+    mkdir -p var/run/btw
 
 3. Convert the local configuration file to connect to redis through
    the local socket started by ``btwredis``.
 
 4. Use ``lib.settings.join_prefix`` in the settings file and
    ``slugify.slugify``.
+
+5. Modify your uwsgi init file so that it has::
+
+     uid = btw
+     buffer-size=32768
 
 0.8.x to 1.0.0
 ~~~~~~~~~~~~~~
