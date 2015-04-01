@@ -225,13 +225,14 @@ InsertBiblPtrAction.prototype.execute = function (data) {
 
     var text = range && range.toString();
 
-    var wst = Bloodhound.tokenizers.whitespace;
+    // The nonword tokenizer provided by bloodhound.
+    var nw = Bloodhound.tokenizers.nonword;
     function tokenizeItem(item) {
-        return wst(item.title).concat(wst(item.creators));
+        return nw(item.title).concat(nw(item.creators), nw(item.date));
     }
 
     function tokenizePS(ps) {
-        return tokenizeItem(ps.item).concat(wst(ps.reference_title));
+        return tokenizeItem(ps.item).concat(nw(ps.reference_title));
     }
 
     function datumTokenizer(datum) {
@@ -240,7 +241,7 @@ InsertBiblPtrAction.prototype.execute = function (data) {
 
     var options = {
         datumTokenizer: datumTokenizer,
-        queryTokenizer: wst,
+        queryTokenizer: nw,
         local: []
     };
 
