@@ -285,7 +285,8 @@ InsertBiblPtrAction.prototype.execute = function (data) {
             source: cited_engine.ttAdapter(),
             templates: {
                 header: "Cited",
-                suggestion: renderSuggestion
+                suggestion: renderSuggestion,
+                empty: " does not contain a match."
             }
         }, {
             name: 'zotero',
@@ -293,7 +294,8 @@ InsertBiblPtrAction.prototype.execute = function (data) {
             source: zotero_engine.ttAdapter(),
             templates: {
                 header: "Zotero",
-                suggestion: renderSuggestion
+                suggestion: renderSuggestion,
+                empty: " does not contain a match."
             }
 
         }]

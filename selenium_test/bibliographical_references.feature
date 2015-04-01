@@ -41,3 +41,8 @@ Scenario: replacing a selection with a reference
   Given a document with a single sense
   When the user replaces a selection with reference to an item with a reference title
   Then the new reference contains the reference title.
+
+Scenario: no match
+  Given a document with a single sense
+  When the user searches for a bibliographical item that does not exist
+  Then the bibliographical reference typeahead shows that there is no match

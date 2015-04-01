@@ -2,6 +2,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from nose.tools import assert_equal
+
 import wedutil
 from behave import step_matcher
 
@@ -243,3 +245,44 @@ def step_impl(context):
         return ret[0]
 
     util.wait(cond)
+
+@when(ur"^the user searches for a bibliographical item that does not exist$")
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    # Obtain the first placeholder after "[etymology]".
+    ph = __get_first_ph_in_etymology(driver)
+
+    wedutil.click_until_caret_in(util, ph)
+    util.ctrl_equivalent_x("/")
+
+    context.execute_steps(u"""
+    When the user clicks the context menu option "Insert a new \
+bibliographical reference"
+    """)
+
+    util.find_element((By.CSS_SELECTOR,
+                       ".wed-typeahead-popup .tt-input"))
+
+    # We do this rather than send directly to the input element
+    # because it should have been focussed automatically.
+
+    ActionChains(driver) \
+        .send_keys("FLFLFL") \
+        .perform()
+
+
+@then(ur"^the bibliographical reference typeahead shows that there is no "
+      ur"match$")
+def step_impl(context):
+    driver = context.driver
+    util = context.util
+
+    text = driver.execute_script("""
+    var dropdown = document.querySelector(
+        ".wed-typeahead-popup .tt-dropdown-menu");
+    return dropdown.textContent.trim();
+    """)
+    assert_equal(text, "Cited does not contain a match."
+                 "Zotero does not contain a match.")
