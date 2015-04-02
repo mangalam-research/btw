@@ -248,6 +248,9 @@ InsertBiblPtrAction.prototype.execute = function (data) {
     var cited_engine = new Bloodhound(options);
     var zotero_engine = new Bloodhound(options);
 
+    cited_engine.sorter = btw_util.biblSuggestionSorter;
+    zotero_engine.sorter = btw_util.biblSuggestionSorter;
+
     cited_engine.initialize();
     zotero_engine.initialize();
 

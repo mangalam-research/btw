@@ -161,6 +161,78 @@ function biblDataToReferenceText(data) {
     return text;
 }
 
+function biblSuggestionSorter(array) {
+    var item_pk_to_pss = {};
+    var items = [];
+
+    var i, it, l;
+    // Separate items (secondary sources) and primary sources.
+    for(i = 0; (it = array[i]); ++i) {
+        if (!it.item)
+            items.push(it);
+        else {
+            l = item_pk_to_pss[it.item.pk];
+            if (!l)
+                l = item_pk_to_pss[it.item.pk] = [];
+            l.push(it);
+        }
+    }
+
+    items.sort(function (a, b) {
+        // Order by creator...
+        if (a.creators < b.creators)
+            return -1;
+
+        if (a.creators > b.creators)
+            return 1;
+
+        // then by title....
+        if (a.title < b.title)
+            return -1;
+
+        if (a.title > b.title)
+            return 1;
+
+        // then by date...
+        if (a.date < b.date)
+            return -1;
+
+        if (a.date > b.date)
+            return 1;
+
+        // It is unlikely that we'd get here but if we do, then...
+        return Number(a.pk) - Number(b.pk);
+    });
+
+    function sort_pss(a, b) {
+        // We don't bother with 0 since it is not possible to
+        // have two identical reference titles.
+        return (a.reference_title < b.reference_title) ? -1 : 1;
+    }
+
+    var sorted_by_item = [];
+    for(i = 0; (it = items[i]); ++i) {
+        l = item_pk_to_pss[it.pk];
+        if (l) {
+            l.sort(sort_pss);
+            sorted_by_item = sorted_by_item.concat(l);
+            delete item_pk_to_pss[it.pk];
+        }
+        sorted_by_item.push(it);
+    }
+
+    // Any remaining primary sources in item_pk_to_pss get to the front.
+    var pss = [];
+    Object.keys(item_pk_to_pss).forEach(function (key) {
+        var l = item_pk_to_pss[key];
+        pss = pss.concat(l);
+    });
+
+    pss.sort(sort_pss);
+
+    return pss.concat(sorted_by_item);
+}
+
 
 exports.languageCodeToLabel = languageCodeToLabel;
 exports.languageToLanguageCode = languageToLanguageCode;
@@ -169,5 +241,6 @@ exports.termsForSense = termsForSense;
 exports.makeCollapsible = makeCollapsible;
 exports.updateCollapsible = updateCollapsible;
 exports.biblDataToReferenceText = biblDataToReferenceText;
+exports.biblSuggestionSorter = biblSuggestionSorter;
 
 });
