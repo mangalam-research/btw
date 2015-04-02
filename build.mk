@@ -216,8 +216,15 @@ else
 endif # BEHAVE_SAVE
 
 .PHONY: test
-test: all
+test: test-django test-karma
+
+.PHONY: test-django
+test-django:
 	./manage.py test
+
+.PHONY: test-karma
+test-karma:
+	xvfb-run karma start --single-run
 
 .PHONY: keep-latest
 keep-latest:

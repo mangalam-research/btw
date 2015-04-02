@@ -1,0 +1,7 @@
+{ "multistr": true,
+  "globals":
+  { "define": false,
+    "require": false,
+    "describe": false,
+    "it": false}
+}
