@@ -306,7 +306,7 @@ InsertBiblPtrAction.prototype.execute = function (data) {
     };
 
     var pos = editor.computeContextMenuPosition(undefined, true);
-    var ta = editor.displayTypeaheadPopup(pos.left, pos.top, "Reference",
+    var ta = editor.displayTypeaheadPopup(pos.left, pos.top, 600, "Reference",
                                  ta_options, function (obj) {
         if (!obj)
             return;
