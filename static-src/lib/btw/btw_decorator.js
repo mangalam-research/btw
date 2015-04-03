@@ -104,7 +104,7 @@ function BTWDecorator(mode, meta) {
         },
         {
             parent: domutil.toGUISelector("btw:citations"),
-            children: ["btw:example"]
+            children: ["btw:example", "btw:example-explained"]
         },
         {
             parent: domutil.toGUISelector(
@@ -113,8 +113,13 @@ function BTWDecorator(mode, meta) {
             children: ["btw:other-citations"]
         },
         {
-            parent: domutil.toGUISelector("btw:example, btw:example-explained"),
+            parent: domutil.toGUISelector(
+                "btw:example, btw:example-explained"),
             children: ["btw:semantic-fields"]
+        },
+        {
+            parent: domutil.toGUISelector("btw:other-citations"),
+            children: ["btw:cit", "btw:semantic-fields"]
         }
     ];
 
@@ -404,15 +409,6 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
             spec_ix < spec_limit; ++spec_ix) {
             spec = children[spec_ix];
 
-            // We want to present controls only for children that are
-            // absent!
-            child = el.firstElementChild;
-            while(child) {
-                if (child.classList.contains(spec))
-                    continue spec_loop;
-                child = child.nextElementSibling;
-            }
-
             var ename = this._mode._resolver.resolveName(spec);
             var locations = this._editor.validator.possibleWhere(
                 node, new validate.Event("enterStartTag", ename.ns,
@@ -450,7 +446,7 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                         err_msg.lastIndexOf("tag not allowed here: ", 0) ===
                         0)
                         // There's nothing to be done with this location.
-                        break location_loop;
+                        continue location_loop;
                 }
 
                 filtered_locations.push(l);
@@ -461,72 +457,74 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
             if (!locations.length)
                 continue;
 
-            var data_loc = makeDLoc(this._editor.data_root, node, locations[0]);
-            var data = {name: spec, move_caret_to: data_loc};
-            var gui_loc = this._gui_updater.fromDataLocation(data_loc);
+            for (lix = 0; (l = locations[lix]) !== undefined; ++lix) {
+                var data_loc = makeDLoc(this._editor.data_root, node, l);
+                var data = {name: spec, move_caret_to: data_loc};
+                var gui_loc = this._gui_updater.fromDataLocation(data_loc);
 
-            var tuples = [];
-            this._mode.getContextualActions(
-                "insert", spec, node, locations[0]).forEach(
-                    function (act) {
-                    tuples.push([act, data, act.getLabelFor(data)]);
-                });
+                var tuples = [];
+                this._mode.getContextualActions(
+                    "insert", spec, node, l).forEach(
+                        function (act) {
+                        tuples.push([act, data, act.getLabelFor(data)]);
+                    });
 
-            var control = el.ownerDocument.createElement("button");
-            control.className = "_gui _phantom _va_instantiator btn " +
-                "btn-instantiator btn-xs";
-            control.setAttribute("href", "#");
-            var $control = $(control);
-            // Get tooltips from the current mode
-            var self = this;
-            var options = {
-                title: function (name) {
-                    if (!self._editor.preferences.get("tooltips"))
-                        return undefined;
-                    return self._editor.mode.shortDescriptionFor(name);
-                }.bind(undefined, spec),
-                container: $control,
-                delay: { show: 1000 },
-                placement: "auto top"
-            };
-            tooltip($control, options);
+                var control = el.ownerDocument.createElement("button");
+                control.className = "_gui _phantom _va_instantiator btn " +
+                    "btn-instantiator btn-xs";
+                control.setAttribute("href", "#");
+                var $control = $(control);
+                // Get tooltips from the current mode
+                var self = this;
+                var options = {
+                    title: function (name) {
+                        if (!self._editor.preferences.get("tooltips"))
+                            return undefined;
+                        return self._editor.mode.shortDescriptionFor(name);
+                    }.bind(undefined, spec),
+                    container: $control,
+                    delay: { show: 1000 },
+                    placement: "auto top"
+                };
+                tooltip($control, options);
 
-            if (tuples.length > 1) {
-                control.innerHTML = ' + ' + spec;
+                if (tuples.length > 1) {
+                    control.innerHTML = ' + ' + spec;
 
-                // Convert the tuples to actual menu items.
-                var items = [];
-                for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
-                    var li = el.ownerDocument.createElement("li");
-                    li.innerHTML = "<a tabindex='0' href='#'>" + tup[2] +
-                        "</a>";
-                    var $a = $(li.firstChild);
-                    $a.click(tup[1], tup[0].bound_handler);
-                    $a.mousedown(false);
-                    items.push(li);
+                    // Convert the tuples to actual menu items.
+                    var items = [];
+                    for(var tix = 0, tup; (tup = tuples[tix]) !== undefined; ++tix) {
+                        var li = el.ownerDocument.createElement("li");
+                        li.innerHTML = "<a tabindex='0' href='#'>" + tup[2] +
+                            "</a>";
+                        var $a = $(li.firstChild);
+                        $a.click(tup[1], tup[0].bound_handler);
+                        $a.mousedown(false);
+                        items.push(li);
+                    }
+
+                    $control.click(function (gui_loc, items, ev) {
+                        if (this._editor.getGUICaret() === undefined)
+                            this._editor.setGUICaret(gui_loc);
+                        new context_menu.ContextMenu(
+                            this._editor.my_window.document,
+                            ev.clientX, ev.clientY,
+                            items);
+                        return false;
+                    }.bind(this, gui_loc, items));
                 }
-
-                $control.click(function (ev) {
-                    if (this._editor.getGUICaret() === undefined)
-                        this._editor.setGUICaret(gui_loc);
-                    new context_menu.ContextMenu(
-                        this._editor.my_window.document,
-                        ev.clientX, ev.clientY,
-                        items);
-                    return false;
-                }.bind(this));
+                else if (tuples.length === 1) {
+                    control.innerHTML = tuples[0][2];
+                    $control.mousedown(false);
+                    $control.click(tuples[0][1], function (data_loc, tr, ev) {
+                        if (this._editor.getDataCaret() === undefined)
+                            this._editor.setDataCaret(data_loc);
+                        tr.bound_terminal_handler(ev);
+                        this.refreshElement(root, el);
+                    }.bind(this, data_loc, tuples[0][0]));
+                }
+                this._gui_updater.insertNodeAt(gui_loc, control);
             }
-            else if (tuples.length === 1) {
-                control.innerHTML = tuples[0][2];
-                $control.mousedown(false);
-                $control.click(tuples[0][1], function (ev) {
-                    if (this._editor.getDataCaret() === undefined)
-                        this._editor.setDataCaret(data_loc);
-                    tuples[0][0].bound_terminal_handler(ev);
-                    this.refreshElement(root, el);
-                }.bind(this));
-            }
-            this._gui_updater.insertNodeAt(gui_loc, control);
         }
     }
 };

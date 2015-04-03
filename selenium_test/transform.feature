@@ -103,7 +103,6 @@ Scenario: inserting a subsense by using a visible absence
   When the user clicks on the visible absence for btw:subsense
   Then a new btw:subsense is created
   And there is no visible absence for btw:explanation
-  And there is no visible absence for btw:subsense
 
 Scenario: inserting citations in a sense by using a visible absence
   Given a document with a sense with explanation
@@ -328,6 +327,6 @@ Scenario: creating a new contrastive section
   Given a document with contrastive elements with one child
   When the user deletes the contrastive section
   And the user clicks on the visible absence for btw:explanation
-  And the user clicks on the visible absence for btw:citations
-  And the user clicks on the visible absence for btw:contrastive-section
-  Then the contrastive section has btw:none in all its subsections
+#  And the user clicks on the visible absence for btw:citations
+#  And the user clicks on the visible absence for btw:contrastive-section
+#  Then the contrastive section has btw:none in all its subsections

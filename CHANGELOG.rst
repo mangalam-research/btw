@@ -5,6 +5,9 @@
    - The insertion of bibliographical references is now done with a
      typeahead field rather than a modal dialog.
 
+   - The buttons for creating new elements ("Create new btw:...") in
+     the body of the article are now present in more locations.
+
    - When viewing an unpublished article there is an alert box at the
      top indicating that the article is unpublished.
 
