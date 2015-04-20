@@ -144,10 +144,10 @@ BTWDecorator.prototype.addHandlers = function () {
     }.bind(this));
 
     this._gui_domlistener.addHandler(
-        "excluded-element",
+        "excluding-element",
         util.classFromOriginalName("btw:sense"),
         function (root, tree, parent, prev, next, el) {
-        this.excludedSenseHandler(el);
+        this.excludingSenseHandler(el);
     }.bind(this));
 
     this._domlistener.addHandler(
@@ -158,10 +158,10 @@ BTWDecorator.prototype.addHandlers = function () {
     }.bind(this));
 
     this._gui_domlistener.addHandler(
-        "excluded-element",
+        "excluding-element",
         util.classFromOriginalName("btw:subsense"),
         function (root, tree, parent, prev, next, el) {
-        this.excludedSubsenseHandler(root, el);
+        this.excludingSubsenseHandler(root, el);
     }.bind(this));
 
     this._gui_domlistener.addHandler(
@@ -172,7 +172,7 @@ BTWDecorator.prototype.addHandlers = function () {
     }.bind(this));
 
     this._gui_domlistener.addHandler(
-        "children-changed",
+        "children-changing",
         domutil.toGUISelector("ref, ref *"),
         function (root, added, removed, prev, next, el) {
         this._refChangedInGUI(root, closestByClass(el, "ref", root));
@@ -195,7 +195,7 @@ BTWDecorator.prototype.addHandlers = function () {
     // This is needed to handle cases when an btw:cit acquires or
     // loses Pāli text.
     this._domlistener.addHandler(
-        "excluded-element",
+        "excluding-element",
         domutil.toGUISelector("btw:cit foreign"),
         function (root, tree, parent, prev, next, el) {
         var cit = closestByClass(el, "btw:cit", root);
@@ -598,7 +598,7 @@ BTWDecorator.prototype.includedSenseHandler = function (root, el) {
     this._domlistener.trigger("included-sense");
 };
 
-BTWDecorator.prototype.excludedSenseHandler = function (el) {
+BTWDecorator.prototype.excludingSenseHandler = function (el) {
     this._deleteLinksPointingTo(el);
     // Yep, we trigger the included-sense trigger.
     this._domlistener.trigger("included-sense");
@@ -612,7 +612,7 @@ BTWDecorator.prototype.includedSubsenseHandler = function (root, el) {
 };
 
 
-BTWDecorator.prototype.excludedSubsenseHandler = function (root, el) {
+BTWDecorator.prototype.excludingSubsenseHandler = function (root, el) {
     this._deleteLinksPointingTo(el);
     this.refreshSubsensesForSense(root, el.parentNode);
 };

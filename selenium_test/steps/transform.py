@@ -71,11 +71,11 @@ def step_impl(context):
 @then(u'the senses are the same as originally')
 def step_impl(context):
     util = context.util
-    btw_util.assert_senses_in_order(util)
 
     initial_senses = context.initial_senses
 
     util.wait(lambda *_: initial_senses == btw_util.get_senses(util))
+    btw_util.assert_senses_in_order(util)
 
 
 @record_renditions_for("A")

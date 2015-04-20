@@ -32,7 +32,7 @@
 
    - Infrastructure: BTW instances no longer share the Redis cache.
 
-   - Upgrade to wed 0.22.1. The salient changes are:
+   - Upgrade to wed 0.24.2. The salient changes are:
 
      * Upgrade to Font Awesome 4.3.0.
 
