@@ -14,7 +14,7 @@ psycopg2>=2.5.2,<3
 django-forms-bootstrap>=3.0.0,<4
 requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
-selenium==2.43.0
+selenium==2.45.0
 pebble>=3.1.8,<4
 django-redis>=3.8.1,<4
 django-cache-management>=0.1.0,<1
