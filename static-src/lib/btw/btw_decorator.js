@@ -375,14 +375,6 @@ BTWDecorator.prototype.noneDecorator = function (root, el) {
 };
 
 BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
-    var child = el.firstElementChild;
-    while(child) {
-        var next = child.nextElementSibling;
-        if (child.classList.contains("_va_instantiator"))
-            this._gui_updater.removeNode(child);
-        child = next;
-    }
-
     var found, spec;
     for(var i = 0, limit = this._visible_absence_specs.length; i < limit;
         ++i) {
@@ -391,6 +383,14 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
             found = spec;
             break;
         }
+    }
+
+    var child = el.firstElementChild;
+    while(child) {
+        var next = child.nextElementSibling;
+        if (child.classList.contains("_va_instantiator"))
+            this._gui_updater.removeNode(child);
+        child = next;
     }
 
     if (found) {
@@ -419,9 +419,18 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
             var filtered_locations = [];
             location_loop:
             for(var lix = 0, l; (l = locations[lix]) !== undefined; ++lix) {
-                var clone = node.cloneNode(true);
+                // We clone only the node itself and its first level
+                // children.
+                var clone = node.cloneNode(false);
                 var div = clone.ownerDocument.createElement("div");
                 div.appendChild(clone);
+
+                child = node.firstChild;
+                while(child) {
+                    clone.appendChild(child.cloneNode(false));
+                    child = child.nextSibling;
+                }
+
                 clone.insertBefore(
                     transformation.makeElement(clone.ownerDocument,
                                                ename.ns, spec),
