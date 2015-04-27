@@ -9,11 +9,9 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
-from south.modelsinspector import add_introspection_rules
 
 from .zotero import Zotero, zotero_settings
 from . import signals
-from lib import util
 
 # This is an arbitrary limit on the size of a Zotero URL fragment that
 # uniquely identifies a Zotero entry.
@@ -41,9 +39,6 @@ from lib import util
 #
 # We double the values below to build some slack into the system.
 
-add_introspection_rules([], [r"^bibliography\.models\.ZoteroUIDField"])
-
-
 class ZoteroUIDField(models.CharField):
     description = "A Zotero user id or group id."
 
@@ -52,9 +47,6 @@ class ZoteroUIDField(models.CharField):
         # prefix we add to distinguish user ids from group ids.
         kwargs['max_length'] = 22
         super(ZoteroUIDField, self).__init__(*args, **kwargs)
-
-add_introspection_rules([], [r"^bibliography\.models\.ZoteroAPIKeyField"])
-
 
 class ZoteroAPIKeyField(models.CharField):
     description = "A Zotero API key."

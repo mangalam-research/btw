@@ -13,8 +13,6 @@ from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
 
-from south.management.commands import patch_for_test_db_setup
-
 from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lib import util
@@ -226,7 +224,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         server_address, control_read, control_write = args
-        patch_for_test_db_setup()
 
         print "Starting server at:", server_address
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address

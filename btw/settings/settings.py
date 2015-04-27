@@ -224,7 +224,6 @@ s.INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'less',
-    'south',
     'django_nose',
     'core',
     'wed',
@@ -319,9 +318,6 @@ s.LOGGING = {
         }
     }
 }
-
-s.SOUTH_TESTS_MIGRATE = False
-
 
 s.CELERY_ACCEPT_CONTENT = ['json']
 s.CELERY_TASK_SERIALIZER = 'json'

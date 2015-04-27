@@ -113,7 +113,6 @@ for name, user in name_users:
     subprocess.check_call(
         ['psql', '-c', 'GRANT ALL ON ALL TABLES IN SCHEMA public TO ' + user,
          name])
-    subprocess.check_call(['./manage.py', 'syncdb', '--noinput'])
     subprocess.check_call(['./manage.py', 'migrate'])
     subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
     subprocess.check_call(['./manage.py', 'btwredis', 'start'])
