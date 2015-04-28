@@ -226,17 +226,13 @@ Answer all questions negatively. Create a database::
 
 4. Run::
 
-    ./manage.py syncdb
+    ./manage.py migrate
 
 5. Run::
 
-    ./manage.py migrate
-
-6. Run::
-
     ./manage.py createcachetable bibliography_cache
 
-7. Make sure that there is a site with id equal to the `SITE_ID` value
+6. Make sure that there is a site with id equal to the `SITE_ID` value
    from the settings, and a correct domain name and display name. In
    SQL, the command to do this would be something like::
 
@@ -393,6 +389,11 @@ Generally:
 
 3. Make sure you have a current backup of the database.
 
+.. warning:: Do not run the following steps before you have read the
+             version-specific information about upgrading. Some
+             upgrades require that the following steps be partially
+             performed or done in a different way, etc.
+
 4. Run::
 
     $ sudo monit unmonitor [appropriate group name]
@@ -409,7 +410,6 @@ Generally:
     [Make sure the description shows what you expect.]
     $ . ../btw_env/bin/activate
     $ pip install -r requirements.txt
-    $ ./manage.py syncdb
     $ ./manage.py migrate
     $ npm outdated
     [Upgrade anything that needs upgrading.]
@@ -435,6 +435,22 @@ Generally:
      $ sudo service uwsgi reload
 
 See below for specific upgrade cases.
+
+1.1.x to 1.2.0
+~~~~~~~~~~~~~~
+
+1. **After stopping redis but before updating the source,** upgrade
+   ``South`` to the latest in the 1.x series.
+
+2. **After stopping redis but before updating the source,** upgrade
+   ``django-allauth`` to the version required by BTW.
+
+3. **After stopping redis but before updating the source,** run
+   ``./manage.py migrate socialauth``. This will upgrade the tables
+   for the ``socialauth`` app (provied by ``django-allauth``) to the
+   latest format.
+
+4. Resume the installation with the source update, and so on...
 
 1.0.x to 1.1.0
 ~~~~~~~~~~~~~~
@@ -794,8 +810,6 @@ tests). The procedure to follow is:
    development server connects to a temporary, different database.
 
 2. Issue::
-
-    $ ./manage.py syncdb
 
     $ ./manage.py migrate
 
