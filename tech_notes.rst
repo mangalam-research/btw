@@ -382,19 +382,21 @@ Upgrade Proper
 
 Generally:
 
-1. Make sure you have tagged the current release with ``git tag
+1. **Squeeze in upgrades to the server's infrastructure here...**
+
+2. Make sure you have tagged the current release with ``git tag
    v... -a`` The ``-a`` is important to create an annotated tag.
 
-2. Make sure all your changes are pushed to the repository.
+3. Make sure all your changes are pushed to the repository.
 
-3. Make sure you have a current backup of the database.
+4. Make sure you have a current backup of the database.
 
 .. warning:: Do not run the following steps before you have read the
              version-specific information about upgrading. Some
              upgrades require that the following steps be partially
              performed or done in a different way, etc.
 
-4. Run::
+5. Run::
 
     $ sudo monit unmonitor [appropriate group name]
     $ ./manage.py btwworker stop
@@ -430,7 +432,7 @@ Generally:
      to connect to the production database.]
     $ sudo monit monitor [appropriate group name]
 
-5. Reload uwsgi::
+6. Reload uwsgi::
 
      $ sudo service uwsgi reload
 
