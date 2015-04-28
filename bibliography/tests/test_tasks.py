@@ -4,14 +4,14 @@ import mock
 
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from .util import TestMeta, replay, record
 from .. import tasks
 from ..models import Item
 from lib.util import WithStringIO, utcnow
 
-cache = get_cache('bibliography')
+cache = caches['bibliography']
 
 @override_settings(CELERY_ALWAYS_EAGER=True,
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,

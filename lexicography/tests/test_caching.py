@@ -5,7 +5,7 @@ import mock
 import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
@@ -20,7 +20,7 @@ dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
                       for x in ("users.json", "views.json"))
 
-cache = get_cache('article_display')
+cache = caches['article_display']
 
 mock_records = mock_zotero.Records([
     {
@@ -99,7 +99,7 @@ class CachingTestCase(TestCase):
     item = None
 
     def setUp(self):
-        get_cache('article_display').clear()
+        cache.clear()
         self.patch = mock.patch.multiple("bibliography.zotero.Zotero",
                                          get_all=get_all_mock,
                                          get_item=get_item_mock)
@@ -249,7 +249,7 @@ class CachingTestCase(TestCase):
         new_entry.mark_deleted(orig.latest.user)
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             new_entry.undelete(orig.latest.user)
@@ -276,7 +276,7 @@ class CachingTestCase(TestCase):
         entries = [orig, copy]
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             foo = Entry.objects.get(lemma="foo")
@@ -304,7 +304,7 @@ class CachingTestCase(TestCase):
         entries = [orig, copy]
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             foo = Entry.objects.get(lemma="foo")
@@ -339,7 +339,7 @@ class CachingTestCase(TestCase):
         self.assertTrue(foo.latest.publish(foo.latest.user))
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             foo = Entry.objects.get(lemma="foo")
@@ -378,7 +378,7 @@ class CachingTestCase(TestCase):
         self.assertTrue(foo.latest.publish(foo.latest.user))
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             foo = Entry.objects.get(lemma="foo")
@@ -422,7 +422,7 @@ class CachingTestCase(TestCase):
         foo = Entry.objects.get(lemma="foo")
 
         # Clear the cache so that we start from a blank state.
-        get_cache('article_display').clear()
+        cache.clear()
 
         def op(_term):
             self.assertTrue(foo.latest.unpublish(foo.latest.user))

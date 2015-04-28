@@ -4,8 +4,7 @@ import mock
 import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core.cache import get_cache
-from django.contrib.auth import get_user_model
+from django.core.cache import caches
 
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
@@ -20,7 +19,7 @@ dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
                       for x in ("users.json", "views.json"))
 
-cache = get_cache('article_display')
+cache = caches['article_display']
 
 mock_records = mock_zotero.Records([
     {
@@ -97,7 +96,7 @@ class TasksTestCase(TestCase):
     fixtures = ["initial_data.json"] + local_fixtures
 
     def setUp(self):
-        get_cache('article_display').clear()
+        cache.clear()
         super(TasksTestCase, self).setUp()
 
     def assertDependsOn(self, cr, man, name):

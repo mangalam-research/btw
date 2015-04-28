@@ -4,7 +4,7 @@ import lxml.etree
 
 from celery.utils.log import get_task_logger
 from celery import Task
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from btw.celery import app
 from .models import ChangeRecord, Entry
@@ -15,7 +15,7 @@ from lib.tasks import acquire_mutex
 
 logger = get_task_logger(__name__)
 
-cache = get_cache('article_display')
+cache = caches['article_display']
 
 class PrepareChangerecordTask(Task):
     abstract = True

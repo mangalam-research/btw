@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from celery.utils.log import get_task_logger
 from celery import Task
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from btw.celery import app
 from .zotero import Zotero, zotero_settings
@@ -13,7 +13,7 @@ from lib.util import utcnow
 logger = get_task_logger(__name__)
 btw_zotero = Zotero(zotero_settings(), 'BTW Library')
 
-cache = get_cache('bibliography')
+cache = caches['bibliography']
 
 # These are keys we use in the bibliography cache. They cannot clash
 # with the keys set from fetching items from the Zotero database as

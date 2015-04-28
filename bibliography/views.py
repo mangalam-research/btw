@@ -14,7 +14,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
 from django.core.urlresolvers import resolve, reverse
 from django.views.decorators.cache import never_cache
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import viewsets, generics, mixins, permissions, \
     parsers, renderers
@@ -30,7 +30,7 @@ from . import tasks
 logger = logging.getLogger(__name__)
 
 btw_zotero = Zotero(zotero_settings(), 'BTW Library')
-cache = get_cache("bibliography")
+cache = caches["bibliography"]
 
 def ajax_login_required(view):
     @wraps(view)

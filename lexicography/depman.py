@@ -1,11 +1,11 @@
 from lib import util
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 class DependencyManager(object):
 
     def __init__(self, prefix):
         self.prefix = prefix
-        self.cache = get_cache('article_display')
+        self.cache = caches['article_display']
 
     def make_key(self, key):
         return self.prefix + u":" + key

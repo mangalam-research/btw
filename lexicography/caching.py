@@ -1,11 +1,11 @@
 from django.dispatch import receiver
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 from . import signals
 from . import depman
 from bibliography import signals as bibsignals
 
-cache = get_cache('article_display')
+cache = caches['article_display']
 
 @receiver(signals.entry_available)
 @receiver(signals.entry_unavailable)

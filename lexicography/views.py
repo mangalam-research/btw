@@ -30,7 +30,7 @@ from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.views.decorators.cache import never_cache
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 import lib.util as util
 from . import handles
@@ -43,7 +43,7 @@ from .forms import SaveForm
 from . import usermod
 from . import tasks
 
-article_display_cache = get_cache('article_display')
+article_display_cache = caches['article_display']
 
 logger = logging.getLogger("lexicography")
 

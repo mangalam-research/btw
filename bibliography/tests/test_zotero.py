@@ -4,7 +4,7 @@ import mock
 from unittest import skip
 import urllib2
 
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.test import TestCase
 
 # pylint: disable=no-name-in-module
@@ -68,7 +68,7 @@ class ZoteroTest(TestCase):
 
     def setUp(self):
         self.zotero = Zotero(zotero_settings(), 'BTW Library')
-        get_cache('bibliography').clear()
+        caches['bibliography'].clear()
         super(ZoteroTest, self).setUp()
 
     def assert_miss(self, mock_cache, number_of_sets, number_of_misses=1):

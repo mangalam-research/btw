@@ -14,7 +14,7 @@ import semver
 from django.db.models import Q
 from django.utils.timezone import utc
 from django.conf import settings
-from django.core.cache import get_cache
+from django.core.cache import caches
 import django_redis
 
 # We effectively reexport this function here.
@@ -221,7 +221,7 @@ def delete_own_keys(name):
     .. warning:: This method is Redis-specific and will fail if used
                  on a cache that is not backed by redis.
     """
-    cache = get_cache(name)
+    cache = caches[name]
     prefix = cache.key_prefix
     con = con_by_name[name]
     keys = con.keys(prefix + ':*')
@@ -230,22 +230,22 @@ def delete_own_keys(name):
 
 
 def add_to_set(name, key, member):
-    cache = get_cache(name)
+    cache = caches[name]
     con = con_by_name[name]
     con.sadd(cache.make_key(key), member)
 
 def remove_from_set(name, key, member):
-    cache = get_cache(name)
+    cache = caches[name]
     con = con_by_name[name]
     con.srem(cache.make_key(key), member)
 
 def get_set(name, key):
-    cache = get_cache(name)
+    cache = caches[name]
     con = con_by_name[name]
     return con.smembers(cache.make_key(key))
 
 def get_set_union(name, iterator):
-    cache = get_cache(name)
+    cache = caches[name]
     con = con_by_name[name]
     return con.sunion([cache.make_key(i) for i in iterator])
 

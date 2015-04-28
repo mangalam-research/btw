@@ -9,13 +9,13 @@ from xml.dom import minidom
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.cache import get_cache
+from django.core.cache import caches
 
 logger = logging.getLogger(__name__)
 
 CACHED_DATA_VERSION = 4
 
-cache = get_cache('bibliography')
+cache = caches['bibliography']
 
 _cached_details = None
 
