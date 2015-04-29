@@ -1,7 +1,7 @@
 Django>=1.7.7,<1.8
 # The south doc recommends not automatically upgrading beyond 0.8.
 semver>=0.0.2
-django-nose>=1.3,<2
+django-nose>=1.4,<2
 django-webtest>=1.7.5
 webtest>=2.0.15
 django-less>=0.7.2
@@ -15,9 +15,9 @@ requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
 selenium==2.45.0
 pebble>=3.1.8,<4
-django-redis>=3.8.1,<4
-django-cache-management>=0.1.0,<1
+django-redis>=3.8.4,<4
+django-cache-management>=1.0.0,<2
 celery[redis]>=3.1.17,<4
-djangorestframework>=3.0.5,<4
+djangorestframework>=3.1.1,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4

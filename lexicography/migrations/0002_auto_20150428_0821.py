@@ -34,12 +34,13 @@ class PermissionResolver(object):
         return ct
 
 def permissions(apps, schema_editor):
-    from django.contrib.contenttypes.management import update_all_contenttypes
-    update_all_contenttypes(interactive=True, verbosity=0)
+    from django.contrib.contenttypes.management import update_contenttypes
+    from django.apps import apps as configured_apps
+    for app in configured_apps.get_app_configs():
+        update_contenttypes(app, interactive=True, verbosity=0)
 
     from django.contrib.auth.management import create_permissions
-    from django.apps import apps
-    for app in apps.get_app_configs():
+    for app in configured_apps.get_app_configs():
         create_permissions(app, verbosity=0)
 
     Group = apps.get_model("auth", "Group")

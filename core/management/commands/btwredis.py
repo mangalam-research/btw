@@ -21,6 +21,7 @@ class Command(BaseCommand):
     help = """\
 Manage the redis server used by BTW.
 """
+    args = "command"
 
     def handle(self, *args, **options):
         if len(args) == 0:

@@ -112,6 +112,8 @@ class Command(BaseCommand):
     help = """\
 Manage workers.
 """
+    args = "command"
+
     option_list = BaseCommand.option_list + (
         make_option('--all',
                     action='store_true',

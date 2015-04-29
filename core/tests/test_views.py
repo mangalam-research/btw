@@ -147,7 +147,7 @@ class LoginTestCase(ViewTestCase):
         self.assertContains(response, "Are you sure you want to sign out?")
         response = response.form.submit()
         self.assertRedirects(response, reverse("main"))
-        assert_not_equal(session_id, self.app.cookies["sessionid"])
+        assert_not_equal(session_id, self.app.cookies.get("sessionid"))
 
     def test_main_show_login(self):
         """

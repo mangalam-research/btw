@@ -21,5 +21,5 @@ def request(_context, flow):
     # 0.11 is released.
     #
 
-    flow.request.headers["X-BTW-Sequence"] = [sequence]
+    flow.request.headers["X-BTW-Sequence"] = [str(sequence)]
     sequence += 1

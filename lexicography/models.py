@@ -81,6 +81,11 @@ class Entry(models.Model):
         if self.id is None and ctype != ChangeRecord.CREATE:
             raise ValueError("The Entry has no id but the ctype is not CREATE")
 
+        self.lemma = lemma
+        # save() first. So that if we have an integrity error, there is no
+        # stale ChangeRecord to remove.
+        self.save()
+
         cr = ChangeRecord(
             entry=self,
             lemma=lemma,
@@ -91,15 +96,8 @@ class Entry(models.Model):
             csubtype=subtype,
             c_hash=chunk)
 
-        self.lemma = lemma
-        # save() first. So that if we have an integrity error, there is no
-        # stale ChangeRecord to remove.
-        self.save()
-
-        # We need to do this in case the entry just acquired its id when
-        # ``save()`` was called.
-        cr.entry = self
         cr.save()
+
         # We can't set latest before we've saved cr.
         self.latest = cr
         self.save()
