@@ -441,18 +441,23 @@ See below for specific upgrade cases.
 1.1.x to 1.2.0
 ~~~~~~~~~~~~~~
 
-1. **After stopping redis but before updating the source,** upgrade
-   ``South`` to the latest in the 1.x series.
+1. Upgrade the nginx configuration to the new one so that developers
+   can bypass maintenance mode.
+
+2. Uninstall South.
 
 2. **After stopping redis but before updating the source,** upgrade
+   ``South`` to the latest in the 1.x series.
+
+3. **After stopping redis but before updating the source,** upgrade
    ``django-allauth`` to the version required by BTW.
 
-3. **After stopping redis but before updating the source,** run
+4. **After stopping redis but before updating the source,** run
    ``./manage.py migrate socialauth``. This will upgrade the tables
    for the ``socialauth`` app (provied by ``django-allauth``) to the
    latest format.
 
-4. Resume the installation with the source update, and so on...
+5. Resume the installation with the source update, and so on...
 
 1.0.x to 1.1.0
 ~~~~~~~~~~~~~~
