@@ -502,6 +502,18 @@ See below for specific upgrade cases.
 Notes from Actual Upgrades
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- 1.0.5 to 1.1.0: The upgrade window was scheduled for 2015/04/29 at
+  8:00-10:00 EDT. I began preparing at around 7:30 EDT so as to get a
+  head start with the steps that could be performed before the
+  upgrade, and server maintenance not directly tied to the upgrade
+  (e.g. shutting down the demo site). At 8:00 EDT I put the server
+  into maintenance mode. At around 8:35 I put the server out of
+  maintenance mode. The server initially failed to work because I
+  forgot to make a couple changes to the btw.ini file (uwsgi
+  configuration). Moreover I had to change ownership of the log files
+  in /var/log/btw so that BTW could write there. Then it was smooth
+  sailing.
+
 - 0.7.1 to 0.8.0: The upgrade window was scheduled for 2015/01/21 at
   8:00-9:00 EST. I began preparing at around 7:30 EST because a few of
   the upgrade steps (installing new packages, updating the settings of
