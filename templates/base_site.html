@@ -72,6 +72,11 @@
     You are on the demo site. Do not save any work here.
   </div>
   {% endif %}
+  {% if request.COOKIES.btw_dev %}
+  <div class="alert alert-danger" role="alert">
+    You are accessing the site as a DEVELOPER. Make sure to clear out of developer mode and access the site as a normal user before telling users to access the site.
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
 

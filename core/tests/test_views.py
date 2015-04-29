@@ -1,4 +1,5 @@
 import os
+import cookielib as http_cookiejar
 
 from django_webtest import TransactionWebTest
 from django.core.urlresolvers import reverse
@@ -74,6 +75,41 @@ class GeneralTestCase(ViewTestCase):
         self.assertEqual(
             alerts[0].text.strip(),
             "You are on the demo site. Do not save any work here.")
+
+    def test_dev_alert(self):
+        """
+        Tests that a demo alert shows up if the site is accessed while the
+        cookie that indicates a developer is turned on.
+        """
+        # The value can be anything as BTW itself does not care what
+        # it is.
+        cookie = http_cookiejar.Cookie(
+            version=0,
+            name='btw_dev',
+            value="foo",
+            port=None,
+            port_specified=False,
+            domain='.localhost',
+            domain_specified=True,
+            domain_initial_dot=False,
+            path='/',
+            path_specified=True,
+            secure=False,
+            expires=None,
+            discard=False,
+            comment=None,
+            comment_url=None,
+            rest=None
+        )
+        self.app.cookiejar.set_cookie(cookie)
+        response = self.app.get('/')
+        alerts = response.lxml.xpath(self.alert_xpath)
+        self.assertEqual(len(alerts), 1, "there should be one alert")
+        self.assertEqual(
+            alerts[0].text.strip(),
+            "You are accessing the site as a DEVELOPER. Make sure to "
+            "clear out of developer mode and access the site as a normal "
+            "user before telling users to access the site.")
 
 
 # Turn off the requirement for emails just for this test.
