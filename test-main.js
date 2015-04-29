@@ -13,11 +13,27 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 });
 
 require.config({
-  baseUrl: '/base/build/static-build/lib/',
+    baseUrl: '/base/build/static-build/lib/',
+    // We need these so that they behave nicely in testing.
+    config: {
+        'wed/log': {
+            focus_popup: true // For testing only.
+        },
+        'wed/onerror': {
+            suppress_old_onerror: true, // For testing only.
+            test: true // For testing only.
+        },
+        'wed/onbeforeunload': {
+            test: true // For testing only
+        }
+    }
+});
 
-  // Dynamically load all test files
-  deps: allTestFiles,
-
-  // Kickoff the tests.
-  callback: window.__karma__.start
+// This makes things a bit more expensive than we'd like because we
+// are loading all of wed. However, this method will work whether we
+// are building BTW with optimized or non-optimized code, whereas
+// using RequireJS' packages option would have to be used only when
+// using optimized code, etc.
+require(['wed/wed'], function () {
+  require(allTestFiles, window.__karma__.start);
 });
