@@ -1,22 +1,25 @@
+from django.contrib import admin
+
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-from django.views.generic import TemplateView
+from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls.static import static
 
-from django.contrib import admin
+from lib.admin import limited_admin_site
+
 admin.autodiscover()
 
-urlpatterns = patterns(
+urlpatterns = i18n_patterns(
     '',
-    url(r'^$', TemplateView.as_view(template_name='main.html'), name="main"),
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(limited_admin_site.urls)),
+    url(r'^full-admin/', include(admin.site.urls)),
     url(r'^login/$', 'allauth.account.views.login', name="login"),
     url(r'^logout/$', 'allauth.account.views.logout', name="logout"),
-    url(r'^lexicography/', include('lexicography.urls')),
-    url(r'^bibliography/', include('bibliography.urls')),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^invitation/', include('invitation.urls'))
-)
+    url(r'^invitation/', include('invitation.urls')),
+    url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^', include('cms.urls')),
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 if settings.DEBUG:

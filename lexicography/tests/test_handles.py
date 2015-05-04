@@ -5,15 +5,16 @@ from django.db import transaction
 
 from .. import handles
 from ..models import Handle
+from lib import util
 
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "views.json", ))
 
 
-class HandleManagerTestCase(TransactionTestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+class HandleManagerTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "views.json", ))
+    serialized_rollback = True
 
     def setUp(self):
         self.a = handles.HandleManager("a")

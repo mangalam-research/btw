@@ -270,3 +270,79 @@ outputs to a :class:`StringIO` object.
     logger.addHandler(handler)
     yield stream, handler
     logger.removeHandler(handler)
+
+class PermissionResolver(object):
+
+    def __init__(self, Permission, ContentType):
+        """
+        A ``PermissionResolver`` object is used to get permission objects
+        from ``(permission name, app name, model name)`` sequences. We
+        pass models to it so that it can be used in migrations.
+
+        :param Permission: The model for auth permission objects.
+        :param ContentType: The model for content type objects.
+        """
+        self.Permission = Permission
+        self.ContentType = ContentType
+        self.ct_cache = {}
+        self.p_cache = {}
+
+    def resolve(self, p):
+        perm, app, model = p
+        p_key = tuple(p)
+        p = self.p_cache.get(p_key)
+        if p is not None:
+            return p
+
+        ct = self.resolve_ct(app, model)
+        p = self.Permission.objects.get(codename=perm, content_type=ct)
+        self.p_cache[p_key] = p
+        return p
+
+    def resolve_ct(self, app, model):
+        ct_key = (app, model)
+        ct = self.ct_cache.get(ct_key)
+        if ct is not None:
+            return ct
+
+        ct = self.ContentType.objects.get(app_label=app, model=model)
+        self.ct_cache[ct_key] = ct
+        return ct
+
+class NoPostMigrateMixin(object):
+
+    def _fixture_teardown(self):
+        # This is a terrible hack to get proper behavior for
+        # serialized_rollbacks in a TransactionTestCase. The problem
+        # is as follows:
+        #
+        # 1. serialized_rollbacks is necessary to reload the data that
+        # is generated from data migrations.
+        #
+        # 2. Reloading the serialized data causes integrity failures
+        # with Django apps like django.contrib.contenttypes and
+        # django.contrib.auth. The problem is that upon flushing the
+        # database, Django emits a post migrate signal which causes
+        # content types and default permissions associated with models
+        # to be recreated. Then, when the data is deserialized, some
+        # records are created twice.
+        #
+        # 3. Using the available_apps field *would* be an option but
+        # a) it is part of the private API and can change at any
+        # moment, b) tracing the dependencies among apps is a harduous
+        # task, which is not helped by the way the available_apps code
+        # in Django's testcases.py file handles exceptions. (When an
+        # exception occurs while setting the apps that are going to be
+        # available, this exception may get swallowed in the error
+        # handling code if another exception happens there.)
+        #
+        # So the strategy here is to temporarily set available_apps to
+        # a non-None value, which causes the stock _fixture_teardown()
+        # to not generate a post migrate signal.
+        #
+        saved_aa = self.available_apps
+        try:
+            self.available_apps = []
+            super(NoPostMigrateMixin, self)._fixture_teardown()
+        finally:
+            self.available_apps = saved_aa

@@ -11,12 +11,10 @@ from .. import models
 from . import util
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "locking.json"))
-
 
 class LockingTestCase(TestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "locking.json"))
 
     def setUp(self):
         self.logger = logging.getLogger('lexicography.locking')

@@ -228,6 +228,15 @@ class Item(models.Model):
         return reverse('bibliography_items', args=(self.pk, ))
 
     @property
+    def abstract_url(self):
+        """
+        The abstract URL is the URL which is to be used when referring to
+        this item in documents. It is different from the ``url``
+        property because it is independent from the URL routing.
+        """
+        return "/bibliography/" + str(self.pk)
+
+    @property
     def zotero_url(self):
         # We purposely do not cause a refresh. The URL should not ever
         # change once an entry is created. The URL is based on the
@@ -347,6 +356,15 @@ class PrimarySource(models.Model):
     @property
     def url(self):
         return reverse('bibliography_primary_sources', args=(self.pk, ))
+
+    @property
+    def abstract_url(self):
+        """
+        The abstract URL is the URL which is to be used when referring to
+        this item in documents. It is different from the ``url``
+        property because it is independent from the URL routing.
+        """
+        return "/bibliography/primary-sources/" + str(self.pk)
 
     def as_dict(self):
         """

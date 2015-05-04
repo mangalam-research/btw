@@ -49,7 +49,7 @@ def invalidate_bibl_dependents(sender, **kwargs):
     instances = [kwargs['instance']] if signal is bibsignals.item_updated \
         else kwargs['instances']
 
-    all_urls = [instance.url for instance in instances]
+    all_urls = [instance.abstract_url for instance in instances]
 
     deps = depman.bibl.get_union(all_urls)
     depman.bibl.delete_many(all_urls)

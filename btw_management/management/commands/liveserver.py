@@ -12,6 +12,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
+from django.utils import translation
+from cms.test_utils.testcases import BaseCMSTestCase
 
 from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
@@ -45,11 +47,15 @@ class LexicographyPatcher(object):
         return self.old_changerecord_details(request, *args, **kwargs)
 
 
-class SeleniumTest(LiveServerTestCase):
+class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
+                   LiveServerTestCase):
 
     reset_sequences = True
+    serialized_rollback = True
 
     def setUp(self):
+        super(SeleniumTest, self).setUp()
+        translation.activate('en-us')
         from bibliography.models import Item, PrimarySource
         from bibliography.tasks import fetch_items
 
@@ -66,6 +72,25 @@ class SeleniumTest(LiveServerTestCase):
         ps.save()
         fetch_items()
 
+        from lib import cmsutil
+        cmsutil.refresh_cms_apps()
+        from cms.api import create_page
+        self.home_page = \
+            create_page("Home", "generic_page.html",
+                        "en-us")
+        self.home_page.toggle_in_navigation()
+        self.home_page.publish('en-us')
+        self.lexicography_page = \
+            create_page("Lexicography", "generic_page.html",
+                        "en-us", apphook='LexicographyApp')
+        self.lexicography_page.toggle_in_navigation()
+        self.lexicography_page.publish('en-us')
+        self.bibliography_page = \
+            create_page("Bibliography", "generic_page.html",
+                        "en-us", apphook='BibliographyApp')
+        self.bibliography_page.toggle_in_navigation()
+        self.bibliography_page.publish('en-us')
+
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
         self.__control_write = control_write
@@ -73,9 +98,7 @@ class SeleniumTest(LiveServerTestCase):
         super(SeleniumTest, self).__init__(*args, **kwargs)
         from django.conf import settings
         self.fixtures = \
-            [os.path.join(settings.TOPDIR, "lexicography", "fixtures",
-                          "initial_data.json"),
-             os.path.join(settings.TOPDIR, "core", "tests", "fixtures",
+            [os.path.join(settings.TOPDIR, "core", "tests", "fixtures",
                           "sites.json")] + \
             list(os.path.join(settings.TOPDIR, "lexicography", "tests",
                               "fixtures", x)
@@ -138,7 +161,7 @@ class SeleniumTest(LiveServerTestCase):
                 print "Unknown command: ", command
 
     def create_document(self, what):
-        add_raw_url = reverse("admin:lexicography_entry_rawnew")
+        add_raw_url = reverse("full-admin:lexicography_entry_rawnew")
         from lexicography.tests.util import get_valid_document_data
         data = get_valid_document_data()
         publish = True
@@ -218,6 +241,20 @@ class Runner(DiscoverRunner):
     def build_suite(self, *args, **kwargs):
         return Suite(self.__control_read, self.__control_write)
 
+    def setup_databases(self, *args, **kwargs):
+        ret = super(Runner, self).setup_databases(*args, **kwargs)
+        # Save the serialization of our databases... We have to do
+        # this ourselves here because Django's DiscoverRunner won't
+        # perform a serialization for databases that have a
+        # TEST_MIRROR set, which is our case because we do not want a
+        # migration to happen with every test.
+        from django.db import connections
+        for alias in connections:
+            connection = connections[alias]
+            connection._test_serialized_contents = \
+                connection.creation.serialize_db_to_string()
+        return ret
+
 class Command(BaseCommand):
     help = 'Starts a live server for testing.'
     args = "address control_read control_write"
@@ -229,6 +266,14 @@ class Command(BaseCommand):
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
 
         zotero_patch.start()
+
+        # We do this to remove an error message about reloading the
+        # app. The way we use Django CMS in this test setup, we do not
+        # need to reload.
+        from cms.signals.apphook import debug_server_restart
+        from cms.signals import urls_need_reloading
+
+        urls_need_reloading.disconnect(debug_server_restart)
 
         # Start getting the valid document data now, in parallel with the
         # rest.

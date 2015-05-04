@@ -1,21 +1,23 @@
 import os
 
 from django.core.urlresolvers import reverse
-from django_webtest import TransactionWebTest
+from django_webtest import WebTest
+from django.test.utils import override_settings
+from cms.test_utils.testcases import BaseCMSTestCase
 
 from ..models import Entry
 from . import util as test_util
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "views.json"))
 
-class EntryViewTestCase(TransactionWebTest):
-    fixtures = ["initial_data.json"] + local_fixtures
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class EntryViewTestCase(BaseCMSTestCase, WebTest):
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "views.json"))
 
-    changelist_url = reverse("admin:lexicography_entry_changelist")
-    add_raw = reverse("admin:lexicography_entry_rawnew")
-    update_raw = reverse("admin:lexicography_entry_rawupdate",
+    changelist_url = reverse("full-admin:lexicography_entry_changelist")
+    add_raw = reverse("full-admin:lexicography_entry_rawnew")
+    update_raw = reverse("full-admin:lexicography_entry_rawupdate",
                          args=(1,))
 
     def generic_unclean(self, url):

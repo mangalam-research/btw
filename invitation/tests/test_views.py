@@ -1,7 +1,9 @@
-from django_webtest import TransactionWebTest
+from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test.utils import override_settings
+from django.utils import translation
+from cms.test_utils.testcases import BaseCMSTestCase
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal
@@ -13,14 +15,14 @@ from ..models import Invitation
 from .util import expire, BAD_KEY
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "sites.json"))
 
-
-class ViewTestCase(TransactionWebTest):
-    fixtures = ["initial_data.json"] + local_fixtures
+class ViewTestCase(BaseCMSTestCase, WebTest):
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "sites.json"))
 
     def setUp(self):
+        super(ViewTestCase, self).setUp()
+        translation.activate('en-us')
         self.login_url = reverse('login')
         self.bare_invite_url = reverse('invitation_invite')
         self.bare_complete_url = reverse('invitation_complete')
@@ -33,6 +35,7 @@ class InviteTestCase(ViewTestCase):
     def test_not_logged_in(self):
         """Test that a user who is not logged gets redirected."""
         response = self.app.get(self.bare_invite_url)
+        response = response.follow()
         self.assertRedirects(response, self.login_url +
                              "?next=" + self.bare_invite_url)
 
@@ -75,7 +78,7 @@ You have been invited to join BTW.
 
 Click the link below to register. This link will expire in 5 days.
 
-http://localhost:80/invitation/use/{0}/
+http://localhost:80/en-us/invitation/use/{0}/
 
 All the best,
 The BTW Team

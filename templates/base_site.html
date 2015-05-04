@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load menu_tags %}
 {% block page_title %}
   {% if page_title %}
     {{ globals.site_name }} | {{ page_title }}
@@ -23,47 +24,10 @@
     </div>
     <div class="collapse navbar-collapse" id="btw-site-navigation-collapse">
       <ul class="nav navbar-nav">
-        <li id="btw-home-menu"><a href="/">Home</a></li>
-        <li id="btw-lexicography-menu">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            Lexicography <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li id="btw-lexicography-main-sub"><a href="{% url 'lexicography_main' %}">Search</a></li>
-            {% if perms.lexicography.add_entry %}
-            <li id="btw-lexicography-new-sub"><a href="{% url 'lexicography_entry_new' %}">New Article</a></li>
-            {% endif %}
-          </ul>
-        </li>
-        <li id="btw-bibliography-menu" class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            Bibliography <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li id="btw-bibliography-general-sub"><a href="{% url 'bibliography_search' %}">General Search</a></li>
-            {% if perms.bibliography.add_primarysource and perms.bibliography.change_primarysource %}
-            <li id="btw-bibliography-manage-sub"><a href="{% url 'bibliography_manage' %}">Manage</a></li>
-            {% endif %}
-          </ul>
-        </li>
+        {% show_menu 0 1 100 100 "menu/navbar.html" %}
       </ul>
-
       <ul class="nav navbar-nav navbar-right">
-        {% if user.is_authenticated %}
-        <li id="btw-account-menu" class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            {{ user.username }} <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {% if user.is_superuser %}
-            <li><a href="{% url 'admin:index' %}">Administration</a></li>
-            {% endif %}
-            <li><a href="{% url 'logout' %}">Log out</a></li>
-          </ul>
-        </li>
-        {% else %}
-        <li><a href="{% url 'login' %}">Log in</a></li>
-        {% endif %}
+        {% show_menu 0 1 100 100 "menu/navbar_right.html" %}
       </ul>
     </div>
   </div>
@@ -83,10 +47,6 @@
 {% block end %}
 <script>
   require(["jquery"], function ($) {
-      if (typeof django_active_menu !== 'undefined')
-          $("#" + django_active_menu).addClass("active");
-      if (typeof django_active_submenu !== 'undefined')
-          $("#" + django_active_submenu).addClass("active");
   {% if settings.DEBUG %}
       var $body = $(document.body);
       $body.css("background-image", "url({% static 'images/development_wm.png' %})");

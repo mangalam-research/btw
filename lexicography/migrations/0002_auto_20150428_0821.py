@@ -2,36 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-
-class PermissionResolver(object):
-
-    def __init__(self, Permission, ContentType):
-        self.Permission = Permission
-        self.ContentType = ContentType
-        self.ct_cache = {}
-        self.p_cache = {}
-
-    def resolve(self, p):
-        perm, app, model = p
-        p_key = tuple(p)
-        p = self.p_cache.get(p_key)
-        if p is not None:
-            return p
-
-        ct = self.resolve_ct(app, model)
-        p = self.Permission.objects.get(codename=perm, content_type=ct)
-        self.p_cache[p_key] = p
-        return p
-
-    def resolve_ct(self, app, model):
-        ct_key = (app, model)
-        ct = self.ct_cache.get(ct_key)
-        if ct is not None:
-            return ct
-
-        ct = self.ContentType.objects.get(app_label=app, model=model)
-        self.ct_cache[ct_key] = ct
-        return ct
+from lib.util import PermissionResolver
 
 def permissions(apps, schema_editor):
     from django.contrib.contenttypes.management import update_contenttypes

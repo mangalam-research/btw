@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import json
+import urllib
 
 from django_webtest import WebTest
 from django.test import Client
@@ -7,15 +8,17 @@ from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.test.utils import override_settings
+from django.utils import translation
+from cms.test_utils.testcases import BaseCMSTestCase
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
 import mock
 
-from .util import TestMeta, replay, record
+from .util import TestMeta, replay
 from . import mock_zotero
 from ..models import Item, PrimarySource
-import lib.util
 
 User = get_user_model()
 
@@ -23,13 +26,10 @@ User = get_user_model()
 # somewhere else.
 assert_equal.im_self.longMessage = True
 
-search_url = reverse('bibliography_search')
-manage_url = reverse('bibliography_manage')
-item_table_url = reverse('bibliography_item_table')
 login_url = reverse('login')
 
-
-class _BaseTest(WebTest):
+@override_settings(ROOT_URLCONF='bibliography.tests.urls')
+class _BaseTest(BaseCMSTestCase, WebTest):
     __metaclass__ = TestMeta
 
     url = None
@@ -42,14 +42,12 @@ class _BaseTest(WebTest):
 
     def setUp(self):
         super(_BaseTest, self).setUp()
+        translation.activate('en-us')
         self.client = Client()
         # create test user with zotero profile setup.
         self.user = User.objects.create_user(username='test', password='test')
         self.noperm = User.objects.create_user(username='noperm',
                                                password='test')
-
-    def tearDown(self):
-        self.user.delete()
 
 
 class LoginMixin(object):
@@ -81,7 +79,9 @@ class TestSearchView(_BaseTest, LoginMixin):
     Tests for the search view.
     """
 
-    url = search_url
+    def setUp(self):
+        super(TestSearchView, self).setUp()
+        self.url = reverse('bibliography_search')
 
     # We override the base one.
     def test_not_logged(self):
@@ -271,7 +271,9 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
     Tests for the manage view.
     """
 
-    url = manage_url
+    def setUp(self):
+        super(TestManageView, self).setUp()
+        self.url = reverse('bibliography_manage')
 
     # Override the base one.
     def test_not_logged(self):
@@ -279,8 +281,9 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
         Test that the response is a redirection to the login page when the
         user is not logged in.
         """
-        response = self.client.get(manage_url)
-        self.assertRedirects(response, login_url + "?next=" + manage_url)
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, login_url + "?" +
+                             urllib.urlencode({"next": self.url}))
 
 class TestItemTableView(_PatchZoteroTest, LoginMixin):
 
@@ -292,7 +295,9 @@ class TestItemTableView(_PatchZoteroTest, LoginMixin):
     # django-datatables-view. So don't go looking for such tests here.
     #
 
-    url = item_table_url
+    def setUp(self):
+        super(TestItemTableView, self).setUp()
+        self.url = reverse('bibliography_item_table')
 
 
 class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):

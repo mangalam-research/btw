@@ -336,7 +336,7 @@ BTWMode.prototype._getBibliographicalInfo = function () {
     }).then(function (data) {
         var url_to_item = Object.create(null);
         for (var i = 0, item; (item = data[i]); ++i) {
-            url_to_item[item.url] = item;
+            url_to_item[item.abstract_url] = item;
         }
         return url_to_item;
     });

@@ -219,8 +219,12 @@ endif # BEHAVE_SAVE
 test: test-django test-karma
 
 .PHONY: test-django
-test-django:
-	./manage.py test
+test-django: test-django-menu
+	./manage.py test --attr='!isolation'
+
+.PHONY: test-django-menu
+test-django-menu:
+	./manage.py test --attr=isolation=menu
 
 .PHONY: test-karma
 test-karma:

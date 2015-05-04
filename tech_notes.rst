@@ -1211,5 +1211,51 @@ data is laid out as follows:
 
   This cache can be destroyed safely.
 
+CMS Choice for BTW
+==================
+
+The Short List
+--------------
+
+Django CMS: One rather major issue with Django CMS is that people who
+can edit pages must be able to access the ``admin`` interface.
+
+feinCMS: This tool also needs to give CMS editors access to the
+``admin`` interface.
+
+Candidates
+----------
+
+As of 2015-04-23, after removing projects that are dead or in an alpha
+state or not updated in years from the table at:
+
+https://www.djangopackages.com/grids/g/cms/
+
+we get these candidates:
+
+* Django CMS
+* Wagtail
+* Mezzanine
+* feinCMS
+* django-fiber
+* Opps
+* Django page CMS
+
+Rejected
+--------
+
+Mezzanine: As of 2015-04-23 does not support Django 1.7 or later.
+
+Wagtail: appears to completely take over the admin interface. No
+support for revisions.
+
+django-fiber: eliminated because it needs djangorestframework to be
+less than 3 but BTW already uses the 3 series.
+
+Opps: documentation seemed rather rudimentary, it is also not clear
+how it performs with Django > 1.5.
+
+Django page CMS: compatible with Django 1.5, 1.6 but not 1.7 or 1.8.
+
 ..  LocalWords: uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth

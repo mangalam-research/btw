@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 from bibliography.models import ZoteroUser
 
-
 class ZoteroUserInline(admin.StackedInline):
     model = ZoteroUser
     can_delete = False

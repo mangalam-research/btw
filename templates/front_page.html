@@ -1,0 +1,9 @@
+{% extends "generic_page.html" %}
+{% load cms_tags %}
+
+{% block content %}
+  <div class="row">
+  {{ block.super }}
+  {% include "two_column_well.html" %}
+  </div>
+{% endblock %}

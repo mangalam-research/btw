@@ -34,7 +34,7 @@ def make_link_method(field_name, display_name=None):
         field = getattr(obj, field_name)
         # pylint: disable-msg=W0212
         model_name = field._meta.model_name
-        return make_link(reverse("admin:lexicography_" +
+        return make_link(reverse("full-admin:lexicography_" +
                                  model_name + "_change", args=(field, )),
                          escape(str(field)))
     method.allow_tags = True
@@ -79,7 +79,7 @@ class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
 
 
 def changerecord_to_str(cr):
-    return make_link(reverse('admin:lexicography_changerecord_change',
+    return make_link(reverse('full-admin:lexicography_changerecord_change',
                              args=(cr.id, )),
                      cr.user.username + " " + str(cr.datetime)) \
         if cr is not None else None
@@ -106,7 +106,7 @@ class EntryAdmin(admin.ModelAdmin):
     nice_latest_published.short_description = "Latest published"
 
     def edit_raw(self, obj):
-        return make_link(reverse('admin:lexicography_entry_rawupdate',
+        return make_link(reverse('full-admin:lexicography_entry_rawupdate',
                                  args=(obj.id, )), "Edit raw XML")
 
     def view(self, obj):
@@ -116,8 +116,9 @@ class EntryAdmin(admin.ModelAdmin):
     def delete_undelete(self, obj):
         return mark_safe(
             '<a class="{2}" href="{0}">{1}</a>'
-            .format(reverse('admin:lexicography_entry_undelete' if obj.deleted
-                            else 'admin:lexicography_entry_mark_deleted',
+            .format(reverse('full-admin:lexicography_entry_undelete'
+                            if obj.deleted
+                            else 'full-admin:lexicography_entry_mark_deleted',
                             args=(obj.id, )),
                     "Undelete" if obj.deleted else "Delete",
                     "lexicography-undelete" if obj.deleted
@@ -165,7 +166,8 @@ class EntryAdmin(admin.ModelAdmin):
                                        ChangeRecord.MANUAL)
                     release_entry_lock(entry, request.user)
                     return HttpResponseRedirect(
-                        reverse('admin:lexicography_entry_changelist'))
+                        reverse('full-admin:lexicography_entry_changelist',
+                                current_app=self.admin_site.name))
         else:
             form = RawSaveForm()
 
@@ -193,7 +195,8 @@ class EntryAdmin(admin.ModelAdmin):
                     ChangeRecord.MANUAL)
                 release_entry_lock(entry, request.user)
                 return HttpResponseRedirect(
-                    reverse('admin:lexicography_entry_changelist'))
+                    reverse('full-admin:lexicography_entry_changelist',
+                            current_app=self.admin_site.name))
 
         else:
             form = RawSaveForm(instance=entry.latest.c_hash)
@@ -240,7 +243,7 @@ class EntryAdmin(admin.ModelAdmin):
             'show_save_and_add_another': False,
             'show_save_and_continue': False,
             'show_delete': False
-        })
+        }, current_app=self.admin_site.name)
 
 
 #

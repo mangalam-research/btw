@@ -8,15 +8,26 @@ if __name__ == "__main__":
             and (len(sys.argv) < 3 or "--nostatic" not in sys.argv[2:])):
         sys.argv.append("--nostatic")
 
+    testing = len(sys.argv) > 1 and sys.argv[1] == "test"
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                          "btw.test_settings" if len(sys.argv) > 1 and
-                          sys.argv[1] == "test"
-                          else "btw.settings")
+                          "btw.test_settings" if testing else "btw.settings")
 
-    if len(sys.argv) > 1 and sys.argv[1] == "btwredis":
-        from django.conf import settings
-        settings.INSTALLED_APPS = ['btw_management']
+    import subprocess
+    started_redis = False
+    if testing:
+        subprocess.check_call([sys.argv[0], "btwredis", "start",
+                               "--delete-dump"])
+        started_redis = True
 
-    from django.core.management import execute_from_command_line
-
-    execute_from_command_line(sys.argv)
+    from lib import env
+    env.from_command_line = True
+    env.testing = testing or (
+        len(sys.argv) > 1 and sys.argv[1] in ("liveserver", "runserver"))
+    try:
+        from django.core.management import execute_from_command_line
+        execute_from_command_line(sys.argv)
+    finally:
+        if started_redis:
+            subprocess.check_call([sys.argv[0], "btwredis", "stop",
+                                   "--delete-dump"])

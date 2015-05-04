@@ -5,6 +5,7 @@ import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.cache import caches
+from django.core.urlresolvers import reverse
 
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
@@ -16,8 +17,6 @@ from .util import launch_fetch_task, create_valid_article, \
     extract_inter_article_links
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "views.json"))
 
 cache = caches['article_display']
 
@@ -91,9 +90,11 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
                      get_item=get_item_mock)
 @override_settings(CELERY_ALWAYS_EAGER=True,
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+                   BROKER_BACKEND='memory',
+                   ROOT_URLCONF='lexicography.tests.urls')
 class TasksTestCase(TestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "views.json"))
 
     def setUp(self):
         cache.clear()
@@ -230,12 +231,13 @@ class TasksTestCase(TestCase):
         tree = lxml.etree.fromstring(result["xml"])
         refs_by_term = extract_inter_article_links(tree)
 
-        self.assertEqual(refs_by_term,
-                         {
-                             'foo': '/lexicography/entry/2/',
-                             'abcd': '/lexicography/entry/1/'
-                         },
-                         "the article should have the right links")
+        self.assertEqual(
+            refs_by_term,
+            {
+                'foo': reverse("lexicography_entry_details", args=(2,)),
+                'abcd': reverse("lexicography_entry_details", args=(1,))
+            },
+            "the article should have the right links")
 
         self.assertEqual(
             result["bibl_data"],

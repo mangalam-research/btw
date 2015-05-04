@@ -23,6 +23,7 @@ class Command(BaseCommand):
 Manage the redis server used by BTW.
 """
     args = "command"
+    requires_system_checks = False
 
     option_list = BaseCommand.option_list + (
         make_option('--delete-dump',

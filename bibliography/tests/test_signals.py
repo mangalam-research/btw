@@ -5,18 +5,12 @@ have a separate module for testing them.
 
 """
 
-import os
-
 from django.test import TestCase
 import mock
 
 from .. import signals, tasks
 from ..models import Item, PrimarySource
 from . import mock_zotero
-
-dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "one_entry.json"))
 
 class SignalGrabber(object):
 

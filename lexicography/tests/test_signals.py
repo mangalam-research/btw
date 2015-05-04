@@ -18,9 +18,6 @@ from .util import launch_fetch_task, get_valid_document_data
 launch_fetch_task()
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "one_entry.json"))
-
 user_model = get_user_model()
 
 class SignalGrabber(object):
@@ -49,7 +46,8 @@ xmltree = xml.XMLTree(valid_editable)
 schema_version = xmltree.extract_version()
 
 class SignalTestCase(TestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "one_entry.json"))
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")

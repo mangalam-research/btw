@@ -135,7 +135,7 @@ class BTWRedisTestCase(unittest.TestCase):
                 def communicate(self, *args, **kwargs):
                     if args[0].startswith("auth "):
                         MockPopen.__times += 1
-                        if MockPopen.__times == 2:
+                        if MockPopen.__times >= 2:
                             return ("NOAUTH", "")
 
                     return super(MockPopen, self).communicate(*args, **kwargs)
@@ -199,7 +199,8 @@ class BTWRedisTestCase(unittest.TestCase):
 
         c = Caller()
         with mock.patch(
-                "core.management.commands.btwredis.get_running_workers") \
+                "btw_management.management.commands.btwredis"
+                ".get_running_workers") \
             as grw, \
             with_fake_settings(), \
             self.assertRaisesRegexp(

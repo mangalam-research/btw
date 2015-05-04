@@ -311,7 +311,7 @@ InsertBiblPtrAction.prototype.execute = function (data) {
         if (!obj)
             return;
 
-        data.target = obj.url;
+        data.target = obj.abstract_url;
         if (range)
             editor.mode.replace_selection_with_ref_tr.execute(data);
         else

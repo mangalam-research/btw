@@ -339,7 +339,7 @@ def step_impl(context, what):
     # We simulate an AJAX query on the search table.
     while True:
         r = requests.get(context.selenic.SERVER +
-                         "/lexicography/search-table/",
+                         "/en-us/lexicography/search-table/",
                          params={
                              "length": -1,
                              "search[value]": title,

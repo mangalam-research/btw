@@ -1,13 +1,15 @@
 # -*- encoding: utf-8 -*-
-from django_webtest import TransactionWebTest
-from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
 import cookielib as http_cookiejar
-
 import os
 import datetime
 
-import lxml.etree
+
+from django_webtest import WebTest
+from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse
+from django.test.utils import override_settings
+from django.utils import translation
+from cms.test_utils.testcases import BaseCMSTestCase
 
 from .. import models
 from ..models import Entry, EntryLock, ChangeRecord, Chunk, PublicationChange
@@ -28,11 +30,13 @@ def set_lemma(tree, new_lemma):
     return test_util.set_lemma(tree.xpath("//*[@id='id_data']")[0].text,
                                new_lemma)
 
-
-class ViewsTestCase(TransactionWebTest):
-    fixtures = ["initial_data.json"] + local_fixtures
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class ViewsTestCase(BaseCMSTestCase, WebTest):
+    fixtures = local_fixtures
 
     def setUp(self):
+        translation.activate('en-us')
+
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
         self.noperm = user_model.objects.get(username="noperm")
@@ -301,10 +305,9 @@ class EditingTestCase(ViewsTestCase):
         #
         # Returns the response which has the editing page.
         #
-        response = self.app.get(reverse("lexicography_main"), user=user)
-        url = reverse('lexicography_entry_new')
-        response = response.click(href=url).follow()
-
+        response =\
+            self.app.get(
+                reverse('lexicography_entry_new'), user=user).maybe_follow()
         # Check the logurl has a good value.
         self.assertEqual(response.form['logurl'].value,
                          reverse('lexicography_log'))

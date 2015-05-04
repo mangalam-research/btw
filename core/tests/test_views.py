@@ -1,10 +1,12 @@
 import os
 import cookielib as http_cookiejar
 
-from django_webtest import TransactionWebTest
+from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.contrib.sites.models import Site
+from django.contrib.auth import get_user_model
+from cms.test_utils.testcases import BaseCMSTestCase
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_true, assert_equal, assert_false, \
@@ -13,26 +15,39 @@ from nose.tools import assert_true, assert_equal, assert_false, \
 from invitation.tests.util import BAD_KEY
 from invitation.models import Invitation
 import lib.util
+from lib import cmsutil
 
 dirname = os.path.dirname(__file__)
+user_model = get_user_model()
 
 
-class ViewTestCase(TransactionWebTest):
-    fixtures = ["initial_data.json"]
+@override_settings(ROOT_URLCONF='core.tests.urls')
+class ViewTestCase(BaseCMSTestCase, WebTest):
 
     def setUp(self):
-        self.signup_url = reverse("account_signup")
-        self.verification_sent = reverse("account_email_verification_sent")
+        super(ViewTestCase, self).setUp()
+        from django.utils import translation
+        translation.activate('en-us')
+        # We need a home page for some of the tests to pass.
+        from cms.api import create_page
+        self.home_page = \
+            create_page("Home", "generic_page.html",
+                        "en-us")
+        self.home_page.toggle_in_navigation()
+        self.home_page.publish('en-us')
+        cmsutil.refresh_cms_apps()
+
         self.lexicography_url = reverse("lexicography_main")
 
     def tearDown(self):
+        super(ViewTestCase, self).tearDown()
         # We must clear the page cache to make sure tests are working.
         lib.util.delete_own_keys('page')
 
+
 class GeneralTestCase(ViewTestCase):
 
-    fixtures = ["initial_data.json",
-                os.path.join("core", "tests", "fixtures", "sites.json")]
+    fixtures = [os.path.join("core", "tests", "fixtures", "sites.json")]
 
     brand_xpath = '//a[@class="navbar-brand"]'
     alert_xpath = \
@@ -44,7 +59,7 @@ class GeneralTestCase(ViewTestCase):
         the site.
         """
 
-        response = self.app.get('/')
+        response = self.app.get(reverse('pages-root'))
         brand = response.lxml.xpath(self.brand_xpath)[0]
         self.assertEqual(brand.text, "BTW dev")
 
@@ -60,7 +75,7 @@ class GeneralTestCase(ViewTestCase):
         site.name = "foo"
         site.save()
 
-        response = self.app.get('/')
+        response = self.app.get(reverse('pages-root'))
         brand = response.lxml.xpath(self.brand_xpath)[0]
         self.assertEqual(brand.text, "foo")
 
@@ -69,7 +84,7 @@ class GeneralTestCase(ViewTestCase):
         """
         Tests that a demo alert shows up if the site is a demo.
         """
-        response = self.app.get('/')
+        response = self.app.get(reverse('pages-root'))
         alerts = response.lxml.xpath(self.alert_xpath)
         self.assertEqual(len(alerts), 1, "there should be one alert")
         self.assertEqual(
@@ -102,7 +117,7 @@ class GeneralTestCase(ViewTestCase):
             rest=None
         )
         self.app.cookiejar.set_cookie(cookie)
-        response = self.app.get('/')
+        response = self.app.get(reverse('pages-root'))
         alerts = response.lxml.xpath(self.alert_xpath)
         self.assertEqual(len(alerts), 1, "there should be one alert")
         self.assertEqual(
@@ -115,8 +130,7 @@ class GeneralTestCase(ViewTestCase):
 # Turn off the requirement for emails just for this test.
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
 class LoginTestCase(ViewTestCase):
-    fixtures = ViewTestCase.fixtures + \
-        [os.path.join(dirname, "fixtures", "users.json")]
+    fixtures = [os.path.join(dirname, "fixtures", "users.json")]
 
     def test_login(self):
         """
@@ -146,15 +160,18 @@ class LoginTestCase(ViewTestCase):
         response = self.app.get(reverse("logout"))
         self.assertContains(response, "Are you sure you want to sign out?")
         response = response.form.submit()
-        self.assertRedirects(response, reverse("main"))
+        self.assertRedirects(response, "/", target_status_code=302)
+        response = response.follow()
+        self.assertRedirects(response, reverse("pages-root"))
         assert_not_equal(session_id, self.app.cookies.get("sessionid"))
+        response = response.follow()
 
     def test_main_show_login(self):
         """
         Tests that the main view shows a login option when the user has
         not logged in yet.
         """
-        response = self.app.get(reverse("main"))
+        response = self.app.get(reverse("pages-root"))
         self.assertTrue(
             len(response.lxml.xpath("//a[@href='{0}']"
                                     .format(reverse("login")))) > 0)
@@ -164,7 +181,7 @@ class LoginTestCase(ViewTestCase):
         Tests that the main view shows a logout option when the user is
         logged in.
         """
-        response = self.app.get(reverse("main"), user='foo')
+        response = self.app.get(reverse("pages-root"), user='foo')
         self.assertTrue(
             len(response.lxml.xpath("//a[@href='{0}']"
                                     .format(reverse("logout")))) > 0)
@@ -174,7 +191,7 @@ class LoginTestCase(ViewTestCase):
         Tests that the main view shows an administration option when the
         user is an administrator.
         """
-        response = self.app.get(reverse("main"), user='admin')
+        response = self.app.get(reverse("pages-root"), user='admin')
         self.assertTrue(
             len(response.lxml.xpath("//a[@href='{0}']"
                                     .format(reverse("admin:index")))) > 0)
@@ -184,13 +201,25 @@ class LoginTestCase(ViewTestCase):
         Tests that the main view does not show an administration option
         when the user is not an administrator.
         """
-        response = self.app.get(reverse("main"), user='foo')
+        response = self.app.get(reverse("pages-root"), user='foo')
         self.assertTrue(
             len(response.lxml.xpath("//a[@href='{0}']"
                                     .format(reverse("admin:index")))) == 0)
 
 
-class SignupTestCase(ViewTestCase):
+class SignupTestCase(WebTest):
+
+    def setUp(self):
+        super(SignupTestCase, self).setUp()
+        from django.utils import translation
+        translation.activate('en-us')
+        self.signup_url = reverse("account_signup")
+        self.verification_sent = reverse("account_email_verification_sent")
+
+    def tearDown(self):
+        super(SignupTestCase, self).tearDown()
+        # We must clear the page cache to make sure tests are working.
+        lib.util.delete_own_keys('page')
 
     def test_signup_without_invite(self):
         """

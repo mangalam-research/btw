@@ -1,0 +1,15 @@
+{% load menu_tags %}
+
+<li class="child{% if child.selected or child.ancestor %} active{% endif %}{% if child.children %} dropdown{% endif %}">
+        {% if child.children %}
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          {{ child.get_menu_title }}<span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          {% show_menu from_level to_level extra_inactive extra_active "menu/navbar.html" "" "" child %}
+        </ul>
+        {% else %}
+        <a href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">{{ child.get_menu_title }}</a>
+
+        {% endif %}
+</li>

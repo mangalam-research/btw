@@ -108,6 +108,7 @@ with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
                  .replace('@SERVER_PORT@', server_port))
 
 for name, user in name_users:
+    subprocess.check_call(['./manage.py', 'btwredis', 'start'])
     subprocess.check_call(['createdb', name])
     clean_databases = True
     subprocess.check_call(
@@ -115,7 +116,6 @@ for name, user in name_users:
          name])
     subprocess.check_call(['./manage.py', 'migrate'])
     subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
-    subprocess.check_call(['./manage.py', 'btwredis', 'start'])
     subprocess.check_call(['./manage.py', 'clearcache', '--all'])
     subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
     # Give time to the workers to start.

@@ -1,0 +1,7 @@
+{% load menu_tags %}
+
+{% for child in children %}
+{% if child.attr.pull_right or child.level > 0 %}
+{% include "menu/navbar_menu.html" %}
+{% endif %}
+{% endfor %}

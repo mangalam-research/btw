@@ -8,7 +8,7 @@ from django.test.utils import override_settings
 from django.test import SimpleTestCase
 
 from .util import Caller, call_command
-from core.management.commands.btwworker import flush_caches
+from btw_management.management.commands.btwworker import flush_caches
 
 tmpdir = None
 runpath = None

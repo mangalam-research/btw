@@ -152,7 +152,7 @@ def create_valid_article():
     now = util.utcnow()
 
     client = Client()
-    add_raw_url = reverse("admin:lexicography_entry_rawnew")
+    add_raw_url = reverse("full-admin:lexicography_entry_rawnew")
     assert client.login(username='foo', password='foo')
     response = client.post(add_raw_url, {"data": data})
     assert response.status_code == 302

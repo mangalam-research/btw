@@ -20,13 +20,18 @@ user_model = get_user_model()
 # pylint: disable=W0212
 
 
-class EntryTestCase(TransactionTestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+    fixtures = local_fixtures
+    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
         self.entry = Entry.objects.get(id=1)
+        from django.db import connections
+        for db_name in self._databases_names(include_mirrors=False):
+            with open("/tmp/" + db_name, 'w') as f:
+                f.write(connections[db_name]._test_serialized_contents)
 
     def test_dependency_key(self):
         """
@@ -176,8 +181,9 @@ xmltree = xml.XMLTree(valid_editable)
 schema_version = xmltree.extract_version()
 
 
-class ChangeRecordTestCase(TransactionTestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+class ChangeRecordTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+    fixtures = local_fixtures
+    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
@@ -442,8 +448,9 @@ class ChangeRecordTestCase(TransactionTestCase):
             old_count)
 
 
-class EntryLockTestCase(TransactionTestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+class EntryLockTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+    fixtures = local_fixtures
+    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
@@ -456,8 +463,9 @@ class EntryLockTestCase(TransactionTestCase):
         self.assertTrue(lock.expirable)
 
 
-class ChunkTestCase(TransactionTestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+class ChunkTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+    fixtures = local_fixtures
+    serialized_rollback = True
 
     def test_abnormal_is_invalid(self):
         """

@@ -121,7 +121,7 @@ s.MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-s.MEDIA_URL = ''
+s.MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -171,7 +171,13 @@ s.MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # LocaleMiddleware was added for Django CMS.
+    'django.middleware.locale.LocaleMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
 )
 
 s.CACHE_MIDDLEWARE_KEY_PREFIX = lambda s: s.BTW_SITE_NAME
@@ -189,6 +195,17 @@ s.TEMPLATE_DIRS = (
     os.path.join(s.TOPDIR, "templates"),
 )
 
+s.CMS_TEMPLATES = (
+    ('generic_page.html', 'Generic'),
+    ('front_page.html', 'Site Front Page'),
+)
+
+s.CMS_PERMISSION = True
+
+s.LANGUAGES = [
+    ('en-us', 'English'),
+]
+
 s.TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
@@ -202,6 +219,8 @@ s.TEMPLATE_CONTEXT_PROCESSORS = (
     "allauth.account.context_processors.account",
     "allauth.socialaccount.context_processors.socialaccount",
     "btw.context_processors.global_context_processor",
+    'sekizai.context_processors.sekizai',
+    'cms.context_processors.cms_settings',
 )
 
 s.AUTHENTICATION_BACKENDS = (
@@ -217,6 +236,7 @@ s.AUTHENTICATION_BACKENDS = (
 # the browsable API, which we currently do not want to provide.
 #
 s.INSTALLED_APPS = (
+    'core',
     'btw_management',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -227,11 +247,13 @@ s.INSTALLED_APPS = (
     # templates. We must NOT ever use it even in testing because it
     # caches responses.
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    # This is required by Django CMS and must appear before
+    # 'django.contrib.admin'
+    'djangocms_admin_style',
+    'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.admindocs',
     'less',
     'django_nose',
-    'core',
     'wed',
     'lexicography',
     'bibliography',
@@ -258,7 +280,49 @@ s.INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.vk',
     # 'allauth.socialaccount.providers.weibo',
     'django_forms_bootstrap',
-    'django_cache_management'
+    'django_cache_management',
+    # Django CMS
+    'cms',
+    # The following are needed by Django CMS
+    'treebeard',
+    'menus',
+    'sekizai',
+    'reversion',
+    # For django-filer which is required by Django CMS
+    "filer",
+    "mptt",
+    "easy_thumbnails",
+    "djangocms_text_ckeditor",
+    'cmsplugin_iframe',
+    # For cmsplugin-filer, which is required by Django CMS,
+    'cmsplugin_filer_file',
+    'cmsplugin_filer_folder',
+    'cmsplugin_filer_link',
+    'cmsplugin_filer_image',
+    'cmsplugin_filer_teaser',
+    'cmsplugin_filer_video',
+    # End of apps required by Django CMS.
+    'final',
+)
+
+s.MIGRATION_MODULES = {
+    'filer': 'filer.migrations_django',
+    'cmsplugin_filer_file': 'cmsplugin_filer_file.migrations_django',
+    'cmsplugin_filer_folder': 'cmsplugin_filer_folder.migrations_django',
+    'cmsplugin_filer_link': 'cmsplugin_filer_link.migrations_django',
+    'cmsplugin_filer_image': 'cmsplugin_filer_image.migrations_django',
+    'cmsplugin_filer_teaser': 'cmsplugin_filer_teaser.migrations_django',
+    'cmsplugin_filer_video': 'cmsplugin_filer_video.migrations_django',
+    'djangocms_text_ckeditor': 'djangocms_text_ckeditor.migrations_django'
+}
+
+# For easy_thumbnails
+s.THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    # 'easy_thumbnails.processors.scale_and_crop',
+    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
+    'easy_thumbnails.processors.filters',
 )
 
 s.ACCOUNT_AUTHENTICATION_METHOD = "username"
@@ -270,7 +334,7 @@ s.ACCOUNT_SIGNUP_FORM_CLASS = 'core.forms.SignupForm'
 
 s.INVITATION_EXPIRY_DAYS = 5
 
-s.TEST_RUNNER = 'core.runner.Runner'
+s.TEST_RUNNER = 'django_nose.runner.NoseTestSuiteRunner'
 
 s.LOGGING = {
     'version': 1,
@@ -397,6 +461,7 @@ s.BTW_FONTAWESOME_CSS_PATH = \
 # For styling with bootstrap:
 s.BTW_DATATABLES_CSS_PATH = \
     '/static/lib/external/datatables/css/dataTables.bootstrap.css'
+
 s.BTW_BOOTSTRAP_EDITABLE__CSS_PATH = \
     '/static/lib/external/bootstrap3-editable/css/bootstrap-editable.css'
 s.BTW_REQUIREJS_PATH = None

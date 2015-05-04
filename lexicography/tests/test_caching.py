@@ -6,6 +6,7 @@ import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.cache import caches
+from django.core.urlresolvers import reverse
 
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
@@ -17,9 +18,6 @@ from .util import launch_fetch_task, create_valid_article, \
     extract_unlinked_terms
 
 dirname = os.path.dirname(__file__)
-local_fixtures = list(os.path.join(dirname, "fixtures", x)
-                      for x in ("users.json", "views.json"))
-
 cache = caches['article_display']
 
 mock_records = mock_zotero.Records([
@@ -92,9 +90,12 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
 @override_settings(CELERY_ALWAYS_EAGER=True,
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+                   BROKER_BACKEND='memory',
+                   ROOT_URLCONF='lexicography.tests.urls')
 class CachingTestCase(TestCase):
-    fixtures = ["initial_data.json"] + local_fixtures
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "views.json"))
+
     ps = None
     item = None
 
@@ -146,8 +147,8 @@ class CachingTestCase(TestCase):
             refs_by_term = extract_inter_article_links(tree)
 
             expected = {
-                'foo': '/lexicography/entry/2/',
-                'abcd': '/lexicography/entry/1/'
+                'foo': reverse("lexicography_entry_details", args=(2,)),
+                'abcd': reverse("lexicography_entry_details", args=(1,)),
             }
 
             if cr.lemma == u"prasāda copy":
@@ -163,8 +164,9 @@ class CachingTestCase(TestCase):
             term = extract_unlinked_terms(tree)[0]
 
         self.assertItemsEqual(depman.lemma.get(term), dep_keys)
-        self.assertItemsEqual(depman.bibl.get(self.item.url), dep_keys)
-        self.assertItemsEqual(depman.bibl.get(self.ps.url), dep_keys)
+        self.assertItemsEqual(
+            depman.bibl.get(self.item.abstract_url), dep_keys)
+        self.assertItemsEqual(depman.bibl.get(self.ps.abstract_url), dep_keys)
 
         op(term)
 
@@ -451,7 +453,7 @@ class CachingTestCase(TestCase):
             self.item.title += "bis"
             self.item.save()
             self.assertIsNone(
-                depman.bibl.get(self.item.url),
+                depman.bibl.get(self.item.abstract_url),
                 "there should no longer be any dependency "
                 "information regarding the item that has been "
                 "changed")
@@ -475,7 +477,7 @@ class CachingTestCase(TestCase):
             self.ps.reference_title += "bis"
             self.ps.save()
             self.assertIsNone(
-                depman.bibl.get(self.ps.url),
+                depman.bibl.get(self.ps.abstract_url),
                 "there should no longer be any dependency "
                 "information regarding the item that has been "
                 "changed")
