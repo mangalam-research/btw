@@ -211,6 +211,11 @@ s.AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
+#
+# rest_framework is not part of the installed apps. What gives? It is
+# not needed to use Django REST Framework, because it only provides
+# the browsable API, which we currently do not want to provide.
+#
 s.INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -373,6 +378,9 @@ s.BTW_REDIS_SOCKET = lambda s: \
 s.REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
     ),
 }
 
