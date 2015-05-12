@@ -13,6 +13,10 @@ if __name__ == "__main__":
                           sys.argv[1] == "test"
                           else "btw.settings")
 
+    if len(sys.argv) > 1 and sys.argv[1] == "btwredis":
+        from django.conf import settings
+        settings.INSTALLED_APPS = ['btw_management']
+
     from django.core.management import execute_from_command_line
 
     execute_from_command_line(sys.argv)

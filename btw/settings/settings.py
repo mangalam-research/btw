@@ -217,6 +217,7 @@ s.AUTHENTICATION_BACKENDS = (
 # the browsable API, which we currently do not want to provide.
 #
 s.INSTALLED_APPS = (
+    'btw_management',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

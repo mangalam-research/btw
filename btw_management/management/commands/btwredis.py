@@ -3,6 +3,7 @@ import signal
 import subprocess
 import errno
 import time
+from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -23,6 +24,17 @@ Manage the redis server used by BTW.
 """
     args = "command"
 
+    option_list = BaseCommand.option_list + (
+        make_option('--delete-dump',
+                    action='store_true',
+                    dest='delete_dump',
+                    default=False,
+                    help='Delete the dump file before starting redis or '
+                    'after stopping it.'),
+    )
+
+    requires_system_checks = False
+
     def handle(self, *args, **options):
         if len(args) == 0:
             raise CommandError("you must specify a command.")
@@ -35,6 +47,8 @@ Manage the redis server used by BTW.
         sockfile_path = os.path.join(settings.BTW_REDIS_SOCKET_DIR_PATH,
                                      join_prefix(prefix, "redis.sock"))
         dumpfile_name = join_prefix(prefix, "dump.rdb")
+        dir_path = os.path.join(settings.TOPDIR, "var", "lib", "redis")
+        dumpfile_path = os.path.join(dir_path, dumpfile_name)
 
         def running():
             cli = subprocess.Popen(
@@ -51,7 +65,7 @@ Manage the redis server used by BTW.
                 raise CommandError("redis appears to be running already.")
 
             template = open(
-                os.path.join("core", "management", "templates",
+                os.path.join("btw_management", "management", "templates",
                              "redis.conf")).read()
 
             makedirs(run_path)
@@ -70,7 +84,6 @@ Manage the redis server used by BTW.
             logfile_path = os.path.join(logging_path,
                                         join_prefix(prefix,
                                                     "redis-server.log"))
-            dir_path = os.path.join(settings.TOPDIR, "var", "lib", "redis")
             makedirs(dir_path)
 
             generated_template = template.format(
@@ -84,8 +97,21 @@ Manage the redis server used by BTW.
             if generated_template != old_template:
                 open(generated_name, 'w').write(generated_template)
 
+            if options["delete_dump"] and os.path.exists(dumpfile_path):
+                os.unlink(dumpfile_path)
+
             subprocess.check_call(["redis-server", generated_name])
-            if running():
+            tries = 10
+            is_up = False
+            while not running():
+                tries -= 1
+                if tries == 0:
+                    break
+                time.sleep(0.1)
+            else:
+                is_up = True
+
+            if is_up:
                 self.stdout.write("Started redis.")
             else:
                 raise CommandError("cannot talk to redis.")
@@ -117,6 +143,9 @@ Manage the redis server used by BTW.
             except OSError as ex:
                 if ex.errno != errno.ESRCH:
                     raise
+
+            if options["delete_dump"] and os.path.exists(dumpfile_path):
+                os.unlink(dumpfile_path)
 
             self.stdout.write("Stopped redis.")
 
