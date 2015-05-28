@@ -44,7 +44,7 @@ def cms_editor(apps, schema_editor):
         "publish_page",
     )]
 
-    pg = PageUserGroup.objects.create(name="cms author", created_by=fake)
+    pg = PageUserGroup.objects.create(name="CMS scribe", created_by=fake)
     pg.permissions = perms
     pg.save()
 

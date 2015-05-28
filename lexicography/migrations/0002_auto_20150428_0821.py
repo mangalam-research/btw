@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations
 from lib.util import PermissionResolver
 
 def permissions(apps, schema_editor):
@@ -15,12 +15,23 @@ def permissions(apps, schema_editor):
         create_permissions(app, verbosity=0)
 
     Group = apps.get_model("auth", "Group")
+
+    # Rename the author group if it exists.
+    try:
+        author_group = Group.objects.get(name="author")
+    except Group.DoesNotExist:
+        author_group = None
+
+    if author_group:
+        author_group.name = "scribe"
+        author_group.save()
+
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")
-    if Group.objects.filter(name__in=("author", "editor")).exists():
-        print "You already have an author or editor group in your database."
+    if Group.objects.filter(name__in=("scribe", "editor")).exists():
+        print "You already have an scribe or editor groups in your database."
         print ("Assuming that we are upgrading from a pre-Django 1.7 "
-               "installation, and aborting.")
+               "installation, and stopping.")
         print
         print ("If the assumption is incorrect, please edit your database "
                "manually.")
@@ -28,7 +39,7 @@ def permissions(apps, schema_editor):
 
     resolver = PermissionResolver(Permission, ContentType)
 
-    author_perms = [resolver.resolve(x) for x in [
+    scribe_perms = [resolver.resolve(x) for x in [
         ["add_authority", "lexicography", "authority"],
         ["add_changerecord", "lexicography", "changerecord"],
         ["add_chunk", "lexicography", "chunk"],
@@ -40,9 +51,9 @@ def permissions(apps, schema_editor):
         ["add_otherauthority", "lexicography", "otherauthority"],
         ["add_userauthority", "lexicography", "userauthority"]
     ]]
-    author = Group.objects.create(name="author")
-    author.permissions = author_perms
-    author.save()
+    scribe = Group.objects.create(name="scribe")
+    scribe.permissions = scribe_perms
+    scribe.save()
 
     editor_perms = [resolver.resolve(x) for x in [
         ["add_authority", "lexicography", "authority"],

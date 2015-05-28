@@ -171,7 +171,7 @@ class Entry(models.Model):
         locking. That is, if the user lacks the permissions or cannot
         lock the entry, then the user cannot edit the entry. The user
         must have the same permissions as those in the group named
-        "author", either because the user belongs to that group or
+        "scribe", either because the user belongs to that group or
         because the user has all the permissions of that
         group.
 

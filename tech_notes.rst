@@ -444,8 +444,6 @@ See below for specific upgrade cases.
 1. Upgrade the nginx configuration to the new one so that developers
    can bypass maintenance mode.
 
-2. Uninstall South.
-
 2. **After stopping redis but before updating the source,** upgrade
    ``South`` to the latest in the 1.x series.
 
@@ -458,6 +456,13 @@ See below for specific upgrade cases.
    latest format.
 
 5. Resume the installation with the source update, and so on...
+
+Afterwards:
+
+1. Create the pages managed by the CMS.
+
+2. Create an account for Bennett with the "scribe" and "CMS scribe"
+   roles, and the right to manage bibliography.
 
 1.0.x to 1.1.0
 ~~~~~~~~~~~~~~
@@ -925,24 +930,63 @@ configuration file.
  Roles
 =======
 
-+-----------+-------------------+--------------------------+
-|BTW Role   |Django group(s)    |Notes                     |
-+-----------+-------------------+--------------------------+
-|visitor    |-                  |                          |
-+-----------+-------------------+--------------------------+
-|user       |-                  |This is an abstract       |
-|           |                   |role. So no group.        |
-+-----------+-------------------+--------------------------+
-|author     |author             |                          |
-+-----------+-------------------+--------------------------+
-|editor     |editor             |                          |
-+-----------+-------------------+--------------------------+
-|superuser  |                   |Django superuser flag on. |
-+-----------+-------------------+--------------------------+
+An earlier version of BTW used the terms "author" for people who have
+the capability to edit articles. This proved confusing in discussion
+because people who can edit articles are not necessarily the authors
+of the articles. They can be proofreaders, assistants, etc.
 
-**FUTURE** Initial versions of BTW will only allow the superuser(s) to
-create new users. Later version should have an interface to streamline
-this.
+* "informational pages": Those pages that exist primarily to provide
+  information *about* the BTW project but that are not application
+  pages.  Examples: the home page of the site, a page about who is
+  involved in the project, a page that describes methodology,
+  documentation about the site, etc.
+
+* "application pages": Those pages that primarily serve to provide a user
+  interface to the applications that are part of BTW. All of the
+  lexicographical and bibliographical pages are application pages. This
+  includes the pages that show the lexicographical articles.
+
++---------------------+-------------------+--------------------------+
+|BTW Role             |Django role(s)     |Notes                     |
++---------------------+-------------------+--------------------------+
+|visitor              |-                  |People who visit the site |
+|                     |                   |but do not have an        |
+|                     |                   |account.                  |
++---------------------+-------------------+--------------------------+
+|user                 |-                  |Users are able to log in  |
+|                     |                   |but cannot edit           |
+|                     |                   |anything. (As of 2015/5,  |
+|                     |                   |this is a theoretical     |
+|                     |                   |role. Not yet in use.)    |
++---------------------+-------------------+--------------------------+
+|lexicographical      |scribe             |                          |
+|article author       |                   |                          |
++---------------------+-------------------+--------------------------+
+|assistant,           |scribe             |                          |
+|proofreader, etc...  |                   |                          |
+|                     |                   |                          |
++---------------------+-------------------+--------------------------+
+|maintainer           |CMS scribe         |                          |
+|for the              |                   |                          |
+|informational        |                   |                          |
+|pages                |                   |                          |
++---------------------+-------------------+--------------------------+
+|superuser            |-                  |Django superuser flag on. |
++---------------------+-------------------+--------------------------+
+
+A "Django role" corresponds to a Django group. The groups are defined
+as follows:
+
+* scribe: able to edit lexicographical articles.
+
+* CMS scribe: able to edit the informational pages.
+
+* editor: all privileges of scribes, but reserved for future use. (We
+  may eventually limit publishing privileges to only people in the
+  "editor" group.)
+
+There is no group able to edit application pages as these must be
+edited by developers.
 
 ========
 BTW Mode

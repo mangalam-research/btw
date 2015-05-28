@@ -13,8 +13,8 @@ from django.contrib.auth.models import Group
 
 
 def can_author(user):
-    author = Group.objects.get(name='author')
-    for perm in author.permissions.all():
+    scribe = Group.objects.get(name='scribe')
+    for perm in scribe.permissions.all():
         if not user.has_perm("{0.content_type.app_label}.{0.codename}"
                              .format(perm)):
             return False

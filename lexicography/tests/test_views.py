@@ -98,7 +98,7 @@ class MainTestCase(ViewsTestCase):
         """
         self.search_table_search("abcd", self.foo)
 
-    def test_search_by_non_author_gets_no_edit_link_on_locked_articles(self):
+    def test_search_by_non_scribe_gets_no_edit_link_on_locked_articles(self):
         """
         Tests that when an article is already locked by user X and user Y
         does a search, and user Y is not able to edit articles, then
@@ -119,9 +119,9 @@ class MainTestCase(ViewsTestCase):
         # And the user is *NOT* told that the article is locked.
         self.assertNotIn("Locked by", response)
 
-    def test_search_by_non_author_does_not_return_unpublished_articles(self):
+    def test_search_by_non_scribe_does_not_return_unpublished_articles(self):
         """
-        Someone who is not an author cannot see unpublished articles.
+        Someone who is not a scribe cannot see unpublished articles.
         """
         entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
@@ -137,9 +137,9 @@ class MainTestCase(ViewsTestCase):
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
 
-    def test_search_by_non_author_does_not_return_deleted_articles(self):
+    def test_search_by_non_scribe_does_not_return_deleted_articles(self):
         """
-        Someone who is not an author cannot see deleted articles.
+        Someone who is not a scribe cannot see deleted articles.
         """
         entry = Entry.objects.get(lemma="abcd")
         response = self.search_table_search("abcd", self.noperm)
@@ -159,9 +159,9 @@ class MainTestCase(ViewsTestCase):
         hits = funcs.parse_search_results(response.body)
         self.assertEqual(len(hits), 0)
 
-    def test_search_lemma_by_author_can_return_unpublished_articles(self):
+    def test_search_lemma_by_scribe_can_return_unpublished_articles(self):
         """
-        Someone who is an author can see unpublished articles.
+        Someone who is a scribe can see unpublished articles.
         """
         entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
@@ -181,9 +181,9 @@ class MainTestCase(ViewsTestCase):
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["foo"]["hits"]), 1)
 
-    def test_search_lemma_by_author_can_return_deleted_articles(self):
+    def test_search_lemma_by_scribe_can_return_deleted_articles(self):
         """
-        Someone who is an author can see unpublished articles.
+        Someone who is a scribe can see unpublished articles.
         """
         entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
@@ -200,9 +200,9 @@ class MainTestCase(ViewsTestCase):
         self.assertEqual(len(hits["foo"]["hits"]), 1)
         self.assertEqual(hits["foo"]["hits"][0]["deleted"], "Yes")
 
-    def test_search_by_author_can_return_unpublished_articles(self):
+    def test_search_by_scribe_can_return_unpublished_articles(self):
         """
-        Someone who is an author can see unpublished articles.
+        Someone who is a scribe can see unpublished articles.
         """
         # This just ensures that there **are** unpublished entries.
         self.assertTrue(
@@ -223,9 +223,9 @@ class MainTestCase(ViewsTestCase):
                          Entry.objects.active_entries()
                          .filter(latest_published__isnull=True).count())
 
-    def test_search_by_author_can_return_deleted_articles(self):
+    def test_search_by_scribe_can_return_deleted_articles(self):
         """
-        Someone who is an author can see deleted articles.
+        Someone who is a scribe can see deleted articles.
         """
         # We delete one.
         entry = Entry.objects.get(lemma="abcd")

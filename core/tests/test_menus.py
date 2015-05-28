@@ -41,10 +41,10 @@ class MenuTestCase(WebTest):
         from django.utils import translation
         translation.activate('en-us')
 
-        self.author = user_model.objects.create_user(
+        self.scribe = user_model.objects.create_user(
             username='test', password='test')
-        g = Group.objects.get(name='author')
-        g.user_set.add(self.author)
+        g = Group.objects.get(name='scribe')
+        g.user_set.add(self.scribe)
         g.save()
 
         from lib import cmsutil
@@ -107,18 +107,18 @@ class MenuTestCase(WebTest):
         response = self.app.get(reverse('pages-root'))
         response.click(href=reverse_to_re('lexicography_main'))
 
-    def test_lexicography_new_for_authors(self):
+    def test_lexicography_new_for_scribes(self):
         """
-        Test that there is a link to create new articles if the user is an
-        author.
+        Test that there is a link to create new articles if the user is a
+        scribe.
         """
-        response = self.app.get(reverse('pages-root'), user=self.author)
+        response = self.app.get(reverse('pages-root'), user=self.scribe)
         response.click(href=reverse_to_re('lexicography_entry_new'))
 
     def test_lexicography_new_for_others(self):
         """
         Test that there is no link to create new articles if the user is
-        not an author.
+        not a scribe.
         """
         response = self.app.get(reverse('pages-root'))
         with self.assertRaisesRegexp(IndexError,
@@ -137,7 +137,7 @@ class MenuTestCase(WebTest):
         Test that there is no link to search bibliographical articles for
         a user who lacks the permissions.
         """
-        response = self.app.get(reverse('pages-root'), user=self.author)
+        response = self.app.get(reverse('pages-root'), user=self.scribe)
         with self.assertRaisesRegexp(IndexError,
                                      "^No matching elements found"):
             response.click(href=reverse_to_re('bibliography_manage'))
@@ -164,7 +164,7 @@ class MenuTestCase(WebTest):
         """
         Test that the user menu shows the user name for logged in users.
         """
-        response = self.app.get(reverse('pages-root'), user=self.author)
+        response = self.app.get(reverse('pages-root'), user=self.scribe)
         candidates = response.lxml.xpath(
             "//div[@id='btw-site-navigation']"
             "//ul[contains(@class, ' navbar-right')]/li/a")
@@ -187,7 +187,7 @@ class MenuTestCase(WebTest):
         Test that the user menu does not show the admin menu item for users
         who are not super users.
         """
-        response = self.app.get(reverse('pages-root'), user=self.author)
+        response = self.app.get(reverse('pages-root'), user=self.scribe)
         with self.assertRaisesRegexp(IndexError,
                                      "^No matching elements found"):
             response.click(href=reverse_to_re('full-admin:index'))
@@ -205,5 +205,5 @@ class MenuTestCase(WebTest):
         """
         Test that the user menu shows a logout menu to logged in users.
         """
-        response = self.app.get(reverse('pages-root'), user=self.author)
+        response = self.app.get(reverse('pages-root'), user=self.scribe)
         response.click(href=reverse_to_re('logout'))
