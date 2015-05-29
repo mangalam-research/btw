@@ -2,6 +2,7 @@
 /cache
 /logs
 /sitestatic
+/media
 /btw.sqlite3
 /README.html
 /node_modules
