@@ -44,7 +44,7 @@ def ajax_login_required(view):
 @require_GET
 def search(request):
     return _ajax_search(request) if request.is_ajax() else \
-        manage(request, submenu="btw-bibliography-general-sub")
+        _table(request, False, "btw-bibliography-general-sub")
 
 
 @never_cache
@@ -81,7 +81,10 @@ def check_refresh(request):
 @never_cache
 @login_required
 @require_GET
-def manage(request, editable=False, submenu="btw-bibliography-manage-sub"):
+def manage(request):
+    return _table(request, True, "btw-bibliography-manage-sub")
+
+def _table(request, editable, submenu):
     template = loader.get_template('bibliography/manage.html')
     context = RequestContext(
         request,

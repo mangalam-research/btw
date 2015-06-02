@@ -5,8 +5,7 @@ from .views import ItemTable, ItemViewSet, AllListView
 
 urlpatterns = patterns('bibliography.views',
                        url(r'^search/$', 'search', name='bibliography_search'),
-                       url(r'^manage/$', 'manage', {'editable': True},
-                           name='bibliography_manage'),
+                       url(r'^manage/$', 'manage', name='bibliography_manage'),
                        url(r"^initiate-refresh/$", "initiate_refresh",
                            name="bibliography_initiate_refresh"),
                        url(r"^check-refresh/$", "check_refresh",
