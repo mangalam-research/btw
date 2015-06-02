@@ -309,9 +309,23 @@ Run::
 Demo Site
 ---------
 
-Make sure that the site name in the sites table is properly set. Make
-sure that anything that depends on the location of STATIC_URL is
-properly set.
+Complete Copy
+~~~~~~~~~~~~~
+
+1. Dump the database on the "real" site.
+
+2. Drop the old btw_demo database.
+
+3. Create a new btw_demo database.
+
+4. Issue::
+
+    pg_restore -d btw_demo [path to dump]
+
+Partial Copy
+~~~~~~~~~~~~
+
+Make sure that the site name in the sites table is properly set.
 
 If you are going to move over users then:
 
@@ -448,20 +462,36 @@ See below for specific upgrade cases.
    ``South`` to the latest in the 1.x series.
 
 3. **After stopping redis but before updating the source,** upgrade
-   ``django-allauth`` to the version required by BTW.
+   ``django-allauth`` to the version required by BTW **1.2.0**.
 
 4. **After stopping redis but before updating the source,** run
-   ``./manage.py migrate socialauth``. This will upgrade the tables
-   for the ``socialauth`` app (provied by ``django-allauth``) to the
+   ``./manage.py migrate socialaccount``. This will upgrade the tables
+   for the ``socialaccount`` app (provied by ``django-allauth``) to the
    latest format.
 
 5. Resume the installation with the source update, and so on...
 
 Afterwards:
 
-1. Create the pages managed by the CMS.
+1. Create the pages managed by the CMS:
 
-2. Create an account for Bennett with the "scribe" and "CMS scribe"
+ a. On the development machine issue::
+
+    ./manage.py dumpdata --indent=2 --natural-foreign cms cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_link cmsplugin_filer_link cmsplugin_filer_image cmsplugin_filer_teaser cmsplugin_filer_video  easy_thumbnails filer djangocms_text_ckeditor > dump.json
+
+ b. Remove the record that has to do with cms.pageusergroup.
+
+ c. On the deployment machine issue::
+
+    ./manage loaddata dump.json
+
+ d. Copy the ``media`` subdirectory from the dev machine to the
+    deployment machine. **Make sure to move it into the right location**.
+
+2. Duplicate the permission setup from the dev machine to the
+   deployment machine.
+
+3. Create an account for Bennett with the "scribe" and "CMS scribe"
    roles, and the right to manage bibliography.
 
 1.0.x to 1.1.0
