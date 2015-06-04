@@ -182,11 +182,12 @@ Pinging worker testing.bibliography.worker... failed: not started
 testing.worker has started.
 testing.bibliography.worker has started.
 """)
+        from btw.settings._env import env
         self.assertEqual(stderr, """\
-testing.worker: not using environment karma_dev (uses environment foo)
-testing.bibliography.worker: not using environment karma_dev (uses \
+testing.worker: not using environment {0} (uses environment foo)
+testing.bibliography.worker: not using environment {0} (uses \
 environment foo)
-""")
+""".format(env))
 
     def test_stop_all(self):
         """
@@ -317,12 +318,15 @@ Checking worker testing.bibliography.worker... failed: not started
                 stdout, stderr = call_command("btwworker", "check")
         finally:
             call_command("btwworker", "stop", all=True)
+
+        from btw.settings._env import env
+
         self.assertEqual(stdout, """\
-Checking worker testing.worker... failed: not using environment karma_dev \
+Checking worker testing.worker... failed: not using environment {0} \
 (uses environment foo)
 Checking worker testing.bibliography.worker... failed: not using \
-environment karma_dev (uses environment foo)
-""")
+environment {0} (uses environment foo)
+""".format(env))
         self.assertEqual(stderr, "")
 
     def test_ping_does_not_take_arguments(self):
