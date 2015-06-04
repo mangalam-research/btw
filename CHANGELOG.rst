@@ -1,3 +1,11 @@
+* 1.2.0:
+
+  + New features:
+
+   - Upgraded to Django 1.7.x.
+
+   - Added of Django CMS 3.1 for managing the informational pages.
+
 * 1.1.0:
 
   + New features:
