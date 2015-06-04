@@ -489,7 +489,9 @@ Afterwards:
     deployment machine. **Make sure to move it into the right location**.
 
 2. Duplicate the permission setup from the dev machine to the
-   deployment machine.
+   deployment machine. In particular:
+
+ a. Add the permissions to the CMS plugins to the "CMS scribe" group.
 
 3. Create an account for Bennett with the "scribe" and "CMS scribe"
    roles, and the right to manage bibliography.

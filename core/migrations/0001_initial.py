@@ -32,6 +32,7 @@ def cms_editor(apps, schema_editor):
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")
     PageUserGroup = apps.get_model("cms", "PageUserGroup")
+    GlobalPagePermission = apps.get_model("cms", "GlobalPagePermission")
 
     resolver = PermissionResolver(Permission, ContentType)
 
@@ -44,9 +45,18 @@ def cms_editor(apps, schema_editor):
         "publish_page",
     )]
 
+    perms.append(resolver.resolve(("use_structure", "cms", "placeholder")))
+
     pg = PageUserGroup.objects.create(name="CMS scribe", created_by=fake)
     pg.permissions = perms
     pg.save()
+
+    # We create a GlobalPagePermission for our new group with default
+    # values.
+    global_pp = GlobalPagePermission()
+    global_pp.group = pg
+    global_pp.save()
+
 
 class Migration(migrations.Migration):
 
