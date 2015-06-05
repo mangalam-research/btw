@@ -6,6 +6,7 @@ from django.test.utils import override_settings
 from cms.test_utils.testcases import BaseCMSTestCase
 
 from ..models import Entry
+from ..xml import get_supported_schema_versions
 from . import util as test_util
 
 dirname = os.path.dirname(__file__)
@@ -19,6 +20,11 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
     add_raw = reverse("full-admin:lexicography_entry_rawnew")
     update_raw = reverse("full-admin:lexicography_entry_rawupdate",
                          args=(1,))
+
+    def setUp(self):
+        super(EntryViewTestCase, self).setUp()
+        from django.utils import translation
+        translation.activate('en-us')
 
     def generic_unclean(self, url):
         response = self.app.get(url, user="admin")
@@ -81,3 +87,84 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
 
     def test_update_raw_successful(self):
         self.generic_successful(self.update_raw)
+
+    def test_revert_available(self):
+        """
+        The revert option should be available for ChangeRecord instances
+        that have supported versions.
+        """
+
+        entry = Entry.objects.get(lemma='foo')
+        latest = entry.latest
+        latest.c_hash.schema_version = \
+            get_supported_schema_versions().keys()[-1]
+        latest.c_hash.save()
+        url = reverse("lexicography_change_revert", args=(latest.pk,))
+        response = self.app.get(
+            reverse("full-admin:lexicography_entry_change",
+                    args=(entry.pk, )),
+            user="admin")
+        self.assertTrue(response.lxml.xpath("//a[@href='{0}']".format(url)))
+
+    def test_revert_unavailable(self):
+        """
+        The revert option should be unavailable for ChangeRecord instances
+        that have unsupported versions.
+        """
+
+        entry = Entry.objects.get(lemma='foo')
+        latest = entry.latest
+        # We cheat by setting the version to 0.0
+        latest.c_hash.schema_version = "0.0"
+        latest.c_hash.save()
+
+        url = reverse("lexicography_change_revert", args=(latest.pk,))
+        response = self.app.get(
+            reverse("full-admin:lexicography_entry_change",
+                    args=(entry.pk, )),
+            user="admin")
+        self.assertFalse(response.lxml.xpath("//a[@href='{0}']".format(url)))
+
+
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class ChangeRecordViewTestCase(BaseCMSTestCase, WebTest):
+    fixtures = list(os.path.join(dirname, "fixtures", x)
+                    for x in ("users.json", "views.json"))
+
+    def setUp(self):
+        super(ChangeRecordViewTestCase, self).setUp()
+        from django.utils import translation
+        translation.activate('en-us')
+
+    def test_revert_available(self):
+        """
+        The revert option should be available for ChangeRecord instances
+        that have supported versions.
+        """
+
+        latest = Entry.objects.get(lemma='foo').latest
+        latest.c_hash.schema_version = \
+            get_supported_schema_versions().keys()[-1]
+        latest.c_hash.save()
+        url = reverse("lexicography_change_revert", args=(latest.pk,))
+        response = self.app.get(
+            reverse("full-admin:lexicography_changerecord_changelist"),
+            user="admin")
+        self.assertTrue(response.lxml.xpath("//a[@href='{0}']".format(url)))
+
+    def test_revert_unavailable(self):
+        """
+        The revert option should be unavailable for ChangeRecord instances
+        that have unsupported versions.
+        """
+
+        latest = Entry.objects.get(lemma='foo').latest
+        # We cheat by setting the version to 0.0
+        latest.c_hash.schema_version = "0.0"
+        latest.c_hash.save()
+
+        url = reverse("lexicography_change_revert", args=(latest.pk,))
+        response = self.app.get(
+            reverse("full-admin:lexicography_changerecord_changelist"),
+            user="admin")
+        self.assertFalse(response.lxml.xpath("//a[@href='{0}']".format(url)))

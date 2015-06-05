@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 import unittest
 import os
+from collections import OrderedDict
+
 import lib.util as util
 from .. import xml
 
@@ -98,3 +100,21 @@ class XMLTreeTestCase(unittest.TestCase):
         self.assertFalse(xmltree.is_data_unclean())
         self.assertEqual(xmltree.get_bibilographical_targets(),
                          set(["/bibliography/1", "/bibliography/2"]))
+
+class XMLTestCase(unittest.TestCase):
+
+    def test_get_supported_schema_versions(self):
+        versions = xml.get_supported_schema_versions()
+        expected = OrderedDict([
+            ("0.9", xml.VersionInfo(can_revert=False, can_validate=True)),
+            ("0.10", xml.VersionInfo(can_revert=True, can_validate=True))
+        ])
+        self.assertEqual(versions, expected)
+
+    def test_can_revert_to(self):
+        # Non-existent version
+        self.assertFalse(xml.can_revert_to("0.0"))
+        # Old version
+        self.assertFalse(xml.can_revert_to("0.9"))
+        # New version
+        self.assertTrue(xml.can_revert_to("0.10"))

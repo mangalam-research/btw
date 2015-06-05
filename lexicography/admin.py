@@ -19,7 +19,7 @@ from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
     OtherAuthority, Authority, EntryLock, Handle, PublicationChange, \
     DeletionChange
-from .xml import XMLTree
+from .xml import XMLTree, can_revert_to
 from .views import try_updating_entry
 from . import usermod
 
@@ -46,6 +46,9 @@ class ChangeRecordMixin(object):
 
     def revert(self, obj):
         if obj.id is None:
+            return ""
+
+        if not can_revert_to(obj.c_hash.schema_version):
             return ""
 
         return mark_safe(('<a class="lexicography-revert" href="%s">'

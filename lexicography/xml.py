@@ -7,6 +7,9 @@ import lxml.etree
 
 import os
 import re
+from collections import OrderedDict, namedtuple
+
+import semver
 
 import lib.util as util
 
@@ -30,6 +33,57 @@ def schema_for_version_unsafe(version):
         return None
 
     return path
+
+VersionInfo = namedtuple('VersionInfo', ('can_revert', 'can_validate'))
+
+schema_dir_re = re.compile(r"^btw-storage-([0-9.]+)$")
+_supported_schema_versions = None
+def get_supported_schema_versions():
+    """
+    Returns a list of schema versions that we support.
+    """
+    global _supported_schema_versions  # pylint: disable=global-statement
+
+    if _supported_schema_versions is not None:
+        return _supported_schema_versions
+
+    versions = []
+    outdir = os.path.join(schemas_dirname, "out")
+    for d in (d for d in os.listdir(outdir)
+              if os.path.isdir(os.path.join(outdir, d))):
+        match = schema_dir_re.match(d)
+        if match:
+            version = match.group(1)
+            versions.append(version)
+
+    # We don't actually always have the patch number that semver
+    # expects, so normalize.
+    norm = lambda x: (x + ".0") if x.count(".") == 1 else x
+
+    versions = sorted(versions, lambda a, b: semver.compare(norm(a),
+                                                            norm(b)))
+
+    # We support validating all versions that we find but we can
+    # revert only to the last one.
+    ret = OrderedDict()
+    for v in versions[:-1]:
+        ret[v] = VersionInfo(can_validate=True, can_revert=False)
+
+    ret[versions[-1]] = VersionInfo(can_validate=True, can_revert=True)
+
+    _supported_schema_versions = ret
+
+    return ret
+
+def can_revert_to(version):
+    """
+    :param version: The version to check.
+    :type version: `:class:str`
+    :returns: ``True`` if we can revert to ``version``, ``False``
+              otherwise.
+    """
+    info = get_supported_schema_versions().get(version, None)
+    return info is not None and info.can_revert
 
 
 _NO_SCHEMATRON = {
