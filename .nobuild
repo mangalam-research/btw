@@ -1,0 +1,7 @@
+If this file appears as a change in the commit, then our buildbot
+configuration is set to ignore the change. In other words, the change
+will *NOT* trigger a buildbot build.
+
+So you can edit this file to prevent a commit from triggering a build.
+
+.

@@ -418,17 +418,26 @@ LANG_TO_CODE = {
 @then(ur'^the text "prasāda" is marked as (?P<lang>Pāli|Sanskrit|Latin) '
       ur'in btw:definition$')
 def step_impl(context, lang):
-    driver = context.driver
     util = context.util
 
-    test = driver.execute_script(ur"""
-    var $el = jQuery(".btw\\:definition .foreign:contains('prasāda')");
-    if (!$el[0])
-        return [false, undefined];
-    return [true, $el.attr('data-wed-xml---lang')];
-    """)
-    assert_true(test[0])
-    assert_equal(test[1], LANG_TO_CODE[lang])
+    # In theory the operation that we are testing here is
+    # asynchronous. It should usually be fast enough so that by the
+    # time we perform this test, it is already in effect but
+    # hmm... delays seem to happen sometimes, so...
+
+    def check(driver):
+        test = driver.execute_script(ur"""
+        var $el = jQuery(".btw\\:definition .foreign:contains('prasāda')");
+        if (!$el[0])
+            return [false, undefined];
+        return [true, $el.attr('data-wed-xml---lang')];
+        """)
+
+        return Result(test[0], test[1])
+
+    result = Condition(util, check).wait()
+    assert_true(result)
+    assert_equal(result.payload, LANG_TO_CODE[lang])
 
 
 @when(ur"^the user clears formatting from the (?P<what>first paragraph"
