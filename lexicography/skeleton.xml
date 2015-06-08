@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.10" authority="/">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.0" authority="/">
   <btw:lemma><btw:todo>Fill lemma.</btw:todo></btw:lemma>
   <btw:overview>
     <btw:definition>
@@ -34,4 +34,10 @@
       <p></p>
     </btw:etymology>
   </btw:historico-semantical-data>
+  <btw:credits>
+    <btw:credit>
+      <resp><btw:todo>Fill responsibility.</btw:todo></resp>
+      <persName><btw:todo>Fill name.</btw:todo></persName>
+    </btw:credit>
+  </btw:credits>
 </btw:entry>

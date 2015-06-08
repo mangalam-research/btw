@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.10" authority="LL">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.0" authority="LL">
   <btw:lemma>prasāda</btw:lemma>
   <btw:overview><!-- UNIT 1: OVERVIEW -->
     <btw:definition><!-- Definition -->
@@ -684,4 +684,15 @@
       <p>Cp. Eng “settle down,” “to be set in one’s convictions;” also “sedate,” which goes back to Lat  <foreign xml:lang="la">sēdō –are</foreign>, “to settle, soothe, calm, allay,” and its partic. <foreign xml:lang="la">sēdātus</foreign>, “calm, composed,” adv. sedate. Consider also <foreign xml:lang="la">sedimentum</foreign>.</p>
     </btw:etymology>
   </btw:historico-semantical-data>
+  <btw:credits>
+    <btw:credit>
+      <resp>Author: </resp>
+      <persName><forename>Jane</forename><surname>Doe</surname><genName></genName></persName>
+    </btw:credit>
+    <btw:credit>
+      <resp>Etymologist: </resp>
+      <persName><forename>John</forename><surname>Doeh</surname><genName></genName></persName>
+    </btw:credit>
+    <editor><persName><forename>Ada</forename><surname>Lovelace</surname><genName></genName></persName></editor>
+  </btw:credits>
 </btw:entry>

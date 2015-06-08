@@ -107,7 +107,8 @@ class XMLTestCase(unittest.TestCase):
         versions = xml.get_supported_schema_versions()
         expected = OrderedDict([
             ("0.9", xml.VersionInfo(can_revert=False, can_validate=True)),
-            ("0.10", xml.VersionInfo(can_revert=True, can_validate=True))
+            ("0.10", xml.VersionInfo(can_revert=False, can_validate=True)),
+            ("1.0", xml.VersionInfo(can_revert=True, can_validate=True))
         ])
         self.assertEqual(versions, expected)
 
@@ -117,4 +118,5 @@ class XMLTestCase(unittest.TestCase):
         # Old version
         self.assertFalse(xml.can_revert_to("0.9"))
         # New version
-        self.assertTrue(xml.can_revert_to("0.10"))
+        versions = xml.get_supported_schema_versions()
+        self.assertTrue(xml.can_revert_to(versions.keys()[-1]))
