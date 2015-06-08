@@ -413,7 +413,7 @@ Generally:
 5. Run::
 
     $ sudo monit unmonitor [appropriate group name]
-    $ ./manage.py btwworker stop
+    $ ./manage.py btwworker stop --all
 
     # The next command **must** be omitted if BTW is meant to continue
     # running. May be omitted if there is no change to how redis is
@@ -441,7 +441,7 @@ Generally:
     # if needed. Copy into /etc/monit/conf.d if update needed.
     # Issue ``service monit reload`` to have it read its configuration.
 
-    $ ./manage.py test
+    $ make test-django
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
     $ sudo monit monitor [appropriate group name]
@@ -449,6 +449,12 @@ Generally:
 6. Reload uwsgi::
 
      $ sudo service uwsgi reload
+
+7. Run btw-smoketest::
+
+     scrapy crawl btw -a btw_dev='<secret>'
+
+8. Take the site out of maintenance mode.
 
 See below for specific upgrade cases.
 
@@ -477,7 +483,7 @@ Afterwards:
 
  a. On the development machine issue::
 
-    ./manage.py dumpdata --indent=2 --natural-foreign cms cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_link cmsplugin_filer_link cmsplugin_filer_image cmsplugin_filer_teaser cmsplugin_filer_video  easy_thumbnails filer djangocms_text_ckeditor > dump.json
+    ./manage.py dumpdata --indent=2 --natural-foreign cms cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_link cmsplugin_filer_link cmsplugin_filer_image cmsplugin_filer_teaser cmsplugin_filer_video  easy_thumbnails filer djangocms_text_ckeditor cmsplugin_iframe > dump.json
 
  b. Remove the record that has to do with cms.pageusergroup.
 
@@ -561,6 +567,15 @@ Afterwards:
 
 Notes from Actual Upgrades
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- 1.1.0 to 1.2.0: The upgrade window was scheduled for 2015/06/08 at
+  8:00-10:00 EDT. I began preparing at around 7:30 EDT so as to get a
+  head start with the steps that could be performed before the
+  upgrade. At 8:05 EDT I put the server into maintenance mode. At
+  about 9:05 EDT I took the server out of maintenance mode. I got a
+  couple of task errors while running the Django tests. Probably due
+  to how the logging is different on the server than on the dev
+  system.
 
 - 1.0.5 to 1.1.0: The upgrade window was scheduled for 2015/04/29 at
   8:00-10:00 EDT. I began preparing at around 7:30 EDT so as to get a
