@@ -197,6 +197,12 @@ class Entry(models.Model):
     def dependency_key(self):
         return self.lemma
 
+    @property
+    def schema_version(self):
+        """
+        The schema version of the latest version of this entry.
+        """
+        return self.latest.schema_version
 
 class ChangeRecord(models.Model):
 
@@ -313,6 +319,13 @@ class ChangeRecord(models.Model):
             published = self.published
 
         return "{0}_{1}".format(self.c_hash.c_hash, published)
+
+    @property
+    def schema_version(self):
+        """
+        The schema version of this update.
+        """
+        return self.c_hash.schema_version
 
     class Meta(object):
         unique_together = (("entry", "datetime", "ctype"), )

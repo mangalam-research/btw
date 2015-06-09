@@ -7,8 +7,9 @@ from django.core.exceptions import PermissionDenied
 import lxml.etree
 
 from ..models import Entry, ChangeRecord, PublicationChange, Chunk
-from .. import locking
+from .. import locking, xml
 import lib.util as util
+from .test_xml import as_editable
 
 dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
@@ -19,6 +20,9 @@ user_model = get_user_model()
 # Disable warnings about accessing protected members.
 # pylint: disable=W0212
 
+valid_editable = as_editable(os.path.join(xml.schemas_dirname, "prasada.xml"))
+xmltree = xml.XMLTree(valid_editable)
+schema_version = xmltree.extract_version()
 
 class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
     fixtures = local_fixtures
@@ -174,11 +178,28 @@ class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         self.assertEqual(latest.csubtype, ChangeRecord.MANUAL)
         self.assertFalse(latest.published)
 
-from .test_xml import as_editable
-from .. import xml
-valid_editable = as_editable(os.path.join(xml.schemas_dirname, "prasada.xml"))
-xmltree = xml.XMLTree(valid_editable)
-schema_version = xmltree.extract_version()
+    def test_schema_version(self):
+        """
+        Test that the schema_version property returns the schema_version
+        of the latest version of an entry.
+        """
+        self.assertEqual(self.entry.schema_version,
+                         self.entry.latest.c_hash.schema_version)
+
+        # Make sure we are actually changing the version number!
+        self.assertNotEqual(self.entry.schema_version, "0.0")
+
+        c = Chunk(data=valid_editable.decode('utf-8'),
+                  schema_version="0.0")
+        c.save()
+        self.entry.update(
+            self.foo,
+            "q",
+            c,
+            self.entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+        self.assertEqual(self.entry.schema_version, "0.0")
 
 
 class ChangeRecordTestCase(util.NoPostMigrateMixin, TransactionTestCase):
@@ -447,6 +468,28 @@ class ChangeRecordTestCase(util.NoPostMigrateMixin, TransactionTestCase):
             PublicationChange.objects.filter(changerecord=latest).count(),
             old_count)
 
+    def test_schema_version(self):
+        """
+        Test that the schema_version property returns the schema_version
+        of the version of the change record.
+        """
+        self.assertEqual(self.entry.latest.schema_version,
+                         self.entry.latest.c_hash.schema_version)
+
+        # Make sure we are actually changing the version number!
+        self.assertNotEqual(self.entry.latest.schema_version, "0.0")
+
+        c = Chunk(data=valid_editable.decode('utf-8'),
+                  schema_version="0.0")
+        c.save()
+        self.entry.update(
+            self.foo,
+            "q",
+            c,
+            self.entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+        self.assertEqual(self.entry.latest.schema_version, "0.0")
 
 class EntryLockTestCase(util.NoPostMigrateMixin, TransactionTestCase):
     fixtures = local_fixtures
