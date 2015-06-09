@@ -27,7 +27,7 @@ def step_impl(context, action, name):
         });
         if (rows.length !== 1)
             return null;
-        var link = rows[0].querySelector("td:nth-of-type(2)>a");
+        var link = rows[0].querySelector("td:nth-of-type(3)>a");
         return [link, link && link.textContent];
         """, name)
 

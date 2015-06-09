@@ -38,7 +38,8 @@ from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
 from . import models
 from .locking import release_entry_lock, drop_entry_lock, \
     entry_lock_required, try_acquiring_lock
-from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml
+from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml, \
+    get_supported_schema_versions
 from .forms import SaveForm
 from . import usermod
 from . import tasks
@@ -61,8 +62,9 @@ def main(request):
 
 class SearchTable(BaseDatatableView):
     model = ChangeRecord
-    columns = ['lemma', 'published', 'entry__deleted', 'datetime', 'user']
-    order_columns = ['lemma', 'published',
+    columns = ['lemma', 'schema_version', 'published', 'entry__deleted',
+               'datetime', 'user']
+    order_columns = ['lemma', 'schema_version', 'published',
                      'entry__deleted', 'datetime', 'user']
 
     def render_column(self, row, column):
@@ -95,6 +97,22 @@ class SearchTable(BaseDatatableView):
         if column == "entry__deleted":
             return "Yes" if row.entry.deleted else "No"
 
+        if column == "schema_version":
+            warn = ""
+            # We do not want to generate the warning for change
+            # records that we cannot edit. The only thing we can edit
+            # is the latest version of an entry.
+            if row.entry.latest == row \
+               and row.schema_version != \
+                    get_supported_schema_versions().keys()[-1]:
+                warn = (
+                    ' <span class="label label-warning" title='
+                    '"Editing this entry will automatically upgrade the '
+                    'schema version and may require additional editing to '
+                    'satisfy the new schema.">!</span>'
+                )
+            return row.schema_version + warn
+
         ret = super(SearchTable, self).render_column(row, column)
         #
         # We check the permission because for people who cannot edit
@@ -116,6 +134,7 @@ class SearchTable(BaseDatatableView):
                 ret = mark_safe('Locked by ' +
                                 util.nice_name(row.entry.is_locked()) + '. ') \
                     + ret
+
         return ret
 
     def get_initial_queryset(self):

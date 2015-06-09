@@ -12,16 +12,16 @@ return function ($table, options) {
     var columnDefs = [];
     if (!can_author) {
         columnDefs.push({
-            targets: [1, 2],
+            targets: [1, 2, 3],
             orderable: false,
             visible: false
         });
     }
     else {
         columnDefs.push({
-            targets: [2],
+            targets: [3],
             render: function (data, type, row_data) {
-                var deleted = row_data[2];
+                var deleted = row_data[3];
                 return deleted === "Yes" ?
                     '<span style="color: red">Yes</span>' : deleted;
             }

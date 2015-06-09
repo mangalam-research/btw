@@ -42,7 +42,7 @@ def parse_search_results(data):
 
     ret = {}
     for row in rows:
-        assert len(row) == 5, "unexpected row length"
+        assert len(row) == 6, "unexpected row length"
         cell = row[0]
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
@@ -57,6 +57,11 @@ def parse_search_results(data):
                              + str(len(els)))
 
         cell = row[1]
+        tree = lxml.etree.parse(StringIO(cell), parser)
+        schema_version = cell.split("<", 1)[0].strip()
+        schema_update = len(tree.xpath("//span")) != 0
+
+        cell = row[2]
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
         publish_link = els[0] if len(els) == 1 else None
@@ -78,9 +83,11 @@ def parse_search_results(data):
             "view_url": view_link.get("href"),
             "publish_url":
             publish_link.get("href") if publish_link is not None else None,
-            "deleted": row[2],
-            "datetime": row[3],
+            "deleted": row[3],
+            "datetime": row[4],
             "published": published,
+            "schema_version": schema_version,
+            "schema_update": schema_update
         }
         lemma_rec = ret.get(lemma)
         if lemma_rec:

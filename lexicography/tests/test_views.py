@@ -14,6 +14,7 @@ from cms.test_utils.testcases import BaseCMSTestCase
 from .. import models
 from ..models import Entry, EntryLock, ChangeRecord, Chunk, PublicationChange
 from ..views import REQUIRED_WED_VERSION
+from ..xml import get_supported_schema_versions
 from . import util as test_util
 from . import funcs
 import lib.util as util
@@ -249,6 +250,57 @@ class MainTestCase(ViewsTestCase):
                          .values_list("entry").count())
         self.assertEqual(funcs.count_hits(hits),
                          ChangeRecord.objects.filter(published=False).count())
+
+    def test_search_by_scribe_shows_schema_version(self):
+        """
+        Someone who is a scribe can see schema versions.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+
+        c = Chunk(data=entry.latest.c_hash.data,
+                  schema_version="0.0")
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response = self.search_table_search("abcd", self.foo)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits), 1)
+        hits = hits["abcd"]["hits"]
+        self.assertEqual(hits[0]["schema_version"], "0.0")
+        self.assertTrue(hits[0]["schema_update"])
+
+    def test_search_by_scribe_does_not_show_schema_upgrade_warning(self):
+        """
+        Someone who is a scribe can see schema versions but won't see an
+        upgrade warning if there is no need to upgrade.
+        """
+
+        entry = Entry.objects.get(lemma="abcd")
+
+        latest_version = get_supported_schema_versions().keys()[-1]
+        c = Chunk(data=entry.latest.c_hash.data,
+                  schema_version=latest_version)
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response = self.search_table_search("abcd", self.foo)
+        hits = funcs.parse_search_results(response.body)
+        self.assertEqual(funcs.count_hits(hits), 1)
+        hits = hits["abcd"]["hits"]
+        self.assertEqual(hits[0]["schema_version"], latest_version)
+        self.assertFalse(hits[0]["schema_update"])
 
     def test_search_link_to_old_records_show_old_records(self):
         """

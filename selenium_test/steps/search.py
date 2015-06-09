@@ -136,7 +136,7 @@ def step_impl(context, kind):
         var rows = table.querySelectorAll("tbody>tr");
         for (var i = 0, row; !finished() && (row = rows[i]); ++i) {
             var cells = row.querySelectorAll("td");
-            var status = cells[1].textContent.split(/\s+/, 1)[0];
+            var status = cells[2].textContent.split(/\s+/, 1)[0];
             switch (status) {
             case "No":
                 unpublished = true;
