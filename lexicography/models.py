@@ -209,10 +209,12 @@ class ChangeRecord(models.Model):
     CREATE = 'C'
     UPDATE = 'U'
     REVERT = 'R'
+    VERSION = 'V'
     TYPE_CHOICES = (
         (CREATE, "Create"),
         (UPDATE, "Update"),
         (REVERT, "Revert"),
+        (VERSION, "Version update"),
     )
 
     AUTOMATIC = 'A'
@@ -236,6 +238,8 @@ class ChangeRecord(models.Model):
     csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
     c_hash = models.ForeignKey('Chunk', on_delete=models.PROTECT)
     published = models.BooleanField(default=False)
+    # Here too we arbitrarily limit the size.
+    note = models.CharField(max_length=1024, blank=True)
 
     def get_absolute_url(self):
         return reverse('lexicography_changerecord_details',
