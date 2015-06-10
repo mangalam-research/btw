@@ -908,6 +908,51 @@ class EditingTestCase(ViewsTestCase):
 
         self.assertEqual(len(messages), 0)
 
+    def test_edit_automatically_upgrades(self):
+        """
+        Editing an article that is saved using an old version of a schema
+        automatically upgrades to the latest version.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response, _ = self.open_abcd('foo')
+
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertEqual(entry.latest.c_hash.data,
+                         u"""\
+<?xml version="1.0" encoding="UTF-8"?>\
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="1.0">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>""")
+
 
 class CommonPublishUnpublishCases(object):
 

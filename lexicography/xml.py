@@ -113,6 +113,15 @@ def schematron_for_version_unsafe(version):
     return path
 
 
+def convert_to_version(data, fr, to):
+    xsl_file_name = "btw-storage-{0}-to-{1}.xsl".format(fr, to)
+    xsl_path = os.path.join(schemas_dirname, xsl_file_name)
+    if not os.path.exists(xsl_path):
+        raise ValueError("cannot convert from {0} to {1}".format(fr, to))
+
+    return util.run_saxon(xsl_path, data)
+
+
 # 20140912: No longer needed as part of normal operations but we are
 # keeping it here in case some old data needs conversion. It should
 # probably be removed after a few versions of BTW have been released.
@@ -233,6 +242,23 @@ def delete_authority(data):
     # another serialization in the pipe which may change things in
     # unexpected ways.
     return _auth_re.sub('', data, count=1)
+
+_version_re = re.compile(r'(<btw:entry\s+.*?)version\s*=\s*(["\']).*?\2')
+_new_version_re = re.compile(r"^[0-9.]+$")
+
+
+def set_version(data, new_version):
+    # We don't use lxml for this because we don't want to introduce
+    # another serialization in the pipe which may change things in
+    # unexpected ways.
+    if not _new_version_re.match(new_version):
+        raise ValueError("the new version contains invalid data")
+    ret = _version_re.sub(r'\1version="{0}"'.format(new_version),
+                          data, count=1)
+    if ret == data:
+        raise ValueError("was unable to set new version")
+    return ret
+
 
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')

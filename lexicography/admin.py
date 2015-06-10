@@ -19,7 +19,6 @@ from .forms import RawSaveForm
 from .models import Entry, Chunk, ChangeRecord, EntryLock, Handle, \
     PublicationChange, DeletionChange
 from .xml import XMLTree, can_revert_to
-from .views import try_updating_entry
 from . import usermod
 
 def make_link(url, text):
@@ -163,7 +162,7 @@ class EntryAdmin(admin.ModelAdmin):
                         'Lemma already present in database: ' + lemma)
                 else:
                     entry = Entry()
-                    try_updating_entry(request, entry, chunk, xmltree,
+                    entry.try_updating(request, chunk, xmltree,
                                        ChangeRecord.CREATE,
                                        ChangeRecord.MANUAL)
                     release_entry_lock(entry, request.user)
@@ -192,8 +191,8 @@ class EntryAdmin(admin.ModelAdmin):
                 chunk = form.save(commit=False)
 
                 xmltree = XMLTree(chunk.data.encode("utf-8"))
-                try_updating_entry(
-                    request, entry, chunk, xmltree, ChangeRecord.UPDATE,
+                entry.try_updating(
+                    request, chunk, xmltree, ChangeRecord.UPDATE,
                     ChangeRecord.MANUAL)
                 release_entry_lock(entry, request.user)
                 return HttpResponseRedirect(

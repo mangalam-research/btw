@@ -77,7 +77,8 @@ class Entry(models.Model):
         return reverse('lexicography_entry_details', args=[str(self.id)])
 
     @method_decorator(transaction.atomic)
-    def update(self, user, session_key, chunk, lemma, ctype, subtype):
+    def update(self, user, session_key, chunk, lemma, ctype, subtype,
+               note=""):
         if self.id is None and ctype != ChangeRecord.CREATE:
             raise ValueError("The Entry has no id but the ctype is not CREATE")
 
@@ -94,7 +95,8 @@ class Entry(models.Model):
             session=session_key,
             ctype=ctype,
             csubtype=subtype,
-            c_hash=chunk)
+            c_hash=chunk,
+            note=note)
 
         cr.save()
 
@@ -203,6 +205,65 @@ class Entry(models.Model):
         The schema version of the latest version of this entry.
         """
         return self.latest.schema_version
+
+    def use_latest_schema_version(self, request):
+        """
+        Ensures that the entry is using the latest schema version. If it
+        is **already** so, then this method does nothing. Otherwise,
+        it will edit the entry to upgrade it to the latest schema
+        version.
+
+        This method must be able to lock the entry for modification.
+
+        :returns: The latest version of this entry, or ``None`` if the
+        entry could not be locked.
+        :rtype: :class:`ChangeRecord`
+        """
+        latest_version = xml.get_supported_schema_versions().keys()[-1]
+
+        if self.schema_version == latest_version:
+            # No need to upgrade.
+            return self.latest
+
+        # We need to upgrade.
+        data = xml.convert_to_version(self.latest.c_hash.data,
+                                      self.schema_version,
+                                      latest_version)
+        chunk = Chunk(data=data, schema_version=latest_version)
+        chunk.save()
+        xmltree = xml.XMLTree(chunk.data.encode("utf-8"))
+        if not self.try_updating(
+                request, chunk,
+                xmltree,
+                ChangeRecord.VERSION,
+                ChangeRecord.AUTOMATIC,
+                "Update to schema version " + latest_version):
+            return None
+
+        return self.latest
+
+    def try_updating(self, request, chunk, xmltree, ctype, subtype,
+                     note=""):
+        # We cannot import this at the top level without causing a loop.
+        from .locking import try_acquiring_lock
+
+        chunk.save()
+        user = request.user
+        session_key = request.session.session_key
+        lemma = xmltree.extract_lemma()
+        if self.id is None:
+            self.update(user, session_key, chunk, lemma,
+                        ChangeRecord.CREATE, subtype, note)
+            if try_acquiring_lock(self, user) is None:
+                raise Exception("unable to acquire the lock of an entry "
+                                "that was just created but not committed!")
+        else:
+            if try_acquiring_lock(self, user) is None:
+                return False
+            self.update(user, session_key, chunk, lemma, ctype, subtype,
+                        note)
+        return True
+
 
 class ChangeRecord(models.Model):
 

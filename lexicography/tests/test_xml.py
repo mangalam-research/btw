@@ -106,3 +106,42 @@ class XMLTestCase(unittest.TestCase):
         # New version
         versions = xml.get_supported_schema_versions()
         self.assertTrue(xml.can_revert_to(versions.keys()[-1]))
+
+    def test_convert_to_version_bad_versions(self):
+        """
+        The function convert_to_version fails if there is no schema for
+        conversion.
+        """
+        with self.assertRaisesRegexp(ValueError,
+                                     "cannot convert from 0.0 to 0.0"):
+            xml.convert_to_version("", "0.0", "0.0")
+
+    def test_convert_to_version_0_10_to_1_0(self):
+        """
+        The function convert_to_version converts 0.10 to 1.0.
+        """
+        result = xml.convert_to_version("""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>
+        """,
+                                        "0.10", "1.0")
+        self.assertEqual(result, u"""\
+<?xml version="1.0" encoding="UTF-8"?>\
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="1.0">
+  <btw:lemma/>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>""")

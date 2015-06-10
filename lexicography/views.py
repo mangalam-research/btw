@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, \
     HttpResponseBadRequest, Http404, QueryDict
+from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods, etag
 from django.template import RequestContext
@@ -37,7 +38,7 @@ from . import handles
 from .models import Entry, ChangeRecord, Chunk, EntryLock
 from . import models
 from .locking import release_entry_lock, drop_entry_lock, \
-    entry_lock_required, try_acquiring_lock
+    entry_lock_required
 from .xml import XMLTree, xhtml_to_xml, clean_xml, \
     get_supported_schema_versions
 from .forms import SaveForm
@@ -316,24 +317,6 @@ def _show_changerecord(request, cr):
         context_instance=RequestContext(request))
 
 
-def try_updating_entry(request, entry, chunk, xmltree, ctype, subtype):
-    chunk.save()
-    user = request.user
-    session_key = request.session.session_key
-    lemma = xmltree.extract_lemma()
-    if entry.id is None:
-        entry.update(user, session_key, chunk, lemma, ChangeRecord.CREATE,
-                     subtype)
-        if try_acquiring_lock(entry, request.user) is None:
-            raise Exception("unable to acquire the lock of an entry "
-                            "that was just created but not committed!")
-    else:
-        if try_acquiring_lock(entry, request.user) is None:
-            return False
-        entry.update(user, session_key, chunk, lemma, ctype, subtype)
-    return True
-
-
 # entry_new and entry_update do not call the handle_update directly
 # but send back a redirection response. Why? This is so that from the
 # user's point of view the urls that edit articles are consistently
@@ -364,6 +347,7 @@ def entry_update(request, entry_id):
 @never_cache
 @login_required
 @require_http_methods(["GET", "POST"])
+@transaction.atomic
 def handle_update(request, handle_or_entry_id):
     # We determine through the session whether this is for a new
     # article.
@@ -397,7 +381,18 @@ def handle_update(request, handle_or_entry_id):
         return HttpResponseRedirect(reverse("lexicography_main"))
 
     if entry is not None:
-        chunk = entry.latest.c_hash
+        latest = entry.use_latest_schema_version(request)
+        # This means that the entry is locked. This could happen if
+        # the entry was unlocked when the user searched for it but was
+        # locked between the time the user searched and the time the
+        # user clicked the button.
+        if latest is None:
+            lock = EntryLock.objects.get(entry=entry_id)
+            return TemplateResponse(
+                request, 'lexicography/locked.html',
+                {'page_title': "Lexicography",
+                 'lock': lock})
+        chunk = latest.c_hash
     else:
         chunk = Chunk(data=clean_xml(
             open(os.path.join(dirname, "skeleton.xml"), 'r').read()))
@@ -559,7 +554,7 @@ def _save_command(request, entry_id, handle, command, messages):
 
     try:
         with transaction.atomic():
-            if not try_updating_entry(request, entry, chunk, xmltree,
+            if not entry.try_updating(request, chunk, xmltree,
                                       ChangeRecord.UPDATE, subtype):
                 # Update failed due to locking
                 lock = EntryLock.objects.get(entry=entry)
@@ -676,8 +671,9 @@ def change_revert(request, change_id):
     change = ChangeRecord.objects.get(id=change_id)
     chunk = change.c_hash
     xmltree = XMLTree(chunk.data.encode("utf-8"))
-    if not try_updating_entry(request, change.entry, chunk, xmltree,
-                              ChangeRecord.REVERT, ChangeRecord.MANUAL):
+    if not change.entry.try_updating(request, chunk, xmltree,
+                                     ChangeRecord.REVERT,
+                                     ChangeRecord.MANUAL):
         return HttpResponse("Entry locked!", status=409)
     return HttpResponse("Reverted.")
 
