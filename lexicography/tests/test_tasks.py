@@ -262,20 +262,23 @@ class TasksTestCase(TestCase):
         Tests that if the key is already set, we do not recalculate
         it.
         """
+        cr = ChangeRecord.objects.get(pk=1)
+        key = cr.article_display_key(cr.published)
         tasks.prepare_changerecord_for_display.delay(1).get()
         with WithStringIO(tasks.logger) as (stream, handler):
             tasks.prepare_changerecord_for_display.delay(1).get()
             self.assertLogRegexp(
                 handler,
                 stream,
-                "^5af6712b87152507c264a550171d2045936bb64d"
-                "_True is set; ending task.$")
+                "^{0} is set; ending task.$".format(key))
 
     def test_prepare_changerecord_for_display_vanish(self):
         """
         Tests that if a task is already in progress, new tasks stop
         running early.
         """
+        cr = ChangeRecord.objects.get(pk=1)
+        key = cr.article_display_key(cr.published)
         tasks.prepare_changerecord_for_display.delay(
             1,
             test={"vanish": True}).get()
@@ -284,8 +287,7 @@ class TasksTestCase(TestCase):
             self.assertLogRegexp(
                 handler,
                 stream,
-                "^5af6712b87152507c264a550171d2045936bb64d"
-                "_True is held by (?:.*?); ending task.$")
+                "^{0} is held by (?:.*?); ending task.$".format(key))
 
     def test_prepare_changerecord_for_display_fail(self):
         """

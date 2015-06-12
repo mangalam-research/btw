@@ -16,9 +16,8 @@ from django.core.exceptions import PermissionDenied
 
 from .locking import release_entry_lock, entry_lock_required
 from .forms import RawSaveForm
-from .models import Entry, Chunk, ChangeRecord, UserAuthority, \
-    OtherAuthority, Authority, EntryLock, Handle, PublicationChange, \
-    DeletionChange
+from .models import Entry, Chunk, ChangeRecord, EntryLock, Handle, \
+    PublicationChange, DeletionChange
 from .xml import XMLTree, can_revert_to
 from .views import try_updating_entry
 from . import usermod
@@ -300,8 +299,5 @@ admin.site.register(Chunk, ChunkAdmin)
 admin.site.register(ChangeRecord, ChangeRecordAdmin)
 admin.site.register(PublicationChange)
 admin.site.register(DeletionChange)
-admin.site.register(UserAuthority)
-admin.site.register(OtherAuthority)
-admin.site.register(Authority)
 admin.site.register(EntryLock, EntryLockAdmin)
 admin.site.register(Handle, HandleAdmin)

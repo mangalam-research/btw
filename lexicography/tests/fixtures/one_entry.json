@@ -1,49 +1,38 @@
 [
 {
-  "pk": 1,
-  "model": "lexicography.entry",
   "fields": {
     "deleted": false,
     "lemma": "abcd",
     "latest_published": 1,
     "latest": 1
-  }
+  },
+  "model": "lexicography.entry",
+  "pk": 1
 },
 {
-  "pk": 1,
-  "model": "lexicography.changerecord",
   "fields": {
-    "c_hash": "5af6712b87152507c264a550171d2045936bb64d",
+    "c_hash": "92e5b17a2e166c62d11a442691db3e81fe6aa42e",
     "ctype": "U",
     "datetime": "2013-09-06T19:57:52.120Z",
+    "note": "",
+    "lemma": "abcd",
     "session": "5d11233110b1b6387ec4b67504a98ef5",
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "published": true,
     "csubtype": "M",
-    "entry": 1,
-    "lemma": "abcd"
-  }
+    "entry": 1
+  },
+  "model": "lexicography.changerecord",
+  "pk": 1
 },
 {
-  "pk": "5af6712b87152507c264a550171d2045936bb64d",
-  "model": "lexicography.chunk",
   "fields": {
-    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>abcd</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
+    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"1.0\"><btw:lemma>abcd</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section/></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:renditions-and-discussions><btw:classical-renditions/><btw:modern-renditions/></btw:renditions-and-discussions></btw:entry>",
     "_valid": false,
-    "schema_version": "0.10",
+    "schema_version": "1.0",
     "is_normal": true
-  }
-},
-{
-  "pk": "5d8b8d158fea90404a170d157207c983c29f40f3",
+  },
   "model": "lexicography.chunk",
-  "fields": {
-    "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"0.10\" authority=\"/authority/1\"><btw:lemma>definition filled</btw:lemma><btw:overview><btw:definition><p>Etymologically linked to the process of sedimentation (pra\u221asad, see below), pras\u0101da denotes the resulting state of clarity and translucency of liquids. This sense is extended metaphorically [...] its most common meanings of serenity, confidence, and favor or mercy.</p><p>In Buddhist literature, pras\u0101da belongs mainly to the semantic field of faith. [...] it denotes a sudden and overpowering surge [...]</p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term><btw:semantic-fields><btw:sf><btw:todo>Fill semantic field.</btw:todo></btw:sf></btw:semantic-fields></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
-    "_valid": false,
-    "schema_version": "0.10",
-    "is_normal": true
-  }
+  "pk": "92e5b17a2e166c62d11a442691db3e81fe6aa42e"
 }
 ]

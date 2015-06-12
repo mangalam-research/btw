@@ -51,7 +51,7 @@ class XMLTreeTestCase(unittest.TestCase):
     def test_extract_lemma_returns_none_when_empty_lemma(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """
@@ -62,7 +62,7 @@ class XMLTreeTestCase(unittest.TestCase):
     def test_extract_lemma_returns_none_when_whitespace_lemma(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma>   </btw:lemma>
 </btw:entry>
         """
@@ -70,24 +70,10 @@ class XMLTreeTestCase(unittest.TestCase):
         self.assertFalse(xmltree.is_data_unclean())
         self.assertIsNone(xmltree.extract_lemma())
 
-    def test_extract_authority_passes(self):
-        editable = as_editable(os.path.join(xml.schemas_dirname,
-                                            "prasada.xml"))
-        self.assertEqual(xml.XMLTree(editable).extract_authority(),
-                         "LL")
-
-    def test_extract_lemma_fails_when_no_authority(self):
-        data = '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
-        xmltree = xml.XMLTree(data)
-        self.assertFalse(xmltree.is_data_unclean())
-        self.assertRaisesRegexp(ValueError,
-                                "can't find the authority in the data passed",
-                                xmltree.extract_authority)
-
     def test_get_bibliographical_targets(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma></btw:lemma>
   <p>
   <ref target="/bibliography/1">foo</ref>

@@ -557,7 +557,7 @@ class ChunkTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         # This data is just flat out invalid...
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" version="0.10"\
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """

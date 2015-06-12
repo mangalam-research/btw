@@ -20,7 +20,7 @@ class RawSaveFormTest(SimpleTestCase):
     def test_no_version(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0"\
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """
@@ -31,8 +31,7 @@ class RawSaveFormTest(SimpleTestCase):
     def test_no_schema(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0"\
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.0" \
-  authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.0">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """
@@ -47,8 +46,7 @@ class RawSaveFormTest(SimpleTestCase):
     def test_no_schematron(self):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0"\
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.0" \
-  authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="0.0">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """

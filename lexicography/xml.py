@@ -201,21 +201,6 @@ btw:lemma element.
 
         return lemma
 
-    def extract_authority(self):
-        """
-Extracts the authority from the XML tree. This is the contents of the
-authority attribute on the top element.
-
-:returns: The authority
-:rtype: str
-"""
-        authority = self.tree.get('authority')
-
-        if authority is None:
-            raise ValueError("can't find the authority in the data passed")
-
-        return authority.strip()
-
     def extract_version(self):
         """
 Extracts the version from the XML tree.
@@ -241,18 +226,13 @@ Extracts the version from the XML tree.
         return version.strip() if version is not None else None
 
 
-_auth_re = re.compile(r'authority\s*=\s*(["\']).*?\1')
-_new_auth_re = re.compile(r"^[A-Za-z0-9/]*$")
+_auth_re = re.compile(r' authority\s*=\s*(["\']).*?\1')
 
-
-def set_authority(data, new_authority):
+def delete_authority(data):
     # We don't use lxml for this because we don't want to introduce
     # another serialization in the pipe which may change things in
     # unexpected ways.
-    if not _new_auth_re.match(new_authority):
-        raise ValueError("the new authority contains invalid data")
-    return _auth_re.sub('authority="{0}"'.format(new_authority), data, count=1)
-
+    return _auth_re.sub('', data, count=1)
 
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')

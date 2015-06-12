@@ -37,7 +37,7 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
     def generic_no_version(self, url):
         data = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0"\
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="LL">
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
   <btw:lemma></btw:lemma>
 </btw:entry>
         """
@@ -57,7 +57,7 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
         form.submit()
         entry = Entry.objects.get(lemma='foo copy')
         chunk = entry.latest.c_hash
-        self.assertEqual(chunk.schema_version, "0.10")
+        self.assertEqual(chunk.schema_version, "1.0")
         self.assertTrue(chunk.is_normal)
         self.assertEqual(chunk.data, data)
 

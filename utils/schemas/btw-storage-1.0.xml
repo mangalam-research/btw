@@ -135,9 +135,6 @@
 	      <desc>The version of the BTW storage schema that should
 	      validate this document.</desc>
 	    </attDef>
-            <attDef ident="authority" usage="req">
-	      <desc>The person responsible for this entry.</desc>
-	    </attDef>
           </attList>
         </elementSpec>
 

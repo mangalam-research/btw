@@ -507,26 +507,6 @@ class EntryLock(models.Model):
         self.save()
 
 
-class Authority(models.Model):
-
-    class Meta(object):
-        verbose_name_plural = "Authorities"
-
-
-class UserAuthority(Authority):
-
-    class Meta(object):
-        verbose_name_plural = "UserAuthorities"
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-
-
-class OtherAuthority(Authority):
-
-    class Meta(object):
-        verbose_name_plural = "OtherAuthorities"
-    name = models.CharField(max_length=1024)
-
-
 class Handle(models.Model):
 
     class Meta(object):

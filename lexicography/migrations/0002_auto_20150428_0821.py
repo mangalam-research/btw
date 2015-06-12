@@ -40,7 +40,6 @@ def permissions(apps, schema_editor):
     resolver = PermissionResolver(Permission, ContentType)
 
     scribe_perms = [resolver.resolve(x) for x in [
-        ["add_authority", "lexicography", "authority"],
         ["add_changerecord", "lexicography", "changerecord"],
         ["add_chunk", "lexicography", "chunk"],
         ["add_entry", "lexicography", "entry"],
@@ -48,15 +47,12 @@ def permissions(apps, schema_editor):
         ["add_entrylock", "lexicography", "entrylock"],
         ["change_entrylock", "lexicography", "entrylock"],
         ["delete_entrylock", "lexicography", "entrylock"],
-        ["add_otherauthority", "lexicography", "otherauthority"],
-        ["add_userauthority", "lexicography", "userauthority"]
     ]]
     scribe = Group.objects.create(name="scribe")
     scribe.permissions = scribe_perms
     scribe.save()
 
     editor_perms = [resolver.resolve(x) for x in [
-        ["add_authority", "lexicography", "authority"],
         ["add_changerecord", "lexicography", "changerecord"],
         ["add_chunk", "lexicography", "chunk"],
         ["add_entry", "lexicography", "entry"],
@@ -65,8 +61,6 @@ def permissions(apps, schema_editor):
         ["add_entrylock", "lexicography", "entrylock"],
         ["change_entrylock", "lexicography", "entrylock"],
         ["delete_entrylock", "lexicography", "entrylock"],
-        ["add_otherauthority", "lexicography", "otherauthority"],
-        ["add_userauthority", "lexicography", "userauthority"]
     ]]
     editor = Group.objects.create(name="editor")
     editor.permissions = editor_perms

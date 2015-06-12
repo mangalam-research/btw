@@ -34,11 +34,11 @@ from django.core.cache import caches
 
 import lib.util as util
 from . import handles
-from .models import Entry, ChangeRecord, Chunk, UserAuthority, EntryLock
+from .models import Entry, ChangeRecord, Chunk, EntryLock
 from . import models
 from .locking import release_entry_lock, drop_entry_lock, \
     entry_lock_required, try_acquiring_lock
-from .xml import XMLTree, set_authority, xhtml_to_xml, clean_xml, \
+from .xml import XMLTree, xhtml_to_xml, clean_xml, \
     get_supported_schema_versions
 from .forms import SaveForm
 from . import usermod
@@ -545,17 +545,6 @@ def _save_command(request, entry_id, handle, command, messages):
             {'type': 'save_transient_error',
              'msg': 'Please specify a lemma for your entry.'})
         return None
-
-    authority = xmltree.extract_authority()
-    if authority == "/":
-        # We must replace the temp value with something real
-        try:
-            authority = UserAuthority.objects.get(user=request.user)
-        except UserAuthority.DoesNotExist:
-            authority = UserAuthority()
-            authority.user = request.user
-            authority.save()
-        data = set_authority(data, "/authority/" + str(authority.id))
 
     schema_version = xmltree.extract_version()
     chunk = Chunk(data=data, schema_version=schema_version)
