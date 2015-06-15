@@ -98,9 +98,13 @@ WARNING: in general, this operation cannot be reliably undone without
                     before.write(chunk.data.encode('utf-8'))
 
                 if chunk.is_normal:
+                    if chunk.schema_version == "":
+                        self.stdout.write("Correcting lack of version")
+                        chunk.schema_version = \
+                            xml.XMLTree(chunk.data.encode('utf-8')) \
+                               .extract_version()
+
                     if not chunk.valid:
-                        self.stdout.write(
-                            "Won't validate chunk after transformation.")
                         initially_invalid = True
 
                     converted = util.run_saxon(xsl_path, chunk.data)
@@ -127,8 +131,6 @@ WARNING: in general, this operation cannot be reliably undone without
                     with open(os.path.join(log_dir, chunk.pk,
                                            "BECAME_INVALID"), 'w'):
                         pass
-
-                    continue
 
                 if not options['noop']:
                     new_chunk.save()
