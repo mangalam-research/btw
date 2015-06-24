@@ -1,3 +1,11 @@
+* 1.2.1:
+
+  + Bug fixes:
+
+    The introduction of Django CMS introduced language prefixes in
+    URLs. This caused some hyperlinking code in btw_view to fail recognizing
+    links between articles and creating hyperlinks. This fixes the problem.
+
 * 1.2.0:
 
   + New features:

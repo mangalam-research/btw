@@ -4,14 +4,16 @@ import re
 from StringIO import StringIO
 
 import lxml.etree
+import requests
 
 from selenium.webdriver.support.wait import TimeoutException
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
-from nose.tools import assert_equal, assert_true, assert_is_none
+from nose.tools import assert_equal, assert_true
 from behave import step_matcher  # pylint: disable=E0611
 from selenic.util import Result, Condition
 
+from lexicography.tests import funcs
 from selenium_test import btw_util
 from ..environment import server_write, server_read
 
@@ -482,3 +484,43 @@ def step_impl(context, exists):
             return text is None
 
     util.wait(check)
+
+
+@then(ur'^there is a hyperlink with label "(?P<label>.*?)" that points to the '
+      ur'article for the same lemma$')
+def step_impl(context, label):
+    driver = context.driver
+
+    r = requests.get(context.selenic.SERVER +
+                     "/en-us/lexicography/search-table/",
+                     params={
+                         "length": -1,
+                         "search[value]": label,
+                         "lemmata_only": "true",
+                         "publication_status": "both",
+                     },
+                     cookies={
+                         "sessionid": context.session_id
+                     } if context.session_id else None)
+    hits = funcs.parse_search_results(r.text)
+    url = hits[label]["hits"][0]["view_url"]
+
+    with open(context.server_write_fifo, 'w') as fifo:
+        fifo.write("changerecord link to entry link {0}\n".format(url))
+    with open(context.server_read_fifo, 'r') as fifo:
+        entry_url = fifo.read().strip().decode('utf-8')
+
+    links = driver.execute_script("""
+    var url = arguments[0];
+    var links = btw_viewer._root.querySelectorAll("a[href='" + url + "']");
+    var ret = [];
+    for (var i = 0, link; (link = links[i]); ++i) {
+        ret.push(link.textContent);
+    }
+    return ret;
+    """, entry_url)
+
+    assert_true(len(links) > 0, "there should be a link")
+
+    for link in links:
+        assert_equal(link, label, "the link label should be " + label)

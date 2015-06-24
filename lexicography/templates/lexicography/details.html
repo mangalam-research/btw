@@ -1,5 +1,6 @@
 {% extends "lexicography/base.html" %}
 {% load staticfiles %}
+{% load i18n %}
 {% block extrahead %}
 <link href="{% static "lib/wed/wed.css" %}" media="screen" rel="stylesheet" />
 <link href="{% static "lib/btw/btw-view.css" %}" media="screen" rel="stylesheet" />
@@ -9,6 +10,7 @@
 {{ block.super }}
 <script id="wed-data" type="text/xml">{% autoescape off %}{{ data }}{% endautoescape %}</script>
 <script>
+{% get_current_language as LANGUAGE_CODE %}
 require(['btw/btw_view'], function(Viewer) {
   var wed_document = document.getElementsByClassName("wed-document")[0];
   var data = document.getElementById("wed-data").textContent;
@@ -16,7 +18,10 @@ require(['btw/btw_view'], function(Viewer) {
   // Purposely leak it.
   window.btw_viewer = new Viewer(wed_document, "{{edit_url}}",
                                  "{{ fetch_url }}", data,
-             {% autoescape off %}{{ bibl_data }}{% endautoescape %});
+             {% autoescape off %}{{ bibl_data }}{% endautoescape %},
+                                 // We have to build the prefix from
+                                 // the language code.
+                                 "/{{ LANGUAGE_CODE }}");
 });
 </script>
 {% endblock %}

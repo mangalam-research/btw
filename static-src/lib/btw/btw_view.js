@@ -48,8 +48,14 @@ var closest = domutil.closest;
  * same values those returned as when asking the server to resolve
  * these targets individually. This mapping must be
  * complete. Otherwise, it is an internal error.
+ * @param {string} language_prefix The language prefix currently used
+ * in URLs. Django will prefix URLs with something like "/en-us" when
+ * the user is using the American English setup. It could be inferable
+ * from the URLs passed in other parameter or from the URL of the
+ * currrent page but it is preferable to get an actual value than try
+ * to guess it.
  */
-function Viewer(root, edit_url, fetch_url, data, bibl_data) {
+function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
@@ -61,6 +67,7 @@ function Viewer(root, edit_url, fetch_url, data, bibl_data) {
     this._refmans = new btw_refmans.WholeDocumentManager();
     this._meta = new btw_meta.Meta();
     this._load_timeout = 30000;
+    this._language_prefix = language_prefix;
 
     this._resolver = new name_resolver.NameResolver();
     var mappings = this._meta.getNamespaceMappings();
@@ -903,7 +910,7 @@ Viewer.prototype.refDecorator = function (root, el) {
     orig_target = orig_target.trim();
 
     var bibl_prefix = "/bibliography/";
-    var entry_prefix = "/lexicography/entry/";
+    var entry_prefix = this._language_prefix + "/lexicography/entry/";
     var a, child;
     if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
         // We want to remove any possible a element before we give

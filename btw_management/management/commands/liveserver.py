@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import execute_from_command_line
 from django.test import LiveServerTestCase
 from django.test.runner import DiscoverRunner
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
@@ -157,6 +157,15 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
                 self._patcher.timeout_on_ajax = True
                 with open(self.__control_write, 'w') as out:
                     out.write("\n")
+            elif command.startswith("changerecord link to entry link "):
+                cr_link = args[5]
+                resolved = resolve(cr_link)
+                from lexicography.models import ChangeRecord
+                cr = ChangeRecord.objects.get(
+                    id=resolved.kwargs['changerecord_id'])
+                with open(self.__control_write, 'w') as out:
+                    out.write(reverse("lexicography_entry_details",
+                                      args=(cr.entry.id, )) + "\n")
             else:
                 print "Unknown command: ", command
 

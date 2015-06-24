@@ -144,3 +144,8 @@ Scenario: clicking a link in the table of contents collapses it
   Then the table of contents is expanded
   When the user clicks a link in the table of contents
   Then the table of contents is collapsed
+
+Scenario: inter-article hyperlinking
+  Given a valid document
+  And the view has finished rendering
+  Then there is a hyperlink with label "abcd" that points to the article for the same lemma
