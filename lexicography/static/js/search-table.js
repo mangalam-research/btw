@@ -51,7 +51,7 @@ return function ($table, options) {
         alertbox.style.left = rect.left + 5 + "px";
     }
 
-    function handle_publish_unpublish(ev) {
+    function post_publish_unpublish(ev) {
         $.ajax({
             type: "POST",
             url: this.attributes.href.value,
@@ -66,6 +66,54 @@ return function ($table, options) {
         });
         return false;
     }
+
+    function check_unpublish(ev) {
+        var $modal = $(
+'<div class="modal" style="position: absolute" tabindex="1">\
+  <div class="modal-dialog">\
+    <div class="modal-content">\
+      <div class="modal-header">\
+        <h3>STOP AND READ!</h3>\
+      </div>\
+      <div class="modal-body">\
+        <p>Unpublishing should be done only under very special \
+circumstances. There is <strong>no need</strong> to unpubish an old \
+version of an article <strong>merely</strong> because you are publishing \
+a newer version.</p>\
+        <p>Generally, you should unpublish only as a matter of law or \
+ethics (for instance, the article used copyrighted material without \
+permission).</p>\
+        <p>If you have just published a version of an article and want \
+to unpublish it right away, this is fine.</p>\
+      </div>\
+      <div class="modal-footer">\
+          <a href="#" class="btn btn-primary" data-dismiss="modal">\
+Cancel</a>\
+          <a href="#" class="btn btn-default" data-dismiss="modal">\
+Yes, I want to unpublish</a>\
+      </div>\
+    </div>\
+  </div>\
+</div>');
+
+        document.body.appendChild($modal[0]);
+
+        $modal.on('click', '.btn.btn-primary', function () {
+            document.body.removeChild($modal[0]);
+            return false;
+        });
+
+        var obj = this;
+        $modal.on('click', '.btn.btn-default', function () {
+            post_publish_unpublish.call(obj, ev);
+            document.body.removeChild($modal[0]);
+            return false;
+        });
+
+        $modal.modal();
+        return false;
+    }
+
     var doc = $table[0].ownerDocument;
 
     var label = doc.createElement("label");
@@ -133,9 +181,9 @@ return function ($table, options) {
 
         var i, btn;
         for (i = 0; (btn = publish_btns[i]); ++i)
-            $(btn).click(handle_publish_unpublish);
+            $(btn).click(post_publish_unpublish);
         for (i = 0; (btn = unpublish_btns[i]); ++i)
-            $(btn).click(handle_publish_unpublish);
+            $(btn).click(check_unpublish);
     }
 
     var table = $table.dataTable({
