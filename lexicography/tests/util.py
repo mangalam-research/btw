@@ -9,6 +9,7 @@ from StringIO import StringIO
 from django.test.client import Client
 from django.core.urlresolvers import reverse
 import lxml.etree
+from lxml import html
 from pebble import process
 
 from .. import xml
@@ -238,3 +239,28 @@ def extract_unlinked_terms(tree):
         })
 
     return [''.join(t.itertext()).strip() for t in terms]
+
+def normalize_space(x):
+    """
+    Strip leading and trailing spaces. All spaces are turned into
+    simple spaces (ASCII 32, Unicode code point 00032). Sequences of
+    spaces are turned into single spaces.
+
+    :param x: A string.
+    :returns: The converted string.
+    """
+    return ' '.join(x.strip().split())
+
+def inner_html(x):
+    """
+    Extracts the equivalent of DOM's ``innerHTML`` from an lxml
+    Element.
+    """
+    return (x.text or '') + ''.join(html.tostring(d) for d in x)
+
+def inner_normalized_html(x):
+    """
+    Extracts the equivalent of DOM's ``innerHTML`` from an lxml
+    ``Element`` and normalizes the spaces.
+    """
+    return normalize_space(inner_html(x))

@@ -3,7 +3,6 @@ import cookielib as http_cookiejar
 import os
 import datetime
 
-
 from django_webtest import WebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
@@ -18,6 +17,7 @@ from ..xml import get_supported_schema_versions
 from . import util as test_util
 from . import funcs
 import lib.util as util
+from . util import inner_normalized_html
 
 dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
@@ -83,6 +83,227 @@ class ViewsTestCase(BaseCMSTestCase, WebTest):
         self.assertEqual(response.form['logurl'].value,
                          reverse('lexicography_log'))
         return response, entry
+
+class DetailsTestCase(ViewsTestCase):
+
+    def test_entry_shows_latest_published(self):
+        """
+        When a random user views an entry, the default view is that of the
+        latest published version.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        response1 = self.app.get(entry.get_absolute_url())
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response2 = self.app.get(entry.get_absolute_url())
+
+        self.assertEqual(response1.body, response2.body,
+                         "the response should not have changed because "
+                         "the new version of the article is not "
+                         "published yet")
+
+        # We now publish the change. So the view should be different
+        # from the first.
+        self.assertTrue(entry.latest.publish(self.foo),
+                        "publishing should be successful")
+        response3 = self.app.get(entry.get_absolute_url())
+        self.assertNotEqual(response1.body, response3.body,
+                            "the response should have changed because "
+                            "the new version has been published")
+
+    def test_entry_warns_scribe_about_latest_published(self):
+        """
+        When a scribe views an unpublished entry, and there is a published
+        version, there is a warning on the page pointing to the latest
+        published version.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+        response1 = self.app.get(entry.get_absolute_url(), user=self.foo)
+
+        self.assertEqual(
+            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
+            "there should be no alerts")
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response2 = self.app.get(
+            entry.latest.get_absolute_url(), user=self.foo)
+
+        self.assertEqual(
+            inner_normalized_html(
+                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+            ('You are looking at an unpublished version of the article. '
+             'Follow this <a href="{0}">link</a> to get to the latest '
+             'published version.').format(entry.get_absolute_url()),
+            "there should be an alert pointing to the latest "
+            "published version")
+
+        # We now publish the change. So the alert should be gone.
+        self.assertTrue(entry.latest.publish(self.foo),
+                        "publishing should be successful")
+        response3 = self.app.get(entry.latest.get_absolute_url(),
+                                 user=self.foo)
+        self.assertEqual(
+            len(response3.lxml.cssselect('div.alert.alert-danger')), 0,
+            "there should be no alerts")
+
+    def test_entry_warns_scribe_about_latest_unpublished(self):
+        """
+        When a scribe views an entry, and there is a newer unpublished
+        version, there is a warning on the page.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+        response1 = self.app.get(entry.get_absolute_url(), user=self.foo)
+
+        self.assertEqual(
+            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
+            "there should be no alerts")
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response2 = self.app.get(
+            entry.get_absolute_url(), user=self.foo)
+
+        self.assertEqual(
+            inner_normalized_html(
+                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+            ('There is a <a href="{0}">newer unpublished version</a> '
+             'of this article.').format(entry.latest.get_absolute_url()),
+            "there should be an alert pointing to the latest "
+            "unpublished version")
+
+        # We now publish the change. So the alert should be gone.
+        self.assertTrue(entry.latest.publish(self.foo),
+                        "publishing should be successful")
+        response3 = self.app.get(entry.get_absolute_url(),
+                                 user=self.foo)
+        self.assertEqual(
+            len(response3.lxml.cssselect('div.alert.alert-danger')), 0,
+            "there should be no alerts")
+
+    def test_entry_warns_user_about_latest_published(self):
+        """
+        When a user views an entry, and there is a newer published
+        version, there is a warning on the page pointing to the latest
+        published version.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+        response1 = self.app.get(entry.get_absolute_url())
+
+        self.assertEqual(
+            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
+            "there should be no alerts")
+
+        old_published = entry.latest_published
+
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        # We now publish the change. So the alert should be gone.
+        self.assertTrue(entry.latest.publish(self.foo),
+                        "publishing should be successful")
+        response2 = self.app.get(old_published.get_absolute_url())
+
+        self.assertEqual(
+            inner_normalized_html(
+                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+            ('There is a <a href="{0}">newer published version</a> '
+             'of this article.').format(entry.get_absolute_url()),
+            "there should be an alert pointing to the latest "
+            "published version")
 
 
 class MainTestCase(ViewsTestCase):

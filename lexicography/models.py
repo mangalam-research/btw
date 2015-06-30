@@ -303,8 +303,8 @@ class ChangeRecord(models.Model):
     note = models.CharField(max_length=1024, blank=True)
 
     def get_absolute_url(self):
-        return reverse('lexicography_changerecord_details',
-                       args=(self.id, ))
+        return reverse('lexicography_entry_details',
+                       args=(self.entry.id, self.id, ))
 
     @property
     def etag(self):

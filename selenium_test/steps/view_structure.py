@@ -478,8 +478,9 @@ def step_impl(context, exists):
         """)
 
         if exists == "an":
-            return text.strip() == ("You are looking at an unpublished "
-                                    "version of the article.")
+            return text.strip().startswith(
+                "You are looking at an unpublished version of the "
+                "article.")
         else:
             return text is None
 

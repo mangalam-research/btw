@@ -15,9 +15,9 @@ import logging
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, render_to_response
-from django.http import HttpResponse, HttpResponseRedirect, \
-    HttpResponseBadRequest, Http404, QueryDict
+from django.shortcuts import render, redirect, render_to_response
+from django.http import HttpResponse, HttpResponseNotFound, \
+    HttpResponseRedirect, HttpResponseBadRequest, Http404, QueryDict
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods, etag
@@ -205,23 +205,43 @@ class SearchTable(BaseDatatableView):
 
 @require_GET
 @never_cache
-def entry_details(request, entry_id):
+def entry_details(request, entry_id, changerecord_id=None):
     """
-    For random users, showing the entry will show the latest published
-    version of the entry. For users who can author, showing the entry
-    will show the latest version.
+    When no ChangeRecord id is provided, showing the Entry will show
+    the latest published version of the entry.
+
+    If a ChangeRecord id is provided, we show this ChangeRecord,
+    provided that it belongs to the Entry specified.
     """
     entry = Entry.objects.get(id=entry_id)
-
     can_author = usermod.can_author(request.user)
 
+    if changerecord_id is None:
+
+        # Random users cannot view records that have not been published.
+        if not can_author and not entry.latest_published:
+            raise PermissionDenied
+
+        return _show_changerecord(request, entry.latest_published)
+
+    # We have a changerecord_id
+    cr = ChangeRecord.objects.get(id=changerecord_id)
+    if cr.entry != entry:
+        return HttpResponseNotFound("""
+<h1>Non-existent Version</h1>
+<p>The article exists but you are looking for a version does not exist. \
+The version you are seeking may never have existed in the first place. Or \
+perhaps the version you are seeking has been removed from the system due \
+to a serious issue (legal, ethical, etc.) with its contents.</p>
+<p>The latest version of the article accessible to you is \
+<a href="{0}">here</a>.</p>
+        """.format(mark_safe(entry.get_absolute_url())))
+
     # Random users cannot view records that have not been published.
-    if not can_author and not entry.latest_published:
+    if not can_author and not cr.published:
         raise PermissionDenied
 
-    cr = entry.latest if can_author else entry.latest_published
     return _show_changerecord(request, cr)
-
 
 @require_GET
 @never_cache
@@ -242,12 +262,8 @@ def changerecord_details(request, changerecord_id):
         return HttpResponse(json.dumps(prepared),
                             content_type=JSON_TYPE)
 
-    # Random users cannot view records that have not been published.
-    if not usermod.can_author(request.user) and not cr.published:
-        raise PermissionDenied
-
-    return _show_changerecord(request, cr)
-
+    # We no longer access ChangeRecord objects directly.
+    return redirect(cr, permanent=True)
 
 @require_POST
 def changerecord_publish(request, changerecord_id):
@@ -305,6 +321,19 @@ def _show_changerecord(request, cr):
                 reverse('lexicography_changerecord_details',
                         args=(cr.pk, ))
 
+    # We want to warn the user of any version that has been published
+    # and is not this version. We pass cr.entry so that we can get the
+    # non-version specific URL of to view the entry.
+    latest_published = cr.entry \
+        if cr != cr.entry.latest_published else None
+
+    # If the user is able to see unpublished articles, then we want to
+    # warn the user if there exist a later version which is
+    # unpublished.
+    latest_unpublished = cr.entry.latest if not show_published and \
+        (cr != cr.entry.latest) and \
+        (cr.entry.latest != cr.entry.latest_published) else None
+
     return render_to_response(
         'lexicography/details.html',
         {
@@ -312,7 +341,9 @@ def _show_changerecord(request, cr):
             'data': data,
             'bibl_data': bibl_data,
             'edit_url': edit_url,
-            'is_published': cr.published
+            'is_published': cr.published,
+            'latest_unpublished': latest_unpublished,
+            'latest_published': latest_published
         },
         context_instance=RequestContext(request))
 
