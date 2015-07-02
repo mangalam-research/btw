@@ -1306,6 +1306,25 @@ data is laid out as follows:
 
   This cache can be destroyed safely.
 
+Bibliographical Formats
+=======================
+
+At the same time we've added the "how to cite" functionality, we've
+considered adding the framework necessary for the autodiscovery of
+bibliographical formats. For instance, a user visiting our page and
+who'd like to include into their Zotero database the bibliographical
+information for an article could just click a button to have the
+information be transfered to their database.
+
+Unfortunately, the realm of bibliographical data interchange standards
+is a mess. Dublin Core does not have a notion of "encylopedia
+article". Neither does COinS. MODS is a format that fully support what
+we need but it is discoverable only by using unAPI, which is a clunky
+standard and also requires making HTML5 pages invalid.
+
+In light of the problems above, we will settle for now on providing an
+option to download MODS manually.
+
 CMS Choice for BTW
 ==================
 

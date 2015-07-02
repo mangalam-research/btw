@@ -10,6 +10,7 @@ require.config({
    datatables: 'external/datatables/js/jquery.dataTables.min',
    'datatables.bootstrap': 'external/datatables/js/dataTables.bootstrap',
    "bootstrap-editable": 'external/bootstrap3-editable/js/bootstrap-editable',
+   "bootstrap-datepicker": 'external/bootstrap-datepicker/js/bootstrap-datepicker',
    qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
@@ -65,6 +66,10 @@ require.config({
    'bootstrap-editable': {
        deps: ["bootstrap"],
        exports: "jQuery.fn.editable"
+   },
+   'bootstrap-datepicker': {
+       deps: ["bootstrap"],
+       exports: "jQuery.fn.datepicker"
    },
    'qunit': {
        exports: 'QUnit',

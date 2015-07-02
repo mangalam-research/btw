@@ -4,6 +4,7 @@
 {% block extrahead %}
 <link href="{% static "lib/wed/wed.css" %}" media="screen" rel="stylesheet" />
 <link href="{% static "lib/btw/btw-view.css" %}" media="screen" rel="stylesheet" />
+<link href="{% static "lib/external/bootstrap-datepicker/css/bootstrap-datepicker.css" %}" media="screen" rel="stylesheet" />
 {% for polyfill in btw_globals.wed_polyfills %}
 <script type="text/javascript" src="{{ polyfill }}"></script>
 {% endfor %}
@@ -42,6 +43,129 @@ require(['btw/btw_view'], function(Viewer) {
   There is a <a href="{{ latest_unpublished.get_absolute_url }}">newer unpublished version</a> of this article.
 </div>
 {% endif %}
+<div class="modal fade" id="cite-modal" tabindex="-1" role="dialog" aria-labelledby="cite-modal-label">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="how-to-cite-label">Cite</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="access-date">Desired access date:</label><input id="access-date" type="text" type="text" class="form-control" />
+            <p class="help-block">
+              Bibliographical references to web sites normally include an
+              access date. You may change it if needed (the format is
+              YYYY-MM-DD).
+            </p>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox"> Include a version-specific link.
+            </label>
+            <p class="help-block">
+              If this checkbox is unchecked, the link included in the
+              citation will always point to the <strong>latest
+              published version</strong> of this article. If this
+              checkbox is checked, then the link included in the
+              citation will always point to <strong>this</strong>
+              version of the article.
+            </p>
+          </div>
+          <script>
+            require(["jquery", "bootstrap-datepicker"], function ($) {
+            $('#cite-modal #access-date).datepicker({
+                format: "yyyy-mm-dd",
+                todayBtn: "linked",
+                autoclose: true,
+                todayHighlight: true
+            }).datepicker('setDate', Date());
+            });
+          </script>
+        </form>
+        <hr />
+        <p>If your bibliographical management software is able to
+        import the MODS format, it is preferable to save the MODS
+        record for this page and import it into your bibliographical
+        management software.</p>
+        <button class="btn btn-default" id="download-mods">
+          Get the MODS Record</button>
+        <hr />
+        <p>Otherwise you may cut and paste the following preformatted
+          text, according to the style you prefer.</p>
+        <p>Chicago:
+          <blockquote>
+            <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, s.v. "{{ page_title }}," accessed <span class="accessed"></span> <span class="url"></url>.
+          </blockquote>
+        </p>
+        <p>MLA:
+          <blockquote>
+            "prasāda". The Buddhist Translators Workbench, version 1.2.1. 2015. Berkeley: Mangalam Research Center for Buddhist Languages. http://.../en-us/lexicography/entry/40/ (accessed July 01, 2015).
+          </blockquote>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="link-modal" tabindex="-1" role="dialog" aria-labelledby="link-modal-label">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="link-modal-label">Link</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          <a href="{{ permalink }}">Permalink</a> to
+          <strong>the latest published version</strong> of this
+          article. This link will always point to the latest published
+          version of this article.
+        </p>
+        <hr />
+        <p>
+          <a href="{{ version_permalink }}">Permalink</a>
+          to <strong>this version</strong> of the article. This link will
+          always point to the version of the article you are currently
+          viewing.
+          {% if not is_published %}
+          <strong>Note that you are currently viewing an unpublished
+            version of the article. If you provide this link to someone
+            who cannot edit BTW articles, they will not be able to use
+            the link, unless this exact version is published before they
+            use the link.</strong>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="history-modal" tabindex="-1" role="dialog" aria-labelledby="history-modal-label">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="history-modal-label">Article History</h4>
+      </div>
+      <div class="modal-body">
+        {% if can_author %}
+        <p>This list here shows only those versions that have been
+        published. If you need to see unpublished versions, please use
+        the main <a href="{% url "lexicography_main" %}">
+            lexicography page</a> to perform a search there.</p>
+        {% endif %}
+        <ul>
+        {% for h in history %}
+        <li><a href="{{ h.url }}">{{ h.date }}</a>{% if h.url == version_permalink %} You are currently looking at this version.{% endif %}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row well well-sm">
+  <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#history-modal">Article history</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#link-modal">Link to this article</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#cite-modal">Cite this article</a>
+</div>
 <div class="wed-frame row">
   <div class="wed-document col-lg-9 col-md-9 col-sm-11 col-xs-11">
     <div class="alert alert-info loading" style="display: none">

@@ -74,7 +74,7 @@ class Entry(models.Model):
         return self.lemma
 
     def get_absolute_url(self):
-        return reverse('lexicography_entry_details', args=[str(self.id)])
+        return reverse('lexicography_entry_details', args=(self.id, ))
 
     @method_decorator(transaction.atomic)
     def update(self, user, session_key, chunk, lemma, ctype, subtype,

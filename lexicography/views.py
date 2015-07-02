@@ -290,7 +290,9 @@ def changerecord_unpublish(request, changerecord_id):
 
 def _show_changerecord(request, cr):
 
-    show_published = not usermod.can_author(request.user)
+    can_author = usermod.can_author(request.user)
+
+    show_published = not can_author
 
     key = cr.article_display_key(show_published)
     prepared = article_display_cache.get(key)
@@ -330,13 +332,25 @@ def _show_changerecord(request, cr):
     # If the user is able to see unpublished articles, then we want to
     # warn the user if there exist a later version which is
     # unpublished.
-    latest_unpublished = cr.entry.latest if not show_published and \
+    latest_unpublished = cr.entry.latest if can_author and \
         (cr != cr.entry.latest) and \
         (cr.entry.latest != cr.entry.latest_published) else None
+
+    # Provide a history for the article
+    history = []
+    for version in cr.entry.changerecord_set.filter(published=True) \
+            .order_by("-datetime"):
+        history.append({
+            'url': version.get_absolute_url(),
+            'date': version.datetime
+        })
 
     return render_to_response(
         'lexicography/details.html',
         {
+            'bibliographical_data': {
+                'version': util.version()
+            },
             'page_title': cr.lemma,
             'fetch_url': fetch_url,
             'data': data,
@@ -344,7 +358,11 @@ def _show_changerecord(request, cr):
             'edit_url': edit_url,
             'is_published': cr.published,
             'latest_unpublished': latest_unpublished,
-            'latest_published': latest_published
+            'latest_published': latest_published,
+            'permalink': cr.entry.get_absolute_url(),
+            'version_permalink': cr.get_absolute_url(),
+            'can_author': can_author,
+            'history': history
         },
         context_instance=RequestContext(request))
 
