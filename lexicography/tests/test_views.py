@@ -36,6 +36,7 @@ class ViewsTestCase(BaseCMSTestCase, WebTest):
     fixtures = local_fixtures
 
     def setUp(self):
+        super(ViewsTestCase, self).setUp()
         translation.activate('en-us')
 
         self.foo = user_model.objects.get(username="foo")
@@ -85,6 +86,13 @@ class ViewsTestCase(BaseCMSTestCase, WebTest):
         return response, entry
 
 class DetailsTestCase(ViewsTestCase):
+
+    def test_has_lemma_in_title(self):
+        entry = Entry.objects.get(lemma="abcd")
+        response = self.app.get(entry.get_absolute_url())
+        self.assertEqual(response.lxml.xpath("/html/head/title/text()")[0]
+                         .strip(),
+                         "example.com | abcd")
 
     def test_entry_shows_latest_published(self):
         """

@@ -5,27 +5,27 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
     <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>{% block page_title %}BTW{% endblock %}</title>
-        {% render_block "js" %}
-	<script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
-	<script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
-        <script>
-          require.config({
-              baseUrl: '{% static 'lib/' %}'
-          });
-          require(["bootstrap"]);
-        </script>
-        <link href="{{ btw_globals.btw_bootstrap_css_path }}" type="text/css" media="screen" rel="stylesheet" />
-        <link href="{{ btw_globals.btw_fontawesome_css_path }}" type="text/css" media="screen" rel="stylesheet" />
-        <link href="{% static 'css/site.css' %}" type="text/css" media="screen" rel="stylesheet" />
-	<script type="text/javascript">
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>{% block page_title %}BTW{% endblock %}</title>
+      {% render_block "js" %}
+      <script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
+      <script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
+      <script>
+        require.config({
+          baseUrl: '{% static 'lib/' %}'
+        });
+        require(["bootstrap"]);
+      </script>
+      <link href="{{ btw_globals.btw_bootstrap_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+      <link href="{{ btw_globals.btw_fontawesome_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+      <link href="{% static 'css/site.css' %}" type="text/css" media="screen" rel="stylesheet" />
+      <script type="text/javascript">
 	{% autoescape off %}
 	{{ btw_globals.wed_config }}
 	{% endautoescape %}
-	</script>
-	{% block extrahead %}{% endblock %}
-        {% render_block "css" %}
+      </script>
+      {% block extrahead %}{% endblock %}
+      {% render_block "css" %}
     </head>
 
     <body>

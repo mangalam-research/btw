@@ -337,6 +337,7 @@ def _show_changerecord(request, cr):
     return render_to_response(
         'lexicography/details.html',
         {
+            'page_title': cr.lemma,
             'fetch_url': fetch_url,
             'data': data,
             'bibl_data': bibl_data,
