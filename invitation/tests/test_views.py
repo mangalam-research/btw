@@ -3,6 +3,9 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test.utils import override_settings
 from django.utils import translation
+from django.contrib.sites.models import Site
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 from cms.test_utils.testcases import BaseCMSTestCase
 
 # pylint: disable=no-name-in-module
@@ -15,10 +18,9 @@ from ..models import Invitation
 from .util import expire, BAD_KEY
 
 dirname = os.path.dirname(__file__)
+user_model = get_user_model()
 
 class ViewTestCase(BaseCMSTestCase, WebTest):
-    fixtures = list(os.path.join(dirname, "fixtures", x)
-                    for x in ("users.json", "sites.json"))
 
     def setUp(self):
         super(ViewTestCase, self).setUp()
@@ -29,8 +31,34 @@ class ViewTestCase(BaseCMSTestCase, WebTest):
         self.complete_url = reverse('invitation_complete')
         self.signup_url = reverse('account_signup')
 
-
 class InviteTestCase(ViewTestCase):
+
+    def setUp(self):
+        super(InviteTestCase, self).setUp()
+        site = Site.objects.get_current()
+        site.name = "BTW"
+        site.domain = "btw.mangalamresearch.org"
+        site.save()
+
+        g = Group.objects.get(name='scribe')
+
+        self.foo = user_model.objects.create_user(
+            username='foo', password='test')
+
+        self.foo.user_permissions.add(Permission.objects.get(
+            codename="add_invitation"))
+        self.foo.groups.add(g)
+
+        self.foo2 = user_model.objects.create_user(
+            username='foo2', password='test')
+        self.foo2.groups.add(g)
+
+    def tearDown(self):
+        super(InviteTestCase, self).tearDown()
+        # We need to clear the cache manually because the rollback
+        # performed by the testing framework won't trigger the signals
+        # that automatically clear the cache. :-/
+        Site.objects.clear_cache()
 
     def test_not_logged_in(self):
         """Test that a user who is not logged gets redirected."""
