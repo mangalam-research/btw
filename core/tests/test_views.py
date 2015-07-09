@@ -6,11 +6,8 @@ from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from cms.test_utils.testcases import BaseCMSTestCase
-
-# pylint: disable=no-name-in-module
-from nose.tools import assert_true, assert_equal, assert_false, \
-    assert_not_equal
 
 from invitation.tests.util import BAD_KEY
 from invitation.models import Invitation
@@ -47,11 +44,23 @@ class ViewTestCase(BaseCMSTestCase, WebTest):
 
 class GeneralTestCase(ViewTestCase):
 
-    fixtures = [os.path.join("core", "tests", "fixtures", "sites.json")]
-
     brand_xpath = '//a[@class="navbar-brand"]'
     alert_xpath = \
         '//div[@id="btw-site-navigation"]/div[@role="alert"]'
+
+    def setUp(self):
+        super(GeneralTestCase, self).setUp()
+        site = Site.objects.get_current()
+        site.name = "BTW dev"
+        site.domain = "btw.mangalamresearch.org"
+        site.save()
+
+    def tearDown(self):
+        super(GeneralTestCase, self).tearDown()
+        # We need to clear the cache manually because the rollback
+        # performed by the testing framework won't trigger the signals
+        # that automatically clear the cache. :-/
+        Site.objects.clear_cache()
 
     def test_defaults(self):
         """
@@ -130,7 +139,17 @@ class GeneralTestCase(ViewTestCase):
 # Turn off the requirement for emails just for this test.
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
 class LoginTestCase(ViewTestCase):
-    fixtures = [os.path.join(dirname, "fixtures", "users.json")]
+
+    def setUp(self):
+        super(LoginTestCase, self).setUp()
+
+        self.admin = user_model.objects.create_superuser(
+            username='admin', email="foo@foo.foo", password='test')
+
+        g = Group.objects.get(name='scribe')
+        self.foo = user_model.objects.create_user(
+            username='foo', password='foo')
+        self.foo.groups.add(g)
 
     def test_login(self):
         """
@@ -163,7 +182,7 @@ class LoginTestCase(ViewTestCase):
         self.assertRedirects(response, "/", target_status_code=302)
         response = response.follow()
         self.assertRedirects(response, reverse("pages-root"))
-        assert_not_equal(session_id, self.app.cookies.get("sessionid"))
+        self.assertNotEqual(session_id, self.app.cookies.get("sessionid"))
         response = response.follow()
 
     def test_main_show_login(self):
@@ -242,8 +261,8 @@ class SignupTestCase(WebTest):
         response = self.app.get(url)
         self.assertRedirects(response, self.signup_url)
 
-        assert_equal(self.app.session['invitation_key'], invitation.key,
-                     "the key should be stored in the session")
+        self.assertEqual(self.app.session['invitation_key'], invitation.key,
+                         "the key should be stored in the session")
         response = response.follow()
         form = response.form
 
@@ -257,6 +276,8 @@ class SignupTestCase(WebTest):
         self.assertRedirects(response, self.verification_sent)
 
         invitation = Invitation.objects.get(pk=invitation.pk)
-        assert_true(invitation.used, "the invitation should have been used")
-        assert_false('invitation_key' in self.app.session,
-                     "the key should have been removed from the session")
+        self.assertTrue(invitation.used,
+                        "the invitation should have been used")
+        self.assertFalse(
+            'invitation_key' in self.app.session,
+            "the key should have been removed from the session")

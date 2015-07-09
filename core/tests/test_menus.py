@@ -33,13 +33,15 @@ def reverse_to_re(name):
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
 class MenuTestCase(WebTest):
 
-    fixtures = [os.path.join(dirname, "fixtures", "users.json")]
     saved_menus = None
 
     def setUp(self):
         super(MenuTestCase, self).setUp()
         from django.utils import translation
         translation.activate('en-us')
+
+        self.admin = user_model.objects.create_superuser(
+            username='admin', email="foo@foo.foo", password='test')
 
         self.scribe = user_model.objects.create_user(
             username='test', password='test')
