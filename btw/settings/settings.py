@@ -485,6 +485,15 @@ if not hasattr(s, "BTW_TESTING"):
     s.BTW_TESTING = False
 s.BTW_SELENIUM_TESTS = False
 
+# This setting is used to force BTW to install its apps somewhere. On
+# a normally deployed site (and even in the development site), some
+# BTW applications are available as apphooks attached to Django CMS
+# pages. In testing, this is not always desirable. For intance, when
+# manipulating fixtures for testing, a virgin database is created in
+# which fixtures to be edited are loaded. This new database obviously
+# has no CMS page. Turning this setting on is the solution. It should not
+# be used in production. It will be ignored if DEBUG is not also True.
+s.BTW_DIRECT_APP_MODE = False
 
 exec _env.find_config("btw")  # pylint: disable=exec-used
 

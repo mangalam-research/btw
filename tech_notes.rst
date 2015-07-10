@@ -843,27 +843,31 @@ There is no direct way to modify the fixtures used by the Django tests
 (this includes the live server tests which is used to run the Selenium
 tests). The procedure to follow is:
 
-1. Move your development database to a different location
+1. Stop the development server.
+
+2. Move your development database to a different location
    temporariy. **Or** modify the development environment so that the
    development server connects to a temporary, different database.
 
-2. Issue::
+3. Issue::
 
     $ ./manage.py migrate
 
-    $ ./manage.py runserver
+4. Then start your server again. You should start it with
+   ``BTW_DIRECT_APP_MODE`` set to ``True``. Or you won't be able to
+   access the lexicography and bibliography apps.
 
-3. Repeat the following command for all fixtures you want to load or
+5. Repeat the following command for all fixtures you want to load or
    pass all fixtures together on the same command line::
 
     $ ./manage.py loaddata [fixture]
 
-4. At this point you can edit your database.
+6. At this point you can edit your database.
 
-5. Run a garbage collection to remove old chunks that are no longer
+7. Run a garbage collection to remove old chunks that are no longer
    referred.
 
-6. When you are done kill the server, and dump the data as needed::
+8. When you are done kill the server, and dump the data as needed::
 
     $ ./manage.py dumpdata --indent=2 --natural [application] > [file]
 

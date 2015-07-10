@@ -17,7 +17,18 @@ urlpatterns = i18n_patterns(
     url(r'^logout/$', 'allauth.account.views.logout', name="logout"),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^invitation/', include('invitation.urls')),
-    url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')))
+
+# These have to be inserted before the CMS pattern.
+if settings.DEBUG and settings.BTW_DIRECT_APP_MODE:
+    urlpatterns += i18n_patterns(
+        '',
+        url(r'^lexicography/', include('lexicography.urls')),
+        url(r'^bibliography/', include('bibliography.urls')),
+    )
+
+urlpatterns += i18n_patterns(
+    '',
     url(r'^', include('cms.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
