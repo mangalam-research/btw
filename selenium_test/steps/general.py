@@ -260,7 +260,10 @@ WHAT_TO_TITLE = {
     u"an antonym with citations, followed by another antonym":
     u"antonym with citations, followed by another antonym",
     u"citations everywhere possible (subsense)":
-    u"citations everywhere possible (subsense)"
+    u"citations everywhere possible (subsense)",
+    u"an empty surname": u"empty surname",
+    u"a missing editor": u"empty surname",
+    u"a missing author": u"no author"
 }
 
 

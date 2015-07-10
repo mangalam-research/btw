@@ -96,6 +96,45 @@ Validator.prototype.validateDocument = function () {
         }
     }
 
+    // Verify that surnames are not empty
+    var surnames = this._gui_root.getElementsByClassName("surname");
+    var surname;
+    for (i = 0; (surname = surnames[i]); ++i) {
+        var data_surname = $.data(surname, "wed_mirror_node");
+        if (data_surname.textContent.length === 0)
+            ret.push({
+                error: new ValidationError(
+                    "surname cannot be empty"),
+                node: data_surname,
+                index: 0
+            });
+    }
+
+    // Verify that there is an editor
+    var btw_credits = this._gui_root.getElementsByClassName("btw:credits")[0];
+    // btw:credits can be missing on files that should be upgraded to
+    // the latest version of the schema.
+    if (btw_credits) {
+        var data_btw_credits = $.data(btw_credits, "wed_mirror_node");
+        if (!btw_credits.getElementsByClassName("editor").length) {
+            ret.push({
+                error: new ValidationError("there must be at least one editor"),
+                node: data_btw_credits,
+                index: 0
+            });
+        }
+
+        // Verify that there is an author
+        if (!btw_credits.getElementsByClassName("btw:credit").length) {
+            ret.push({
+                error: new ValidationError("there must be at least one author"),
+                node: data_btw_credits,
+                index: 0
+            });
+        }
+    }
+    // Else schema validation will have taken care of the missing btw:credits...
+
     return ret;
 };
 

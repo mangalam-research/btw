@@ -13,13 +13,20 @@ schema_version = xmltree.extract_version()
 
 class SchematronTestCase(unittest.TestCase):
 
-    def test_valid(self):
-        self.assertTrue(
-            util.schematron(xml.schematron_for_version(schema_version),
-                            valid_editable.decode('utf-8')))
+    @classmethod
+    def setUpClass(cls):
+        # This is really a precondition to the rest of the test
+        # suite. If this assertion fails, there's no point in running
+        # anything else. It is also a test of sorts because if this
+        # fails, then the schematron is wrong or the file is wrong.
+        #
+        # Running this here instead of checking for every test cuts
+        # down considerably on the running time of the test suite.
+        #
+        assert util.schematron(xml.schematron_for_version(schema_version),
+                               valid_editable.decode('utf-8'))
 
     def test_cognate_without_semantic_fields(self):
-        self.test_valid()
         tree = lxml.etree.fromstring(valid_editable)
         # We remove all semantic-fields from one cognate
         sfs = tree.xpath("//btw:cognate[1]//btw:semantic-fields",
@@ -36,7 +43,6 @@ class SchematronTestCase(unittest.TestCase):
                             data))
 
     def test_sense_without_semantic_fields(self):
-        self.test_valid()
         tree = lxml.etree.fromstring(valid_editable)
         # We remove all semantic-fields from one sense
         sfs = tree.xpath(
@@ -59,7 +65,6 @@ class SchematronTestCase(unittest.TestCase):
         Test that the schematron test will report an error if a semantic
         field is incorrect.
         """
-        self.test_valid()
         tree = lxml.etree.fromstring(valid_editable)
         # We remove all semantic-fields from one sense
         sfs = tree.xpath(
@@ -78,7 +83,6 @@ class SchematronTestCase(unittest.TestCase):
         """
         Test various invalid cases for semantic fields.
         """
-        self.test_valid()
         tree = lxml.etree.fromstring(valid_editable)
         sfs = tree.xpath(
             "//btw:sf",
@@ -107,7 +111,6 @@ class SchematronTestCase(unittest.TestCase):
         """
         Test various valid cases for semantic fields.
         """
-        self.test_valid()
         tree = lxml.etree.fromstring(valid_editable)
         sfs = tree.xpath(
             "//btw:sf",
@@ -131,3 +134,62 @@ class SchematronTestCase(unittest.TestCase):
                                       'svrl': 'http://purl.oclc.org/dsdl/svrl'
                                   })
         self.assertEqual(len(found), 0)
+
+    def test_empty_surname(self):
+        """
+        Test that an empty surname raises an error
+        """
+        tree = lxml.etree.fromstring(valid_editable)
+        surnames = tree.xpath(
+            "//tei:surname",
+            namespaces={
+                "tei": "http://www.tei-c.org/ns/1.0"
+            })
+
+        surnames[0].text = ""
+
+        data = lxml.etree.tostring(
+            tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        self.assertFalse(
+            util.schematron(xml.schematron_for_version(schema_version),
+                            data))
+
+    def test_no_editor(self):
+        """
+        Test that a an editor must be recorded.
+        """
+        tree = lxml.etree.fromstring(valid_editable)
+        editors = tree.xpath(
+            "//tei:editor",
+            namespaces={
+                "tei": "http://www.tei-c.org/ns/1.0"
+            })
+
+        for el in editors:
+            el.getparent().remove(el)
+
+        data = lxml.etree.tostring(
+            tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        self.assertFalse(
+            util.schematron(xml.schematron_for_version(schema_version),
+                            data))
+
+    def test_no_author(self):
+        """
+        Test that a an author must be recorded.
+        """
+        tree = lxml.etree.fromstring(valid_editable)
+        authors = tree.xpath(
+            "//btw:credit",
+            namespaces={
+                "btw": "http://mangalamresearch.org/ns/btw-storage",
+            })
+
+        for el in authors:
+            el.getparent().remove(el)
+
+        data = lxml.etree.tostring(
+            tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        self.assertFalse(
+            util.schematron(xml.schematron_for_version(schema_version),
+                            data))

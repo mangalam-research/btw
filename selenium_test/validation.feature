@@ -24,3 +24,18 @@ Scenario: valid semantic fields are not reported
 Given a document with good semantic fields
 And the document is completely validated
 Then there are no errors
+
+Scenario: an empty surname results in an error
+Given a document with an empty surname
+And the document is completely validated
+Then there is an error reporting an empty surname
+
+Scenario: a document without an editor results in an error
+Given a document with a missing editor
+And the document is completely validated
+Then there is an error reporting a missing editor
+
+Scenario: a document without an author results in an error
+Given a document with a missing author
+And the document is completely validated
+Then there is an error reporting a missing author
