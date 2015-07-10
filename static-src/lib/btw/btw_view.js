@@ -217,7 +217,8 @@ Viewer.prototype.processData = function (data, bibl_data) {
     var heading_map = {
         "btw:overview": "• OVERVIEW",
         "btw:sense-discrimination": "• SENSE DISCRIMINATION",
-        "btw:historico-semantical-data": "• HISTORICO-SEMANTICAL DATA"
+        "btw:historico-semantical-data": "• HISTORICO-SEMANTICAL DATA",
+        "btw:credits": "• CREDITS"
     };
 
     // Override the head specs with those required for
@@ -500,6 +501,21 @@ Viewer.prototype.processData = function (data, bibl_data) {
     var with_id;
     for(i = 0; (with_id = with_ids[i]) !== undefined; ++i)
         this.idDecorator(root, with_id);
+
+    // We unwrap the contents of all "resp" elements.
+    var resps = root.getElementsByClassName("resp");
+    var resp;
+    // As we process each element, it is removed from the live list
+    // returned by getElementsByClassName.
+    while ((resp = resps[0])) {
+        var parent = resp.parentNode;
+        var child = resp.firstChild;
+        while (child) {
+            parent.insertBefore(child, resp);
+            child = resp.firstChild;
+        }
+        parent.removeChild(resp);
+    }
 
     // We want to process all ref elements earlier so that hyperlinks
     // to examples are created properly.
@@ -795,8 +811,82 @@ Viewer.prototype.languageDecorator = function () {
 Viewer.prototype.noneDecorator = function () {
 };
 
-Viewer.prototype.elementDecorator = function () {
+Viewer.prototype.elementDecorator = function (root, el) {
+    var name = util.getOriginalName(el);
+
+    switch(name) {
+    case "persName":
+        this.persNameDecorator(root, el);
+        break;
+    case "editor":
+        this.editorDecorator(root, el);
+        break;
+    }
 };
+
+function prependLabel(name, text, el, dec) {
+    var class_ = "_" + name + "_label";
+    var label = domutil.childByClass(el, class_);
+    if (!label) {
+        label = el.ownerDocument.createElement("div");
+        label.className = "_text _phantom " + class_;
+        label.textContent = text;
+        dec._gui_updater.insertBefore(el, label, el.firstChild);
+    }
+}
+
+Viewer.prototype.editorDecorator = function (root, el) {
+    prependLabel("editor", "Editor: ", el, this);
+};
+
+Viewer.prototype.persNameDecorator = function (root, el) {
+    var dec = this;
+    el.classList.add("_inline");
+
+    function handleSeparator(class_, where, text) {
+        var separator_class = "_" + class_ + "_separator";
+        var child = domutil.childByClass(el, class_);
+        var exists = child && child.childNodes.length;
+        var old_separator = domutil.childByClass(el,
+                                                 separator_class);
+
+        if (exists) {
+            if (!old_separator) {
+                var separator = el.ownerDocument.createElement("div");
+                separator.className = "_text _phantom " + separator_class;
+                separator.textContent = text;
+                var before;
+                switch(where) {
+                case "after":
+                    before = child.nextSibling;
+                    break;
+                case "before":
+                    before = child;
+                    break;
+                default:
+                    throw new Error("unknown value for where: " + where);
+                }
+                dec._gui_updater.insertBefore(el, separator, before);
+            }
+        }
+        else if (old_separator)
+            dec._gui_updater.removeNode(old_separator);
+    }
+
+    handleSeparator("forename", "after", " ");
+    handleSeparator("genName", "before", ", ");
+
+    var name_separator_class = "_persNamename_separator";
+    var old_name_separator = domutil.childByClass(el, name_separator_class);
+
+    if (!old_name_separator) {
+        var separator = el.ownerDocument.createElement("div");
+        separator.className = "_text _phantom " + name_separator_class;
+        separator.textContent = " ";
+        dec._gui_updater.insertBefore(el, separator, el.firstChild);
+    }
+};
+
 
 Viewer.prototype._transformContrastiveItems = function(root, name) {
     // A "group" here is an element that combines a bunch of elements

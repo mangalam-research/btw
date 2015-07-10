@@ -33,7 +33,8 @@ function HeadingDecorator(refmans, gui_updater, heading_map,
     this._unit_heading_map = heading_map || {
     "btw:overview": "UNIT 1: OVERVIEW",
     "btw:sense-discrimination": "UNIT 2: SENSE DISCRIMINATION",
-    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA"
+    "btw:historico-semantical-data": "UNIT 3: HISTORICO-SEMANTICAL DATA",
+    "btw:credits": "UNIT 4: CREDITS"
     };
 
 

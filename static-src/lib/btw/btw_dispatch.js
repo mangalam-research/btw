@@ -27,6 +27,7 @@ DispatchMixin.prototype.dispatch = function (root, el) {
     case "btw:overview":
     case "btw:sense-discrimination":
     case "btw:historico-semantical-data":
+    case "btw:credits":
         this._heading_decorator.unitHeadingDecorator(el);
         break;
     case "btw:definition":

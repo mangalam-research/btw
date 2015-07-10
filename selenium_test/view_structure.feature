@@ -67,6 +67,7 @@ SENSE DISCRIMINATION
 >D. devotion
 HISTORICO-SEMANTICAL DATA
 >etymology
+CREDITS
 """
 
 Scenario: clicking the expand all button expands all sections

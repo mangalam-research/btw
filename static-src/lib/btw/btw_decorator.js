@@ -49,6 +49,7 @@ function BTWDecorator(mode, meta) {
         "btw:entry",
         "btw:lemma",
         "btw:overview",
+        "btw:credits",
         "btw:definition",
         "btw:sense-discrimination",
         "btw:sense",

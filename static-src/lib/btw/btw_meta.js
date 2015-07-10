@@ -43,10 +43,13 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:sense-emphasis":
     case "btw:todo":
         return true;
+    case "tei:editor":
+    case "tei:persName":
+    case "tei:resp":
+        return false;
     case "btw:none":
     case "btw:english-term":
     case "btw:term":
-        return false;
     case "tei:ptr":
         if (node.parentNode &&
             util.getOriginalName(node.parentNode) === "btw:citations")
