@@ -156,3 +156,9 @@ Scenario: there is an article history modal available
   And the view has finished rendering
   When the user clicks the button named "Article history"
   Then there is a modal dialog titled "Article History" visible
+
+Scenario: there is a permalink modal available
+  Given a valid document
+  And the view has finished rendering
+  When the user clicks the button named "Link to this article"
+  Then there is a modal dialog titled "Links" visible

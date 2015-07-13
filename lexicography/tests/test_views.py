@@ -480,6 +480,74 @@ version="0.10" authority="/1">
             "the modal should show a warning about unpublished "
             "versions")
 
+    def test_permalinks(self):
+        """
+        When the details view has a modals that will show correct
+        permalinks.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+
+        response = self.app.get(entry.get_absolute_url())
+        modal = response.lxml.cssselect("div#link-modal")[0]
+        links = modal.cssselect("a")
+        self.assertEqual(links[0].get("href"),
+                         entry.get_absolute_url(),
+                         "the first link should be the entry's absolute URL")
+        self.assertEqual(links[1].get("href"),
+                         entry.latest_published.get_absolute_url(),
+                         "the second link should be the latest published "
+                         "version's absolute URL")
+
+    def test_permalinks_unpublished(self):
+        """
+        When a scribe views an unpublished entry, there is a notice that
+        the second permalink cannot be used by non-scribes.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response = self.app.get(
+            entry.latest.get_absolute_url(), user=self.foo)
+        modal = response.lxml.cssselect("div#link-modal")[0]
+        links = modal.cssselect("a")
+        self.assertTrue(inner_normalized_html(links[1].getparent())
+                        .endswith("""\
+<strong>Note that you are currently viewing an unpublished version of \
+the article. If you provide this link to someone who cannot edit BTW \
+articles, they will not be able to use the link, unless this exact version is \
+published before they use the link.</strong>\
+"""),
+                        "there should be a warning")
+
 
 class MainTestCase(ViewsTestCase):
 
