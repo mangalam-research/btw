@@ -323,13 +323,17 @@ version="0.10" authority="/1">
                              "the entry should be published")
         first_published = entry.latest_published
         response1 = self.app.get(entry.get_absolute_url())
-        lis = response1.html.select("div#history-modal ul > li")
+        lis = response1.lxml.cssselect("div#history-modal ul > li")
         self.assertEqual(len(lis), 1,
                          "there should be one published version")
+
         self.assertTrue(
-            lis[0].decode_contents()
+            inner_normalized_html(lis[0])
             .endswith("You are currently looking at this version."),
             "the first history entry should be marked as the current one")
+        self.assertTrue(
+            lis[0].cssselect("i.fa-arrow-right"),
+            "the first history entry should have an arrow")
 
         # We change the entry but do not publish
         c = Chunk(data="""
@@ -369,17 +373,23 @@ version="0.10" authority="/1">
                             "the response should have changed because "
                             "the new version has been published")
 
-        lis = response3.html.select("div#history-modal ul > li")
+        lis = response3.lxml.cssselect("div#history-modal ul > li")
         self.assertEqual(len(lis), 2,
                          "there should be two published versions")
         self.assertTrue(
-            lis[0].decode_contents()
+            inner_normalized_html(lis[0])
             .endswith("You are currently looking at this version."),
             "the first history entry should be marked as the current one")
+        self.assertTrue(
+            lis[0].cssselect("i.fa-arrow-right"),
+            "the first history entry should have an arrow")
         self.assertFalse(
-            lis[1].string
+            inner_normalized_html(lis[1])
             .endswith("You are currently looking at this version."),
             "the other history entry should not be marked as the current one")
+        self.assertFalse(
+            lis[1].cssselect("i.fa-arrow-right"),
+            "the other history entry should not have an arrow")
 
         # Check the URLs too.
         published = entry.changerecord_set.filter(published=True) \
@@ -394,17 +404,23 @@ version="0.10" authority="/1">
 
         # We're looking at the earlier published version.
         response4 = self.app.get(first_published.get_absolute_url())
-        lis = response4.html.select("div#history-modal ul > li")
+        lis = response4.lxml.cssselect("div#history-modal ul > li")
         self.assertEqual(len(lis), 2,
                          "there should be two published versions")
         self.assertFalse(
-            lis[0].string
+            inner_normalized_html(lis[0])
             .endswith("You are currently looking at this version."),
             "the first history entry should not be marked as the current one")
+        self.assertFalse(
+            lis[0].cssselect("i.fa-arrow-right"),
+            "the first history entry should not have an arrow")
         self.assertTrue(
-            lis[1].decode_contents()
+            inner_normalized_html(lis[1])
             .endswith("You are currently looking at this version."),
             "the other history entry should be marked as the current one")
+        self.assertTrue(
+            lis[1].cssselect("i.fa-arrow-right"),
+            "the other history entry should have an arrow")
 
     def test_scribe_viewing_unpublished_has_nothing_marked_in_history(self):
         """
@@ -443,19 +459,22 @@ version="0.10" authority="/1">
         response1 = self.app.get(
             entry.latest.get_absolute_url(), user=self.foo)
 
-        lis = response1.html.select("div#history-modal ul > li")
+        lis = response1.lxml.cssselect("div#history-modal ul > li")
         self.assertEqual(len(lis), 1,
                          "the list should have the single published version")
         self.assertFalse(
-            lis[0].string
+            inner_normalized_html(lis[0])
             .endswith("You are currently looking at this version."),
             "the single version in the list should not be marked as the "
             "one being viewed")
+        self.assertFalse(
+            lis[0].cssselect("i.fa-arrow-right"),
+            "the other history entry should not have an arrow")
 
-        modal_body = response1.html.select(
+        modal_body = response1.lxml.cssselect(
             "div#history-modal .modal-body > p")[0]
         self.assertTrue(
-            normalize_space(modal_body.decode_contents())
+            inner_normalized_html(modal_body)
             .startswith("This list here shows only those versions that "
                         "have been published."),
             "the modal should show a warning about unpublished "

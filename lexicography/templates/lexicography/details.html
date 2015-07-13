@@ -154,9 +154,10 @@ require(['btw/btw_view'], function(Viewer) {
         the main <a href="{% url "lexicography_main" %}">
             lexicography page</a> to perform a search there.</p>
         {% endif %}
-        <ul>
+        <p>All times are UTC.</p>
+        <ul class="fa-ul">
         {% for h in history %}
-        <li><a href="{{ h.url }}">{{ h.date }}</a>{% if h.url == version_permalink %} You are currently looking at this version.{% endif %}</li>
+        <li>{% if h.url == version_permalink %}<i class="fa-li fa fa-arrow-right"></i>{% endif %}<a href="{{ h.url }}">{{ h.date }}</a>{% if h.url == version_permalink %} You are currently looking at this version.{% endif %}</li>
         {% endfor %}
         </ul>
       </div>
