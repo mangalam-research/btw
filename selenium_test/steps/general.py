@@ -7,6 +7,7 @@ from nose.tools import assert_equal, assert_true
 
 
 from selenium.webdriver.common.by import By
+import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from behave import then, when, given, Given, \
     step_matcher  # pylint: disable=E0611
@@ -495,6 +496,7 @@ def step_impl(context):
                                         ".modal.in .modal-header h3"))
     assert_equal(header.text, "Edited by another!")
 
+
 @then('^the editor is present$')
 def step_impl(context):
     # This is deliberately brief. This should be used on a page where
@@ -502,3 +504,21 @@ def step_impl(context):
     # checking that we are still there.
     assert_true(context.driver.execute_script(
         "return window.wed_editor !== undefined"))
+
+
+@when(ur'^the user clicks the button named "(?P<name>.*?)"$')
+def step_impl(context, name):
+    button = context.driver.find_element_by_link_text(name)
+    button.click()
+
+
+@then(ur'^there is a modal dialog titled "(?P<name>.*?)" visible$')
+def step_impl(context, name):
+    util = context.util
+
+    modal = util.wait(
+        EC.visibility_of_element_located((By.CSS_SELECTOR,
+                                          ".modal.in")))
+
+    assert_equal(modal.find_element_by_class_name("modal-title").text,
+                 name)

@@ -313,6 +313,154 @@ version="0.10" authority="/1">
             "there should be an alert pointing to the latest "
             "published version")
 
+    def test_entry_history_marks_correct_version_as_the_one_viewed(self):
+        """
+        When a random user views an entry, the article history shows the
+        correct version as the one being viewed.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        first_published = entry.latest_published
+        response1 = self.app.get(entry.get_absolute_url())
+        lis = response1.html.select("div#history-modal ul > li")
+        self.assertEqual(len(lis), 1,
+                         "there should be one published version")
+        self.assertTrue(
+            lis[0].decode_contents()
+            .endswith("You are currently looking at this version."),
+            "the first history entry should be marked as the current one")
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response2 = self.app.get(entry.get_absolute_url())
+
+        self.assertEqual(response1.body, response2.body,
+                         "the response should not have changed because "
+                         "the new version of the article is not "
+                         "published yet")
+
+        # We now publish the change. So the view should be different
+        # from the first.
+        self.assertTrue(entry.latest.publish(self.foo),
+                        "publishing should be successful")
+        response3 = self.app.get(entry.get_absolute_url())
+        self.assertNotEqual(response1.body, response3.body,
+                            "the response should have changed because "
+                            "the new version has been published")
+
+        lis = response3.html.select("div#history-modal ul > li")
+        self.assertEqual(len(lis), 2,
+                         "there should be two published versions")
+        self.assertTrue(
+            lis[0].decode_contents()
+            .endswith("You are currently looking at this version."),
+            "the first history entry should be marked as the current one")
+        self.assertFalse(
+            lis[1].string
+            .endswith("You are currently looking at this version."),
+            "the other history entry should not be marked as the current one")
+
+        # Check the URLs too.
+        published = entry.changerecord_set.filter(published=True) \
+                                          .order_by("-datetime")
+        ix = 0
+        for pub in published:
+            self.assertEqual(lis[ix].cssselect("a")[0].get("href"),
+                             pub.get_absolute_url(),
+                             ("the URL of item {0} should correspond to the "
+                              "URL of published version {0}").format(ix))
+            ix += 1
+
+        # We're looking at the earlier published version.
+        response4 = self.app.get(first_published.get_absolute_url())
+        lis = response4.html.select("div#history-modal ul > li")
+        self.assertEqual(len(lis), 2,
+                         "there should be two published versions")
+        self.assertFalse(
+            lis[0].string
+            .endswith("You are currently looking at this version."),
+            "the first history entry should not be marked as the current one")
+        self.assertTrue(
+            lis[1].decode_contents()
+            .endswith("You are currently looking at this version."),
+            "the other history entry should be marked as the current one")
+
+    def test_scribe_viewing_unpublished_has_nothing_marked_in_history(self):
+        """
+        When a scribe views an unpublished entry, the article history does
+        not mark anything. Also, there is a notice that the history
+        shows only published versions.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        self.assertIsNotNone(entry.latest_published,
+                             "the entry should be published")
+        self.assertEqual(entry.latest_published, entry.latest,
+                         "the latest version should be the published one")
+
+        # We change the entry but do not publish
+        c = Chunk(data="""
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma>abcd</btw:lemma>
+  <p>
+  </p>
+</btw:entry>
+        """, schema_version="0.10")
+
+        # We lie so that we can perform the test.
+        c._valid = True
+        c.save()
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        response1 = self.app.get(
+            entry.latest.get_absolute_url(), user=self.foo)
+
+        lis = response1.html.select("div#history-modal ul > li")
+        self.assertEqual(len(lis), 1,
+                         "the list should have the single published version")
+        self.assertFalse(
+            lis[0].string
+            .endswith("You are currently looking at this version."),
+            "the single version in the list should not be marked as the "
+            "one being viewed")
+
+        modal_body = response1.html.select(
+            "div#history-modal .modal-body > p")[0]
+        self.assertTrue(
+            normalize_space(modal_body.decode_contents())
+            .startswith("This list here shows only those versions that "
+                        "have been published."),
+            "the modal should show a warning about unpublished "
+            "versions")
+
 
 class MainTestCase(ViewsTestCase):
 

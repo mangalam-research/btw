@@ -150,3 +150,9 @@ Scenario: inter-article hyperlinking
   Given a valid document
   And the view has finished rendering
   Then there is a hyperlink with label "abcd" that points to the article for the same lemma
+
+Scenario: there is an article history modal available
+  Given a valid document
+  And the view has finished rendering
+  When the user clicks the button named "Article history"
+  Then there is a modal dialog titled "Article History" visible
