@@ -579,10 +579,8 @@ class ChunkTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         tree = lxml.etree.fromstring(valid_editable)
         sfs = tree.xpath("//btw:example/btw:semantic-fields | "
                          "//btw:example-explained/btw:semantic-fields",
-                         namespaces={
-                             "btw":
-                             "http://mangalamresearch.org/ns/btw-storage"
-                         })
+                         namespaces=xml.default_namespace_mapping)
+
         for el in sfs:
             el.getparent().remove(el)
         data = lxml.etree.tostring(

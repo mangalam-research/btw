@@ -30,10 +30,7 @@ class SchematronTestCase(unittest.TestCase):
         tree = lxml.etree.fromstring(valid_editable)
         # We remove all semantic-fields from one cognate
         sfs = tree.xpath("//btw:cognate[1]//btw:semantic-fields",
-                         namespaces={
-                             "btw":
-                             "http://mangalamresearch.org/ns/btw-storage"
-                         })
+                         namespaces=xml.default_namespace_mapping)
         for el in sfs:
             el.getparent().remove(el)
         data = lxml.etree.tostring(
@@ -49,9 +46,7 @@ class SchematronTestCase(unittest.TestCase):
             "//btw:sense[1]//btw:semantic-fields[not "
             "(ancestor::btw:english-rendition or "
             "ancestor::btw:contrastive-section)]",
-            namespaces={
-                "btw": "http://mangalamresearch.org/ns/btw-storage"
-            })
+            namespaces=xml.default_namespace_mapping)
         for el in sfs:
             el.getparent().remove(el)
         data = lxml.etree.tostring(
@@ -67,11 +62,8 @@ class SchematronTestCase(unittest.TestCase):
         """
         tree = lxml.etree.fromstring(valid_editable)
         # We remove all semantic-fields from one sense
-        sfs = tree.xpath(
-            "//btw:sf",
-            namespaces={
-                "btw": "http://mangalamresearch.org/ns/btw-storage"
-            })
+        sfs = tree.xpath("//btw:sf",
+                         namespaces=xml.default_namespace_mapping)
         sfs[0].text += "x"
         data = lxml.etree.tostring(
             tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
@@ -84,11 +76,8 @@ class SchematronTestCase(unittest.TestCase):
         Test various invalid cases for semantic fields.
         """
         tree = lxml.etree.fromstring(valid_editable)
-        sfs = tree.xpath(
-            "//btw:sf",
-            namespaces={
-                "btw": "http://mangalamresearch.org/ns/btw-storage"
-            })
+        sfs = tree.xpath("//btw:sf",
+                         namespaces=xml.default_namespace_mapping)
 
         x = 0
         for case in invalid_sf_cases:
@@ -112,11 +101,8 @@ class SchematronTestCase(unittest.TestCase):
         Test various valid cases for semantic fields.
         """
         tree = lxml.etree.fromstring(valid_editable)
-        sfs = tree.xpath(
-            "//btw:sf",
-            namespaces={
-                "btw": "http://mangalamresearch.org/ns/btw-storage"
-            })
+        sfs = tree.xpath("//btw:sf",
+                         namespaces=xml.default_namespace_mapping)
 
         x = 0
         for case in valid_sf_cases:
@@ -140,11 +126,8 @@ class SchematronTestCase(unittest.TestCase):
         Test that an empty surname raises an error
         """
         tree = lxml.etree.fromstring(valid_editable)
-        surnames = tree.xpath(
-            "//tei:surname",
-            namespaces={
-                "tei": "http://www.tei-c.org/ns/1.0"
-            })
+        surnames = tree.xpath("//tei:surname",
+                              namespaces=xml.default_namespace_mapping)
 
         surnames[0].text = ""
 
@@ -159,11 +142,8 @@ class SchematronTestCase(unittest.TestCase):
         Test that a an editor must be recorded.
         """
         tree = lxml.etree.fromstring(valid_editable)
-        editors = tree.xpath(
-            "//tei:editor",
-            namespaces={
-                "tei": "http://www.tei-c.org/ns/1.0"
-            })
+        editors = tree.xpath("//tei:editor",
+                             namespaces=xml.default_namespace_mapping)
 
         for el in editors:
             el.getparent().remove(el)
@@ -179,11 +159,8 @@ class SchematronTestCase(unittest.TestCase):
         Test that a an author must be recorded.
         """
         tree = lxml.etree.fromstring(valid_editable)
-        authors = tree.xpath(
-            "//btw:credit",
-            namespaces={
-                "btw": "http://mangalamresearch.org/ns/btw-storage",
-            })
+        authors = tree.xpath("//btw:credit",
+                             namespaces=xml.default_namespace_mapping)
 
         for el in authors:
             el.getparent().remove(el)

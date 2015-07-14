@@ -40,7 +40,7 @@ from . import models
 from .locking import release_entry_lock, drop_entry_lock, \
     entry_lock_required
 from .xml import XMLTree, xhtml_to_xml, clean_xml, \
-    get_supported_schema_versions
+    get_supported_schema_versions, default_namespace_mapping
 from .forms import SaveForm
 from . import usermod
 from . import tasks

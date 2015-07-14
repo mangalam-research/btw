@@ -8,7 +8,7 @@ from django.core.cache import caches
 
 from btw.celery import app
 from .models import ChangeRecord, Entry
-from .xml import XMLTree
+from .xml import XMLTree, default_namespace_mapping
 from . import depman
 from bibliography.views import targets_to_dicts
 from lib.tasks import acquire_mutex
@@ -103,16 +103,12 @@ def prepare_changerecord_for_display(self, pk, published=None,
     this_lemma = xml.extract_lemma()
 
     tree = xml.tree
-    namespaces = {
-        "btw": "http://mangalamresearch.org/ns/btw-storage",
-        "tei": "http://www.tei-c.org/ns/1.0"
-    }
     terms = tree.xpath(
         "//*[self::btw:antonym or self::btw:cognate "
         "or self::btw:conceptual-proximate]/btw:term | "
         "/btw:entry/btw:overview/btw:definition/tei:p/"
         "tei:foreign[@xml:lang='sa-Latn']",
-        namespaces=namespaces)
+        namespaces=default_namespace_mapping)
 
     candidates = Entry.objects.active_entries()
 

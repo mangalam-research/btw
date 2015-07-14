@@ -17,6 +17,13 @@ dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
 
+tei_namespace = 'http://www.tei-c.org/ns/1.0'
+btw_namespace = 'http://mangalamresearch.org/ns/btw-storage'
+
+default_namespace_mapping = {
+    'btw': btw_namespace,
+    'tei': tei_namespace
+}
 
 def schema_for_version(version):
     path = schema_for_version_unsafe(version)
@@ -174,9 +181,7 @@ Get all targets that point to bibliographical references.
 :rtype: :class:`set` of strings.
 """
         refs = self.tree.xpath("//tei:ref",
-                               namespaces={
-                                   'tei': 'http://www.tei-c.org/ns/1.0'
-                               })
+                               namespaces=default_namespace_mapping)
 
         return set([target for target in
                     [ref.get('target') for ref in refs]
@@ -190,10 +195,8 @@ btw:lemma element.
 :returns: The lemma.
 :rtype: str
 """
-        lemma = self.tree.xpath(
-            "btw:lemma",
-            namespaces={
-                'btw': 'http://mangalamresearch.org/ns/btw-storage'})
+        lemma = self.tree.xpath("btw:lemma",
+                                namespaces=default_namespace_mapping)
 
         if not len(lemma):
             return None

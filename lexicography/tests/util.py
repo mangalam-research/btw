@@ -80,9 +80,8 @@ def set_lemma(data, new_lemma):
 
     # This casts a wider net than strictly necessary but it does not
     # matter.
-    lemma_hits = data_tree.xpath(
-        "btw:lemma",
-        namespaces={'btw': 'http://mangalamresearch.org/ns/btw-storage'})
+    lemma_hits = data_tree.xpath("btw:lemma",
+                                 namespaces=xml.default_namespace_mapping)
 
     for lemma in lemma_hits:
         if new_lemma is None:  # None means "remove the lemma"
