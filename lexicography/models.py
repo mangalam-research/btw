@@ -476,9 +476,8 @@ class Chunk(models.Model):
         if not self.is_normal:
             self._valid = False
         else:
-            self._valid = util.validate(
-                xml.schema_for_version(self.schema_version),
-                self.data)
+            self._valid = util.validate_with_rng(
+                xml.schema_for_version(self.schema_version), self.data)
 
             if self._valid:
                 # We must perform the schematron checks to see whether it is

@@ -111,8 +111,7 @@ def fetch():
     tree = xml.XMLTree(data)
     version = tree.extract_version()
 
-    if not util.validate(xml.schema_for_version(version),
-                         data):
+    if not util.validate_with_rng(xml.schema_for_version(version), data):
         raise ValueError("the file is not actually valid!")
 
     sch = xml.schematron_for_version(version)

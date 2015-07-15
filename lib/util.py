@@ -68,7 +68,7 @@ def run_xsltproc(xsl_path, input_data):
         return ret
 
 
-def validate(rng_path, input_data, silent=True):
+def validate_rng(rng_path, input_data, silent=True):
     with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
 
         out = open("/dev/null", 'w') if silent else None

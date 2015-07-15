@@ -113,7 +113,8 @@ WARNING: in general, this operation cannot be reliably undone without
                     new_chunk.schema_version = \
                         xml.XMLTree(
                             converted.encode('utf-8')).extract_version()
-                    new_chunk._valid = util.validate(after_rng, converted)
+                    new_chunk._valid = util.validate_with_rng(after_rng,
+                                                              converted)
                 else:
                     # Abnormal chunk. We won't try to validate and convert.
                     initially_invalid = True

@@ -585,8 +585,10 @@ class ChunkTestCase(util.NoPostMigrateMixin, TransactionTestCase):
             el.getparent().remove(el)
         data = lxml.etree.tostring(
             tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
-        self.assertTrue(util.validate(xml.schema_for_version(schema_version),
-                                      data), "the data should validate")
+        self.assertTrue(
+            util.validate_with_rng(xml.schema_for_version(schema_version),
+                                   data),
+            "the data should validate")
         self.assertFalse(util.schematron(
             xml.schematron_for_version(schema_version),
             data), "the data should not pass the schematron check")
