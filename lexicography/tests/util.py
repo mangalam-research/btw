@@ -154,7 +154,8 @@ def create_valid_article():
     add_raw_url = reverse("full-admin:lexicography_entry_rawnew")
     assert client.login(username='foo', password='foo')
     response = client.post(add_raw_url, {"data": data})
-    assert response.status_code == 302
+    assert response.status_code == 302,\
+        "response was " + str(response.status_code)
     return Entry.objects.get(latest__datetime__gte=now)
 
 def copy_entry(src):

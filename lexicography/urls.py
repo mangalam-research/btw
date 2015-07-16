@@ -10,6 +10,8 @@ urlpatterns = patterns(
     url(r'^entry/(?P<entry_id>\d+)(?:/(?P<changerecord_id>\d+))?/$',
         'entry_details',
         name='lexicography_entry_details'),
+    url(r'^entry/(?P<entry_id>\d+)(?:/(?P<changerecord_id>\d+))?/mods$',
+        'mods', name='lexicography_entry_mods'),
     url(r'^changerecord/(?P<changerecord_id>\d+)/$', 'changerecord_details',
         name='lexicography_changerecord_details'),
     url(r'^changerecord/(?P<changerecord_id>\d+)/publish$',

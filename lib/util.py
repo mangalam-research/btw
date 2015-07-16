@@ -68,11 +68,20 @@ def run_xsltproc(xsl_path, input_data):
         return ret
 
 
-def validate_rng(rng_path, input_data, silent=True):
+def validate_with_rng(rng_path, input_data, silent=True):
     with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
 
         out = open("/dev/null", 'w') if silent else None
         return subprocess.call(["jing", rng_path, tmpinput_path],
+                               stdout=out, stderr=out) == 0
+
+
+def validate_with_xmlschema(schema_path, input_data, silent=True):
+    with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
+
+        out = open("/dev/null", 'w') if silent else None
+        return subprocess.call(["xmllint", "--schema",
+                                schema_path, tmpinput_path],
                                stdout=out, stderr=out) == 0
 
 

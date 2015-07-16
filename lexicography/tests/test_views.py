@@ -2,7 +2,9 @@
 import cookielib as http_cookiejar
 import os
 import datetime
+import string
 
+import lxml.etree
 from django_webtest import WebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
@@ -13,11 +15,15 @@ from cms.test_utils.testcases import BaseCMSTestCase
 from .. import models
 from ..models import Entry, EntryLock, ChangeRecord, Chunk, PublicationChange
 from ..views import REQUIRED_WED_VERSION
-from ..xml import get_supported_schema_versions
+from ..xml import get_supported_schema_versions, mods_schema_path, XMLTree, \
+    default_namespace_mapping
 from . import util as test_util
 from . import funcs
 import lib.util as util
-from . util import inner_normalized_html
+from .util import inner_normalized_html, launch_fetch_task, \
+    create_valid_article
+
+launch_fetch_task()
 
 dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
@@ -547,6 +553,325 @@ articles, they will not be able to use the link, unless this exact version is \
 published before they use the link.</strong>\
 """),
                         "there should be a warning")
+
+#
+# This FormatDict and the method to partially apply a format is taken
+# from this StackOverflow answer:
+#
+# http://stackoverflow.com/a/11284026/
+#
+class FormatDict(dict):
+
+    def __missing__(self, key):
+        return "{" + key + "}"
+
+class ModsTestCase(ViewsTestCase):
+
+    mods_template_without_names = """\
+<?xml version="1.0"?>
+<modsCollection xmlns="http://www.loc.gov/mods/v3" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xsi:schemaLocation="http://www.loc.gov/mods/v3 \
+http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
+<titleInfo><title>prasāda</title></titleInfo>\
+<typeOfResource>text</typeOfResource>\
+<genre authority="local">dictionaryEntry</genre>\
+{names}\
+<relatedItem type="host"><genre authority="marcgt">dictionary</genre>\
+<originInfo><edition>version {version}</edition>\
+<place><placeTerm type="text">Berkeley</placeTerm></place>\
+<publisher>Mangalam Research Center for Buddhist Languages</publisher>\
+<dateCreated>{year}</dateCreated><issuance>monographic</issuance></originInfo>\
+<titleInfo><title>Buddhist Translators Workbench</title></titleInfo>\
+</relatedItem><location><url dateLastAccessed="2015-01-02">{url}</url>\
+</location></mods></modsCollection>\n"""
+
+    mods_template = string.Formatter().vformat(mods_template_without_names,
+                                               (),
+                                               FormatDict({'names': """\
+<name type="personal"><namePart type="family">Doe</namePart>\
+<namePart type="given">Jane</namePart>\
+<role><roleTerm type="code" authority="marcrelator">aut</roleTerm>\
+</role></name>\
+<name type="personal"><namePart type="family">Doeh</namePart>\
+<namePart type="given">John</namePart><role>\
+<roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name>\
+"""}))
+
+    def setUp(self):
+        super(ModsTestCase, self).setUp()
+        self.entry = create_valid_article()
+        self.assertTrue(self.entry.latest.publish(self.foo))
+        # Reacquire the object with the proper value of latest_published.
+        self.entry = Entry.objects.get(id=self.entry.id)
+
+    def assertValid(self, mods):
+        self.assertTrue(
+            util.validate_with_xmlschema(mods_schema_path,
+                                         mods.decode("utf-8")),
+            "the resulting data should be valid")
+
+    def test_missing_access_date(self):
+        """
+        Tests that if the access-date parameter is missing, we get a
+        reasonable error message.
+        """
+        entry = self.entry
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id,)),
+                                expect_errors=True)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.body, "access-date is a required parameter")
+
+    def test_unpublished_entry(self):
+        """
+        Tests that if a non-version-specific MODS is requested and the
+        entry has never been published, then we get a reasonable error
+        message.
+        """
+        entry = Entry.objects.get(lemma="foo")
+        self.assertIsNone(entry.latest_published,
+                          "the entry must not have been published already")
+
+        response = self.app.get(
+            reverse("lexicography_entry_mods",
+                    args=(entry.id,)),
+            params={"access-date": "2015-01-02"},
+            expect_errors=True)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.body, "this entry has never been "
+                         "published: you must request a "
+                         "specific change record")
+
+    def test_non_version_specific_no_changerecord(self):
+        """
+        Tests that generating a MODS with a non-version specific URL
+        works, when no ChangeRecord is specified.
+        """
+        entry = self.entry
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id,)),
+                                params={
+                                    "access-date": "2015-01-02"
+        })
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.get_absolute_url()
+        }
+
+        self.assertEqual(
+            response.body, self.mods_template.format(**xml_params))
+        self.assertValid(response.body)
+
+    def test_non_version_specific_changerecord(self):
+        """
+        Tests that generating a MODS with a non-version specific URL
+        works, when a ChangeRecord is specified.
+        """
+        entry = self.entry
+        # We change the entry but do not publish
+        entry.update(
+            self.foo,
+            "q",
+            entry.latest.c_hash,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        # Reacquire after the change
+        entry = Entry.objects.get(id=entry.id)
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id, entry.latest.id)),
+                                params={
+                                    "access-date": "2015-01-02"
+        })
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.get_absolute_url()
+        }
+
+        self.assertEqual(
+            response.body, self.mods_template.format(**xml_params))
+        self.assertValid(response.body)
+
+    def test_version_specific_no_changerecord_id(self):
+        """
+        Tests that generating a MODS with a version-specific URL works
+        when no ChangeRecord is specified.
+        """
+        entry = self.entry
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id,)),
+                                params={
+                                    "access-date": "2015-01-02",
+                                    "version-specific": "true"
+        })
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.latest_published.get_absolute_url()
+        }
+
+        self.assertEqual(
+            response.body, self.mods_template.format(**xml_params))
+        self.assertValid(response.body)
+
+    def test_version_specific_changerecord_id(self):
+        """
+        Tests that generating a MODS with a version-specific URL works
+        when a ChangeRecord is specified.
+        """
+        entry = self.entry
+
+        # We change the entry but do not publish
+        entry.update(
+            self.foo,
+            "q",
+            entry.latest.c_hash,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        # Reacquire after the change
+        entry = Entry.objects.get(id=entry.id)
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id, entry.latest.id)),
+                                params={
+                                    "access-date": "2015-01-02",
+                                    "version-specific": "true"
+        })
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.latest.get_absolute_url()
+        }
+
+        self.assertEqual(
+            response.body, self.mods_template.format(**xml_params))
+        self.assertValid(response.body)
+
+    def test_name_without_first_name(self):
+        """
+        Tests that generating a MODS with a name that does not have a
+        first name works.
+        """
+        entry = self.entry
+
+        tree = XMLTree(entry.latest.c_hash.data)
+        forenames = tree.tree.xpath("//tei:forename",
+                                    namespaces=default_namespace_mapping)
+        for forename in forenames:
+            forename.text = ""
+
+        c = Chunk(data=test_util.stringify_etree(tree.tree),
+                  schema_version=entry.latest.c_hash.schema_version)
+        # Yes, we cheat.
+        c._valid = True
+        c.save()
+
+        # We change the entry but do not publish
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        # Reacquire after the change
+        entry = Entry.objects.get(id=entry.id)
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id, entry.latest.id)),
+                                params={"access-date": "2015-01-02"})
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.get_absolute_url(),
+            'names': """\
+<name type="personal"><namePart type="family">Doe</namePart>\
+<role><roleTerm type="code" authority="marcrelator">aut</roleTerm>\
+</role></name>\
+<name type="personal"><namePart type="family">Doeh</namePart><role>\
+<roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name>\
+"""
+        }
+
+        self.assertEqual(
+            response.body,
+            self.mods_template_without_names.format(**xml_params))
+        self.assertValid(response.body)
+
+    def test_name_with_genName(self):
+        """
+        Tests that generating a MODS with a genName works.
+        """
+        entry = self.entry
+
+        tree = XMLTree(entry.latest.c_hash.data)
+        names = tree.tree.xpath("//tei:genName",
+                                namespaces=default_namespace_mapping)
+        for name in names:
+            name.text = "fo<o"
+
+        c = Chunk(data=test_util.stringify_etree(tree.tree),
+                  schema_version=entry.latest.c_hash.schema_version)
+        # Yes, we cheat.
+        c._valid = True
+        c.save()
+
+        # We change the entry but do not publish
+        entry.update(
+            self.foo,
+            "q",
+            c,
+            entry.lemma,
+            ChangeRecord.UPDATE,
+            ChangeRecord.MANUAL)
+
+        # Reacquire after the change
+        entry = Entry.objects.get(id=entry.id)
+
+        response = self.app.get(reverse("lexicography_entry_mods",
+                                        args=(entry.id, entry.latest.id)),
+                                params={"access-date": "2015-01-02"})
+
+        xml_params = {
+            'version': util.version(),
+            'year': datetime.date.today().year,
+            'url': server_name + entry.get_absolute_url(),
+            'names': """\
+<name type="personal"><namePart type="family">Doe</namePart>\
+<namePart type="given">Jane</namePart>\
+<namePart type="termsOfAddress">fo&lt;o</namePart>\
+<role><roleTerm type="code" authority="marcrelator">aut</roleTerm>\
+</role></name>\
+<name type="personal"><namePart type="family">Doeh</namePart>\
+<namePart type="given">John</namePart>\
+<namePart type="termsOfAddress">fo&lt;o</namePart>\
+<role><roleTerm type="code" authority="marcrelator">aut</roleTerm>\
+</role></name>\
+"""
+        }
+
+        self.assertEqual(
+            response.body,
+            self.mods_template_without_names.format(**xml_params))
+        self.assertValid(response.body)
 
 
 class MainTestCase(ViewsTestCase):

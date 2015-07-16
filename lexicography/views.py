@@ -245,6 +245,63 @@ to a serious issue (legal, ethical, etc.) with its contents.</p>
 
 @require_GET
 @never_cache
+def mods(request, entry_id, changerecord_id=None):
+    access_date = request.GET.get('access-date', None)
+    version_specific = request.GET.get('version-specific', None)
+
+    if access_date is None:
+        return HttpResponseBadRequest(
+            "access-date is a required parameter")
+
+    entry = Entry.objects.get(id=entry_id)
+    if changerecord_id is not None:
+        cr = ChangeRecord.objects.get(id=changerecord_id)
+    else:
+        cr = entry.latest_published
+        if cr is None:
+            return HttpResponseBadRequest("this entry has never been "
+                                          "published: you must request a "
+                                          "specific change record")
+
+    data = cr.c_hash.data
+
+    xml = XMLTree(data)
+
+    author_names = xml.tree.xpath("//btw:credit//tei:persName",
+                                  namespaces=default_namespace_mapping)
+    authors = []
+    for name in author_names:
+        forename = ''.join(name.xpath("./tei:forename",
+                                      namespaces=default_namespace_mapping)[0]
+                           .itertext())
+        surname = ''.join(name.xpath("./tei:surname",
+                                     namespaces=default_namespace_mapping)[0]
+                          .itertext())
+        genName = ''.join(name.xpath("./tei:genName",
+                                     namespaces=default_namespace_mapping)[0]
+                          .itertext())
+        authors.append({
+            'forename': forename,
+            'surname': surname,
+            'genName': genName
+        })
+
+    url = cr.get_absolute_url() if version_specific \
+        else entry.get_absolute_url()
+
+    return render_to_response("lexicography/mods.xml",
+                              {
+                                  'title': cr.lemma,
+                                  'version': util.version(),
+                                  'year': datetime.date.today().year,
+                                  'authors': authors,
+                                  'url': request.build_absolute_uri(url),
+                                  'access_date': access_date
+                              },
+                              content_type="application/xml+mods")
+
+@require_GET
+@never_cache
 def changerecord_details(request, changerecord_id):
     cr = ChangeRecord.objects.get(pk=changerecord_id)
 
