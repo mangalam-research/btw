@@ -1325,6 +1325,27 @@ standard and also requires making HTML5 pages invalid.
 In light of the problems above, we will settle for now on providing an
 option to download MODS manually.
 
+Citation Formats
+================
+
+Unfortunately, various sources quote the style guides
+inconsistently. To generate the citations that BTW produces we
+examined how the HTE does it and we consulted the following sources:
+
+The guide used for the MLA citation formati is this one:
+
+https://www.library.cornell.edu/research/citation/mla
+
+We have elected, like the OED and the HTE do, to not include the
+editor names in the citation generated according to the MLA. This
+simplifies the code quite a bit.
+
+For the Chicago style:
+
+http://library.osu.edu/documents/english/FINALlibrary_CMS.pdf
+
+
+
 CMS Choice for BTW
 ==================
 

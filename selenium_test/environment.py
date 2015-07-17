@@ -117,6 +117,13 @@ def cleanup(context, failed):
             shutil.rmtree(context.server_tempdir, True)
         context.server_tempdir = None
 
+    if context.download_dir:
+        if keep_tempdirs:
+            print "Keeping download tempdir:", context.download_dir
+        else:
+            shutil.rmtree(context.download_dir, True)
+        context.download_dir = None
+
 class DeadServer(Exception):
     pass
 
@@ -202,6 +209,19 @@ def before_all(context):
                 context.sc_tunnel_tempdir = \
                 outil.start_sc(builder.SC_TUNNEL_PATH, user, key)
         desired_capabilities["tunnel-identifier"] = sc_tunnel_id
+
+    chrome_options = builder.local_conf.get("CHROME_OPTIONS", None)
+    if chrome_options:
+        # We set a temporary directory for Chrome downloads. Even if
+        # we do not test downloads, this will prevent Chrome from
+        # polluting our *real* download directory.
+        context.download_dir = tempfile.mkdtemp()
+        prefs = {
+            "download.default_directory": context.download_dir
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+    else:
+        context.download_dir = None
 
     driver = builder.get_driver(desired_capabilities)
     context.driver = driver

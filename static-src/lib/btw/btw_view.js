@@ -530,13 +530,13 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // up to 3.3.1) can't handle a period in a URL's hash. It passes
     // the has to jQuery as a CSS selector and jQuery silently fails
     // to find the object.
-    var targets = doc.querySelectorAll("[id]");
+    var targets = root.querySelectorAll("[id]");
     for (var target_ix = 0, target; (target = targets[target_ix]);
         ++target_ix) {
         target.id = target.id.replace(/\./g, "_");
     }
 
-    var links = doc.getElementsByTagName("a");
+    var links = root.getElementsByTagName("a");
     for (var link_ix = 0, link; (link = links[link_ix]); ++link_ix) {
         if (link.attributes.href &&
             link.attributes.href.value.lastIndexOf("#", 0) !== 0)

@@ -162,3 +162,33 @@ Scenario: there is a permalink modal available
   And the view has finished rendering
   When the user clicks the button named "Link to this article"
   Then there is a modal dialog titled "Links" visible
+
+Scenario: the user can set the access date of the citations produced by the citation dialog
+  Given a valid document
+  And the view has finished rendering
+  When the button named "Cite this article" is enabled
+  And the user clicks the button named "Cite this article"
+  Then there is a modal dialog titled "Cite" visible
+  And the citations show the date from the access date field
+  When the user clicks in the access date field
+  Then there is a date picker visible
+  When the user changes the date
+  Then the citations show the date from the access date field
+  And the MODS data has the correct access date field
+  # When the user clicks the button named "Get the MODS Record"
+
+Scenario: the user can choose the type of url of the citations produced by the citation dialog
+  Given a valid document
+  And the view has finished rendering
+  When the button named "Cite this article" is enabled
+  And the user clicks the button named "Cite this article"
+  Then there is a modal dialog titled "Cite" visible
+  And the citations show the url specified by the version-specific checkbox
+  And the MODS data has the correct url
+  When the user clicks the version-specific checkbox
+  Then the citations show the url specified by the version-specific checkbox
+  And the MODS data has the correct url
+  When the user clicks the version-specific checkbox
+  Then the citations show the url specified by the version-specific checkbox
+  And the MODS data has the correct url
+  # When the user clicks the button named "Get the MODS Record"

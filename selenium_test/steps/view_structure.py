@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E0611
 import re
+import datetime
 from StringIO import StringIO
 
 import lxml.etree
@@ -9,7 +10,7 @@ import requests
 from selenium.webdriver.support.wait import TimeoutException
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
-from nose.tools import assert_equal, assert_true
+from nose.tools import assert_equal, assert_true, assert_false
 from behave import step_matcher  # pylint: disable=E0611
 from selenic.util import Result, Condition
 
@@ -525,3 +526,159 @@ def step_impl(context, label):
 
     for link in links:
         assert_equal(link, label, "the link label should be " + label)
+
+
+@when(ur'^the user clicks in the access date field$')
+def step_impl(context):
+    field = context.util.find_element((By.ID, "access-date"))
+    field.click()
+
+
+@then(ur'^there is a date picker visible$')
+def step_impl(context):
+    picker = context.util.find_element((By.CLASS_NAME, "datepicker"))
+    assert_true(picker.is_displayed())
+
+
+@when(ur'^the user changes the date$')
+def step_impl(context):
+    util = context.util
+    field = util.find_element((By.ID, "access-date"))
+
+    initial = field.get_attribute("value")
+
+    prev = util.find_element((By.CSS_SELECTOR, ".datepicker .prev"))
+    prev.click()
+    day = util.find_element((By.CSS_SELECTOR, ".datepicker .day"))
+    day.click()
+
+    util.wait(lambda *_: field.get_attribute("value") != initial)
+
+
+@then(ur'^the citations show the date from the access date field$')
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    field = util.find_element((By.ID, "access-date"))
+
+    value = field.get_attribute("value")
+    # We use this rather than strftime so that we can have a day
+    # number without a leading zero. On the internet there are those
+    # who suggest using %-d but with strftime it this does not seem to
+    # be portable.
+    formatted = "{0:%B} {0.day} {0:%Y}".format(
+        datetime.datetime.strptime(value, "%Y-%m-%d"))
+
+    accessed_spans = driver.execute_script("""
+    return Array.prototype.map.call(
+        document.querySelectorAll("#cite-modal .accessed"),
+        function (x) {
+            return x.textContent;
+    });
+    """)
+    assert_true(len(accessed_spans) > 0,
+                "there should be some spans")
+    for span in accessed_spans:
+        assert_equal(span, formatted)
+
+
+def get_permalinks(driver):
+    # We grab the values of the links in the links modal. This allows
+    # finding the URL values we need without having to query the
+    # server. The correctness of these values is tested in a nose
+    # unittest that tests the view directly.
+    links = driver.execute_script("""
+    return Array.prototype.map.call(
+        document.querySelectorAll("#link-modal .modal-body a"),
+        function (x) {
+            return x.href;
+    });
+    """)
+    return {"non-version-specific": links[0],
+            "version-specific": links[1]}
+
+@then(ur'^the MODS data has the correct (?P<what>access date field|url)$')
+def step_impl(context, what):
+    driver = context.driver
+    util = context.util
+
+    data = driver.execute_async_script("""
+    var done = arguments[0];
+    var $ = jQuery;
+    var $form = $('#cite-modal .modal-body form');
+    $.ajax({
+        url: $form[0].action,
+        data: $form.serialize(),
+        dataType: "text"
+    }).done(done).fail(function (jqXHR, textStatus, errorThrown) {
+      done([textStatus]);
+    });
+    """)
+    assert_false(isinstance(data, list),
+                 "there should be no protocol error ({0})".format(data[0]))
+
+    tree = lxml.etree.fromstring(data)
+    if what == "access date field":
+        field = util.find_element((By.ID, "access-date"))
+        value = field.get_attribute("value")
+
+        date = tree.xpath("//mods:url/@dateLastAccessed",
+                          namespaces={
+                              "mods": "http://www.loc.gov/mods/v3"
+                          })
+        assert_equal(date[0], value)
+    elif what == "url":
+        field = util.find_element((By.ID, "version-specific"))
+        value = field.is_selected()
+        urls = tree.xpath("//mods:url",
+                          namespaces={
+                              "mods": "http://www.loc.gov/mods/v3"
+                          })
+        assert_true(len(urls) == 1, "there should be exactly one url")
+
+        permalinks = get_permalinks(driver)
+
+        assert_equal(''.join(urls[0].itertext()),
+                     permalinks['version-specific' if value
+                                else 'non-version-specific'],
+                     "the url value should be correct")
+    else:
+        raise ValueError("unknown value for ``what`` parameter")
+
+
+@then(ur'^the citations show the url specified by the version-specific '
+      ur'checkbox$')
+def step_impl(context):
+    util = context.util
+    driver = context.driver
+
+    field = util.find_element((By.ID, "version-specific"))
+
+    value = field.is_selected()
+
+    permalinks = get_permalinks(driver)
+    expected_url = permalinks['version-specific' if value
+                              else 'non-version-specific']
+
+    url_spans = driver.execute_script("""
+    return Array.prototype.map.call(
+        document.querySelectorAll("#cite-modal a.url"),
+        function (x) {
+            return {href: x.href, text: x.textContent};
+    });
+    """)
+
+    assert_true(len(url_spans) > 0, "there should be some spans")
+    for span in url_spans:
+        assert_equal(span["href"], expected_url,
+                     "the link href should match the expected URL")
+        assert_equal(span["text"], expected_url,
+                     "the link text should match the expected URL")
+
+
+@when(ur'^the user clicks the version-specific checkbox$')
+def step_impl(context):
+    util = context.util
+    field = util.find_element((By.ID, "version-specific"))
+    field.click()

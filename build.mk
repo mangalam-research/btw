@@ -112,7 +112,7 @@ COPIED_LOCAL_SOURCES:=$(filter-out $(GENERATED_LOCAL_SOURCES),$(LOCAL_SOURCES))
 
 DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) $(BUILD_DEST)/lib/external/bluebird.min.js $(BUILD_DEST)/lib/external/bootstrap-datepicker
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).js $(BUILD_DEST)/lib/external/qunit-$(QUNIT_VERSION).css $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) $(BUILD_DEST)/lib/external/bluebird.min.js $(BUILD_DEST)/lib/external/bootstrap-datepicker $(BUILD_DEST)/lib/external/moment.js
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -293,6 +293,9 @@ $(BUILD_DEST)/lib/external/bluebird%: node_modules/bluebird/js/browser/bluebird%
 	cp $< $@
 
 $(BUILD_DEST)/lib/external/bootstrap-datepicker: node_modules/bootstrap-datepicker/dist
+	cp -rp $< $@
+
+$(BUILD_DEST)/lib/external/moment.js: node_modules/moment/moment.js
 	cp -rp $< $@
 
 $(BUILD_DEST)/lib/external/jquery-growl/%: COMMON_DIR:=$(BUILD_DEST)/lib/external/jquery-growl

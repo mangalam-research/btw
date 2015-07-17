@@ -1,9 +1,17 @@
 @import "btw-mode.less";
 @import (reference) "../../../build/expanded/bootstrap/less/variables.less";
 
-// For the scrollspy...
 body {
+    // For the scrollspy...
     position: relative;
+
+    // This overrides the default behavior of Bootstrap which is to
+    // switch to overflow: hidden when a modal is open. The problem is
+    // that if the modal overflows the screen size then it is not
+    // possible to scroll!!!
+    &.modal-open {
+        overflow: auto;
+    }
 }
 
 .collapsing.width {

@@ -10,21 +10,6 @@
 {% endfor %}
 {{ block.super }}
 <script id="wed-data" type="text/xml">{% autoescape off %}{{ data }}{% endautoescape %}</script>
-<script>
-{% get_current_language as LANGUAGE_CODE %}
-require(['btw/btw_view'], function(Viewer) {
-  var wed_document = document.getElementsByClassName("wed-document")[0];
-  var data = document.getElementById("wed-data").textContent;
-
-  // Purposely leak it.
-  window.btw_viewer = new Viewer(wed_document, "{{edit_url}}",
-                                 "{{ fetch_url }}", data,
-             {% autoescape off %}{{ bibl_data }}{% endautoescape %},
-                                 // We have to build the prefix from
-                                 // the language code.
-                                 "/{{ LANGUAGE_CODE }}");
-});
-</script>
 {% endblock %}
 {% block content %}
 {% if not is_published %}
@@ -51,9 +36,9 @@ require(['btw/btw_view'], function(Viewer) {
         <h4 class="modal-title" id="how-to-cite-label">Cite</h4>
       </div>
       <div class="modal-body">
-        <form>
+        <form action="mods">
           <div class="form-group">
-            <label for="access-date">Desired access date:</label><input id="access-date" type="text" type="text" class="form-control" />
+            <label for="access-date">Desired access date:</label><input name="access-date" id="access-date" type="text" type="text" class="form-control" />
             <p class="help-block">
               Bibliographical references to web sites normally include an
               access date. You may change it if needed (the format is
@@ -62,46 +47,35 @@ require(['btw/btw_view'], function(Viewer) {
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox"> Include a version-specific link.
+              <input type="checkbox" name="version-specific" id="version-specific"> Include a version-specific link.
             </label>
             <p class="help-block">
               If this checkbox is unchecked, the link included in the
               citation will always point to the <strong>latest
               published version</strong> of this article. If this
               checkbox is checked, then the link included in the
-              citation will always point to <strong>this</strong>
-              version of the article.
+              citation will always point to <strong>the version of the
+              article you are currently viewing</strong>.
             </p>
           </div>
-          <script>
-            require(["jquery", "bootstrap-datepicker"], function ($) {
-            $('#cite-modal #access-date).datepicker({
-                format: "yyyy-mm-dd",
-                todayBtn: "linked",
-                autoclose: true,
-                todayHighlight: true
-            }).datepicker('setDate', Date());
-            });
-          </script>
+          <p>If your bibliographical management software is able to
+            import the MODS format, it is preferable to save the MODS
+            record for this page and import it into your bibliographical
+            management software.</p>
+          <button type="submit" class="btn btn-default" id="download-mods">
+            Get the MODS Record</button>
         </form>
-        <hr />
-        <p>If your bibliographical management software is able to
-        import the MODS format, it is preferable to save the MODS
-        record for this page and import it into your bibliographical
-        management software.</p>
-        <button class="btn btn-default" id="download-mods">
-          Get the MODS Record</button>
         <hr />
         <p>Otherwise you may cut and paste the following preformatted
           text, according to the style you prefer.</p>
         <p>Chicago:
           <blockquote>
-            <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, s.v. "{{ page_title }}," accessed <span class="accessed"></span> <span class="url"></url>.
+            <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, s.v. "{{ page_title }}," by <span id="chicago_authors"></span>, accessed <span class="accessed"></span> <a class="url"></a>.
           </blockquote>
         </p>
         <p>MLA:
           <blockquote>
-            "prasāda". The Buddhist Translators Workbench, version 1.2.1. 2015. Berkeley: Mangalam Research Center for Buddhist Languages. http://.../en-us/lexicography/entry/40/ (accessed July 01, 2015).
+            <span id="mla_authors"></span>. "{{ page_title }}." <i>The Buddhist Translators Workbench</i>. Version {{ bibliographical_data.version }}. Berkeley: Mangalam Research Center for Buddhist Languages, <span id="mla_year"></span>. Web. <span class="accessed"></span>. <a class="url"></a>.
           </blockquote>
         </p>
       </div>
@@ -165,7 +139,7 @@ require(['btw/btw_view'], function(Viewer) {
   </div>
 </div>
 <div class="row well well-sm">
-  <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#history-modal">Article history</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#link-modal">Link to this article</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#cite-modal">Cite this article</a>
+  <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#history-modal">Article history</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#link-modal">Link to this article</a> | <a href="#" class="btn btn-link disabled" role="button" data-toggle="modal" data-target="#cite-modal">Cite this article</a>
 </div>
 <div class="wed-frame row">
   <div class="wed-document col-lg-9 col-md-9 col-sm-11 col-xs-11">
@@ -184,4 +158,24 @@ require(['btw/btw_view'], function(Viewer) {
     </nav>
   </div>
 </div>
+<script>
+{% get_current_language as LANGUAGE_CODE %}
+require(['btw/btw_view', '../js/lexicography/view-support'],
+function(Viewer, sup) {
+  var wed_document = document.getElementsByClassName("wed-document")[0];
+  var data = document.getElementById("wed-data").textContent;
+
+  var viewer = new Viewer(wed_document, "{{edit_url}}",
+                          "{{ fetch_url }}", data,
+      {% autoescape off %}{{ bibl_data }}{% endautoescape %},
+                          // We have to build the prefix from
+                          // the language code.
+                          "/{{ LANGUAGE_CODE }}");
+
+  // Purposely leak it.
+  window.btw_viewer = viewer;
+  sup("{{ permalink }}", "{{ version_permalink }}", viewer);
+});
+</script>
+
 {% endblock %}

@@ -508,8 +508,16 @@ def step_impl(context):
 
 @when(ur'^the user clicks the button named "(?P<name>.*?)"$')
 def step_impl(context, name):
-    button = context.driver.find_element_by_link_text(name)
+    path = ("//*[(self::a or self::button) and "
+            "(normalize-space(text()) = '{0}')]").format(name)
+    button = context.driver.find_element_by_xpath(path)
     button.click()
+
+
+@when(ur'^the button named "(?P<name>.*?)" is enabled$')
+def step_impl(context, name):
+    button = context.driver.find_element_by_link_text(name)
+    assert_true(button.is_enabled())
 
 
 @then(ur'^there is a modal dialog titled "(?P<name>.*?)" visible$')

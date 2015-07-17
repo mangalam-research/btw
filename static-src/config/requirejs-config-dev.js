@@ -19,7 +19,8 @@ require.config({
      // For bibliography
    'modules': '/static/scripts/modules',
    localforage: 'external/localforage',
-   'bluebird': 'external/bluebird.min'
+   'bluebird': 'external/bluebird.min',
+   moment: 'external/moment'
  },
  packages: [
      {
