@@ -21,7 +21,7 @@ from ..environment import server_write, server_read
 step_matcher("re")
 
 
-@then(r"^the table of contents is (?P<state>expandable|non-expandable)$")
+@then(r"the table of contents is (?P<state>expandable|non-expandable)")
 def step_impl(context, state):
     util = context.util
 
@@ -36,7 +36,7 @@ def step_impl(context, state):
                 "{0} expandable".format("be" if expandable else "not be"))
 
 
-@then(r"^the table of contents is (?P<state>expanded|collapsed)$")
+@then(r"the table of contents is (?P<state>expanded|collapsed)")
 def step_impl(context, state):
     util = context.util
 
@@ -51,7 +51,7 @@ def step_impl(context, state):
         assert_true(False, "the table of contents should be " + state)
 
 
-@when(r"^the user clicks on the button to toggle the table of contents$")
+@when(r"the user clicks on the button to toggle the table of contents")
 def step_impl(context):
     driver = context.driver
     button = driver.find_element_by_css_selector(
@@ -60,7 +60,7 @@ def step_impl(context):
     button.click()
 
 
-@when(r"^the user clicks a link in the table of contents$")
+@when(r"the user clicks a link in the table of contents")
 def step_impl(context):
     driver = context.driver
     link = driver.find_element_by_css_selector(
@@ -69,7 +69,7 @@ def step_impl(context):
     link.click()
 
 
-@then("^the senses and subsenses are properly numbered$")
+@then("the senses and subsenses are properly numbered")
 def step_impl(context):
     util = context.util
 
@@ -86,7 +86,7 @@ def step_impl(context):
         # This is more useful than a timeout error.
         btw_util.assert_senses_in_order(util, True)
 
-@given("^the view has finished rendering$")
+@given("the view has finished rendering")
 def step_impl(context):
     driver = context.driver
     timeout_test = getattr(context, 'ajax_timeout_test', None)
@@ -109,8 +109,8 @@ def step_impl(context):
     check();
     """, timeout_test)
 
-@given(ur"^that the next document will be loaded by a "
-       ur"(?P<condition>failing|timing-out) AJAX call$")
+@given(ur"that the next document will be loaded by a "
+       ur"(?P<condition>failing|timing-out) AJAX call")
 def step_impl(context, condition):
     server_write(context, 'clearcache article_display\n')
     server_read(context)
@@ -142,7 +142,7 @@ def extract_text_from_el(el):
 def extract_text(elements):
     return [extract_text_from_el(el) for el in elements]
 
-@then("^the english renditions are reformatted in the correct structure$")
+@then("the english renditions are reformatted in the correct structure")
 def step_impl(context):
     driver = context.driver
     html = driver.execute_script(ur"""
@@ -164,8 +164,8 @@ def step_impl(context):
     assert_equal(extract_text(term_list_terms),
                  extract_text(semantic_field_collection_terms))
 
-@then(ur"^the (?P<what>antonyms|cognates|conceptual proximates) are "
-      ur"reformatted in the correct structure$")
+@then(ur"the (?P<what>antonyms|cognates|conceptual proximates) are "
+      ur"reformatted in the correct structure")
 def step_impl(context, what):
     driver = context.driver
 
@@ -217,8 +217,8 @@ def step_impl(context, what):
                     "the label should have a the sequence number " + str(seq))
         seq += 1
 
-@then(ur'^the citation that starts with "(?P<citation>.*?)" is'
-      ur'(?P<not_op> not)? in a collapsed section$')
+@then(ur'the citation that starts with "(?P<citation>.*?)" is'
+      ur'(?P<not_op> not)? in a collapsed section')
 def step_impl(context, citation, not_op=None):
     def check(driver):
         ret = driver.execute_script(btw_util.GET_CITATION_TEXT + ur"""
@@ -249,7 +249,7 @@ def step_impl(context, citation, not_op=None):
     result = Condition(context.util, check).wait()
     assert_true(result, result.payload)
 
-@then(ur'^all collapsible sections are (?P<state>collapsed|expanded)$')
+@then(ur'all collapsible sections are (?P<state>collapsed|expanded)')
 def step_impl(context, state):
     driver = context.driver
 
@@ -268,7 +268,7 @@ def step_impl(context, state):
             "all sections should be expanded"];
     """, state == "collapsed")
 
-@when(ur'^the user clicks the (?P<which>expand all|collapse all) button$')
+@when(ur'the user clicks the (?P<which>expand all|collapse all) button')
 def step_impl(context, which):
     util = context.util
 
@@ -298,8 +298,8 @@ def step_impl(context, which):
          .format(which))))
     button.click()
 
-@then(ur'^the bibliography hyperlink with label "(?P<label>.*)" points '
-      ur'to "(?P<url>.*)"$')
+@then(ur'the bibliography hyperlink with label "(?P<label>.*)" points '
+      ur'to "(?P<url>.*)"')
 def step_impl(context, label, url):
     driver = context.driver
 
@@ -317,12 +317,10 @@ def step_impl(context, label, url):
     return [a.href === url, "the link should point to " + url];
     """)
 
-@then(ur'^the (?P<what>first collapsible section) titled '
-      ur'"(?P<title>.*?)" contains$')
-@then(ur'^the (?P<what>cognate) "(?P<title>.*?)" has the semantic '
-      ur'fields$')
-@then(ur'^the (?P<what>article) has the semantic '
-      ur'fields$')
+@then(ur'the (?P<what>first collapsible section) titled '
+      ur'"(?P<title>.*?)" contains')
+@then(ur'the (?P<what>cognate) "(?P<title>.*?)" has the semantic fields')
+@then(ur'the (?P<what>article) has the semantic fields')
 def step_impl(context, what, title=None):
     driver = context.driver
 
@@ -369,7 +367,7 @@ def step_impl(context, what, title=None):
     assert_equal(result[0], context.text.strip(),
                  "the semantic fields should be equal")
 
-@then(ur'^the table of contents contains$')
+@then(ur'the table of contents contains')
 def step_impl(context):
     driver = context.driver
     text = context.text.strip()
@@ -429,7 +427,7 @@ def step_impl(context):
     """)
     assert_equal(nav, expected_nav)
 
-@then(ur'^the navigation link "(?P<text>.*?)" points to the fourth subsense$')
+@then(ur'the navigation link "(?P<text>.*?)" points to the fourth subsense')
 def step_impl(context, text):
     driver = context.driver
 
@@ -452,7 +450,7 @@ def step_impl(context, text):
 
     assert_true(result[0], result[1])
 
-@then(ur"^the (?P<what>loading|time out) error message is visible$")
+@then(ur"the (?P<what>loading|time out) error message is visible")
 def step_impl(context, what):
     util = context.util
 
@@ -467,8 +465,8 @@ def step_impl(context, what):
     assert_equal(alert.text.strip(), msg)
 
 
-@then(ur"^there is (?P<exists>an|no) alert indicating the document "
-      ur"is unpublished$")
+@then(ur"there is (?P<exists>an|no) alert indicating the document "
+      ur"is unpublished")
 def step_impl(context, exists):
     util = context.util
 
@@ -488,8 +486,8 @@ def step_impl(context, exists):
     util.wait(check)
 
 
-@then(ur'^there is a hyperlink with label "(?P<label>.*?)" that points to the '
-      ur'article for the same lemma$')
+@then(ur'there is a hyperlink with label "(?P<label>.*?)" that points to the '
+      ur'article for the same lemma')
 def step_impl(context, label):
     driver = context.driver
 
@@ -528,19 +526,19 @@ def step_impl(context, label):
         assert_equal(link, label, "the link label should be " + label)
 
 
-@when(ur'^the user clicks in the access date field$')
+@when(ur'the user clicks in the access date field')
 def step_impl(context):
     field = context.util.find_element((By.ID, "access-date"))
     field.click()
 
 
-@then(ur'^there is a date picker visible$')
+@then(ur'there is a date picker visible')
 def step_impl(context):
     picker = context.util.find_element((By.CLASS_NAME, "datepicker"))
     assert_true(picker.is_displayed())
 
 
-@when(ur'^the user changes the date$')
+@when(ur'the user changes the date')
 def step_impl(context):
     util = context.util
     field = util.find_element((By.ID, "access-date"))
@@ -555,7 +553,7 @@ def step_impl(context):
     util.wait(lambda *_: field.get_attribute("value") != initial)
 
 
-@then(ur'^the citations show the date from the access date field$')
+@then(ur'the citations show the date from the access date field')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -598,7 +596,7 @@ def get_permalinks(driver):
     return {"non-version-specific": links[0],
             "version-specific": links[1]}
 
-@then(ur'^the MODS data has the correct (?P<what>access date field|url)$')
+@then(ur'the MODS data has the correct (?P<what>access date field|url)')
 def step_impl(context, what):
     driver = context.driver
     util = context.util
@@ -647,8 +645,8 @@ def step_impl(context, what):
         raise ValueError("unknown value for ``what`` parameter")
 
 
-@then(ur'^the citations show the url specified by the version-specific '
-      ur'checkbox$')
+@then(ur'the citations show the url specified by the version-specific '
+      ur'checkbox')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -677,7 +675,7 @@ def step_impl(context):
                      "the link text should match the expected URL")
 
 
-@when(ur'^the user clicks the version-specific checkbox$')
+@when(ur'the user clicks the version-specific checkbox')
 def step_impl(context):
     util = context.util
     field = util.find_element((By.ID, "version-specific"))

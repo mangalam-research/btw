@@ -6,7 +6,7 @@ from lexicography.tests.data import invalid_sf_cases
 step_matcher('re')
 
 
-@given('^the document is completely validated$')
+@given('the document is completely validated')
 def step_impl(context):
     driver = context.driver
     driver.execute_async_script("""
@@ -16,7 +16,7 @@ def step_impl(context):
     });
     """)
 
-@then('^there are no errors$')
+@then('there are no errors')
 def step_impl(context):
     driver = context.driver
 
@@ -27,8 +27,8 @@ def step_impl(context):
     assert_equal(count, 0)
 
 
-@then(r'^there is an error reporting that sense (?P<label>.*?) is '
-      r'without semantic fields$')
+@then(r'there is an error reporting that sense (?P<label>.*?) is '
+      r'without semantic fields')
 def step_impl(context, label):
     driver = context.driver
 
@@ -84,29 +84,29 @@ def find_error(context, expected_error_text, expected_tag, child=True):
     """, expected_error_text, expected_tag, child))
 
 
-@then(r'^there is an error reporting that a cognate is without semantic '
-      r'fields$')
+@then(r'there is an error reporting that a cognate is without semantic '
+      r'fields')
 def step_impl(context):
     find_error(context, "cognate without semantic fields", "btw:cognate")
 
 
-@then(r'^there are errors reporting the bad semantic fields$')
+@then(r'there are errors reporting the bad semantic fields')
 def step_impl(context):
     find_error(
         context, "semantic field is not in a recognized format", "btw:sf")
 
 
-@then(r'^there is an error reporting an empty surname$')
+@then(r'there is an error reporting an empty surname')
 def step_impl(context):
     find_error(context, "surname cannot be empty", "surname", False)
 
 
-@then(r'^there is an error reporting a missing editor$')
+@then(r'there is an error reporting a missing editor')
 def step_impl(context):
     find_error(context, "there must be at least one editor",
                "btw:credits", False)
 
-@then(r'^there is an error reporting a missing author$')
+@then(r'there is an error reporting a missing author')
 def step_impl(context):
     find_error(context, "there must be at least one author",
                "btw:credits", False)

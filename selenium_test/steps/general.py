@@ -114,15 +114,14 @@ def step_impl(context, x):
 step_matcher('re')
 
 
-@given(r'^the window is sized so that the table of contents is '
-       r'expandable$')
+@given(r'the window is sized so that the table of contents is expandable')
 def step_impl(context):
     driver = context.driver
     driver.set_window_size(683, 741)
     context.execute_steps(u"Then the table of contents is expandable")
 
 
-@when("^(?:the user )?scrolls the editor pane (?P<choice>completely )?down$")
+@when("(?:the user )?scrolls the editor pane (?P<choice>completely )?down")
 def step_impl(context, choice):
     driver = context.driver
     util = context.util
@@ -163,9 +162,9 @@ users = {
 }
 
 
-@given(ur"^(?P<user_desc>the user|a user without permission to edit "
-       ur"primary sources) has logged in$")
-@when(ur"^(?P<user_desc>the user) logs in$")
+@given(ur"(?P<user_desc>the user|a user without permission to edit "
+       ur"primary sources) has logged in")
+@when(ur"(?P<user_desc>the user) logs in")
 def step_impl(context, user_desc):
     driver = context.driver
     util = context.util
@@ -214,7 +213,7 @@ def step_impl(context, user_desc):
         # driver.get(selenic.SERVER)
     context.is_logged_in = True
 
-@when("^the user logs out$")
+@when("the user logs out")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -270,8 +269,8 @@ WHAT_TO_TITLE = {
 
 href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
-@Given(ur"^(?:a|an) (?P<what>valid|(?:un)?published) document$")
-@Given(ur"^a document with (?P<what>.*?)$")
+@Given(ur"(?:a|an) (?P<what>valid|(?:un)?published) document")
+@Given(ur"a document with (?P<what>.*?)")
 def step_impl(context, what):
     feature = context.feature
     util = context.util
@@ -372,7 +371,7 @@ def step_impl(context, what):
         """)
 
 
-@Given("^a document that has no (?P<what>.*)$")
+@Given("a document that has no (?P<what>.*)")
 def step_impl(context, what):
     driver = context.driver
     context.execute_steps(u"""
@@ -386,7 +385,7 @@ def step_impl(context, what):
     assert_equal(len(els), 0)
 
 
-@Given("^the document has no (?P<what>.*)$")
+@Given("the document has no (?P<what>.*)")
 def step_impl(context, what):
     driver = context.driver
     # Make a CSS selector out of it
@@ -396,8 +395,8 @@ def step_impl(context, what):
     assert_equal(len(els), 0)
 
 
-@When('^the user saves the file'
-      '(?P<how> using the keyboard| using the toolbar)?$')
+@When('the user saves the file'
+      '(?P<how> using the keyboard| using the toolbar)?')
 def step_impl(context, how=None):
     driver = context.driver
     util = context.util
@@ -424,7 +423,7 @@ def step_impl(context, how=None):
         "return window.__selenium_saved"))
 
 
-@When("^the user reloads the file$")
+@When("the user reloads the file")
 def step_impl(context):
     driver = context.driver
 
@@ -437,7 +436,7 @@ def step_impl(context):
     setup_editor(context)
 
 
-@When("^the user reloads the page$")
+@When("the user reloads the page")
 def step_impl(context):
     driver = context.driver
 
@@ -448,8 +447,8 @@ def step_impl(context):
     """)
     driver.get(driver.current_url)
 
-@when(ur"^the user clicks the (?P<what>save|quit without saving) button "
-      ur"in the toolbar$")
+@when(ur"the user clicks the (?P<what>save|quit without saving) button "
+      ur"in the toolbar")
 def step_impl(context, what):
     what = {
         "save": "save",
@@ -461,7 +460,7 @@ def step_impl(context, what):
     button.click()
 
 
-@when('^someone else modifies the file$')
+@when('someone else modifies the file')
 def step_impl(context, how=None):
     driver = context.driver
     util = context.util
@@ -489,15 +488,15 @@ def step_impl(context, how=None):
         "return !window.__btw_test_waiting_for_mod"))
 
 
-@then('^the user gets a dialog that the file has been modified by '
-      'another user$')
+@then('the user gets a dialog that the file has been modified by '
+      'another user')
 def step_impl(context):
     header = context.util.find_element((By.CSS_SELECTOR,
                                         ".modal.in .modal-header h3"))
     assert_equal(header.text, "Edited by another!")
 
 
-@then('^the editor is present$')
+@then('the editor is present')
 def step_impl(context):
     # This is deliberately brief. This should be used on a page where
     # some work has already been done with the editor. We're just
@@ -506,7 +505,7 @@ def step_impl(context):
         "return window.wed_editor !== undefined"))
 
 
-@when(ur'^the user clicks the button named "(?P<name>.*?)"$')
+@when(ur'the user clicks the button named "(?P<name>.*?)"')
 def step_impl(context, name):
     path = ("//*[(self::a or self::button) and "
             "(normalize-space(text()) = '{0}')]").format(name)
@@ -514,13 +513,13 @@ def step_impl(context, name):
     button.click()
 
 
-@when(ur'^the button named "(?P<name>.*?)" is enabled$')
+@when(ur'the button named "(?P<name>.*?)" is enabled')
 def step_impl(context, name):
     button = context.driver.find_element_by_link_text(name)
     assert_true(button.is_enabled())
 
 
-@then(ur'^there is a modal dialog titled "(?P<name>.*?)" visible$')
+@then(ur'there is a modal dialog titled "(?P<name>.*?)" visible')
 def step_impl(context, name):
     util = context.util
 

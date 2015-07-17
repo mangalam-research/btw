@@ -14,7 +14,7 @@ from selenic.util import Condition, Result
 step_matcher('re')
 
 
-@when(ur"^the user brings up a context menu in the text in the definition")
+@when(ur"the user brings up a context menu in the text in the definition")
 def step_impl(context):
     driver = context.driver
 
@@ -46,7 +46,7 @@ def step_impl(context):
         assert_equal(row['choice'], choice.text)
 
 
-@when(ur'^the user clicks the hyperlinking choice for "(?P<what>.*?)"$')
+@when(ur'the user clicks the hyperlinking choice for "(?P<what>.*?)"')
 def step_impl(context, what):
     driver = context.driver
     context.hyperlinks_before_insertion = \
@@ -65,7 +65,7 @@ def step_impl(context, what):
     driver.find_element_by_css_selector(".modal.in .btn-primary").click()
 
 
-@then(ur'^a new hyperlink with the label "(?P<what>.*?)" is inserted\.?$')
+@then(ur'a new hyperlink with the label "(?P<what>.*?)" is inserted\.?')
 def step_impl(context, what):
     links = btw_util.get_sense_hyperlinks(context.util)
 
@@ -77,7 +77,7 @@ def step_impl(context, what):
     assert_equal(links[0]["text"], what)
 
 
-@then(ur'^there are hyperlinks with labels "\[a\]" and "\[a2\]"\.?$')
+@then(ur'there are hyperlinks with labels "\[a\]" and "\[a2\]"\.?')
 def step_impl(context):
     links = btw_util.get_sense_hyperlinks(context.util)
 
@@ -102,12 +102,12 @@ def sanitize_id_selector(context, selector):
 
 
 __LINK_RE1 = \
-    (ur'^the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
+    (ur'the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
      ur'points to the(?: (?P<term>first|second|third))? example'
-     ur'(?: with the citation that starts with "(?P<citation>.*?)")?\.?$')
+     ur'(?: with the citation that starts with "(?P<citation>.*?)")?\.?')
 __LINK_RE2 = \
-    (ur'^the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
-     ur'to "(?P<term>.*?)"\.?$')
+    (ur'the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
+     ur'to "(?P<term>.*?)"\.?')
 
 
 @given(__LINK_RE1)
@@ -208,7 +208,7 @@ def step_impl(context, example, label, term=None, citation=None):
     assert_true(result.payload[0], result.payload[1])
 
 
-@then(ur'^the sense hyperlink with label "(?P<label>.*?)" has a tooltip '
+@then(ur'the sense hyperlink with label "(?P<label>.*?)" has a tooltip '
       ur'that says "(?P<tooltip>.*)"')
 def step_impl(context, label, tooltip):
 
@@ -245,7 +245,7 @@ __CHOICE_TO_SELECTOR = {
 }
 
 
-@when(ur"^the user brings up a context menu "
+@when(ur"the user brings up a context menu "
       ur"(?P<choice>in the last btw:citations|on the start label of the "
       ur"first example)")
 def step_impl(context, choice):
@@ -274,7 +274,7 @@ def step_impl(context, choice):
             break
 
 
-@when(ur"^the user deletes the first example")
+@when(ur"the user deletes the first example")
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -290,7 +290,7 @@ def step_impl(context):
     """)
 
 
-@then(ur"^there are no example hyperlinks")
+@then(ur"there are no example hyperlinks")
 def step_impl(context):
 
     id_selector = sanitize_id_selector(context, "#BTW-E.")
@@ -316,7 +316,7 @@ function getHyperlinksWithLabel(label) {
 }
 """
 
-@when(ur'^the user makes the hyperlink with label "(?P<label>.*?)" visible$')
+@when(ur'the user makes the hyperlink with label "(?P<label>.*?)" visible')
 def step_impl(context, label):
     driver = context.driver
     ret = driver.execute_async_script(GET_HYPERLINKS_WITH_LABEL + ur"""
@@ -355,7 +355,7 @@ def step_impl(context, label):
 
     context.shown_link = ret[0]
 
-@when(ur'^the user clicks the hyperlink$')
+@when(ur'the user clicks the hyperlink')
 def step_impl(context):
     context.shown_link.click()
     del context.shown_link

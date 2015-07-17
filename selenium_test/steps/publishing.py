@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 step_matcher('re')
 
 
-@when(ur'^the user clicks the button to (?P<action>publish|unpublish) '
-      ur'"(?P<name>.*?)"$')
+@when(ur'the user clicks the button to (?P<action>publish|unpublish) '
+      ur'"(?P<name>.*?)"')
 def step_impl(context, action, name):
     util = context.util
 
@@ -43,7 +43,7 @@ def step_impl(context, action, name):
     link.click()
 
 
-@then('^there is a message indicating failure to publish$')
+@then('there is a message indicating failure to publish')
 def step_impl(context):
     util = context.util
 
@@ -52,7 +52,7 @@ def step_impl(context):
     assert_equal(text, "This change record cannot be published.")
 
 
-@when('^the user dismisses the message$')
+@when('the user dismisses the message')
 def step_impl(context):
     util = context.util
 
@@ -62,8 +62,8 @@ def step_impl(context):
         (By.CSS_SELECTOR, ".alert"))) != 0)
 
 
-@then(ur'^there is a message indicating that the article was '
-      ur'(?P<action>published|unpublished)$')
+@then(ur'there is a message indicating that the article was '
+      ur'(?P<action>published|unpublished)')
 def step_impl(context, action):
     util = context.util
 
@@ -72,7 +72,7 @@ def step_impl(context, action):
     assert_equal(text, "This change record was {0}.".format(action))
 
 
-@when('^the article with lemma "foo" can be published$')
+@when('the article with lemma "foo" can be published')
 def step_impl(context):
     driver = context.driver
     r = requests.get(context.selenic.SERVER +
@@ -83,7 +83,7 @@ def step_impl(context):
                      })
     assert_equal(r.status_code, 200)
 
-@then('^there is a warning dialog about unpublishing$')
+@then('there is a warning dialog about unpublishing')
 def step_impl(context):
     util = context.util
 
@@ -93,7 +93,7 @@ def step_impl(context):
                 "the modal should be about unpublishing")
 
 
-@when(ur'^the user cancels the dialog$')
+@when(ur'the user cancels the dialog')
 def step_impl(context):
     util = context.util
 
@@ -104,7 +104,7 @@ def step_impl(context):
                             (By.CSS_SELECTOR, ".modal-body"))) != 0)
 
 
-@when(ur'^the user clicks the dialog button that performs the unpublishing$')
+@when(ur'the user clicks the dialog button that performs the unpublishing')
 def step_impl(context):
     util = context.util
 

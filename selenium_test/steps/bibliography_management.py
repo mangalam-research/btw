@@ -7,7 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 step_matcher('re')
 
 
-@when(ur"^the user clicks the button for refreshing the bibliography$")
+@when(ur"the user clicks the button for refreshing the bibliography")
 def step_impl(context):
     driver = context.driver
 
@@ -15,7 +15,7 @@ def step_impl(context):
         driver.find_element_by_id("btw-prev-refreshed").text
     driver.find_element_by_id("btw-refresh").click()
 
-@then(ur"^the bibliography is refreshed$")
+@then(ur"the bibliography is refreshed")
 def step_impl(context):
     util = context.util
     driver = context.driver

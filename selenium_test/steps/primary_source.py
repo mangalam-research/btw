@@ -27,8 +27,8 @@ SUBCOLUMNS = {
 
 NUMBER_OF_ROWS = 3
 
-load_re = ur'^(?:that )?the user (?:is on|reloads) the page for '\
-          ur'(?:editing primary sources|managing bibliographical items)$'
+load_re = ur'(?:that )?the user (?:is on|reloads) the page for '\
+          ur'(?:editing primary sources|managing bibliographical items)'
 
 
 @given(load_re)
@@ -38,9 +38,9 @@ def step_impl(context):
     driver.get(context.selenic.SERVER + "/bibliography/manage/")
 
 
-title_re = ur'^(?:that )?the items are sorted by ' \
+title_re = ur'(?:that )?the items are sorted by ' \
            ur'(?P<order>ascending|descending) ' \
-           ur'(?P<what>creators|dates|original titles)\.?$'
+           ur'(?P<what>creators|dates|original titles)\.?'
 Order = collections.namedtuple('Order', ('op', 'class_'))
 ORDERS = {
     "descending": Order(lambda a, b: a > b, 'sorting_desc'),
@@ -97,8 +97,8 @@ def step_impl(context, order, what):
     util.wait(cond)
 
 
-@when(ur'^the user clicks on the icon for sorting '
-      ur'(?P<what>creators|dates|original titles)$')
+@when(ur'the user clicks on the icon for sorting '
+      ur'(?P<what>creators|dates|original titles)')
 def step_impl(context, what):
     util = context.util
     column = COLUMNS[what]
@@ -110,8 +110,8 @@ def step_impl(context, what):
     header.click()
 
 
-@when(ur'^the user clicks on the button to add a primary source of row '
-      ur'(?P<row_n>\d+)$')
+@when(ur'the user clicks on the button to add a primary source of row '
+      ur'(?P<row_n>\d+)')
 def step_impl(context, row_n):
     util = context.util
     column = COLUMNS["buttons"]
@@ -146,8 +146,8 @@ def step_impl(context, row_n):
     util.wait(cond)
 
 
-@when(ur'^the user submits the dialog with reference title of '
-      ur'"(?P<title>.*?)" and a genre of "(?P<genre>.*?)"$')
+@when(ur'the user submits the dialog with reference title of '
+      ur'"(?P<title>.*?)" and a genre of "(?P<genre>.*?)"')
 def step_impl(context, title, genre):
     driver = context.driver
     util = context.util
@@ -172,12 +172,12 @@ def step_impl(context, title, genre):
     util.wait(fill)
 
 
-@then(ur"^the modal dialog to add a primary source (?:comes up|is visible)$")
+@then(ur"the modal dialog to add a primary source (?:comes up|is visible)")
 def step_impl(context):
     context.util.find_element((By.CLASS_NAME, "primary-source-form"))
 
 
-@then(ur"^the modal dialog to add a primary source disappears$")
+@then(ur"the modal dialog to add a primary source disappears")
 def step_impl(context):
     util = context.util
 
@@ -189,8 +189,8 @@ def step_impl(context):
     util.wait(cond)
 
 
-@then(ur'^the modal dialog shows the error "(?P<error>.*?)" for the '
-      'reference title field$')
+@then(ur'the modal dialog shows the error "(?P<error>.*?)" for the '
+      'reference title field')
 def step_impl(context, error):
     util = context.util
 
@@ -206,8 +206,8 @@ def step_impl(context, error):
     util.wait(cond)
 
 
-@then(ur"^row (?P<row>\d+) shows there (?:are|is) (?P<sources>\d+) "
-      ur"primary sources?$")
+@then(ur"row (?P<row>\d+) shows there (?:are|is) (?P<sources>\d+) "
+      ur"primary sources?")
 def step_impl(context, row, sources):
     util = context.util
 
@@ -225,9 +225,9 @@ def step_impl(context, row, sources):
     util.wait(cond)
 
 
-@then(ur'^row (?P<row>\d+) shows a primary source in subtable row '
+@then(ur'row (?P<row>\d+) shows a primary source in subtable row '
       ur'(?P<subrow>\d+) with reference title of '
-      ur'"(?P<title>.*?)" and a genre of "(?P<genre>.*?)"$')
+      ur'"(?P<title>.*?)" and a genre of "(?P<genre>.*?)"')
 def step_impl(context, row, subrow, title, genre):
     util = context.util
 
@@ -268,7 +268,7 @@ def step_impl(context, row, subrow, title, genre):
     util.wait(cond)
 
 
-@then(ur'^row (?P<row>\d+) shows a subtable that has (?P<num>\d+) row$')
+@then(ur'row (?P<row>\d+) shows a subtable that has (?P<num>\d+) row')
 def step_impl(context, row, num):
     util = context.util
 
@@ -313,7 +313,7 @@ def desired_row_state(driver, row, state):
     return ret if state == "open" else not ret
 
 
-@when(ur'^the user (?P<action>opens|closes) row (?P<row>\d+)$')
+@when(ur'the user (?P<action>opens|closes) row (?P<row>\d+)')
 def step_impl(context, action, row):
     util = context.util
     column = COLUMNS["buttons"]
@@ -351,7 +351,7 @@ def step_impl(context, action, row):
     util.wait(lambda driver: desired_row_state(driver, row, desired_state))
 
 
-@then(ur'^row (?P<row>\d+) is (?P<state>open|closed)$')
+@then(ur'row (?P<row>\d+) is (?P<state>open|closed)')
 def step_impl(context, row, state):
     util = context.util
     column = COLUMNS["buttons"]
@@ -359,7 +359,7 @@ def step_impl(context, row, state):
     util.wait(lambda driver: desired_row_state(driver, row, state))
 
 
-@when(ur'^the user (?P<action>opens|closes) all rows$')
+@when(ur'the user (?P<action>opens|closes) all rows')
 def step_impl(context, action):
     util = context.util
     column = COLUMNS["buttons"]
@@ -393,7 +393,7 @@ def step_impl(context, action):
     util.wait(button_clicked)
 
 
-@when(ur'^the user enters "(?P<text>.*?)" in the reference title field$')
+@when(ur'the user enters "(?P<text>.*?)" in the reference title field')
 def step_impl(context, text):
     context.driver.execute_script("""
     var text = arguments[0];
@@ -402,7 +402,7 @@ def step_impl(context, text):
     """, text)
 
 
-@when(ur'^the user sets the genre to "(?P<value>.*?)"$')
+@when(ur'the user sets the genre to "(?P<value>.*?)"')
 def step_impl(context, value):
     context.driver.execute_script("""
     var value = arguments[0];
@@ -412,8 +412,8 @@ def step_impl(context, value):
     """, value)
 
 
-@when(ur'^the user clicks on the button to edit the first primary source of '
-      ur'row (?P<row>\d+)$')
+@when(ur'the user clicks on the button to edit the first primary source of '
+      ur'row (?P<row>\d+)')
 def step_impl(context, row):
     util = context.util
 
@@ -444,13 +444,13 @@ def step_impl(context, row):
     button.click()
 
 
-@given("^all rows are loaded\.?$")
+@given("all rows are loaded\.?")
 def step_impl(context):
     context.execute_steps(u"""
     Given there are {0} rows.
     """.format(NUMBER_OF_ROWS))
 
-rows_re = ur'^there (?:is|are) (?P<number>\d+) rows?\.?$'
+rows_re = ur'there (?:is|are) (?P<number>\d+) rows?\.?'
 
 
 def wait_until_datatable_has_n_rows(util, selector_or_element, number):
@@ -490,7 +490,7 @@ def step_impl(context, number):
                                     number)
 
 
-@when(ur'^the user clicks on the filtering field$')
+@when(ur'the user clicks on the filtering field')
 def step_impl(context):
     util = context.util
     field = util.find_element((By.CSS_SELECTOR,
@@ -498,7 +498,7 @@ def step_impl(context):
     field.click()
 
 
-@then(ur'^there are no buttons for adding primary sources$')
+@then(ur'there are no buttons for adding primary sources')
 def step_impl(context):
     driver = context.driver
 
@@ -506,7 +506,7 @@ def step_impl(context):
         "table#bibliography-table>tbody>tr div.add-button")), 0)
 
 
-@then(ur'^there are no buttons for editing primary sources$')
+@then(ur'there are no buttons for editing primary sources')
 def step_impl(context):
     # This test is hardcoded to check only in the first subtable and
     # expect the subtable to have only one row.
@@ -526,7 +526,7 @@ def step_impl(context):
         "table#bibliography-table>tbody>tr div.edit-button")), 0)
 
 
-@when(ur'^the user selects the menu to show 25 entries$')
+@when(ur'the user selects the menu to show 25 entries')
 def step_impl(context):
     driver = context.driver
     driver.execute_async_script("""

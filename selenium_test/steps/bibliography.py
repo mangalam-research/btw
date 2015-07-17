@@ -33,11 +33,10 @@ def __get_first_ph_in_etymology(driver):
     """)
 
 
-@when(ur'^the user adds a reference to an item$')
-@when(ur'^the user adds a reference to an item'
-      ur'(?P<which> to the (?:first|second) example)?$')
-@when(ur'^the user adds a reference to an item (?P<which>with|without) a '
-      ur'reference title$')
+@when(ur'the user adds a reference to an item'
+      ur'(?P<which> to the (?:first|second) example)?')
+@when(ur'the user adds a reference to an item (?P<which>with|without) a '
+      ur'reference title')
 def step_impl(context, which=None):
     driver = context.driver
     util = context.util
@@ -101,8 +100,8 @@ bibliographical reference"
         .perform()
 
 
-@when(ur"^the user replaces a selection with reference to an item with "
-      ur"a reference title$")
+@when(ur"the user replaces a selection with reference to an item with "
+      ur"a reference title")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -133,8 +132,8 @@ with a bibliographical reference"
         .send_keys(Keys.ENTER) \
         .perform()
 
-@then(ur'^a new reference is inserted$')
-@then(ur'^the new reference contains the reference title\.?$')
+@then(ur'a new reference is inserted')
+@then(ur'the new reference contains the reference title\.?')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -149,7 +148,7 @@ def step_impl(context):
     util.wait(cond)
 
 
-@then(ur"^the new reference contains the first author's last name and "
+@then(ur"the new reference contains the first author's last name and "
       ur"the date\.?")
 def step_impl(context):
     util = context.util
@@ -165,7 +164,7 @@ def step_impl(context):
     util.wait(cond)
 
 
-@when(ur"^the user adds custom text to the (?P<what>new|first) reference$")
+@when(ur"the user adds custom text to the (?P<what>new|first) reference")
 def step_impl(context, what):
     util = context.util
     driver = context.driver
@@ -186,28 +185,28 @@ to reference"
     """)
 
 
-@then(ur"^the new reference contains a placeholder\.?$")
+@then(ur"the new reference contains a placeholder\.?")
 def step_impl(context):
     util = context.util
 
     util.find_element((By.CSS_SELECTOR, ".ref ._placeholder"))
 
 
-@when(ur"^the user brings up the context menu$")
+@when(ur"the user brings up the context menu")
 def step_impl(context):
     util = context.util
 
     util.ctrl_equivalent_x("/")
 
 
-@given(ur"^that the user is on the page for performing a general "
+@given(ur"that the user is on the page for performing a general "
        ur"bibliographical search")
 def step_impl(context):
     driver = context.driver
     driver.get(context.selenic.SERVER + "/bibliography/search/")
 
 
-@when(ur"^the user deletes a reference")
+@when(ur"the user deletes a reference")
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -226,8 +225,8 @@ def step_impl(context):
     """)
 
 
-@then(ur"^the element that contained the reference no longer contains the "
-      ur"space that was added for the reference$")
+@then(ur"the element that contained the reference no longer contains the "
+      ur"space that was added for the reference")
 def step_impl(context):
     util = context.util
     parent = context.deleted_reference_parent
@@ -246,7 +245,7 @@ def step_impl(context):
 
     util.wait(cond)
 
-@when(ur"^the user searches for a bibliographical item that does not exist$")
+@when(ur"the user searches for a bibliographical item that does not exist")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -273,8 +272,8 @@ bibliographical reference"
         .perform()
 
 
-@then(ur"^the bibliographical reference typeahead shows that there is no "
-      ur"match$")
+@then(ur"the bibliographical reference typeahead shows that there is no "
+      ur"match")
 def step_impl(context):
     driver = context.driver
     util = context.util

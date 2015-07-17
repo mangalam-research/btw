@@ -21,7 +21,7 @@ step_matcher("re")
 
 
 @when(ur'the user brings up a context menu on navigation item '
-      ur'"(?P<item>.*?)"(?:under "(?P<under>.*?)")?')
+      ur'"(?P<item>.*?)"(?: under "(?P<under>.*?)")?')
 def step_impl(context, item, under):
     driver = context.driver
     util = context.util

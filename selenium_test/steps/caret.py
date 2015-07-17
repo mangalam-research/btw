@@ -7,7 +7,7 @@ import wedutil
 step_matcher('re')
 
 
-@when(r"^the user clicks on the btw:none element of (?P<parent>.*)$")
+@when(r"the user clicks on the btw:none element of (?P<parent>.*)")
 def step_impl(context, parent):
     util = context.util
 
@@ -19,7 +19,7 @@ def step_impl(context, parent):
     wedutil.click_until_caret_in(util, element)
 
 
-@when(u"^the user clicks on the end label of the last foreign element$")
+@when(u"the user clicks on the end label of the last foreign element")
 def step_impl(context):
     driver = context.driver
 
@@ -38,7 +38,7 @@ def step_impl(context):
     button.click()
 
 
-@when(u"^(?:the user )?hits the (?P<choice>right|left) arrow$")
+@when(u"(?:the user )?hits the (?P<choice>right|left) arrow")
 def step_impl(context, choice):
     driver = context.driver
 

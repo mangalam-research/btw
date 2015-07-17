@@ -8,8 +8,8 @@ import wedutil
 step_matcher('re')
 
 
-@then(ur'^the btw:explanation for the (?P<parent>btw:sense|btw:subsense) '
-      ur'(?P<has>has(?: no)?) numbering$')
+@then(ur'the btw:explanation for the (?P<parent>btw:sense|btw:subsense) '
+      ur'(?P<has>has(?: no)?) numbering')
 def step_impl(context, parent, has):
     util = context.util
     prefix = u"." + parent.replace(":", ur"\:") + ur">.btw\:explanation"

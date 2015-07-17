@@ -82,7 +82,7 @@ def cleanup(context, failed):
 
     if context.sc_tunnel_tempdir:
         if keep_tempdirs:
-            print "Keeping tunnel tempdir:", context.sc_tunnel_tempdir
+            print("Keeping tunnel tempdir:", context.sc_tunnel_tempdir)
         else:
             shutil.rmtree(context.sc_tunnel_tempdir, True)
         context.sc_tunnel_tempdir = None
@@ -112,14 +112,14 @@ def cleanup(context, failed):
 
     if context.server_tempdir:
         if keep_tempdirs:
-            print "Keeping server tempdir:", context.server_tempdir
+            print("Keeping server tempdir:", context.server_tempdir)
         else:
             shutil.rmtree(context.server_tempdir, True)
         context.server_tempdir = None
 
     if context.download_dir:
         if keep_tempdirs:
-            print "Keeping download tempdir:", context.download_dir
+            print("Keeping download tempdir:", context.download_dir)
         else:
             shutil.rmtree(context.download_dir, True)
         context.download_dir = None
@@ -425,9 +425,9 @@ def after_step(context, step):
                             slugify(context.scenario.name + "_"
                                     + step.name) + ".png")
         driver.save_screenshot(name)
-        print
-        print "Captured screenshot:", name
-        print
+        print("")
+        print("Captured screenshot:", name)
+        print("")
 
     server_alive(context)
     # Perform this query only if SELENIUM_LOGS is on.
@@ -436,10 +436,10 @@ def after_step(context, step):
         return window.selenium_log;
         """)
         if logs:
-            print
-            print "JavaScript log:"
-            print "\n".join(repr(x) for x in logs)
-            print
+            print("")
+            print("JavaScript log:")
+            print("\n".join(repr(x) for x in logs))
+            print("")
             driver.execute_script("""
             window.selenium_log = [];
             """)

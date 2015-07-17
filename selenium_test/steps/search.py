@@ -10,7 +10,7 @@ from selenic.util import Result, Condition
 step_matcher('re')
 
 
-@given('^the search table is loaded$')
+@given('the search table is loaded')
 def step_impl(context):
     util = context.util
     util.find_element((By.ID, "search-table_next"))
@@ -54,7 +54,7 @@ test();
 """
 
 
-@when('^the user searches for lemma "(?P<query>.*?)"')
+@when('the user searches for lemma "(?P<query>.*?)"')
 def step_impl(context, query):
     util = context.util
     driver = context.driver
@@ -75,8 +75,8 @@ def step_impl(context, query):
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
 
 
-@then(r'^the search results show (?P<count>one entry|(?:\d+) entries) for '
-      r'"(?P<lemma>.*?)"')
+@then(r'the search results show (?P<count>one entry|(?:\d+) entries) for '
+      r'"(?P<lemma>.*?)".?')
 def step_impl(context, count, lemma):
     if count == "one entry":
         count = 1
@@ -96,8 +96,8 @@ def step_impl(context, count, lemma):
                  str(count) + " results")
 
 
-@then('^the search results show '
-      '(?P<kind>published and unpublished|(?:un)?published) entries$')
+@then('the search results show '
+      '(?P<kind>published and unpublished|(?:un)?published) entries')
 def step_impl(context, kind):
     driver = context.driver
     ret = driver.execute_async_script("""
@@ -171,7 +171,7 @@ def step_impl(context, kind):
     assert_true(ret)
 
 
-@when('^the user switches the search to (?P<kind>(?:un)?published) articles$')
+@when('the user switches the search to (?P<kind>(?:un)?published) articles')
 def step_impl(context, kind):
     util = context.util
     driver = context.driver
@@ -195,7 +195,7 @@ def step_impl(context, kind):
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
 
 
-@when('^the user sets the search to search all records$')
+@when('the user sets the search to search all records')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -217,7 +217,7 @@ def step_impl(context):
     driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
 
 
-@then('^there is (?P<existence>no|a) "(?P<name>.*?)" column visible$')
+@then('there is (?P<existence>no|a) "(?P<name>.*?)" column visible')
 def step_impl(context, existence, name):
     util = context.util
 
@@ -254,7 +254,7 @@ def step_impl(context, existence, name):
     assert_true(result, result.payload)
 
 
-@then('^the search box is empty and the lemmata only box is unchecked$')
+@then('the search box is empty and the lemmata only box is unchecked')
 def step_impl(context):
     util = context.util
     driver = context.driver
