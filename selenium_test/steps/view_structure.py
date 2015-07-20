@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E0611
 import re
+import os
 import datetime
 from StringIO import StringIO
 
@@ -680,3 +681,25 @@ def step_impl(context):
     util = context.util
     field = util.find_element((By.ID, "version-specific"))
     field.click()
+
+
+@then(ur'the MODS data is downloaded')
+def step_impl(context):
+    util = context.util
+    download_dir = context.download_dir
+    if download_dir is not None:
+        mods_path = os.path.join(download_dir, "mods")
+        util.wait(lambda *_: os.path.exists(mods_path))
+        # This test is not meant to check the data's structure so we
+        # read the file and make sure it parses.
+        with open(mods_path, 'r') as f:
+            data = f.read()
+        lxml.etree.fromstring(data)
+    #
+    # else: skip this step
+    #
+    # Practically this means doing nothing. However, behave does not
+    # give us the option to mark this step as skipped. The closest
+    # would be: context.scenario.skip() but it marks the whole
+    # scenario as skipped, which is not true. (The earlier steps have
+    # run and have tested something.)

@@ -188,6 +188,7 @@ def before_all(context):
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
     context.visible = os.environ.get("SELENIUM_VISIBLE")
 
+    context.download_dir = None
     context.sc_tunnel = None
     context.sc_tunnel_tempdir = None
     desired_capabilities = {}
@@ -198,6 +199,17 @@ def before_all(context):
         context.display.start()
         builder.update_ff_binary_env('DISPLAY')
         context.wm = subprocess.Popen(["openbox", "--sm-disable"])
+
+        chrome_options = builder.local_conf.get("CHROME_OPTIONS", None)
+        if chrome_options:
+            # We set a temporary directory for Chrome downloads. Even if
+            # we do not test downloads, this will prevent Chrome from
+            # polluting our *real* download directory.
+            context.download_dir = tempfile.mkdtemp()
+            prefs = {
+                "download.default_directory": context.download_dir
+            }
+            chrome_options.add_experimental_option("prefs", prefs)
     else:
         context.display = None
         context.wm = None
@@ -209,19 +221,6 @@ def before_all(context):
                 context.sc_tunnel_tempdir = \
                 outil.start_sc(builder.SC_TUNNEL_PATH, user, key)
         desired_capabilities["tunnel-identifier"] = sc_tunnel_id
-
-    chrome_options = builder.local_conf.get("CHROME_OPTIONS", None)
-    if chrome_options:
-        # We set a temporary directory for Chrome downloads. Even if
-        # we do not test downloads, this will prevent Chrome from
-        # polluting our *real* download directory.
-        context.download_dir = tempfile.mkdtemp()
-        prefs = {
-            "download.default_directory": context.download_dir
-        }
-        chrome_options.add_experimental_option("prefs", prefs)
-    else:
-        context.download_dir = None
 
     driver = builder.get_driver(desired_capabilities)
     context.driver = driver
