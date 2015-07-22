@@ -322,6 +322,16 @@ Complete Copy
 
     pg_restore -d btw_demo [path to dump]
 
+5. Set the site name::
+
+    $ . ../btw_env/bin/activate
+    $ ./manage.py btwredis start
+    $ ./manage.py btwdb set_site_name
+    $ ./manage.py btwredis stop
+
+ This will set the site name in the database to what is recorded in
+ the Django settings.
+
 Partial Copy
 ~~~~~~~~~~~~
 
