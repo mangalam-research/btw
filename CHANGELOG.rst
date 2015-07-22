@@ -1,3 +1,74 @@
+* 1.3.0:
+
+  + Change in nomenclature:
+
+   - Previous versions of BTW and its documentation referred to people
+     who could edit articles as "authors". With the addition of the
+     capability to record credits, we've decided that saying "author"
+     to refer to the capability to edit articles could lead to
+     confusion because people who can edit articles are not all
+     strictly speaking "authors" of the articles. (For intance, I can
+     edit all articles on BTW but I did not author any of them.)
+
+     From now on, we use the generic term "scribe" to refer to those
+     people who are allowed by BTW to edit articles on BTW,
+     irrespective of what their specific role is. They can be authors,
+     proofreaders, typists, site administrators, etc.
+
+  + New features:
+
+   - Articles now have the means to record credits (authors, editors).
+
+   - Unpublishing an article now gives a warning. With the addition of
+     the permalink and citation functionality, it is likely that some
+     readers of BTW will incorporate in their own work links to
+     versions of articles that may be later superseded by newer
+     versions. Unpublishing would break those links. So a warning is
+     presented reminding that unpublishing should be done only in
+     exceptional circumstances.
+
+   - Scribes now see the schema version of an article in the search
+     table. There is also a visual warning if an article is stored in
+     an earlier version of the schema.
+
+   - The lemma of an article is now included in the HTML title shown
+     when viewing the page. (This is the HTML title, which becomes the
+     title of the browser window or tab. Articles have always had the
+     lemma prominently displayed at the top of the article itself.)
+
+   - When displaying an article, BTW now includes:
+
+     - An "Article History" button which allows the user to see the
+       article's publishing history.
+
+     - A "Link to this article" button which allows the user to get
+       the permalinks of the article: a non-version-specific permalink
+       which always points to the latest published version of the
+       article, and a version-specific permalink which points to the
+       specific version being viewed.
+
+     - A "Cite this article" button which presents the user with two
+       bibliographical entries for this aricle preformatted according
+       to the Chicago Manual of Style and the MLA standards. It also
+       allows downloading the bibliographical information of the
+       article in the MODS format, which can then be loaded in
+       bibliographical management software.
+
+     - When viewing:
+
+       ~ For everyone: if someone is viewing a published version of an
+       article but there is a newer published version, they get a
+       warning and a link to the newest published version.
+
+       ~ For scribes: the warning they get when they look at an
+       unpublished version now includes a link to the latest published
+       version. (This warning already existed in previous versions of
+       BTW but did not include the link.)
+
+       ~ For scribes: they get a warning if there is a newer
+       unpublished version of an article, and the warning contains a
+       link to this newer version.
+
 * 1.2.1:
 
   + Bug fixes:
