@@ -204,7 +204,7 @@ README.html: README.rst
 selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
-selenium_test/*.feature selenium_test: build-config
+selenium_test/*.feature selenium_test: build-config javascript
 	python utils/check_selenium_config.py
 	$(MAKE) -f build.mk all
 ifneq ($(strip $(BEHAVE_SAVE)),)
@@ -219,15 +219,19 @@ endif # BEHAVE_SAVE
 test: test-django test-karma
 
 .PHONY: test-django
-test-django: test-django-menu
+# The dependency on $(TARGETS) is needed because the tests depend on a
+# complete application to run properly.
+test-django: test-django-menu $(TARGETS)
 	./manage.py test --attr='!isolation'
 
 .PHONY: test-django-menu
-test-django-menu:
+# The dependency on $(TARGETS) is needed because the tests depend on a
+# complete application to run properly.
+test-django-menu: $(TARGETS)
 	./manage.py test --attr=isolation=menu
 
 .PHONY: test-karma
-test-karma:
+test-karma: javascript
 	xvfb-run karma start --single-run
 
 .PHONY: keep-latest
