@@ -19,7 +19,6 @@
 {% block content %}
 {% if can_edit %}
 <p>Previously refreshed from Zotero database: <span id="btw-prev-refreshed">{{ prev_refreshed }}</span>. <button id="btw-refresh" class="btn btn-default" title="Refresh"><i class="fa fa-refresh"></i></button></p>
-{% endif %}
 <script>
 require(["../scripts/refresh"], function (refresh) {
     var initiate_url = '{{ initiate_refresh_url }}';
@@ -28,5 +27,6 @@ require(["../scripts/refresh"], function (refresh) {
     refresh(initiate_url, check_url);
 });
 </script>
+{% endif %}
 {% include "bibliography/table.html" %}
 {% endblock %}
