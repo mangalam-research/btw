@@ -83,4 +83,3 @@ $($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 
 clean::
 	rm -rf $($(ME)_outdir)
-	touch $@
