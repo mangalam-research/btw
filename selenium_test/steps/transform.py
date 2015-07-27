@@ -152,26 +152,50 @@ def step_impl(context, where):
     util = context.util
 
     initial_subsenses = context.initial_subsenses_by_sense["A"]
-    subsenses = btw_util.get_subsenses_for_sense(util, "A")
-    assert_equal(len(subsenses), len(initial_subsenses) + 1,
-                 "one new subsense")
 
-    if where == "after":
-        assert_equal(subsenses[0],
-                     {"explanation": u"sense a1",
-                      "head": u"[brief explanation of sense a1]"})
-        assert_equal(subsenses[1],
-                     {"explanation": u'',
-                      "head": u"[brief explanation of sense a2]"})
-    elif where == "before":
-        assert_equal(subsenses[0],
-                     {"explanation": u'',
-                      "head": u"[brief explanation of sense a1]"})
-        assert_equal(subsenses[1],
-                     {"explanation": u"sense a1",
-                      "head": u"[brief explanation of sense a2]"})
-    else:
-        raise ValueError("unexpected value for where: " + where)
+    def check(driver):
+        subsenses = btw_util.get_subsenses_for_sense(util, "A")
+        if len(subsenses) != len(initial_subsenses) + 1:
+            return Result(False,
+                          "no new subsense was created")
+
+        if where == "after":
+            expected = {"explanation": u"sense a1",
+                        "head": u"[brief explanation of sense a1]"}
+            if subsenses[0] != expected:
+                return Result(False,
+                              "unexpected value for first subsense: {0} != {1}"
+                              .format(subsenses[0], expected))
+
+            expected = {"explanation": u'',
+                        "head": u"[brief explanation of sense a2]"}
+            if subsenses[1] != expected:
+                return Result(
+                    False,
+                    "unexpected value for second subsense: {0} != {1}"
+                    .format(subsenses[1], expected))
+        elif where == "before":
+            expected = {"explanation": u'',
+                        "head": u"[brief explanation of sense a1]"}
+            if subsenses[0] != expected:
+                return Result(False,
+                              "unexpected value for first subsense: {0} != {1}"
+                              .format(subsenses[0], expected))
+
+            expected = {"explanation": u"sense a1",
+                        "head": u"[brief explanation of sense a2]"}
+            if subsenses[1] != expected:
+                return Result(
+                    False,
+                    "unexpected value for second subsense: {0} != {1}"
+                    .format(subsenses[1], expected))
+        else:
+            raise ValueError("unexpected value for where: " + where)
+
+        return Result(True, "")
+
+    result = Condition(util, check).wait()
+    assert_true(result, result.payload)
 
 
 @then("a new (?P<what>.*?) is created(?: in (?P<inside>.*))?")
