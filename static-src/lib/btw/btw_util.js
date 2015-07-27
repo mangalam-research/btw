@@ -105,7 +105,7 @@ function makeCollapsible(document, kind, heading_id, collapse_id,
         additional_group_classes ? " " + additional_group_classes : "";
 
     var el = domutil.htmlToElements(
-        _.template(collapsible_template, {
+        _.template(collapsible_template)({
             kind: kind,
             group_classes: additional_group_classes,
             panel_classes: additional_panel_classes,

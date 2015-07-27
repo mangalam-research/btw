@@ -108,7 +108,7 @@ function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
         buttons += _.template(
 '<a class="btw-edit-btn btn btn-default" title="Edit"\
       href="<%= edit_url %>"><i class="fa fa-fw fa-pencil-square-o"></i>\
-  </a>', { edit_url: edit_url });
+  </a>')({ edit_url: edit_url });
     }
     buttons +=
 '<a class="btw-expand-all-btn btn btn-default" title="Expand All" href="#">\
@@ -607,9 +607,10 @@ Viewer.prototype.processData = function (data, bibl_data) {
         }
 
         if (heading) {
-            var li = domutil.htmlToElements(_.template(
-                '<li><a href="#<%= target %>"><%= heading %></a></li>',
-                { target: anchor.id, heading: heading}), doc)[0];
+            var li = domutil.htmlToElements(
+                _.template(
+                    '<li><a href="#<%= target %>"><%= heading %></a></li>')
+                ({ target: anchor.id, heading: heading}), doc)[0];
             ul_stack[0].appendChild(li);
         }
     }

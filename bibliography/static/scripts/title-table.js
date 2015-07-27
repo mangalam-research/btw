@@ -1,4 +1,4 @@
-define(['jquery', 'lodash/modern/utilities/template',
+define(['jquery', 'lodash/modern/string/template',
         'jquery.cookie', 'datatables.bootstrap'],
        function ($, template) {
 var csrftoken = $.cookie('csrftoken');
