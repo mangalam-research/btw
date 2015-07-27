@@ -11,7 +11,6 @@ require.config({
    'datatables.bootstrap': 'external/datatables/js/dataTables.bootstrap',
    "bootstrap-editable": 'external/bootstrap3-editable/js/bootstrap-editable',
    "bootstrap-datepicker": 'external/bootstrap-datepicker/js/bootstrap-datepicker',
-   qunit: 'external/qunit-1.12.0',
    'pubsub-js': 'external/pubsub',
    xregexp: 'external/xregexp',
    'jquery.growl': 'external/jquery-growl/js/jquery.growl',
@@ -71,11 +70,6 @@ require.config({
    'bootstrap-datepicker': {
        deps: ["bootstrap"],
        exports: "jQuery.fn.datepicker"
-   },
-   'qunit': {
-       exports: 'QUnit',
-       init: function () { this.QUnit.config.autostart = false;
-                           return this.QUnit; }
    },
    'jquery.growl': {
        deps: ['jquery'],
