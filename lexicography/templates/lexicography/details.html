@@ -13,18 +13,18 @@
 {% endblock %}
 {% block content %}
 {% if not is_published %}
-<div class="alert alert-danger" role="alert">
-  You are looking at an unpublished version of the article. Follow this <a href="{{ latest_published.get_absolute_url }}">link</a> to get to the latest published version.
+<div class="alert alert-danger article-alert" role="alert">
+  You are looking at an unpublished version of the article.{% if latest_published %} Follow this <a href="{{ latest_published.get_absolute_url }}">link</a> to get to the latest published version.{% endif %}
 </div>
 {% else %}
 {% if latest_published %}
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger article-alert" role="alert">
   There is a <a href="{{ latest_published.get_absolute_url }}">newer published version</a> of this article.
 </div>
 {% endif %}
 {% endif %}
 {% if latest_unpublished %}
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger article-alert" role="alert">
   There is a <a href="{{ latest_unpublished.get_absolute_url }}">newer unpublished version</a> of this article.
 </div>
 {% endif %}

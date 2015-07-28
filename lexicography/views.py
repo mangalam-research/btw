@@ -384,7 +384,8 @@ def _show_changerecord(request, cr):
     # and is not this version. We pass cr.entry so that we can get the
     # non-version specific URL of to view the entry.
     latest_published = cr.entry \
-        if cr != cr.entry.latest_published else None
+        if (cr.entry.latest_published is not None and
+            cr != cr.entry.latest_published) else None
 
     # If the user is able to see unpublished articles, then we want to
     # warn the user if there exist a later version which is

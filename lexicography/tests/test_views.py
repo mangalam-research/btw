@@ -162,8 +162,8 @@ version="0.10" authority="/1">
         response1 = self.app.get(entry.get_absolute_url(), user=self.foo)
 
         self.assertEqual(
-            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
-            "there should be no alerts")
+            len(response1.lxml.cssselect('div.article-alert')), 0,
+            "there should be no article alerts")
 
         # We change the entry but do not publish
         c = Chunk(data="""
@@ -192,7 +192,7 @@ version="0.10" authority="/1">
 
         self.assertEqual(
             inner_normalized_html(
-                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+                response2.lxml.cssselect("div.article-alert")[0]),
             ('You are looking at an unpublished version of the article. '
              'Follow this <a href="{0}">link</a> to get to the latest '
              'published version.').format(entry.get_absolute_url()),
@@ -205,8 +205,26 @@ version="0.10" authority="/1">
         response3 = self.app.get(entry.latest.get_absolute_url(),
                                  user=self.foo)
         self.assertEqual(
-            len(response3.lxml.cssselect('div.alert.alert-danger')), 0,
-            "there should be no alerts")
+            len(response1.lxml.cssselect('div.article-alert')), 0,
+            "there should be no article alerts")
+
+    def test_warning_does_not_include_link_if_article_never_published(self):
+        """
+        When a scribe views an unpublished changerecord, and the entry has
+        not ever been published, there is no link in the warning.
+        """
+        entry = Entry.objects.get(lemma="foo")
+        self.assertIsNone(entry.latest_published,
+                          "the entry should not be published")
+        response1 = self.app.get(
+            entry.latest.get_absolute_url(), user=self.foo)
+
+        self.assertEqual(
+            inner_normalized_html(
+                response.lxml.cssselect("div.article-alert")[0]),
+            'You are looking at an unpublished version of the article.',
+            "there should be an alert, but not pointing to the latest "
+            "published version")
 
     def test_entry_warns_scribe_about_latest_unpublished(self):
         """
@@ -221,8 +239,8 @@ version="0.10" authority="/1">
         response1 = self.app.get(entry.get_absolute_url(), user=self.foo)
 
         self.assertEqual(
-            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
-            "there should be no alerts")
+            len(response1.lxml.cssselect('div.article-alert')), 0,
+            "there should be no article alerts")
 
         # We change the entry but do not publish
         c = Chunk(data="""
@@ -251,7 +269,7 @@ version="0.10" authority="/1">
 
         self.assertEqual(
             inner_normalized_html(
-                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+                response2.lxml.cssselect("div.article-alert")[0]),
             ('There is a <a href="{0}">newer unpublished version</a> '
              'of this article.').format(entry.latest.get_absolute_url()),
             "there should be an alert pointing to the latest "
@@ -263,8 +281,8 @@ version="0.10" authority="/1">
         response3 = self.app.get(entry.get_absolute_url(),
                                  user=self.foo)
         self.assertEqual(
-            len(response3.lxml.cssselect('div.alert.alert-danger')), 0,
-            "there should be no alerts")
+            len(response1.lxml.cssselect('div.article-alert')), 0,
+            "there should be no article alerts")
 
     def test_entry_warns_user_about_latest_published(self):
         """
@@ -280,8 +298,8 @@ version="0.10" authority="/1">
         response1 = self.app.get(entry.get_absolute_url())
 
         self.assertEqual(
-            len(response1.lxml.cssselect('div.alert.alert-danger')), 0,
-            "there should be no alerts")
+            len(response1.lxml.cssselect('div.article-alert')), 0,
+            "there should be no article alerts")
 
         old_published = entry.latest_published
 
@@ -313,7 +331,7 @@ version="0.10" authority="/1">
 
         self.assertEqual(
             inner_normalized_html(
-                response2.lxml.cssselect("div.alert.alert-danger")[0]),
+                response2.lxml.cssselect("div.article-alert")[0]),
             ('There is a <a href="{0}">newer published version</a> '
              'of this article.').format(entry.get_absolute_url()),
             "there should be an alert pointing to the latest "
