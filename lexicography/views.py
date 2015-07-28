@@ -218,14 +218,19 @@ def entry_details(request, entry_id, changerecord_id=None):
 
     if changerecord_id is None:
 
-        # Random users cannot view records that have not been published.
-        if not can_author and not entry.latest_published:
-            raise PermissionDenied
-
+        # The entry does not have a latest published record...
+        if not entry.latest_published:
+            return HttpResponseNotFound(
+                "You are trying to view the latest published "
+                "version of an article that has never been published.")
         return _show_changerecord(request, entry.latest_published)
 
     # We have a changerecord_id
-    cr = ChangeRecord.objects.get(id=changerecord_id)
+    try:
+        cr = ChangeRecord.objects.get(id=changerecord_id)
+    except ChangeRecord.DoesNotExist:
+        return HttpResponseNotFound("You are trying to view a version "
+                                    "that does not exist.")
     if cr.entry != entry:
         return HttpResponseNotFound("""
 <h1>Non-existent Version</h1>

@@ -216,7 +216,7 @@ version="0.10" authority="/1">
         entry = Entry.objects.get(lemma="foo")
         self.assertIsNone(entry.latest_published,
                           "the entry should not be published")
-        response1 = self.app.get(
+        response = self.app.get(
             entry.latest.get_absolute_url(), user=self.foo)
 
         self.assertEqual(
@@ -225,6 +225,37 @@ version="0.10" authority="/1">
             'You are looking at an unpublished version of the article.',
             "there should be an alert, but not pointing to the latest "
             "published version")
+
+    def test_try_to_view_latest_published_version_of_unpublished_article(self):
+        """
+        When anyone tries to get the latest published version of an
+        unpublished article, they get a 404.
+        """
+        entry = Entry.objects.get(lemma="foo")
+        self.assertIsNone(entry.latest_published,
+                          "the entry should not be published")
+        response = self.app.get(entry.get_absolute_url(), expect_errors=True)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.body,
+                         "You are trying to view the latest published "
+                         "version of an article that has never been "
+                         "published.")
+
+    def test_try_to_view_a_nonexistent_changerecord(self):
+        """
+        When anyone tries to view a change record that does not exist,
+        they get a nice 404.
+        """
+        entry = Entry.objects.get(lemma="abcd")
+        # We fabricate a URL.
+        response = self.app.get(entry.get_absolute_url() + "0/",
+                                expect_errors=True)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.body,
+                         "You are trying to view a version "
+                         "that does not exist.")
 
     def test_entry_warns_scribe_about_latest_unpublished(self):
         """
