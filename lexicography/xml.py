@@ -16,7 +16,7 @@ import lib.util as util
 dirname = os.path.dirname(__file__)
 schemas_dirname = os.path.join(dirname, "../utils/schemas")
 xsl_dirname = os.path.join(dirname, "../utils/xsl/")
-mods_schema_path = os.path.join(schemas_dirname, "mods-3-5.xsd")
+mods_schema_path = os.path.join(schemas_dirname, "out/flat_mods/mods-3-5.xsd")
 
 tei_namespace = 'http://www.tei-c.org/ns/1.0'
 btw_namespace = 'http://mangalamresearch.org/ns/btw-storage'

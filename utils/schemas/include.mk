@@ -31,8 +31,10 @@ $(ME)_LATEST_METADATA_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-metadata.json)
 $(ME)_LATEST_DOC_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=-doc)
 $(ME)_LATEST_JS_TARGET:=$($(ME)_LATEST_RNG_TARGET:.rng=.js)
 
+$(ME)_FLAT_MODS:=$($(ME)_outdir)/flat_mods/mods-3-5.xsd
+
 .PHONY: btw-schema-targets
-btw-schema-targets: $($(ME)_RNG_TARGETS) $($(ME)_LATEST_DOC_TARGET) $($(ME)_LATEST_METADATA_TARGET) $($(ME)_LATEST_JS_TARGET) $($(ME)_XSL_TARGETS)
+btw-schema-targets: $($(ME)_RNG_TARGETS) $($(ME)_LATEST_DOC_TARGET) $($(ME)_LATEST_METADATA_TARGET) $($(ME)_LATEST_JS_TARGET) $($(ME)_XSL_TARGETS) $($(ME)_FLAT_MODS)
 
 $($(ME)_outdir)/btw-storage-latest.rng: $($(ME)_LATEST_RNG_TARGET)
 $($(ME)_outdir)/btw-storage-metadata-latest.json: $($(ME)_LATEST_METADATA_TARGET)
@@ -80,6 +82,10 @@ $($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	-mkdir $@
 	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 cssFile="./tei.css" cssPrintFile="./tei-print.css" outputDir=$@
 	cp -rp $($(ME)_TEI)/tei-print.css $($(ME)_TEI)/tei.css $@/
+
+$($(ME)_FLAT_MODS): $($(ME)_include_mk_DIR)/flatten.xsl $($(ME)_include_mk_DIR)/mods-3-5.xsd
+	# Saxon will create the directory.
+	saxon -xsl:$< -s:$(word 2,$^) -o:$@
 
 clean::
 	rm -rf $($(ME)_outdir)
