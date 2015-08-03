@@ -20,7 +20,7 @@ from selenium_test import btw_util
 @when("the user loads the top page of the lexicography app")
 def user_load_lexicography(context):
     driver = context.driver
-    driver.get(context.selenic.SERVER + "/lexicography")
+    driver.get(context.builder.SERVER + "/lexicography")
 
 
 @then("the user gets the top page of the lexicography app")
@@ -61,7 +61,7 @@ def step_impl(context):
     context.execute_steps(u"""
     Given the user has logged in
     """)
-    driver.get(context.selenic.SERVER + "/lexicography/entry/new")
+    driver.get(context.builder.SERVER + "/lexicography/entry/new")
     setup_editor(context)
 
     btw_util.record_document_features(context)
@@ -168,7 +168,7 @@ users = {
 def step_impl(context, user_desc):
     driver = context.driver
     util = context.util
-    selenic = context.selenic
+    selenic = context.builder
 
     user = users[user_desc]
     if not util.can_set_cookies:
@@ -217,7 +217,7 @@ def step_impl(context, user_desc):
 def step_impl(context):
     driver = context.driver
     util = context.util
-    selenic = context.selenic
+    selenic = context.builder
     logout_url = selenic.SERVER + "/logout"
     driver.get(logout_url)
     button = driver.find_element_by_css_selector("button[type='submit']")
@@ -341,7 +341,7 @@ def step_impl(context, what):
 
     # We simulate an AJAX query on the search table.
     while True:
-        r = requests.get(context.selenic.SERVER +
+        r = requests.get(context.builder.SERVER +
                          "/en-us/lexicography/search-table/",
                          params={
                              "length": -1,
@@ -357,11 +357,11 @@ def step_impl(context, what):
             break
 
     if edit:
-        driver.get(context.selenic.SERVER + hits[title]["edit_url"])
+        driver.get(context.builder.SERVER + hits[title]["edit_url"])
         setup_editor(context)
         btw_util.record_document_features(context)
     else:
-        driver.get(context.selenic.SERVER + hits[title]["hits"][0]["view_url"])
+        driver.get(context.builder.SERVER + hits[title]["hits"][0]["view_url"])
         # We must ensure jQuery is loaded because the test suite depends on it.
         driver.execute_async_script("""
         var done = arguments[0];

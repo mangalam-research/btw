@@ -838,7 +838,7 @@ Running the Suite
 
 To run the suite issue::
 
-    $ make selenium-test TEST_BROWSER='OS,BROWSER,VERSION'
+    $ make selenium-test BEHAVE_PARAMS="-D browser='OS,BROWSER,VERSION'"
 
 where ``OS,BROWSER,VERSION`` is a combination of
 ``OS,BROWSER,VERSION`` present in ``config/browser.txt``.

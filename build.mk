@@ -203,7 +203,7 @@ selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
 selenium_test/*.feature selenium_test: build-config javascript
-	python utils/check_selenium_config.py
+	behave $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
 	$(MAKE) -f build.mk all
 ifneq ($(strip $(BEHAVE_SAVE)),)
 	(STAMP=$$(date -Iseconds); \

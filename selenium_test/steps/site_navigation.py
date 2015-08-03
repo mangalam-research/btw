@@ -14,9 +14,9 @@ OPTION_TO_ID = {
 def step_impl(context, page):
     driver = context.driver
     if page == "Home":
-        driver.get(context.selenic.SERVER)
+        driver.get(context.builder.SERVER)
     else:
-        driver.get(context.selenic.SERVER)
+        driver.get(context.builder.SERVER)
         for part in page.split("/"):
             driver.find_element_by_link_text(part).click()
 

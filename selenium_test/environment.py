@@ -21,8 +21,6 @@ _dirname = os.path.dirname(__file__)
 
 conf_path = os.path.join(os.path.dirname(_dirname),
                          "build", "config", "selenium_config.py")
-builder = Builder(conf_path)
-
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
 from nose.tools import assert_equal  # pylint: disable=E0611
@@ -53,6 +51,7 @@ def cleanup(context, failed):
 
     keep_tempdirs = context.behave_keep_tempdirs
 
+    builder = context.builder
     if driver:
         try:
             builder.set_test_status(
@@ -179,18 +178,42 @@ def setup_screenshots(context):
     context.screenshots_dir_path = this_screenshots_dir_path
 
 
+def dump_config(builder):
+    print("***")
+    print(builder.config)
+    print("***")
+
+
 def before_all(context):
 
     atexit.register(cleanup, context, True)
+
+    # We need to set these to None so that cleanup does not fail. It
+    # expects to be able to check these fields without having to check
+    # first for their existence.
+    context.driver = None
+    context.wm = None
+    context.display = None
+    context.server = None
+    context.server_tempdir = None
+    context.download_dir = None
+    context.sc_tunnel = None
+    context.sc_tunnel_tempdir = None
+    context.builder = None
+
     setup_screenshots(context)
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
     context.visible = os.environ.get("SELENIUM_VISIBLE")
 
-    context.download_dir = None
-    context.sc_tunnel = None
-    context.sc_tunnel_tempdir = None
+    userdata = context.config.userdata
+    context.builder = builder = Builder(conf_path, userdata)
+
+    dump_config(builder)
+    if userdata.get("check_selenium_config", False):
+        exit(0)
+
     desired_capabilities = {}
     if not builder.remote:
         visible = context.visible or \
@@ -227,8 +250,6 @@ def before_all(context):
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
                                      5 if builder.remote else 2)
-    context.selenic = builder
-
     # Without this, window sizes vary depending on the actual browser
     # used.
     context.initial_window_size = {"width": 1020, "height": 580}
@@ -269,7 +290,7 @@ def before_all(context):
     signal.signal(signal.SIGCHLD, lambda *_: sigchld(context))
 
     # We must add the port to the server
-    context.selenic.SERVER += ":" + nginx_port
+    context.builder.SERVER += ":" + nginx_port
 
     context.selenium_logs = os.environ.get("SELENIUM_LOGS", False)
 

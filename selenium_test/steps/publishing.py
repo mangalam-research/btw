@@ -75,7 +75,7 @@ def step_impl(context, action):
 @when('the article with lemma "foo" can be published')
 def step_impl(context):
     driver = context.driver
-    r = requests.get(context.selenic.SERVER +
+    r = requests.get(context.builder.SERVER +
                      "/lexicography/entry/foo/testing-mark-valid",
                      cookies={
                          "sessionid":

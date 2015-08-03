@@ -492,7 +492,7 @@ def step_impl(context, exists):
 def step_impl(context, label):
     driver = context.driver
 
-    r = requests.get(context.selenic.SERVER +
+    r = requests.get(context.builder.SERVER +
                      "/en-us/lexicography/search-table/",
                      params={
                          "length": -1,

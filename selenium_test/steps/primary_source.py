@@ -35,7 +35,7 @@ load_re = ur'(?:that )?the user (?:is on|reloads) the page for '\
 @when(load_re)
 def step_impl(context):
     driver = context.driver
-    driver.get(context.selenic.SERVER + "/bibliography/manage/")
+    driver.get(context.builder.SERVER + "/bibliography/manage/")
 
 
 title_re = ur'(?:that )?the items are sorted by ' \
