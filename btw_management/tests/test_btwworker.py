@@ -52,6 +52,9 @@ class BTWWorkerTestCase(SimpleTestCase):
         # We changed BTW_CELERY_WORKER_PREFIX but the workers in
         # btwworker are still cached. We must flush them.
         flush_caches()
+        from django.conf import settings
+        settings.BTW_LOGGING_PATH_FOR_BTW = logpath
+        settings.BTW_RUN_PATH_FOR_BTW = runpath
 
     def assertNoOutput(self, c):
         self.assertTrue(c.called)
