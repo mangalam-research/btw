@@ -272,38 +272,48 @@ def mods(request, entry_id, changerecord_id=None):
 
     xml = XMLTree(data)
 
-    author_names = xml.tree.xpath("//btw:credit//tei:persName",
-                                  namespaces=default_namespace_mapping)
-    authors = []
-    for name in author_names:
-        forename = ''.join(name.xpath("./tei:forename",
-                                      namespaces=default_namespace_mapping)[0]
-                           .itertext())
-        surname = ''.join(name.xpath("./tei:surname",
-                                     namespaces=default_namespace_mapping)[0]
-                          .itertext())
-        genName = ''.join(name.xpath("./tei:genName",
-                                     namespaces=default_namespace_mapping)[0]
-                          .itertext())
-        authors.append({
-            'forename': forename,
-            'surname': surname,
-            'genName': genName
-        })
+    def names_to_objects(names):
+        objs = []
+        for name in names:
+            forename = ''.join(
+                name.xpath("./tei:forename",
+                           namespaces=default_namespace_mapping)[0].itertext())
+            surname = ''.join(
+                name.xpath("./tei:surname",
+                           namespaces=default_namespace_mapping)[0].itertext())
+            genName = ''.join(
+                name.xpath("./tei:genName",
+                           namespaces=default_namespace_mapping)[0].itertext())
+            objs.append({
+                'forename': forename,
+                'surname': surname,
+                'genName': genName
+            })
+        return objs
+
+    authors = names_to_objects(
+        xml.tree.xpath("//btw:credit//tei:persName",
+                       namespaces=default_namespace_mapping))
+
+    editors = names_to_objects(
+        xml.tree.xpath("//tei:editor/tei:persName",
+                       namespaces=default_namespace_mapping))
 
     url = cr.get_absolute_url() if version_specific \
         else entry.get_absolute_url()
 
-    return render_to_response("lexicography/mods.xml",
-                              {
-                                  'title': cr.lemma,
-                                  'version': util.version(),
-                                  'year': datetime.date.today().year,
-                                  'authors': authors,
-                                  'url': request.build_absolute_uri(url),
-                                  'access_date': access_date
-                              },
-                              content_type="application/xml+mods")
+    return render(request,
+                  "lexicography/mods.xml",
+                  {
+                      'title': cr.lemma,
+                      'version': util.version(),
+                      'year': datetime.date.today().year,
+                      'authors': authors,
+                      'editors': editors,
+                      'url': request.build_absolute_uri(url),
+                      'access_date': access_date
+                  },
+                  content_type="application/xml+mods")
 
 @require_GET
 @never_cache

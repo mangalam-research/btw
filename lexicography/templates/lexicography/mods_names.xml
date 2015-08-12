@@ -1,0 +1,16 @@
+{% spaceless %}
+{% for name in names %}
+<name type="personal">
+  <namePart type="family">{{ name.surname }}</namePart>
+  {% if name.forename %}
+  <namePart type="given">{{ name.forename }}</namePart>
+  {% endif %}
+  {% if name.genName %}
+  <namePart type="termsOfAddress">{{ name.genName }}</namePart>
+  {% endif %}
+  <role>
+    <roleTerm type="code" authority="marcrelator">{{ marcrelator }}</roleTerm>
+  </role>
+</name>
+{% endfor %}
+{% endspaceless %}

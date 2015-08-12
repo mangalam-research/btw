@@ -617,7 +617,7 @@ class FormatDict(dict):
 class ModsTestCase(ViewsTestCase):
 
     mods_template_without_names = """\
-<?xml version="1.0"?>
+<?xml version="1.0"?>\
 <modsCollection xmlns="http://www.loc.gov/mods/v3" \
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
 xsi:schemaLocation="http://www.loc.gov/mods/v3 \
@@ -625,13 +625,22 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
 <titleInfo><title>prasāda</title></titleInfo>\
 <typeOfResource>text</typeOfResource>\
 <genre authority="local">dictionaryEntry</genre>\
+<genre authority="marcgt">article</genre>\
 {names}\
 <relatedItem type="host"><genre authority="marcgt">dictionary</genre>\
 <originInfo><edition>version {version}</edition>\
 <place><placeTerm type="text">Berkeley</placeTerm></place>\
 <publisher>Mangalam Research Center for Buddhist Languages</publisher>\
-<dateCreated>{year}</dateCreated><issuance>monographic</issuance></originInfo>\
+<dateCreated>{year}</dateCreated><issuance>continuing</issuance></originInfo>\
 <titleInfo><title>Buddhist Translators Workbench</title></titleInfo>\
+<name type="personal"><namePart type="family">Gómez</namePart>\
+<namePart type="given">Luis</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edc</roleTerm></role>\
+</name>\
+<name type="personal"><namePart type="family">Lugli</namePart>\
+<namePart type="given">Ligeia</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edc</roleTerm></role>\
+</name>\
 </relatedItem><location><url dateLastAccessed="2015-01-02">{url}</url>\
 </location></mods></modsCollection>\n"""
 
@@ -645,6 +654,10 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
 <name type="personal"><namePart type="family">Doeh</namePart>\
 <namePart type="given">John</namePart><role>\
 <roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name>\
+<name type="personal"><namePart type="family">Lovelace</namePart>\
+<namePart type="given">Ada</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edt</roleTerm>\
+</role></name>\
 """}))
 
     def setUp(self):
@@ -857,6 +870,9 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
 </role></name>\
 <name type="personal"><namePart type="family">Doeh</namePart><role>\
 <roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name>\
+<name type="personal"><namePart type="family">Lovelace</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edt</roleTerm>\
+</role></name>\
 """
         }
 
@@ -913,6 +929,11 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
 <namePart type="given">John</namePart>\
 <namePart type="termsOfAddress">fo&lt;o</namePart>\
 <role><roleTerm type="code" authority="marcrelator">aut</roleTerm>\
+</role></name>\
+<name type="personal"><namePart type="family">Lovelace</namePart>\
+<namePart type="given">Ada</namePart>\
+<namePart type="termsOfAddress">fo&lt;o</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edt</roleTerm>\
 </role></name>\
 """
         }

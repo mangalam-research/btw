@@ -18,6 +18,7 @@ def global_context_processor(request):
             settings.BTW_BOOTSTRAP_EDITABLE__CSS_PATH,
             'wed_polyfills': settings.BTW_WED_POLYFILLS,
             'demo': settings.BTW_DEMO,
+            'editors': settings.BTW_EDITORS,
         },
         # Vanilla Django settings.
         'settings': {
