@@ -153,7 +153,7 @@ Pinging worker testing.bibliography.worker... passed
         self.assertEqual(stderr, "")
         self.assertEqual(stdout_ping, """\
 Pinging worker testing.worker... passed
-Pinging worker testing.bibliography.worker... failed: not started
+Pinging worker testing.bibliography.worker... failed: no pidfile
 """)
         self.assertEqual(stderr_ping, "")
 
@@ -236,7 +236,7 @@ Pinging worker testing.bibliography.worker... passed
 """)
         self.assertEqual(stderr_ping, "")
         self.assertEqual(stdout_ping2, """\
-Pinging worker testing.worker... failed: not started
+Pinging worker testing.worker... failed: no pidfile
 Pinging worker testing.bibliography.worker... passed
 """)
         self.assertEqual(stderr_ping2, "")
@@ -292,7 +292,7 @@ Checking worker testing.bibliography.worker... passed
             call_command("btwworker", "stop", all=True)
         self.assertEqual(stdout, """\
 Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... failed: not started
+Checking worker testing.bibliography.worker... failed: no pidfile
 """)
         self.assertEqual(stderr, "")
 
@@ -355,7 +355,7 @@ environment {0} (uses environment foo)
             call_command("btwworker", "stop", all=True)
         self.assertEqual(stdout, """\
 Pinging worker testing.worker... passed
-Pinging worker testing.bibliography.worker... failed: not started
+Pinging worker testing.bibliography.worker... failed: no pidfile
 """)
         self.assertEqual(stderr, "")
 

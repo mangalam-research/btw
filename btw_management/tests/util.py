@@ -1,5 +1,21 @@
 from cStringIO import StringIO
 
+# We need to use this class rather than call_command if we want to be
+# able to capture some diagnostic information when an exception is
+# raised. If we do:
+#
+# stdout, stderr = call_command(...)
+#
+# And an exception is raised, then the assignment is not done and
+# there is nothing to examine. Conversely, this works:
+#
+# c = Caller()
+# try:
+#     c.call_command(...)
+# finally:
+#     self.assertEqual(c.stdout, "bar")
+#
+#
 class Caller(object):
 
     def __init__(self):

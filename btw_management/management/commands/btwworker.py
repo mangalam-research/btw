@@ -1,6 +1,5 @@
 import os
-import subprocess
-import time
+import errno
 
 from functools32 import lru_cache
 from django.core.exceptions import ImproperlyConfigured
@@ -11,19 +10,22 @@ from btw.celery import app
 from core.tasks import get_btw_env
 from lib.util import join_prefix
 from bibliography.tasks import periodic_fetch_items
-from redis.exceptions import ConnectionError
 from optparse import make_option
 from celery.bin.multi import multi_args, NamespacedOptionParser, MultiTool
+from celery.exceptions import TimeoutError
 
 class Worker(object):
 
     def __init__(self, name, queues, start_task=None):
         self.name = name
         self.queues = queues
+        # We do not use %n because it's value is resolved by Celery
+        # but we need it in our code here. So we use self.name
+        # instead, which is good enough for us.
         self.logfile = os.path.join(settings.BTW_LOGGING_PATH_FOR_BTW,
-                                    "%n.log")
+                                    self.name + ".log")
         self.pidfile = os.path.join(settings.BTW_RUN_PATH_FOR_BTW,
-                                    "%n.pid")
+                                    self.name + ".pid")
         logfile_arg = "--logfile=" + self.logfile
         pidfile_arg = "--pidfile=" + self.pidfile
         self.start_cmd = ['multi', 'start', '-A', 'btw',
@@ -34,10 +36,11 @@ class Worker(object):
                          name, logfile_arg, pidfile_arg]
         self.start_task = start_task
 
+_cached_defined_workers = None
 
 def get_defined_workers():
-    if get_defined_workers._cached:
-        return get_defined_workers._cached
+    if _cached_defined_workers:
+        return _cached_defined_workers
 
     prefix = settings.BTW_CELERY_WORKER_PREFIX
     if prefix.find(".") >= 0:
@@ -52,37 +55,18 @@ def get_defined_workers():
                periodic_fetch_items.delay),
     ]
 
-    get_defined_workers._cached = ret
+    global _cached_defined_workers
+    _cached_defined_workers = ret
 
     return ret
-get_defined_workers._cached = None
+_cached_defined_workers = None
 
 def get_running_workers(error_equals_no_worker=False):
     workers = get_defined_workers()
-    i = app.control.inspect()
-    try:
-        d = i.stats()
-        if not d:
-            if error_equals_no_worker:
-                return []
-
-            raise CommandError("no Celery workers found")
-    except ConnectionError as e:
-        if error_equals_no_worker:
-            return []
-
-        raise CommandError(
-            "cannot connect to Celery's backend: " + str(e))
-
-    names = [w.name for w in workers]
-    full_names = get_full_names(names)
-
     ret = []
     for worker in workers:
-        full_name = full_names[worker.name]
-        if full_name in d:
+        if not worker_does_not_exist(worker):
             ret.append(worker)
-
     return ret
 
 
@@ -97,7 +81,8 @@ def _get_full_names(names):
 
 def flush_caches():
     _get_full_names.cache_clear()
-    get_defined_workers._cached = None
+    global _cached_defined_workers
+    _cached_defined_workers = None
 
 def check_no_all(options, cmd):
     if options["all"]:
@@ -107,6 +92,30 @@ def check_no_arguments(args, cmd):
     if len(args) > 1:
         raise CommandError("{0} does not take arguments.".format(cmd))
 
+
+def worker_does_not_exist(worker):
+    if not os.path.exists(worker.pidfile):
+        return "no pidfile"
+
+    with open(worker.pidfile, 'r') as pidfile:
+        try:
+            pid = int(pidfile.read())
+        except ValueError:
+            return "cannot read pid"
+
+    try:
+        os.kill(pid, 0)
+    except OSError as ex:
+        if ex.errno == errno.ESRCH:
+            return "process does not exist"
+        elif ex.errno == errno.EPERM:
+            # Process exists, we just cannot send a signal
+            # to it.
+            pass
+        else:
+            raise
+
+    return False
 
 class Command(BaseCommand):
     help = """\
@@ -224,15 +233,15 @@ Manage workers.
             check_no_arguments(args, cmd)
             check_no_all(options, cmd)
 
-            running_workers = get_running_workers()
-            full_names = get_full_names([w.name for w in running_workers])
+            full_names = get_full_names([w.name for w in workers])
 
             for worker in workers:
                 self.stdout.write("Pinging worker %s... " %
                                   worker.name, ending='')
 
-                if worker not in running_workers:
-                    self.stdout.write("failed: not started")
+                status = worker_does_not_exist(worker)
+                if status:
+                    self.stdout.write("failed: " + status)
                     continue
 
                 full_name = full_names[worker.name]
@@ -251,23 +260,28 @@ Manage workers.
                 # We need CELERY_WORKER_DIRECT so that the next test will work.
                 raise CommandError("CELERY_WORKER_DIRECT must be True")
 
-            running_workers = get_running_workers()
-            full_names = get_full_names([w.name for w in running_workers])
+            full_names = get_full_names([w.name for w in workers])
 
             for worker in workers:
                 self.stdout.write("Checking worker %s... " %
                                   worker.name, ending='')
 
-                if worker not in running_workers:
-                    self.stdout.write("failed: not started")
+                status = worker_does_not_exist(worker)
+                if status:
+                    self.stdout.write("failed: " + status)
                     continue
 
                 full_name = full_names[worker.name]
 
                 # We send the task directly to the worker so that we
                 # are sure *that* worker handles the request.
-                result = get_btw_env.apply_async((), queue=full_name +
-                                                 ".dq").get()
+                try:
+                    result = get_btw_env.apply_async((), queue=full_name +
+                                                     ".dq").get(timeout=60)
+                except TimeoutError:
+                    self.stdout.write("failed: timed out")
+                    continue
+
                 if result != env:
                     self.stdout.write(
                         ("failed: not using environment {0} "

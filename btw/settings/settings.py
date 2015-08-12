@@ -495,6 +495,18 @@ s.BTW_SELENIUM_TESTS = False
 # be used in production. It will be ignored if DEBUG is not also True.
 s.BTW_DIRECT_APP_MODE = False
 
+# This has to be set to a real value for running the project. This
+# variable contains a list of forename, surname, genName fields (this
+# mirrors what we accept in the schema that determines article
+# structure). The list of names here determines the editor names that
+# are used for citing the project *as a whole*.
+#
+# Why a setting and not a table. Table queries are relatively costly
+# compared to reading a setting. Also, this setting is not going to
+# change very often during the life of the project. In fact, we expect
+# it won't ever change, but we want to have some flexibility.
+s.BTW_EDITORS = None
+
 exec _env.find_config("btw")  # pylint: disable=exec-used
 
 # Execute per-app overrides.
