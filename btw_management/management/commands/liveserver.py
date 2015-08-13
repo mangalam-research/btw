@@ -18,6 +18,7 @@ from cms.test_utils.testcases import BaseCMSTestCase
 from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lib import util
+from lexicography.xml import tei_namespace, btw_namespace
 
 class LexicographyPatcher(object):
 
@@ -175,10 +176,83 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         data = get_valid_document_data()
         publish = True
 
+        def alter_lemma_and_convert(tree, lemma):
+            lemmas = tree.xpath(
+                "//btw:lemma",
+                namespaces={
+                    "btw": "http://mangalamresearch.org/ns/btw-storage"
+                })
+            lemmas[0].text = lemma
+            return lxml.etree.tostring(
+                tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+
         if what == "valid article":
             pass
-        elif what in ("bad semantic fields article",
-                      "good semantic fields article"):
+        elif what in ("valid article, with one author",
+                      "valid article, with two authors",
+                      "valid article, with three authors",
+                      "valid article, with four authors"):
+            total_authors = {
+                "valid article, with one author": 1,
+                "valid article, with two authors": 2,
+                "valid article, with three authors": 3,
+                "valid article, with four authors": 4
+            }[what]
+
+            publish = True
+            tree = lxml.etree.fromstring(data)
+            authors = tree.xpath(
+                "//btw:credit",
+                namespaces={"btw": btw_namespace})
+
+            assert len(authors) == 2
+            if total_authors == 1:
+                authors[1].getparent().remove(authors[1])
+            elif total_authors == 2:
+                pass
+            else:
+                btw_credits = authors[0].getparent()
+                for number in xrange(len(authors) + 1, total_authors + 1):
+                    btw_credits.append(lxml.etree.XML("""
+<btw:credit xmlns="{0}" xmlns:btw="{1}">
+  <resp>Resp</resp>
+    <persName><forename>Forename {2}</forename><surname>Surname {2}</surname>\
+    <genName>GenName {2}</genName></persName>
+</btw:credit>""".format(tei_namespace, btw_namespace, number)))
+
+            data = alter_lemma_and_convert(tree, what)
+        elif what in ("valid article, with one editor",
+                      "valid article, with two editors",
+                      "valid article, with three editors",
+                      "valid article, with four editors"):
+            total_editors = {
+                "valid article, with one editor": 1,
+                "valid article, with two editors": 2,
+                "valid article, with three editors": 3,
+                "valid article, with four editors": 4
+            }[what]
+
+            publish = True
+            tree = lxml.etree.fromstring(data)
+            editors = tree.xpath(
+                "//tei:editor",
+                namespaces={"tei": tei_namespace})
+
+            assert len(editors) == 1
+            if total_editors == 1:
+                pass
+            else:
+                btw_credits = editors[0].getparent()
+                for number in xrange(len(editors) + 1, total_editors + 1):
+                    btw_credits.append(lxml.etree.XML("""
+<editor xmlns="{0}">
+  <persName><forename>Forename {1}</forename><surname>Surname {1}</surname>\
+  <genName>GenName {1}</genName></persName>
+</editor>""".format(tei_namespace, number)))
+
+            data = alter_lemma_and_convert(tree, what)
+        elif what in ("valid article, with bad semantic fields",
+                      "valid article, with good semantic fields"):
             publish = False
             tree = lxml.etree.fromstring(data)
             sfs = tree.xpath(
@@ -187,19 +261,13 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
                     "btw": "http://mangalamresearch.org/ns/btw-storage"
                 })
             ix = 0
-            cases = invalid_sf_cases if what.startswith("bad ") \
+            cases = invalid_sf_cases if what.endswith("bad semantic fields") \
                 else valid_sf_cases
             for case in cases:
                 sfs[ix].text = case
                 ix += 1
-            lemmas = tree.xpath(
-                "//btw:lemma",
-                namespaces={
-                    "btw": "http://mangalamresearch.org/ns/btw-storage"
-                })
-            lemmas[0].text = what
-            data = lxml.etree.tostring(
-                tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+
+            data = alter_lemma_and_convert(tree, what)
         else:
             print "Unknown document: ", what
         User = get_user_model()

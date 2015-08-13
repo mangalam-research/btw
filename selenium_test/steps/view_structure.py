@@ -703,3 +703,29 @@ def step_impl(context):
     # would be: context.scenario.skip() but it marks the whole
     # scenario as skipped, which is not true. (The earlier steps have
     # run and have tested something.)
+
+@then(ur'the (?P<style>Chicago|MLA) author names are "(?P<names>.*?)"')
+def step_impl(context, style, names):
+    driver = context.driver
+
+    selector = {
+        "Chicago": "#chicago_authors",
+        "MLA": "#mla_authors"
+    }[style]
+
+    authors = driver.execute_script("""
+    var selector = arguments[0];
+    return document.querySelector("#cite-modal " + selector).textContent
+    """, selector)
+
+    assert_equal(names, authors)
+
+@then(ur'the editor names are "(?P<names>.*?)"')
+def step_impl(context, names):
+    driver = context.driver
+
+    editors = driver.execute_script("""
+    return document.querySelector("#cite-modal #mla_editors").textContent
+    """)
+
+    assert_equal(names, editors)

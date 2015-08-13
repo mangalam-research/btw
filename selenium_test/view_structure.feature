@@ -199,3 +199,34 @@ Scenario: the user can download the MODS record
   Then there is a modal dialog titled "Cite" visible
   When the user clicks the button named "Get the MODS Record"
   Then the MODS data is downloaded
+
+Scenario Outline: the user can get citation records with correct authors
+  Given a valid article, with <authors>
+  And the view has finished rendering
+  When the button named "Cite this article" is enabled
+  And the user clicks the button named "Cite this article"
+  Then there is a modal dialog titled "Cite" visible
+  And the Chicago author names are "<chicago_authors>"
+  And the MLA author names are "<mla_authors>"
+
+  Examples:
+  | authors       | chicago_authors        | mla_authors             |
+  | one author    | Jane Doe               | Doe, Jane               |
+  | two authors   | Jane Doe and John Doeh | Doe, Jane and John Doeh |
+  | three authors | Jane Doe, John Doeh and Forename 3 Surname 3, GenName 3 | Doe, Jane, John Doeh and Forename 3 Surname 3, GenName 3  |
+  | four authors  | Jane Doe, John Doeh, Forename 3 Surname 3, GenName 3 and Forename 4 Surname 4, GenName 4 | Doe, Jane, et al. |
+
+Scenario Outline: the user can get citation records with correct editors
+  Given a valid article, with <editors>
+  And the view has finished rendering
+  When the button named "Cite this article" is enabled
+  And the user clicks the button named "Cite this article"
+  Then there is a modal dialog titled "Cite" visible
+  And the editor names are "<mla_editors>"
+
+  Examples:
+  | editors       | mla_editors            |
+  | one editor    | Ed. Lovelace, Ada      |
+  | two editors   | Eds. Lovelace, Ada and Forename 2 Surname 2, GenName 2 |
+  | three editors | Eds. Lovelace, Ada, Forename 2 Surname 2, GenName 2 and Forename 3 Surname 3, GenName 3 |
+  | four editors  | Eds. Lovelace, Ada, et al.  |

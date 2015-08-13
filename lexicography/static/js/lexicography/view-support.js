@@ -65,47 +65,36 @@ return function (permalink, version_permalink, viewer) {
 
     refreshCitations();
 
-    function convertAuthor(el) {
-        var surname = el.getElementsByClassName("surname")[0]
-                .textContent.trim();
-        var forename = el.getElementsByClassName("forename")[0]
-                .textContent.trim();
-        var genName = el.getElementsByClassName("genName")[0]
-                .textContent.trim();
+    function convertNames(els) {
+        var ret = [];
+        for (var i = 0, el; (el = els[i]); ++i) {
+            var surname = el.getElementsByClassName("surname")[0]
+                    .textContent.trim();
+            var forename = el.getElementsByClassName("forename")[0]
+                    .textContent.trim();
+            var genName = el.getElementsByClassName("genName")[0]
+                    .textContent.trim();
 
-        if (genName === "")
-            genName = undefined;
+            if (genName === "")
+                genName = undefined;
 
-        if (forename === "")
-            forename = undefined;
+            if (forename === "")
+                forename = undefined;
 
-        return {
-            surname: surname,
-            forename: forename,
-            genName: genName
-        };
+            ret.push({
+                surname: surname,
+                forename: forename,
+                genName: genName
+            });
+        }
+
+        return ret;
     }
 
     function combineNames(names, reverse_first, max) {
         var ret = "";
 
         var i = 0, name = names[0];
-
-        // max is used for MLA format citations. If there are more
-        // than 3 authors, then we only list the last names + "et
-        // al.".
-        if (names.length > max) {
-            for (; (name = names[i]); ++i) {
-                ret += name.surname;
-
-                if (names[i + 1])
-                    ret += (i < names.length - 2) ? ", " : " and ";
-            }
-
-            ret += " et al.";
-
-            return ret;
-        }
 
         if (reverse_first) {
             ret += name.surname;
@@ -120,6 +109,15 @@ return function (permalink, version_permalink, viewer) {
                 ret += (names.length > 2) ? ", " : " and ";
 
             i++;
+        }
+
+        // max is used for MLA format citations. If there are more
+        // than 3 authors, then we only list the first author + "et
+        // al.".
+        if (names.length > max) {
+            ret += "et al.";
+
+            return ret;
         }
 
         for (; (name = names[i]); ++i) {
@@ -155,14 +153,16 @@ return function (permalink, version_permalink, viewer) {
         // We need to wait until the document is "done" rendering so
         // that we can grab the author information and editor
         // information for the citations.
-        var author_els = root.querySelectorAll(".btw\\:credit .persName");
-        var i, el;
-        var authors = [];
-        for (i = 0; (el = author_els[i]); ++i)
-            authors.push(convertAuthor(el));
+        var authors = convertNames(
+            root.querySelectorAll(".btw\\:credit .persName"));
+        var editors = convertNames(root.querySelectorAll(".editor .persName"));
 
         var mla_authors = document.getElementById("mla_authors");
         mla_authors.textContent = combineNames(authors, true, 3);
+
+        var mla_editors = document.getElementById("mla_editors");
+        mla_editors.textContent = editors.length > 1 ? "Eds. " : "Ed. ";
+        mla_editors.textContent += combineNames(editors, true, 3);
 
         var chicago_authors = document.getElementById("chicago_authors");
         chicago_authors.textContent = combineNames(authors);

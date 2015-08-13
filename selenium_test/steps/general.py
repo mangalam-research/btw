@@ -270,6 +270,7 @@ WHAT_TO_TITLE = {
 href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
 @Given(ur"(?:a|an) (?P<what>valid|(?:un)?published) document")
+@Given(ur"a (?P<what>valid article, .*)")
 @Given(ur"a document with (?P<what>.*?)")
 def step_impl(context, what):
     feature = context.feature
@@ -312,29 +313,19 @@ def step_impl(context, what):
         """)
 
     title = None
-    if what in ("valid", "published") \
-       and not context.valid_document_created:
-        with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("create valid article\n")
-        with open(context.server_read_fifo, 'r') as fifo:
-            title = fifo.read().strip().decode('utf-8')
-        context.valid_document_created = True
 
-    if what == "bad semantic fields" \
-       and not context.bad_semantic_fields_document_created:
-        with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("create bad semantic fields article\n")
-        with open(context.server_read_fifo, 'r') as fifo:
-            title = fifo.read().strip().decode('utf-8')
-        context.bad_semantic_fields_document_created = True
+    if what in ("published", "valid"):
+        what = "valid article"
+    elif what in ("bad semantic fields", "good semantic fields"):
+        what = "valid article, with " + what
 
-    if what == "good semantic fields" \
-       and not context.good_semantic_fields_document_created:
+    if (what == "valid article" or what.startswith("valid article, ")) \
+       and not context.created_documents.get(what, False):
         with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("create good semantic fields article\n")
+            fifo.write("create " + what + "\n")
         with open(context.server_read_fifo, 'r') as fifo:
             title = fifo.read().strip().decode('utf-8')
-        context.good_semantic_fields_document_created = True
+        context.created_documents[what] = True
 
     if title is None:
         title = WHAT_TO_TITLE[what]
