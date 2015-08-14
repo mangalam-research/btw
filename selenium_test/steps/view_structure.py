@@ -554,14 +554,24 @@ def step_impl(context):
     util.wait(lambda *_: field.get_attribute("value") != initial)
 
 
+def is_in_article(feature):
+    name = os.path.splitext(os.path.basename(feature.filename))[0]
+    return name in ("view", "view_structure")
+
 @then(ur'the citations show the date from the access date field')
 def step_impl(context):
+    in_article = is_in_article(context.feature)
+
+    accessed_selector = "#cite-modal .accessed" if in_article else \
+                        ".cite-form .accessed"
+
     util = context.util
     driver = context.driver
 
     field = util.find_element((By.ID, "access-date"))
 
-    value = field.get_attribute("value")
+    value = util.wait(lambda *_: field.get_attribute("value"))
+
     # We use this rather than strftime so that we can have a day
     # number without a leading zero. On the internet there are those
     # who suggest using %-d but with strftime it this does not seem to
@@ -570,12 +580,13 @@ def step_impl(context):
         datetime.datetime.strptime(value, "%Y-%m-%d"))
 
     accessed_spans = driver.execute_script("""
+    var selector = arguments[0];
     return Array.prototype.map.call(
-        document.querySelectorAll("#cite-modal .accessed"),
+        document.querySelectorAll(selector),
         function (x) {
             return x.textContent;
     });
-    """)
+    """, accessed_selector)
     assert_true(len(accessed_spans) > 0,
                 "there should be some spans")
     for span in accessed_spans:
@@ -599,13 +610,19 @@ def get_permalinks(driver):
 
 @then(ur'the MODS data has the correct (?P<what>access date field|url)')
 def step_impl(context, what):
+    in_article = is_in_article(context.feature)
+
+    form_selector = '#cite-modal .modal-body form' if in_article else \
+                    '.cite-form form'
+
     driver = context.driver
     util = context.util
 
     data = driver.execute_async_script("""
-    var done = arguments[0];
+    var selector = arguments[0];
+    var done = arguments[1];
     var $ = jQuery;
-    var $form = $('#cite-modal .modal-body form');
+    var $form = $(selector);
     $.ajax({
         url: $form[0].action,
         data: $form.serialize(),
@@ -613,7 +630,7 @@ def step_impl(context, what):
     }).done(done).fail(function (jqXHR, textStatus, errorThrown) {
       done([textStatus]);
     });
-    """)
+    """, form_selector)
     assert_false(isinstance(data, list),
                  "there should be no protocol error ({0})".format(data[0]))
 

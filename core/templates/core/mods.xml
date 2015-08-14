@@ -1,0 +1,19 @@
+{% load mods %}{% spaceless %}<?xml version="1.0"?><modsCollection xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd">
+  <mods>
+    <titleInfo><title>Buddhist Translators Workbench</title></titleInfo>
+    <typeOfResource>text</typeOfResource>
+    <genre authority="marcgt">dictionary</genre>
+    {% mods_names btw_globals.editors 'edc' %}
+    <originInfo>
+      <edition>version {{ version }}</edition>
+      <place><placeTerm type="text">Berkeley</placeTerm></place>
+      <publisher>Mangalam Research Center for Buddhist Languages</publisher>
+      <dateCreated>{{ year }}</dateCreated>
+      <issuance>continuing</issuance>
+    </originInfo>
+    <location>
+      <url dateLastAccessed="{{ access_date }}">{{ globals.site_url }}</url>
+    </location>
+  </mods>
+</modsCollection>
+{% endspaceless %}

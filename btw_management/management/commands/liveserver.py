@@ -75,7 +75,7 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
 
         from lib import cmsutil
         cmsutil.refresh_cms_apps()
-        from cms.api import create_page
+        from cms.api import create_page, add_plugin
         self.home_page = \
             create_page("Home", "generic_page.html",
                         "en-us")
@@ -91,6 +91,11 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
                         "en-us", apphook='BibliographyApp')
         self.bibliography_page.toggle_in_navigation()
         self.bibliography_page.publish('en-us')
+        self.cite_page = create_page("Cite", "generic_page.html", "en-us")
+        self.cite_page.toggle_in_navigation()
+        content = self.cite_page.placeholders.get(slot='content')
+        add_plugin(content, "CitePlugin", "en-us")
+        self.cite_page.publish('en-us')
 
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read

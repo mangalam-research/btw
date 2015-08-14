@@ -1,0 +1,38 @@
+{% load sekizai_tags %}
+<div class="cite-form">
+  <form action="{% url 'core_mods' %}">
+    <div class="form-group">
+      <label for="access-date">Desired access date:</label><input name="access-date" id="access-date" type="text" type="text" class="form-control" />
+      <p class="help-block">
+        Bibliographical references to web sites normally include an
+        access date. You may change it if needed (the format is
+        YYYY-MM-DD).
+      </p>
+    </div>
+    <p>If your bibliographical management software is able to
+      import the MODS format, it is preferable to save the MODS
+      record for this page and import it into your bibliographical
+      management software.</p>
+    <button type="submit" class="btn btn-default" id="download-mods">
+      Get the MODS Record</button>
+  </form>
+  <hr />
+  <p>Otherwise you may cut and paste the following preformatted text,
+  according to the style you prefer.</p>
+  <p>Chicago:
+    <blockquote>
+      <span id="chicago_authors">{{ chicago_authors }}</span>, <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, Berkeley:
+Mangalam Research Center for Buddhist Languages, {{ year }}, accessed <span class="accessed"></span> <a href="{{ home }}">{{ globals.site_url }}</a>.
+    </blockquote>
+  </p>
+  <p>MLA:
+    <blockquote>
+      <span id="mla_authors">{{ mla_authors }}</span>. <i>The Buddhist Translators Workbench</i>. Version {{ bibliographical_data.version }}. Berkeley: Mangalam Research Center for Buddhist Languages, {{ year }}. Web. <span class="accessed"></span>. <a href="{{ home }}">{{ globals.site_url }}</a>.
+    </blockquote>
+  </p>
+</div>
+{% addtoblock "js_late" %}
+<script>
+require(["../js/core/cite-support"]);
+</script>
+{% endaddtoblock %}

@@ -1,5 +1,6 @@
-import os
+# -*- encoding: utf-8 -*-
 import cookielib as http_cookiejar
+import datetime
 
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
@@ -7,14 +8,15 @@ from django.test.utils import override_settings
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.utils import translation
 from cms.test_utils.testcases import BaseCMSTestCase
 
 from invitation.tests.util import BAD_KEY
 from invitation.models import Invitation
-import lib.util
+import lib.util as util
 from lib import cmsutil
+from lexicography.xml import mods_schema_path
 
-dirname = os.path.dirname(__file__)
 user_model = get_user_model()
 
 
@@ -23,7 +25,6 @@ class ViewTestCase(BaseCMSTestCase, WebTest):
 
     def setUp(self):
         super(ViewTestCase, self).setUp()
-        from django.utils import translation
         translation.activate('en-us')
         # We need a home page for some of the tests to pass.
         from cms.api import create_page
@@ -39,7 +40,7 @@ class ViewTestCase(BaseCMSTestCase, WebTest):
     def tearDown(self):
         super(ViewTestCase, self).tearDown()
         # We must clear the page cache to make sure tests are working.
-        lib.util.delete_own_keys('page')
+        util.delete_own_keys('page')
 
 
 class GeneralTestCase(ViewTestCase):
@@ -230,7 +231,6 @@ class SignupTestCase(WebTest):
 
     def setUp(self):
         super(SignupTestCase, self).setUp()
-        from django.utils import translation
         translation.activate('en-us')
         self.signup_url = reverse("account_signup")
         self.verification_sent = reverse("account_email_verification_sent")
@@ -238,7 +238,7 @@ class SignupTestCase(WebTest):
     def tearDown(self):
         super(SignupTestCase, self).tearDown()
         # We must clear the page cache to make sure tests are working.
-        lib.util.delete_own_keys('page')
+        util.delete_own_keys('page')
 
     def test_signup_without_invite(self):
         """
@@ -281,3 +281,69 @@ class SignupTestCase(WebTest):
         self.assertFalse(
             'invitation_key' in self.app.session,
             "the key should have been removed from the session")
+
+class ModsTestCase(BaseCMSTestCase, WebTest):
+
+    mods_template = """\
+<?xml version="1.0"?>\
+<modsCollection xmlns="http://www.loc.gov/mods/v3" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xsi:schemaLocation="http://www.loc.gov/mods/v3 \
+http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
+<titleInfo><title>Buddhist Translators Workbench</title></titleInfo>\
+<typeOfResource>text</typeOfResource>\
+<genre authority="marcgt">dictionary</genre>\
+<name type="personal"><namePart type="family">Gómez</namePart>\
+<namePart type="given">Luis</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edc</roleTerm></role>\
+</name>\
+<name type="personal"><namePart type="family">Lugli</namePart>\
+<namePart type="given">Ligeia</namePart>\
+<role><roleTerm type="code" authority="marcrelator">edc</roleTerm></role>\
+</name>\
+<originInfo><edition>version {version}</edition>\
+<place><placeTerm type="text">Berkeley</placeTerm></place>\
+<publisher>Mangalam Research Center for Buddhist Languages</publisher>\
+<dateCreated>{year}</dateCreated><issuance>continuing</issuance></originInfo>\
+<location><url dateLastAccessed="2015-01-02">{url}</url>\
+</location></mods></modsCollection>\n"""
+
+    def setUp(self):
+        super(ModsTestCase, self).setUp()
+        translation.activate('en-us')
+        self.mods_url = reverse("core_mods")
+
+    def assertValid(self, mods):
+        self.assertTrue(
+            util.validate_with_xmlschema(mods_schema_path,
+                                         mods.decode("utf-8")),
+            "the resulting data should be valid")
+
+    def test_missing_access_date(self):
+        """
+        Tests that if the access-date parameter is missing, we get a
+        reasonable error message.
+        """
+
+        response = self.app.get(self.mods_url, expect_errors=True)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.body, "access-date is a required parameter")
+
+    def test_basic(self):
+        """
+        Tests that generating a MODS works.
+        """
+        response = self.app.get(self.mods_url,
+                                params={"access-date": "2015-01-02"})
+
+        xml_params = {
+            'version': util.version(),
+            'year': '2012-' + str(datetime.date.today().year),
+            'url': "http://localhost:80/"
+        }
+
+        self.assertEqual(
+            response.body,
+            self.mods_template.format(**xml_params))
+        self.assertValid(response.body)

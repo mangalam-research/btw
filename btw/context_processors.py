@@ -27,6 +27,7 @@ def global_context_processor(request):
         # Other globals that do not come from settings.
         'globals': {
             'site_name': SimpleLazyObject(
-                lambda: get_current_site(request).name)
+                lambda: get_current_site(request).name),
+            'site_url': request.build_absolute_uri('/')
         }
     }

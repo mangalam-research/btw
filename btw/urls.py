@@ -29,6 +29,7 @@ if settings.DEBUG and settings.BTW_DIRECT_APP_MODE:
 
 urlpatterns += i18n_patterns(
     '',
+    url(r'^core/', include('core.urls')),
     url(r'^', include('cms.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
