@@ -67,6 +67,8 @@ class BTWCheckTestCase(SimpleTestCase):
     maxDiff = None
 
     def setUp(self):
+        from django.conf import settings
+        self.worker_prefix = settings.BTW_CELERY_WORKER_PREFIX
         self.site = site = Site.objects.get_current()
         site.name = "testing"
         site.save()
@@ -85,9 +87,9 @@ class BTWCheckTestCase(SimpleTestCase):
             finally:
                 self.assertEqual(c.stdout, """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
                 self.assertEqual(c.stderr, "")
 
     def test_workers_fail(self):
@@ -100,9 +102,9 @@ Checking worker testing.bibliography.worker... passed
         finally:
             self.assertEqual(c.stdout, """\
 Redis instance is alive.
-Checking worker testing.worker... failed: no pidfile
-Checking worker testing.bibliography.worker... failed: no pidfile
-""")
+Checking worker {0}.worker... failed: no pidfile
+Checking worker {0}.bibliography.worker... failed: no pidfile
+""".format(self.worker_prefix))
             self.assertEqual(c.stderr, "")
 
     def test_editors_not_set_fail(self):
@@ -118,9 +120,9 @@ Checking worker testing.bibliography.worker... failed: no pidfile
             finally:
                 self.assertEqual(c.stdout, """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr, "settings.BTW_EDITORS is not set\n")
 
@@ -137,9 +139,9 @@ Checking worker testing.bibliography.worker... passed
             finally:
                 self.assertEqual(c.stdout, """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
                     "settings.BTW_EDITORS is not of the right format\n")
@@ -167,9 +169,9 @@ Checking worker testing.bibliography.worker... passed
             finally:
                 self.assertEqual(c.stdout, """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
                     """\
@@ -199,9 +201,9 @@ settings.BTW_EDITORS is not of the right format
             self.assertEqual(c.stdout,
                              """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,
                 """\
@@ -223,9 +225,9 @@ settings.BTW_RUN_PATH_FOR_BTW ("@@foo@@") does not exist
             self.assertEqual(c.stdout,
                              """\
 Redis instance is alive.
-Checking worker testing.worker... passed
-Checking worker testing.bibliography.worker... passed
-""")
+Checking worker {0}.worker... passed
+Checking worker {0}.bibliography.worker... passed
+""".format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,
                 "the site name in the database (testing) is different from "
