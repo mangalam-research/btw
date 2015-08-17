@@ -1863,9 +1863,9 @@
       "resolved": "https://registry.npmjs.org/requirejs/-/requirejs-2.1.19.tgz"
     },
     "wed": {
-      "version": "0.24.2",
-      "from": "../../../../../src/git-repos/wed/build/LATEST-DIST.tgz",
-      "resolved": "file:../../../../../src/git-repos/wed/build/LATEST-DIST.tgz",
+      "version": "0.24.3",
+      "from": "wed@>=0.24.3",
+      "resolved": "https://registry.npmjs.org/wed/-/wed-0.24.3.tgz",
       "dependencies": {
         "amd-loader": {
           "version": "0.0.5",
