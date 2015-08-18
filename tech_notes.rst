@@ -474,9 +474,15 @@ See below for specific upgrade cases.
 1.2.x to 1.3.0
 ~~~~~~~~~~~~~~
 
+You must add ``BTW_EDITORS`` to Django's settings.
+
+The ``CitePlugin`` must be added to some page to allow site-wide
+citations.
+
 During migration Django will ask whether the content types for the
 models userauthority, otherauthority and authority should be
 removed. Answer yes.
+
 
 1.1.x to 1.2.0
 ~~~~~~~~~~~~~~
