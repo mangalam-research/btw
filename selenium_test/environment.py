@@ -15,6 +15,7 @@ from nose.tools import assert_true
 import selenic.util
 from selenic import Builder, outil
 from behave import step_registry
+from behave.tag_matcher import ActiveTagMatcher
 from pyvirtualdisplay import Display
 
 _dirname = os.path.dirname(__file__)
@@ -214,6 +215,30 @@ def before_all(context):
     if userdata.get("check_selenium_config", False):
         exit(0)
 
+    browser_to_tag_value = {
+        "INTERNETEXPLORER": "ie",
+        "CHROME": "ch",
+        "FIREFOX": "ff"
+    }
+
+    values = {
+        'browser': browser_to_tag_value[builder.config.browser],
+    }
+
+    platform = builder.config.platform
+    if platform.startswith("OS X "):
+        values['platform'] = 'osx'
+    elif platform.startswith("WINDOWS "):
+        values['platform'] = 'win'
+    elif platform == "LINUX" or platform.startswith("LINUX "):
+        values['platform'] = 'linux'
+
+    # We have some cases that need to match a combination of platform
+    # and browser
+    values['platform_browser'] = values['platform'] + "," + values['browser']
+
+    context.active_tag_matcher = ActiveTagMatcher(values)
+
     desired_capabilities = {}
     if not builder.remote:
         visible = context.visible or \
@@ -303,8 +328,11 @@ CLEARCACHE = "clearcache:"
 FAIL = "fail:"
 
 def before_scenario(context, scenario):
-    driver = context.driver
+    if context.active_tag_matcher.should_exclude_with(scenario.effective_tags):
+        scenario.skip(reason="Disabled by an active tag")
+        return
 
+    driver = context.driver
     driver.set_window_size(context.initial_window_size["width"],
                            context.initial_window_size["height"])
     driver.set_window_position(0, 0)
@@ -363,8 +391,13 @@ def before_scenario(context, scenario):
                 server_read(context)
             else:
                 raise Exception("unknown failure type: " + what)
-        elif tag == "wip":
-            pass
+        elif tag == "wip" or \
+                tag.startswith("not.with_") or \
+                tag.startswith("use.with_") or \
+                tag.startswith("only.with_") or \
+                tag.startswith("active.with_") or \
+                tag.startswith("not_active.with_"):
+            pass  # Don't panic when encountering behave's stock tags.
         else:
             raise Exception("unknown tag")
 
@@ -375,7 +408,10 @@ def before_scenario(context, scenario):
     context.session_id = None
 
 
-def after_scenario(context, _scenario):
+def after_scenario(context, scenario):
+    if scenario.status == "skipped":
+        return  # No cleanup needed...
+
     driver = context.driver
 
     handles = driver.window_handles

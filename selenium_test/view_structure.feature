@@ -191,6 +191,10 @@ Scenario: the user can choose the type of url of the citations produced by the c
   Then the citations show the url specified by the version-specific checkbox
   And the MODS data has the correct url
 
+# In IE we get a prompt when we download a file. This prompt cannot be
+# manipulated by Selenium, nor does there seem to be a way to prevent
+# it.
+@not.with_browser=ie
 Scenario: the user can download the MODS record
   Given a valid document
   And the view has finished rendering
