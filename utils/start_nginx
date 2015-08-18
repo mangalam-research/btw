@@ -107,21 +107,21 @@ with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
                  .replace('@PORT@', nginx_port)
                  .replace('@SERVER_PORT@', server_port))
 
+subprocess.check_call(['./manage.py', 'btwredis', 'start'])
 for name, user in name_users:
-    subprocess.check_call(['./manage.py', 'btwredis', 'start'])
     subprocess.check_call(['createdb', name])
     clean_databases = True
     subprocess.check_call(
         ['psql', '-c', 'GRANT ALL ON ALL TABLES IN SCHEMA public TO ' + user,
          name])
-    subprocess.check_call(['./manage.py', 'migrate'])
-    subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
-    subprocess.check_call(['./manage.py', 'clearcache', '--all'])
-    subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
-    # Give time to the workers to start.
-    import time
-    time.sleep(2)
-    subprocess.check_call(['./manage.py', 'btwcheck'])
+subprocess.check_call(['./manage.py', 'migrate'])
+subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
+subprocess.check_call(['./manage.py', 'clearcache', '--all'])
+subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
+# Give time to the workers to start.
+import time
+time.sleep(2)
+subprocess.check_call(['./manage.py', 'btwcheck'])
 
 pid_to_name = {}
 server = subprocess.Popen(["./manage.py", "liveserver",
