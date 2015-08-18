@@ -322,12 +322,15 @@ Complete Copy
 
     pg_restore -d btw_demo [path to dump]
 
-5. Set the site name::
+5. Run the migrations, make sure redis is running and do::
 
     $ . ../btw_env/bin/activate
-    $ ./manage.py btwredis start
+    $ ./manage.py migrate
+
+6. Set the site name, make sure redis is running and do::
+
+    $ . ../btw_env/bin/activate
     $ ./manage.py btwdb set_site_name
-    $ ./manage.py btwredis stop
 
  This will set the site name in the database to what is recorded in
  the Django settings.
@@ -467,6 +470,13 @@ Generally:
 8. Take the site out of maintenance mode.
 
 See below for specific upgrade cases.
+
+1.2.x to 1.3.0
+~~~~~~~~~~~~~~
+
+During migration Django will ask whether the content types for the
+models userauthority, otherauthority and authority should be
+removed. Answer yes.
 
 1.1.x to 1.2.0
 ~~~~~~~~~~~~~~
