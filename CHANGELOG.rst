@@ -7,7 +7,7 @@
      capability to record credits, we've decided that saying "author"
      to refer to the capability to edit articles could lead to
      confusion because people who can edit articles are not all
-     strictly speaking "authors" of the articles. (For intance, I can
+     strictly speaking "authors" of the articles. (For instance, I can
      edit all articles on BTW but I did not author any of them.)
 
      From now on, we use the generic term "scribe" to refer to those
@@ -16,6 +16,9 @@
      proofreaders, typists, site administrators, etc.
 
   + New features:
+
+   - BTW now has a Django CMS plugin that provide the BTW-as-a-whole
+     citation functionality.
 
    - Articles now have the means to record credits (authors, editors).
 
@@ -48,7 +51,7 @@
        specific version being viewed.
 
      - A "Cite this article" button which presents the user with two
-       bibliographical entries for this aricle preformatted according
+       bibliographical entries for this article preformatted according
        to the Chicago Manual of Style and the MLA standards. It also
        allows downloading the bibliographical information of the
        article in the MODS format, which can then be loaded in
@@ -68,6 +71,13 @@
        ~ For scribes: they get a warning if there is a newer
        unpublished version of an article, and the warning contains a
        link to this newer version.
+
+  + Upgrades:
+
+    - Upgrade to wed 0.24.3. This introduces some bug fixes with how
+      wed handles validation errors.
+
+    - Manu upgrades to the software libraries that BTW uses.
 
 * 1.2.1:
 
