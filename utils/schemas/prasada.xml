@@ -13,24 +13,24 @@
         <btw:english-rendition>
           <btw:english-term>clarity</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>01.04.08.01|02.07</btw:sf>
-            <btw:sf>01.04.08.09</btw:sf>
-            <btw:sf>01.07.04.01.02|07</btw:sf>
-            <btw:sf>02.01.08.01.02|03</btw:sf>
-            <btw:sf>02.01.10.01</btw:sf>
-            <btw:sf>02.01.10.02.03|04</btw:sf>
-            <btw:sf>17.05.03|07</btw:sf>
-            <btw:sf>03.11.03.03.05.01</btw:sf>
+            <btw:sf>01.04.08.01|02.07n</btw:sf>
+            <btw:sf>01.04.08.09n</btw:sf>
+            <btw:sf>01.07.04.01.02|07n</btw:sf>
+            <btw:sf>02.01.08.01.02|03n</btw:sf>
+            <btw:sf>02.01.10.01n</btw:sf>
+            <btw:sf>02.01.10.02.03|04n</btw:sf>
+            <btw:sf>17.05.03|07n</btw:sf>
+            <btw:sf>03.11.03.03.05.01n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>serenity</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>01.02.11.02.01|08.01</btw:sf>
-            <btw:sf>01.05.05.09.01|00</btw:sf>
-            <btw:sf>02.02.18</btw:sf>
-            <btw:sf>02.02.19.06</btw:sf>
-            <btw:sf>03.01.06.01.03.03|09.06</btw:sf>
+            <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+            <btw:sf>01.05.05.09.01|00n</btw:sf>
+            <btw:sf>02.02.18n</btw:sf>
+            <btw:sf>02.02.19.06n</btw:sf>
+            <btw:sf>03.01.06.01.03.03|09.06n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
@@ -39,7 +39,7 @@
         <btw:citations>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>01.04.08</btw:sf>
+              <btw:sf>01.04.08n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake AkośV, 128</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ <btw:lemma-instance>prasāda</btw:lemma-instance> iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             <btw:tr>Faith is <btw:lemma-instance>serenity</btw:lemma-instance> of mind. The mind, polluted with major and minor defilements (<foreign xml:lang="sa-Latn">kleśopakleśa</foreign>) becomes clear when it exercises by means of faith; just like water by means of a water-clarifying gem.</btw:tr>
@@ -47,26 +47,26 @@
           <btw:example-explained>
             <btw:explanation>in the sense of intellectual clarity, or lucidity, associated with confidence</btw:explanation>
             <btw:semantic-fields>
-              <btw:sf>01.04.04</btw:sf>
-              <btw:sf>01.02.11</btw:sf>
-              <btw:sf>01.06.07.03</btw:sf>
-              <btw:sf>02.02.18</btw:sf>
-              <btw:sf>02.02.19</btw:sf>
-              <btw:sf>01.05.05.09.01</btw:sf>
-              <btw:sf>03.05.01</btw:sf>
+              <btw:sf>01.04.04n</btw:sf>
+              <btw:sf>01.02.11n</btw:sf>
+              <btw:sf>01.06.07.03n</btw:sf>
+              <btw:sf>02.02.18n</btw:sf>
+              <btw:sf>02.02.19n</btw:sf>
+              <btw:sf>01.05.05.09.01n</btw:sf>
+              <btw:sf>03.05.01n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake MN I,487</ref><foreign xml:lang="pi-Latn">Etthāhaṃ bho gotama aññāṇam āpādiṃ, ettha sammoham āpādiṃ. Yāpi me esā bhoto gotamassa purimena kathāsallāpena ahu <btw:lemma-instance>pasāda</btw:lemma-instance>mattā, sāpi me etarahi antarahitāti.</foreign></btw:cit>
             <btw:tr>Now, Venerable Gautama, I face ignorance in this regard and I feel confused about this. The little bit of <btw:lemma-instance>clarity</btw:lemma-instance> that I had achieved through our previous talk is gone.</btw:tr>
           </btw:example-explained>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>01.04.04</btw:sf>
-              <btw:sf>01.02.11</btw:sf>
-              <btw:sf>01.06.07.03</btw:sf>
-              <btw:sf>02.02.18</btw:sf>
-              <btw:sf>02.02.19</btw:sf>
-              <btw:sf>01.05.05.09.01</btw:sf>
-              <btw:sf>03.05.01</btw:sf>
+              <btw:sf>01.04.04n</btw:sf>
+              <btw:sf>01.02.11n</btw:sf>
+              <btw:sf>01.06.07.03n</btw:sf>
+              <btw:sf>02.02.18n</btw:sf>
+              <btw:sf>02.02.19n</btw:sf>
+              <btw:sf>01.05.05.09.01n</btw:sf>
+              <btw:sf>03.05.01n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake NetP 28 (PTS Hardy 1902)</ref><foreign xml:lang="pi-Latn">okappanalakkhaṇā saddhā adhimuttipaccupaṭṭhānā ca anāvilalakkhaṇo <btw:lemma-instance>pasādo</btw:lemma-instance> sampasīdanapaccupaṭṭhāno ca .</foreign></btw:cit>
             <btw:tr>Faith has the defining characteristic of trusting and its manifestation is commitment. <btw:lemma-instance>Confidence</btw:lemma-instance> has the defining characteristic of being clear and its manifestation is assurance.</btw:tr>
@@ -74,7 +74,7 @@
         </btw:citations>
         <btw:other-citations>
           <btw:semantic-fields>
-            <btw:sf>03.05.01</btw:sf>
+            <btw:sf>03.05.01n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
         </btw:other-citations>
@@ -84,26 +84,26 @@
         <btw:citations>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>01.04.04</btw:sf>
-              <btw:sf>01.02.11</btw:sf>
-              <btw:sf>01.06.07.03</btw:sf>
-              <btw:sf>02.02.18</btw:sf>
-              <btw:sf>02.02.19</btw:sf>
-              <btw:sf>01.05.05.09.01</btw:sf>
-              <btw:sf>03.05.01</btw:sf>
+              <btw:sf>01.04.04n</btw:sf>
+              <btw:sf>01.02.11n</btw:sf>
+              <btw:sf>01.06.07.03n</btw:sf>
+              <btw:sf>02.02.18n</btw:sf>
+              <btw:sf>02.02.19n</btw:sf>
+              <btw:sf>01.05.05.09.01n</btw:sf>
+              <btw:sf>03.05.01n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/primary-sources/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">sarvāvavādakaśreṣṭhaṁ śakrabrahmeśānayamavarūṇakuveravā[va]sava-somādityādibhir apyapratihataśāsanaṁ kandarpadarpāpamardanaśūraṁ mahātmānam atimaharddhikaṁ sthaviropaguptamārabhya kāñcideva vibudhajanamanaḥ<btw:lemma-instance>prasāda</btw:lemma-instance>kārīṁ dharmyāṁ kathāṁ samanusmariṣyāmaḥ|</foreign></btw:cit>
             <btw:tr>We shall recall a docrinal tale capable of <btw:lemma-instance>brightnening</btw:lemma-instance> the mind of gods and men. It starts with Upagupta, the best of all preachers, whose teaching was irresistible (<foreign xml:lang="sa-Latn">apratihata</foreign>) even for Śākra, Brahmā, Īśāna, Yama, Varūṇa, Kubera, Vāsava, Soma, the Ādityas and the other gods, an eminent person, a hero capable of crushing the Kandarpa’s pride, endowed with enourmous yogic powers.</btw:tr>
           </btw:example>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>01.04.04</btw:sf>
-              <btw:sf>01.02.11</btw:sf>
-              <btw:sf>01.06.07.03</btw:sf>
-              <btw:sf>02.02.18</btw:sf>
-              <btw:sf>02.02.19</btw:sf>
-              <btw:sf>01.05.05.09.01</btw:sf>
-              <btw:sf>03.05.01</btw:sf>
+              <btw:sf>01.04.04n</btw:sf>
+              <btw:sf>01.02.11n</btw:sf>
+              <btw:sf>01.06.07.03n</btw:sf>
+              <btw:sf>02.02.18n</btw:sf>
+              <btw:sf>02.02.19n</btw:sf>
+              <btw:sf>01.05.05.09.01n</btw:sf>
+              <btw:sf>03.05.01n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake Saddharmapuṇḍarīka, 149</ref><foreign xml:lang="sa-Latn">atha khalu tāścatasraḥ parṣadastaṃ mahāntaṃ ratnastūpaṃ dṛṣṭvā vaihāyasamantarīkṣe sthitaṃ saṃjātaharṣāḥ prītiprāmodya<btw:lemma-instance>prasāda</btw:lemma-instance>prāptāḥ tasyāṃ velāyāmutthāya āsanebhyo 'ñjaliṃ pragṛhyāvasthitāḥ ||</foreign></btw:cit>
             <btw:tr>Then, the four assemblies saw that great stūpa studded with jewels suspended in mid-air and were taken by rapturous joy and filled with blissful pleasure, delight and <btw:lemma-instance>serenity</btw:lemma-instance>. At that [sight], they rose from their seats, salutated [it] reverently, and remained [respectfully] standing. </btw:tr>
@@ -111,7 +111,7 @@
         </btw:citations>
         <btw:other-citations>
           <btw:semantic-fields>
-            <btw:sf>03.05.01</btw:sf>
+            <btw:sf>03.05.01n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
         </btw:other-citations>
@@ -128,7 +128,7 @@
             </btw:citations>
             <btw:other-citations>
               <btw:semantic-fields>
-                <btw:sf>03.05.01</btw:sf>
+                <btw:sf>03.05.01n</btw:sf>
               </btw:semantic-fields>
               <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             </btw:other-citations>
@@ -143,7 +143,7 @@
             </btw:citations>
             <btw:other-citations>
               <btw:semantic-fields>
-                <btw:sf>03.05.01</btw:sf>
+                <btw:sf>03.05.01n</btw:sf>
               </btw:semantic-fields>
               <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             </btw:other-citations>
@@ -155,13 +155,13 @@
             <btw:citations>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>01.02.11</btw:sf>
-                  <btw:sf>01.04.04</btw:sf>
-                  <btw:sf>01.04.08</btw:sf>
-                  <btw:sf>01.05.05</btw:sf>
-                  <btw:sf>01.05.05.09.01</btw:sf>
-                  <btw:sf>02.01.10</btw:sf>
-                  <btw:sf>03.11.03</btw:sf>
+                  <btw:sf>01.02.11n</btw:sf>
+                  <btw:sf>01.04.04n</btw:sf>
+                  <btw:sf>01.04.08n</btw:sf>
+                  <btw:sf>01.05.05n</btw:sf>
+                  <btw:sf>01.05.05.09.01n</btw:sf>
+                  <btw:sf>02.01.10n</btw:sf>
+                  <btw:sf>03.11.03n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake Tathāgatācintyaguhya, 29v6-7</ref><foreign xml:lang="sa-Latn">tadyathā bhagavan udaka<btw:cognate-instance>prasādakaṃ</btw:cognate-instance> maṇiratnaṃ sarvaṃ kaluṣabhāvaṃ prasādayati | evam eva bhagavaṃ bodhisatvasya prajñāratnaṃ sarvakleśamalaṃ satvānāṃ <btw:cognate-instance>prasādayati</btw:cognate-instance> |</foreign></btw:cit>
                 <btw:tr>For example, Venerable One, the water-<btw:cognate-instance>clearing</btw:cognate-instance> mineral clears up all mud. Likewise, Venerable One, the jewel of bodhisatvas’ understanding <btw:cognate-instance>clears</btw:cognate-instance> all impurities and defilements of sentient beings</btw:tr>
@@ -169,7 +169,7 @@
             </btw:citations>
             <btw:other-citations>
               <btw:semantic-fields>
-                <btw:sf>03.05.01</btw:sf>
+                <btw:sf>03.05.01n</btw:sf>
               </btw:semantic-fields>
               <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             </btw:other-citations>
@@ -179,7 +179,7 @@
             <btw:citations>
               <btw:example xml:id="E.1">
                 <btw:semantic-fields>
-                  <btw:sf>01.02.11</btw:sf>
+                  <btw:sf>01.02.11n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake AkośBh ad VIII,9, 440
               4-12</ref><foreign xml:lang="sa-Latn">adhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance>
@@ -226,28 +226,28 @@
               </btw:example>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>01.04.04</btw:sf>
-                  <btw:sf>01.04.08</btw:sf>
-                  <btw:sf>01.05.05.09.01</btw:sf>
-                  <btw:sf>01.06.07.03</btw:sf>
-                  <btw:sf>02.02.11</btw:sf>
-                  <btw:sf>02.02.18</btw:sf>
-                  <btw:sf>02.02.19</btw:sf>
-                  <btw:sf>03.05.01</btw:sf>
+                  <btw:sf>01.04.04n</btw:sf>
+                  <btw:sf>01.04.08n</btw:sf>
+                  <btw:sf>01.05.05.09.01n</btw:sf>
+                  <btw:sf>01.06.07.03n</btw:sf>
+                  <btw:sf>02.02.11n</btw:sf>
+                  <btw:sf>02.02.18n</btw:sf>
+                  <btw:sf>02.02.19n</btw:sf>
+                  <btw:sf>03.05.01n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake AkośBh ad VIII. 9b and c, 441</ref><foreign xml:lang="sa-Latn">dvitīye dhyane’ dhyātma<btw:cognate-instance>saṃprasādo</btw:cognate-instance> nāsti | kleśāvilatvāt |</foreign></btw:cit>
                 <btw:tr>There is no inner <btw:cognate-instance>limpidity</btw:cognate-instance> (<foreign xml:lang="sa-Latn">adhyātmasaṃprasāda</foreign>) in the second meditative stage, because of the turbidity of defilements (<foreign xml:lang="sa-Latn">kleśa</foreign>). </btw:tr>
               </btw:example>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>01.04.04</btw:sf>
-                  <btw:sf>01.04.08</btw:sf>
-                  <btw:sf>01.05.05.09.01</btw:sf>
-                  <btw:sf>01.06.07.03</btw:sf>
-                  <btw:sf>02.02.11</btw:sf>
-                  <btw:sf>02.02.18</btw:sf>
-                  <btw:sf>02.02.19</btw:sf>
-                  <btw:sf>03.05.01</btw:sf>
+                  <btw:sf>01.04.04n</btw:sf>
+                  <btw:sf>01.04.08n</btw:sf>
+                  <btw:sf>01.05.05.09.01n</btw:sf>
+                  <btw:sf>01.06.07.03n</btw:sf>
+                  <btw:sf>02.02.11n</btw:sf>
+                  <btw:sf>02.02.18n</btw:sf>
+                  <btw:sf>02.02.19n</btw:sf>
+                  <btw:sf>03.05.01n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake AkośBhV, 376</ref><foreign xml:lang="sa-Latn">praśāntavāhitāvasthā cittasyādhyātma<btw:cognate-instance>saṃprasāda</btw:cognate-instance> iti</foreign></btw:cit>
                 <btw:tr>The inner <btw:cognate-instance>tranquillity</btw:cognate-instance> of thought (<foreign xml:lang="sa-Latn">citta</foreign>) is the state brought about by calm.</btw:tr>
@@ -255,7 +255,7 @@
             </btw:citations>
             <btw:other-citations>
               <btw:semantic-fields>
-                <btw:sf>03.05.01</btw:sf>
+                <btw:sf>03.05.01n</btw:sf>
               </btw:semantic-fields>
               <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             </btw:other-citations>
@@ -272,7 +272,7 @@
             </btw:citations>
             <btw:other-citations>
               <btw:semantic-fields>
-                <btw:sf>03.05.01</btw:sf>
+                <btw:sf>03.05.01n</btw:sf>
               </btw:semantic-fields>
               <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 1</ref><foreign xml:lang="sa-Latn">śraddhā cetasaḥ prasāda iti. kleśopakleśakaluṣitaṃ cetaḥ śraddhāyogāt prasīdati. udakaprasādakamaṇiyogād ivodakaṃ.</foreign></btw:cit>
             </btw:other-citations>
@@ -291,56 +291,56 @@
         <btw:english-rendition>
           <btw:english-term>confidence</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>02.01.12.10.04|02</btw:sf>
-            <btw:sf>02.01.12.10.04|02.01</btw:sf>
-            <btw:sf>02.01.13.02</btw:sf>
-            <btw:sf>02.01</btw:sf>
-            <btw:sf>02.01.13.08.11</btw:sf>
-            <btw:sf>02.01.14.05.05|00</btw:sf>
-            <btw:sf>02.02.22.15|11.01.01</btw:sf>
-            <btw:sf>02.02.28.05</btw:sf>
-            <btw:sf>02.02.31.02</btw:sf>
-            <btw:sf>02.02.31.08</btw:sf>
-            <btw:sf>03.04.13.18.05|13.04</btw:sf>
-            <btw:sf>03.05.01.03.01</btw:sf>
+            <btw:sf>02.01.12.10.04|02n</btw:sf>
+            <btw:sf>02.01.12.10.04|02.01n</btw:sf>
+            <btw:sf>02.01.13.02n</btw:sf>
+            <btw:sf>02.01n</btw:sf>
+            <btw:sf>02.01.13.08.11n</btw:sf>
+            <btw:sf>02.01.14.05.05|00n</btw:sf>
+            <btw:sf>02.02.22.15|11.01.01n</btw:sf>
+            <btw:sf>02.02.28.05n</btw:sf>
+            <btw:sf>02.02.31.02n</btw:sf>
+            <btw:sf>02.02.31.08n</btw:sf>
+            <btw:sf>03.04.13.18.05|13.04n</btw:sf>
+            <btw:sf>03.05.01.03.01n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>trust</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>01.02.08.03.08.14|01.04</btw:sf>
-            <btw:sf>01.05.05.15.01.05|15.03</btw:sf>
-            <btw:sf>01.05.05.15.01.05|15.05</btw:sf>
-            <btw:sf>02.01.13.02|00</btw:sf>
-            <btw:sf>15.05</btw:sf>
-            <btw:sf>02.01.13.02|02</btw:sf>
-            <btw:sf>02.01.14.05.05</btw:sf>
-            <btw:sf>03.04.13.18.05|13.03 </btw:sf>
-            <btw:sf>03.04.13.18.05|13.03.02</btw:sf>
-            <btw:sf>03.04.13.18.05|13.04</btw:sf>
-            <btw:sf>03.05.01.03.01</btw:sf>
-            <btw:sf>03.05.01|02</btw:sf>
-            <btw:sf>03.05.01|05.01</btw:sf>
-            <btw:sf>03.10.05.02|12</btw:sf>
-            <btw:sf>03.10.05.02|15</btw:sf>
-            <btw:sf>03.10.13.02|05.06</btw:sf>
-            <btw:sf>03.10.13.20.03|03</btw:sf>
+            <btw:sf>01.02.08.03.08.14|01.04n</btw:sf>
+            <btw:sf>01.05.05.15.01.05|15.03n</btw:sf>
+            <btw:sf>01.05.05.15.01.05|15.05n</btw:sf>
+            <btw:sf>02.01.13.02|00n</btw:sf>
+            <btw:sf>15.05n</btw:sf>
+            <btw:sf>02.01.13.02|02n</btw:sf>
+            <btw:sf>02.01.14.05.05n</btw:sf>
+            <btw:sf>03.04.13.18.05|13.03n</btw:sf>
+            <btw:sf>03.04.13.18.05|13.03.02n</btw:sf>
+            <btw:sf>03.04.13.18.05|13.04n</btw:sf>
+            <btw:sf>03.05.01.03.01n</btw:sf>
+            <btw:sf>03.05.01|02n</btw:sf>
+            <btw:sf>03.05.01|05.01n</btw:sf>
+            <btw:sf>03.10.05.02|12n</btw:sf>
+            <btw:sf>03.10.05.02|15n</btw:sf>
+            <btw:sf>03.10.13.02|05.06n</btw:sf>
+            <btw:sf>03.10.13.20.03|03n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>faith</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>02.01.13|02</btw:sf>
-            <btw:sf>02.01.13.02</btw:sf>
-            <btw:sf>02.01.13.02.02</btw:sf>
-            <btw:sf>02.01.13.08.11.01.01</btw:sf>
-            <btw:sf>02.08.03.13.02|06</btw:sf>
-            <btw:sf>03.05.01.03.01</btw:sf>
-            <btw:sf>03.05.04.04</btw:sf>
-            <btw:sf>03.07.00</btw:sf>
-            <btw:sf>03.07.00.02|01</btw:sf>
-            <btw:sf>03.07.00.05.01</btw:sf>
-            <btw:sf>03.10.13.10.02|02</btw:sf>
+            <btw:sf>02.01.13|02n</btw:sf>
+            <btw:sf>02.01.13.02n</btw:sf>
+            <btw:sf>02.01.13.02.02n</btw:sf>
+            <btw:sf>02.01.13.08.11.01.01n</btw:sf>
+            <btw:sf>02.08.03.13.02|06n</btw:sf>
+            <btw:sf>03.05.01.03.01n</btw:sf>
+            <btw:sf>03.05.04.04n</btw:sf>
+            <btw:sf>03.07.00n</btw:sf>
+            <btw:sf>03.07.00.02|01n</btw:sf>
+            <btw:sf>03.07.00.05.01n</btw:sf>
+            <btw:sf>03.10.13.10.02|02n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
@@ -349,7 +349,7 @@
         <btw:citations>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>02.01.13</btw:sf>
+              <btw:sf>02.01.13n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 81</ref><p><foreign xml:lang="sa-Latn">atha sthaviro rājñaḥ <btw:lemma-instance>prasāda</btw:lemma-instance>vṛddhyarthamuvāca| mahārāja kiṃ drakṣyasi tāṃ devatāṃ| yayā dṛṣṭaḥ prajāyan sa vane'smin vadatāṃ varaḥ|</foreign></p>
               <p><foreign xml:lang="sa-Latn">kramamāṇaḥ padān sapta śrutvā vāco yayā muneḥ||</foreign></p>
@@ -367,17 +367,17 @@
           </btw:example>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02</btw:sf>
-              <btw:sf>02.01.13.08.11</btw:sf>
-              <btw:sf>02.01.13.08.11.01.01</btw:sf>
-              <btw:sf>02.01.14</btw:sf>
-              <btw:sf>02.01.17</btw:sf>
-              <btw:sf>02.02.22</btw:sf>
-              <btw:sf>02.02.14</btw:sf>
-              <btw:sf>02.02.12</btw:sf>
-              <btw:sf>02.02.13</btw:sf>
-              <btw:sf>03.07</btw:sf>
+              <btw:sf>02.01.13.02n</btw:sf>
+              <btw:sf>02.01.13.02.02n</btw:sf>
+              <btw:sf>02.01.13.08.11n</btw:sf>
+              <btw:sf>02.01.13.08.11.01.01n</btw:sf>
+              <btw:sf>02.01.14n</btw:sf>
+              <btw:sf>02.01.17n</btw:sf>
+              <btw:sf>02.02.22n</btw:sf>
+              <btw:sf>02.02.14n</btw:sf>
+              <btw:sf>02.02.12n</btw:sf>
+              <btw:sf>02.02.13n</btw:sf>
+              <btw:sf>03.07n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake Vajracchedikā 116</ref><foreign xml:lang="sa-Latn">ye imeṣv evaṃrūpeṣu sūtrāṃtapadeṣu bhāṣyamāṇeṣv ekacitta<btw:lemma-instance>prasāda</btw:lemma-instance>mātram api pratilapsyaṃte | jñātās te subhūte tathāgatena dṛṣṭās te subhūte tathāgatena sarve te aprameyaṃ puṇyaskaṃdhaṃ prasaviṣyaṃti pratigṛhīṣyaṃti |</foreign></btw:cit>
             <btw:tr>Subhūti, the tathāgata knows those [practitioners] who have even just a single thought of <btw:lemma-instance>faith</btw:lemma-instance>  when these doctrines are expounded; all of them will generate and gain immeasurable amounts of merit.</btw:tr>
@@ -389,51 +389,51 @@
         <btw:citations>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02</btw:sf>
-              <btw:sf>02.01.13.08.11</btw:sf>
-              <btw:sf>02.01.13.08.11.01.01</btw:sf>
-              <btw:sf>02.01.14</btw:sf>
-              <btw:sf>02.01.17</btw:sf>
-              <btw:sf>02.02.22</btw:sf>
-              <btw:sf>02.02.14</btw:sf>
-              <btw:sf>02.02.12</btw:sf>
-              <btw:sf>02.02.13</btw:sf>
-              <btw:sf>03.07</btw:sf>
+              <btw:sf>02.01.13.02n</btw:sf>
+              <btw:sf>02.01.13.02.02n</btw:sf>
+              <btw:sf>02.01.13.08.11n</btw:sf>
+              <btw:sf>02.01.13.08.11.01.01n</btw:sf>
+              <btw:sf>02.01.14n</btw:sf>
+              <btw:sf>02.01.17n</btw:sf>
+              <btw:sf>02.02.22n</btw:sf>
+              <btw:sf>02.02.14n</btw:sf>
+              <btw:sf>02.02.12n</btw:sf>
+              <btw:sf>02.02.13n</btw:sf>
+              <btw:sf>03.07n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake AkośBh ad VI, 75a (pradhan 387 3)</ref><foreign xml:lang="sa-Latn">ataś catvāry api satyāny abhisamayato dharmāvetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhaḥ [Y: dharme’vetya..]</foreign></btw:cit>
             <btw:tr>Then, when [practitioners] comprehend the the four truths, they obtain absolute <btw:lemma-instance>confdence</btw:lemma-instance> in the doctrine (<foreign xml:lang="sa-Latn">dharma</foreign>).</btw:tr>
           </btw:example>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02</btw:sf>
-              <btw:sf>02.01.13.08.11</btw:sf>
-              <btw:sf>02.01.13.08.11.01.01</btw:sf>
-              <btw:sf>02.01.14</btw:sf>
-              <btw:sf>02.01.17</btw:sf>
-              <btw:sf>02.02.22</btw:sf>
-              <btw:sf>02.02.14</btw:sf>
-              <btw:sf>02.02.12</btw:sf>
-              <btw:sf>02.02.13</btw:sf>
-              <btw:sf>03.07</btw:sf>
+              <btw:sf>02.01.13.02n</btw:sf>
+              <btw:sf>02.01.13.02.02n</btw:sf>
+              <btw:sf>02.01.13.08.11n</btw:sf>
+              <btw:sf>02.01.13.08.11.01.01n</btw:sf>
+              <btw:sf>02.01.14n</btw:sf>
+              <btw:sf>02.01.17n</btw:sf>
+              <btw:sf>02.02.22n</btw:sf>
+              <btw:sf>02.02.14n</btw:sf>
+              <btw:sf>02.02.12n</btw:sf>
+              <btw:sf>02.02.13n</btw:sf>
+              <btw:sf>03.07n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake AkośBh ad VI, 75a (pradhan 387 9)</ref><foreign xml:lang="sa-Latn">avetya<btw:lemma-instance>prasādā</btw:lemma-instance> iti ko’rthaḥ | yathābhūtasatyāny avabudhya saṃpratyayo ’vetyaprasādaḥ</foreign></btw:cit>
             <btw:tr>What is the meaning of absolute confidence? Absolute <btw:lemma-instance>confidence</btw:lemma-instance> is the conviction (<foreign xml:lang="sa-Latn">saṃpratyaya</foreign>) resulting from understanding the truth correctly (as it is).</btw:tr>
           </btw:example>
           <btw:example>
             <btw:semantic-fields>
-              <btw:sf>02.01.13.02</btw:sf>
-              <btw:sf>02.01.13.02.02</btw:sf>
-              <btw:sf>02.01.13.08.11</btw:sf>
-              <btw:sf>02.01.13.08.11.01.01</btw:sf>
-              <btw:sf>02.01.14</btw:sf>
-              <btw:sf>02.01.17</btw:sf>
-              <btw:sf>02.02.22</btw:sf>
-              <btw:sf>02.02.14</btw:sf>
-              <btw:sf>02.02.12</btw:sf>
-              <btw:sf>02.02.13</btw:sf>
-              <btw:sf>03.07</btw:sf>
+              <btw:sf>02.01.13.02n</btw:sf>
+              <btw:sf>02.01.13.02.02n</btw:sf>
+              <btw:sf>02.01.13.08.11n</btw:sf>
+              <btw:sf>02.01.13.08.11.01.01n</btw:sf>
+              <btw:sf>02.01.14n</btw:sf>
+              <btw:sf>02.01.17n</btw:sf>
+              <btw:sf>02.02.22n</btw:sf>
+              <btw:sf>02.02.14n</btw:sf>
+              <btw:sf>02.02.12n</btw:sf>
+              <btw:sf>02.02.13n</btw:sf>
+              <btw:sf>03.07n</btw:sf>
             </btw:semantic-fields>
             <btw:cit><ref target="/bibliography/1">, XXX fake Prasannapadā, 487</ref><foreign xml:lang="sa-Latn">tatra adhigamadharmeṇa pratyakṣadharmatayā sarvamārairapi buddhe bhagavati abhedyatvādavetya<btw:lemma-instance>prasāda</btw:lemma-instance>lābhena saṃghaḥ, sa na syāt . na cet santi te'ṣṭau puruṣapudgalāḥ ||</foreign></btw:cit>
             <btw:tr>If there were not the kinds of people, then the monastic community - that prevails by virtue of realization of the dharma, direct experence of dharmatā,  faithfulness (<foreign xml:lang="sa-Latn">abhedya</foreign>) to the lord Buddha despite all evils, and attainment of <btw:lemma-instance>absolute confidence</btw:lemma-instance> - would not be [either].</btw:tr>
@@ -495,15 +495,15 @@
             <btw:citations>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>02.01.13</btw:sf>
+                  <btw:sf>02.01.13n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 5</ref><foreign xml:lang="sa-Latn">tena yāvadupāyena gupto gāndhiko bhagavacchāsane<btw:cognate-instance>'bhiprasāditaḥ</btw:cognate-instance>| sa yadā<btw:cognate-instance>'bhiprasannas</btw:cognate-instance>tadā sthaviraḥ saṃbahulairbhikṣubhiḥ sārdhamekadivasaṃ tasya gṛhaṃ praviṣṭaḥ aparasminnahani, ātmadvitīyaḥ| anyasminnahani, ekākī| yāvad gupto gāndhikaḥ sthaviraṃ śāṇakavāsinamekākinaṃ dṛṣṭvā kathayati| na khalvāryasya kaścit paścācchramaṇaṃ| sthavira uvāca| jarādharmāṇāṃ kuto'smākaṃ paścācchramaṇo bhavati| yadi kecicchraddhāpurogeṇa pravrajanti, te'smākaṃ paścācchramaṇā bhavanti| gupto gāndhika uvāca| āryāhaṃ tāvad gṛhavāse parigṛddho viṣayā'bhirataśca| na mayā śakyaṃ pravrajituṃ| api tu yo'smākaṃ putro bhavati taṃ vayamāryasya paścācchramaṇaṃ dāsyāmaḥ|</foreign></btw:cit>
                 <btw:tr>by virtue of skillful means, the perfumer Gupta had <btw:cognate-instance>converted</btw:cognate-instance>  (<foreign xml:lang="sa-Latn">abhiprasādita</foreign>) in the teaching of the Venerable One. when the [perfumer] had been <btw:cognate-instance>converted</btw:cognate-instance>, the elder [Śāṇakavāsin] went to his house, one day accompamied by many monks, on another day with another person only, and yet another day, he went alone. so, upon seeing that the elder Śāṇakavāsin was alone, the perfumer Gupta asks ‘Why, Your Reverence is not accompanied by an accolite?’ The elder said:  ‘Why should a decaying mortal have accolites? If [, though,] some people, driven by faith (<foreign xml:lang="sa-Latn">śraddhāpuruga</foreign>) were to renounce worldly life they would be my accolites.’ The perfumer said: ‘Your Reverence, all my life (tāvad) I have been coveting the householder’s life and have been attached to the pleasures of the sense; I cannot renounce worldly life. But I shall devote my son to be the accolite of Your Reverence.’</btw:tr>
               </btw:example>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>03.07</btw:sf>
-                  <btw:sf>03.07.01</btw:sf>
+                  <btw:sf>03.07n</btw:sf>
+                  <btw:sf>03.07.01n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake Suvarṇavarṇa, 4</ref><foreign xml:lang="sa-Latn">sa kathayati kauśikaṃ aśrāddho ’sau sārthavāhas tasya buddhe prasādo nāstīti | śakraḥ kathayati | mārṣa gṛhāṇa tvaṃ ahan tathā kariṣyāmi yathāsau sārthavāho buddhaśāsane <btw:cognate-instance>’bhiprasīdatīt</btw:cognate-instance>i |</foreign></btw:cit>
                 <btw:tr>He says: ‘Kauśika, that caravan leader is an unbeliever, he has no faith in the Buddha.’ Śakra replies: ‘Sir, take [rebirth there] and I shall see to it that the caravan leader <btw:cognate-instance>converts to</btw:cognate-instance> the buddha’s teaching.’</btw:tr>
@@ -515,9 +515,9 @@
             <btw:citations>
               <btw:example xml:id="E.2">
                 <btw:semantic-fields>
-                  <btw:sf>02.01.13</btw:sf>
-                  <btw:sf>02.02.22</btw:sf>
-                  <btw:sf>02.01.13.02</btw:sf>
+                  <btw:sf>02.01.13n</btw:sf>
+                  <btw:sf>02.02.22n</btw:sf>
+                  <btw:sf>02.01.13.02n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake Vimalakīrti 116</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>aprasannānāṃ</btw:cognate-instance> ca kulaputrāṇāṃ prasādam utpādayiṣyāmi, <btw:cognate-instance>prasannānāṃ</btw:cognate-instance> ca dhārmikīṃ rakṣāvaraṇaguptiṃ kariṣyāmi | </foreign></btw:cit>
                 <btw:tr>I shall instill faith in those people who are hostile [to buddhism], and for those pious ones already favaroble [towards it], I will provide protection, shelter and security.</btw:tr>
@@ -550,13 +550,13 @@
         <btw:english-rendition>
           <btw:english-term>favor</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>01.03.07.10.03</btw:sf>
-            <btw:sf>01.05.05.12.01</btw:sf>
-            <btw:sf>01.05.05.12.01.03.02</btw:sf>
-            <btw:sf>02.01.17.01</btw:sf>
-            <btw:sf>02.02.22.01</btw:sf>
-            <btw:sf>02.04.06</btw:sf>
-            <btw:sf>03.08.13.03</btw:sf>
+            <btw:sf>01.03.07.10.03n</btw:sf>
+            <btw:sf>01.05.05.12.01n</btw:sf>
+            <btw:sf>01.05.05.12.01.03.02n</btw:sf>
+            <btw:sf>02.01.17.01n</btw:sf>
+            <btw:sf>02.02.22.01n</btw:sf>
+            <btw:sf>02.04.06n</btw:sf>
+            <btw:sf>03.08.13.03n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
@@ -564,7 +564,7 @@
       <btw:citations>
         <btw:example>
           <btw:semantic-fields>
-            <btw:sf>01.05.05.12.01</btw:sf>
+            <btw:sf>01.05.05.12.01n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake Suvarṇavarṇāvadāna (Roy 1971, 71)</ref><foreign xml:lang="sa-Latn">anena pathā putrako me suvarṇavarṇaḥ kumāro nīyate yathā ca taṃ paśyāmi tathā me <btw:lemma-instance>prasādaṃ</btw:lemma-instance> kartum arhatheti</foreign></btw:cit>
           <btw:tr>My son, the young Suvarṇavarṇa, is conducted [to execution] along this road; please grant me the <btw:lemma-instance>favor</btw:lemma-instance> of seeing him.</btw:tr>
@@ -580,7 +580,7 @@
             <btw:citations>
               <btw:example>
                 <btw:semantic-fields>
-                  <btw:sf>01.05.05.12.01</btw:sf>
+                  <btw:sf>01.05.05.12.01n</btw:sf>
                 </btw:semantic-fields>
                 <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 62</ref><foreign xml:lang="sa-Latn"><btw:cognate-instance>prasīda</btw:cognate-instance> nivartaya mānasaṃ|</foreign></btw:cit>
                 <btw:tr><btw:cognate-instance>Please</btw:cognate-instance>, change your mind</btw:tr>
@@ -600,11 +600,11 @@
         <btw:english-rendition>
           <btw:english-term>devotion</btw:english-term>
           <btw:semantic-fields>
-            <btw:sf>01.05.05.14.01</btw:sf>
-            <btw:sf>03.05.01.03.01.01</btw:sf>
-            <btw:sf>03.07.00.22.02</btw:sf>
-            <btw:sf>03.07.03</btw:sf>
-            <btw:sf>03.07.00.23</btw:sf>
+            <btw:sf>01.05.05.14.01n</btw:sf>
+            <btw:sf>03.05.01.03.01.01n</btw:sf>
+            <btw:sf>03.07.00.22.02n</btw:sf>
+            <btw:sf>03.07.03n</btw:sf>
+            <btw:sf>03.07.00.23n</btw:sf>
           </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
@@ -612,27 +612,27 @@
       <btw:citations>
         <btw:example>
           <btw:semantic-fields>
-            <btw:sf>02.01.17</btw:sf>
+            <btw:sf>02.01.17n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake AkośBh ad IV. 22 (pradhan 210 16ff)</ref><foreign xml:lang="sa-Latn">yena prasādavegenāsaṃvarasthasya kuśalā ’vijñāptir utpadyate stavavandanādikriyāṃ kurvataḥ yena ca kleśavegena saṃvarasthasyākuśalā 'vijñaptirutpadyate vadhabandhanatāḍanādikriyāṃ kurvataḥ tau yāvad anuvartete tāvat te apy avijñaptī /</foreign></btw:cit>
           <btw:tr>If a person who is not restrained by the precepts possesses positive karma derived from un-manifested actions (<foreign xml:lang="sa-Latn">avijñapti</foreign>), because he is moved by the force of faith, he carries out acts of praise and worship [towards the Buddha]; and  if a person who is restrained by the precepts possesses negative <foreign xml:lang="sa-Latn">karma</foreign> derived from un-manifested actions (<foreign xml:lang="sa-Latn">avijñapti</foreign>), because he is moved by the force of the defilements (<foreign xml:lang="sa-Latn">kleśa</foreign>), he kills, imprisons or assaults [other sentient beings].</btw:tr>
         </btw:example>
         <btw:example>
           <btw:semantic-fields>
-            <btw:sf>02.02.12</btw:sf>
-            <btw:sf>02.02.13</btw:sf>
-            <btw:sf>03.07.03</btw:sf>
-            <btw:sf>03.07.00.23</btw:sf>
+            <btw:sf>02.02.12n</btw:sf>
+            <btw:sf>02.02.13n</btw:sf>
+            <btw:sf>03.07.03n</btw:sf>
+            <btw:sf>03.07.00.23n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake Aśokāvadāna, 3</ref><foreign xml:lang="sa-Latn">tatra yo'sau pañcānāṃ markaṭaśatānāṃ yūthapatiḥ sa taṃ yūthamapahāya yatra pārśve pañca pratyekabuddhaśatāni prativasanti tatra gataḥ| tasya tān pratyekabuddhān dṛṣṭvā <btw:lemma-instance>prasādo</btw:lemma-instance> jātaḥ| sa teṣāṃ pratyekabuddhānāṃ śīrṇaparṇāni mūlaphalāni copanāmayati</foreign></btw:cit>
           <btw:tr>Then the chief of the 500 monkeys, left his pack for the mountain where the 500 pratyekabuddhas lived. Upon beholding the pratyekabuddhas he <btw:lemma-instance>felt trusting devotion</btw:lemma-instance> [for them] (prasāda jata). He presented the pratyekabuddha with leaves, roots and fruits.</btw:tr>
         </btw:example>
         <btw:example>
           <btw:semantic-fields>
-            <btw:sf>02.02.12</btw:sf>
-            <btw:sf>02.02.13</btw:sf>
-            <btw:sf>03.07.03</btw:sf>
-            <btw:sf>03.07.00.23</btw:sf>
+            <btw:sf>02.02.12n</btw:sf>
+            <btw:sf>02.02.13n</btw:sf>
+            <btw:sf>03.07.03n</btw:sf>
+            <btw:sf>03.07.00.23n</btw:sf>
           </btw:semantic-fields>
           <btw:cit><ref target="/bibliography/1">, XXX fake Suvarṇavarṇāvadāna 150-151</ref><foreign xml:lang="sa-Latn">yāvat paśyati tām vibhūtiṃ suvarṇavarṇañ ca kumāraṃ candramaṇḍalapratisparddhinaṃ padmasyopari karṇikāyāṃ niṣaṇṇaṃ ghanapaṭalanirmuktam iva śaratakālapūrṇacandraṃ suvarṇayūpam iva śriyā jvalantam udvīkṣya paramavismayāvarttitacittasantatiḥ |samuddaṇḍaromakūpaḥ paramapraharṣormmitaraṅgāpūryamāṇavadanakamalaḥ parama<btw:lemma-instance>prasāda</btw:lemma-instance>vegāvarjitacittasantatiḥ | sarvaśarīreṇa sthavirānandasya pādayoḥ patitaḥ</foreign></btw:cit>
           <btw:tr>[King Ajātaśatru] thus so that great display of might. He looked at the young Suvarṇavarṇa seated on the center of a lotus [that resplended] like the disc of the moon, magnificently radiant like the the full moon of autumn rising above (<foreign xml:lang="sa-Latn">nirmukta</foreign>) the veil of clouds o like a golden triumphal column (<foreign xml:lang="sa-Latn">yūpa</foreign>). [At this sight], extreme amazent took hold of [the king’s] mind. The hair of his body bristled, his face blushed (kamala) with waves of rapturous joy, extreme <btw:lemma-instance>feeling of devotion</btw:lemma-instance> took hold of his mind. He fell with his all body at the feet of the venerable (sthavira) Ānanda.</btw:tr>

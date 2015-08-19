@@ -305,6 +305,7 @@ s.INSTALLED_APPS = (
     'cmsplugin_filer_image',
     'cmsplugin_filer_teaser',
     'cmsplugin_filer_video',
+    'semantic_fields',
     # End of apps required by Django CMS.
     'final',
 )

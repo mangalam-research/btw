@@ -120,7 +120,7 @@ FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST
 
 .DELETE_ON_ERROR:
 
-TARGETS:= javascript btw-schema-targets
+TARGETS:= javascript python-generation btw-schema-targets
 .PHONY: all
 all: _all
 # Check we are using the same version of bootstrap in both places, we
@@ -142,6 +142,13 @@ include $(shell find . -name "include.mk")
 
 .PHONY: _all
 _all: $(TARGETS) build-config build-scripts
+
+.PHONY: python-generation
+python-generation: build/python/semantic_fields/field.py
+
+build/python/semantic_fields/field.py: semantic_fields/field.ebnf
+	-mkdir $(dir $@)
+	grako $< -o $@
 
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
@@ -203,7 +210,7 @@ README.html: README.rst
 selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
-selenium_test/*.feature selenium_test: build-config javascript
+selenium_test/*.feature selenium_test: build-config $(TARGETS)
 	behave $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
 	$(MAKE) -f build.mk all
 ifneq ($(strip $(BEHAVE_SAVE)),)
