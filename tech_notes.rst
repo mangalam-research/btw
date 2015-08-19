@@ -440,8 +440,7 @@ Generally:
     $ . ../btw_env/bin/activate
     $ pip install -r requirements.txt
     $ ./manage.py migrate
-    $ npm outdated
-    [Upgrade anything that needs upgrading.]
+    $ npm install
     $ make
 
     # Execute the next command if redis is not already running.
@@ -593,6 +592,12 @@ Afterwards:
 
 Notes from Actual Upgrades
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- 1.2.x to 1.3.0: The upgrade window was scheduled for 2015/08/19 at
+  11:00-12:00 EDT. I began preparing at around 10:40 EDT so as to get
+  a head start with the steps that could be performed before the
+  upgrade. The issue with Tilaa crippling the performance of the swap
+  probably added a good 15-20 minutes to the whole proceedings.
 
 - 1.1.0 to 1.2.0: The upgrade window was scheduled for 2015/06/08 at
   8:00-10:00 EDT. I began preparing at around 7:30 EDT so as to get a
