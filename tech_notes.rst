@@ -443,6 +443,14 @@ Generally:
     $ npm install
     $ make
 
+    # This is the perfect time to perform a full vacuum on the database.
+    # Do this if you've locked the users out of the system already.
+    # This command will lock tables while they are being vacuumed. We use
+    # ``time`` to record how long it takes. This is useful information because
+    # as the database grows, it will take more times. Eventually it could
+    # take hours to run a vacuumdb full operation.
+    $ time vacuumdb -fzv
+
     # Execute the next command if redis is not already running.
     $ ./manage.py btwredis start
 
