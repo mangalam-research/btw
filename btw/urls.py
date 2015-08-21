@@ -35,6 +35,11 @@ urlpatterns += i18n_patterns(
 
 
 if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+                            url(r'^__debug__/', include(debug_toolbar.urls)),
+                            )
+
     # In debug mode we do not want any static files to be cached
     from django.contrib.staticfiles.views import serve
     from django.views.decorators.cache import never_cache

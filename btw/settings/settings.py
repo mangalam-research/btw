@@ -507,6 +507,12 @@ s.BTW_DIRECT_APP_MODE = False
 # it won't ever change, but we want to have some flexibility.
 s.BTW_EDITORS = None
 
+# If the debug_toolbar is used, we don't want it to patch the settings
+# itself because debug_panel (which extends debug_toolbar) requires
+# some specific changes.
+s.DEBUG_TOOLBAR_PATCH_SETTINGS = False
+s.INTERNAL_IPS = ('127.0.0.1', '::1')
+
 exec _env.find_config("btw")  # pylint: disable=exec-used
 
 # Execute per-app overrides.
