@@ -47,18 +47,31 @@ adapt the instructions so as to not use virtualenv.
 
 1. Install necessary packages::
 
-    $ apt-get install uwsgi postgresql-9.1 postgresqlgit python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc redis-server
+    $ apt-get install uwsgi postgresql git python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc redis-server
 
-   We need the following packages from backports::
+   Install the version of ``postgresql-server-dev-...`` that is
+   appropriate for the version of postgresql installed on the
+   server. This will be needed when ``pip`` installs the Python
+   packages.
+
+   On Wheezy, we need the following packages from backports::
 
     $ apt-get -t wheezy-backports install nginx
+
+   On Jessie, the latest nginx is fine.
 
 2. Install ``/etc/apt/sources.list.d/tei.list`` from the config
    tree. Or add the following source to your apt sources::
 
     deb http://tei.oucs.ox.ac.uk/teideb/binary ./
 
-3. Install uwsgi with pip::
+3. Install::
+
+    $ apt-get install tei-roma tei-p5-source
+
+4. On Jessie, the version of uwsgi that ships with the distribution is fine.
+
+   On Wheezy, install uwsgi with pip::
 
     $ sudo pip install uwsgi
 
@@ -79,29 +92,29 @@ adapt the instructions so as to not use virtualenv.
    It is **strongly** sugested to have apticron installed so that you
    get a warning once a new version of uwsgi is available.
 
-4. Add this key to the list of keys recognized by ``apt`` so that you
+5. Add this key to the list of keys recognized by ``apt`` so that you
    don't get security issues with installing tei::
 
     pub   1024D/86A9A497 2001-11-27
     uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
     sub   1024g/BFABA9D0 2001-11-27
 
-5. You can try connecting to the server on port 80 to see that nginx
+6. You can try connecting to the server on port 80 to see that nginx
    is running. Then stop nginx and::
 
     $ rm /etc/nginx/sites-enabled/default
 
-6. Create a top directory for the site::
+7. Create a top directory for the site::
 
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
 
-The above directory is just a suggestion. If you are doing this for
-Mangalam, then you **must** consult the documentation on how to
-install a server and check the section named "FS Structure" to use the
-proper structure.
+  The above directory is just a suggestion. If you are doing this for
+  Mangalam, then you **must** consult the documentation on how to
+  install a server and check the section named "FS Structure" to use
+  the proper structure.
 
-7. Create the virtual environment for BTW::
+8. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ pip install virtualenv
@@ -169,7 +182,7 @@ Installing
 
 2. Install some Node dependencies::
 
-    $ npm install wed less lodash argparse
+    $ npm install
 
 3. Use the virtual environment::
 
@@ -193,7 +206,7 @@ Answer all questions negatively. Create a database::
 
     $ sudo -u postgres createdb -O btw btw
 
-2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.6/ref/databases/#optimizing-postgresql-s-configuration).
+2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.8/ref/databases/#optimizing-postgresql-s-configuration). As of PostgreSQL 9.4 as installed on Debian Jessie, the default values are those that Django wants so there is nothing to do here.
 
 .. note:: With the default configuration of postgres, you must connect either:
 
@@ -209,7 +222,8 @@ Answer all questions negatively. Create a database::
   2nd option. Therefore all connections must be done by specifying
   ``localhost`` as the host.
 
-3. Create a ``default`` database entry in the configuration::
+3. If you do not already have a configuration file with the entry,
+   create a ``default`` database entry in the configuration::
 
     DATABASES = {
         'default': {
@@ -224,30 +238,20 @@ Answer all questions negatively. Create a database::
   You probably want to put this inside a file local to your
   installation. See `Environment and Settings`_.
 
-4. Run::
+4. Start BTW's redis instance::
 
-    ./manage.py migrate
+    ./manage.py btwredis start
 
 5. Run::
 
-    ./manage.py createcachetable bibliography_cache
+    ./manage.py migrate
 
-6. Make sure that there is a site with id equal to the `SITE_ID` value
-   from the settings, and a correct domain name and display name. In
-   SQL, the command to do this would be something like::
+6. Run::
 
-     => update django_site set domain = '<name>', name='BTW' where id=<id>;
+    ./manage.py btwdb set_site_name
 
-Redis
------
-
-1. Install Debian's ``redis-server`` package.
-
-2. Generate a password for redis. Edit ``/etc/redis/redis.conf`` to
-   set ``requirepass`` to the password.
-
-3. Edit the local BTW configuration so that redis connections use the
-   password.
+   This sets the name of site 1 in the database to match the
+   BTW_SITE_NAME setting.
 
 Settings
 --------
@@ -301,10 +305,15 @@ Run::
   $  ./manage.py btwworker generate-monit-config
   # Install the config generated.
   $ ./manage.py btwcheck
-  $ ./manage.py test
+  $ make test-django
   [The Zotero tests will necessarily fail because the server is set
-   to connect to the production database.]
+   to connect to the production Zotero database.]
   $ sudo monit monitor btw_worker
+
+If you have not yet done so, create the log directory for the nginx
+process responsible for serving BTW::
+
+  $ mkdir /var/log/nginx/btw.mangalamresearch.org/
 
 Demo Site
 ---------
@@ -334,6 +343,8 @@ Complete Copy
 
  This will set the site name in the database to what is recorded in
  the Django settings.
+
+7. Copy the media directory from the regular site to the demo site.
 
 Partial Copy
 ~~~~~~~~~~~~
