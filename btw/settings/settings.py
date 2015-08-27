@@ -334,7 +334,7 @@ s.ACCOUNT_SIGNUP_FORM_CLASS = 'core.forms.SignupForm'
 
 s.INVITATION_EXPIRY_DAYS = 5
 
-s.TEST_RUNNER = 'django_nose.runner.NoseTestSuiteRunner'
+s.TEST_RUNNER = 'core.runner.Runner'
 
 s.LOGGING = {
     'version': 1,

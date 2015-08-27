@@ -19,6 +19,7 @@ from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lib import util
 from lexicography.xml import tei_namespace, btw_namespace
+from lib.testutil import unmonkeypatch_databases
 
 class LexicographyPatcher(object):
 
@@ -324,6 +325,7 @@ class Runner(DiscoverRunner):
         return Suite(self.__control_read, self.__control_write)
 
     def setup_databases(self, *args, **kwargs):
+        unmonkeypatch_databases()
         ret = super(Runner, self).setup_databases(*args, **kwargs)
         # Save the serialization of our databases... We have to do
         # this ourselves here because Django's DiscoverRunner won't
