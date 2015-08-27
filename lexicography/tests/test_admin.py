@@ -16,15 +16,15 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json"))
 
-    changelist_url = reverse("full-admin:lexicography_entry_changelist")
-    add_raw = reverse("full-admin:lexicography_entry_rawnew")
-    update_raw = reverse("full-admin:lexicography_entry_rawupdate",
-                         args=(1,))
-
     def setUp(self):
         super(EntryViewTestCase, self).setUp()
         from django.utils import translation
         translation.activate('en-us')
+        self.changelist_url = reverse(
+            "full-admin:lexicography_entry_changelist")
+        self.add_raw = reverse("full-admin:lexicography_entry_rawnew")
+        self.update_raw = reverse("full-admin:lexicography_entry_rawupdate",
+                                  args=(1,))
 
     def generic_unclean(self, url):
         response = self.app.get(url, user="admin")

@@ -26,8 +26,6 @@ User = get_user_model()
 # somewhere else.
 assert_equal.im_self.longMessage = True
 
-login_url = reverse('login')
-
 @override_settings(ROOT_URLCONF='bibliography.tests.urls')
 class _BaseTest(BaseCMSTestCase, WebTest):
     __metaclass__ = TestMeta
@@ -48,6 +46,7 @@ class _BaseTest(BaseCMSTestCase, WebTest):
         self.user = User.objects.create_user(username='test', password='test')
         self.noperm = User.objects.create_user(username='noperm',
                                                password='test')
+        self.login_url = reverse('login')
 
 
 class LoginMixin(object):
@@ -282,7 +281,7 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
         user is not logged in.
         """
         response = self.client.get(self.url, follow=True)
-        self.assertRedirects(response, login_url + "?" +
+        self.assertRedirects(response, self.login_url + "?" +
                              urllib.urlencode({"next": self.url}))
 
 class TestItemTableView(_PatchZoteroTest, LoginMixin):
