@@ -29,12 +29,19 @@ def setUpModule():
     os.mkdir(logpath)
     old_btw_env_suppress_message = os.environ.get("BTW_ENV_SUPPRESS_MESSAGE")
     os.environ["BTW_ENV_SUPPRESS_MESSAGE"] = "1"
+    # We purge all tasks before running the tests here so that the workers
+    # do not attempt to do anything.
+    from celery.task.control import discard_all
+    discard_all()
 
 def tearDownModule():
     if old_btw_env_suppress_message:
         os.environ["BTW_ENV_SUPPRESS_MESSAGE"] = old_btw_env_suppress_message
-    if os.path.exists(tmpdir):
-        shutil.rmtree(tmpdir)
+    if os.environ.get("BTW_TESTING_KEEP_BTWWORKER_DIR", None) is None:
+        if os.path.exists(tmpdir):
+            shutil.rmtree(tmpdir)
+    else:
+        print "Keeping", tmpdir
 
 @override_settings(BTW_LOGGING_PATH_FOR_BTW="",
                    BTW_RUN_PATH_FOR_BTW="",
