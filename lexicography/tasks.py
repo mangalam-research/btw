@@ -100,62 +100,20 @@ def prepare_changerecord_for_display(self, pk, published=None,
     xml = XMLTree(data.encode("utf-8"))
     if xml.is_data_unclean():
         raise ValueError("the data is not clean")
-    this_lemma = xml.extract_lemma()
 
-    tree = xml.tree
-    terms = tree.xpath(
-        "//*[self::btw:antonym or self::btw:cognate "
-        "or self::btw:conceptual-proximate]/btw:term | "
-        "/btw:entry/btw:overview/btw:definition/tei:p/"
-        "tei:foreign[@xml:lang='sa-Latn']",
-        namespaces=default_namespace_mapping)
+    # Do the actual work...
+    modified = False
+    (lemmas, modified) = hyperlink_article(data, xml, published)
+    (targets, bibl_data) = get_bibliographical_data(xml)
 
-    candidates = Entry.objects.active_entries()
-
-    if published:
-        candidates = candidates.filter(latest_published__isnull=False)
-
-    targets = xml.get_bibilographical_targets()
-
-    lemmas = set()
-    for term in terms:
-        lemma = u''.join(term.itertext()).strip()
-        # Empty lemmas can happen while editing, just skip.
-        if not lemma or lemma == this_lemma:
-            continue
-
-        lemmas.add(lemma)
-
-    # This creates a map of lemma to Entry in one database query.
-    found_lemmas = {
-        candidate.lemma: candidate for candidate in
-        candidates.filter(lemma__in=lemmas)}
-
-    for term in terms:
-        lemma = u''.join(term.itertext()).strip()
-        candidate = found_lemmas.get(lemma)
-
-        if candidate is None:
-            continue
-
-        ref = lxml.etree.Element("ref")
-        ref.set("target", candidate.get_absolute_url())
-        ref.text = term.text
-        term.text = ''
-        ref.extend(term.getchildren())
-        ref.tail = term.tail
-        term.tail = ''
-        term.append(ref)
-
-    bibl_data = targets_to_dicts(targets)
-
-    if not found_lemmas:
+    if not modified:
         # We do not reserialize an unmodified tree.
         prepared = data
     else:
-        prepared = lxml.etree.tostring(tree,
+        prepared = lxml.etree.tostring(xml.tree,
                                        xml_declaration=False,
                                        encoding='utf-8').decode('utf-8')
+
     #
     # The work we've done becomes obsolete if:
     #
@@ -182,3 +140,71 @@ def prepare_changerecord_for_display(self, pk, published=None,
 
     cache.set(key, {"xml": prepared, "bibl_data": bibl_data})
     logger.debug("%s is set", key)
+
+def hyperlink_article(data, xml, published):
+    this_lemma = xml.extract_lemma()
+
+    # We extract from the tree all the lemmas that appear as part of
+    # the article, for instance as an antonym, a cognate, etc. We also
+    # include in the list the foreign Sanskrit terms in the
+    # definition.
+    tree = xml.tree
+    terms = tree.xpath(
+        "//*[self::btw:antonym or self::btw:cognate "
+        "or self::btw:conceptual-proximate]/btw:term | "
+        "/btw:entry/btw:overview/btw:definition/tei:p/"
+        "tei:foreign[@xml:lang='sa-Latn']",
+        namespaces=default_namespace_mapping)
+
+    # Use a set to eliminate duplicate lemmas.
+    lemmas = set()
+    for term in terms:
+        lemma = u''.join(term.itertext()).strip()
+        # Empty lemmas can happen while editing, just skip. We also do
+        # not link the article to itself.
+        if not lemma or lemma == this_lemma:
+            continue
+
+        lemmas.add(lemma)
+
+    # The candidates are those articles that *could* be the target of
+    # a link.
+    candidates = Entry.objects.active_entries()
+
+    # If this article is published, we link only to published articles.
+    if published:
+        candidates = candidates.filter(latest_published__isnull=False)
+
+    # This creates a map of lemma to Entry in one database query. The
+    # map contains only those lemmas for which we *can* hyperlink.
+    found_lemmas = {
+        candidate.lemma: candidate for candidate in
+        candidates.filter(lemma__in=lemmas)}
+
+    for term in terms:
+        lemma = u''.join(term.itertext()).strip()
+        candidate = found_lemmas.get(lemma)
+
+        # We just leave intact those terms we cannot link.
+        if candidate is None:
+            continue
+
+        # Otherwise, modify the term so that it holds a reference to
+        # the other article.
+        ref = lxml.etree.Element("ref")
+        ref.set("target", candidate.get_absolute_url())
+        ref.text = term.text
+        term.text = ''
+        ref.extend(term.getchildren())
+        ref.tail = term.tail
+        term.tail = ''
+        term.append(ref)
+
+    return (lemmas, bool(found_lemmas))
+
+
+def get_bibliographical_data(xml):
+    targets = xml.get_bibilographical_targets()
+    bibl_data = targets_to_dicts(targets)
+
+    return (targets, bibl_data)
