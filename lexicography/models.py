@@ -62,7 +62,7 @@ class Entry(models.Model):
     latest = models.ForeignKey('ChangeRecord', related_name='+', null=True)
     latest_published = models.ForeignKey('ChangeRecord', related_name="+",
                                          null=True)
-    deleted = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False, db_index=True)
 
     def save(self, *args, **kwargs):
         was_nonexistent = self.pk is None
