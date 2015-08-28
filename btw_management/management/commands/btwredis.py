@@ -6,9 +6,7 @@ import time
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
-
-from lib.util import join_prefix
+from lib.redis import Config
 from .btwworker import get_running_workers
 
 def makedirs(path):
@@ -40,23 +38,14 @@ Manage the redis server used by BTW.
         if len(args) == 0:
             raise CommandError("you must specify a command.")
 
-        prefix = settings.BTW_REDIS_SITE_PREFIX
-
-        run_path = os.path.join(settings.BTW_RUN_PATH, "redis")
-        pidfile_path = os.path.join(run_path, join_prefix(prefix,
-                                                          "redis.pid"))
-        sockfile_path = os.path.join(settings.BTW_REDIS_SOCKET_DIR_PATH,
-                                     join_prefix(prefix, "redis.sock"))
-        dumpfile_name = join_prefix(prefix, "dump.rdb")
-        dir_path = os.path.join(settings.TOPDIR, "var", "lib", "redis")
-        dumpfile_path = os.path.join(dir_path, dumpfile_name)
+        config = Config()
 
         def running():
             cli = subprocess.Popen(
-                ["redis-cli", "-s", sockfile_path],
+                ["redis-cli", "-s", config.sockfile_path],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
-            out, _ = cli.communicate("auth " + settings.BTW_REDIS_PASSWORD)
+            out, _ = cli.communicate("auth " + config.password)
 
             return out == "OK\n"
 
@@ -65,43 +54,26 @@ Manage the redis server used by BTW.
             if running():
                 raise CommandError("redis appears to be running already.")
 
-            template = open(
-                os.path.join("btw_management", "management", "templates",
-                             "redis.conf")).read()
+            makedirs(config.run_path)
+            makedirs(config.socket_dir_path)
 
-            makedirs(run_path)
-            makedirs(settings.BTW_REDIS_SOCKET_DIR_PATH)
-
-            generated_name = os.path.join(run_path,
-                                          join_prefix(prefix, "redis.conf"))
             try:
-                old_template = open(generated_name).read()
+                old_config = open(config.generated_config_path).read()
             except IOError:
-                old_template = None
+                old_config = None
 
-            logging_path = os.path.join(settings.BTW_LOGGING_PATH, "redis")
-            makedirs(logging_path)
+            makedirs(config.logging_path)
+            makedirs(config.dir_path)
 
-            logfile_path = os.path.join(logging_path,
-                                        join_prefix(prefix,
-                                                    "redis-server.log"))
-            makedirs(dir_path)
+            if config.generated_config != old_config:
+                open(config.generated_config_path, 'w').write(
+                    config.generated_config)
 
-            generated_template = template.format(
-                pidfile_path=pidfile_path,
-                sockfile_path=sockfile_path,
-                logfile_path=logfile_path,
-                dir_path=dir_path,
-                dumpfile_name=dumpfile_name,
-                redis_pass=settings.BTW_REDIS_PASSWORD)
+            if options["delete_dump"] and os.path.exists(config.dumpfile_path):
+                os.unlink(config.dumpfile_path)
 
-            if generated_template != old_template:
-                open(generated_name, 'w').write(generated_template)
-
-            if options["delete_dump"] and os.path.exists(dumpfile_path):
-                os.unlink(dumpfile_path)
-
-            subprocess.check_call(["redis-server", generated_name])
+            subprocess.check_call(
+                ["redis-server", config.generated_config_path])
             tries = 10
             is_up = False
             while not running():
@@ -123,9 +95,10 @@ Manage the redis server used by BTW.
                     "cannot stop redis while BTW workers are running.")
 
             try:
-                pid = open(pidfile_path).read().strip()
+                pid = open(config.pidfile_path).read().strip()
             except IOError:
-                raise CommandError("cannot read pid from " + pidfile_path)
+                raise CommandError(
+                    "cannot read pid from " + config.pidfile_path)
 
             try:
                 pid = int(pid)
@@ -145,8 +118,8 @@ Manage the redis server used by BTW.
                 if ex.errno != errno.ESRCH:
                     raise
 
-            if options["delete_dump"] and os.path.exists(dumpfile_path):
-                os.unlink(dumpfile_path)
+            if options["delete_dump"] and os.path.exists(config.dumpfile_path):
+                os.unlink(config.dumpfile_path)
 
             self.stdout.write("Stopped redis.")
 

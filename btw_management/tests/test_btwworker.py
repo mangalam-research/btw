@@ -387,6 +387,7 @@ Pinging worker testing.bibliography.worker... failed: no pidfile
         self.assertMultiLineEqual(stdout, """
 check process testing.worker pidfile "foo/var/run/btw/testing.worker.pid"
       group testing
+      depends on btw-redis
       start program = "python foo/manage.py btwworker start testing.worker"
             as uid btw and gid btw
       stop program = "python foo/manage.py btwworker stop testing.worker"
@@ -396,6 +397,7 @@ check process testing.worker pidfile "foo/var/run/btw/testing.worker.pid"
 check process testing.bibliography.worker pidfile "foo/var/run/btw/\
 testing.bibliography.worker.pid"
       group testing
+      depends on btw-redis
       start program = "python foo/manage.py btwworker start \
 testing.bibliography.worker"
             as uid btw and gid btw
@@ -416,6 +418,7 @@ testing.bibliography.worker"
         self.assertMultiLineEqual(stdout, """
 check process testing.worker pidfile "foo/var/run/btw/testing.worker.pid"
       group testing
+      depends on btw-redis
       start program = "blah/bin/python foo/manage.py btwworker start \
 testing.worker"
             as uid btw and gid btw
@@ -427,6 +430,7 @@ testing.worker"
 check process testing.bibliography.worker pidfile "foo/var/run/btw/\
 testing.bibliography.worker.pid"
       group testing
+      depends on btw-redis
       start program = "blah/bin/python foo/manage.py btwworker start \
 testing.bibliography.worker"
             as uid btw and gid btw
