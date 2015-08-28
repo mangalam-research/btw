@@ -318,6 +318,18 @@ process responsible for serving BTW::
 Demo Site
 ---------
 
+When creating a new demo site make sure that:
+
+1. It contains a ``env`` file in the top level directory of the Django
+   project that sets the ``env`` to a new value appropriate for the
+   demo site. (This is what will make the site use a different
+   database from the main site.)
+
+2. Create a file named ``NOBACKUP-TAG`` in the top level directory of
+   the demo site. (The deepest directory that encompasses all the
+   files of this site but excludes any other site.) This prevents
+   backing up this site in the fs backups.
+
 Complete Copy
 ~~~~~~~~~~~~~
 
