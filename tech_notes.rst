@@ -734,6 +734,17 @@ Tests are of three types:
 * Selenium-based tests, which run *outside* the browser but use Selenium
   to control a browser.
 
+In August 2015 we conducted some tests with a RAM-based PostgreSQL
+cluster to see whether it would improve testing time. We found roughly
+a 7% improvement on test times when running the Django tests but the
+hoops we have to go through to setup the cluster and the problems this
+could cause in the long run (more complex database setups would
+require redesigning the code that creates and manages the cluster) are
+not worth this small improvement. The time improvement is expected to
+be even smaller when running the Selenium-based tests that need
+running on Sauce Labs, as the bulk of the waiting time there is due to
+communications between the test suite and the browser.
+
 Django Tests
 ============
 
