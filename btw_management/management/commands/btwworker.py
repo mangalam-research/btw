@@ -1,5 +1,7 @@
 import os
 import errno
+import time
+from itertools import chain
 
 from functools32 import lru_cache
 from django.core.exceptions import ImproperlyConfigured
@@ -182,9 +184,6 @@ Manage workers.
                 if retcode:
                     self.error("there was an error starting {0}"
                                .format(name))
-                if worker.start_task:
-                    worker.start_task()
-
                 # What we are doing here has more to do with waiting
                 # for the worker to start rather than actually
                 # checking the return value. It would be quite
@@ -193,17 +192,31 @@ Manage workers.
 
                 # We send the task directly to the worker so that we
                 # are sure *that* worker handles the request.
-                requests.append((name,
+                requests.append((worker,
                                  get_btw_env.apply_async((), queue=full_name +
                                                          ".dq")))
 
-            for name, request in requests:
+            for worker, request in requests:
+                name = worker.name
                 result = request.get()
                 if result != env:
                     self.error(
                         ("{0}: not using environment {1} "
                          "(uses environment {2})")
                         .format(name, env, result))
+
+                # We have to do this to unschedule the tasks that may
+                # have been scheduled by a previous worker. If we do
+                # not do this, we can end up with having gobs of tasks
+                # scheduled for future execution. However, we cannot
+                # do this when we stop the tasks. Why? Because the
+                # list of revoked tasks is held only in memory and
+                # will vanish when the workers are stopped.
+                self.revoke_scheduled(full_names[name])
+
+                if worker.start_task:
+                    worker.start_task()
+
                 self.stdout.write("{0} has started.".format(name))
 
         elif cmd == "names":
@@ -315,8 +328,35 @@ check process {worker_name} pidfile "{proj_path}/var/run/btw/{worker_name}.pid"
                     worker_name=worker.name,
                     group=settings.BTW_SLUGIFIED_SITE_NAME,
                     python_path=python_path))
+        elif cmd == "revoke-scheduled":
+            self.revoke_scheduled()
         else:
             raise CommandError("bad command: " + cmd)
+
+    def revoke_scheduled(self, name=None):
+        while True:
+            # When we run this function just after having started a
+            # worker, it is possible to get None as a value. So we
+            # loop until the worker returns something sensible.
+            scheduled = app.control.inspect().scheduled()
+            if scheduled is not None:
+                schedule_info = chain.from_iterable(scheduled.itervalues()) \
+                    if name is None else scheduled.get(name, None)
+                if schedule_info is not None:
+                    break
+            time.sleep(0.5)
+
+        to_revoke = [scheduled["request"]["id"] for scheduled in
+                     schedule_info]
+        to_revoke_set = set(to_revoke)
+        app.control.revoke(to_revoke, reply=True)
+        # Wait until the tasks appear in the set.
+        while True:
+            if to_revoke_set.issubset(
+                    set(chain.from_iterable(
+                        app.control.inspect().revoked().itervalues()))):
+                break
+            time.sleep(0.5)
 
     def error(self, msg):
         self.stderr.write(msg)
