@@ -130,16 +130,6 @@ def convert_to_version(data, fr, to):
     return util.run_saxon(xsl_path, data)
 
 
-# 20140912: No longer needed as part of normal operations but we are
-# keeping it here in case some old data needs conversion. It should
-# probably be removed after a few versions of BTW have been released.
-
-
-def editable_to_storage(data):
-    return util.run_saxon(os.path.join(xsl_dirname, "out/html-to-xml.xsl"),
-                          data)
-
-
 def clean_xml(data):
     return util.run_saxon(os.path.join(xsl_dirname, "xml-to-xml.xsl"),
                           data)
