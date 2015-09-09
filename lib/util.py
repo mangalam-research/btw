@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from StringIO import StringIO
 import lxml.etree
 import logging
-
+import functools32
 
 import semver
 from django.db.models import Q
@@ -68,22 +68,63 @@ def run_xsltproc(xsl_path, input_data):
         return ret
 
 
-def validate_with_rng(rng_path, input_data, silent=True):
-    with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
+# We use a LRU cache so that we don't keep loading the same data over
+# and over. BTW uses a limited number of schemas.
+@functools32.lru_cache(maxsize=10)
+def rng_path_to_schema(path):
+    with open(path) as f:
+        schema_doc = lxml.etree.parse(f)
+    return lxml.etree.RelaxNG(schema_doc)
 
-        out = open("/dev/null", 'w') if silent else None
-        return subprocess.call(["jing", rng_path, tmpinput_path],
-                               stdout=out, stderr=out) == 0
+
+def validate_with_rng(rng_path, input_data, silent=True):
+    schema = rng_path_to_schema(rng_path)
+
+    try:
+        doc = lxml.etree.fromstring(input_data.encode("utf8"))
+    except lxml.etree.XMLSyntaxError:
+        # The document is not even well-formed.
+        return False
+
+    return schema(doc)
+
+
+# We use a LRU cache so that we don't keep loading the same data over
+# and over. BTW uses a limited number of schemas.
+@functools32.lru_cache(maxsize=10)
+def xmlschema_path_to_schema(path):
+    with open(path) as f:
+        schema_doc = lxml.etree.parse(f)
+    return lxml.etree.XMLSchema(schema_doc)
 
 
 def validate_with_xmlschema(schema_path, input_data, silent=True):
-    with WithTmpFiles(input_data) as (_, tmpinput_path, _, _):
+    schema = xmlschema_path_to_schema(schema_path)
 
-        out = open("/dev/null", 'w') if silent else None
-        return subprocess.call(["xmllint", "--schema",
-                                schema_path, tmpinput_path],
-                               stdout=out, stderr=out) == 0
+    try:
+        doc = lxml.etree.fromstring(input_data.encode("utf8"))
+    except lxml.etree.XMLSyntaxError:
+        # The document is not even well-formed.
+        return False
 
+    return schema(doc)
+
+@functools32.lru_cache(maxsize=10)
+def transform_path_to_transform(path):
+    with open(path) as f:
+        doc = lxml.etree.parse(f)
+    return lxml.etree.XSLT(doc)
+
+def transform_with_xslt(xslt_path, input_data):
+    transform = transform_path_to_transform(xslt_path)
+    doc = lxml.etree.fromstring(input_data.encode("utf8"))
+    ret = unicode(transform(doc))
+    # We first check that what we are going to alter is what we expect.
+    assert ret.startswith(u'<?xml version="1.0"?>\n')
+    # Add the encoding for consistency with the rest of BTW. Yes, we
+    # put utf8 here even though the string is unicode.
+    ret = ret.replace(u'?>', u' encoding="UTF-8"?>', 1)
+    return ret
 
 def schematron(xsl, input_data):
     """
@@ -91,6 +132,8 @@ def schematron(xsl, input_data):
     schematron schema) against the data and reports whether there was
     any error.
     """
+    # The schematron transformation to XSL generates xslt 2. So we
+    # cannot use lxml to run the xslt script.
     output = run_saxon(xsl, input_data)
     tree = lxml.etree.fromstring(output.encode("utf-8"))
     found = tree.xpath("//svrl:failed-assert",

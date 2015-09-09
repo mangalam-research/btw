@@ -86,6 +86,8 @@ class SchematronTestCase(unittest.TestCase):
 
         data = lxml.etree.tostring(
             tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        # We do not use util.schematron because we want to get the
+        # list of results.
         output_tree = lxml.etree.fromstring(
             util.run_saxon(xml.schematron_for_version(schema_version),
                            data).encode('utf-8'))
@@ -111,6 +113,8 @@ class SchematronTestCase(unittest.TestCase):
 
         data = lxml.etree.tostring(
             tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+        # We do not use util.schematron because we want to get the
+        # list of results.
         output_tree = lxml.etree.fromstring(
             util.run_saxon(xml.schematron_for_version(schema_version),
                            data).encode('utf-8'))

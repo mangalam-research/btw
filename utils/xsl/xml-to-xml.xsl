@@ -3,7 +3,7 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:btw="http://lddubeau.com/ns/btw-storage"
-    version="2.0">
+    version="1.0">
 
   <xsl:strip-space elements="*"/>
   <xsl:preserve-space elements="tei:p tei:cit tei:lbl tei:quote btw:cit btw:tr"/>

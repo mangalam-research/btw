@@ -127,12 +127,13 @@ def convert_to_version(data, fr, to):
     if not os.path.exists(xsl_path):
         raise ValueError("cannot convert from {0} to {1}".format(fr, to))
 
-    return util.run_saxon(xsl_path, data)
+    return util.transform_with_xslt(xsl_path, data)
 
 
 def clean_xml(data):
-    return util.run_saxon(os.path.join(xsl_dirname, "xml-to-xml.xsl"),
-                          data)
+    return util.transform_with_xslt(os.path.join(xsl_dirname,
+                                                 "xml-to-xml.xsl"),
+                                    data)
 
 
 class XMLTree(object):

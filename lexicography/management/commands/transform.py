@@ -107,6 +107,9 @@ WARNING: in general, this operation cannot be reliably undone without
                     if not chunk.valid:
                         initially_invalid = True
 
+                    # We do not use lxml for this because lxml only
+                    # supports xslt 1.0 and we want to be able to run
+                    # 2.0 transforms.
                     converted = util.run_saxon(xsl_path, chunk.data)
                     new_chunk = Chunk()
                     new_chunk.data = converted

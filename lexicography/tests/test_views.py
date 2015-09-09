@@ -1800,7 +1800,7 @@ version="0.10" authority="/1">
         entry = Entry.objects.get(lemma="abcd")
         self.assertEqual(entry.latest.c_hash.data,
                          u"""\
-<?xml version="1.0" encoding="UTF-8"?>\
+<?xml version="1.0" encoding="UTF-8"?>
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
 xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 version="1.0">

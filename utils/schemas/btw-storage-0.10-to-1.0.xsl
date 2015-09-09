@@ -5,7 +5,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:btw="http://mangalamresearch.org/ns/btw-storage"
     exclude-result-prefixes="tei"
-    version="2.0">
+    version="1.0">
 
   <xsl:preserve-space  elements="*"/>
 
