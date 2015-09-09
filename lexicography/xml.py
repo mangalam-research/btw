@@ -66,7 +66,8 @@ def get_supported_schema_versions():
 
     # We don't actually always have the patch number that semver
     # expects, so normalize.
-    norm = lambda x: (x + ".0") if x.count(".") == 1 else x
+    def norm(x):
+        return (x + ".0") if x.count(".") == 1 else x
 
     versions = sorted(versions, lambda a, b: semver.compare(norm(a),
                                                             norm(b)))
