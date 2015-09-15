@@ -554,11 +554,14 @@ def step_impl(context):
 
 @when(ur"the user clicks at the start of the second semantic field")
 def step_impl(context):
-    sfs = context.util.find_elements((By.CSS_SELECTOR, r".btw\:sf"))
+    util = context.util
+    sfs = util.find_elements((By.CSS_SELECTOR, r".btw\:sf"))
     ActionChains(context.driver) \
         .move_to_element_with_offset(sfs[1], 1, 2) \
         .click() \
         .perform()
+
+    wedutil.wait_for_caret_to_be_in(util, sfs[1])
 
 
 @when(ur'the user adds the text "blip" in btw:tr')
