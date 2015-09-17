@@ -19,7 +19,7 @@ s.BTW_BUILD_ENV = os.environ.get('JENKINS_HOME', None) or \
 #
 # Trigger the loading of the regular settings so that they modify s
 #
-from . import settings  # pylint: disable=unused-import
+from . import settings  # noqa, pylint: disable=unused-import
 
 #
 # These must be off for WebTest based tests to run without issue.
@@ -38,9 +38,7 @@ s.SESSION_COOKIE_HTTPONLY = False
 # Yes, we mean to have this be private.
 __SILENT = True
 
-if __SILENT:
-    s.LOGGING_CONFIG = False
-else:
+if not __SILENT:
     loggers = s.LOGGING['loggers']
     loggers[''] = {
         'handlers': ['console'],

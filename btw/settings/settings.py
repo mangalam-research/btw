@@ -8,11 +8,15 @@
 # CREATE CIRCULAR DEPENDENCIES BETWEEN SETTINGS. You'll just get a
 # stack overflow error if you do.
 #
+import os
+from logging import Filter
+
+from slugify import slugify
+from kombu import Queue
+
+from . import _env
 from lib.settings import s, join_prefix
 
-import os
-from slugify import slugify
-from . import _env
 
 # This assumes that this file is settings/__init__.py
 s.CURDIR = os.path.dirname(os.path.abspath(__file__))
@@ -336,6 +340,20 @@ s.INVITATION_EXPIRY_DAYS = 5
 
 s.TEST_RUNNER = 'core.runner.Runner'
 
+class TestingFilter(Filter):
+
+    def filter(self, record):
+        from django.conf import settings
+        return not settings.BTW_TESTING
+
+# Yes, this is a private variable.
+__EMAIL_TEST = False
+
+if __EMAIL_TEST:
+    s.EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    s.EMAIL_FILE_PATH = '/tmp/app-messages'  # change this to a proper location
+    s.ADMINS = (("Louis Dubeau", "ldd@lddubeau.com"), )
+
 s.LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -343,6 +361,9 @@ s.LOGGING = {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         },
+        'testing': {
+            '()': TestingFilter
+        }
     },
     'formatters': {
         'verbose': {
@@ -356,12 +377,13 @@ s.LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            'filters': [] if __EMAIL_TEST else ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'filters': ['testing'],
             'formatter': 'verbose'
         },
     },
@@ -373,6 +395,14 @@ s.LOGGING = {
         },
         'lexicography': {
             'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'lexicography.tasks': {
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'core.tasks': {
             'level': 'DEBUG',
             'propagate': True,
         },
@@ -406,8 +436,6 @@ s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = \
 s.CELERY_DEFAULT_EXCHANGE = 'default'
 s.CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
 s.CELERY_DEFAULT_ROUTING_KEY = 'default'
-
-from kombu import Queue
 
 s.CELERY_QUEUES = lambda s: (
     Queue(s.CELERY_DEFAULT_QUEUE, routing_key='default'),
