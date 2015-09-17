@@ -7,6 +7,7 @@ import lxml.etree
 from celery.utils.log import get_task_logger
 from celery import Task
 from django.core.cache import caches
+from grako.exceptions import FailedParse
 
 from btw.celery import app
 from .models import ChangeRecord, Entry
@@ -16,7 +17,7 @@ from . import depman
 from bibliography.views import targets_to_dicts
 from lib.tasks import acquire_mutex
 from semantic_fields.models import Category
-from semantic_fields.util import parse_sf
+from semantic_fields.util import parse_local_references
 
 logger = get_task_logger(__name__)
 
@@ -49,14 +50,27 @@ def prepare_changerecord_for_display(self, pk, published=None,
 
     * Adds the links to other articles present in the database.
 
-    This task will cache the information.
+    * Creates the list of semantic fields that are derived from lists
+      of semantic fields that scribes insert in articles.
+
+    * Resolves semantic field numbers to their names and formats the
+      names.
+
+    The result is an article which is no longer strictly speaking
+    conforming to the btw-storage schema but is what the ``btw_view.js``
+    code expects.
+
+    The task also gathers the bibliographical data necessary for
+    displaying the article.
+
+    This task will cache the modified article and the bibliographical
+    data.
 
     :param pk: The primary key of the change record to display.
     :type pk: :class:`int`
     :param published: Whether to consider the record as published or
                       not. This overrides the record's actual status.
     :type published: :class:`bool`
-
     """
 
     # The ``test`` parameter is not documented as it is used only for
@@ -119,6 +133,7 @@ def prepare_changerecord_for_display(self, pk, published=None,
     modified = combine_sense_semantic_fields(xml) or modified
     modified = combine_all_semantic_fields(xml) or modified
     modified = combine_cognate_semantic_fields(xml) or modified
+    modified = name_semantic_fields(xml) or modified
 
     if not modified:
         # We do not reserialize an unmodified tree.
@@ -356,3 +371,74 @@ def combine_semantic_fields(texts, depth=None):
                   # latter. Mapping "." to "~" takes care of this
                   # sorting issue.
                   key=lambda x: key_re.sub(r"0\1", x.replace(".", "~")))
+
+
+def name_semantic_fields(xml):
+    sfs = xml.tree.xpath("//btw:sf", namespaces=default_namespace_mapping)
+
+    #
+    # We perform an initial scan so as to avoid hitting the database
+    # over and over for the same reference.
+    #
+
+    # This is a set of references we've tried to resolve, whether
+    # successfully or not. We use this to prevent hitting the database
+    # multiple times rather than ``used`` so that ``used`` contains only
+    # references that resolve to **something**.
+    fetched = set()
+    # This is a map from reference its resolution from the database.
+    used = {}
+    for sf in set(elements_as_text(sfs)):
+        category = None
+
+        try:
+            refs = parse_local_references(sf)
+        except (ValueError, FailedParse):
+            # We let unparseable cases slide. This allows early display of
+            # articles.
+            continue
+
+        for ref in refs:
+            ref_str = unicode(ref)
+            if ref_str not in fetched:
+                try:
+                    category = Category.objects.get(path=ref_str)
+                except Category.DoesNotExist:
+                    continue
+
+                fetched.add(ref_str)
+
+                if category is not None:
+                    used[ref_str] = category
+
+    if not used:
+        return False
+
+    for sf in sfs:
+        text = element_as_text(sf)
+        try:
+            refs = parse_local_references(text)
+        except (ValueError, FailedParse):
+            # We let unparseable cases slide. This allows early display of
+            # articles.
+            continue
+
+        ref_categories = [(ref, used.get(ref, None)) for ref in
+                          (unicode(ref) for ref in refs)]
+
+        sep = ''
+        if ref_categories:
+            del sf[:]
+            sf.text = ''
+            if len(ref_categories) > 1:
+                sep = " @"
+
+        for (ref, category) in ref_categories:
+            if category is not None:
+                sf.text = category.heading + " (" + ref + ")"
+            else:
+                sf.text = ref
+
+            sf.text += sep
+
+    return bool(used)

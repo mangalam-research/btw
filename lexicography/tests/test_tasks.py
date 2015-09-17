@@ -82,6 +82,9 @@ mock_records = mock_zotero.Records([
     }
 ])
 
+hte_fixture = os.path.join(
+    dirname, "..", "..", "semantic_fields", "tests", "fixtures", "hte.json")
+
 # We use ``side_effect`` for this mock because we need to refetch
 # ``mock_records.values`` at run time since we change it for some
 # tests.
@@ -96,7 +99,8 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
                    ROOT_URLCONF='lexicography.tests.urls')
 class TasksTestCase(TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
-                    for x in ("users.json", "views.json"))
+                    for x in ("users.json", "views.json")) + [hte_fixture]
+    maxDiff = None
 
     def setUp(self):
         cache.clear()
@@ -263,37 +267,37 @@ class TasksTestCase(TestCase):
         expected_values = [
             [
                 "01.02.11n",
-                "01.04.04n",
+                "Person (01.04.04n)",
                 "01.04.08n",
                 "01.05.05.09.01n",
                 "01.06.07.03n",
-                "02.02.18n",
-                "02.02.19n",
-                "03.05.01n",
+                "Beautification (02.02.18n)",
+                "Lack of beauty (02.02.19n)",
+                "Written laws (03.05.01n)",
             ],
             [
-                "02.01.13n",
-                "02.01.13.02n",
-                "02.01.13.02.02n",
-                "02.01.13.08.11n",
-                "02.01.13.08.11.01.01n",
-                "02.01.14n",
+                "Belief (02.01.13n)",
+                "Belief, trust, confidence (02.01.13.02n)",
+                "Act of convincing, conviction (02.01.13.02.02n)",
+                "Absence of doubt, confidence (02.01.13.08.11n)",
+                "Making certain, assurance (02.01.13.08.11.01.01n)",
+                "Expectation (02.01.14n)",
                 "02.01.17n",
-                "02.02.12n",
-                "02.02.13n",
-                "02.02.14n",
+                "Good taste (02.02.12n)",
+                "Bad taste (02.02.13n)",
+                "Fashionableness (02.02.14n)",
                 "02.02.22n",
-                "03.07n",
+                "Education (03.07n)",
             ],
             [
                 "01.05.05.12.01n"
             ],
             [
                 "02.01.17n",
-                "02.02.12n",
-                "02.02.13n",
+                "Good taste (02.02.12n)",
+                "Bad taste (02.02.13n)",
                 "03.07.00.23n",
-                "03.07.03n"
+                "Learning (03.07.03n)"
             ],
         ]
 
@@ -317,23 +321,23 @@ class TasksTestCase(TestCase):
         sfs = [sf.text for sf in sfss[0]]
         self.assertEqual(sfs, [
             "01.02.11n",
-            "01.04.04n",
+            "Person (01.04.04n)",
             "01.04.08n",
-            "01.05.05n",
-            "01.06.07n",
-            "02.01.13n",
-            "02.01.14n",
+            "By eating habits (01.05.05n)",
+            "01.06.07n",  # By family relationships ,
+            "Belief (02.01.13n)",
+            "Expectation (02.01.14n)",
             "02.01.17n",
-            "02.02.12n",
-            "02.02.13n",
-            "02.02.14n",
-            "02.02.18n",
-            "02.02.19n",
+            "Good taste (02.02.12n)",
+            "Bad taste (02.02.13n)",
+            "Fashionableness (02.02.14n)",
+            "Beautification (02.02.18n)",
+            "Lack of beauty (02.02.19n)",
             "02.02.22n",
-            "03.05.01n",
-            "03.07n",
+            "Written laws (03.05.01n)",
+            "Education (03.07n)",
             "03.07.00n",
-            "03.07.03n"
+            "Learning (03.07.03n)"
         ],
             "the list of semantic fields should be correct")
         self.assertIsNone(sfss[0].getnext())
@@ -350,6 +354,7 @@ class TasksTestCase(TestCase):
         cr = ChangeRecord.objects.get(pk=1)
         key = cr.article_display_key(cr.published)
         tasks.prepare_changerecord_for_display.delay(1).get()
+        # configure_logging()
         with WithStringIO(tasks.logger) as (stream, handler):
             tasks.prepare_changerecord_for_display.delay(1).get()
             self.assertLogRegexp(
@@ -1176,3 +1181,52 @@ class CombineAllSemanticFieldsTestCase(BaseSemanticFieldTestCase):
         self.assertFalse(modified, "the tree should not be reported modified")
         self.assertEqual(before, lxml.etree.tostring(tree.tree),
                          "the data should be the same")
+
+
+class NameSemanticFieldsTestCase(TestCase):
+
+    fixtures = [hte_fixture]
+
+    def test_modified(self):
+        data = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<btw:semantic-fields xmlns:btw="{0}">
+ <btw:sf>03.07n</btw:sf>
+ <btw:sf>02.02.13n</btw:sf>
+ <btw:sf>01.01n</btw:sf>
+</btw:semantic-fields>
+""".format(xml.default_namespace_mapping["btw"])
+
+        tree = xml.XMLTree(data.encode("utf8"))
+        self.assertIsNone(tree.parsing_error)
+        modified = tasks.name_semantic_fields(tree)
+        self.assertTrue(modified, "the tree should have been modified")
+
+        sfs = [sf.text for sf in tree.tree.xpath(
+            "/btw:semantic-fields/btw:sf",
+            namespaces=xml.default_namespace_mapping)]
+        self.assertEqual(sfs, [
+            "Education (03.07n)",
+            "Bad taste (02.02.13n)",
+            "01.01n"
+        ])
+
+    def test_not_modified(self):
+        data = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<btw:semantic-fields xmlns:btw="{0}">
+ <btw:sf>01.01n</btw:sf>
+</btw:semantic-fields>
+""".format(xml.default_namespace_mapping["btw"])
+
+        tree = xml.XMLTree(data.encode("utf8"))
+        self.assertIsNone(tree.parsing_error)
+        modified = tasks.name_semantic_fields(tree)
+        self.assertFalse(modified, "the tree should not have been modified")
+
+        sfs = [sf.text for sf in tree.tree.xpath(
+            "/btw:semantic-fields/btw:sf",
+            namespaces=xml.default_namespace_mapping)]
+        self.assertEqual(sfs, [
+            "01.01n"
+        ])
