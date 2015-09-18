@@ -3,12 +3,13 @@ import subprocess
 import re
 import inspect
 
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-dirname = os.path.dirname(os.path.abspath(filename))
-
 from selenium.webdriver.firefox.webdriver import FirefoxProfile, FirefoxBinary
 from selenium.webdriver.chrome.options import Options
 import selenic
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+dirname = os.path.dirname(os.path.abspath(filename))
+
 
 #
 # LOGS determines whether Selenium tests will capture logs. Turning it
@@ -81,6 +82,7 @@ with open(os.path.join(dirname, "./browsers.txt")) as browsers:
             continue  # Skip comments and blank lines
         parts = line.split(",")
         if len(parts) == 3:
+            parts = parts + [caps, False]
             Config(*parts)
         elif len(parts) == 4:
             assert parts[-1].upper() == "REMOTE"
