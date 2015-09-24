@@ -1,3 +1,14 @@
+* 1.3.1:
+
+  + Bug fix: Fix in the permission checks for accessing the general search in
+    the bibliography part of BTW.
+
+  + Infrastructure feature: new administrative command to generate a
+    monit file that can be used to cleanly start/stop and restart BTW.
+
+  + Infrastructure bug fix: purge previously scheduled Celery tasks
+    when starting the workers.
+
 * 1.3.0:
 
   + Change in nomenclature:
