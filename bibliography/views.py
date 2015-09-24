@@ -157,9 +157,8 @@ class ItemTable(BaseDatatableView):
 
     @classmethod
     def as_view(cls, *args, **kwargs):
-        return ajax_login_required(
-            require_GET(super(ItemTable, cls).as_view(*args,
-                                                      **kwargs)))
+        return require_GET(super(ItemTable, cls).as_view(*args,
+                                                         **kwargs))
 
     def get_initial_queryset(self):
         return Item.objects.all()
@@ -215,9 +214,8 @@ class PrimarySourceTable(BaseDatatableView):
 
     @classmethod
     def as_view(cls, *args, **kwargs):
-        return ajax_login_required(
-            require_GET(super(PrimarySourceTable, cls).as_view(*args,
-                                                               **kwargs)))
+        return require_GET(super(PrimarySourceTable, cls).as_view(*args,
+                                                                  **kwargs))
 
     def get_initial_queryset(self):
         return self.item.primary_sources.all()
@@ -236,7 +234,6 @@ class PrimarySourceTable(BaseDatatableView):
         return qs
 
 
-@ajax_login_required
 @require_GET
 def item_primary_sources(request, pk):
     return PrimarySourceTable.as_view(item_pk=pk)(request)

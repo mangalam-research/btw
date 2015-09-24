@@ -31,7 +31,6 @@ class _BaseTest(BaseCMSTestCase, WebTest):
     __metaclass__ = TestMeta
 
     url = None
-    xhr = False
 
     def __init__(self, *args, **kwargs):
         super(_BaseTest, self).__init__(*args, **kwargs)
@@ -50,6 +49,8 @@ class _BaseTest(BaseCMSTestCase, WebTest):
 
 
 class LoginMixin(object):
+
+    xhr = False
 
     def test_not_logged(self):
         """
@@ -298,6 +299,16 @@ class TestItemTableView(_PatchZoteroTest, LoginMixin):
         super(TestItemTableView, self).setUp()
         self.url = reverse('bibliography_item_table')
 
+    # We override the default...
+    def test_not_logged(self):
+        """
+        Test that the response is 200 when the user is not logged in.
+        """
+        response = self.client.get(
+            self.url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest' if self.xhr else None)
+        assert_equal(response.status_code, 200)
+
 
 class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):
 
@@ -319,6 +330,16 @@ class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):
         self.url = reverse(
             'bibliography_item_primary_sources',
             args=(Item.objects.get(item_key="1").pk,))
+
+    # We override the default...
+    def test_not_logged(self):
+        """
+        Test that the response is 200 when the user is not logged in.
+        """
+        response = self.client.get(
+            self.url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest' if self.xhr else None)
+        assert_equal(response.status_code, 200)
 
     def test_post(self):
         response = self.client.login(username=u'test', password=u'test')
