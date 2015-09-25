@@ -36,7 +36,8 @@ class Config:
         if self._generated_config is not None:
             return self._generated_config
 
-        with open(os.path.join("btw_management", "management", "templates",
+        with open(os.path.join(os.path.dirname(__file__), "..",
+                               "btw_management", "management", "templates",
                                "redis.conf")) as f:
             template = f.read()
 
