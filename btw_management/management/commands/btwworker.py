@@ -120,39 +120,6 @@ def worker_does_not_exist(worker):
 
     return False
 
-def generate_monit_config():
-    workers = get_defined_workers()
-
-    template = """
-check process {worker_name} pidfile "{proj_path}/var/run/btw/{worker_name}.pid"
-      group {group}
-      depends on btw-redis
-      start program = "{python_path} {proj_path}/manage.py btwworker start \
-{worker_name}"
-            as uid btw and gid btw
-      stop program = "{python_path} {proj_path}/manage.py btwworker stop \
-{worker_name}"
-            as uid btw and gid btw
-      if does not exist then start
-"""
-    env_path = settings.ENVPATH
-    python_path = os.path.join(env_path, "bin", "python") \
-        if env_path is not None else "python"
-
-    buf = ""
-    worker_names = []
-    for worker in workers:
-        buf += template.format(
-            proj_path=settings.TOPDIR,
-            worker_name=worker.name,
-            group=settings.BTW_SLUGIFIED_SITE_NAME,
-            python_path=python_path)
-        worker_names.append(worker.name)
-    return {
-        "script": buf,
-        "names": worker_names
-    }
-
 class Command(BaseCommand):
     help = """\
 Manage workers.
@@ -337,11 +304,6 @@ Manage workers.
                     continue
 
                 self.stdout.write("passed")
-        elif cmd == "generate-monit-config":
-            check_no_arguments(args, cmd)
-            check_no_all(options, cmd)
-
-            self.stdout.write(generate_monit_config()["script"])
         elif cmd == "revoke-scheduled":
             self.revoke_scheduled()
         else:

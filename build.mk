@@ -107,6 +107,7 @@ LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-
 GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/requirejs-config-dev.js
 # Local sources that are merely copied.
 COPIED_LOCAL_SOURCES:=$(filter-out $(GENERATED_LOCAL_SOURCES),$(LOCAL_SOURCES))
+BUILD_SCRIPTS:=build/scripts/
 
 DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
 
@@ -140,7 +141,7 @@ all: _all
 include $(shell find . -name "include.mk")
 
 .PHONY: _all
-_all: $(TARGETS) build-config
+_all: $(TARGETS) build-config build-scripts
 
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
@@ -235,6 +236,10 @@ test-karma: javascript
 .PHONY: keep-latest
 keep-latest:
 	find test_logs -type f -not -name $$(realpath --relative-to=test_logs test_logs/LATEST) -delete
+
+build-scripts:
+	mkdir -p $(BUILD_SCRIPTS)
+	./manage.py btw generate-scripts $(BUILD_SCRIPTS)
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
