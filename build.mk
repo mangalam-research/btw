@@ -231,7 +231,7 @@ test-django-menu: $(TARGETS)
 
 .PHONY: test-karma
 test-karma: javascript
-	xvfb-run karma start --single-run
+	xvfb-run ./node_modules/.bin/karma start --single-run
 
 .PHONY: keep-latest
 keep-latest:
