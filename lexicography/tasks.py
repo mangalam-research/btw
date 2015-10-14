@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import re
+
 import lxml.etree
 
 from celery.utils.log import get_task_logger
@@ -8,10 +10,13 @@ from django.core.cache import caches
 
 from btw.celery import app
 from .models import ChangeRecord, Entry
-from .xml import XMLTree, default_namespace_mapping
+from .xml import XMLTree, default_namespace_mapping, elements_as_text, \
+    element_as_text
 from . import depman
 from bibliography.views import targets_to_dicts
 from lib.tasks import acquire_mutex
+from semantic_fields.models import Category
+from semantic_fields.util import parse_sf
 
 logger = get_task_logger(__name__)
 
@@ -105,6 +110,15 @@ def prepare_changerecord_for_display(self, pk, published=None,
     modified = False
     (lemmas, modified) = hyperlink_article(data, xml, published)
     (targets, bibl_data) = get_bibliographical_data(xml)
+    #
+    # The series of steps we perform here will turn the article into
+    # something which no longer conforms to the btw-storage
+    # schema. See the documentation in each function to know what
+    # changes are made.
+    #
+    modified = combine_sense_semantic_fields(xml) or modified
+    modified = combine_all_semantic_fields(xml) or modified
+    modified = combine_cognate_semantic_fields(xml) or modified
 
     if not modified:
         # We do not reserialize an unmodified tree.
@@ -208,3 +222,137 @@ def get_bibliographical_data(xml):
     bibl_data = targets_to_dicts(targets)
 
     return (targets, bibl_data)
+
+def combine_all_semantic_fields(xml):
+    """
+    Create the "all semantic fields" section from the semantic fields
+    of each sense. This must be performed after we've created the list
+    of semantic fields for each sense. This function grabs the list of
+    semantic fields we previous created for senses (i.e. the semantic
+    fields in the ``btw:semantic-fields`` element which is the
+    immediate child of ``btw:sense``) and appends a new
+    ``btw:semantic-fields`` element to ``btw:overview``.
+
+    Semantic fields thus combined are truncated to 3 levels, and
+    duplicates are eliminated.
+    """
+    all_sfs = lxml.etree.Element(
+        "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
+        nsmap=default_namespace_mapping)
+    sfs = xml.tree.xpath("//btw:sense/btw:semantic-fields/btw:sf",
+                         namespaces=default_namespace_mapping)
+    if sfs:
+        combine_semantic_fields_into(sfs, all_sfs, 3)
+        overview = xml.tree.xpath("//btw:overview",
+                                  namespaces=default_namespace_mapping)[0]
+        overview.append(all_sfs)
+        return True
+
+    return False
+
+def combine_sense_semantic_fields(xml):
+    """
+    Combine the semantic fields that appear in the citations of a
+    sense, minus those in ``btw:contrastive-section``. These fields
+    are combined into a ``btw:semantic-fields`` element that sits
+    before the contrastive section of the sense, or at the end of the
+    sense if there is no contrastive section.
+    """
+    senses = xml.tree.xpath(
+        "//btw:sense", namespaces=default_namespace_mapping)
+    modified = False
+    for sense in senses:
+        contrastives = sense.xpath(
+            ".//btw:contrastive-section", namespaces=default_namespace_mapping)
+        contrastive = contrastives[0] if contrastives else None
+
+        # We get all btw:sf elements that are outside the
+        # contrastive section.
+        sfs = sense.xpath("(.//btw:citations//btw:sf | "
+                          ".//btw:other-citations//btw:sf)"
+                          "[not(ancestor::btw:contrastive-section)]",
+                          namespaces=default_namespace_mapping)
+        if sfs:
+            modified = True
+            sense_sfss = lxml.etree.Element(
+                "{{{0}}}semantic-fields".format(
+                    default_namespace_mapping["btw"]),
+                nsmap=default_namespace_mapping)
+            combine_semantic_fields_into(sfs, sense_sfss)
+            if contrastive is not None:
+                contrastive.addprevious(sense_sfss)
+            else:
+                sense.append(sense_sfss)
+
+    return modified
+
+
+def combine_cognate_semantic_fields(xml):
+    """
+    For each ``btw:cognate``, this function adds a
+    ``btw:semantic-fields`` element that is a combination of all the
+    semantic fields in the cognate. The new element is added at the
+    very start of the ``btw:cognate`` element.
+    """
+    cognates = xml.tree.xpath(
+        "//btw:cognate", namespaces=default_namespace_mapping)
+    modified = False
+    for cognate in cognates:
+        modified = True
+        sfs = cognate.xpath(".//btw:sf",
+                            namespaces=default_namespace_mapping)
+
+        sfss = lxml.etree.Element(
+            "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
+            nsmap=default_namespace_mapping)
+        combine_semantic_fields_into(sfs, sfss)
+        cognate[0].addprevious(sfss)
+
+    return modified
+
+
+def combine_semantic_fields_into(sfs, into, depth=None):
+    texts = elements_as_text(sfs)
+
+    combined = combine_semantic_fields(texts, depth)
+    for text in combined:
+        sf = lxml.etree.Element("{{{0}}}sf".format(
+            default_namespace_mapping["btw"]), nsmap=default_namespace_mapping)
+        sf.text = text
+        into.append(sf)
+
+
+# This is the regular expression we use to remove everything after
+# ``|`` or the positional suffix. (We use this *only* for the truncation.)
+truncate_re = re.compile(r"\|.*|[a-z]+.*$")
+
+def truncate_to(text, depth):
+    parts = truncate_re.sub("", text).split(".")
+
+    # Only perform this transformation if we need to truncate.
+    if len(parts) > depth or (len(parts) == depth and ("|" in text)):
+        # We always add "n" as the pos when we truncate.
+        return ".".join(truncate_re.sub("", text).split(".")[0:depth]) + "n"
+
+    return text
+
+
+key_re = re.compile(r"(?<!\d)(\d{2})(?!\d)")
+
+def combine_semantic_fields(texts, depth=None):
+    return sorted(set(texts if depth is None else (truncate_to(text, depth)
+                                                   for text in texts)),
+                  # We add a leading 0 to numbers that do not have it
+                  # because the HTE project has at least *some*
+                  # semantic field codes that are 100, 101, etc but
+                  # they did *not* redesign the codes to be padded
+                  # with an additional 0. So without the padding we do
+                  # here, we would sort incorrectly sometimes.
+                  #
+                  # The replacement of "." with "~" is done to sort
+                  # properly. The problem is that "." comes before
+                  # [a-z] in lexical order. So "01.01.02" would come
+                  # **before** "01.01aj", even if it is a child of the
+                  # latter. Mapping "." to "~" takes care of this
+                  # sorting issue.
+                  key=lambda x: key_re.sub(r"0\1", x.replace(".", "~")))

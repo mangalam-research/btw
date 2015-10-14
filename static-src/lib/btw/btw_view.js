@@ -395,39 +395,6 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // structure.
     //
 
-    // Combine the semantic fields of each sense from those semantic
-    // fields assigned to the citations of the sense (but not those in
-    // the contrastive section).
-    for(i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
-        // There can be only one contrastive section.
-        var contrastive =
-                sense.getElementsByClassName("btw:contrastive-section")[0];
-        // We get all btw:sf elements that are outside the
-        // contrastive section.
-        /* jshint loopfunc:true */
-        sfs = _slice.call(sense.querySelectorAll(
-            domutil.toGUISelector("btw:citations btw:sf, "+
-                                  "btw:other-citations btw:sf")))
-                .filter(function (x) {
-                return !contrastive.contains(x);
-            });
-
-        var sense_sfss = this.makeElement("btw:semantic-fields");
-        this.combineSemanticFieldsInto(sfs, sense_sfss);
-        sense.insertBefore(sense_sfss, contrastive || null);
-    }
-
-
-    // Create the "all semantic fields" section from the semantic
-    // fields of each sense.
-    var all_sfs = this.makeElement("btw:semantic-fields");
-    sfs = root.querySelectorAll(domutil.toGUISelector(
-        "btw:sense>btw:semantic-fields>btw:sf"));
-    this.combineSemanticFieldsInto(sfs, all_sfs, 3);
-    var overview = root.getElementsByClassName("btw:overview")[0];
-    overview.appendChild(all_sfs);
-
-
     // Transform English renditions to the viewing format.
     var english_renditions =
             root.getElementsByClassName("btw:english-renditions");
@@ -970,17 +937,20 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         group.appendChild(coll);
 
         //
-        // If there are btw:sematic-fields elements, combine them. But
-        // only for cognates.
+        // If there are btw:sematic-fields elements, move them to
+        // the list of terms.
         //
         if (name === "cognate") {
-            var cits = coll.getElementsByClassName("btw:citations");
-            for (var cit_ix = 0, cit; (cit = cits[cit_ix]); ++cit_ix) {
-                var sfs = cit.getElementsByClassName("btw:sf");
-                var sfss = this.makeElement("btw:semantic-fields");
-                var wrapper = wrappers[cit_ix];
+            var cognates = coll.getElementsByClassName("btw:cognate");
+            for (var cognate_ix = 0, cognate; (cognate = cognates[cognate_ix]);
+                 ++cognate_ix) {
+                // We get only the first one, which is the one that
+                // contains the combined semantic fields for the whole
+                // cognate.
+                var sfss = cognate.getElementsByClassName(
+                    "btw:semantic-fields")[0];
+                var wrapper = wrappers[cognate_ix];
                 wrapper.parentNode.insertBefore(sfss, wrapper.nextSibling);
-                this.combineSemanticFieldsInto(sfs, sfss);
             }
         }
     }
@@ -1073,19 +1043,6 @@ Viewer.prototype.makeElement = function (name, attrs) {
     var ename = this._resolver.resolveName(name);
     var e = transformation.makeElement(this._data_doc, ename.ns, name, attrs);
     return convert.toHTMLTree(this._doc, e);
-};
-
-Viewer.prototype.combineSemanticFieldsInto = function (sfs, into, depth) {
-    var texts = [];
-    for (var sfs_ix = 0, sf; (sf = sfs[sfs_ix]); ++sfs_ix)
-        texts.push(sf.textContent.trim());
-
-    var combined = btw_semantic_fields.combineSemanticFields(texts, depth);
-    for (var ix = 0, text; (text = combined[ix]); ++ix) {
-        sf = this.makeElement("btw:sf");
-        sf.textContent = text;
-        into.appendChild(sf);
-    }
 };
 
 return Viewer;

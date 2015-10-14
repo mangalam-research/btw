@@ -259,4 +259,14 @@ def set_version(data, new_version):
 def xhtml_to_xml(data):
     return data.replace(u"&nbsp;", u'\u00a0')
 
+def element_as_text(el):
+    text = ''.join(el.itertext())
+    return ' '.join(text.strip().split())
+
+def elements_as_text(els):
+    for el in els:
+        text = element_as_text(el)
+        if text:
+            yield text
+
 #  LocalWords:  xml html xsl xhtml xmlns btw lxml r'authority Za nbsp

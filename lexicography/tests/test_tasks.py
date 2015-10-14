@@ -125,9 +125,9 @@ class TasksTestCase(TestCase):
         cr = ChangeRecord.objects.get(pk=1)
         # Check that the correct results are in the cache
         result = cache.get(cr.article_display_key())
-        self.assertEqual(result["xml"], cr.c_hash.data,
-                         "the xml should be the same as the "
-                         "original")
+        tree = lxml.etree.fromstring(result["xml"])
+        self.assertEqual(len(extract_inter_article_links(tree)), 0,
+                         "the xml should not contain any article links")
         self.assertEqual(result["bibl_data"], {},
                          "the bibl data should be empty")
         self.assertIsNone(
@@ -150,9 +150,9 @@ class TasksTestCase(TestCase):
 
         # Check that the correct results are in the cache.
         result = cache.get(cr.article_display_key())
-        self.assertEqual(result["xml"], cr.c_hash.data,
-                         "the result should be the same as the "
-                         "original data")
+        tree = lxml.etree.fromstring(result["xml"])
+        self.assertEqual(len(extract_inter_article_links(tree)), 0,
+                         "the xml should not contain any article links")
         self.assertEqual(result["bibl_data"], {},
                          "the bibl data should be empty")
         self.assertIsNone(
@@ -190,9 +190,9 @@ class TasksTestCase(TestCase):
 
         # Check that the correct results are in the cache.
         result = cache.get(cr.article_display_key())
-        self.assertEqual(result["xml"], cr.c_hash.data,
-                         "the result should be the same as the "
-                         "original self")
+        tree = lxml.etree.fromstring(result["xml"])
+        self.assertEqual(len(extract_inter_article_links(tree)), 0,
+                         "there should be no article links")
         self.assertEqual(result["bibl_data"], {
             "/bibliography/2": item.as_dict()
         }, "the bibl_data should be correct.")
