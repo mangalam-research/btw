@@ -1465,5 +1465,60 @@ how it performs with Django > 1.5.
 
 Django page CMS: compatible with Django 1.5, 1.6 but not 1.7 or 1.8.
 
+
+XML Database choices for BTW
+============================
+
+This investigation was performed in October 2015.
+
+We started with the list of databases at: https://en.wikipedia.org/wiki/XML_database
+
+Out of BaseX, Berkeley DB XML Edition, eXist-db, MarkLogic and Qizx
+only the first 3 are open-source.
+
+Berkeley DB XML Edition
+-----------------------
+
+Documentation says that it supports only XQuery 1.0, which is
+ancient. Produced by Oracle and consequently exhibits the typical
+Oracle documentation (monolithic, hard to read, etc.)
+
+Base X
+------
+
+Problems:
+
+- Issuing a db creation command with a db name that already exists
+  will wipe the existing db. This can be worked around.
+
+- Any change to the database flushes the indexes until they are
+  explicitly rebuilt. There is an autoindexing mode but it is
+  recommended only for small to medium databases. This could probably
+  be worked around but seems stupid. What's the point of having a
+  **database** system if indexing has to be managed explicitly.
+
+- Speed tests with extracting all semantic fields from published
+  articles with the real BTW database (at the time of 2015/10/15) do
+  not show any speed improvement over a naive lxml-based scan.
+
+eXist-db
+--------
+
+- Does not fully support XQuery 3.0. For some of the XQuery functions it
+requires the use of eXist-db-specific extensions. (Why not provide an
+alias???) Needs the use of custom extensions for supporting what
+XQuery Update and XQuery Full Text provide.
+
+- However, eXist-db has "real indexes" that are updated as the data is
+  updated rather than flushed whenever the data is updated like BaseX
+  does.
+
+- The same speed tests as BaseX show that it is not faster than our
+  naive lxml-based scan.
+
+Overall, when we *are* ready to add an XML-based database to BTW this
+should be the choice.
+
+
 ..  LocalWords: uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth
