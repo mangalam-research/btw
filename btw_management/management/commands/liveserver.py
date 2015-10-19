@@ -25,6 +25,7 @@ from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lexicography.xml import tei_namespace, btw_namespace, \
     default_namespace_mapping, XMLTree
+from lexicography.models import Chunk
 from lib import util
 from lib.testutil import unmonkeypatch_databases
 from bibliography.models import Item, PrimarySource
@@ -131,6 +132,9 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                               "fixtures", "views.json")]
 
             call_command('loaddata', *fixtures, **{'verbosity': 0})
+
+            # We must populate the eXist database.
+            Chunk.objects.sync_with_exist()
 
             # Id 1
             item = Item(item_key="3")

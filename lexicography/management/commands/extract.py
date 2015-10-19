@@ -1,9 +1,12 @@
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
+from eulexistdb.db import ExistDB
 
 from lexicography.models import Entry
 from lexicography.xml import XMLTree, default_namespace_mapping
+from lib import existdb
+from lib import xquery
 
 class Command(BaseCommand):
     help = """\
@@ -25,7 +28,7 @@ sfs: extracts all the semantic field numbers found in the database
                     action='store_true',
                     dest='lemmas',
                     default=False,
-                    help='Output the lemma with the semantic field.'),
+                    help='Output the lemma with the semantic field.')
     )
 
     def handle(self, *args, **options):
@@ -53,8 +56,12 @@ sfs: extracts all the semantic field numbers found in the database
         else:
             raise ValueError("cannot handle --only with value: " + only)
 
-        for entry in entries.prefetch_related('changerecord_set') \
-                            .prefetch_related('changerecord_set__c_hash'):
+        hashes = set()
+
+        use_lxml = True
+
+        for entry in entries.prefetch_related('changerecord_set__c_hash',
+                                              'latest_published__c_hash'):
             if not only:
                 crs = entry.changerecord_set.all()
             elif only == "published":
@@ -64,29 +71,46 @@ sfs: extracts all the semantic field numbers found in the database
             else:
                 raise ValueError("cannot handle --only with value: " + only)
 
-            for cr in crs:
-                # It is in theory possible to get the same hash twice.
-                if cr.c_hash.c_hash in hashes_done:
-                    continue
+            if use_lxml:
+                for cr in crs:
+                    # It is in theory possible to get the same hash twice.
+                    if cr.c_hash.c_hash in hashes_done:
+                        continue
 
-                if not cr.c_hash.is_normal:
-                    continue
+                    if not cr.c_hash.is_normal or not cr.c_hash.valid:
+                        continue
 
-                tree = XMLTree(cr.c_hash.data.encode("utf8"))
-                sfs = tree.tree.xpath("//btw:sf",
-                                      namespaces=default_namespace_mapping)
-                for sf in sfs:
-                    if sf.text:
-                        sf = ' '.join(sf.text.strip().split())
-                        if sf:
-                            extracted.setdefault(sf, []).append(cr.lemma)
-                hashes_done.add(cr.c_hash.c_hash)
+                    tree = XMLTree(cr.c_hash.data.encode("utf8"))
+                    sfs = tree.tree.xpath("//btw:sf",
+                                          namespaces=default_namespace_mapping)
+                    for sf in sfs:
+                        if sf.text:
+                            sf = ' '.join(sf.text.strip().split())
+                            if sf:
+                                extracted.setdefault(sf, []).append(cr.lemma)
+                    hashes_done.add(cr.c_hash.c_hash)
 
-        for sf in extracted:
-            lemmas = extracted[sf]
-            if output_lemmas:
-                print "{0}: {1}" \
-                    .format(sf.encode('utf8'),
-                            [l.encode('utf8') for l in lemmas])
             else:
-                print sf.encode('utf8')
+                hashes.update(
+                    cr.c_hash.c_hash for cr in crs
+                    if cr.c_hash.is_normal and cr.c_hash.valid)
+
+        if use_lxml:
+            for sf in extracted:
+                if output_lemmas:
+                    lemmas = extracted[sf]
+                    print "{0}: {1}" \
+                        .format(sf.encode('utf8'),
+                                [l.encode('utf8') for l in lemmas])
+                else:
+                    print sf.encode('utf8')
+        else:
+            db = ExistDB()
+
+            for query in existdb.query_iterator(db, xquery.make(
+                    ("for $x in distinct-values(({0})//btw:sf/text()) "
+                     "return $x")
+                    .format(",".join(["doc('/btw/{0}')".format(hash)
+                                      for hash in hashes])))):
+                for result in query.values:
+                    print result

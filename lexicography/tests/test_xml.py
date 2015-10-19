@@ -145,3 +145,157 @@ version="1.0">
   <ref target="/bibliography/2"/>
   </p>
 </btw:entry>""")
+
+    def test_strip_xml_decl_without_decl(self):
+        """
+        ``strip_xml_decl`` does nothing if there is no XML declaration.
+        """
+        to_convert = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>
+        """
+        decl, result = xml.strip_xml_decl(to_convert)
+        self.assertEqual(decl, "", "there should be no XML declaration")
+        self.assertEqual(result, to_convert, "the result should be the same")
+
+    def test_strip_xml_decl(self):
+        """
+        ``strip_xml_decl`` removes the XML declaration if present.
+        """
+        to_convert = """\
+<?xml version="1.0" encoding="utf-8"   ?>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+  <p>
+  <ref target="/bibliography/1">foo</ref>
+  <ref target="/bibliography/2"/>
+  <ref target="/bibliography/2"/>
+  </p>
+</btw:entry>
+        """
+        decl, result = xml.strip_xml_decl(to_convert)
+        self.assertEqual(decl, '<?xml version="1.0" encoding="utf-8"   ?>',
+                         "there should an XML declaration")
+        self.assertEqual(result, "\n" + to_convert.split("\n", 1)[1],
+                         "the result should be the same")
+
+    def test_wrap_btw_document(self):
+        """
+        Wraps the document and preserves the XML declaration.
+        """
+        to_convert = """\
+<?xml version="1.0" encoding="utf-8"   ?>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+"""
+        self.assertEqual(xml.wrap_btw_document(to_convert,
+                                               published=True),
+                         """\
+<?xml version="1.0" encoding="utf-8"   ?>\
+<btw:wrapper xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+published="True">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+</btw:wrapper>""")
+
+    def test_wrap_btw_document_no_decl(self):
+        """
+        Wraps the document when there is no XML declaration.
+        """
+        to_convert = """\
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+"""
+        self.assertEqual(xml.wrap_btw_document(to_convert,
+                                               published=False),
+                         """\
+<btw:wrapper xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+published="False"><btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+</btw:wrapper>""")
+
+    def test_unwrap_btw_document(self):
+        """
+        Unwraps the document and preserves the XML declaration.
+        """
+        to_convert = """\
+<?xml version="1.0" encoding="utf-8"   ?>\
+<btw:wrapper xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+published="True">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+</btw:wrapper>"""
+
+        self.assertEqual(xml.unwrap_btw_document(to_convert),
+                         """\
+<?xml version="1.0" encoding="utf-8"   ?>
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+""")
+
+    def test_unwrap_btw_document_no_decl(self):
+        """
+        Unwraps a document without XML declaration.
+        """
+        to_convert = """\
+<btw:wrapper xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+published="True">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+</btw:wrapper>"""
+
+        self.assertEqual(xml.unwrap_btw_document(to_convert),
+                         """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.10" authority="/1">
+  <btw:lemma></btw:lemma>
+</btw:entry>
+""")
+
+    def test_unwrap_btw_document_fails_on_lacking_start_wrapper(self):
+        """
+        Fails if the start of the wrapper is missing.
+        """
+        with self.assertRaisesRegexp(ValueError,
+                                     r"^value does not start with wrapper$"):
+            xml.unwrap_btw_document("")
+
+    def test_unwrap_btw_document_fails_on_lacking_end_wrapper(self):
+        """
+        Fails if the end of the wrapper is missing.
+        """
+        with self.assertRaisesRegexp(ValueError,
+                                     r"^value does not end with wrapper$"):
+            xml.unwrap_btw_document("<btw:wrapper >")

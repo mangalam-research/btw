@@ -22,6 +22,7 @@ okay.
         stderr = options.get('stderr', sys.stderr)
         self.check_redis(stdout, stderr)
         self.check_celery(stdout, stderr)
+        self.check_existdb(stdout, stderr)
 
         if self.error_count > 0:
             raise CommandError(str(self.error_count) + " error(s)")
@@ -82,6 +83,9 @@ okay.
 
     def check_redis(self, stdout, stderr):
         call_command('btwredis', 'check', stdout=stdout, stderr=stderr)
+
+    def check_existdb(self, stdout, stderr):
+        call_command('btwexistdb', 'checkdb', stdout=stdout, stderr=stderr)
 
     def error(self, msg):
         self.stderr.write(msg)

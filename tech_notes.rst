@@ -1637,7 +1637,8 @@ Problems:
   explicitly rebuilt. There is an autoindexing mode but it is
   recommended only for small to medium databases. This could probably
   be worked around but seems stupid. What's the point of having a
-  **database** system if indexing has to be managed explicitly.
+  **database** system if indexing has to be managed
+  explicitly. (http://docs.basex.org/wiki/Index#Updates)
 
 - Speed tests with extracting all semantic fields from published
   articles with the real BTW database (at the time of 2015/10/15) do

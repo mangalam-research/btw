@@ -332,6 +332,7 @@ s.INSTALLED_APPS = (
     'cmsplugin_filer_image',
     'cmsplugin_filer_teaser',
     'cmsplugin_filer_video',
+    'eulexistdb',
     'semantic_fields',
     # End of apps required by Django CMS.
     'pipeline',
@@ -349,7 +350,8 @@ class DisableMigrations(object):
     def __getitem__(self, item):
         return "notmigrations"
 
-def _MIGRATION_MODULES(s):
+# pylint: disable=redefined-outer-name
+def _migration_modules(s):
     if s.BTW_DISABLE_MIGRATIONS:
         return DisableMigrations()
 
@@ -362,7 +364,7 @@ def _MIGRATION_MODULES(s):
         'cmsplugin_filer_video': 'cmsplugin_filer_video.migrations_django',
     }
 
-s.MIGRATION_MODULES = _MIGRATION_MODULES
+s.MIGRATION_MODULES = _migration_modules
 
 # For easy_thumbnails
 s.THUMBNAIL_PROCESSORS = (
@@ -585,6 +587,31 @@ s.BTW_EDITORS = None
 # some specific changes.
 s.DEBUG_TOOLBAR_PATCH_SETTINGS = False
 s.INTERNAL_IPS = ('127.0.0.1', '::1')
+
+# These are custom settings...
+# Either "full" or "standalone". Full provides the web server used to provide
+# eXide, etc.
+s.BTW_EXISTDB_SERVER_TYPE = "full"
+s.BTW_EXISTDB_SERVER_ADMIN_USER = None
+s.BTW_EXISTDB_SERVER_ADMIN_PASSWORD = None
+
+# These are eulexistdb settings
+s.EXISTDB_SERVER_USER = None
+s.EXISTDB_SERVER_PASSWORD = None
+# This is the default location, port and URL when using eXist as
+# a standalone server.
+def _server_url(s):
+    host = "http://localhost"
+    return {
+        "standalone": host + ":8088/",
+        "full": host + ":8080/exist/"
+    }[s.BTW_EXISTDB_SERVER_TYPE]
+
+s.EXISTDB_SERVER_URL = _server_url
+s.EXISTDB_ROOT_COLLECTION = "/btw"
+
+# The directory that contains eXist-db's bin.
+s.EXISTDB_HOME_PATH = os.path.join(os.environ["HOME"], "local", "eXist-db")
 
 exec _env.find_config("btw")  # pylint: disable=exec-used
 

@@ -278,5 +278,64 @@ def elements_as_text(els):
         if text:
             yield text
 
+def strip_xml_decl(data):
+    """
+    If there is an initial XML declaration, strip it. This function is
+    not meant to be run on XML that is not well-formed. It does not
+    check for well-formedness, just do not call it on malformed data.
+
+    :rtype: A tuple whose first element is the declaration that was
+            removed, and the second element is the data after stripping.
+    """
+    xml_decl = ""
+    if data.startswith("<?xml "):
+        xml_decl = data[0:data.index("?>") + 2]
+        data = data[len(xml_decl):]
+
+    return (xml_decl, data)
+
+def wrap_btw_document(data, published):
+    """
+    Wrap a BTW document (i.e. a document whose top level element is
+    ``btw:entry``) in a ``btw:wrapper`` element which holds metadata
+    related to the document.
+
+    If the document has an XML declaration, it is preserved.
+
+    :param data: The document.
+    :param published: Whether this document has been published or not.
+
+    :rtype: The document, wrapped.
+    """
+    xml_decl, data = strip_xml_decl(data)
+
+    return xml_decl + \
+        ("<btw:wrapper xmlns:btw=\"{ns}\" published=\"{published}\">"
+         "{data}</btw:wrapper>").format(ns=btw_namespace,
+                                        published=published, data=data)
+
+def unwrap_btw_document(data):
+    """
+    Unwraps a BTW document that has been wrapped with
+
+    ``btw:wrapper``. Note that this will work only on the exact output
+    produced by ``wrap_btw_document``.
+
+    If the document has an XML declaration, it is preserved.
+
+    :rtype: The document, unwrapped.
+    """
+    xml_decl, data = strip_xml_decl(data)
+
+    # Yep, we're using string searches. The wrapper we put around
+    # the document is very strictly controlled.
+    if not data.startswith("<btw:wrapper "):
+        raise ValueError("value does not start with wrapper")
+    end_tag = "</btw:wrapper>"
+    if not data.endswith(end_tag):
+        raise ValueError("value does not end with wrapper")
+
+    end_of_start = data.index(">")
+    return xml_decl + data[end_of_start + 1:-len(end_tag)]
 
 #  LocalWords:  xml html xsl xhtml xmlns btw lxml r'authority Za nbsp

@@ -20,11 +20,13 @@ def make_btwworker_pass():
             mock.patch(
                 "btw_management.management.commands.btwworker"
                 ".get_running_workers",
-                side_effect=lambda *_, **__: btwworker.get_defined_workers()), \
+                side_effect=lambda *_, **__:
+                btwworker.get_defined_workers()), \
             mock.patch(
                 "btw_management.management.commands.btwredis"
                 ".get_running_workers",
-                side_effect=lambda *_, **__: btwworker.get_defined_workers()), \
+                side_effect=lambda *_, **__:
+                btwworker.get_defined_workers()), \
             mock.patch("btw_management.management.commands.btwworker"
                        ".get_full_names",
                        side_effect=lambda names:
@@ -89,6 +91,7 @@ class BTWCheckTestCase(SimpleTestCase):
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(c.stderr, "")
 
@@ -104,6 +107,7 @@ Checking worker {0}.bibliography.worker... passed
 Redis instance is alive.
 Checking worker {0}.worker... failed: no pidfile
 Checking worker {0}.bibliography.worker... failed: no pidfile
+BaseX instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(c.stderr, "")
 
@@ -122,6 +126,7 @@ Checking worker {0}.bibliography.worker... failed: no pidfile
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr, "settings.BTW_EDITORS is not set\n")
@@ -141,6 +146,7 @@ Checking worker {0}.bibliography.worker... passed
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
@@ -171,6 +177,7 @@ Checking worker {0}.bibliography.worker... passed
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
@@ -203,6 +210,7 @@ settings.BTW_EDITORS is not of the right format
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,
@@ -227,6 +235,7 @@ settings.BTW_RUN_PATH_FOR_BTW ("@@foo@@") does not exist
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
+BaseX instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,

@@ -1,0 +1,13 @@
+<collection xmlns="http://exist-db.org/collection-config/1.0">
+  <index xmlns:btw="http://mangalamresearch.org/ns/btw-storage">
+    <!-- Disable the old full text index -->
+    <fulltext default="none" attributes="false"/>
+    <lucene>
+      <analyzer class="org.apache.lucene.analysis.en.EnglishAnalyzer"/>
+      <analyzer id="standard"
+                class="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
+      <text qname="btw:lemma" analyzer="standard"/>
+      <text qname="btw:entry"/>
+    </lucene>
+  </index>
+</collection>

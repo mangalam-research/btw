@@ -90,6 +90,11 @@ def cleanup(*_whatever):
         sys.stderr.write("Cannot stop workers.\n")
 
     try:
+        subprocess.check_call(['./manage.py', 'btwexistdb', 'dropdb'])
+    except:
+        sys.stderr.write("Cannot drop eXist database.")
+
+    try:
         subprocess.check_call(['./manage.py', 'btwredis', 'stop'])
     except:
         sys.stderr.write("Cannot stop redis.\n")
@@ -161,6 +166,8 @@ subprocess.check_call(['./manage.py', 'migrate'])
 subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
 subprocess.check_call(['./manage.py', 'clearcache', '--all'])
 subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
+subprocess.check_call(['./manage.py', 'btwexistdb', 'createdb'])
+subprocess.check_call(['./manage.py', 'btwexistdb', 'loadindex'])
 subprocess.check_call(['./manage.py', 'btwcheck'])
 
 pid_to_name = {}
