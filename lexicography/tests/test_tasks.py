@@ -1230,3 +1230,30 @@ class NameSemanticFieldsTestCase(TestCase):
         self.assertEqual(sfs, [
             "01.01n"
         ])
+
+    def test_subcategories(self):
+        """
+        Test that semantic fields that are subcategories have their
+        heading displayed together with the heading of their parents.
+        """
+        data = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<btw:semantic-fields xmlns:btw="{0}">
+ <btw:sf>02.01.12.10.04|02.01n</btw:sf>
+ <btw:sf>02.01.12.10.04|02n</btw:sf>
+</btw:semantic-fields>
+""".format(xml.default_namespace_mapping["btw"])
+
+        tree = xml.XMLTree(data.encode("utf8"))
+        self.assertIsNone(tree.parsing_error)
+        modified = tasks.name_semantic_fields(tree)
+        self.assertTrue(modified, "the tree should have been modified")
+
+        sfs = [sf.text for sf in tree.tree.xpath(
+            "/btw:semantic-fields/btw:sf",
+            namespaces=xml.default_namespace_mapping)]
+        self.assertEqual(sfs, [
+            "Privacy :: private matter/business :: "
+            "confiding of (02.01.12.10.04|02.01n)",
+            "Privacy :: private matter/business (02.01.12.10.04|02n)",
+        ])

@@ -388,6 +388,7 @@ def name_semantic_fields(xml):
     fetched = set()
     # This is a map from reference its resolution from the database.
     used = {}
+    found = False
     for sf in set(elements_as_text(sfs)):
         category = None
 
@@ -399,19 +400,44 @@ def name_semantic_fields(xml):
             continue
 
         for ref in refs:
-            ref_str = unicode(ref)
-            if ref_str not in fetched:
+            while True:
+                ref_str = unicode(ref)
+
+                # Already processed, we don't need to seek this field
+                # or its parents.
+                if ref_str in fetched:
+                    break
+
                 try:
                     category = Category.objects.get(path=ref_str)
                 except Category.DoesNotExist:
-                    continue
+                    category = None
 
                 fetched.add(ref_str)
 
-                if category is not None:
-                    used[ref_str] = category
+                # It is okay to set the value to none if it so happens
+                # that we found no category. This way we don't
+                # fruitlessly the same field later if it happens to
+                # not exist.
+                used[ref_str] = category
 
-    if not used:
+                # Using found obviates the need to scan ``used``
+                # later.
+                found = found or category is not None
+
+                # In the cases where a reference has a
+                # subcategory, we need to join the subcategory
+                # with its parents, up to the first parent which
+                # is not a subcategory. So we need to fetch
+                # these. Otherwise, we end our processing of this
+                # reference.
+                if not ref.hte_subcats:
+                    break  # End here.
+
+                # Process the parent.
+                ref = ref.parent()
+
+    if not found:
         return False
 
     for sf in sfs:
@@ -423,8 +449,8 @@ def name_semantic_fields(xml):
             # articles.
             continue
 
-        ref_categories = [(ref, used.get(ref, None)) for ref in
-                          (unicode(ref) for ref in refs)]
+        ref_categories = [(ref, used.get(unicode(ref), None)) for ref in
+                          refs]
 
         sep = ''
         if ref_categories:
@@ -434,11 +460,26 @@ def name_semantic_fields(xml):
                 sep = " @"
 
         for (ref, category) in ref_categories:
-            if category is not None:
-                sf.text = category.heading + " (" + ref + ")"
-            else:
-                sf.text = ref
+            initial_ref = ref
+            heading = ""
+            failed = False
+            while True:
+                if category is None:
+                    failed = True
+                    break
+
+                heading = category.heading + heading
+                if not ref.hte_subcats:
+                    break
+
+                # We need to add the parent heading to this one.
+                ref = ref.parent()
+                category = used.get(unicode(ref), None)
+                heading = " :: " + heading
+
+            sf.text = unicode(initial_ref) if failed \
+                else heading + " (" + unicode(initial_ref) + ")"
 
             sf.text += sep
 
-    return bool(used)
+    return True
