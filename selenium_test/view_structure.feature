@@ -42,15 +42,15 @@ Scenario: a valid document has a correct structure
   And the bibliography hyperlink with label "Foo" points to "https://www.foo3.com"
   And the first collapsible section titled "all semantic fields in the citations of this sense" contains
     """
-    01.02.11n; 01.04.04n; 01.04.08n; 01.05.05.09.01n; 01.06.07.03n; 02.02.18n; 02.02.19n; 03.05.01n
+    01.02.11n;; 01.04.04n;; 01.04.08n;; 01.05.05.09.01n;; 01.06.07.03n;; 02.02.18n;; 02.02.19n;; 03.05.01n
     """
   And the cognate "saṃprasāda" has the semantic fields
     """
-    01.02.11n; 01.04.04n; 01.04.08n; 01.05.05.09.01n; 01.06.07.03n; 02.02.11n; 02.02.18n; 02.02.19n; 03.05.01n
+    01.02.11n;; 01.04.04n;; 01.04.08n;; 01.05.05.09.01n;; 01.06.07.03n;; 02.02.11n;; 02.02.18n;; 02.02.19n;; 03.05.01n
     """
   And the article has the semantic fields
     """
-    01.02.11n; 01.04.04n; 01.04.08n; 01.05.05n; 01.06.07n; 02.01.13n; 02.01.14n; 02.01.17n; 02.02.12n; 02.02.13n; 02.02.14n; 02.02.18n; 02.02.19n; 02.02.22n; 03.05.01n; 03.07n; 03.07.00n; 03.07.03n
+    01.02.11n;; 01.04.04n;; 01.04.08n;; 01.05.05n;; 01.06.07n;; 02.01.13n;; 02.01.14n;; 02.01.17n;; 02.02.12n;; 02.02.13n;; 02.02.14n;; 02.02.18n;; 02.02.19n;; 02.02.22n;; 03.05.01n;; 03.07n;; 03.07.00n;; 03.07.03n
     """
   And the navigation link "2. absolute confidence derived from understanding, typically compounded with avetya or abhedya" points to the fourth subsense
   And the table of contents contains

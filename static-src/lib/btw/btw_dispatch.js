@@ -44,7 +44,7 @@ DispatchMixin.prototype.dispatch = function (root, el) {
         break;
     case "btw:semantic-fields":
         this._heading_decorator.sectionHeadingDecorator(el);
-        this.listDecorator(el, "; ");
+        this.listDecorator(el, ";; ");
         break;
     case "ptr":
         this.ptrDecorator(root, el);
