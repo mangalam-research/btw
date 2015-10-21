@@ -501,6 +501,20 @@ Generally:
 
 See below for specific upgrade cases.
 
+1.3.x to 1.4.0
+~~~~~~~~~~~~~~
+
+- You must load the HTE data somehow. It could be using the ``hte``
+  command or by dumping some the ``semantic_field...`` tables in the
+  development database and loading them in production. Remember to set
+  the sequences used to set ids properly if you use a SQL
+  dump/restore.
+
+- It is necessary to flush the article display cache::
+
+  $ ./manage.py clearcache article_display
+
+
 1.2.x to 1.3.0
 ~~~~~~~~~~~~~~
 
