@@ -1519,6 +1519,15 @@ XQuery Update and XQuery Full Text provide.
 Overall, when we *are* ready to add an XML-based database to BTW this
 should be the choice.
 
+Websockets
+==========
+
+October 2015.
+
+As I had long suspected, the whole notion of just adding a nonblocking event loop to a blocking app is utter nonsense. See https://uwsgi-docs.readthedocs.org/en/latest/articles/OffloadingWebsocketsAndSSE.html
+
+When we want to add websockets to BTW, it is worth taking a look at
+https://pypi.python.org/pypi/django-websocket-redis
 
 ..  LocalWords: uwsgi sqlite backend Django init py env config btw
 ..  LocalWords:  Zotero Zotero's zotero BTW's auth
