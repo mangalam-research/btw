@@ -53,8 +53,8 @@ BUILD_DIR:=build
 # This cannot be the same URL as in wed. We want to the *source*
 # version of Bootstrap, not the distribution version which does not
 # contain the less files.
-BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.3.2.zip
-BOOTSTRAP_BASE=bootstrap-3.3.2.zip
+BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.3.5.zip
+BOOTSTRAP_BASE=bootstrap-3.3.5.zip
 
 JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # This creates a file name that a) identifies what it is an b) happens
