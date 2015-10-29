@@ -18,16 +18,16 @@ from behave import step_registry
 from behave.tag_matcher import ActiveTagMatcher
 from pyvirtualdisplay import Display
 
+from nose.tools import assert_equal  # pylint: disable=E0611
+from selenium_test import btw_util
+
 _dirname = os.path.dirname(__file__)
 
 conf_path = os.path.join(os.path.dirname(_dirname),
                          "build", "config", "selenium_config.py")
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
-from nose.tools import assert_equal  # pylint: disable=E0611
 assert_equal.im_self.longMessage = True
-
-from selenium_test import btw_util
 
 def sig(num, _frame):
     # Doing this ensures that cleanup will be called once before_all
@@ -202,8 +202,6 @@ def before_all(context):
     context.sc_tunnel_tempdir = None
     context.builder = None
 
-    setup_screenshots(context)
-
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
     context.visible = os.environ.get("SELENIUM_VISIBLE")
@@ -214,6 +212,8 @@ def before_all(context):
     dump_config(builder)
     if userdata.get("check_selenium_config", False):
         exit(0)
+
+    setup_screenshots(context)
 
     browser_to_tag_value = {
         "INTERNETEXPLORER": "ie",
@@ -476,8 +476,8 @@ def after_step(context, step):
     driver = context.driver
     if step.status == "failed":
         name = os.path.join(context.screenshots_dir_path,
-                            slugify(context.scenario.name + "_"
-                                    + step.name) + ".png")
+                            slugify(context.scenario.name + "_" +
+                                    step.name) + ".png")
         driver.save_screenshot(name)
         print("")
         print("Captured screenshot:", name)
