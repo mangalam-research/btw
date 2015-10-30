@@ -19,7 +19,8 @@ require.config({
    'modules': '/static/scripts/modules',
    localforage: 'external/localforage',
    'bluebird': 'external/bluebird.min',
-   moment: 'external/moment'
+   moment: 'external/moment',
+   interact: 'external/interact'
  },
  packages: [
      {
