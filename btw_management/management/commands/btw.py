@@ -1,5 +1,4 @@
 import os
-import stat
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -35,6 +34,11 @@ check process {worker_name} pidfile "{proj_path}/var/run/btw/{worker_name}.pid"
         "names": worker_names
     }
 
+def subdir(a, b):
+    """Returns whether a is a subdir of b."""
+    rel = os.path.relpath(os.path.realpath(a), os.path.realpath(b))
+    return not (rel == os.curdir or rel == os.pardir or
+                rel.startswith(os.pardir + os.sep))
 
 class Command(BaseCommand):
     help = """\
@@ -151,6 +155,12 @@ export UWSGI_DEB_CONFNAME=btw
             for path in [manage_path, start_uwsgi_path]:
                 st = os.stat(path)
                 os.chmod(path, st.st_mode | 0111)
+
+        elif cmd == "list-local-app-paths":
+            from django.apps import apps
+            for app in apps.get_app_configs():
+                if subdir(app.path, settings.TOPDIR):
+                    self.stdout.write(app.path)
 
         else:
             raise ValueError("unknown command: " + cmd)

@@ -1,0 +1,2 @@
+{% load libsf %}
+<label>Other parts of speech: <span class="sf-other-pos">{% for sibling in instance.related_by_pos %}{% sflink sibling sibling.heading_and_pos %}{% if not forloop.last %} {% endif %}{% endfor %}</span></label>

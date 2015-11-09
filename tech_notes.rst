@@ -512,7 +512,15 @@ See below for specific upgrade cases.
 
 - It is necessary to flush the article display cache::
 
-  $ ./manage.py clearcache article_display
+    $ ./manage.py clearcache article_display
+
+- You must give the ``category.add_category`` right to whoever will be
+  allowed to add categories.
+
+- You will have to create a "Semantic Fields" page which will have for
+  apphook semantic_fields. This pages should also have its permissions
+  set so that "Login required" checked and "Menu visibility" is "for
+  logged in users only".
 
 
 1.2.x to 1.3.0

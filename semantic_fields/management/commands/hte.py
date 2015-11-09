@@ -16,9 +16,9 @@ from django.db import models, reset_queries, connection
 from django.core import serializers
 from django.conf import settings
 
-from semantic_fields.models import Category, Lexeme, SearchWord, POS_CHOICES
+from semantic_fields.models import Category, Lexeme, SearchWord
 from semantic_fields.util import ParsedExpression, _make_from_hte, \
-    parse_local_reference
+    parse_local_reference, POS_CHOICES
 
 def get_csv_reader(csv_file, expected_headers):
     reader = csv.reader(csv_file,

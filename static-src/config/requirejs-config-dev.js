@@ -20,7 +20,18 @@ require.config({
    localforage: 'external/localforage',
    'bluebird': 'external/bluebird.min',
    moment: 'external/moment',
-   interact: 'external/interact'
+   interact: 'external/interact.min',
+   velocity: 'external/velocity/velocity.min',
+   'velocity-ui': 'external/velocity/velocity.ui.min'
+ },
+ // We use this map to force velocity to use Bluebird for promises.
+ map: {
+    '*': {
+        velocity: 'velocity-glue'
+    },
+    'velocity-glue': {
+        velocity: 'velocity'
+    }
  },
  packages: [
      {

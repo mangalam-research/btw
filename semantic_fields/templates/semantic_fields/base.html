@@ -1,0 +1,9 @@
+{% extends "base_site.html" %}
+{% load sekizai_tags %}
+{% load static %}
+{% load pipeline %}
+{% block extrahead %}
+{% addtoblock "css" %}
+{% stylesheet 'semantic_fields' %}
+{% endaddtoblock %}
+{% endblock %}

@@ -111,7 +111,7 @@ BUILD_SCRIPTS:=build/scripts/
 
 DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) $(BUILD_DEST)/lib/external/bluebird.min.js $(BUILD_DEST)/lib/external/bootstrap-datepicker $(BUILD_DEST)/lib/external/moment.js
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) $(BUILD_DEST)/lib/external/bluebird.min.js $(BUILD_DEST)/lib/external/bootstrap-datepicker $(BUILD_DEST)/lib/external/moment.js $(BUILD_DEST)/lib/external/velocity/velocity.min.js $(BUILD_DEST)/lib/external/velocity/velocity.ui.min.js
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -237,7 +237,7 @@ test-django-menu: $(TARGETS)
 	./manage.py test --attr=isolation=menu
 
 .PHONY: test-karma
-test-karma: javascript
+test-karma: all
 	xvfb-run ./node_modules/.bin/karma start --single-run
 
 .PHONY: keep-latest
@@ -303,6 +303,10 @@ $(BUILD_DEST)/lib/external/bootstrap-datepicker: node_modules/bootstrap-datepick
 	cp -rp $< $@
 
 $(BUILD_DEST)/lib/external/moment.js: node_modules/moment/moment.js
+	cp -rp $< $@
+
+$(BUILD_DEST)/lib/external/velocity/%: node_modules/velocity-animate/%
+	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
 $(BUILD_DEST)/lib/external/jquery-growl/%: COMMON_DIR:=$(BUILD_DEST)/lib/external/jquery-growl

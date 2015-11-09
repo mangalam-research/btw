@@ -4,3 +4,5 @@ import os
 # were right here.
 dirname = os.path.abspath(os.path.dirname(__file__))
 __path__.append(os.path.join(dirname, "../build/python/semantic_fields"))
+
+default_app_config = "semantic_fields.apps.DefaultAppConfig"

@@ -1,0 +1,25 @@
+{% extends "semantic_fields/base.html" %}
+{% block extrahead %}
+{{ block.super }}
+<link href="{{ btw_globals.btw_datatables_css_path }}" type="text/css" media="screen" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+{% include "semantic_fields/search_table.html" %}
+
+<script>
+  require(["jquery", "../js/displayers", "../js/semantic-field-search",
+  "../js/semantic-field-add"],
+  function ($, displayers_mod, st, add) {
+    var $table = $(document.getElementById("semantic-field-table"));
+    var table_panel = $table[0].closest(".panel");
+    var $template = $(displayers_mod.html_template);
+    table_panel.parentNode.insertBefore($template[0], table_panel.nextSibling);
+    var displayers = st($table,
+        $template[0],
+        { ajax_source_url: "{% url 'semantic_fields_table' %}" }).displayers;
+    {% if request.user.can_add_semantic_fields %}
+    add(displayers);
+    {% endif %}
+  });
+</script>
+{% endblock %}

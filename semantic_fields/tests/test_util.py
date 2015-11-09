@@ -1,7 +1,8 @@
 from django.test import TestCase
 from grako.exceptions import FailedParse
 
-from ..util import parse_local_reference, ParsedExpression
+from ..util import parse_local_reference, ParsedExpression, POS_CHOICES, \
+    POS_CHOICES_EXPANDED
 
 class UtilTestCase(TestCase):
     # We specifically do not test the failure modes of parse_sf
@@ -84,6 +85,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.hte_pos, "n")
         self.assertEqual(parsed.branches, None)
         self.assertEqual(parsed.specification, None)
+        self.assertEqual(parsed.pos, "n")
 
     def test_branches(self):
         """
@@ -105,6 +107,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.branches[1].uri, "http://www.bar.com")
         self.assertEqual(parsed.branches[1].levels, ("4", "5"))
         self.assertEqual(parsed.branches[1].pos, "aj")
+        self.assertEqual(parsed.pos, "aj")
 
     def test_specifications(self):
         """
@@ -153,6 +156,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.branches[0].levels, ("1", "2", "3"))
         self.assertEqual(parsed.branches[0].pos, "v")
         self.assertEqual(parsed.specification, None)
+        self.assertEqual(parsed.pos, "v")
 
     def test_subcat_parent(self):
         """
@@ -196,3 +200,138 @@ class ParsedExpressionTest(TestCase):
             self.assertEqual(str(parent), value)
         parent = parent.parent()
         self.assertIsNone(parent)
+
+    def test_pos_specified(self):
+        """
+        ``pos`` raises an exception on specified expressions.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot determine the pos of a "
+                "specified reference$"):
+            # pylint: disable=expression-not-assigned
+            ParsedExpression("01.01|02.03n/04.05n@01.01n").pos
+
+    def test_related_by_pos_hte_field(self):
+        """
+        ``related_by_pos()`` should return a correct list of related paths
+        when called for a HTE field.
+        """
+        parsed = ParsedExpression("01.01|02.03n")
+        related = [unicode(x) for x in parsed.related_by_pos()]
+        self.assertItemsEqual(related, ("01.01|02.03" + x for (x, _) in
+                                        POS_CHOICES if x != "n"))
+        # Specifically check that a path without pos is not there.
+        self.assertNotIn("01.01|02.03", related)
+
+    def test_related_by_pos_branch(self):
+        """
+        ``related_by_pos()`` should return a correct list of related paths
+        when called on an expression with branches.
+        """
+        parsed = ParsedExpression("01.01|02.03n/04.05n")
+        related = [unicode(x) for x in parsed.related_by_pos()]
+        self.assertItemsEqual(related, ("01.01|02.03n/04.05" + x for (x, _) in
+                                        POS_CHOICES_EXPANDED if x != "n"))
+        # Specifically check that a path without pos *is* there.
+        self.assertIn("01.01|02.03n/04.05", related)
+
+    def test_related_by_pos_specified(self):
+        """
+        ``related_by_pos()`` raises an exception on specified expressions.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot determine the related expressions of a "
+                "specified reference$"):
+            ParsedExpression("01.01|02.03n/04.05n@01.01n").related_by_pos()
+
+    def test_last_level_number_hte(self):
+        """
+        ``last_level_number`` provide the right number on pure HTE
+        expressions without subcategories.
+        """
+        parsed = ParsedExpression("01.02.03.04n")
+        self.assertEqual(parsed.last_level_number, 4)
+
+    def test_last_level_number_hte_subcat(self):
+        """
+        ``last_level_number`` provide the right number on pure HTE
+        expressions with subcategories.
+        """
+        parsed = ParsedExpression("01.01|01.02n")
+        self.assertEqual(parsed.last_level_number, 2)
+
+    def test_last_level_number_branches(self):
+        """
+        ``last_level_number`` provide the right number on expressions with
+        branches.
+        """
+        parsed = ParsedExpression("01.01n/01.02n/03.06n")
+        self.assertEqual(parsed.last_level_number, 6)
+
+    def test_last_level_number_fails_on_specified(self):
+        """
+        ``last_level_number`` raise an exception when used on a specified
+        expression.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot determine the last level of a "
+                "specified reference$"):
+            # pylint: disable=expression-not-assigned
+            ParsedExpression("01.01n@01.02n").last_level_number
+
+    def test_make_child_fails_on_bad_number(self):
+        """
+        ``make_child`` with a bad number should raise an exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^the number must be greater than 0$"):
+            ParsedExpression("01.01n/01.02n").make_child('', -1, "n")
+
+    def test_make_child_fails_on_bad_pos(self):
+        """
+        ``make_child`` with a bad pos should raise an exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^pos is not among valid choices$"):
+            ParsedExpression("01.01n/01.02n").make_child('', 10, "invalid")
+
+    # This is a current limitation of BTW. To be lifted later.
+    def test_make_child_fails_on_non_empty_uri(self):
+        """
+        ``make_child`` with a bad URI should raise an exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^BTW currently supports only an empty string for the URI$"):
+            ParsedExpression("01.01n/01.02n").make_child('x', 10, "n")
+
+    def test_make_child_fails_specified(self):
+        """
+        ``make_child`` raises an exception when invoked on a specified
+        expression.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot make a child for a specified reference$"):
+            ParsedExpression("01.01n@02.03n").make_child('', 2, "n")
+
+    def test_make_child_branch_exists(self):
+        """
+        ``make_child`` produces a correct expression when the branch
+        already exists.
+        """
+        child = ParsedExpression("01.01n/1.2n").make_child('', 2, "aj")
+        self.assertEqual(unicode(child), "01.01n/1.2.2aj")
+
+    def test_make_child_no_branch(self):
+        """
+        ``make_child`` produces a correct expression when the branch
+        does not already exist.
+        """
+        child = ParsedExpression("01.01n").make_child('', 2, "aj")
+        self.assertEqual(unicode(child), "01.01n/2aj")

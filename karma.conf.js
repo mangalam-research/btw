@@ -10,14 +10,17 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['requirejs', 'mocha', 'chai'],
-
+    frameworks: ['requirejs', 'mocha', 'chai-as-promised', 'chai'],
 
     // list of files / patterns to load in the browser
     files: [
-      'build/static-build/requirejs-config.js',
+      'sitestatic/config/requirejs-config-dev.js',
       'test-main.js',
-      {pattern: 'build/static-build/**/*.js', included: false}
+      {pattern: 'sitestatic/lib/**/*.js', included: false},
+      {pattern: 'sitestatic/js/**/*.js', included: false},
+      {pattern: 'karma_tests/**/*.js', included: false},
+      {pattern: 'semantic_fields/karma_tests/**/*.js', included: false},
+      {pattern: 'node_modules/sinon/lib/**/*.js', included: false}
     ],
 
 

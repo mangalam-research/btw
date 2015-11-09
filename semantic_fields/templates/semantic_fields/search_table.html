@@ -1,0 +1,42 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">
+      Semantic Field Search
+    </h4>
+  </div>
+  <div class="panel-body">
+    <table id="semantic-field-table" class="table table-striped">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Semantic Fields Found</th>
+        </tr>
+      </thead>
+        <tbody>
+        </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+  </div>
+</div>
+{% comment %}
+The following div contains templates for the help text in the search
+interface.
+{% endcomment %}
+<div class="semantic-field-search-help" style="display: none">
+  <p class="search-help">Type the text you want to search for in this
+  field. If you surround the text with double quotes, the search will
+  be "exact". For instance, if you search for <code>"Speak"</code>, it
+  will match only the word <code>Speak</code>,
+  not <code>Speaking</code>, or <code>speak</code>.</p>
+  <p class="aspect-help">This selector determines what aspect of the
+    semantic fields you want to search: <code>semantic field
+    names</code> will search only the names of the semantic
+    fields, <code>lexemes</code> will search only the lexemes
+    associated with the fields.</p>
+  <p class="scope-help">This selector determines what the scope of the
+  search is. Use <code>HTE fields</code> to select only those fields
+  provided with the Historical Thesaurus of English. Use <code>custom
+  BTW fields</code> to search those fields created for the BTW
+  project. Use <code>all fields</code> to search all fields.</p>
+</div>

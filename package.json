@@ -11,10 +11,14 @@
         "karma-mocha": ">=0.1.10 <1",
         "karma-chai": ">=0.1.0 <1",
         "karma-requirejs": ">=0.2.2 <1",
+        "karma-chai-as-promised": ">=0.1.2 <1",
         "less": ">=2 <3",
         "moment": ">=2.10.3 <3",
-        "bluebird": ">=2.9.13 <3",
+        "bluebird": ">=3 <4",
         "bootstrap-datepicker": ">=1.4.0 <2",
-        "wed": ">=0.26"
+        "wed": ">=0.26",
+        "velocity-animate": ">=1.2.3 <2",
+        "sinon": ">=1.17.3 <2",
+        "chai-as-promised": ">=5.2.0 <6"
     }
 }

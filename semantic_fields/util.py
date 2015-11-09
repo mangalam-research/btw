@@ -11,10 +11,8 @@ class _FieldParser(fieldParser):
     def parse(self, string, start):
         return super(_FieldParser, self).parse(string, start)
 
-__parser = _FieldParser()
-
 def _to_ast(string):
-    return __parser.parse(string, "field")
+    return _FieldParser().parse(string, "field")
 
 def _make_from_hte(**kwargs):
     """
@@ -73,7 +71,7 @@ class ParsedExpression():
 
         if exp.branches:
             self.branches = \
-                tuple(_ParsedBranch(branch) for branch in exp.branches)
+                tuple(_ParsedBranch(branch=branch) for branch in exp.branches)
         else:
             self.branches = None
 
@@ -166,12 +164,119 @@ class ParsedExpression():
         self_copy.specification = None
         return [self_copy] + spec.specification_to_array()
 
+    @property
+    def pos(self):
+        """
+        The pos that govern this expression. This is the last pos that
+        appears in the sequence of hte number and branches.
+        """
+        if self.specification:
+            raise ValueError("cannot determine the pos of a "
+                             "specified reference")
+
+        if self.branches:
+            return self.branches[-1].pos
+
+        return self.hte_pos
+
+    def related_by_pos(self):
+        """
+        :returns: The list of expressions which would differ from this
+        expression only due to the governing pos being different. Note
+        that this function builds a theoretical list. It does not
+        verify whether these expression correspond to existing fields
+        in the database.
+        """
+        if self.specification:
+            raise ValueError("cannot determine the related expressions of a "
+                             "specified reference")
+
+        my_pos = self.pos
+
+        ret = []
+
+        # The set of choices we iterate over is different depending on
+        # whether we are on a branch or not. Branches can take a blank
+        # pos, HTE fields (no branch) cannot.
+        choices = POS_CHOICES_EXPANDED if self.branches else POS_CHOICES
+
+        for (pos, _) in choices:
+            if pos == my_pos:
+                continue
+            related = copy.copy(self)
+            if related.branches:
+                related.branches = \
+                    related.branches[:-1] + (copy.copy(related.branches[-1]), )
+                related.branches[-1].pos = pos
+            else:
+                related.hte_pos = pos
+            ret.append(related)
+
+        return ret
+
+    @property
+    def last_level_number(self):
+        if self.specification:
+            raise ValueError("cannot determine the last level of a "
+                             "specified reference")
+
+        if self.branches:
+            return self.branches[-1].last_level_number
+
+        if self.hte_subcats:
+            return int(self.hte_subcats[-1])
+
+        return int(self.hte_levels[-1])
+
+    def make_child(self, uri, number, pos):
+        if self.specification:
+            raise ValueError("cannot make a child for a specified reference")
+
+        if pos not in POS_TO_VERBOSE:
+            raise ValueError("pos is not among valid choices")
+
+        if number <= 0:
+            raise ValueError("the number must be greater than 0")
+
+        ret = self.branch_out(uri)
+
+        ret = copy.copy(self) if ret is self else ret
+        ret.branches = ret.branches[:-1] + \
+            (ret.branches[-1].make_child(number, pos), )
+        return ret
+
+    def branch_out(self, uri):
+        if self.specification:
+            raise ValueError("cannot make a branch for a specified reference")
+
+        if self.branches and self.branches[-1].uri == uri:
+            # There's nothing to be done
+            return self
+
+        ret = copy.copy(self)
+        if not ret.branches:
+            ret.branches = (_ParsedBranch(uri=uri), )
+            return ret
+
+        ret.branches = ret.branches + (_ParsedBranch(uri=uri), )
+        return ret
+
+
 class _ParsedBranch(object):
 
-    def __init__(self, branch):
-        self.uri = branch.uri
-        self.levels = tuple(branch.levels)
-        self.pos = branch.pos
+    def __init__(self, branch=None, uri=None):
+        if branch is not None:
+            self.uri = branch.uri or ""
+            self.levels = tuple(branch.levels)
+            self.pos = branch.pos or ""
+        else:
+            self.uri = uri
+            self.levels = ()
+            self.pos = ''
+
+        if self.uri != "":
+            raise ValueError(
+                "BTW currently supports only an empty string for the URI")
 
     def __unicode__(self):
         ret = u"/"
@@ -201,6 +306,42 @@ class _ParsedBranch(object):
         ret.levels = ret.levels[:-1]
         return ret
 
+    @property
+    def last_level_number(self):
+        return int(self.levels[-1])
+
+    def make_child(self, number, pos):
+        if pos not in POS_TO_VERBOSE:
+            raise ValueError("pos is not among valid choices")
+
+        if number <= 0:
+            raise ValueError("the number must be greater than 0")
+
+        ret = copy.copy(self)
+        ret.pos = pos
+        ret.levels = ret.levels + (str(number), )
+        return ret
+
+POS_CHOICES = (
+    ('aj', 'Adjective'),
+    ('av', 'Adverb'),
+    ('cj', 'Conjunction'),
+    ('in', 'Interjection'),
+    ('n', 'Noun'),
+    ('p', 'Preposition'),
+    ('ph', 'Phrase'),
+    ('v', 'Verb'),
+    ('vi', 'Intransitive verb'),
+    ('vm', 'Impersonal verb'),
+    ('vp', 'Passive verb'),
+    ('vr', 'Reflexive verb'),
+    ('vt', 'Transitive verb')
+)
+
+# HTE fields need a pos, but custom fields may have a blank pos.
+POS_CHOICES_EXPANDED = POS_CHOICES + (('', 'None'), )
+
+POS_TO_VERBOSE = dict(POS_CHOICES_EXPANDED)
 
 def _branch_checks(ast):
     if ast.branches and len(ast.branches) > 1:
