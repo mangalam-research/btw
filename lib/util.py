@@ -9,12 +9,14 @@ from StringIO import StringIO
 import lxml.etree
 import logging
 import functools32
+from functools import wraps
 
 import semver
 from django.db.models import Q
 from django.utils.timezone import utc
 from django.conf import settings
 from django.core.cache import caches
+from django.core.exceptions import PermissionDenied
 import django_redis
 
 # We effectively reexport this function here.
@@ -398,3 +400,16 @@ class NoPostMigrateMixin(object):
             super(NoPostMigrateMixin, self)._fixture_teardown()
         finally:
             self.available_apps = saved_aa
+
+def ajax_login_required(view):
+    """
+    This is the AJAX-y version of @login_required. If the user is not
+    authenticated, this will raise ``PermissionDenied`` rather than
+    redirect to the login page.
+    """
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            raise PermissionDenied
+        return view(request, *args, **kwargs)
+    return wrapper

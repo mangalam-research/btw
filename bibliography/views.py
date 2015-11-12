@@ -1,12 +1,10 @@
 import logging
 import json
-from functools import wraps
 import itertools
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
 from django.template import loader, RequestContext
-from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_GET, require_POST,  \
     require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
@@ -20,6 +18,7 @@ from rest_framework import viewsets, generics, mixins, permissions, \
     parsers, renderers
 from rest_framework.response import Response
 
+from lib.util import ajax_login_required
 from .zotero import Zotero, zotero_settings
 from .models import Item, PrimarySource
 from .forms import PrimarySourceForm
@@ -31,15 +30,6 @@ logger = logging.getLogger(__name__)
 
 btw_zotero = Zotero(zotero_settings(), 'BTW Library')
 cache = caches["bibliography"]
-
-def ajax_login_required(view):
-    @wraps(view)
-    def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated():
-            raise PermissionDenied
-        return view(request, *args, **kwargs)
-    return wrapper
-
 
 @require_GET
 def search(request):
