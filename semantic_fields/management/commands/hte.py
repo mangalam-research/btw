@@ -252,6 +252,8 @@ extract-sfs: extracts all the semantic field numbers found in the database
             self.dump_subset(args, options)
         elif cmd == "timing-test":
             self.timing_test(args, options)
+        elif cmd == "analyze":
+            self.analyze()
         else:
             raise ValueError("unknown command: " + cmd)
 
@@ -783,3 +785,24 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 model.objects.all().delete()
                 raise CommandError(
                     "loading {0} failed: stopping".format(path))
+
+    def analyze(self):
+        pos_re = re.compile("[a-z]+$")
+        paths = set(Category.objects.all().values_list("path", flat=True))
+
+        total = len(paths)
+        subcats = 0
+        total_missing = 0
+        for path in paths:
+            as_noun = pos_re.sub("n", path)
+            if as_noun not in paths:
+                total_missing += 1
+                # self.stdout.write("{0} has no noun equivalent".format(path))
+                cat = Category.objects.get(path=path)
+                if cat.is_subcat:
+                    subcats += 1
+
+        self.stdout.write("{0} fields total".format(total))
+        self.stdout.write("{0} fields have no noun equivalent"
+                          .format(total_missing))
+        self.stdout.write("{0} of them are subcategories".format(subcats))
