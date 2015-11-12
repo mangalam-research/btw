@@ -151,8 +151,25 @@ s.STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'less.finders.LessFinder'
+    'pipeline.finders.PipelineFinder'
 )
+
+# We need this for ``pipeline``.
+s.STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
+
+s.PIPELINE_CSS = {}
+
+s.PIPELINE_JS = {}
+
+s.PIPELINE_CSS_COMPRESSOR = None
+
+s.PIPELINE_JS_COMPRESSOR = None
+
+s.PIPELINE_COMPILERS = (
+    'pipeline.compilers.less.LessCompiler',
+)
+
+s.PIPELINE_LESS_BINARY = os.path.join(s.TOPDIR, "./node_modules/.bin/lessc")
 
 #
 # This must be set in the installation-specific files.
@@ -256,7 +273,6 @@ s.INSTALLED_APPS = (
     'djangocms_admin_style',
     'django.contrib.admin.apps.SimpleAdminConfig',
     'django.contrib.admindocs',
-    'less',
     'django_nose',
     'wed',
     'lexicography',
@@ -307,6 +323,7 @@ s.INSTALLED_APPS = (
     'cmsplugin_filer_video',
     'semantic_fields',
     # End of apps required by Django CMS.
+    'pipeline',
     'final',
 )
 
