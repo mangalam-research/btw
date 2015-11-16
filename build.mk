@@ -61,7 +61,7 @@ JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # to correspond to the top directory of the zip that github creates.
 JQUERY_COOKIE_BASE:=jquery-cookie-$(patsubst v%,%,$(notdir $(JQUERY_COOKIE_URL)))
 
-DATATABLES_URL:=http://datatables.net/releases/DataTables-1.10.2.zip
+DATATABLES_URL:=http://datatables.net/releases/DataTables-1.10.10.zip
 # This creates a file name that a) identifies what it is an b) happens
 # to correspond to the top directory of the zip that github creates.
 DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
