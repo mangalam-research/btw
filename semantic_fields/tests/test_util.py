@@ -300,16 +300,6 @@ class ParsedExpressionTest(TestCase):
                 "^pos is not among valid choices$"):
             ParsedExpression("01.01n/01.02n").make_child('', 10, "invalid")
 
-    # This is a current limitation of BTW. To be lifted later.
-    def test_make_child_fails_on_non_empty_uri(self):
-        """
-        ``make_child`` with a bad URI should raise an exception.
-        """
-        with self.assertRaisesRegexp(
-                ValueError,
-                "^BTW currently supports only an empty string for the URI$"):
-            ParsedExpression("01.01n/01.02n").make_child('x', 10, "n")
-
     def test_make_child_fails_specified(self):
         """
         ``make_child`` raises an exception when invoked on a specified

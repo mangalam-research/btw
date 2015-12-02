@@ -274,10 +274,6 @@ class _ParsedBranch(object):
             self.levels = ()
             self.pos = ''
 
-        if self.uri != "":
-            raise ValueError(
-                "BTW currently supports only an empty string for the URI")
-
     def __unicode__(self):
         ret = u"/"
         if self.uri:
