@@ -16,7 +16,7 @@ from django.db import models, reset_queries, connection
 from django.core import serializers
 from django.conf import settings
 
-from semantic_fields.models import Category, Lexeme, SearchWord
+from semantic_fields.models import SemanticField, Lexeme, SearchWord
 from semantic_fields.util import ParsedExpression, _make_from_hte, \
     parse_local_reference, POS_CHOICES
 
@@ -158,12 +158,12 @@ class FieldConverter(object):
         raise NotImplementedError("subclasses must implement this")
 
 
-class CategoryFieldConverter(FieldConverter):
+class SemanticFieldFieldConverter(FieldConverter):
     frm = "catid"
-    to = "category"
+    to = "semantic_field"
 
     def __init__(self, catids):
-        super(CategoryFieldConverter, self).__init__()
+        super(SemanticFieldFieldConverter, self).__init__()
         self.catids = catids
 
     def convert(self, row):
@@ -274,11 +274,11 @@ extract-sfs: extracts all the semantic field numbers found in the database
 
         self.stdout.write(using("before categories"))
         if any(model.objects.exists() for model in (
-                Category, Lexeme, SearchWord)) and not force_overwrite:
+                SemanticField, Lexeme, SearchWord)) and not force_overwrite:
             raise CommandError("would overwrite tables; "
                                "use --force-overwrite to override")
 
-        for model in Category, Lexeme, SearchWord:
+        for model in SemanticField, Lexeme, SearchWord:
             model.objects.all().delete()
 
         skipped = False
@@ -295,8 +295,8 @@ extract-sfs: extracts all the semantic field numbers found in the database
             # "pos".
             for x in truncations:
                 try:
-                    Category.objects.get(path=x)
-                except Category.DoesNotExist:
+                    SemanticField.objects.get(path=x)
+                except SemanticField.DoesNotExist:
                     raise ValueError(("record {0} is missing; this will "
                                       "prevent truncation").format(x))
 
@@ -306,7 +306,7 @@ extract-sfs: extracts all the semantic field numbers found in the database
             # We prefetch the catid values from the database instead of
             # checking them one by one.
             catids = {x["catid"]: x["id"] for x in
-                      Category.objects.filter(catid__isnull=False)
+                      SemanticField.objects.filter(catid__isnull=False)
                       .values("id", "catid")}
 
             self.load(lexemes_path, Lexeme, [
@@ -347,7 +347,7 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 # And which are for "current" words.
                 row[header_to_csv_index["current"]] == "_"],
                 None,
-                [CategoryFieldConverter(catids)])
+                [SemanticFieldFieldConverter(catids)])
             skipped = True
 
         using("before searchwords")
@@ -383,8 +383,8 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 total_count += 1
                 cat = None
                 try:
-                    cat = Category.objects.get(path=unicode(parsed))
-                except Category.DoesNotExist:
+                    cat = SemanticField.objects.get(path=unicode(parsed))
+                except SemanticField.DoesNotExist:
                     self.stderr.write("{0} did not exist".format(parsed))
 
                 if cat:
@@ -402,7 +402,8 @@ extract-sfs: extracts all the semantic field numbers found in the database
 
         to_serialize.update(parents)
 
-        lexemes = Lexeme.objects.filter(category__in=to_serialize.keys())
+        lexemes = Lexeme.objects.filter(
+            semantic_field__in=to_serialize.keys())
         searchword = SearchWord.objects.filter(htid__in=lexemes)
 
         self.stdout.write(serializers.serialize("json",
@@ -462,18 +463,18 @@ extract-sfs: extracts all the semantic field numbers found in the database
         if what == "get":
             for request in requests:
                 try:
-                    Category.objects.get(path=request)
+                    SemanticField.objects.get(path=request)
                     found += 1
-                except Category.DoesNotExist:
+                except SemanticField.DoesNotExist:
                     self.stdout.write("cannot find: " + request)
                     pass
         elif what == "children":
             found = 0
             for request in requests:
                 try:
-                    node = Category.objects.get(path=request)
+                    node = SemanticField.objects.get(path=request)
                     found += 1
-                except Category.DoesNotExist:
+                except SemanticField.DoesNotExist:
                     self.stdout.write("cannot find: " + request)
                     node = None
                 if node:
@@ -497,7 +498,7 @@ extract-sfs: extracts all the semantic field numbers found in the database
 
             def insert():
                 if not failures:
-                    Category.objects.bulk_create(records)
+                    SemanticField.objects.bulk_create(records)
                 # In DEBUG mode Django will record all queries made to
                 # the database, which can easily use all memory. Don't
                 # prevent DEBUG=True but flush the queries periodically.
@@ -544,14 +545,14 @@ extract-sfs: extracts all the semantic field numbers found in the database
                     self.stderr.write("{0}".format(failure[1]))
 
                 self.stderr.write("validation failed: deleting table")
-                Category.objects.all().delete()
+                SemanticField.objects.all().delete()
                 raise CommandError(
                     "loading {0} failed: stopping".format(path))
 
         return truncations
 
     def fix_parents(self):
-        values = Category.objects.values("path", "id")
+        values = SemanticField.objects.values("path", "id")
         path_to_id_cache = {d["path"]: d["id"] for d in values}
 
         def find_parent(path):
@@ -584,7 +585,7 @@ extract-sfs: extracts all the semantic field numbers found in the database
             for (id, parent) in id_to_parent.iteritems():
                 count += 1
                 if parent is not None:
-                    cursor.execute("UPDATE semantic_fields_category "
+                    cursor.execute("UPDATE semantic_fields_semanticfield "
                                    "SET parent_id = %s WHERE id = %s",
                                    [parent, id])
 
@@ -641,9 +642,10 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 raise ValueError("pos not among expected values: {0}"
                                  .format(row))
             path += pos
-            last = Category(path=path,
-                            heading=row[header_to_csv_index["heading"]],
-                            catid=row[header_to_csv_index["catid"]])
+            last = SemanticField(
+                path=path,
+                heading=row[header_to_csv_index["heading"]],
+                catid=row[header_to_csv_index["catid"]])
             last.full_clean()
 
             records.append(last)
@@ -788,7 +790,8 @@ extract-sfs: extracts all the semantic field numbers found in the database
 
     def analyze(self):
         pos_re = re.compile("[a-z]+$")
-        paths = set(Category.objects.all().values_list("path", flat=True))
+        paths = set(SemanticField.objects.all().values_list("path",
+                                                            flat=True))
 
         total = len(paths)
         subcats = 0
@@ -797,8 +800,9 @@ extract-sfs: extracts all the semantic field numbers found in the database
             as_noun = pos_re.sub("n", path)
             if as_noun not in paths:
                 total_missing += 1
-                # self.stdout.write("{0} has no noun equivalent".format(path))
-                cat = Category.objects.get(path=path)
+                # self.stdout
+                # .write("{0} has no noun equivalent".format(path))
+                cat = SemanticField.objects.get(path=path)
                 if cat.is_subcat:
                     subcats += 1
 

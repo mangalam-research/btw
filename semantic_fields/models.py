@@ -4,7 +4,7 @@ from django.utils.html import mark_safe, escape
 
 from .util import parse_local_reference, POS_TO_VERBOSE
 
-class Category(models.Model):
+class SemanticField(models.Model):
     catid = models.IntegerField(unique=True, max_length=7, null=True)
     _path = models.TextField(unique=True, name="path", db_column="path")
     parent = models.ForeignKey(
@@ -32,36 +32,39 @@ class Category(models.Model):
                 for c in children)
 
         # The looping and exception handling here is to handle a
-        # possible race if two users try to create a new category at
+        # possible race if two users try to create a new field at
         # the same time.
         while True:
             max_child += 1
             desired_path = ref.make_child('', max_child, pos)
-            cat = Category(path=desired_path, heading=heading, parent=self)
+            sf = SemanticField(path=desired_path,
+                               heading=heading,
+                               parent=self)
             try:
-                cat.save()
-                return cat
+                sf.save()
+                return sf
             except IntegrityError as ex:
                 # Verify whether the path is already existing.
                 try:
-                    Category.objects.get(path=desired_path)
+                    SemanticField.objects.get(path=desired_path)
                     # Ok, so the desired path exists. Loop over and retry.
-                except Category.DoesNotExist:
+                except SemanticField.DoesNotExist:
                     # It is not a path uniqueness problem, reraise.
                     raise ex
 
     @property
     def detail_url(self):
-        return reverse('semantic_fields_category-detail', args=(self.pk, ))
+        return reverse('semantic_fields_semanticfield-detail',
+                       args=(self.pk, ))
 
     @property
     def create_url(self):
         # We create by POSTing to the list URL
-        return reverse('semantic_fields_category-list')
+        return reverse('semantic_fields_semanticfield-list')
 
     @property
     def add_child_form_url(self):
-        return reverse('semantic_fields_category-add-child-form',
+        return reverse('semantic_fields_semanticfield-add-child-form',
                        args=(self.pk, ))
 
     @property
@@ -98,7 +101,8 @@ class Category(models.Model):
         ref = self.parsed_path
         related = ref.related_by_pos()
         related = \
-            Category.objects.filter(path__in=(unicode(x) for x in related))
+            SemanticField.objects.filter(
+                path__in=(unicode(x) for x in related))
         self._related_by_pos = related
         return related
 
@@ -191,13 +195,13 @@ class Category(models.Model):
 class Lexeme(models.Model):
 
     class Meta:
-        unique_together = ("category", "catorder")
+        unique_together = ("semantic_field", "catorder")
         ordering = ["catorder"]
 
     htid = models.IntegerField(primary_key=True, max_length=7)
-    # The category field is our real foreign key. We convert the HTE
+    # This field is our real foreign key. We convert the HTE
     # field catid to it.
-    category = models.ForeignKey(Category)
+    semantic_field = models.ForeignKey(SemanticField)
     word = models.CharField(max_length=60)
     fulldate = models.CharField(max_length=90)
     catorder = models.IntegerField(max_length=3)

@@ -4,21 +4,21 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.html import escape
 
-from ..models import Category
+from ..models import SemanticField
 from ..util import ParsedExpression
 
 sep_re = re.compile(r"(\s+(?:>|::)\s+)")
 pos_re = re.compile(r" \((.*)\)$")
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
-class CategoryTestCase(TestCase):
+class SemanticFieldTestCase(TestCase):
 
     def test_parsed_path(self):
         """
         Test that ``parsed_path`` returns a proper value when ``path``
         changes.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         self.assertEqual(unicode(c.parsed_path), "01.01n")
         c.path = "01.01v"
         self.assertEqual(unicode(c.parsed_path), "01.01v")
@@ -27,25 +27,27 @@ class CategoryTestCase(TestCase):
         """
         Test that ``pos`` returns a proper value when ``path`` changes.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         self.assertEqual(unicode(c.pos), "n")
         c.path = "01.01v"
         self.assertEqual(unicode(c.pos), "v")
 
     def test_verbose_pos(self):
         """
-        Test that ``verbose_pos`` returns a proper value when ``path`` changes.
+        Test that ``verbose_pos`` returns a proper value when ``path``
+        changes.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         self.assertEqual(unicode(c.verbose_pos), "Noun")
         c.path = "01.01v"
         self.assertEqual(unicode(c.verbose_pos), "Verb")
 
     def test_is_subcat(self):
         """
-        Test that ``is_subcat`` returns a proper value when ``path`` changes.
+        Test that ``is_subcat`` returns a proper value when ``path``
+        changes.
         """
-        c = Category(path="01.01|01n")
+        c = SemanticField(path="01.01|01n")
         self.assertTrue(c.is_subcat)
         c.path = "01.01v"
         self.assertFalse(c.is_subcat)
@@ -55,14 +57,15 @@ class CategoryTestCase(TestCase):
         Test that ``heading_and_pos`` returns a proper value when ``path``
         changes.
         """
-        c = Category(path="01.01n", heading="foo")
+        c = SemanticField(path="01.01n", heading="foo")
         self.assertEqual(unicode(c.heading_and_pos), "foo (Noun)")
         c.path = "01.01v"
         self.assertEqual(unicode(c.heading_and_pos), "foo (Verb)")
 
     def test_related_by_pos(self):
         """
-        Test that related_by_pos returns a proper value when ``path`` changes.
+        Test that related_by_pos returns a proper value when ``path``
+        changes.
         """
 
         # This test hits the database, but we create the data we need
@@ -72,14 +75,14 @@ class CategoryTestCase(TestCase):
         base_path = "01.01"
         create_related = ("n", "v", "aj", "av")
         for pos in create_related:
-            c = Category(path=base_path + pos, heading="foo " + pos)
+            c = SemanticField(path=base_path + pos, heading="foo " + pos)
             c.save()
 
-        c = Category.objects.get(path=base_path + "n")
+        c = SemanticField.objects.get(path=base_path + "n")
 
         related = [x.id for x in c.related_by_pos]
 
-        expected = [Category.objects.get(path=base_path + pos).id
+        expected = [SemanticField.objects.get(path=base_path + pos).id
                     for pos in create_related if pos != "n"]
         self.assertTrue(len(related) > 0)
         self.assertTrue(len(expected) > 0)
@@ -93,44 +96,44 @@ class CategoryTestCase(TestCase):
         """
         Test that the value of ``link`` is correct.
         """
-        c = Category(path="01.01n", heading="foo")
+        c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.link,
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/category/{0}/'>"
+                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_make_link_default(self):
         """
         ``make_link`` should return a reasonable default.
         """
-        c = Category(path="01.01n", heading="foo")
+        c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link(),
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/category/{0}/'>"
+                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_make_link_text(self):
         """
         ``make_link`` should honor the ``text`` parameter.
         """
-        c = Category(path="01.01n", heading="foo")
+        c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link("bar"),
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/category/{0}/'>"
+                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
                           "bar</a>").format(c.id))
 
     def test_make_link_css_class(self):
         """
         ``make_link`` should honor the ``css_class`` parameter.
         """
-        c = Category(path="01.01n", heading="foo")
+        c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link(css_class="bar"),
                          ("<a class='btn btn-default btn-sm sf-link bar' "
-                          "href='/en-us/semantic_fields/category/{0}/'>"
+                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_breadcrumbs_parent_mixed(self):
@@ -150,11 +153,12 @@ class CategoryTestCase(TestCase):
             parent = None
             if parent_path is not None:
                 try:
-                    parent = Category.objects.get(path=unicode(parent_path))
-                except Category.DoesNotExist:
+                    parent = SemanticField.objects.get(
+                        path=unicode(parent_path))
+                except SemanticField.DoesNotExist:
                     pass
 
-            cat = Category(path=path, heading=heading, parent=parent)
+            cat = SemanticField(path=path, heading=heading, parent=parent)
             cat.save()
             self.assertEqual(cat.breadcrumbs, escape(expected))
 
@@ -175,11 +179,12 @@ class CategoryTestCase(TestCase):
             parent = None
             if parent_path is not None:
                 try:
-                    parent = Category.objects.get(path=unicode(parent_path))
-                except Category.DoesNotExist:
+                    parent = SemanticField.objects.get(
+                        path=unicode(parent_path))
+                except SemanticField.DoesNotExist:
                     pass
 
-            cat = Category(path=path, heading=heading, parent=parent)
+            cat = SemanticField(path=path, heading=heading, parent=parent)
             cat.save()
 
             # We don't want to hardcode the actual links in
@@ -189,27 +194,29 @@ class CategoryTestCase(TestCase):
             parts = sep_re.split(expected)
             expected = "".join(
                 [(escape(p) if sep_re.match(p) else
-                  Category.objects.get(heading=p).link)
+                  SemanticField.objects.get(heading=p).link)
                  for p in parts[:-1]])
 
-            last = Category.objects.get(heading=pos_re.sub('', parts[-1]))
+            last = SemanticField.objects.get(
+                heading=pos_re.sub('', parts[-1]))
             expected += last.make_link(last.heading_and_pos)
-            expected = '<span class="sf-breadcrumbs">' + expected + '</span>'
+            expected = '<span class="sf-breadcrumbs">' + expected + \
+                       '</span>'
 
             self.assertEqual(cat.linked_breadcrumbs, expected)
 
-    def test_hte_url_on_non_hte_category(self):
+    def test_hte_url_on_non_hte_semanticfield(self):
         """
         ``hte_url`` should be ``None`` on non-HTE categories.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         self.assertIsNone(c.hte_url)
 
-    def test_hte_url_on_hte_category(self):
+    def test_hte_url_on_hte_semanticfield(self):
         """
         ``hte_url`` should have a decent value for HTE categories.
         """
-        c = Category(path="01.01n", catid=1)
+        c = SemanticField(path="01.01n", catid=1)
         self.assertEqual(
             c.hte_url,
             "http://historicalthesaurus.arts.gla.ac.uk/category/?id=1")
@@ -218,7 +225,7 @@ class CategoryTestCase(TestCase):
         """
         ``make_child`` on a HTE field should open a new branch
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         c.save()
         child = c.make_child("foo", "n")
         self.assertEqual(child.path, "01.01n/1n")
@@ -230,7 +237,7 @@ class CategoryTestCase(TestCase):
         """
         ``make_child`` on a custom field should just add to the branch.
         """
-        c = Category(path="01.01n/1n")
+        c = SemanticField(path="01.01n/1n")
         c.save()
         child = c.make_child("foo", "n")
         self.assertEqual(child.path, "01.01n/1.1n")
@@ -243,7 +250,7 @@ class CategoryTestCase(TestCase):
         ``make_child`` called twice on the same field will create fields
         with paths that do no conflict.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         c.save()
         child = c.make_child("foo", "n")
         self.assertEqual(child.path, "01.01n/1n")
@@ -262,7 +269,7 @@ class CategoryTestCase(TestCase):
         ``make_child`` called twice on the same field will create fields
         with paths that do no conflict.
         """
-        c = Category(path="01.01n")
+        c = SemanticField(path="01.01n")
         c.save()
         with self.assertRaisesRegexp(ValueError,
                                      "^pos is not among valid choices$"):

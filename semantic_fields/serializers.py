@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Category
+from .models import SemanticField
 
-class CategorySerializer(serializers.ModelSerializer):
+class SemanticFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Category
+        model = SemanticField
         fields = ("path", "heading", "parent")

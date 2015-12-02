@@ -2,18 +2,19 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import mark_safe
 from django.template.loader import render_to_string
 from django.core.exceptions import PermissionDenied
+from django.views.decorators.cache import never_cache
 from rest_framework import viewsets, mixins, renderers, parsers, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import NotAcceptable
 from rest_framework import serializers
 
-from .models import Category
-from .serializers import CategorySerializer
-from .forms import CategoryForm
+from .models import SemanticField
+from .serializers import SemanticFieldSerializer
+from .forms import SemanticFieldForm
 
 class SearchTable(BaseDatatableView):
-    model = Category
+    model = SemanticField
 
     columns = ['detail_url', 'heading']
     order_columns = ['', 'path']
@@ -38,7 +39,7 @@ class SearchTable(BaseDatatableView):
         search_value = search_value.strip()
 
         if search_value == "":
-            return Category.objects.none()
+            return SemanticField.objects.none()
 
         if search_value[0] == '"' and search_value[-1] == '"':
             exact = ""  # Exact field lookup
@@ -61,7 +62,7 @@ class SearchTable(BaseDatatableView):
         return qs.filter(**{field + exact: search_value})
 
 
-class CategoryHTMLRenderer(renderers.TemplateHTMLRenderer):
+class SemanticFieldHTMLRenderer(renderers.TemplateHTMLRenderer):
     media_type = "text/html"
     template_name = 'semantic_fields/details.html'
 
@@ -78,26 +79,27 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
-class CategoryViewSet(mixins.RetrieveModelMixin,
-                      mixins.CreateModelMixin,
-                      viewsets.GenericViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class SemanticFieldViewSet(mixins.RetrieveModelMixin,
+                           mixins.CreateModelMixin,
+                           viewsets.GenericViewSet):
+    queryset = SemanticField.objects.all()
+    serializer_class = SemanticFieldSerializer
     lookup_field = "pk"
 
     permission_classes = (permissions.IsAuthenticated, )
     renderer_classes = (
-        renderers.JSONRenderer, CategoryHTMLRenderer, FormRenderer)
+        renderers.JSONRenderer, SemanticFieldHTMLRenderer, FormRenderer)
     parser_classes = (parsers.FormParser, )
 
     def retrieve(self, request, *args, **kwargs):
         if request.accepted_renderer.media_type == "text/html":
             return Response({'instance': self.get_object()})
 
-        return super(CategoryViewSet, self) \
+        return super(SemanticFieldViewSet, self) \
             .retrieve(request, *args, **kwargs)
 
     @detail_route(methods=['get'], url_path='add-child-form')
+    # @never_cache
     def add_child_form(self, request, pk, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
@@ -108,7 +110,7 @@ class CategoryViewSet(mixins.RetrieveModelMixin,
             request.accepted_renderer = FormRenderer()
 
         if request.accepted_renderer.media_type == "application/x-form":
-            form = CategoryForm(initial={'parent': pk})
+            form = SemanticFieldForm(initial={'parent': pk})
             return Response({'form': form}, content_type="text/html")
 
         raise NotAcceptable
@@ -117,9 +119,9 @@ class CategoryViewSet(mixins.RetrieveModelMixin,
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
-        form = CategoryForm(request.data)
+        form = SemanticFieldForm(request.data)
         if form.is_valid():
-            parent = form.cleaned_data["parent"]
+            parent = SemanticField.objects.get(id=form.cleaned_data["parent"])
             parent.make_child(form.cleaned_data["heading"],
                               form.cleaned_data["pos"])
             return Response()

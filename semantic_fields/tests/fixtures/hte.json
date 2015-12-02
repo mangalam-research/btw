@@ -6,7 +6,7 @@
     "catid": 1,
     "heading": "The world"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 1
 },
 {
@@ -16,7 +16,7 @@
     "catid": 121190,
     "heading": "Making certain, assurance"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121174
 },
 {
@@ -26,7 +26,7 @@
     "catid": 120473,
     "heading": "object of"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120457
 },
 {
@@ -36,7 +36,7 @@
     "catid": 134812,
     "heading": "Bad taste"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 134796
 },
 {
@@ -46,7 +46,7 @@
     "catid": 193196,
     "heading": "Seafaring life"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 193179
 },
 {
@@ -56,7 +56,7 @@
     "catid": 146210,
     "heading": "Society"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 146194
 },
 {
@@ -66,7 +66,7 @@
     "catid": 26691,
     "heading": "Animals"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 26691
 },
 {
@@ -76,7 +76,7 @@
     "catid": 117159,
     "heading": "Sharpness, shrewdness, insight"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117147
 },
 {
@@ -86,7 +86,7 @@
     "catid": 188461,
     "heading": "Travel and travelling"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 188444
 },
 {
@@ -96,7 +96,7 @@
     "catid": 117162,
     "heading": "clarity"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117150
 },
 {
@@ -106,7 +106,7 @@
     "catid": 120469,
     "heading": "Belief, trust, confidence"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120453
 },
 {
@@ -116,7 +116,7 @@
     "catid": 39722,
     "heading": "Person"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 39712
 },
 {
@@ -126,7 +126,7 @@
     "catid": 120499,
     "heading": "Act of convincing, conviction"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120483
 },
 {
@@ -136,7 +136,7 @@
     "catid": 120372,
     "heading": "Privacy"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120356
 },
 {
@@ -146,7 +146,7 @@
     "catid": 121270,
     "heading": "Expectation"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121254
 },
 {
@@ -156,7 +156,7 @@
     "catid": 120375,
     "heading": "confiding of"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120359
 },
 {
@@ -166,7 +166,7 @@
     "catid": 121531,
     "heading": "Confident hope, trust"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121515
 },
 {
@@ -176,7 +176,7 @@
     "catid": 172350,
     "heading": "Upbringing"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 172334
 },
 {
@@ -186,7 +186,7 @@
     "catid": 115259,
     "heading": "The mind"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 115247
 },
 {
@@ -196,7 +196,7 @@
     "catid": 193217,
     "heading": "note exchanged for clothing"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 193200
 },
 {
@@ -206,7 +206,7 @@
     "catid": 121155,
     "heading": "Absence of doubt, confidence"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121139
 },
 {
@@ -216,7 +216,7 @@
     "catid": 134724,
     "heading": "Aesthetics"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 134708
 },
 {
@@ -226,7 +226,7 @@
     "catid": 197786,
     "heading": "Occupation and work"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 197769
 },
 {
@@ -236,7 +236,7 @@
     "catid": 134730,
     "heading": "Good taste"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 134714
 },
 {
@@ -246,7 +246,7 @@
     "catid": 39622,
     "heading": "People"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 39612
 },
 {
@@ -256,7 +256,7 @@
     "catid": 165709,
     "heading": "Law"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 165693
 },
 {
@@ -266,7 +266,7 @@
     "catid": 115274,
     "heading": "Mental capacity"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 115262
 },
 {
@@ -276,7 +276,7 @@
     "catid": 120402,
     "heading": "Belief"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120386
 },
 {
@@ -286,7 +286,7 @@
     "catid": 127955,
     "heading": "Passion"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 127939
 },
 {
@@ -296,7 +296,7 @@
     "catid": 120404,
     "heading": "system of belief, creed"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120388
 },
 {
@@ -306,7 +306,7 @@
     "catid": 121173,
     "heading": "Assured fact, certainty"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121157
 },
 {
@@ -316,7 +316,7 @@
     "catid": 120177,
     "heading": "Hiding, concealing from view"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120161
 },
 {
@@ -326,7 +326,7 @@
     "catid": 117851,
     "heading": "Explanation, exposition"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117838
 },
 {
@@ -336,7 +336,7 @@
     "catid": 165768,
     "heading": "Written laws"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 165752
 },
 {
@@ -346,7 +346,7 @@
     "catid": 117855,
     "heading": "light on a subject"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117842
 },
 {
@@ -356,7 +356,7 @@
     "catid": 135910,
     "heading": "Lack of beauty"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 135894
 },
 {
@@ -366,7 +366,7 @@
     "catid": 127464,
     "heading": "Emotion"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 127448
 },
 {
@@ -376,7 +376,7 @@
     "catid": 117101,
     "heading": "Understanding"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117089
 },
 {
@@ -386,7 +386,7 @@
     "catid": 117739,
     "heading": "Intelligibility"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117726
 },
 {
@@ -396,7 +396,7 @@
     "catid": 198000,
     "heading": "Duties"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 197983
 },
 {
@@ -406,7 +406,7 @@
     "catid": 192881,
     "heading": "Navigation"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 192864
 },
 {
@@ -416,7 +416,7 @@
     "catid": 172273,
     "heading": "Education"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 172257
 },
 {
@@ -426,7 +426,7 @@
     "catid": 120374,
     "heading": "private matter/business"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120358
 },
 {
@@ -436,7 +436,7 @@
     "catid": 121441,
     "heading": "Hope"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 121425
 },
 {
@@ -446,7 +446,7 @@
     "catid": 117750,
     "heading": "Clearness, lucidity"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117737
 },
 {
@@ -456,7 +456,7 @@
     "catid": 118523,
     "heading": "Knowledge"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 118507
 },
 {
@@ -466,7 +466,7 @@
     "catid": 226862,
     "heading": "By eating habits"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 226669
 },
 {
@@ -476,7 +476,7 @@
     "catid": 120875,
     "heading": "Uncertainty, doubt, hesitation"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 120859
 },
 {
@@ -486,7 +486,7 @@
     "catid": 172677,
     "heading": "Learning"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 172661
 },
 {
@@ -496,7 +496,7 @@
     "catid": 135161,
     "heading": "Beautification"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 135145
 },
 {
@@ -506,7 +506,7 @@
     "catid": 134920,
     "heading": "Fashionableness"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 134904
 },
 {
@@ -516,7 +516,7 @@
     "catid": 165770,
     "heading": "code of laws"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 165754
 },
 {
@@ -526,7 +526,7 @@
     "catid": 117127,
     "heading": "Intelligence, cleverness"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117115
 },
 {
@@ -536,7 +536,7 @@
     "catid": 117771,
     "heading": "Meaning"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 117758
 },
 {
@@ -546,3368 +546,3368 @@
     "catid": 230945,
     "heading": "Attention and judgment"
   },
-  "model": "semantic_fields.category",
+  "model": "semantic_fields.semanticfield",
   "pk": 229375
 },
 {
   "fields": {
-    "category": 1,
-    "catorder": "47",
-    "fulldate": "1966\u2013",
-    "word": "spaceship earth"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 48
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "46",
-    "fulldate": "1911\u2013",
-    "word": "overworld"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 47
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "44",
-    "fulldate": "1868\u2013",
-    "word": "outer world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 45
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "43",
-    "fulldate": "1830\u2013 US colloq.",
-    "word": "all outdoors"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 44
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "41",
-    "fulldate": "1676\u2013",
-    "word": "a world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 42
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "37",
-    "fulldate": "1602+ 1828\u2013",
-    "word": "glimpses of the moon"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 38
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "35",
-    "fulldate": "c1586\u2013",
-    "word": "mother earth"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 36
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "34",
-    "fulldate": "1575\u2013",
-    "word": "the/this globe"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 35
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "32",
-    "fulldate": "1534\u2013",
-    "word": "the whole world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 33
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "30",
-    "fulldate": "a1340\u2013",
-    "word": "wilderness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 31
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "27",
-    "fulldate": "c1175\u2013",
-    "word": "all the world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 28
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "26",
-    "fulldate": "OE\u2013",
-    "word": "world < woruld"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 27
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "25",
-    "fulldate": "OE\u2013",
-    "word": "mother < modor"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 26
-},
-{
-  "fields": {
-    "category": 1,
-    "catorder": "24",
-    "fulldate": "OE\u2013",
-    "word": "earth < eor\u00fee"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 25
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "18",
-    "fulldate": "1827\u2013 S. Afr.",
-    "word": "skellum"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105187
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "16",
-    "fulldate": "1815\u2013 dial. & joc.",
-    "word": "critter"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105185
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "14",
-    "fulldate": "1729\u2013",
-    "word": "fellow-creature"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105183
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "7",
-    "fulldate": "1398\u2013",
-    "word": "animal"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105176
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "5",
-    "fulldate": "a1300\u2013",
-    "word": "creature"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105174
-},
-{
-  "fields": {
-    "category": 26691,
-    "catorder": "4",
-    "fulldate": "c1220\u2013",
-    "word": "beast"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 105173
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "58",
-    "fulldate": "1972\u2013 orig. US",
-    "word": "personkind"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137847
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "57",
-    "fulldate": "1911\u2013",
-    "word": "homo"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137846
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "50",
-    "fulldate": "1711\u2013",
-    "word": "the species"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137839
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "47",
-    "fulldate": "c1645\u2013",
-    "word": "humankind"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137836
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "44",
-    "fulldate": "1603\u2013",
-    "word": "world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137833
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "43",
-    "fulldate": "1601\u2013",
-    "word": "vicegerent"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137832
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "42",
-    "fulldate": "1601\u2013",
-    "word": "flesh and blood"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137831
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "39",
-    "fulldate": "c1580\u2013",
-    "word": "race"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137828
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "38",
-    "fulldate": "1579\u2013",
-    "word": "humanity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137827
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "34",
-    "fulldate": "c1450\u2013",
-    "word": "people"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137823
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "30",
-    "fulldate": "a1300\u2013",
-    "word": "mankind"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137819
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "27",
-    "fulldate": "c1200\u2013",
-    "word": "microcosm"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137816
-},
-{
-  "fields": {
-    "category": 39612,
-    "catorder": "24",
-    "fulldate": "OE\u2013",
-    "word": "world < woruld"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 137813
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "108",
-    "fulldate": "1975\u2013 orig. US slang",
-    "word": "pisser"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138213
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "107",
-    "fulldate": "1967\u2013",
-    "word": "naked ape"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138212
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "106",
-    "fulldate": "1956\u2013 S. Afr.",
-    "word": "jong"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138211
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "105",
-    "fulldate": "1945\u2013 slang",
-    "word": "face"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138210
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "104",
-    "fulldate": "1943\u2013",
-    "word": "moosh"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138209
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "103",
-    "fulldate": "1931\u2013 colloq.",
-    "word": "character"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138208
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "102",
-    "fulldate": "1930\u2013",
-    "word": "earth-man"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138207
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "101",
-    "fulldate": "1928\u2013 contemp.",
-    "word": "piece of work"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138206
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "100",
-    "fulldate": "1927\u2013 joc. colloq.",
-    "word": "job"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138205
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "99",
-    "fulldate": "1919\u2013",
-    "word": "number"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138204
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "98",
-    "fulldate": "1914\u2013 chiefly Irish",
-    "word": "skin"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138203
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "95",
-    "fulldate": "1899\u2013 slang",
-    "word": "baby"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138200
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "94",
-    "fulldate": "1890\u2013 slang",
-    "word": "mug"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138199
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "92",
-    "fulldate": "1887\u2013",
-    "word": "nut"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138197
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "90",
-    "fulldate": "1867\u2013",
-    "word": "outfit"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138195
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "83",
-    "fulldate": "1836\u2013",
-    "word": "personeity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138188
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "82",
-    "fulldate": "1834\u2013 dial. & joc.",
-    "word": "critter"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138187
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "81",
-    "fulldate": "1826\u2013 West Indies",
-    "word": "somebody/s'mady/s'mody"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138186
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "79",
-    "fulldate": "1821\u2013 slang",
-    "word": "(his) nibs"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138184
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "78",
-    "fulldate": "1815\u2013",
-    "word": "potato"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138183
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "77",
-    "fulldate": "1811\u2013 slang",
-    "word": "article"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138182
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "74",
-    "fulldate": "1788\u2013 slang",
-    "word": "bod"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138179
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "72",
-    "fulldate": "1776\u2013 Anglo-Indian",
-    "word": "wallah"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138177
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "70",
-    "fulldate": "1751\u2013",
-    "word": "worthy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138175
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "69",
-    "fulldate": "1751\u2013",
-    "word": "piece of goods"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138174
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "67",
-    "fulldate": "1742\u2013",
-    "word": "individual"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138172
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "65",
-    "fulldate": "1718\u2013",
-    "word": "mortal"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138170
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "62",
-    "fulldate": "1682\u2013",
-    "word": "fellow-creature"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138167
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "61",
-    "fulldate": "1680\u2013",
-    "word": "sooterkin"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138166
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "60",
-    "fulldate": "1678\u2013",
-    "word": "personality"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138165
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "56",
-    "fulldate": "1650\u2013 now slang & colloq.",
-    "word": "party"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138161
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "55",
-    "fulldate": "1635\u2013",
-    "word": "Adamite"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138160
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "54",
-    "fulldate": "1631\u2013 colloq.",
-    "word": "tick"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138159
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "45",
-    "fulldate": "1596\u2013",
-    "word": "homo"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138150
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "44",
-    "fulldate": "1593\u2013",
-    "word": "earthling"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138149
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "39",
-    "fulldate": "a1555\u2013",
-    "word": "personage"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138144
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "37",
-    "fulldate": "a1533\u2013",
-    "word": "human"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138142
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "35",
-    "fulldate": "c1450\u2013",
-    "word": "wretch"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138140
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "30",
-    "fulldate": "c1386\u2013",
-    "word": "poppet"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138135
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "26",
-    "fulldate": "c1320\u2013",
-    "word": "soul"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138131
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "22",
-    "fulldate": "c1290\u2013",
-    "word": "creature"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138127
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "21",
-    "fulldate": "a1225\u2013",
-    "word": "person"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138126
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "19",
-    "fulldate": "c1200\u20131735 + 1805\u2013 arch. & dial.",
-    "word": "wight"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138124
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "17",
-    "fulldate": "OE\u2013",
-    "word": "son of man < mannes sunu"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138122
-},
-{
-  "fields": {
-    "category": 39712,
-    "catorder": "16",
-    "fulldate": "OE\u2013",
-    "word": "man < mann"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 138121
-},
-{
-  "fields": {
-    "category": 115247,
-    "catorder": "20",
-    "fulldate": "1374\u2013",
-    "word": "head"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 415022
-},
-{
-  "fields": {
-    "category": 115247,
-    "catorder": "17",
-    "fulldate": "OE\u2013",
-    "word": "heart < heorte"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 415019
-},
-{
-  "fields": {
-    "category": 115262,
-    "catorder": "1",
-    "fulldate": "1691\u2013",
-    "word": "mentality"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 415056
-},
-{
-  "fields": {
-    "category": 115262,
-    "catorder": "0",
-    "fulldate": "1604\u2013",
-    "word": "soul"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 415055
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "25",
-    "fulldate": "1816\u2013 chiefly Scots",
-    "word": "uptake"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419953
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "23",
-    "fulldate": "a1662\u2013",
-    "word": "comprehension"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419951
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "22",
-    "fulldate": "1656 + 1872\u2013",
-    "word": "touch"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419950
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "17",
-    "fulldate": "1542\u2013",
-    "word": "reach"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419945
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "9",
-    "fulldate": "1390\u2013",
-    "word": "intelligence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419937
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "6",
-    "fulldate": "OE\u2013",
-    "word": "wit < (ge)witt"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419934
-},
-{
-  "fields": {
-    "category": 117089,
-    "catorder": "5",
-    "fulldate": "OE\u2013",
-    "word": "understanding < understanding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 419933
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "43",
-    "fulldate": "1946\u2013",
-    "word": "knowledgeability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420207
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "41",
-    "fulldate": "1901\u2013",
-    "word": "cerebrality"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420205
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "38",
-    "fulldate": "1755 Dict. + 1809/10\u2013",
-    "word": "cleverness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420202
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "32",
-    "fulldate": "1622\u2013",
-    "word": "talent"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420196
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "30",
-    "fulldate": "1610\u2013",
-    "word": "pate"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420194
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "26",
-    "fulldate": "1555\u2013",
-    "word": "ingeniousness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420190
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "21",
-    "fulldate": "1527\u2013",
-    "word": "dexterity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420185
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "20",
-    "fulldate": "1485\u2013",
-    "word": "capacity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420184
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "17",
-    "fulldate": "1471\u20131648 + 1821\u2013 arch.",
-    "word": "speculation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420181
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "16",
-    "fulldate": "c1430\u2013",
-    "word": "intelligence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420180
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "14",
-    "fulldate": "1393\u2013",
-    "word": "brain"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420178
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "8",
-    "fulldate": "OE\u2013",
-    "word": "understanding < understanding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420172
-},
-{
-  "fields": {
-    "category": 117115,
-    "catorder": "7",
-    "fulldate": "OE\u2013 now arch.",
-    "word": "craft < cr\u00e6ft"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420171
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "41",
-    "fulldate": "1970\u2013 US slang",
-    "word": "smart(s)"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420461
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "40",
-    "fulldate": "1934\u2013",
-    "word": "hard-boiledness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420460
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "39",
-    "fulldate": "1881\u2013",
-    "word": "flair"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420459
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "37",
-    "fulldate": "1865\u2013",
-    "word": "incisiveness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420457
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "34",
-    "fulldate": "1857\u2013",
-    "word": "recollectedness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420454
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "33",
-    "fulldate": "1852\u2013",
-    "word": "perceptiveness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420453
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "32",
-    "fulldate": "1809\u2013",
-    "word": "a long head"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420452
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "30",
-    "fulldate": "1727 Dict. + 1812\u2013",
-    "word": "knowingness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420450
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "29",
-    "fulldate": "1707\u2013",
-    "word": "keenness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420449
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "28",
-    "fulldate": "1690\u2013",
-    "word": "perceptivity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420448
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "27",
-    "fulldate": "1678\u2013",
-    "word": "sagaciousness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420447
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "24",
-    "fulldate": "1647\u2013",
-    "word": "sharpwittedness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420444
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "23",
-    "fulldate": "1638\u2013",
-    "word": "piercingness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420443
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "22",
-    "fulldate": "1627\u2013",
-    "word": "acuteness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420442
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "20",
-    "fulldate": "1606\u2013",
-    "word": "shrewdness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420440
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "19",
-    "fulldate": "1605\u2013",
-    "word": "penetration"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420439
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "17",
-    "fulldate": "1586\u2013",
-    "word": "discernment"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420437
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "16",
-    "fulldate": "1561\u2013",
-    "word": "nimbleness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420436
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "13",
-    "fulldate": "a1548\u2013",
-    "word": "sagacity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420433
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "10",
-    "fulldate": "1531\u2013",
-    "word": "acumen"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420430
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "5",
-    "fulldate": "1297\u2013",
-    "word": "wit"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420425
-},
-{
-  "fields": {
-    "category": 117147,
-    "catorder": "1",
-    "fulldate": "OE\u2013",
-    "word": "sharpness < scearpnes"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420421
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "14",
-    "fulldate": "1939\u2013",
-    "word": "X-ray eyes"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420484
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "13",
-    "fulldate": "1861\u2013",
-    "word": "clairvoyance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420483
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "11",
-    "fulldate": "1824/9\u2013",
-    "word": "far-sightedness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420481
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "10",
-    "fulldate": "a1691\u2013",
-    "word": "clear-sightedness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420480
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "9",
-    "fulldate": "1662\u2013",
-    "word": "perspicuity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420479
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "5",
-    "fulldate": "1616 Dict. + 1646\u2013",
-    "word": "clarity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420475
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "3",
-    "fulldate": "1593\u2013",
-    "word": "knowledge"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420473
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "2",
-    "fulldate": "c1580\u2013",
-    "word": "insight"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420472
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "1",
-    "fulldate": "1548\u2013",
-    "word": "perspicacity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420471
-},
-{
-  "fields": {
-    "category": 117150,
-    "catorder": "0",
-    "fulldate": "1535\u2013",
-    "word": "clearness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 420470
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "19",
-    "fulldate": "1934\u2013",
-    "word": "understandability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424553
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "15",
-    "fulldate": "1873\u2013",
-    "word": "recognizability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424549
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "14",
-    "fulldate": "1871\u2013",
-    "word": "cognizableness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424548
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "12",
-    "fulldate": "1852\u2013",
-    "word": "cognizability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424546
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "11",
-    "fulldate": "1840\u2013",
-    "word": "discoverability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424545
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "10",
-    "fulldate": "1827\u2013",
-    "word": "apprehensibility"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424544
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "9",
-    "fulldate": "1793\u2013",
-    "word": "comprehensibility"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424543
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "8",
-    "fulldate": "1727\u2013",
-    "word": "discernibleness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424542
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "7",
-    "fulldate": "1678\u2013",
-    "word": "intelligibility"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424541
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "4",
-    "fulldate": "1660\u2013",
-    "word": "knowableness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424538
-},
-{
-  "fields": {
-    "category": 117726,
-    "catorder": "0",
-    "fulldate": "1611\u2013",
-    "word": "intelligibleness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424534
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "13",
-    "fulldate": "1901\u2013",
-    "word": "discriminability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424642
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "9",
-    "fulldate": "1851\u2013",
-    "word": "lucidity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424638
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "7",
-    "fulldate": "1836\u2013",
-    "word": "lucidness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424636
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "5",
-    "fulldate": "1646\u2013",
-    "word": "clarity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424634
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "4",
-    "fulldate": "1645\u2013",
-    "word": "plain English"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424633
-},
-{
-  "fields": {
-    "category": 117737,
-    "catorder": "1",
-    "fulldate": "1529\u2013",
-    "word": "plainness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424630
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "18",
-    "fulldate": "1732\u2013",
-    "word": "amount"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424768
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "17",
-    "fulldate": "1690\u2013",
-    "word": "meaning"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424767
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "12",
-    "fulldate": "1631\u2013",
-    "word": "significancy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424762
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "10",
-    "fulldate": "c1450\u2013",
-    "word": "significance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424760
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "9",
-    "fulldate": "c1400\u2013",
-    "word": "interpretation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424759
-},
-{
-  "fields": {
-    "category": 117758,
-    "catorder": "4",
-    "fulldate": "a1300\u2013",
-    "word": "signification"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 424754
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "47",
-    "fulldate": "1964\u2013",
-    "word": "demystification"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425146
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "43",
-    "fulldate": "a1866\u2013",
-    "word": "clarification"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425142
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "41",
-    "fulldate": "1827\u2013",
-    "word": "disambiguation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425140
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "40",
-    "fulldate": "1823\u2013",
-    "word": "exegesis"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425139
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "38",
-    "fulldate": "1751\u2013",
-    "word": "disentanglement"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425137
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "37",
-    "fulldate": "1713\u2013",
-    "word": "unravelling"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425136
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "23",
-    "fulldate": "1581\u2013",
-    "word": "illustration"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425122
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "22",
-    "fulldate": "1580\u2013",
-    "word": "explaining"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425121
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "20",
-    "fulldate": "1570\u2013",
-    "word": "elucidation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425119
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "18",
-    "fulldate": "a1563\u2013",
-    "word": "clearance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425117
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "17",
-    "fulldate": "1548/9\u2013",
-    "word": "explication"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425116
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "13",
-    "fulldate": "1382\u2013",
-    "word": "interpretation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425112
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "12",
-    "fulldate": "1382\u2013",
-    "word": "explanation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425111
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "11",
-    "fulldate": "c1380\u2013",
-    "word": "expounding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425110
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "8",
-    "fulldate": "a1340\u2013",
-    "word": "exposition"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425107
-},
-{
-  "fields": {
-    "category": 117838,
-    "catorder": "6",
-    "fulldate": "OE\u2013",
-    "word": "key < c\u00e6g"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425105
-},
-{
-  "fields": {
-    "category": 117842,
-    "catorder": "2",
-    "fulldate": "1862\u2013",
-    "word": "side-light"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 425166
-},
-{
-  "fields": {
-    "category": 118507,
-    "catorder": "24",
-    "fulldate": "1597\u2013",
-    "word": "comprehension"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 428840
-},
-{
-  "fields": {
-    "category": 118507,
-    "catorder": "16",
-    "fulldate": "c1400\u2013c1440 + a1800\u2013 Scots & northern dial.",
-    "word": "kenning"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 428832
-},
-{
-  "fields": {
-    "category": 118507,
-    "catorder": "12",
-    "fulldate": "1387\u2013",
-    "word": "knowledge"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 428828
-},
-{
-  "fields": {
-    "category": 118507,
-    "catorder": "9",
-    "fulldate": "a1340\u2013",
-    "word": "science"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 428825
-},
-{
-  "fields": {
-    "category": 118507,
-    "catorder": "8",
-    "fulldate": "a1300\u20131621 + 1808\u2013 dial.",
-    "word": "witting"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 428824
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "17",
-    "fulldate": "1922\u2013",
-    "word": "smoke-screening"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438206
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "16",
+    "catorder": 0,
     "fulldate": "1833\u2013",
-    "word": "tucking"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438205
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "15",
-    "fulldate": "1788\u2013",
-    "word": "screening"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438204
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "12",
-    "fulldate": "1615\u2013",
-    "word": "shrouding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438201
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "4",
-    "fulldate": "a1374\u2013 also fig.",
-    "word": "coverture"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438193
-},
-{
-  "fields": {
-    "category": 120161,
-    "catorder": "1",
-    "fulldate": "a1225\u2013",
-    "word": "hiding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 438190
-},
-{
-  "fields": {
-    "category": 120356,
-    "catorder": "4",
-    "fulldate": "1865\u2013",
-    "word": "purdah"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439389
-},
-{
-  "fields": {
-    "category": 120356,
-    "catorder": "2",
-    "fulldate": "1603\u2013",
-    "word": "retirement"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439387
-},
-{
-  "fields": {
-    "category": 120356,
-    "catorder": "1",
-    "fulldate": "1598\u2013",
-    "word": "privacy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439386
-},
-{
-  "fields": {
-    "category": 120358,
-    "catorder": "7",
-    "fulldate": "1748\u2013",
-    "word": "confidence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439399
-},
-{
-  "fields": {
-    "category": 120358,
-    "catorder": "2",
-    "fulldate": "1450/80\u2013",
-    "word": "secret"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439394
-},
-{
-  "fields": {
-    "category": 120359,
-    "catorder": "0",
-    "fulldate": "1592\u2013",
-    "word": "confidence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439400
-},
-{
-  "fields": {
-    "category": 120386,
-    "catorder": "11",
-    "fulldate": "1803\u2013",
-    "word": "acceptation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439524
-},
-{
-  "fields": {
-    "category": 120386,
-    "catorder": "10",
-    "fulldate": "1794\u2013",
-    "word": "acceptance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439523
-},
-{
-  "fields": {
-    "category": 120386,
-    "catorder": "8",
-    "fulldate": "1533\u2013",
-    "word": "belief"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439521
-},
-{
-  "fields": {
-    "category": 120386,
-    "catorder": "6",
-    "fulldate": "1523\u2013",
-    "word": "believing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439519
-},
-{
-  "fields": {
-    "category": 120386,
-    "catorder": "5",
-    "fulldate": "1382/8\u2013",
-    "word": "credence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439518
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "6",
-    "fulldate": "1915\u2013",
-    "word": "whatnotism"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439534
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "5",
-    "fulldate": "1791\u2013",
-    "word": "dogma"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439533
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "4",
-    "fulldate": "1613\u2013 transf.",
-    "word": "creed"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439532
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "3",
-    "fulldate": "1587 + 1840\u2013",
-    "word": "credo"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439531
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "2",
-    "fulldate": "1551\u2013",
-    "word": "faith"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439530
-},
-{
-  "fields": {
-    "category": 120388,
-    "catorder": "0",
-    "fulldate": "a1225\u2013",
-    "word": "belief"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439528
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "29",
-    "fulldate": "1542/5\u2013",
-    "word": "credit"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439763
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "27",
-    "fulldate": "c1440\u2013",
-    "word": "trusting"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439761
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "26",
-    "fulldate": "c1430\u2013",
-    "word": "confidence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439760
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "18",
-    "fulldate": "a1300\u2013",
-    "word": "faith"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439752
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "14",
-    "fulldate": "a1225\u2013",
-    "word": "trust"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439748
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "11",
-    "fulldate": "c1175\u2013",
-    "word": "belief"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439745
-},
-{
-  "fields": {
-    "category": 120453,
-    "catorder": "10",
-    "fulldate": "OE\u20131576 + 1707\u2013 arch.",
-    "word": "hope < hopa"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439744
-},
-{
-  "fields": {
-    "category": 120457,
-    "catorder": "1",
-    "fulldate": "1904\u2013",
-    "word": "honour system"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439776
-},
-{
-  "fields": {
-    "category": 120457,
-    "catorder": "0",
-    "fulldate": "1526\u2013",
-    "word": "trust"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439775
-},
-{
-  "fields": {
-    "category": 120483,
-    "catorder": "3",
-    "fulldate": "1664\u2013",
-    "word": "conviction"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439947
-},
-{
-  "fields": {
-    "category": 120483,
-    "catorder": "2",
-    "fulldate": "1633\u20131644 + 1878\u2013",
-    "word": "convincement"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439946
-},
-{
-  "fields": {
-    "category": 120483,
-    "catorder": "0",
-    "fulldate": "1609\u2013",
-    "word": "assurance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 439944
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "45",
-    "fulldate": "1815\u2013",
-    "word": "suspense"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441639
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "44",
-    "fulldate": "1766\u2013",
-    "word": "dubiety"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441638
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "43",
-    "fulldate": "1719\u2013 Scots & dial.",
-    "word": "swither"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441637
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "41",
-    "fulldate": "1665\u2013",
-    "word": "scrupling"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441635
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "37",
-    "fulldate": "1646 + 1917\u2013",
-    "word": "insecurity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441631
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "35",
-    "fulldate": "1643\u2013",
-    "word": "unsatisfaction"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441629
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "34",
-    "fulldate": "1622\u2013",
-    "word": "hesitation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441628
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "33",
-    "fulldate": "1619\u2013",
-    "word": "unsettledness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441627
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "32",
-    "fulldate": "1617\u2013",
-    "word": "hesitancy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441626
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "26",
-    "fulldate": "a1585\u2013 Scots dial.",
-    "word": "swithering"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441620
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "24",
-    "fulldate": "1548\u2013",
-    "word": "uncertainty"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441618
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "23",
-    "fulldate": "1531\u2013",
-    "word": "doubting"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441617
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "22",
-    "fulldate": "1526\u2013",
-    "word": "scrupulousness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441616
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "21",
-    "fulldate": "1526\u2013",
-    "word": "doubtfulness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441615
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "18",
-    "fulldate": "c1450\u2013",
-    "word": "dubitation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441612
-},
-{
-  "fields": {
-    "category": 120859,
-    "catorder": "7",
-    "fulldate": "a1225\u2013",
-    "word": "doubt"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 441601
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "29",
-    "fulldate": "1857\u2013",
-    "word": "undoubtingness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443450
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "28",
-    "fulldate": "1854\u2013",
-    "word": "positivism"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443449
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "26",
-    "fulldate": "1741\u2013",
-    "word": "positivity"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443447
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "25",
-    "fulldate": "1711\u2013",
-    "word": "positiveness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443446
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "23",
-    "fulldate": "1607\u2013",
-    "word": "reliance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443444
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "21",
-    "fulldate": "1605\u2013 chiefly Theology",
-    "word": "plerophory"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443442
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "20",
-    "fulldate": "1597\u2013",
-    "word": "security"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443441
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "18",
-    "fulldate": "a1572\u2013",
-    "word": "sureness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443439
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "16",
-    "fulldate": "1555\u2013",
-    "word": "confidence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443437
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "11",
-    "fulldate": "1432/50\u2013",
-    "word": "certitude"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443432
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "9",
-    "fulldate": "1375\u2013",
-    "word": "assurance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443430
-},
-{
-  "fields": {
-    "category": 121139,
-    "catorder": "7",
-    "fulldate": "a1340\u2013",
-    "word": "certainty"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443428
-},
-{
-  "fields": {
-    "category": 121157,
-    "catorder": "11",
-    "fulldate": "1570\u2013",
-    "word": "assuredness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443584
-},
-{
-  "fields": {
-    "category": 121157,
-    "catorder": "9",
-    "fulldate": "1538\u2013",
-    "word": "certitude"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443582
-},
-{
-  "fields": {
-    "category": 121157,
-    "catorder": "8",
-    "fulldate": "c1530\u2013",
-    "word": "sureness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443581
-},
-{
-  "fields": {
-    "category": 121157,
-    "catorder": "3",
-    "fulldate": "1340\u2013",
-    "word": "certainty"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443576
-},
-{
-  "fields": {
-    "category": 121174,
-    "catorder": "5",
-    "fulldate": "1609\u2013",
-    "word": "assurance"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443729
-},
-{
-  "fields": {
-    "category": 121174,
-    "catorder": "3",
-    "fulldate": "1530\u2013",
-    "word": "assuring"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 443727
-},
-{
-  "fields": {
-    "category": 121254,
-    "catorder": "24",
-    "fulldate": "1659\u2013",
-    "word": "contemplation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 444376
-},
-{
-  "fields": {
-    "category": 121254,
-    "catorder": "17",
-    "fulldate": "1600\u2013",
-    "word": "expectancy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 444369
-},
-{
-  "fields": {
-    "category": 121254,
-    "catorder": "14",
-    "fulldate": "1538\u2013",
-    "word": "expectation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 444366
-},
-{
-  "fields": {
-    "category": 121425,
-    "catorder": "8",
-    "fulldate": "1613\u2013",
-    "word": "hopes"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 445284
-},
-{
-  "fields": {
-    "category": 121425,
-    "catorder": "3",
-    "fulldate": "OE\u2013",
-    "word": "hope < hopa"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 445279
-},
-{
-  "fields": {
-    "category": 121515,
-    "catorder": "8",
-    "fulldate": "1555\u2013",
-    "word": "security"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 445584
-},
-{
-  "fields": {
-    "category": 121515,
-    "catorder": "5",
-    "fulldate": "c1430\u2013",
-    "word": "confidence"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 445581
-},
-{
-  "fields": {
-    "category": 121515,
-    "catorder": "4",
-    "fulldate": "c1400\u2013",
-    "word": "trust"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 445580
-},
-{
-  "fields": {
-    "category": 127448,
-    "catorder": "10",
-    "fulldate": "1735\u2013",
-    "word": "heart"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 477232
-},
-{
-  "fields": {
-    "category": 127448,
-    "catorder": "9",
-    "fulldate": "1660\u2013",
-    "word": "emotion"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 477231
-},
-{
-  "fields": {
-    "category": 127448,
-    "catorder": "7",
-    "fulldate": "1563\u2013",
-    "word": "stir"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 477229
-},
-{
-  "fields": {
-    "category": 127448,
-    "catorder": "6",
-    "fulldate": "c1400\u2013",
-    "word": "feeling"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 477228
-},
-{
-  "fields": {
-    "category": 127448,
-    "catorder": "3",
-    "fulldate": "c1230\u2013",
-    "word": "affection"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 477225
-},
-{
-  "fields": {
-    "category": 127939,
-    "catorder": "3",
-    "fulldate": "1658\u2013",
-    "word": "transport"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 479283
-},
-{
-  "fields": {
-    "category": 127939,
-    "catorder": "2",
-    "fulldate": "1590\u2013",
-    "word": "passion"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 479282
-},
-{
-  "fields": {
-    "category": 134708,
-    "catorder": "0",
-    "fulldate": "1833\u2013",
-    "word": "aesthetic(s)"
+    "word": "aesthetic(s)",
+    "semantic_field": 134708
   },
   "model": "semantic_fields.lexeme",
   "pk": 509715
 },
 {
   "fields": {
-    "category": 134714,
-    "catorder": "16",
-    "fulldate": "1960\u2013",
-    "word": "shibui"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509744
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "14",
-    "fulldate": "1831\u2013",
-    "word": "aesthetic"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509742
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "12",
-    "fulldate": "1756/82\u2013",
-    "word": "sensibility"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509740
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "11",
-    "fulldate": "1749\u2013",
-    "word": "connoisseurship"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509739
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "5",
-    "fulldate": "1671\u2013",
-    "word": "taste"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509733
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "3",
-    "fulldate": "c1665\u2013",
-    "word": "fancy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 509731
-},
-{
-  "fields": {
-    "category": 134714,
-    "catorder": "0",
+    "catorder": 0,
     "fulldate": "1655\u2013 transf.",
-    "word": "epicurism"
+    "word": "epicurism",
+    "semantic_field": 134714
   },
   "model": "semantic_fields.lexeme",
   "pk": 509728
 },
 {
   "fields": {
-    "category": 134796,
-    "catorder": "3",
-    "fulldate": "1977\u2013 colloq.",
-    "word": "tackiness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510209
-},
-{
-  "fields": {
-    "category": 134796,
-    "catorder": "1",
-    "fulldate": "1784\u2013 now rare",
-    "word": "mauvais ton"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510207
-},
-{
-  "fields": {
-    "category": 134796,
-    "catorder": "0",
+    "catorder": 0,
     "fulldate": "1778\u2013",
-    "word": "tastelessness"
+    "word": "tastelessness",
+    "semantic_field": 134796
   },
   "model": "semantic_fields.lexeme",
   "pk": 510206
 },
 {
   "fields": {
-    "category": 134904,
-    "catorder": "12",
-    "fulldate": "1968\u2013 slang, orig. US",
-    "word": "funkiness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510725
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "11",
-    "fulldate": "1963\u2013 slang",
-    "word": "with-it-ness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510724
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "10",
-    "fulldate": "1946\u2013",
-    "word": "hipness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510723
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "9",
-    "fulldate": "1914\u2013 slang",
-    "word": "hep"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510722
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "7",
-    "fulldate": "1839\u2013",
-    "word": "fashionability"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510720
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "6",
-    "fulldate": "1807/8\u2013",
-    "word": "style"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510719
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "2",
-    "fulldate": "1699\u2013",
-    "word": "fashionableness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510715
-},
-{
-  "fields": {
-    "category": 134904,
-    "catorder": "1",
-    "fulldate": "1676\u2013",
-    "word": "modishness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 510714
-},
-{
-  "fields": {
-    "category": 135145,
-    "catorder": "4",
-    "fulldate": "1641\u2013",
-    "word": "embellishing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 512255
-},
-{
-  "fields": {
-    "category": 135145,
-    "catorder": "3",
-    "fulldate": "a1640 + 1798\u2013",
-    "word": "beautification"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 512254
-},
-{
-  "fields": {
-    "category": 135145,
-    "catorder": "2",
-    "fulldate": "1623\u2013",
-    "word": "embellishment"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 512253
-},
-{
-  "fields": {
-    "category": 135894,
-    "catorder": "10",
-    "fulldate": "1908\u2013",
-    "word": "charmlessness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 515236
-},
-{
-  "fields": {
-    "category": 135894,
-    "catorder": "6",
-    "fulldate": "1829\u2013",
-    "word": "plainness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 515232
-},
-{
-  "fields": {
-    "category": 135894,
-    "catorder": "3",
-    "fulldate": "1624\u2013",
-    "word": "uncomeliness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 515229
-},
-{
-  "fields": {
-    "category": 135894,
-    "catorder": "2",
-    "fulldate": "a1586\u2013",
-    "word": "unhandsomeness"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 515228
-},
-{
-  "fields": {
-    "category": 146194,
-    "catorder": "3",
-    "fulldate": "1652\u2013",
-    "word": "community"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 555949
-},
-{
-  "fields": {
-    "category": 146194,
-    "catorder": "2",
-    "fulldate": "1622 + 1910\u2013",
-    "word": "symbiosis"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 555948
-},
-{
-  "fields": {
-    "category": 146194,
-    "catorder": "1",
-    "fulldate": "1553\u2013",
-    "word": "society"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 555947
-},
-{
-  "fields": {
-    "category": 146194,
-    "catorder": "0",
-    "fulldate": "1449\u2013",
-    "word": "world"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 555946
-},
-{
-  "fields": {
-    "category": 165693,
-    "catorder": "3",
-    "fulldate": "OE\u2013",
-    "word": "law < lagu"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 619183
-},
-{
-  "fields": {
-    "category": 165752,
-    "catorder": "0",
-    "fulldate": "a1832\u2013",
-    "word": "nomography"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 619361
-},
-{
-  "fields": {
-    "category": 165754,
-    "catorder": "6",
-    "fulldate": "1735\u2013",
-    "word": "code"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 619370
-},
-{
-  "fields": {
-    "category": 165754,
-    "catorder": "4",
-    "fulldate": "1650\u2013",
-    "word": "capitulary"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 619368
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "14",
-    "fulldate": "1939\u2013 also transf.",
-    "word": "paedeia/paideia"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639638
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "13",
-    "fulldate": "1860\u2013",
-    "word": "education"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639637
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "12",
-    "fulldate": "1805\u2013",
-    "word": "culture"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639636
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "9",
-    "fulldate": "1629\u2013",
-    "word": "nurturing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639633
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "4",
-    "fulldate": "1548\u2013",
-    "word": "training"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639628
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "3",
-    "fulldate": "c1510\u2013",
-    "word": "the/a culture"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639627
-},
-{
-  "fields": {
-    "category": 172257,
-    "catorder": "2",
-    "fulldate": "1412/20\u2013",
-    "word": "instruction"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639626
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "23",
-    "fulldate": "1929\u2013",
-    "word": "raising up"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639930
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "22",
-    "fulldate": "1857\u2013",
-    "word": "paedotrophy"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639929
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "20",
-    "fulldate": "1842\u2013 now chiefly US",
-    "word": "raising"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639927
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "16",
-    "fulldate": "1611\u2013",
-    "word": "rearing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639923
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "14",
-    "fulldate": "1578\u2013",
-    "word": "nurturing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639921
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "13",
-    "fulldate": "1577\u2013",
-    "word": "breeding"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639920
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "9",
-    "fulldate": "1526\u2013",
-    "word": "bringing up"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639916
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "8",
-    "fulldate": "1520\u2013",
-    "word": "upbringing"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639915
-},
-{
-  "fields": {
-    "category": 172334,
-    "catorder": "3",
-    "fulldate": "c1330\u2013",
-    "word": "nurture"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 639910
-},
-{
-  "fields": {
-    "category": 172661,
-    "catorder": "1",
-    "fulldate": "OE\u2013",
-    "word": "learning < leornung"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 641075
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "25",
-    "fulldate": "1888\u2013",
-    "word": "trooping"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 683011
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "24",
-    "fulldate": "1858\u2013 orig. S. Afr.",
-    "word": "trekking"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 683010
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "22",
-    "fulldate": "1788\u2013",
-    "word": "locomotion"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 683008
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "12",
-    "fulldate": "1536\u2013",
-    "word": "wayfaring"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682998
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "10",
-    "fulldate": "c1400\u20131614 + 1850\u2013 arch.",
-    "word": "wayfare"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682996
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "9",
-    "fulldate": "1375\u2013",
-    "word": "travelling"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682995
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "8",
-    "fulldate": "c1375\u2013",
-    "word": "travel"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682994
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "7",
-    "fulldate": "c1330\u2013",
-    "word": "journeying"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682993
-},
-{
-  "fields": {
-    "category": 188444,
-    "catorder": "6",
-    "fulldate": "a1300\u2013",
-    "word": "going"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 682992
-},
-{
-  "fields": {
-    "category": 192864,
-    "catorder": "1",
-    "fulldate": "1533\u2013",
-    "word": "navigation"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 694969
-},
-{
-  "fields": {
-    "category": 193179,
-    "catorder": "0",
+    "catorder": 0,
     "fulldate": "c1500\u2013",
-    "word": "the sea"
+    "word": "the sea",
+    "semantic_field": 193179
   },
   "model": "semantic_fields.lexeme",
   "pk": 695725
 },
 {
   "fields": {
-    "category": 197769,
-    "catorder": "9",
-    "fulldate": "c1400\u2013",
-    "word": "business"
+    "catorder": 0,
+    "fulldate": "1592\u2013",
+    "word": "confidence",
+    "semantic_field": 120359
   },
   "model": "semantic_fields.lexeme",
-  "pk": 706614
+  "pk": 439400
 },
 {
   "fields": {
-    "category": 197769,
-    "catorder": "6",
+    "catorder": 0,
+    "fulldate": "1604\u2013",
+    "word": "soul",
+    "semantic_field": 115262
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 415055
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "a1225\u2013",
+    "word": "belief",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439528
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "1535\u2013",
+    "word": "clearness",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420470
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "1526\u2013",
+    "word": "trust",
+    "semantic_field": 120457
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439775
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "1609\u2013",
+    "word": "assurance",
+    "semantic_field": 120483
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439944
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "a1832\u2013",
+    "word": "nomography",
+    "semantic_field": 165752
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 619361
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "1449\u2013",
+    "word": "world",
+    "semantic_field": 146194
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 555946
+},
+{
+  "fields": {
+    "catorder": 0,
+    "fulldate": "1611\u2013",
+    "word": "intelligibleness",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424534
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1598\u2013",
+    "word": "privacy",
+    "semantic_field": 120356
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439386
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "OE\u2013",
+    "word": "learning < leornung",
+    "semantic_field": 172661
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 641075
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "OE\u2013",
+    "word": "sharpness < scearpnes",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420421
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1691\u2013",
+    "word": "mentality",
+    "semantic_field": 115262
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 415056
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1553\u2013",
+    "word": "society",
+    "semantic_field": 146194
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 555947
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1904\u2013",
+    "word": "honour system",
+    "semantic_field": 120457
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439776
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1548\u2013",
+    "word": "perspicacity",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420471
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1529\u2013",
+    "word": "plainness",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424630
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1676\u2013",
+    "word": "modishness",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510714
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1784\u2013 now rare",
+    "word": "mauvais ton",
+    "semantic_field": 134796
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510207
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "1533\u2013",
+    "word": "navigation",
+    "semantic_field": 192864
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 694969
+},
+{
+  "fields": {
+    "catorder": 1,
+    "fulldate": "a1225\u2013",
+    "word": "hiding",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438190
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1603\u2013",
+    "word": "retirement",
+    "semantic_field": 120356
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439387
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1633\u20131644 + 1878\u2013",
+    "word": "convincement",
+    "semantic_field": 120483
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439946
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "c1580\u2013",
+    "word": "insight",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420472
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1862\u2013",
+    "word": "side-light",
+    "semantic_field": 117842
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425166
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1551\u2013",
+    "word": "faith",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439530
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1590\u2013",
+    "word": "passion",
+    "semantic_field": 127939
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 479282
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1699\u2013",
+    "word": "fashionableness",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510715
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1450/80\u2013",
+    "word": "secret",
+    "semantic_field": 120358
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439394
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1412/20\u2013",
+    "word": "instruction",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639626
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1622 + 1910\u2013",
+    "word": "symbiosis",
+    "semantic_field": 146194
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 555948
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "a1586\u2013",
+    "word": "unhandsomeness",
+    "semantic_field": 135894
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 515228
+},
+{
+  "fields": {
+    "catorder": 2,
+    "fulldate": "1623\u2013",
+    "word": "embellishment",
+    "semantic_field": 135145
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 512253
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1652\u2013",
+    "word": "community",
+    "semantic_field": 146194
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 555949
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "OE\u2013",
+    "word": "work < weorc",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707262
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "c1330\u2013",
+    "word": "nurture",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639910
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "c1510\u2013",
+    "word": "the/a culture",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639627
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "OE\u2013",
+    "word": "law < lagu",
+    "semantic_field": 165693
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 619183
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1624\u2013",
+    "word": "uncomeliness",
+    "semantic_field": 135894
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 515229
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "a1640 + 1798\u2013",
+    "word": "beautification",
+    "semantic_field": 135145
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 512254
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1977\u2013 colloq.",
+    "word": "tackiness",
+    "semantic_field": 134796
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510209
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "c1665\u2013",
+    "word": "fancy",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509731
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1658\u2013",
+    "word": "transport",
+    "semantic_field": 127939
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 479283
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "c1230\u2013",
+    "word": "affection",
+    "semantic_field": 127448
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 477225
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "OE\u2013",
+    "word": "hope < hopa",
+    "semantic_field": 121425
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 445279
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1530\u2013",
+    "word": "assuring",
+    "semantic_field": 121174
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443727
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1340\u2013",
+    "word": "certainty",
+    "semantic_field": 121157
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443576
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1664\u2013",
+    "word": "conviction",
+    "semantic_field": 120483
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439947
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1587 + 1840\u2013",
+    "word": "credo",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439531
+},
+{
+  "fields": {
+    "catorder": 3,
+    "fulldate": "1593\u2013",
+    "word": "knowledge",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420473
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1613\u2013 transf.",
+    "word": "creed",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439532
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "c1400\u2013",
+    "word": "trust",
+    "semantic_field": 121515
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 445580
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1660\u2013",
+    "word": "knowableness",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424538
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1645\u2013",
+    "word": "plain English",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424633
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "a1300\u2013",
+    "word": "signification",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424754
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1650\u2013",
+    "word": "capitulary",
+    "semantic_field": 165754
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 619368
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1548\u2013",
+    "word": "training",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639628
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "a1374\u2013 also fig.",
+    "word": "coverture",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438193
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1865\u2013",
+    "word": "purdah",
+    "semantic_field": 120356
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439389
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "c1220\u2013",
+    "word": "beast",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105173
+},
+{
+  "fields": {
+    "catorder": 4,
+    "fulldate": "1641\u2013",
+    "word": "embellishing",
+    "semantic_field": 135145
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 512255
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1609\u2013",
+    "word": "assurance",
+    "semantic_field": 121174
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443729
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1646\u2013",
+    "word": "clarity",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424634
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "OE\u2013",
+    "word": "understanding < understanding",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419933
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1791\u2013",
+    "word": "dogma",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439533
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1382/8\u2013",
+    "word": "credence",
+    "semantic_field": 120386
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439518
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1616 Dict. + 1646\u2013",
+    "word": "clarity",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420475
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "c1430\u2013",
+    "word": "confidence",
+    "semantic_field": 121515
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 445581
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1297\u2013",
+    "word": "wit",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420425
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "a1300\u2013",
+    "word": "creature",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105174
+},
+{
+  "fields": {
+    "catorder": 5,
+    "fulldate": "1671\u2013",
+    "word": "taste",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509733
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "a1300\u2013",
+    "word": "going",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682992
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "c1400\u2013",
+    "word": "feeling",
+    "semantic_field": 127448
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 477228
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "OE\u2013",
+    "word": "key < c\u00e6g",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425105
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "1829\u2013",
+    "word": "plainness",
+    "semantic_field": 135894
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 515232
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "1735\u2013",
+    "word": "code",
+    "semantic_field": 165754
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 619370
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "1523\u2013",
+    "word": "believing",
+    "semantic_field": 120386
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439519
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "OE\u2013",
+    "word": "wit < (ge)witt",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419934
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "1915\u2013",
+    "word": "whatnotism",
+    "semantic_field": 120388
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439534
+},
+{
+  "fields": {
+    "catorder": 6,
+    "fulldate": "1807/8\u2013",
+    "word": "style",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510719
+},
+{
+  "fields": {
+    "catorder": 6,
     "fulldate": "a1340\u2013",
-    "word": "occupation"
+    "word": "occupation",
+    "semantic_field": 197769
   },
   "model": "semantic_fields.lexeme",
   "pk": 706611
 },
 {
   "fields": {
-    "category": 197983,
-    "catorder": "18",
-    "fulldate": "1862\u2013 colloq., orig. US",
-    "word": "biz"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707277
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "17",
-    "fulldate": "1826\u2013",
-    "word": "pidgin/pigeon"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707276
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "15",
-    "fulldate": "1570 Scots + 1696\u2013",
-    "word": "commission"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707274
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "14",
-    "fulldate": "1533\u2013",
-    "word": "function"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707273
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "11",
-    "fulldate": "c1385\u2013",
-    "word": "business"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707270
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "10",
-    "fulldate": "1375\u2013",
-    "word": "part"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707269
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "9",
-    "fulldate": "1375/89\u2013",
-    "word": "duty"
-  },
-  "model": "semantic_fields.lexeme",
-  "pk": 707268
-},
-{
-  "fields": {
-    "category": 197983,
-    "catorder": "7",
+    "catorder": 7,
     "fulldate": "c1330\u2013",
-    "word": "office"
+    "word": "journeying",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682993
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "1563\u2013",
+    "word": "stir",
+    "semantic_field": 127448
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 477229
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "a1340\u2013",
+    "word": "certainty",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443428
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "a1225\u2013",
+    "word": "doubt",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441601
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "1398\u2013",
+    "word": "animal",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105176
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "c1330\u2013",
+    "word": "office",
+    "semantic_field": 197983
   },
   "model": "semantic_fields.lexeme",
   "pk": 707266
 },
 {
   "fields": {
-    "category": 197983,
-    "catorder": "3",
-    "fulldate": "OE\u2013",
-    "word": "work < weorc"
+    "catorder": 7,
+    "fulldate": "1748\u2013",
+    "word": "confidence",
+    "semantic_field": 120358
   },
   "model": "semantic_fields.lexeme",
-  "pk": 707262
+  "pk": 439399
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "OE\u2013 now arch.",
+    "word": "craft < cr\u00e6ft",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420171
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "1836\u2013",
+    "word": "lucidness",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424636
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "1678\u2013",
+    "word": "intelligibility",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424541
+},
+{
+  "fields": {
+    "catorder": 7,
+    "fulldate": "1839\u2013",
+    "word": "fashionability",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510720
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "1727\u2013",
+    "word": "discernibleness",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424542
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "c1375\u2013",
+    "word": "travel",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682994
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "a1300\u20131621 + 1808\u2013 dial.",
+    "word": "witting",
+    "semantic_field": 118507
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 428824
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "1555\u2013",
+    "word": "security",
+    "semantic_field": 121515
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 445584
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "1533\u2013",
+    "word": "belief",
+    "semantic_field": 120386
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439521
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "1520\u2013",
+    "word": "upbringing",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639915
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "a1340\u2013",
+    "word": "exposition",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425107
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "c1530\u2013",
+    "word": "sureness",
+    "semantic_field": 121157
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443581
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "OE\u2013",
+    "word": "understanding < understanding",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420172
+},
+{
+  "fields": {
+    "catorder": 8,
+    "fulldate": "1613\u2013",
+    "word": "hopes",
+    "semantic_field": 121425
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 445284
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1629\u2013",
+    "word": "nurturing",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639633
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1375\u2013",
+    "word": "assurance",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443430
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1375\u2013",
+    "word": "travelling",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682995
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1538\u2013",
+    "word": "certitude",
+    "semantic_field": 121157
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443582
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "c1400\u2013",
+    "word": "interpretation",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424759
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1526\u2013",
+    "word": "bringing up",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639916
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1914\u2013 slang",
+    "word": "hep",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510722
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "c1400\u2013",
+    "word": "business",
+    "semantic_field": 197769
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 706614
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1793\u2013",
+    "word": "comprehensibility",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424543
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1375/89\u2013",
+    "word": "duty",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707268
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1662\u2013",
+    "word": "perspicuity",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420479
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1390\u2013",
+    "word": "intelligence",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419937
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1660\u2013",
+    "word": "emotion",
+    "semantic_field": 127448
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 477231
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "a1340\u2013",
+    "word": "science",
+    "semantic_field": 118507
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 428825
+},
+{
+  "fields": {
+    "catorder": 9,
+    "fulldate": "1851\u2013",
+    "word": "lucidity",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424638
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "c1400\u20131614 + 1850\u2013 arch.",
+    "word": "wayfare",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682996
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1375\u2013",
+    "word": "part",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707269
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "OE\u20131576 + 1707\u2013 arch.",
+    "word": "hope < hopa",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439744
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "c1450\u2013",
+    "word": "significance",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424760
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "a1691\u2013",
+    "word": "clear-sightedness",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420480
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1908\u2013",
+    "word": "charmlessness",
+    "semantic_field": 135894
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 515236
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1531\u2013",
+    "word": "acumen",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420430
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1946\u2013",
+    "word": "hipness",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510723
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1827\u2013",
+    "word": "apprehensibility",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424544
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1794\u2013",
+    "word": "acceptance",
+    "semantic_field": 120386
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439523
+},
+{
+  "fields": {
+    "catorder": 10,
+    "fulldate": "1735\u2013",
+    "word": "heart",
+    "semantic_field": 127448
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 477232
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1824/9\u2013",
+    "word": "far-sightedness",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420481
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1840\u2013",
+    "word": "discoverability",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424545
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "c1380\u2013",
+    "word": "expounding",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425110
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1803\u2013",
+    "word": "acceptation",
+    "semantic_field": 120386
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439524
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "c1175\u2013",
+    "word": "belief",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439745
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1432/50\u2013",
+    "word": "certitude",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443432
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1570\u2013",
+    "word": "assuredness",
+    "semantic_field": 121157
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443584
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1749\u2013",
+    "word": "connoisseurship",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509739
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "1963\u2013 slang",
+    "word": "with-it-ness",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510724
+},
+{
+  "fields": {
+    "catorder": 11,
+    "fulldate": "c1385\u2013",
+    "word": "business",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707270
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1615\u2013",
+    "word": "shrouding",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438201
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1852\u2013",
+    "word": "cognizability",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424546
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1387\u2013",
+    "word": "knowledge",
+    "semantic_field": 118507
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 428828
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1631\u2013",
+    "word": "significancy",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424762
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1536\u2013",
+    "word": "wayfaring",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 682998
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1805\u2013",
+    "word": "culture",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639636
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1968\u2013 slang, orig. US",
+    "word": "funkiness",
+    "semantic_field": 134904
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 510725
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1756/82\u2013",
+    "word": "sensibility",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509740
+},
+{
+  "fields": {
+    "catorder": 12,
+    "fulldate": "1382\u2013",
+    "word": "explanation",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425111
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "1861\u2013",
+    "word": "clairvoyance",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420483
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "a1548\u2013",
+    "word": "sagacity",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420433
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "1901\u2013",
+    "word": "discriminability",
+    "semantic_field": 117737
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424642
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "1860\u2013",
+    "word": "education",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639637
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "1382\u2013",
+    "word": "interpretation",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425112
+},
+{
+  "fields": {
+    "catorder": 13,
+    "fulldate": "1577\u2013",
+    "word": "breeding",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639920
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1538\u2013",
+    "word": "expectation",
+    "semantic_field": 121254
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 444366
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1393\u2013",
+    "word": "brain",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420178
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "a1225\u2013",
+    "word": "trust",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439748
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1831\u2013",
+    "word": "aesthetic",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509742
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1729\u2013",
+    "word": "fellow-creature",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105183
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1578\u2013",
+    "word": "nurturing",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639921
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1939\u2013",
+    "word": "X-ray eyes",
+    "semantic_field": 117150
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420484
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1939\u2013 also transf.",
+    "word": "paedeia/paideia",
+    "semantic_field": 172257
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639638
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1533\u2013",
+    "word": "function",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707273
+},
+{
+  "fields": {
+    "catorder": 14,
+    "fulldate": "1871\u2013",
+    "word": "cognizableness",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424548
+},
+{
+  "fields": {
+    "catorder": 15,
+    "fulldate": "1788\u2013",
+    "word": "screening",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438204
+},
+{
+  "fields": {
+    "catorder": 15,
+    "fulldate": "1570 Scots + 1696\u2013",
+    "word": "commission",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707274
+},
+{
+  "fields": {
+    "catorder": 15,
+    "fulldate": "1873\u2013",
+    "word": "recognizability",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424549
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "OE\u2013",
+    "word": "man < mann",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138121
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1815\u2013 dial. & joc.",
+    "word": "critter",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105185
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1611\u2013",
+    "word": "rearing",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639923
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1561\u2013",
+    "word": "nimbleness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420436
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1960\u2013",
+    "word": "shibui",
+    "semantic_field": 134714
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 509744
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1555\u2013",
+    "word": "confidence",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443437
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "c1400\u2013c1440 + a1800\u2013 Scots & northern dial.",
+    "word": "kenning",
+    "semantic_field": 118507
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 428832
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "1833\u2013",
+    "word": "tucking",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438205
+},
+{
+  "fields": {
+    "catorder": 16,
+    "fulldate": "c1430\u2013",
+    "word": "intelligence",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420180
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1922\u2013",
+    "word": "smoke-screening",
+    "semantic_field": 120161
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 438206
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1471\u20131648 + 1821\u2013 arch.",
+    "word": "speculation",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420181
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1600\u2013",
+    "word": "expectancy",
+    "semantic_field": 121254
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 444369
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1826\u2013",
+    "word": "pidgin/pigeon",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707276
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1548/9\u2013",
+    "word": "explication",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425116
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1690\u2013",
+    "word": "meaning",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424767
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1586\u2013",
+    "word": "discernment",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420437
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "OE\u2013",
+    "word": "heart < heorte",
+    "semantic_field": 115247
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 415019
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "OE\u2013",
+    "word": "son of man < mannes sunu",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138122
+},
+{
+  "fields": {
+    "catorder": 17,
+    "fulldate": "1542\u2013",
+    "word": "reach",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419945
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "a1563\u2013",
+    "word": "clearance",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425117
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "1732\u2013",
+    "word": "amount",
+    "semantic_field": 117758
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424768
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "a1300\u2013",
+    "word": "faith",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439752
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "c1450\u2013",
+    "word": "dubitation",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441612
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "a1572\u2013",
+    "word": "sureness",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443439
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "1827\u2013 S. Afr.",
+    "word": "skellum",
+    "semantic_field": 26691
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 105187
+},
+{
+  "fields": {
+    "catorder": 18,
+    "fulldate": "1862\u2013 colloq., orig. US",
+    "word": "biz",
+    "semantic_field": 197983
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 707277
+},
+{
+  "fields": {
+    "catorder": 19,
+    "fulldate": "c1200\u20131735 + 1805\u2013 arch. & dial.",
+    "word": "wight",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138124
+},
+{
+  "fields": {
+    "catorder": 19,
+    "fulldate": "1934\u2013",
+    "word": "understandability",
+    "semantic_field": 117726
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 424553
+},
+{
+  "fields": {
+    "catorder": 19,
+    "fulldate": "1605\u2013",
+    "word": "penetration",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420439
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1606\u2013",
+    "word": "shrewdness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420440
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1485\u2013",
+    "word": "capacity",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420184
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1597\u2013",
+    "word": "security",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443441
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1374\u2013",
+    "word": "head",
+    "semantic_field": 115247
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 415022
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1570\u2013",
+    "word": "elucidation",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425119
+},
+{
+  "fields": {
+    "catorder": 20,
+    "fulldate": "1842\u2013 now chiefly US",
+    "word": "raising",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639927
+},
+{
+  "fields": {
+    "catorder": 21,
+    "fulldate": "1526\u2013",
+    "word": "doubtfulness",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441615
+},
+{
+  "fields": {
+    "catorder": 21,
+    "fulldate": "1527\u2013",
+    "word": "dexterity",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420185
+},
+{
+  "fields": {
+    "catorder": 21,
+    "fulldate": "1605\u2013 chiefly Theology",
+    "word": "plerophory",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443442
+},
+{
+  "fields": {
+    "catorder": 21,
+    "fulldate": "a1225\u2013",
+    "word": "person",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138126
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1580\u2013",
+    "word": "explaining",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425121
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1656 + 1872\u2013",
+    "word": "touch",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419950
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "c1290\u2013",
+    "word": "creature",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138127
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1526\u2013",
+    "word": "scrupulousness",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441616
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1627\u2013",
+    "word": "acuteness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420442
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1788\u2013",
+    "word": "locomotion",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 683008
+},
+{
+  "fields": {
+    "catorder": 22,
+    "fulldate": "1857\u2013",
+    "word": "paedotrophy",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639929
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "a1662\u2013",
+    "word": "comprehension",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419951
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "1929\u2013",
+    "word": "raising up",
+    "semantic_field": 172334
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 639930
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "1581\u2013",
+    "word": "illustration",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425122
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "1531\u2013",
+    "word": "doubting",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441617
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "1638\u2013",
+    "word": "piercingness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420443
+},
+{
+  "fields": {
+    "catorder": 23,
+    "fulldate": "1607\u2013",
+    "word": "reliance",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443444
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "OE\u2013",
+    "word": "earth < eor\u00fee",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 25
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "1597\u2013",
+    "word": "comprehension",
+    "semantic_field": 118507
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 428840
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "OE\u2013",
+    "word": "world < woruld",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137813
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "1659\u2013",
+    "word": "contemplation",
+    "semantic_field": 121254
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 444376
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "1548\u2013",
+    "word": "uncertainty",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441618
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "1647\u2013",
+    "word": "sharpwittedness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420444
+},
+{
+  "fields": {
+    "catorder": 24,
+    "fulldate": "1858\u2013 orig. S. Afr.",
+    "word": "trekking",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 683010
+},
+{
+  "fields": {
+    "catorder": 25,
+    "fulldate": "1816\u2013 chiefly Scots",
+    "word": "uptake",
+    "semantic_field": 117089
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 419953
+},
+{
+  "fields": {
+    "catorder": 25,
+    "fulldate": "1711\u2013",
+    "word": "positiveness",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443446
+},
+{
+  "fields": {
+    "catorder": 25,
+    "fulldate": "1888\u2013",
+    "word": "trooping",
+    "semantic_field": 188444
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 683011
+},
+{
+  "fields": {
+    "catorder": 25,
+    "fulldate": "OE\u2013",
+    "word": "mother < modor",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 26
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "1741\u2013",
+    "word": "positivity",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443447
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "OE\u2013",
+    "word": "world < woruld",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 27
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "a1585\u2013 Scots dial.",
+    "word": "swithering",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441620
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "c1430\u2013",
+    "word": "confidence",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439760
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "c1320\u2013",
+    "word": "soul",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138131
+},
+{
+  "fields": {
+    "catorder": 26,
+    "fulldate": "1555\u2013",
+    "word": "ingeniousness",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420190
+},
+{
+  "fields": {
+    "catorder": 27,
+    "fulldate": "c1200\u2013",
+    "word": "microcosm",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137816
+},
+{
+  "fields": {
+    "catorder": 27,
+    "fulldate": "c1175\u2013",
+    "word": "all the world",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 28
+},
+{
+  "fields": {
+    "catorder": 27,
+    "fulldate": "1678\u2013",
+    "word": "sagaciousness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420447
+},
+{
+  "fields": {
+    "catorder": 27,
+    "fulldate": "c1440\u2013",
+    "word": "trusting",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439761
+},
+{
+  "fields": {
+    "catorder": 28,
+    "fulldate": "1690\u2013",
+    "word": "perceptivity",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420448
+},
+{
+  "fields": {
+    "catorder": 28,
+    "fulldate": "1854\u2013",
+    "word": "positivism",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443449
+},
+{
+  "fields": {
+    "catorder": 29,
+    "fulldate": "1542/5\u2013",
+    "word": "credit",
+    "semantic_field": 120453
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 439763
+},
+{
+  "fields": {
+    "catorder": 29,
+    "fulldate": "1857\u2013",
+    "word": "undoubtingness",
+    "semantic_field": 121139
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 443450
+},
+{
+  "fields": {
+    "catorder": 29,
+    "fulldate": "1707\u2013",
+    "word": "keenness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420449
+},
+{
+  "fields": {
+    "catorder": 30,
+    "fulldate": "a1300\u2013",
+    "word": "mankind",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137819
+},
+{
+  "fields": {
+    "catorder": 30,
+    "fulldate": "a1340\u2013",
+    "word": "wilderness",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 31
+},
+{
+  "fields": {
+    "catorder": 30,
+    "fulldate": "1610\u2013",
+    "word": "pate",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420194
+},
+{
+  "fields": {
+    "catorder": 30,
+    "fulldate": "1727 Dict. + 1812\u2013",
+    "word": "knowingness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420450
+},
+{
+  "fields": {
+    "catorder": 30,
+    "fulldate": "c1386\u2013",
+    "word": "poppet",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138135
+},
+{
+  "fields": {
+    "catorder": 32,
+    "fulldate": "1617\u2013",
+    "word": "hesitancy",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441626
+},
+{
+  "fields": {
+    "catorder": 32,
+    "fulldate": "1622\u2013",
+    "word": "talent",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420196
+},
+{
+  "fields": {
+    "catorder": 32,
+    "fulldate": "1809\u2013",
+    "word": "a long head",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420452
+},
+{
+  "fields": {
+    "catorder": 32,
+    "fulldate": "1534\u2013",
+    "word": "the whole world",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 33
+},
+{
+  "fields": {
+    "catorder": 33,
+    "fulldate": "1852\u2013",
+    "word": "perceptiveness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420453
+},
+{
+  "fields": {
+    "catorder": 33,
+    "fulldate": "1619\u2013",
+    "word": "unsettledness",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441627
+},
+{
+  "fields": {
+    "catorder": 34,
+    "fulldate": "1857\u2013",
+    "word": "recollectedness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420454
+},
+{
+  "fields": {
+    "catorder": 34,
+    "fulldate": "1622\u2013",
+    "word": "hesitation",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441628
+},
+{
+  "fields": {
+    "catorder": 34,
+    "fulldate": "c1450\u2013",
+    "word": "people",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137823
+},
+{
+  "fields": {
+    "catorder": 34,
+    "fulldate": "1575\u2013",
+    "word": "the/this globe",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 35
+},
+{
+  "fields": {
+    "catorder": 35,
+    "fulldate": "c1586\u2013",
+    "word": "mother earth",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 36
+},
+{
+  "fields": {
+    "catorder": 35,
+    "fulldate": "c1450\u2013",
+    "word": "wretch",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138140
+},
+{
+  "fields": {
+    "catorder": 35,
+    "fulldate": "1643\u2013",
+    "word": "unsatisfaction",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441629
+},
+{
+  "fields": {
+    "catorder": 37,
+    "fulldate": "a1533\u2013",
+    "word": "human",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138142
+},
+{
+  "fields": {
+    "catorder": 37,
+    "fulldate": "1602+ 1828\u2013",
+    "word": "glimpses of the moon",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 38
+},
+{
+  "fields": {
+    "catorder": 37,
+    "fulldate": "1865\u2013",
+    "word": "incisiveness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420457
+},
+{
+  "fields": {
+    "catorder": 37,
+    "fulldate": "1646 + 1917\u2013",
+    "word": "insecurity",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441631
+},
+{
+  "fields": {
+    "catorder": 37,
+    "fulldate": "1713\u2013",
+    "word": "unravelling",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425136
+},
+{
+  "fields": {
+    "catorder": 38,
+    "fulldate": "1579\u2013",
+    "word": "humanity",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137827
+},
+{
+  "fields": {
+    "catorder": 38,
+    "fulldate": "1755 Dict. + 1809/10\u2013",
+    "word": "cleverness",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420202
+},
+{
+  "fields": {
+    "catorder": 38,
+    "fulldate": "1751\u2013",
+    "word": "disentanglement",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425137
+},
+{
+  "fields": {
+    "catorder": 39,
+    "fulldate": "1881\u2013",
+    "word": "flair",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420459
+},
+{
+  "fields": {
+    "catorder": 39,
+    "fulldate": "c1580\u2013",
+    "word": "race",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137828
+},
+{
+  "fields": {
+    "catorder": 39,
+    "fulldate": "a1555\u2013",
+    "word": "personage",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138144
+},
+{
+  "fields": {
+    "catorder": 40,
+    "fulldate": "1823\u2013",
+    "word": "exegesis",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425139
+},
+{
+  "fields": {
+    "catorder": 40,
+    "fulldate": "1934\u2013",
+    "word": "hard-boiledness",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420460
+},
+{
+  "fields": {
+    "catorder": 41,
+    "fulldate": "1665\u2013",
+    "word": "scrupling",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441635
+},
+{
+  "fields": {
+    "catorder": 41,
+    "fulldate": "1970\u2013 US slang",
+    "word": "smart(s)",
+    "semantic_field": 117147
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420461
+},
+{
+  "fields": {
+    "catorder": 41,
+    "fulldate": "1676\u2013",
+    "word": "a world",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 42
+},
+{
+  "fields": {
+    "catorder": 41,
+    "fulldate": "1827\u2013",
+    "word": "disambiguation",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425140
+},
+{
+  "fields": {
+    "catorder": 41,
+    "fulldate": "1901\u2013",
+    "word": "cerebrality",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420205
+},
+{
+  "fields": {
+    "catorder": 42,
+    "fulldate": "1601\u2013",
+    "word": "flesh and blood",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137831
+},
+{
+  "fields": {
+    "catorder": 43,
+    "fulldate": "a1866\u2013",
+    "word": "clarification",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425142
+},
+{
+  "fields": {
+    "catorder": 43,
+    "fulldate": "1830\u2013 US colloq.",
+    "word": "all outdoors",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 44
+},
+{
+  "fields": {
+    "catorder": 43,
+    "fulldate": "1601\u2013",
+    "word": "vicegerent",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137832
+},
+{
+  "fields": {
+    "catorder": 43,
+    "fulldate": "1946\u2013",
+    "word": "knowledgeability",
+    "semantic_field": 117115
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 420207
+},
+{
+  "fields": {
+    "catorder": 43,
+    "fulldate": "1719\u2013 Scots & dial.",
+    "word": "swither",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441637
+},
+{
+  "fields": {
+    "catorder": 44,
+    "fulldate": "1868\u2013",
+    "word": "outer world",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 45
+},
+{
+  "fields": {
+    "catorder": 44,
+    "fulldate": "1603\u2013",
+    "word": "world",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137833
+},
+{
+  "fields": {
+    "catorder": 44,
+    "fulldate": "1766\u2013",
+    "word": "dubiety",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441638
+},
+{
+  "fields": {
+    "catorder": 44,
+    "fulldate": "1593\u2013",
+    "word": "earthling",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138149
+},
+{
+  "fields": {
+    "catorder": 45,
+    "fulldate": "1815\u2013",
+    "word": "suspense",
+    "semantic_field": 120859
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 441639
+},
+{
+  "fields": {
+    "catorder": 45,
+    "fulldate": "1596\u2013",
+    "word": "homo",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138150
+},
+{
+  "fields": {
+    "catorder": 46,
+    "fulldate": "1911\u2013",
+    "word": "overworld",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 47
+},
+{
+  "fields": {
+    "catorder": 47,
+    "fulldate": "c1645\u2013",
+    "word": "humankind",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137836
+},
+{
+  "fields": {
+    "catorder": 47,
+    "fulldate": "1966\u2013",
+    "word": "spaceship earth",
+    "semantic_field": 1
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 48
+},
+{
+  "fields": {
+    "catorder": 47,
+    "fulldate": "1964\u2013",
+    "word": "demystification",
+    "semantic_field": 117838
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 425146
+},
+{
+  "fields": {
+    "catorder": 50,
+    "fulldate": "1711\u2013",
+    "word": "the species",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137839
+},
+{
+  "fields": {
+    "catorder": 54,
+    "fulldate": "1631\u2013 colloq.",
+    "word": "tick",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138159
+},
+{
+  "fields": {
+    "catorder": 55,
+    "fulldate": "1635\u2013",
+    "word": "Adamite",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138160
+},
+{
+  "fields": {
+    "catorder": 56,
+    "fulldate": "1650\u2013 now slang & colloq.",
+    "word": "party",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138161
+},
+{
+  "fields": {
+    "catorder": 57,
+    "fulldate": "1911\u2013",
+    "word": "homo",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137846
+},
+{
+  "fields": {
+    "catorder": 58,
+    "fulldate": "1972\u2013 orig. US",
+    "word": "personkind",
+    "semantic_field": 39612
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 137847
+},
+{
+  "fields": {
+    "catorder": 60,
+    "fulldate": "1678\u2013",
+    "word": "personality",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138165
+},
+{
+  "fields": {
+    "catorder": 61,
+    "fulldate": "1680\u2013",
+    "word": "sooterkin",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138166
+},
+{
+  "fields": {
+    "catorder": 62,
+    "fulldate": "1682\u2013",
+    "word": "fellow-creature",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138167
+},
+{
+  "fields": {
+    "catorder": 65,
+    "fulldate": "1718\u2013",
+    "word": "mortal",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138170
+},
+{
+  "fields": {
+    "catorder": 67,
+    "fulldate": "1742\u2013",
+    "word": "individual",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138172
+},
+{
+  "fields": {
+    "catorder": 69,
+    "fulldate": "1751\u2013",
+    "word": "piece of goods",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138174
+},
+{
+  "fields": {
+    "catorder": 70,
+    "fulldate": "1751\u2013",
+    "word": "worthy",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138175
+},
+{
+  "fields": {
+    "catorder": 72,
+    "fulldate": "1776\u2013 Anglo-Indian",
+    "word": "wallah",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138177
+},
+{
+  "fields": {
+    "catorder": 74,
+    "fulldate": "1788\u2013 slang",
+    "word": "bod",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138179
+},
+{
+  "fields": {
+    "catorder": 77,
+    "fulldate": "1811\u2013 slang",
+    "word": "article",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138182
+},
+{
+  "fields": {
+    "catorder": 78,
+    "fulldate": "1815\u2013",
+    "word": "potato",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138183
+},
+{
+  "fields": {
+    "catorder": 79,
+    "fulldate": "1821\u2013 slang",
+    "word": "(his) nibs",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138184
+},
+{
+  "fields": {
+    "catorder": 81,
+    "fulldate": "1826\u2013 West Indies",
+    "word": "somebody/s'mady/s'mody",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138186
+},
+{
+  "fields": {
+    "catorder": 82,
+    "fulldate": "1834\u2013 dial. & joc.",
+    "word": "critter",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138187
+},
+{
+  "fields": {
+    "catorder": 83,
+    "fulldate": "1836\u2013",
+    "word": "personeity",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138188
+},
+{
+  "fields": {
+    "catorder": 90,
+    "fulldate": "1867\u2013",
+    "word": "outfit",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138195
+},
+{
+  "fields": {
+    "catorder": 92,
+    "fulldate": "1887\u2013",
+    "word": "nut",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138197
+},
+{
+  "fields": {
+    "catorder": 94,
+    "fulldate": "1890\u2013 slang",
+    "word": "mug",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138199
+},
+{
+  "fields": {
+    "catorder": 95,
+    "fulldate": "1899\u2013 slang",
+    "word": "baby",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138200
+},
+{
+  "fields": {
+    "catorder": 98,
+    "fulldate": "1914\u2013 chiefly Irish",
+    "word": "skin",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138203
+},
+{
+  "fields": {
+    "catorder": 99,
+    "fulldate": "1919\u2013",
+    "word": "number",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138204
+},
+{
+  "fields": {
+    "catorder": 100,
+    "fulldate": "1927\u2013 joc. colloq.",
+    "word": "job",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138205
+},
+{
+  "fields": {
+    "catorder": 101,
+    "fulldate": "1928\u2013 contemp.",
+    "word": "piece of work",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138206
+},
+{
+  "fields": {
+    "catorder": 102,
+    "fulldate": "1930\u2013",
+    "word": "earth-man",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138207
+},
+{
+  "fields": {
+    "catorder": 103,
+    "fulldate": "1931\u2013 colloq.",
+    "word": "character",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138208
+},
+{
+  "fields": {
+    "catorder": 104,
+    "fulldate": "1943\u2013",
+    "word": "moosh",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138209
+},
+{
+  "fields": {
+    "catorder": 105,
+    "fulldate": "1945\u2013 slang",
+    "word": "face",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138210
+},
+{
+  "fields": {
+    "catorder": 106,
+    "fulldate": "1956\u2013 S. Afr.",
+    "word": "jong",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138211
+},
+{
+  "fields": {
+    "catorder": 107,
+    "fulldate": "1967\u2013",
+    "word": "naked ape",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138212
+},
+{
+  "fields": {
+    "catorder": 108,
+    "fulldate": "1975\u2013 orig. US slang",
+    "word": "pisser",
+    "semantic_field": 39712
+  },
+  "model": "semantic_fields.lexeme",
+  "pk": 138213
 },
 {
   "fields": {

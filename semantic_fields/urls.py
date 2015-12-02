@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import routers
 
 from lib.util import ajax_login_required
-from .views import SearchTable, CategoryViewSet
+from .views import SearchTable, SemanticFieldViewSet
 
 router = routers.SimpleRouter()
-router.register(r'category', CategoryViewSet,
-                base_name="semantic_fields_category")
+router.register(r'semanticfield', SemanticFieldViewSet,
+                base_name="semantic_fields_semanticfield")
 
 urlpatterns = patterns(
     'semantic_fields.views',

@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 
 from cms.test_utils.testcases import BaseCMSTestCase
 
-from ..models import Category, SearchWord, Lexeme
+from ..models import SemanticField, SearchWord, Lexeme
 
 user_model = get_user_model()
 
@@ -25,8 +25,8 @@ class ViewsTestCase(BaseCMSTestCase, WebTest):
         self.noperm = user_model.objects.create(username="foo", password="foo")
         self.perm = user_model.objects.create(username="bar", password="bar")
         self.perm.user_permissions.add(Permission.objects.get(
-            content_type=ContentType.objects.get_for_model(Category),
-            codename="add_category"))
+            content_type=ContentType.objects.get_for_model(SemanticField),
+            codename="add_semanticfield"))
         self.perm.save()
 
         # Not a test proper... but make sure that what we expect is
@@ -112,10 +112,11 @@ class SearchTableTestCase(ViewsTestCase):
         self.assertEqual(json["recordsTotal"], total)
         self.assertEqual(json["recordsFiltered"], len(names))
 
-        headings = ["<p>" +
-                    Category.objects.get(heading=name).linked_breadcrumbs +
-                    "</p>"
-                    for name in names]
+        headings = \
+            ["<p>" +
+             SemanticField.objects.get(heading=name).linked_breadcrumbs +
+             "</p>"
+             for name in names]
 
         self.assertItemsEqual([row[1] for row in json["data"]], headings)
 
@@ -123,10 +124,10 @@ class SearchTableTestCase(ViewsTestCase):
         """
         Test that setting the scope produces correct results.
         """
-        hte = Category(path="01n", heading="hte", catid="1")
+        hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
 
-        nonhte = Category(path="02n", heading="nonhte")
+        nonhte = SemanticField(path="02n", heading="nonhte")
         nonhte.save()
 
         response = self.app.get(self.url,
@@ -143,14 +144,14 @@ class SearchTableTestCase(ViewsTestCase):
         """
         Test that setting the aspect produces correct results.
         """
-        cat1 = Category(path="01n", heading="term")
+        cat1 = SemanticField(path="01n", heading="term")
         cat1.save()
 
-        cat2 = Category(path="02n", heading="aaaa")
+        cat2 = SemanticField(path="02n", heading="aaaa")
         cat2.save()
 
-        lexeme = Lexeme(htid=1,
-                        category=cat2, word="term", fulldate="q", catorder=0)
+        lexeme = Lexeme(htid=1, semantic_field=cat2, word="term",
+                        fulldate="q", catorder=0)
         lexeme.save()
 
         word = SearchWord(sid=1, htid=lexeme, searchword="term", type="oed")
@@ -170,10 +171,10 @@ class SearchTableTestCase(ViewsTestCase):
         """
         Test that using quotes in a search results in an exact search.
         """
-        hte = Category(path="01n", heading="term")
+        hte = SemanticField(path="01n", heading="term")
         hte.save()
 
-        nonhte = Category(path="02n", heading="non-terminal")
+        nonhte = SemanticField(path="02n", heading="non-terminal")
         nonhte.save()
 
         response = self.app.get(self.url,
@@ -227,7 +228,7 @@ class DetailsTestCaseHTML(ViewsTestCase):
 
     def setUp(self):
         super(DetailsTestCaseHTML, self).setUp()
-        self.hte = hte = Category(path="01n", heading="hte", catid="1")
+        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
 
     def test_not_logged_in(self):
@@ -270,7 +271,7 @@ class DetailsTestCaseHTML(ViewsTestCase):
         self.assertEqual(len(response.lxml.cssselect(selector)), 1,
                          "the URL linking to the HTE site should exist")
 
-        nonhte = Category(path="02n", heading="nonhte")
+        nonhte = SemanticField(path="02n", heading="nonhte")
         nonhte.save()
         response = self.query(nonhte.detail_url, self.noperm)
         self.assertEqual(len(response.lxml.cssselect(selector)), 0,
@@ -286,7 +287,7 @@ class DetailsTestCaseHTML(ViewsTestCase):
         self.assertEqual(len(response.lxml.cssselect(selector)), 0,
                          "there should be no listing of other pos")
 
-        sibling = Category(path="01aj", heading="sibling")
+        sibling = SemanticField(path="01aj", heading="sibling")
         sibling.save()
 
         response = self.query(self.hte.detail_url, self.noperm)
@@ -311,18 +312,18 @@ class DetailsTestCaseHTML(ViewsTestCase):
         self.assertEqual(len(response.lxml.cssselect(selector)), 0,
                          "there should be no listing of lexemes")
 
-        other = Category(path="02n", heading="other")
+        other = SemanticField(path="02n", heading="other")
         other.save()
 
-        lexeme = Lexeme(htid=1, category=self.hte, word="foo", fulldate="q",
-                        catorder=0)
+        lexeme = Lexeme(htid=1, semantic_field=self.hte, word="foo",
+                        fulldate="q", catorder=0)
         lexeme.save()
-        lexeme2 = Lexeme(htid=2, category=self.hte, word="bar", fulldate="q",
-                         catorder=1)
+        lexeme2 = Lexeme(htid=2, semantic_field=self.hte, word="bar",
+                         fulldate="q", catorder=1)
         lexeme2.save()
 
         # Create an unrelated lexeme which will not appear in the list.
-        lexeme3 = Lexeme(htid=3, category=other, word="x", fulldate="q",
+        lexeme3 = Lexeme(htid=3, semantic_field=other, word="x", fulldate="q",
                          catorder=0)
         lexeme3.save()
 
@@ -353,7 +354,7 @@ class DetailsTestCaseHTML(ViewsTestCase):
         expected = [{"text": x.heading, "href": x.detail_url} for x in
                     (child1, child2)]
 
-        other = Category(path="02n", heading="other")
+        other = SemanticField(path="02n", heading="other")
         other.save()
         other.make_child(heading="child other", pos="n")
 
@@ -368,7 +369,7 @@ class DetailsTestCaseJSON(ViewsTestCase):
 
     def setUp(self):
         super(DetailsTestCaseJSON, self).setUp()
-        self.hte = hte = Category(path="01n", heading="hte", catid="1")
+        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
 
     def test_not_logged_in(self):
@@ -396,7 +397,7 @@ class AddChildFormTestCase(ViewsTestCase):
 
     def setUp(self):
         super(AddChildFormTestCase, self).setUp()
-        self.hte = hte = Category(path="01n", heading="hte", catid="1")
+        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
 
     def test_not_logged_in(self):
@@ -438,9 +439,9 @@ class CreateTestCase(ViewsTestCase):
 
     def setUp(self):
         super(CreateTestCase, self).setUp()
-        self.hte = hte = Category(path="01n", heading="hte", catid="1")
+        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
-        self.url = reverse('semantic_fields_category-list')
+        self.url = reverse('semantic_fields_semanticfield-list')
 
     def test_not_logged_in(self):
         """
@@ -478,7 +479,7 @@ class CreateTestCase(ViewsTestCase):
 
     def creation_successful(self, accept):
         """
-        Test that a user can create a new category.
+        Test that a user can create a new semantic field.
         """
         self.assertEqual(self.hte.children.count(), 0)
         response = self.app.get(self.hte.add_child_form_url, user=self.perm)
@@ -498,7 +499,7 @@ class CreateTestCase(ViewsTestCase):
         self.assertEqual(response.body, "")
 
         # Reacquire, and check the values of the child.
-        hte = Category.objects.get(id=self.hte.id)
+        hte = SemanticField.objects.get(id=self.hte.id)
         self.assertEqual(hte.children.count(), 1)
         child = hte.children.first()
         self.assertEqual(child.parent, hte)
@@ -542,8 +543,9 @@ class CreateTestCase(ViewsTestCase):
 
         # Check again that there are no children. We reacquire the
         # object to make sure caching is not interfering.
-        self.assertEqual(Category.objects.get(id=self.hte.id).children.count(),
-                         0)
+        self.assertEqual(
+            SemanticField.objects.get(id=self.hte.id).children.count(),
+            0)
 
     def incorrect_pos(self, accept):
         """
@@ -583,8 +585,9 @@ class CreateTestCase(ViewsTestCase):
 
         # Check again that there are no children. We reacquire the
         # object to make sure caching is not interfering.
-        self.assertEqual(Category.objects.get(id=self.hte.id).children.count(),
-                         0)
+        self.assertEqual(
+            SemanticField.objects.get(id=self.hte.id).children.count(),
+            0)
 
     def incorrect_parent(self, accept):
         """
@@ -626,8 +629,9 @@ class CreateTestCase(ViewsTestCase):
 
         # Check again that there are no children. We reacquire the
         # object to make sure caching is not interfering.
-        self.assertEqual(Category.objects.get(id=self.hte.id).children.count(),
-                         0)
+        self.assertEqual(
+            SemanticField.objects.get(id=self.hte.id).children.count(),
+            0)
 
     def missing_parent(self, accept):
         """
@@ -667,8 +671,9 @@ class CreateTestCase(ViewsTestCase):
 
         # Check again that there are no children. We reacquire the
         # object to make sure caching is not interfering.
-        self.assertEqual(Category.objects.get(id=self.hte.id).children.count(),
-                         0)
+        self.assertEqual(
+            SemanticField.objects.get(id=self.hte.id).children.count(),
+            0)
 
 def init():
     for (accept, test) in itertools.product(

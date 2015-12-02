@@ -16,7 +16,7 @@ from .xml import XMLTree, default_namespace_mapping, elements_as_text, \
 from . import depman
 from bibliography.views import targets_to_dicts
 from lib.tasks import acquire_mutex
-from semantic_fields.models import Category
+from semantic_fields.models import SemanticField
 from semantic_fields.util import parse_local_references
 
 logger = get_task_logger(__name__)
@@ -390,7 +390,7 @@ def name_semantic_fields(xml):
     used = {}
     found = False
     for sf in set(elements_as_text(sfs)):
-        category = None
+        sf_record = None
 
         try:
             refs = parse_local_references(sf)
@@ -409,21 +409,21 @@ def name_semantic_fields(xml):
                     break
 
                 try:
-                    category = Category.objects.get(path=ref_str)
-                except Category.DoesNotExist:
-                    category = None
+                    sf_record = SemanticField.objects.get(path=ref_str)
+                except SemanticField.DoesNotExist:
+                    sf_record = None
 
                 fetched.add(ref_str)
 
                 # It is okay to set the value to none if it so happens
-                # that we found no category. This way we don't
+                # that we found no sf_record. This way we don't
                 # fruitlessly the same field later if it happens to
                 # not exist.
-                used[ref_str] = category
+                used[ref_str] = sf_record
 
                 # Using found obviates the need to scan ``used``
                 # later.
-                found = found or category is not None
+                found = found or sf_record is not None
 
                 # In the cases where a reference has a
                 # subcategory, we need to join the subcategory
@@ -449,32 +449,32 @@ def name_semantic_fields(xml):
             # articles.
             continue
 
-        ref_categories = [(ref, used.get(unicode(ref), None)) for ref in
+        ref_sf_records = [(ref, used.get(unicode(ref), None)) for ref in
                           refs]
 
         sep = ''
-        if ref_categories:
+        if ref_sf_records:
             del sf[:]
             sf.text = ''
-            if len(ref_categories) > 1:
+            if len(ref_sf_records) > 1:
                 sep = " @"
 
-        for (ref, category) in ref_categories:
+        for (ref, sf_record) in ref_sf_records:
             initial_ref = ref
             heading = ""
             failed = False
             while True:
-                if category is None:
+                if sf_record is None:
                     failed = True
                     break
 
-                heading = category.heading + heading
+                heading = sf_record.heading + heading
                 if not ref.hte_subcats:
                     break
 
                 # We need to add the parent heading to this one.
                 ref = ref.parent()
-                category = used.get(unicode(ref), None)
+                sf_record = used.get(unicode(ref), None)
                 heading = " :: " + heading
 
             sf.text = unicode(initial_ref) if failed \
