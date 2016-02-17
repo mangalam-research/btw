@@ -12,7 +12,6 @@ Linux,CH,48
 # Perform these next because IE compatibility is a major
 # issue. Finding problems early pays.
 #
-Windows 8,IE,10,Remote
 Windows 8.1,IE,11,Remote
 
 #
