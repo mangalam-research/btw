@@ -9,13 +9,21 @@ function hasTrsAt(data_node, offset) {
         if (ev.params[0] !== "enterStartTag")
             return;
 
-        var unresolved = wed_editor.resolver.unresolveName(
-            ev.params[1], ev.params[2]);
+        var name_pattern = ev.params[1];
+        if (!name_pattern.simple())
+            throw new Error("non-simple pattern; cannot test");
 
-        var trs = wed_editor.mode.getContextualActions(
-            "insert", unresolved, data_node, offset);
-        if (trs.length)
-            ret[unresolved] = 1;
+        var names = name_pattern.toArray();
+        for (var ix = 0, name; (name = names[ix]); ++ix) {
+            var unresolved = wed_editor.resolver.unresolveName(
+                name.ns, name.name);
+
+            var trs = wed_editor.mode.getContextualActions(
+                "insert", unresolved, data_node, offset);
+            if (trs.length)
+                ret[unresolved] = 1;
+        }
+
     });
     function getPath(node) {
         var parent_path = "";
