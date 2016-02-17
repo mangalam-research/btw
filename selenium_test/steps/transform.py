@@ -2,6 +2,7 @@
 import re
 
 from selenium.webdriver.support.wait import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -216,23 +217,29 @@ def step_impl(context, what, inside=None):
 def step_impl(context, what, inside=None):
     driver = context.driver
 
-    button = driver.execute_script(ur"""
-    var what = arguments[0];
-    var inside = arguments[1];
+    done = False
+    while not done:
+        button = driver.execute_script(ur"""
+        var what = arguments[0];
+        var inside = arguments[1];
 
-    var selector = "._va_instantiator:contains('Create new " + what + "')";
-    if (inside)
-        selector = "." + inside.replace(":", "\\:") + " " + selector;
+        var selector = "._va_instantiator:contains('Create new " + what + "')";
+        if (inside)
+            selector = "." + inside.replace(":", "\\:") + " " + selector;
 
-    var ret = jQuery(selector)[0];
-    // For some unfathomable reason, we need to scroll into view
-    // on FF, *before* clicking.
-    ret.scrollIntoView();
-    return ret;
-    """, what, inside)
-    ActionChains(driver) \
-        .click(button) \
-        .perform()
+        var ret = jQuery(selector)[0];
+        // For some unfathomable reason, we need to scroll into view
+        // on FF, *before* clicking.
+        ret.scrollIntoView();
+        return ret;
+        """, what, inside)
+        try:
+            ActionChains(driver) \
+                .click(button) \
+                .perform()
+            done = True
+        except StaleElementReferenceException:
+            pass
 
 
 @then("there is (?P<assertion>a|no) visible absence for (?P<what>.*)")
