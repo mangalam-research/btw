@@ -20,6 +20,7 @@ from pyvirtualdisplay import Display
 
 from nose.tools import assert_equal  # pylint: disable=E0611
 from selenium_test import btw_util
+from selenium.common.exceptions import UnexpectedAlertPresentException
 
 _dirname = os.path.dirname(__file__)
 
@@ -478,10 +479,13 @@ def after_step(context, step):
         name = os.path.join(context.screenshots_dir_path,
                             slugify(context.scenario.name + "_" +
                                     step.name) + ".png")
-        driver.save_screenshot(name)
-        print("")
-        print("Captured screenshot:", name)
-        print("")
+        try:
+            driver.save_screenshot(name)
+            print("")
+            print("Captured screenshot:", name)
+            print("")
+        except UnexpectedAlertPresentException:
+            pass  # There's nothing we can do
 
     server_alive(context)
     # Perform this query only if SELENIUM_LOGS is on.
