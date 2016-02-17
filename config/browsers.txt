@@ -6,7 +6,6 @@
 # Perform these first because they are extremely cheap to perform.
 #
 Linux,CH,48
-Linux,FF,34
 
 
 #
@@ -37,10 +36,6 @@ OS X 10.9,CH,48,Remote
 Windows 8.1,CH,48,Remote
 # wed definitely breaks on Chrome 34.
 # Windows 8.1,CH,34,Remote
-
-# ESR
-Windows 8.1,FF,31,Remote
-Windows 8.1,FF,34,Remote
 
 #
 # FAILING COMBINATIONS
