@@ -494,7 +494,8 @@ BTWDecorator.prototype.refreshVisibleAbsences = function (root, el) {
                     }.bind(undefined, spec),
                     container: $control,
                     delay: { show: 1000 },
-                    placement: "auto top"
+                    placement: "auto top",
+                    trigger: 'hover'
                 };
                 tooltip($control, options);
 
@@ -732,7 +733,7 @@ BTWDecorator.prototype.languageDecorator = function (el) {
         if (label === undefined)
             throw new Error("unknown language: " + lang);
         label = label.split("; ")[0];
-        tooltip($(el), {"title": label, "container": "body"});
+        tooltip($(el), {"title": label, "container": "body", trigger: 'hover'});
     }
 };
 

@@ -225,7 +225,7 @@ function setTitle($el, data) {
     if (date)
         title += ", " + date;
 
-    tooltip($el, {"title": title, container: "body"});
+    tooltip($el, {"title": title, container: "body", trigger: 'hover'});
 }
 
 DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
@@ -336,7 +336,8 @@ DispatchMixin.prototype.linkingDecorator = function (root, el, is_ptr) {
                         node.parentNode.removeChild(node);
                     tooltip($(text), {"title":
                                       "<div>" + target.innerHTML + "</div>",
-                                      "html": true, "container": "body"});
+                                      "html": true, "container": "body",
+                                      trigger: "hover"});
                 }
             }
         }

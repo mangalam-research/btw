@@ -50,7 +50,8 @@ function Toolbar(mode, editor) {
             action.getDescription())
             $button.tooltip({title: action.getDescription(),
                              container: "body",
-                             placement: "auto"});
+                             placement: "auto",
+                             trigger: 'hover'});
         $button.click(bound_click);
         // Prevents acquiring the focus.
         $button.mousedown(false);
