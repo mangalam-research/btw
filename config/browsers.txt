@@ -5,7 +5,7 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,48
+Linux,CH,49
 
 
 #
@@ -18,7 +18,7 @@ Windows 8.1,IE,11,Remote
 # Perform these next because OS X compatibility is an issue. Again, we
 # want to find problems early.
 #
-OS X 10.9,CH,48,Remote
+OS X 10.9,CH,49,Remote
 #
 # On CH 37, Selenium fails to perform:
 # Scenario: removing a paragraph with backspace
@@ -32,7 +32,7 @@ OS X 10.9,CH,48,Remote
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,48,Remote
+Windows 8.1,CH,49,Remote
 # wed definitely breaks on Chrome 34.
 # Windows 8.1,CH,34,Remote
 
