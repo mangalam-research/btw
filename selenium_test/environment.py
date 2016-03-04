@@ -8,6 +8,7 @@ import atexit
 import signal
 import datetime
 import sys
+import types
 
 from slugify import slugify
 import selenic.util
@@ -371,6 +372,26 @@ def before_scenario(context, scenario):
 
     # These documents are not initially present.
     context.created_documents = {}
+
+    context.default_datatable = None
+    context.datatables = {}
+
+    def clear_datatables(self):
+        self.default_datatable = None
+        self.datatables = {}
+
+    context.clear_datatables = types.MethodType(clear_datatables, context)
+
+    def register_datatable(self, datatable, default=False):
+        name = datatable.name
+        if name in self.datatables:
+            raise ValueError("trying to register a datatable with a duplicate "
+                             "name: " + name)
+        if default:
+            self.default_datatable = datatable
+        self.datatables[name] = datatable
+
+    context.register_datatable = types.MethodType(register_datatable, context)
 
     #
     # This allows tags like:

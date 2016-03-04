@@ -74,6 +74,11 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         ps.save()
         fetch_items()
 
+        # Make a custom field so that we can test searches for it
+        from semantic_fields.models import SemanticField
+        first = SemanticField.objects.first()
+        first.make_child("CUSTOM", "n")
+
         from lib import cmsutil
         cmsutil.refresh_cms_apps()
         from cms.api import create_page, add_plugin
@@ -97,6 +102,11 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         content = self.cite_page.placeholders.get(slot='content')
         add_plugin(content, "CitePlugin", "en-us")
         self.cite_page.publish('en-us')
+        self.semantic_fields_page = \
+            create_page("Semantic Fields", "generic_page.html",
+                        "en-us", apphook='SemanticFieldsApp')
+        self.semantic_fields_page.toggle_in_navigation()
+        self.semantic_fields_page.publish('en-us')
 
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
@@ -106,7 +116,9 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         from django.conf import settings
         self.fixtures = \
             [os.path.join(settings.TOPDIR, "core", "tests", "fixtures",
-                          "sites.json")] + \
+                          "sites.json"),
+             os.path.join(settings.TOPDIR, "semantic_fields", "tests",
+                          "fixtures", "hte.json")] + \
             list(os.path.join(settings.TOPDIR, "lexicography", "tests",
                               "fixtures", x)
                  for x in ("users.json", "views.json", "allauth.json"))

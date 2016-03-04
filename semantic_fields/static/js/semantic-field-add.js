@@ -33,7 +33,6 @@ return function (displayers) {
             var cancel = form.querySelector("button.cancel");
 
             function dismiss() {
-                create.style.display = null;
                 div.innerHTML = '';
                 displayer.refresh();
             }
@@ -56,7 +55,7 @@ return function (displayers) {
         }
 
         $(create).one("click", function () {
-            create.style.display = "none";
+            create.parentNode.removeChild(create);
             $.ajax({
                 url: form_url,
                 headers: {
@@ -64,6 +63,7 @@ return function (displayers) {
                 }
             }).done(displayForm);
         });
+        create.style.display = null;
 
     }
 

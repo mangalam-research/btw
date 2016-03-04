@@ -27,17 +27,17 @@ return function ($table, display_div, options) {
     var displayers = new Displayers(display_div);
 
     var template = '\
- <i class="fa fa-question-circle text-info"></i> in \
+ <i class="fa fa-question-circle text-info"></i> <label>in \
 <select class="form-control input-sm" name="aspect">\
 <option value="sf">semantic field names</option>\
 <option value="lexemes">lexemes</option>\
-</select>\
- <i class="fa fa-question-circle text-info"></i> among \
+</select></label>\
+ <i class="fa fa-question-circle text-info"></i> <label>among \
 <select class="form-control input-sm" name="scope">\
 <option value="all">all fields</option>\
 <option value="hte">HTE fields</option>\
 <option value="btw">custom BTW fields</option>\
-</select>\
+</select></label>\
  <i class="fa fa-question-circle text-info"></i>\
 ';
 
@@ -59,13 +59,11 @@ return function ($table, display_div, options) {
                     doc.getElementById("semantic-field-table_wrapper")
                     .getElementsByClassName("dataTables_filter")[0];
             var input = filter.getElementsByTagName("input")[0];
-            input.insertAdjacentHTML("afterend", template);
-            search_aspect = input.parentNode.querySelector(
-                "select[name='aspect']");
-            search_scope = input.parentNode.querySelector(
-                "select[name='scope']");
+            input.parentNode.insertAdjacentHTML("afterend", template);
+            search_aspect = filter.querySelector("select[name='aspect']");
+            search_scope = filter.querySelector("select[name='scope']");
 
-            var help_els = input.parentNode
+            var help_els = filter
                     .getElementsByClassName('fa-question-circle');
             makeHelpPopover(help_els[0], "search-help");
             makeHelpPopover(help_els[1], "aspect-help");

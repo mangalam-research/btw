@@ -361,8 +361,11 @@ Displayer.prototype.display = Promise.method(function (url) {
  * ``transition`` can be used to name a transition to use when showing the URL.
  *
  * @return {Promise} A promise that resolves to this object once the
- * URL has been refreshed and animations completed. The promise will
- * be rejected with
+ * URL has been refreshed and animations completed. If the Ajax
+ * operation fails, the promise will be rejected with an ``Error``
+ * object that has for fields ``jqXHR``, ``textStatus`` and
+ * ``errorThrown`` which correspond to the values that jQuery passes
+ * to the ``.fail`` method.
  */
 Displayer.prototype._refresh = Promise.method(function(options) {
     if (this.closed)
@@ -451,6 +454,20 @@ Displayer.prototype._refresh = Promise.method(function(options) {
             return self;
         });
 });
+
+/**
+ * Refresh the URL currently displayed.
+ *
+ * @return {Promise} A promise that resolves to this object once the
+ * URL has been refreshed and animations completed. If the Ajax
+ * operation fails, the promise will be rejected with an ``Error``
+ * object that has for fields ``jqXHR``, ``textStatus`` and
+ * ``errorThrown`` which correspond to the values that jQuery passes
+ * to the ``.fail`` method.
+ */
+Displayer.prototype.refresh = function () {
+    return this._refresh();
+};
 
 /**
  * Perform the nitty-gritty parts of closing a displayer. This removes

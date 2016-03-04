@@ -12,68 +12,15 @@ step_matcher('re')
 
 @given('the search table is loaded')
 def step_impl(context):
-    util = context.util
-    util.find_element((By.ID, "search-table_next"))
-
-
-_REDRAW_SETUP_FUNCTION = """
-function redrawSetup(done) {
-    window.__selenium_test_redrawn = false;
-    var processing = document.getElementById("search-table_processing");
-    var table = document.getElementById("search-table");
-    function check() {
-        // We do this to make sure that the table is not currently
-        // refreshing when we put in our event handler.
-        if (processing.style.display !== "none") {
-            setTimeout(check, 100);
-            return;
-        }
-        jQuery(table).one("draw.dt", function () {
-            window.__selenium_test_redrawn = true;
-        });
-        done();
-    }
-    check();
-};
-"""
-
-_REDRAW_SETUP_SNIPPET = _REDRAW_SETUP_FUNCTION + """
-redrawSetup(arguments[arguments.length - 1]);
-"""
-
-_REDRAW_CHECK_SNIPPET = """
-var cb = arguments[0];
-function test() {
-    if (window.__selenium_test_redrawn) {
-        cb();
-        return;
-    }
-    setTimeout(test, 1000);
-}
-test();
-"""
+    assert_true(context.default_datatable.is_initialized(),
+                "the search table should be initialized")
 
 
 @when('the user searches for lemma "(?P<query>.*?)"')
 def step_impl(context, query):
-    util = context.util
-    driver = context.driver
-
-    def cond(driver):
-        controls = driver.find_elements_by_css_selector(
-            "#search-table_filter input")
-        return Result(len(controls) == 2, controls)
-
-    controls = util.wait(cond).payload
-
-    controls[1].click()
-    driver.execute_script("""
-    arguments[0].value = arguments[1];
-    """, controls[0], query[:-1])
-    driver.execute_async_script(_REDRAW_SETUP_SNIPPET)
-    controls[0].send_keys(query[-1])
-    driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
-
+    dt = context.default_datatable
+    dt.call_with_search_field("Lemmata only", lambda x: x.click())
+    dt.fill_field("Search", query)
 
 @then(r'the search results show (?P<count>one entry|(?:\d+) entries) for '
       r'"(?P<lemma>.*?)".?')
@@ -174,17 +121,13 @@ def step_impl(context, kind):
 @when('the user switches the search to (?P<kind>(?:un)?published) articles')
 def step_impl(context, kind):
     util = context.util
-    driver = context.driver
-    driver.execute_async_script("""
-    var done = arguments[0];
-    {0}
-    redrawSetup(function () {{
-        var collapse = document.getElementById("advanced-search-collapse");
-        if (!collapse.classList.contains("in"))
-            document.querySelector("a[href='#advanced-search-collapse']").click();
-        done();
-    }});
-    """.format(_REDRAW_SETUP_FUNCTION))
+    dt = context.default_datatable
+    dt.setup_redraw_check()
+    context.driver.execute_script("""
+    var collapse = document.getElementById("advanced-search-collapse");
+    if (!collapse.classList.contains("in"))
+      document.querySelector("a[href='#advanced-search-collapse']").click();
+    """)
     # We have to wait until the element is in ...
     util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
 
@@ -192,29 +135,25 @@ def step_impl(context, kind):
                                        "btw-publication-status")))
     select.select_by_visible_text(kind.capitalize())
 
-    driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
+    dt.wait_for_redraw()
 
 
 @when('the user sets the search to search all records')
 def step_impl(context):
     util = context.util
-    driver = context.driver
-    driver.execute_async_script("""
-    var done = arguments[0];
-    {0}
-    redrawSetup(function () {{
-        var collapse = document.getElementById("advanced-search-collapse");
-        if (!collapse.classList.contains("in"))
-            document.querySelector("a[href='#advanced-search-collapse']").click();
-        done();
-    }});
-    """.format(_REDRAW_SETUP_FUNCTION))
+    dt = context.default_datatable
+    dt.setup_redraw_check()
+    context.driver.execute_script("""
+    var collapse = document.getElementById("advanced-search-collapse");
+    if (!collapse.classList.contains("in"))
+      document.querySelector("a[href='#advanced-search-collapse']").click();
+    """)
     # We have to wait until the element is in ...
     util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
 
     control = util.find_element((By.CLASS_NAME, "btw-search-all-history"))
     control.click()
-    driver.execute_async_script(_REDRAW_CHECK_SNIPPET)
+    dt.wait_for_redraw()
 
 
 @then('there is (?P<existence>no|a) "(?P<name>.*?)" column visible')

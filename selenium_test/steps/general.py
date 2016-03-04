@@ -2,6 +2,8 @@
 import requests
 import re
 import os
+import collections
+
 # pylint: disable=E0611
 from nose.tools import assert_equal, assert_true
 
@@ -15,12 +17,17 @@ from behave import then, when, given, Given, \
 import lexicography.tests.funcs as funcs
 import wedutil
 from selenium_test import btw_util
+from selenic.datatables import Datatable
 
 
 @when("the user loads the top page of the lexicography app")
 def user_load_lexicography(context):
     driver = context.driver
     driver.get(context.builder.SERVER + "/lexicography")
+    context.clear_datatables()
+    dt = Datatable("lexicographical search", "search-table",
+                   context.util)
+    context.register_datatable(dt, True)
 
 
 @then("the user gets the top page of the lexicography app")
@@ -151,8 +158,6 @@ def step_impl(context, choice):
         """)
     util.wait(cond)
     context.scrolled_editor_pane_by = scroll_by
-
-import collections
 
 User = collections.namedtuple("User", ["login", "password"])
 
