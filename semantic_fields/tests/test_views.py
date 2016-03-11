@@ -441,6 +441,11 @@ class CreateTestCase(ViewsTestCase):
         super(CreateTestCase, self).setUp()
         self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
+
+        self.duplicate = SemanticField(path="02n", heading="hte2", catid="2")
+        self.duplicate.save()
+        self.duplicate.make_child("DUPLICATE", "")
+
         self.url = reverse('semantic_fields_semanticfield-list')
 
     def test_not_logged_in(self):
@@ -673,11 +678,54 @@ class CreateTestCase(ViewsTestCase):
             SemanticField.objects.get(id=self.hte.id).children.count(),
             0)
 
+    def duplicate(self, accept):
+        """
+        Test that creating a duplicate field yields an error.
+        """
+        orig_child_count = self.duplicate.children.count()
+        self.assertEqual(orig_child_count, 1)
+        response = self.app.get(self.duplicate.add_child_form_url,
+                                user=self.perm)
+        self.assertEqual(response.status_code, 200)
+        form = response.form
+        form["heading"] = "DUPLICATE"
+        form["pos"] = ""
+
+        response = self.app.post(
+            self.url,
+            headers={
+                "Accept": accept,
+            },
+            params=form.submit_fields(),
+            user=self.perm, expect_errors=True)
+        expected_content_type = {
+            "application/x-form": "text/html",
+            "application/json": "application/json"
+        }[accept]
+        self.assertEqual(response.content_type, expected_content_type)
+        error = u"There is already a semantic field in the namespace '', "\
+                "with pos '' and heading 'DUPLICATE'."
+        if expected_content_type == "text/html":
+            el = response.lxml.cssselect(".alert")[0]
+            self.assertEqual(el.text.strip(), error)
+        elif expected_content_type == "application/json":
+            self.assertEqual(response.json, {u"__all__": [error]})
+        else:
+            raise ValueError("unexpected expected_content_type value: " +
+                             expected_content_type)
+
+        # Check again that there are no new children. We reacquire the
+        # object to make sure caching is not interfering.
+        self.assertEqual(
+            SemanticField.objects.get(id=self.duplicate.id).children.count(),
+            orig_child_count)
+
+
 def init():
     for (accept, test) in itertools.product(
             ("application/json", "application/x-form"),
             ("creation_successful", "heading_required", "incorrect_pos",
-             "incorrect_parent", "missing_parent")):
+             "incorrect_parent", "missing_parent", "duplicate")):
         makefunc(CreateTestCase, getattr(CreateTestCase, test),
                  "test_{0}_{1}".format(test, accept), accept, accept)
 

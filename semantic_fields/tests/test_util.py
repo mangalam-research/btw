@@ -86,6 +86,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.branches, None)
         self.assertEqual(parsed.specification, None)
         self.assertEqual(parsed.pos, "n")
+        self.assertEqual(parsed.last_uri, None)
 
     def test_branches(self):
         """
@@ -108,6 +109,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.branches[1].levels, ("4", "5"))
         self.assertEqual(parsed.branches[1].pos, "aj")
         self.assertEqual(parsed.pos, "aj")
+        self.assertEqual(parsed.last_uri, "http://www.bar.com")
 
     def test_specifications(self):
         """
@@ -121,6 +123,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.hte_levels, ("01", "01"))
         self.assertEqual(parsed.hte_subcats, None)
         self.assertEqual(parsed.hte_pos, "n")
+        self.assertEqual(parsed.last_uri, "http://www.bar.com")
 
         self.assertEqual(len(parsed.branches), 2)
         self.assertEqual(parsed.branches[0].uri, "http://www.foo.com")
@@ -135,12 +138,14 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.specification.hte_subcats, None)
         self.assertEqual(parsed.specification.hte_pos, "n")
         self.assertEqual(parsed.specification.branches, None)
+        self.assertEqual(parsed.specification.last_uri, None)
 
         specspec = parsed.specification.specification
         self.assertEqual(specspec.hte_levels, ("04", "05"))
         self.assertEqual(specspec.hte_subcats, None)
         self.assertEqual(specspec.hte_pos, "n")
         self.assertEqual(specspec.branches, None)
+        self.assertEqual(specspec.last_uri, None)
         self.assertEqual(specspec.specification, None)
 
     def test_start_branches(self):
@@ -157,6 +162,7 @@ class ParsedExpressionTest(TestCase):
         self.assertEqual(parsed.branches[0].pos, "v")
         self.assertEqual(parsed.specification, None)
         self.assertEqual(parsed.pos, "v")
+        self.assertEqual(parsed.last_uri, "http://www.foo.com")
 
     def test_subcat_parent(self):
         """

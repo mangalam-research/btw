@@ -179,6 +179,13 @@ class ParsedExpression():
 
         return self.hte_pos
 
+    @property
+    def last_uri(self):
+        """
+        The URI of the last branch of this expression.
+        """
+        return self.branches[-1].uri if self.branches else None
+
     def related_by_pos(self):
         """
         :returns: The list of expressions which would differ from this

@@ -2,7 +2,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import mark_safe
 from django.template.loader import render_to_string
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.cache import never_cache
+from django import forms
 from rest_framework import viewsets, mixins, renderers, parsers, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -122,9 +122,12 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         form = SemanticFieldForm(request.data)
         if form.is_valid():
             parent = form.cleaned_data["parent"]
-            parent.make_child(form.cleaned_data["heading"],
-                              form.cleaned_data["pos"])
-            return Response()
+            try:
+                parent.make_child(form.cleaned_data["heading"],
+                                  form.cleaned_data["pos"])
+                return Response()
+            except ValueError as ex:
+                form.add_error(None, forms.ValidationError(ex))
 
         # The data was invalid... return the errors in a format
         # appropriate to the request.

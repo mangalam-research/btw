@@ -12,7 +12,7 @@ class SemanticField(models.Model):
     heading = models.TextField()
 
     def make_child(self, heading, pos):
-        ref = parse_local_reference(self.path)
+        ref = self.parsed_path
 
         # This will have to be modified when we allow user-based
         # custom fields.
@@ -27,16 +27,29 @@ class SemanticField(models.Model):
 
         children = self.children.all()
 
-        max_child = 0 if not children.exists() else  \
-            max(parse_local_reference(c.path).last_level_number
-                for c in children)
+        # Right now we can only create semantic fields in the BTW
+        # namespace, which has the empty string URI.
+        uri = ""
+
+        # The siblings use the same URI as the child we want to create
+        siblings = [c for c in children if c.parsed_path.last_uri == uri]
+        dupe = any(c for c in siblings if c.pos == pos and
+                   c.heading == heading)
+        if dupe:
+            raise ValueError(
+                ("There is already a semantic field in the namespace '{0}', "
+                 "with pos '{1}' and heading '{2}'.")
+                .format(uri, pos, heading))
+
+        max_child = 0 if len(siblings) == 0 else  \
+            max(c.parsed_path.last_level_number for c in siblings)
 
         # The looping and exception handling here is to handle a
         # possible race if two users try to create a new field at
         # the same time.
         while True:
             max_child += 1
-            desired_path = ref.make_child('', max_child, pos)
+            desired_path = ref.make_child(uri, max_child, pos)
             sf = SemanticField(path=desired_path,
                                heading=heading,
                                parent=self)
@@ -191,6 +204,9 @@ class SemanticField(models.Model):
         return None if self.catid is None else \
             "http://historicalthesaurus.arts.gla.ac.uk/category/?id={0}" \
             .format(self.catid)
+
+    def __unicode__(self):
+        return self.heading + " " + self.path
 
 class Lexeme(models.Model):
 
