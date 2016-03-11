@@ -121,7 +121,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         form = SemanticFieldForm(request.data)
         if form.is_valid():
-            parent = SemanticField.objects.get(id=form.cleaned_data["parent"])
+            parent = form.cleaned_data["parent"]
             parent.make_child(form.cleaned_data["heading"],
                               form.cleaned_data["pos"])
             return Response()

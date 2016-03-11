@@ -1,6 +1,19 @@
 from django import forms
 
 from . import util
+from .models import SemanticField
+
+class CategoryField(forms.IntegerField):
+
+    def to_python(self, value):
+        if value == "":
+            return None
+
+        try:
+            return SemanticField.objects.get(id=value)
+        except SemanticField.DoesNotExist:
+            raise forms.ValidationError("There is no Category with id " +
+                                        value + ".")
 
 class SemanticFieldForm(forms.Form):
 
@@ -13,7 +26,7 @@ class SemanticFieldForm(forms.Form):
     # fields!!! Using IntegerField is a simple way to avoid the
     # problem. It would also have been possible to be clever and
     # customize the form but simple is better than clever here.
-    parent = forms.IntegerField(widget=forms.HiddenInput())
+    parent = CategoryField(widget=forms.HiddenInput())
     heading = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
     pos = forms.ChoiceField(label="Part of speech:",
                             choices=util.POS_CHOICES_EXPANDED, initial="",

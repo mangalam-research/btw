@@ -614,9 +614,7 @@ class CreateTestCase(ViewsTestCase):
             "application/json": "application/json"
         }[accept]
         self.assertEqual(response.content_type, expected_content_type)
-        error = \
-            u"Select a valid choice. That choice is not one of the " \
-            u"available choices."
+        error = u"There is no Category with id -1."
         if expected_content_type == "text/html":
             # This field is hidden. A hidden field does not show
             # errors.
