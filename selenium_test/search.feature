@@ -70,7 +70,7 @@ Given that the user has loaded the top page of the lexicography app
 And the search table is loaded
 Then the search results show 3 entries for "old and new records".
 
-Scenario: When the user reloads the page, the all records settings remain the same.
+Scenario: When the user reloads the page, the published/unpublished settings remain the same.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
 And the search table is loaded
