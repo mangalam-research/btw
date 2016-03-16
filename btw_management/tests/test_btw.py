@@ -27,7 +27,9 @@ def tearDownModule():
 
 @override_settings(ENVPATH=None,
                    TOPDIR="foo",
-                   BTW_SLUGIFIED_SITE_NAME="testing")
+                   BTW_SLUGIFIED_SITE_NAME="testing",
+                   BTW_CELERY_WORKER_PREFIX="testing",
+                   BTW_REDIS_SITE_PREFIX="testing")
 class BTWTestCase(SimpleTestCase):
 
     def setUp(self):
