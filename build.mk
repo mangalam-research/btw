@@ -147,7 +147,7 @@ _all: $(TARGETS) build-config build-scripts
 python-generation: build/python/semantic_fields/field.py
 
 build/python/semantic_fields/field.py: semantic_fields/field.ebnf
-	-mkdir $(dir $@)
+	-mkdir -p $(dir $@)
 	grako $< -o $@
 
 .PHONY: javascript
