@@ -120,6 +120,8 @@ Yes, I want to unpublish</a>\
     label.innerHTML = 'Lemmata only: <input type="checkbox" class="form-control input-sm"></input>';
     var lemma_checkbox = label.lastElementChild;
 
+    var advanced_row = doc.createElement("div");
+    advanced_row.className = "row";
     var advanced = doc.createElement("div");
     advanced.className = "panel-group";
     advanced.style.marginBottom = "0px";
@@ -150,6 +152,8 @@ Yes, I want to unpublish</a>\
         cl.add("fa-plus");
     });
 
+    advanced_row.appendChild(advanced);
+
     var publication_selector =
             advanced.getElementsByClassName("btw-publication-status")[0];
 
@@ -169,7 +173,7 @@ Yes, I want to unpublish</a>\
 
             if (can_author)
                 filter_row.parentNode.insertBefore(
-                    advanced,
+                    advanced_row,
                     filter_row.nextElementSibling);
 
         }
