@@ -2,9 +2,49 @@ from django.db import models, IntegrityError
 from django.core.urlresolvers import reverse
 from django.utils.html import mark_safe, escape
 
-from .util import parse_local_reference, POS_TO_VERBOSE
+from .util import parse_local_reference, POS_TO_VERBOSE, ParsedExpression
+
+class SemanticFieldManager(models.Manager):
+    def make_field(self, heading, pos):
+        uri = ""
+        roots = self.filter(parent__isnull=True)
+        siblings = [c for c in roots if c.parsed_path.last_uri == uri]
+
+        dupe = any(c for c in siblings if c.pos == pos and
+                   c.heading == heading)
+        if dupe:
+            raise ValueError(
+                ("There is already a semantic field in the namespace '{0}', "
+                 "with pos '{1}' and heading '{2}'.")
+                .format(uri, pos, heading))
+
+        max_child = 0 if len(siblings) == 0 else  \
+            max(c.parsed_path.last_level_number for c in siblings)
+
+        # The looping and exception handling here is to handle a
+        # possible race if two users try to create a new field at
+        # the same time.
+        while True:
+            max_child += 1
+            desired_path = ParsedExpression.make(uri, max_child, pos)
+            sf = SemanticField(path=desired_path,
+                               heading=heading,
+                               parent=None)
+            try:
+                sf.save()
+                return sf
+            except IntegrityError as ex:
+                # Verify whether the path is already existing.
+                try:
+                    SemanticField.objects.get(path=desired_path)
+                    # Ok, so the desired path exists. Loop over and retry.
+                except SemanticField.DoesNotExist:
+                    # It is not a path uniqueness problem, reraise.
+                    raise ex
+
 
 class SemanticField(models.Model):
+    objects = SemanticFieldManager()
     catid = models.IntegerField(unique=True, max_length=7, null=True)
     _path = models.TextField(unique=True, name="path", db_column="path")
     parent = models.ForeignKey(
@@ -71,9 +111,9 @@ class SemanticField(models.Model):
                        args=(self.pk, ))
 
     @property
-    def create_url(self):
-        # We create by POSTing to the list URL
-        return reverse('semantic_fields_semanticfield-list')
+    def add_child_url(self):
+        return reverse('semantic_fields_semanticfield-children',
+                       args=(self.pk, ))
 
     @property
     def add_child_form_url(self):

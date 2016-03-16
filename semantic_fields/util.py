@@ -78,6 +78,10 @@ class ParsedExpression():
         self.specification = ParsedExpression(exp.specification) \
             if exp.specification else None
 
+    @staticmethod
+    def make(uri, number, pos):
+        return ParsedExpression(None).make_child(uri, number, pos)
+
     def __hash__(self):
         return unicode(self)
 

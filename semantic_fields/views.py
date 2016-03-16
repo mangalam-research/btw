@@ -3,6 +3,7 @@ from django.utils.html import mark_safe
 from django.template.loader import render_to_string
 from django.core.exceptions import PermissionDenied
 from django import forms
+from django.views.decorators.cache import never_cache
 from rest_framework import viewsets, mixins, renderers, parsers, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -11,7 +12,7 @@ from rest_framework import serializers
 
 from .models import SemanticField
 from .serializers import SemanticFieldSerializer
-from .forms import SemanticFieldForm
+from .forms import SemanticFieldForm, ChildForm
 
 class SearchTable(BaseDatatableView):
     model = SemanticField
@@ -91,6 +92,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         renderers.JSONRenderer, SemanticFieldHTMLRenderer, FormRenderer)
     parser_classes = (parsers.FormParser, )
 
+    @never_cache
     def retrieve(self, request, *args, **kwargs):
         if request.accepted_renderer.media_type == "text/html":
             return Response({'instance': self.get_object()})
@@ -99,7 +101,6 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             .retrieve(request, *args, **kwargs)
 
     @detail_route(methods=['get'], url_path='add-child-form')
-    # @never_cache
     def add_child_form(self, request, pk, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
@@ -115,16 +116,38 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         raise NotAcceptable
 
+    @detail_route(methods=['post'], url_path='children')
+    def add_child(self, request, pk, *args, **kwargs):
+        if not request.user.can_add_semantic_fields:
+            raise PermissionDenied
+
+        form = ChildForm(request.data)
+        if form.is_valid():
+            parent = SemanticField.objects.get(id=pk)
+            try:
+                parent.make_child(form.cleaned_data["heading"],
+                                  form.cleaned_data["pos"])
+                return Response()
+            except ValueError as ex:
+                form.add_error(None, forms.ValidationError(ex))
+
+        # The data was invalid... return the errors in a format
+        # appropriate to the request.
+        if request.accepted_renderer.media_type == "application/x-form":
+            return Response({'form': form}, content_type="text/html",
+                            status=400)
+
+        raise serializers.ValidationError(form.errors)
+
     def create(self, request, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
         form = SemanticFieldForm(request.data)
         if form.is_valid():
-            parent = form.cleaned_data["parent"]
             try:
-                parent.make_child(form.cleaned_data["heading"],
-                                  form.cleaned_data["pos"])
+                SemanticField.objects.make_field(form.cleaned_data["heading"],
+                                                 form.cleaned_data["pos"])
                 return Response()
             except ValueError as ex:
                 form.add_error(None, forms.ValidationError(ex))

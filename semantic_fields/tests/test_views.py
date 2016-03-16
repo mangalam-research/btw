@@ -446,13 +446,11 @@ class CreateTestCase(ViewsTestCase):
         self.duplicate.save()
         self.duplicate.make_child("DUPLICATE", "")
 
-        self.url = reverse('semantic_fields_semanticfield-list')
-
     def test_not_logged_in(self):
         """
         Test that the response is 403 when the user is not logged in.
         """
-        response = self.app.get(self.url, expect_errors=True)
+        response = self.app.get(self.hte.add_child_url, expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_no_permissions(self):
@@ -461,7 +459,7 @@ class CreateTestCase(ViewsTestCase):
         create.
         """
         response = self.app.post(
-            self.url, user=self.noperm, expect_errors=True)
+            self.hte.add_child_url, user=self.noperm, expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_bad_accept(self):
@@ -474,7 +472,7 @@ class CreateTestCase(ViewsTestCase):
         form["heading"] = "foo"
         form["pos"] = "n"
 
-        response = self.app.post(self.url, user=self.perm,
+        response = self.app.post(self.hte.add_child_url, user=self.perm,
                                  headers={
                                      "Accept": "text/xml",
                                  },
@@ -494,7 +492,7 @@ class CreateTestCase(ViewsTestCase):
         form["pos"] = "n"
 
         response = self.app.post(
-            self.url,
+            self.hte.add_child_url,
             headers={
                 "Accept": accept,
             },
@@ -525,7 +523,7 @@ class CreateTestCase(ViewsTestCase):
         form["pos"] = "n"
 
         response = self.app.post(
-            self.url,
+            self.hte.add_child_url,
             headers={
                 "Accept": accept,
             },
@@ -565,7 +563,7 @@ class CreateTestCase(ViewsTestCase):
         form["pos"].force_value("xxxxxx")
 
         response = self.app.post(
-            self.url,
+            self.hte.add_child_url,
             headers={
                 "Accept": accept,
             },
@@ -594,90 +592,6 @@ class CreateTestCase(ViewsTestCase):
             SemanticField.objects.get(id=self.hte.id).children.count(),
             0)
 
-    def incorrect_parent(self, accept):
-        """
-        Test that creating a new field with an incorrect parent yields an
-        error.
-        """
-        self.assertEqual(self.hte.children.count(), 0)
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
-        self.assertEqual(response.status_code, 200)
-        form = response.form
-        form["heading"] = "foo"
-        form["pos"] = ""
-        form["parent"].force_value("-1")
-
-        response = self.app.post(
-            self.url,
-            headers={
-                "Accept": accept,
-            },
-            params=form.submit_fields(),
-            user=self.perm, expect_errors=True)
-        expected_content_type = {
-            "application/x-form": "text/html",
-            "application/json": "application/json"
-        }[accept]
-        self.assertEqual(response.content_type, expected_content_type)
-        error = u"There is no Category with id -1."
-        if expected_content_type == "text/html":
-            # This field is hidden. A hidden field does not show
-            # errors.
-            pass
-        elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"parent": [error]})
-        else:
-            raise ValueError("unexpected expected_content_type value: " +
-                             expected_content_type)
-
-        # Check again that there are no children. We reacquire the
-        # object to make sure caching is not interfering.
-        self.assertEqual(
-            SemanticField.objects.get(id=self.hte.id).children.count(),
-            0)
-
-    def missing_parent(self, accept):
-        """
-        Test that creating a new field with a missing parent yields an
-        error.
-        """
-        self.assertEqual(self.hte.children.count(), 0)
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
-        self.assertEqual(response.status_code, 200)
-        form = response.form
-        form["heading"] = "foo"
-        form["pos"] = ""
-        form["parent"].force_value("")
-
-        response = self.app.post(
-            self.url,
-            headers={
-                "Accept": accept,
-            },
-            params=form.submit_fields(),
-            user=self.perm, expect_errors=True)
-        expected_content_type = {
-            "application/x-form": "text/html",
-            "application/json": "application/json"
-        }[accept]
-        self.assertEqual(response.content_type, expected_content_type)
-        error = u"This field is required."
-        if expected_content_type == "text/html":
-            # This field is hidden. A hidden field does not show
-            # errors.
-            pass
-        elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"parent": [error]})
-        else:
-            raise ValueError("unexpected expected_content_type value: " +
-                             expected_content_type)
-
-        # Check again that there are no children. We reacquire the
-        # object to make sure caching is not interfering.
-        self.assertEqual(
-            SemanticField.objects.get(id=self.hte.id).children.count(),
-            0)
-
     def duplicate(self, accept):
         """
         Test that creating a duplicate field yields an error.
@@ -692,7 +606,7 @@ class CreateTestCase(ViewsTestCase):
         form["pos"] = ""
 
         response = self.app.post(
-            self.url,
+            self.duplicate.add_child_url,
             headers={
                 "Accept": accept,
             },
@@ -725,7 +639,7 @@ def init():
     for (accept, test) in itertools.product(
             ("application/json", "application/x-form"),
             ("creation_successful", "heading_required", "incorrect_pos",
-             "incorrect_parent", "missing_parent", "duplicate")):
+             "duplicate")):
         makefunc(CreateTestCase, getattr(CreateTestCase, test),
                  "test_{0}_{1}".format(test, accept), accept, accept)
 

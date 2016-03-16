@@ -15,7 +15,7 @@
   {% if request.user.can_add_semantic_fields %}
   <button class="btn btn-default create-child"
           data-form-url="{{ instance.add_child_form_url }}"
-          data-create-url="{{ instance.create_url }}"><i class="fa fa-plus"></i> Create Child</button>
+          data-create-url="{{ instance.add_child_url }}" style="display: none"><i class="fa fa-plus"></i> Create Child</button>
   <div class="create-div"></div>
   {% endif %}
 </div>
