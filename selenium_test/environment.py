@@ -10,17 +10,17 @@ import datetime
 import sys
 
 from slugify import slugify
-# pylint: disable=E0611
-from nose.tools import assert_true
 import selenic.util
 from selenic import Builder, outil
 from behave import step_registry
 from behave.tag_matcher import ActiveTagMatcher
 from pyvirtualdisplay import Display
 
-from nose.tools import assert_equal  # pylint: disable=E0611
+from nose.tools import assert_equal, assert_true  # pylint: disable=E0611
 from selenium_test import btw_util
 from selenium.common.exceptions import UnexpectedAlertPresentException
+
+assert_equal.__self__.maxDiff = None
 
 _dirname = os.path.dirname(__file__)
 
