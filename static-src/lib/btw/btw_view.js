@@ -27,7 +27,6 @@ var name_resolver = require("salve/name_resolver");
 var $ = require("jquery");
 var _ = require("lodash");
 var btw_util = require("./btw_util");
-var btw_semantic_fields = require("./btw_semantic_fields");
 
 var _slice = Array.prototype.slice;
 var _indexOf = Array.prototype.indexOf;
