@@ -102,7 +102,8 @@ def cleanup(context, failed):
         try:
             read = server_read(context)
             if read != 'started':
-                raise ValueError("did not get the 'started' string")
+                raise ValueError("did not get the 'started' string; "
+                                 "got this instead: " + read)
             server_write(context, "quit\n")
             try:
                 context.server.wait()
