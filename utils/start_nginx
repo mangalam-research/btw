@@ -81,7 +81,7 @@ def cleanup(*_whatever):
         tmpconf = None
 
     if tmpdir:
-        shutil.rmtree(tmpdir)
+        shutil.rmtree(tmpdir, ignore_errors=True)
         tmpdir = None
 
 atexit.register(cleanup)
