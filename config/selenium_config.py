@@ -41,6 +41,7 @@ class Config(selenic.Config):
 
         if self.browser == "INTERNETEXPLORER":
             ret["requireWindowFocus"] = True
+            ret["maxDuration"] = 4200
 
         ret["tags"] = [self.browser]
         return ret
@@ -64,7 +65,7 @@ caps = {
     "selenium-version": "2.45.0",
     # We cannot yet use 2.14 due to the change in how an element's
     # center is determined.
-    "chromedriver-version": "2.13",
+    "chromedriver-version": "2.21",
     "maxDuration": 2400,
     "build": describe
 }
