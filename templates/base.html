@@ -8,6 +8,8 @@
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <title>{% block page_title %}BTW{% endblock %}</title>
       {% render_block "js" %}
+      <script type="text/javascript" src="{% static 'lib/wed/polyfills/matches.js' %}"></script>
+      <script type="text/javascript" src="{% static 'lib/wed/polyfills/closest.js' %}"></script>
       <script type="text/javascript" src="{{ btw_globals.requirejs_path }}"></script>
       <script type="text/javascript" src="{{ btw_globals.requirejs_config_path }}"></script>
       <script>
