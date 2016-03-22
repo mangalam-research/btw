@@ -21,6 +21,8 @@ require.config({
    'bluebird': 'external/bluebird.min',
    moment: 'external/moment',
    interact: 'external/interact.min',
+   'merge-options': 'external/merge-options',
+   'is-plain-obj': 'external/is-plain-obj',
    velocity: 'external/velocity/velocity.min',
    'velocity-ui': 'external/velocity/velocity.ui.min'
  },
