@@ -1,3 +1,13 @@
+* 1.4.0:
+
+  + Bug fix: when viewing articles, the button for editing articles
+    was always shown whether editing was possible or not. This bug was
+    purely a **cosmetic** issue, and never permitted editing articles
+    in cases where editing should have been prevented. For instance,
+    if editing was not allowed because a user did not have
+    permissions, then clicking the spurious button would have caused
+    the browser to try to access a non-existent page.
+
 * 1.3.1:
 
   + Bug fix: Fix in the permission checks for accessing the general search in

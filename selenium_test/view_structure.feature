@@ -6,6 +6,7 @@ Scenario: viewing senses and subsenses
   Given a document with senses and subsenses
   And the view has finished rendering
   Then the senses and subsenses are properly numbered
+  And there is no button for editing the article
 
 Scenario: viewing an unpublished article
   Given the user has logged in

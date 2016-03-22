@@ -129,7 +129,8 @@ class SearchTable(BaseDatatableView):
             if row.entry.is_editable_by(self.request.user):
                 ret = mark_safe(
                     ('<a class="btn btn-xs btn-default" href="%s">Edit</a> ') %
-                    reverse("lexicography_entry_update", args=(row.entry.id, ))) + \
+                    reverse("lexicography_entry_update",
+                            args=(row.entry.id, ))) + \
                     ret
             elif row.entry.is_locked():
                 ret = mark_safe('Locked by ' +
@@ -390,7 +391,7 @@ def _show_changerecord(request, cr):
     # the user can edit it.
     edit_url = (reverse("lexicography_entry_update", args=(cr.entry.id, ))
                 if (cr.entry.latest == cr and
-                    cr.entry.is_editable_by(request.user)) else None)
+                    cr.entry.is_editable_by(request.user)) else '')
     fetch_url = '' if data is not None else \
                 reverse('lexicography_changerecord_details',
                         args=(cr.pk, ))

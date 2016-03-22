@@ -264,9 +264,14 @@ hyperlink_re = re.compile(ur'"(.*?)"')
 
 @then("there is no (?P<what>.*)")
 def step_impl(context, what):
+    driver = context.driver
     util = context.util
 
-    if what.startswith("hyperlink with the label "):
+    if what == "button for editing the article":
+        assert_raises(
+            TimeoutException, util.find_element,
+            (By.CSS_SELECTOR, "#toolbar-collapse a.btn[title='Edit']"))
+    elif what.startswith("hyperlink with the label "):
         match = hyperlink_re.search(what)
         label = match.group(1)
 
