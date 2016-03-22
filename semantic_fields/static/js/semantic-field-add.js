@@ -63,7 +63,7 @@ return function (displayers) {
                 }
             }).done(displayForm);
         });
-        create.style.display = null;
+        create.style.display = "";
 
     }
 

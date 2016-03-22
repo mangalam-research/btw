@@ -124,7 +124,7 @@ Displayers.prototype.open = Promise.method(function (url) {
         var ix = this.displayers.indexOf(displayer);
         this.displayers.splice(ix, 1);
     }.bind(this));
-    dom.style.display = null;
+    dom.style.display = "";
     dom.scrollIntoView();
     velocity(dom, "transition.expandIn");
     return displayer.display(url).then(function () {
@@ -426,10 +426,10 @@ Displayer.prototype._refresh = Promise.method(function(options) {
         }).then(function (data) {
             removeData(content.childNodes);
             content.innerHTML = data;
-            content.style.width = null;
-            content.style.height = null;
-            content.style.lineHeight = null;
-            content.style.textAlign = null;
+            content.style.width = "";
+            content.style.height = "";
+            content.style.lineHeight = "";
+            content.style.textAlign = "";
             if (options.transition) {
                 var transition = {
                     "previous": slideLeftIn,
