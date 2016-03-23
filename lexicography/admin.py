@@ -42,6 +42,17 @@ def make_link_method(field_name, display_name=None):
 
 class ChangeRecordMixin(object):
 
+    # We put Media here because all views that use this mixin need to use
+    # the JS and CSS we set here.
+    class Media(object):
+        js = (settings.BTW_REQUIREJS_PATH,
+              settings.BTW_REQUIREJS_CONFIG_PATH,
+              '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
+
+        css = {
+            'all': (settings.BTW_JQUERY_GROWL_CSS_PATH, )
+        }
+
     def revert(self, obj):
         if obj.id is None:
             return ""
@@ -56,15 +67,6 @@ class ChangeRecordMixin(object):
 
 
 class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
-
-    class Media(object):
-        js = (settings.BTW_REQUIREJS_PATH,
-              settings.BTW_REQUIREJS_CONFIG_PATH,
-              '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
-
-        css = {
-            'all': (settings.BTW_JQUERY_GROWL_CSS_PATH, )
-        }
 
     model = ChangeRecord
     fields = ('lemma', 'user', 'datetime', 'session', 'ctype',
@@ -265,11 +267,6 @@ def my_submit_row(context):
 
 
 class ChangeRecordAdmin(admin.ModelAdmin, ChangeRecordMixin):
-
-    class Media(object):
-        js = (settings.BTW_REQUIREJS_PATH,
-              settings.BTW_REQUIREJS_CONFIG_PATH,
-              '/'.join([settings.STATIC_URL, 'js/lexicography/admin.js']))
 
     list_display = ('entry', 'lemma', 'user', 'datetime', 'session',
                     'ctype', 'csubtype', 'published', 'revert', 'chunk_link')

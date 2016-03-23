@@ -8,6 +8,13 @@
     permissions, then clicking the spurious button would have caused
     the browser to try to access a non-existent page.
 
+  + Bug fix: a CSS file was missing from the administration interface
+    that shows ``ChangeRecord`` objects. This caused the notification
+    that is shown for revert operations to appear incorrectly on the
+    screen. This has been fixed. (This problem was visible only to
+    site administrators. At the time of writing, there is only one
+    administrator.)
+
 * 1.3.1:
 
   + Bug fix: Fix in the permission checks for accessing the general search in
