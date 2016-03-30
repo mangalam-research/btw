@@ -1388,9 +1388,9 @@
       "resolved": "https://registry.npmjs.org/void-elements/-/void-elements-2.0.1.tgz"
     },
     "wed": {
-      "version": "0.26.0",
-      "from": "wed@>=0.26.0",
-      "resolved": "https://registry.npmjs.org/wed/-/wed-0.26.0.tgz",
+      "version": "0.26.1",
+      "from": "wed@>=0.26.1",
+      "resolved": "https://registry.npmjs.org/wed/-/wed-0.26.1.tgz",
       "dependencies": {
         "amd-loader": {
           "version": "0.0.5",

@@ -513,9 +513,10 @@ s.BTW_BOOTSTRAP_EDITABLE__CSS_PATH = \
 s.BTW_REQUIREJS_PATH = None
 # We don't load classList from the external directory because it is
 # needed only for IE 9 and we don't support it for BTW.
-s.BTW_WED_POLYFILLS = tuple('/static/lib/wed/polyfills/' +
-                            x for x in ('contains.js', 'matches.js',
-                                        'innerHTML_for_XML.js'))
+s.BTW_WED_POLYFILLS = tuple('/static/lib/wed/polyfills/{0}.js'.format(x)
+                            for x in ('contains', 'matches', 'closest',
+                                      'innerHTML_for_XML',
+                                      'firstElementChild_etc', 'normalize'))
 s.BTW_WED_USE_REQUIREJS = None
 s.BTW_WED_PATH = None
 s.BTW_WED_CSS = None
