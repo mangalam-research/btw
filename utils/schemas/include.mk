@@ -12,7 +12,9 @@ $(ME)_TEI?=$(TEI)
 $(ME)_CONVERT?=$(WED_PATH)/node_modules/.bin/salve-convert
 $(ME)_ODD2HTML?=$($(ME)_TEI)/odds/odd2html.xsl
 $(ME)_SAXON?=saxon
-$(ME)_ROMA?=roma
+$(ME)_ROMA?=utils/roma
+# Parameters common to all invocations of Roma.
+$(ME)_ROMA_PARAMS?=--remoteversion=2.9.1 --xsl=/usr/share/xml/tei/stylesheet
 
 # ls -rv sorts in reverse order by version number. (Yep, ls can do this!)
 $(ME)_VERSIONS:=$(shell ls -rv $($(ME)_include_mk_DIR)/btw-storage-*.xml)
@@ -47,7 +49,7 @@ $($(ME)_outdir)/btw-storage-latest.rng $($(ME)_outdir)/btw-storage-metadata-late
 	cp -rp $< $@
 
 $($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)/%.xml
-	$($(ME)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --dochtml --noxsd --nodtd \
+	$($(ME)_ROMA) $($(ME)_ROMA_PARAMS) --dochtml --noxsd --nodtd \
 		$< $(dir $@)
 
 $($(ME)_XSL_TARGETS): $($(ME)_outdir)/%.xsl: $($(ME)_include_mk_DIR)/%.sch
@@ -57,8 +59,7 @@ $($(ME)_XSL_TARGETS): $($(ME)_outdir)/%.xsl: $($(ME)_include_mk_DIR)/%.sch
 $(ME)_MAKE_COMPILED_NAME=$($(ME)_outdir)/$(1)/btw-storage.compiled
 define $(ME)_MAKE_COMPILED_RULE
 $$(call $(ME)_MAKE_COMPILED_NAME,$(1)): $$($(ME)_include_mk_DIR)/$(1).xml
-	$$($(ME)_ROMA) --xsl=/usr/share/xml/tei/stylesheet --compile \
-		$$< $($(ME)_outdir)/$(1)
+	$$($(ME)_ROMA) $($(ME)_ROMA_PARAMS) --compile $$< $($(ME)_outdir)/$(1)
 endef # MAKE_COMPILED_RULE
 
 $(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(t:$($(ME)_include_mk_DIR)/%.xml=%))))
