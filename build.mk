@@ -96,6 +96,15 @@ endif
 BUILD_ENV:=$(and $(or $(JENKINS_HOME),$(BUILDBOT)),1)
 BEHAVE_SAVE?=$(if $(BUILD_ENV),,1)
 
+# When we do builds through an automated system like Buildbot, the
+# builds must always happen with an optimized wed. We could override
+# WED_OPTIMIZED when we detect that we are in such environment but we
+# probably want to be reminded that we have been operating with an
+# unoptimized wed all this time.
+ifneq ($(and $(BUILD_ENV),$(if $(WED_OPTIMIZED),,1)),)
+$(error You must set WED_OPTIMIZED to build with an optimized wed.)
+endif
+
 SOURCES:=$(shell find static-src -type f)
 BUILD_DEST:=$(BUILD_DIR)/static-build
 EXPANDED_DEST:=$(BUILD_DIR)/expanded
