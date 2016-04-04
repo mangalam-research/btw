@@ -892,13 +892,13 @@ Nginx
 
 Internally, the test suite starts nginx by issuing::
 
-    $ utils/start_nginx <fifo>
+    $ utils/start_server <fifo>
 
 The fifo is a communication channel created by the test suite to
 control the server.  The command above will launch an nginx server
 listening on localhost:8080. It will handle all the requests to static
 resources itself but will forward all other requests to an instance of
-the Django live server (which is started by the ``start_nginx`` script
+the Django live server (which is started by the ``start_server`` script
 to listen on localhost:7777). This server puts all of the things that
 would go in ``/var`` if it was started by the OS in the `<var>`_
 directory that sits at the top of the code tree. Look there for
@@ -910,7 +910,7 @@ it there. Run make again after you made modifications. The only
 processing done on nginx's file is to change all instances of
 ``@PWD@`` with the top of the code tree.
 
-The Django server started by `start_nginx` is based on
+The Django server started by `start_server` is based on
 `LiveServerTestCase` and consequently organises its run time
 environment in the same way. The test suite sends a signal to the
 server so that with each new feature, the server resets itself. This

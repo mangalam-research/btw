@@ -313,7 +313,7 @@ def before_all(context):
 
     nginx_port = str(outil.get_unused_sauce_port())
     context.server = subprocess.Popen(
-        ["utils/start_nginx", context.server_write_fifo,
+        ["utils/start_server", context.server_write_fifo,
          context.server_read_fifo, nginx_port], close_fds=True)
     signal.signal(signal.SIGCHLD, lambda *_: sigchld(context))
 

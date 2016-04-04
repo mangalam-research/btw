@@ -42,6 +42,29 @@ tmpdir = None
 tmpconf = None
 clean_databases = False
 
+def cleanup_databases():
+    for name, _ in name_users:
+        try:
+            # We want to make sure we don't drop a database that has been created
+            # through some other means.
+            subprocess.check_call(
+                ['psql', '-c', 'SELECT * FROM created_by_start_server;',
+                 name], stdout=file("/dev/null", "r"))
+            drop = True
+        except:
+            # If we get any exception here, the command was
+            # unsuccessful.  It may be that the table does not exist,
+            # in which case we don't want to drop the database. Or the
+            # database does not exist, so there is nothing to drop.
+            #
+            # We don't try to detect what the issue is exactly and to
+            # handle other odd cases. This script is meant to be used
+            # only for testing, and nothing else.
+            drop = False
+
+        if drop:
+            subprocess.check_call(['dropdb', name])
+
 def cleanup(*_whatever):
     # Make sure that cleanup happens!
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -72,8 +95,7 @@ def cleanup(*_whatever):
         sys.stderr.write("Cannot stop redis.\n")
 
     if clean_databases:
-        for name, _ in name_users:
-            subprocess.check_call(['dropdb', name])
+        cleanup_databases()
         clean_databases = False
 
     if tmpconf:
@@ -107,13 +129,33 @@ with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
                  .replace('@PORT@', nginx_port)
                  .replace('@SERVER_PORT@', server_port))
 
+# Clean whatever redis instance may have been left out from a previous
+# run. The automated build systems (Buildbot, Jenkins) can sometimes
+# kill a build summarily. Somehow redis sometimes survives the
+# kill. We swallow exceptions here because an exception means either:
+# a) there is no redis to kill or b) something terrible happened but
+# there's really nothing we can do to fix it here.
+try:
+    subprocess.check_call(['./manage.py', 'btwredis', 'stop'])
+except:
+    pass
+
 subprocess.check_call(['./manage.py', 'btwredis', 'start'])
+
+# Again, if the build system summarily killed a build, then there may
+# be databases left from a previous run. Clean them first.
+cleanup_databases()
 for name, user in name_users:
     subprocess.check_call(['createdb', name])
     clean_databases = True
     subprocess.check_call(
         ['psql', '-c', 'GRANT ALL ON ALL TABLES IN SCHEMA public TO ' + user,
          name])
+    # See cleanup_databases for the reason for this CREATE command.
+    subprocess.check_call(
+        ['psql', '-c', 'CREATE TABLE created_by_start_server (id integer);',
+         name])
+
 subprocess.check_call(['./manage.py', 'migrate'])
 subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
 subprocess.check_call(['./manage.py', 'clearcache', '--all'])
