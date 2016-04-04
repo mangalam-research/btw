@@ -1,5 +1,48 @@
 * 1.4.0:
 
+  + This the "interim HTE integration" release.
+
+  + Browser support:
+
+    - Chrome, on all platforms, is the browser of choice for accessing
+      BTW. IE11 is also supported.
+
+    - Support for Firefox on all platforms has been temporarily
+      suspended. Selenium is no longer able to accurately simulate
+      real user interaction with Firefox browsers. The problem is most
+      likely fixable, but we do not have the resources to fix
+      Selenium.
+
+    - IE11 support has been significantly improved.
+
+    - IE10 is no longer supported, as Microsoft itself has pulled
+      support for it.
+
+    - Edge is not yet supported because the service we use to test
+      browsers (Sauce Labs) does not yet fully support it.
+
+  + BTW now incorporates the HTE database of semantic fields into its
+    own database.
+
+  + BTW now shows semantic field names when displaying articles to users.
+
+  + The separator between semantic fields is now a double semi-colon
+    rather than a single semi-colon.
+
+  + BTW also now has facilities for searching semantic fields but
+    these facilities are not yet available for general use.
+
+  + Upgrades:
+
+    - Wed 0.26.1: brings many improvements to IE11 support, and bug
+      fixes.
+
+    - Salve 2.0.0: supports a greater part of Relax NG than previous
+      versions.
+
+    - Over a dozen upgrades to the third-party libaries used by BTW
+      (Bootstrap, DataTables, Kombu, etc.)
+
   + Bug fix: when viewing articles, the button for editing articles
     was always shown whether editing was possible or not. This bug was
     purely a **cosmetic** issue, and never permitted editing articles
