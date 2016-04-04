@@ -103,7 +103,7 @@ def cleanup(context, failed):
             read = server_read(context)
             if read != 'started':
                 raise ValueError("did not get the 'started' string; "
-                                 "got this instead: " + read)
+                                 "got this instead: {0}".format(read))
             server_write(context, "quit\n")
             try:
                 context.server.wait()
@@ -131,25 +131,34 @@ class DeadServer(Exception):
     pass
 
 def server_alive(context):
+    try:
+        assert_server_alive(context)
+    except DeadServer:
+        return False
+
+    return True
+
+def assert_server_alive(context):
     if context.server is None:
-        return
+        raise DeadServer("the server is already dead")
+
     status = context.server.poll()
     if status is not None:
         context.server = None
         if status >= 0:
-            raise DeadServer("server already exited with: " + str(status))
+            raise DeadServer("server exited with: " + str(status))
         else:
             raise DeadServer(
-                "server already terminated with signal: " + str(-status))
+                "server already with signal: " + str(-status))
 
 
 def server_write(context, text):
-    server_alive(context)
+    assert_server_alive(context)
     with open(context.server_write_fifo, 'w') as fifo:
         fifo.write(text)
 
 def server_read(context):
-    server_alive(context)
+    assert_server_alive(context)
     try:
         with open(context.server_read_fifo, 'r') as fifo:
             return fifo.read().strip()
@@ -159,7 +168,7 @@ def server_read(context):
             time.sleep(0.1)
 
 def sigchld(context):
-    server_alive(context)
+    assert_server_alive(context)
 
 screenshots_dir_path = os.path.join("test_logs", "screenshots")
 
@@ -490,7 +499,7 @@ def after_scenario(context, scenario):
 
 
 def before_step(context, _step):
-    server_alive(context)
+    assert_server_alive(context)
     if context.behave_wait:
         time.sleep(context.behave_wait)
 
@@ -509,7 +518,7 @@ def after_step(context, step):
         except UnexpectedAlertPresentException:
             pass  # There's nothing we can do
 
-    server_alive(context)
+    assert_server_alive(context)
     # Perform this query only if SELENIUM_LOGS is on.
     if context.selenium_logs:
         logs = driver.execute_script("""
