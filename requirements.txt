@@ -16,8 +16,9 @@ selenium==2.45.0
 pebble>=3.1.8,<4
 django-redis>=3.8.4,<4
 django-cache-management>=1.0.0,<2
-kombu>=3.0.34,<4
-celery[redis]>=3.1.17,<4
+# 3.0.35 borks.
+kombu==3.0.34
+celery[redis]==3.1.17
 djangorestframework>=3.1.1,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
