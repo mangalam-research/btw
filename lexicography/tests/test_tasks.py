@@ -500,8 +500,8 @@ class CombineSemanticFieldsIntoTestCase(TestCase):
             tree.xpath("//btw:sf", namespaces=xml.default_namespace_mapping),
             into)
         self.assertEqual(lxml.etree.tostring(into), """\
-<btw:foo xmlns:tei="http://www.tei-c.org/ns/1.0" \
-xmlns:btw="http://mangalamresearch.org/ns/btw-storage">\
+<btw:foo xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+xmlns:tei="http://www.tei-c.org/ns/1.0">\
 <btw:sf>01.01n</btw:sf>\
 <btw:sf>01.01.01n</btw:sf>\
 <btw:sf>01.01.01.04n</btw:sf>\
@@ -531,8 +531,8 @@ xmlns:btw="http://mangalamresearch.org/ns/btw-storage">\
             tree.xpath("//btw:sf", namespaces=xml.default_namespace_mapping),
             into, 3)
         self.assertEqual(lxml.etree.tostring(into), """\
-<btw:foo xmlns:tei="http://www.tei-c.org/ns/1.0" \
-xmlns:btw="http://mangalamresearch.org/ns/btw-storage">\
+<btw:foo xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+xmlns:tei="http://www.tei-c.org/ns/1.0">\
 <btw:sf>01.01n</btw:sf>\
 <btw:sf>01.01.01n</btw:sf>\
 <btw:sf>01.01.02n</btw:sf>\
