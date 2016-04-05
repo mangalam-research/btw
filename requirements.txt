@@ -30,8 +30,8 @@ djangocms-admin-style==1.1.0
 html5lib==0.999
 # Optional, recommended packages for django-cms
 Pillow>=2,<3
-django-filer==0.9.9
-cmsplugin-filer==0.10.1
+django-filer==1.1.1
+cmsplugin-filer==1.0.1
 django-reversion==1.8.6
 djangocms-text-ckeditor>=2.4.3,<3
 cmsplugin-iframe==0.1.1

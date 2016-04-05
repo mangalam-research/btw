@@ -328,7 +328,6 @@ s.INSTALLED_APPS = (
 )
 
 s.MIGRATION_MODULES = {
-    'filer': 'filer.migrations_django',
     'cmsplugin_filer_file': 'cmsplugin_filer_file.migrations_django',
     'cmsplugin_filer_folder': 'cmsplugin_filer_folder.migrations_django',
     'cmsplugin_filer_link': 'cmsplugin_filer_link.migrations_django',

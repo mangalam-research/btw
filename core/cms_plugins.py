@@ -4,7 +4,7 @@ import datetime
 from cms.plugin_pool import plugin_pool
 from cmsplugin_iframe.cms_plugins import IframePlugin
 from django.utils.translation import ugettext as _
-from filer.settings import FILER_STATICMEDIA_PREFIX
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from cms.plugin_base import CMSPluginBase
 from cms.models.pluginmodel import CMSPlugin
 from django.conf import settings
@@ -16,8 +16,7 @@ class MyIframePlugin(IframePlugin):
     text_enabled = True
 
     def icon_src(self, instance):
-        return os.path.normpath("%s/icons/video_%sx%s.png" %
-                                (FILER_STATICMEDIA_PREFIX, 32, 32,))
+        return static("filer/icons/video_32x32.png")
 
 plugin_pool.unregister_plugin(IframePlugin)
 plugin_pool.register_plugin(MyIframePlugin)
@@ -92,8 +91,7 @@ class CitePlugin(CMSPluginBase):
         return context
 
     def icon_src(self, instance):
-        return os.path.normpath("%s/images/icons/bookmark_%sx%s.png" %
-                                (settings.STATIC_URL, 32, 32))
+        return static("images/icons/bookmark_32x32.png")
 
 
 plugin_pool.register_plugin(CitePlugin)
