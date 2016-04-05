@@ -34,7 +34,7 @@ django-filer==1.1.1
 cmsplugin-filer==1.0.1
 django-reversion==1.8.6
 djangocms-text-ckeditor>=2.4.3,<3
-cmsplugin-iframe==0.1.1
+cmsplugin-iframe==0.1.3
 lxml>=3.4.4,<4
 cssselect>=0.9.1,<1
 grako>=3.6.5,<4
