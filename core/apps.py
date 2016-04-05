@@ -19,12 +19,7 @@ class SelectedModifier(Modifier):
     """
 
     def modify(self, request, nodes, namespace, root_id, post_cut, breadcrumb):
-        sel = [node for node in nodes if node.selected]
-        if sel:
-            if len(sel) > 1:
-                raise ValueError("unexpected number of selected elements: " +
-                                 str(len(sel)))
-            sel = sel[0]
+        sels = [node for node in nodes if node.selected]
 
         #
         # This block is here only to deal with this issue:
@@ -33,10 +28,11 @@ class SelectedModifier(Modifier):
         #
         # and should be removed when the issue is fixed.
         #
-        if not sel:
+        if not sels:
             # We do not mess with ancestor, descendant, etc. because
             # a) these have not been set yet, and b) they will be set
             # later.
+            sel = None
             for node in nodes:
                 node.selected = False
                 if request.path.startswith(node.get_absolute_url()) and \
@@ -48,7 +44,7 @@ class SelectedModifier(Modifier):
                 sel.selected = True
         # End of the block to remove when the issue is fixed.
 
-        if sel:
+        for sel in sels:
             url = sel.get_absolute_url()
 
             # All descendants of the node that match the url are
@@ -73,5 +69,5 @@ class DefaultAppConfig(AppConfig):
     name = 'core'
 
     def ready(self):
-        import cms.menu
+        import cms.cms_menus
         menu_pool.register_modifier(SelectedModifier)

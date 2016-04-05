@@ -501,6 +501,18 @@ Generally:
 
 See below for specific upgrade cases.
 
+1.4.x to 1.5.0
+~~~~~~~~~~~~~~
+
+- Execute::
+
+    rm `find . -name menu.pyc`
+    rm `find . -name cms_app.pyc`
+
+- After having done the database migrations, run ``manage.py cms
+  fix-tree`` as recommended by Django CMS to fix possible issues with
+  the tree of pages.
+
 1.3.x to 1.4.0
 ~~~~~~~~~~~~~~
 
