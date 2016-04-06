@@ -462,9 +462,9 @@ Generally:
     [Make sure the description shows what you expect.]
     $ . ../btw_env/bin/activate
     $ pip install -r requirements.txt
-    $ ./manage.py migrate
     $ npm install
     $ make
+    $ ./manage.py migrate
 
     # This is the perfect time to perform a full vacuum on the database.
     # Do this if you've locked the users out of the system already.
