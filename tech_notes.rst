@@ -302,7 +302,7 @@ Run::
   $ make
   $ ./manage.py btwredis start
   $ ./manage.py btwworker start
-  $  ./manage.py btwworker generate-monit-config
+  $  ./manage.py btwworker generate-monit-config build/scripts
   # Install the config generated.
   $ ./manage.py btwcheck
   $ make test-django
@@ -479,7 +479,7 @@ Generally:
 
     $ ./manage.py btwworker start --all
     $ ./manage.py btwcheck
-    $ ./manage.py btwworker generate-monit-config
+    $ ./manage.py btwworker generate-monit-config build/scripts
     # Check the generated config against what is already installed, update
     # if needed. Copy into /etc/monit/conf.d if update needed.
     # Issue ``service monit reload`` to have it read its configuration.
@@ -489,9 +489,9 @@ Generally:
      to connect to the production database.]
     $ sudo monit monitor [appropriate group name]
 
-6. Reload uwsgi::
+6. Reload btw::
 
-     $ sudo service uwsgi reload
+     $ sudo monit restart -g btw
 
 7. Run btw-smoketest::
 
