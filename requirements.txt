@@ -6,7 +6,7 @@ django-webtest>=1.7.5
 webtest>=2.0.15
 mock>=1.0.1,<2
 mitmproxy>=0.11.0,<0.12.0
-django-allauth>=0.19.1,<0.20
+django-allauth>=0.25.2,<0.26
 django-datatables-view==1.13
 psycopg2>=2.5.2,<3
 django-forms-bootstrap>=3.0.0,<4

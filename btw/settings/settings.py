@@ -39,7 +39,6 @@ s.BTW_LOGGING_PATH_FOR_BTW = lambda s: os.path.join(s.BTW_LOGGING_PATH, "btw")
 s.BTW_RUN_PATH_FOR_BTW = lambda s: os.path.join(s.BTW_RUN_PATH, "btw")
 
 s.DEBUG = False
-s.TEMPLATE_DEBUG = s.DEBUG
 
 s.ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -177,13 +176,6 @@ s.PIPELINE_LESS_BINARY = os.path.join(s.TOPDIR, "./node_modules/.bin/lessc")
 # Make this unique, and don't share it with anybody.
 # s.SECRET_KEY = ''
 
-# List of callables that know how to import templates from various sources.
-s.TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
-)
-
 s.MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -212,10 +204,6 @@ s.ROOT_URLCONF = 'btw.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 s.WSGI_APPLICATION = 'btw.wsgi.application'
 
-s.TEMPLATE_DIRS = (
-    os.path.join(s.TOPDIR, "templates"),
-)
-
 s.CMS_TEMPLATES = (
     ('generic_page.html', 'Generic'),
     ('front_page.html', 'Site Front Page'),
@@ -227,22 +215,30 @@ s.LANGUAGES = [
     ('en-us', 'English'),
 ]
 
-s.TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    # Required by allauth template tags
-    "django.core.context_processors.request",
-    "django.contrib.messages.context_processors.messages",
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
-    "btw.context_processors.global_context_processor",
-    'sekizai.context_processors.sekizai',
-    'cms.context_processors.cms_settings',
-)
+s.TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(s.TOPDIR, "templates"),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "btw.context_processors.global_context_processor",
+                'sekizai.context_processors.sekizai',
+                'cms.context_processors.cms_settings',
+            ],
+        },
+    },
+]
 
 s.AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
