@@ -1545,6 +1545,62 @@ XQuery Update and XQuery Full Text provide.
 Overall, when we *are* ready to add an XML-based database to BTW this
 should be the choice.
 
+Backup System Choice for BTW
+============================
+
+From the time BTW became an actual web site to Spring 2016, BTW used
+copy.com to store off-site backups. copy.com announced in Winter 2016
+that they'd close in May 2016. We needed a new setup.
+
+Copy.com offered 20GB free. As of April 2016, BTW used 8.7GB of that memory.
+
+AWS
+---
+
+Estimate about $2/month.
+
+Dropbox
+-------
+
+2GB free, which is way too small.
+
+Google Drive
+------------
+
+15GB free.
+
+No official Linux support.
+
+There is no sanctioned daemon to keep a local folder in sync with the
+drive. Many projects started but seem to have stalled.
+
+The only viable option seems to be https://www.insynchq.com which
+costs $25 a year for "organizations".
+
+Hubic
+-----
+
+On paper Hubic seems great. 25GB free.
+
+We actually tried Hubic and found it to be buggy. It looks like if a
+file was being modified while Hubic was working on it, it caused a
+conflict and could corrupt the file.
+
+OneDrive
+--------
+
+No official Linux support.
+
+Amazon Cloud Drive
+------------------
+
+No free plan.
+
+Yandex
+------
+
+Located in Russia. Russian law being the way it is, best to avoid.
+
 Websockets
 ==========
 
