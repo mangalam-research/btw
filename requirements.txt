@@ -1,4 +1,4 @@
-Django>=1.7.7,<1.8
+Django>=1.8,<1.9
 # The south doc recommends not automatically upgrading beyond 0.8.
 semver>=0.0.2
 django-nose>=1.4,<2
