@@ -45,7 +45,7 @@ class SemanticFieldManager(models.Manager):
 
 class SemanticField(models.Model):
     objects = SemanticFieldManager()
-    catid = models.IntegerField(unique=True, max_length=7, null=True)
+    catid = models.IntegerField(unique=True, null=True)
     _path = models.TextField(unique=True, name="path", db_column="path")
     parent = models.ForeignKey(
         "self", related_name="children", null=True, blank=True)
@@ -254,16 +254,16 @@ class Lexeme(models.Model):
         unique_together = ("semantic_field", "catorder")
         ordering = ["catorder"]
 
-    htid = models.IntegerField(primary_key=True, max_length=7)
+    htid = models.IntegerField(primary_key=True)
     # This field is our real foreign key. We convert the HTE
     # field catid to it.
     semantic_field = models.ForeignKey(SemanticField)
     word = models.CharField(max_length=60)
     fulldate = models.CharField(max_length=90)
-    catorder = models.IntegerField(max_length=3)
+    catorder = models.IntegerField()
 
 class SearchWord(models.Model):
-    sid = models.IntegerField(primary_key=True, max_length=7)
+    sid = models.IntegerField(primary_key=True)
     htid = models.ForeignKey(Lexeme)
     searchword = models.CharField(max_length=60, db_index=True)
     type = models.CharField(max_length=3)
