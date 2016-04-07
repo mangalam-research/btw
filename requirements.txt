@@ -18,7 +18,7 @@ django-redis>=3.8.4,<4
 django-cache-management>=1.0.0,<2
 # 3.0.35 borks.
 kombu==3.0.34
-celery[redis]==3.1.17
+celery[redis]==3.1.23
 djangorestframework>=3.1.1,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
@@ -41,3 +41,4 @@ cssselect>=0.9.1,<1
 grako>=3.6.5,<4
 django-pipeline>=1.5.4,<1.6
 mptt>=0.8.3,<0.9
+redis>=2.10.5,<3

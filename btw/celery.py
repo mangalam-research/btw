@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 import logging.config
 
+import celery
 from celery import Celery
 from celery.signals import after_setup_logger, worker_init
 
@@ -10,6 +11,30 @@ from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'btw.settings')
+
+#
+# See this bug report:
+# https://github.com/celery/celery/issues/2903
+#
+# Without the following patch, Celery crashes.
+#
+if celery.VERSION > (3, 1, 23, '', ''):
+    raise ValueError("check whether celery still needs a patch")
+
+if celery.VERSION == (3, 1, 23, '', ''):
+    from celery.backends.redis import RedisBackend
+
+    def patched_create_client(self, **params):
+        def normalize(param):
+            value = params.get(param)
+            if value is not None:
+                params[param] = float(value)
+
+        normalize('socket_timeout')
+        normalize('socket_connect_timeout')
+        return self._new_redis_client(**params)
+
+    RedisBackend._create_client = patched_create_client
 
 if settings.BTW_SELENIUM_TESTS:
     # If we are testing, the live server is patched so as to not
