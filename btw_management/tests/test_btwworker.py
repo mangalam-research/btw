@@ -275,7 +275,7 @@ testing.bibliography.worker was not running.
 
     def test_check(self):
         """
-        Test that ``btwredis check`` checks the workers.
+        Test that ``btwworker check`` checks the workers.
         """
         try:
             call_command("btwworker", "start", all=True)
