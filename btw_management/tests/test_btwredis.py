@@ -6,6 +6,8 @@ import subprocess
 from contextlib import contextmanager
 import mock
 
+from nose.tools import nottest
+
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
 
@@ -54,6 +56,7 @@ def with_fake_settings():
                            BTW_REDIS_PASSWORD="foo"):
         yield
 
+@nottest
 @contextmanager
 def with_test_redis(stop_fails=False):
     with with_fake_settings():
