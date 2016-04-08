@@ -1,13 +1,12 @@
 from django.apps import AppConfig, apps as django_apps
-from django.conf import settings
 
-from lib.admin import limited_admin_site as site
 from lib import env
 
 class DefaultAppConfig(AppConfig):
     name = 'final'
 
     def ready(self):
+        from lib.admin import limited_admin_site as site
         # If we are run from the command line, there is no point in
         # performing any work here. It would actually be harmful to
         # run this code as it would trigger an invalidation of Django
