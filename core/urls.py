@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'core.views',
-    url(r'^mods$', 'mods', name='core_mods')
-)
+from . import views
+
+urlpatterns = [
+    url(r'^mods$', views.mods, name='core_mods')
+]
