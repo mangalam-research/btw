@@ -184,7 +184,21 @@ s.MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    #
+    # We do not use XFrameOptionsMiddleware because we set nginx to
+    # issue the necessary header for all requests made to the site.
+    #
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #
+
+    #
+    # We do not use SecurityMiddleware because we set nginx to issue
+    # the necessary header for all requests made to the site.
+    #
+    # 'django.middleware.security.SecurityMiddleware',
+    #
+
     # LocaleMiddleware was added for Django CMS.
     'django.middleware.locale.LocaleMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
