@@ -41,10 +41,14 @@ SCHEMATRON_TO_XSL?=/usr/share/xml/tei/odd/Utilities/iso_svrl_for_xslt2.xsl
 #
 WED_OPTIMIZED?=1
 
+PYTHON_PARAMS?=
+PYTHON?=python
 
 #
 # End of customizable variables.
 #
+
+DJANGO_MANAGE:=$(PYTHON) $(PYTHON_PARAMS) ./manage.py
 
 WGET:=$(WGET) --no-use-server-timestamps
 
@@ -142,7 +146,7 @@ all: _all
 	  { echo "There appear to be a difference between the \
 	  bootstrap downloaded by BTW and the one in wed." && exit 1; }
 #
-	./manage.py collectstatic --noinput
+	$(DJANGO_MANAGE) collectstatic --noinput
 
 
 
@@ -237,13 +241,13 @@ test: test-django test-karma
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
 test-django: test-django-menu $(TARGETS)
-	./manage.py test --attr='!isolation'
+	$(DJANGO_MANAGE) test --attr='!isolation'
 
 .PHONY: test-django-menu
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
 test-django-menu: $(TARGETS)
-	./manage.py test --attr=isolation=menu
+	$(DJANGO_MANAGE) test --attr=isolation=menu
 
 .PHONY: test-karma
 test-karma: all
@@ -255,7 +259,7 @@ keep-latest:
 
 build-scripts:
 	mkdir -p $(BUILD_SCRIPTS)
-	./manage.py btw generate-scripts $(BUILD_SCRIPTS)
+	$(DJANGO_MANAGE) btw generate-scripts $(BUILD_SCRIPTS)
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 
