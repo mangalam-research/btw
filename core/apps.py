@@ -1,4 +1,21 @@
 from django.apps import AppConfig
+from django.core.checks import Error, register, Tags
+
+@register(Tags.security)
+def no_csrf_cookie_httponly(app_configs, **kwargs):
+    errors = []
+    from django.conf import settings
+    if settings.CSRF_COOKIE_HTTPONLY:
+        errors.append(
+            Error(
+                'BTW cannot work with CSRF_COOKIE_HTTPONLY set to True. '
+                'It only makes attacks somewhat harder, whereas the '
+                'BTW\'s JavaScript code needs to get the CSRF token, and '
+                'getting it from a cookie is the easiest way.',
+                id='core.E001'
+            )
+        )
+    return errors
 
 # We cannot execute the following code at module loading time. Hence
 # the function.
