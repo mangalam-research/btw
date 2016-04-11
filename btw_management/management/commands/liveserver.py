@@ -2,7 +2,8 @@ import os
 from unittest import TestSuite
 
 import lxml.etree
-from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, authenticate
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, \
+    HASH_SESSION_KEY, authenticate
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
 from django.core.management import execute_from_command_line
@@ -158,6 +159,12 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
                 s = SessionStore()
                 s[SESSION_KEY] = user.pk
                 s[BACKEND_SESSION_KEY] = user.backend
+                # This is needed if SessionAuthenticationMiddleware is used
+                # or if we are in Django 1.10 or over where it becomes
+                # default.
+                s[HASH_SESSION_KEY] = user.get_session_auth_hash() \
+                    if hasattr(user, 'get_session_auth_hash') else ''
+
                 s.save()
                 with open(self.__control_write, 'w') as out:
                     out.write(s.session_key + "\n")
