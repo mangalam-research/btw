@@ -3,8 +3,7 @@ import json
 import itertools
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseBadRequest, QueryDict
-from django.template import loader, RequestContext
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_GET, require_POST,  \
     require_http_methods
 from django.contrib.auth.decorators import login_required, permission_required
@@ -42,9 +41,7 @@ def search(request):
 @require_GET
 def _ajax_search(request):
     # present a unbound form.
-    template = loader.get_template('bibliography/search_form.html')
-    return HttpResponse(template.render(RequestContext(request)))
-
+    return render(request, "bibliography/search_form.html")
 
 def previously_refreshed():
     return cache.get(tasks.FETCH_DATE_KEY) or "Unknown"
@@ -75,9 +72,9 @@ def manage(request):
     return _table(request, True, "btw-bibliography-manage-sub")
 
 def _table(request, editable, submenu):
-    template = loader.get_template('bibliography/manage.html')
-    context = RequestContext(
+    return render(
         request,
+        'bibliography/manage.html',
         {
             'can_edit': (
                 editable and
@@ -89,7 +86,6 @@ def _table(request, editable, submenu):
             'check_refresh_url': reverse('bibliography_check_refresh'),
             'initiate_refresh_url': reverse('bibliography_initiate_refresh')
         })
-    return HttpResponse(template.render(context))
 
 
 class ItemViewSet(viewsets.ReadOnlyModelViewSet):

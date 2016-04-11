@@ -229,6 +229,7 @@ class EntryAdmin(admin.ModelAdmin):
 
     def render_raw_form(self, request, form, title, entry=None):
         opts = self.model._meta
+        request.current_app = self.admin_site.name
         return render(request, 'admin/lexicography/entry/raw.html', {
             'title': title,
             'form': form,
@@ -246,7 +247,7 @@ class EntryAdmin(admin.ModelAdmin):
             'show_save_and_add_another': False,
             'show_save_and_continue': False,
             'show_delete': False
-        }, current_app=self.admin_site.name)
+        })
 
 
 #
