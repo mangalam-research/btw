@@ -12,7 +12,7 @@ from rest_framework import serializers
 
 from .models import SemanticField
 from .serializers import SemanticFieldSerializer
-from .forms import SemanticFieldForm, ChildForm
+from .forms import SemanticFieldForm
 
 class SearchTable(BaseDatatableView):
     model = SemanticField
@@ -111,7 +111,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             request.accepted_renderer = FormRenderer()
 
         if request.accepted_renderer.media_type == "application/x-form":
-            form = SemanticFieldForm(initial={'parent': pk})
+            form = SemanticFieldForm()
             return Response({'form': form}, content_type="text/html")
 
         raise NotAcceptable
@@ -121,7 +121,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
-        form = ChildForm(request.data)
+        form = SemanticFieldForm(request.data)
         if form.is_valid():
             parent = SemanticField.objects.get(id=pk)
             try:
