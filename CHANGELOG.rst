@@ -1,3 +1,14 @@
+* 1.4.1:
+
+  + Upgrade from Django 1.7 to Django 1.8. This could no longer be
+    delayed because earlier versions of Django are no longer
+    supported.
+
+  + Upgrade to Django CMS 3.2.3. This brings some important security
+    fixes.
+
+  + Upgrade to wed 0.26.2: this fixes an issue with Chrome 50.
+
 * 1.4.0:
 
   + This the "interim HTE integration" release.
