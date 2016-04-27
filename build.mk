@@ -357,6 +357,14 @@ downloads/$(JQUERY_GROWL_BASE): | downloads
 downloads/$(BOOTSTRAP_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_URL)'
 
+.PHONY: venv
+venv:
+	[ -e .btw-venv ] || virtualenv .btw-venv
+
+.PHONY: dev-venv
+dev-venv: venv
+	.btw-venv/bin/pip install -r requirements.txt
+
 .PHONY: clean
 clean::
 	-rm -rf build

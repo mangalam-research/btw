@@ -17,3 +17,4 @@ local.mk
 /TODO.private
 /*.sql.gz
 /*.sql.bz2
+/.btw-venv
