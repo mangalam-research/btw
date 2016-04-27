@@ -542,7 +542,7 @@ def handle_update(request, handle_or_entry_id):
 # opportunity to change. The Django **code** depends on wed being at a
 # certain version. Changing this in the settings file would be a
 # recipe for disaster.
-REQUIRED_WED_VERSION = "0.26.1"
+REQUIRED_WED_VERSION = "0.26.2"
 
 
 def version_check(version):

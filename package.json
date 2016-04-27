@@ -16,7 +16,7 @@
         "moment": ">=2.10.3 <3",
         "bluebird": ">=3 <4",
         "bootstrap-datepicker": ">=1.4.0 <2",
-        "wed": ">=0.26.1",
+        "wed": ">=0.26.2",
         "velocity-animate": ">=1.2.3 <2",
         "sinon": ">=1.17.3 <2",
         "chai-as-promised": ">=5.2.0 <6"
