@@ -1,5 +1,4 @@
 Django>=1.8,<1.9
-# The south doc recommends not automatically upgrading beyond 0.8.
 semver>=0.0.2
 django-nose>=1.4,<2
 django-webtest>=1.7.5
@@ -12,7 +11,10 @@ psycopg2>=2.5.2,<3
 django-forms-bootstrap>=3.0.0,<4
 requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
-selenium==2.45.0
+selenium==2.49.0
+behave>=1.2.5,<2
+selenic>=0.7.0,<1
+wedutil>=0.19.0,<1
 pebble>=3.1.8,<4
 django-redis>=3.8.4,<4
 django-cache-management>=1.0.0,<2
@@ -40,5 +42,6 @@ lxml>=3.4.4,<4
 cssselect>=0.9.1,<1
 grako>=3.6.5,<4
 django-pipeline>=1.5.4,<1.6
-mptt>=0.8.3,<0.9
+django-mptt>=0.8.3,<0.9
 redis>=2.10.5,<3
+django-debug-toolbar==1.4
