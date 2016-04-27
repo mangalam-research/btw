@@ -1,9 +1,6 @@
 /test_logs
-/cache
-/logs
 /sitestatic
 /media
-/btw.sqlite3
 /README.html
 /node_modules
 /downloads
@@ -19,6 +16,4 @@ local.mk
 /transformations
 /TODO.private
 /*.sql.gz
-/env
-/*.log
-/*.pid
+/*.sql.bz2
