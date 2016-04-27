@@ -5,7 +5,7 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,49
+Linux,CH,50
 
 
 #
@@ -32,7 +32,7 @@ OS X 10.9,CH,48,Remote
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,48,Remote
+Windows 8.1,CH,50,Remote
 # wed definitely breaks on Chrome 34.
 # Windows 8.1,CH,34,Remote
 
