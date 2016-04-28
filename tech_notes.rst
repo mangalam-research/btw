@@ -501,13 +501,20 @@ Generally:
 
 See below for specific upgrade cases.
 
-1.4.x to 1.5.0
+1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~
 
-- Execute::
+- At a minimum, execute::
 
     rm `find . -name menu.pyc`
     rm `find . -name cms_app.pyc`
+
+  To be on the safe site, I actually recommend doing::
+
+    rm `find . -name "*.pyc"`
+
+  When running tests in buildbot some cases failed due to very old
+  leftover ``.pyc`` files.
 
 - After having done the database migrations, run ``manage.py cms
   fix-tree`` as recommended by Django CMS to fix possible issues with
