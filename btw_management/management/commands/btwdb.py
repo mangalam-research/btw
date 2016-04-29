@@ -3,6 +3,8 @@ from django.conf import settings
 
 from optparse import make_option
 from django.contrib.sites.models import Site
+from lexicography.perms import create_perms as lex_create_perms
+from core.perms import create_perms as core_create_perms
 
 
 class Command(BaseCommand):
@@ -26,5 +28,8 @@ from the server.
             site.name = settings.BTW_SITE_NAME
             site.save()
             print "Set the site name..."
+        elif command == "create_perms":
+            lex_create_perms()
+            core_create_perms()
         else:
             raise ValueError("unknown command: " + command)
