@@ -24,7 +24,8 @@ require.config({
    'merge-options': 'external/merge-options',
    'is-plain-obj': 'external/is-plain-obj',
    velocity: 'external/velocity/velocity.min',
-   'velocity-ui': 'external/velocity/velocity.ui.min'
+   'velocity-ui': 'external/velocity/velocity.ui.min',
+   'last-resort': 'external/last-resort'
  },
  // We use this map to force velocity to use Bluebird for promises.
  map: {
