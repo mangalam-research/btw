@@ -160,9 +160,6 @@ subprocess.check_call(['./manage.py', 'migrate'])
 subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
 subprocess.check_call(['./manage.py', 'clearcache', '--all'])
 subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
-# Give time to the workers to start.
-import time
-time.sleep(2)
 subprocess.check_call(['./manage.py', 'btwcheck'])
 
 pid_to_name = {}
