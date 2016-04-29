@@ -14,6 +14,7 @@ from .. import signals
 from ..models import Entry, ChangeRecord, Chunk
 from .. import xml
 from .util import launch_fetch_task, get_valid_document_data
+from lib.util import DisableMigrationsMixin
 
 launch_fetch_task()
 
@@ -45,7 +46,7 @@ valid_editable = get_valid_document_data()
 xmltree = xml.XMLTree(valid_editable)
 schema_version = xmltree.extract_version()
 
-class SignalTestCase(TestCase):
+class SignalTestCase(DisableMigrationsMixin, TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "one_entry.json"))
 

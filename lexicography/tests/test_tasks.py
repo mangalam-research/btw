@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from ..models import ChangeRecord, Entry
 from bibliography.models import Item, PrimarySource
 from .. import tasks, depman, xml
-from lib.util import WithStringIO
+from lib.util import WithStringIO, DisableMigrationsMixin
 from bibliography.tests import mock_zotero
 from bibliography.tasks import fetch_items
 from .util import launch_fetch_task, create_valid_article, \
@@ -97,7 +97,7 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
                    BROKER_BACKEND='memory',
                    ROOT_URLCONF='lexicography.tests.urls')
-class TasksTestCase(TestCase):
+class TasksTestCase(DisableMigrationsMixin, TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json")) + [hte_fixture]
     maxDiff = None

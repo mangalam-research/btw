@@ -1466,7 +1466,20 @@ For the Chicago style:
 
 http://library.osu.edu/documents/english/FINALlibrary_CMS.pdf
 
+Test Suite Optimization Notes
+=============================
 
+In May 2016, we've moved to disable migrations during testing. The
+problem with migrations is that all migrations ever created must be
+performed. It is slow as hell. (Squashing is not quite the answer it
+seems. We don't control the squashing behavior of third-party
+apps. Also, in the past we've been able to modify migration code after
+the fact. Squashing complicates this.) By moving the liveserver to
+disable migrations during testing, and move away from fixtures to some
+extent, we have reduced the run time of a full selenium test with
+Chrome 50 from 30 minutes to 25 minutes. That's about 16%
+improvement. The 5 minutes saved is going to be repeated over and over
+during the life of the project.
 
 CMS Choice for BTW
 ==================

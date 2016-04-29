@@ -11,6 +11,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
 from bibliography.models import PrimarySource
+from lib.util import DisableMigrationsMixin
 
 dirname = os.path.dirname(__file__)
 user_model = get_user_model()
@@ -31,7 +32,7 @@ def reverse_to_re(name):
 # the suite.
 @attr(isolation="menu")
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
-class MenuTestCase(WebTest):
+class MenuTestCase(DisableMigrationsMixin, WebTest):
 
     saved_menus = None
 

@@ -21,7 +21,7 @@ user_model = get_user_model()
 
 
 @override_settings(ROOT_URLCONF='core.tests.urls')
-class ViewTestCase(BaseCMSTestCase, WebTest):
+class ViewTestCase(BaseCMSTestCase, util.DisableMigrationsMixin, WebTest):
 
     def setUp(self):
         super(ViewTestCase, self).setUp()

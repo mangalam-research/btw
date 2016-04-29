@@ -24,9 +24,10 @@ valid_editable = as_editable(os.path.join(xml.schemas_dirname, "prasada.xml"))
 xmltree = xml.XMLTree(valid_editable)
 schema_version = xmltree.extract_version()
 
-class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+class EntryTestCase(util.DisableMigrationsTransactionMixin,
+                    TransactionTestCase):
+
     fixtures = local_fixtures
-    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
@@ -198,9 +199,9 @@ class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         self.assertEqual(self.entry.schema_version, "0.0")
 
 
-class ChangeRecordTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+class ChangeRecordTestCase(util.DisableMigrationsTransactionMixin,
+                           TransactionTestCase):
     fixtures = local_fixtures
-    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
@@ -487,9 +488,9 @@ class ChangeRecordTestCase(util.NoPostMigrateMixin, TransactionTestCase):
             ChangeRecord.MANUAL)
         self.assertEqual(self.entry.latest.schema_version, "0.0")
 
-class EntryLockTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+class EntryLockTestCase(util.DisableMigrationsTransactionMixin,
+                        TransactionTestCase):
     fixtures = local_fixtures
-    serialized_rollback = True
 
     def setUp(self):
         self.foo = user_model.objects.get(username="foo")
@@ -502,9 +503,9 @@ class EntryLockTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         self.assertTrue(lock.expirable)
 
 
-class ChunkTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+class ChunkTestCase(util.DisableMigrationsTransactionMixin,
+                    TransactionTestCase):
     fixtures = local_fixtures
-    serialized_rollback = True
 
     def test_abnormal_is_invalid(self):
         """

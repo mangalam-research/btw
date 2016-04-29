@@ -9,10 +9,11 @@ import datetime
 from .. import locking
 from .. import models
 from . import util
+from lib.util import DisableMigrationsMixin
 
 dirname = os.path.dirname(__file__)
 
-class LockingTestCase(TestCase):
+class LockingTestCase(DisableMigrationsMixin, TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "locking.json"))
 

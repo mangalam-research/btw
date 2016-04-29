@@ -38,6 +38,8 @@ s.SESSION_COOKIE_HTTPONLY = False
 # Yes, we mean to have this be private.
 __SILENT = True
 
+s.BTW_DISABLE_MIGRATIONS = True
+
 if not __SILENT:
     loggers = s.LOGGING['loggers']
     loggers[''] = {

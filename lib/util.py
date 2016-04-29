@@ -363,6 +363,67 @@ class PermissionResolver(object):
         self.ct_cache[ct_key] = ct
         return ct
 
+class DisableMigrationsTransactionMixin(object):
+    """
+    This is a mixin that provides the glue necessary for
+    TransactionTestCase tests to work if BTW_DISABLE_MIGRATIONS is
+    ``True``. Use ``DisableMigrationsMixin`` for ``TestCase``.
+    """
+
+    def _fixture_setup(self):
+        # We have to create the permissions before fixtures are loaded.
+        from django.conf import settings
+        if settings.BTW_DISABLE_MIGRATIONS:
+            from btw_management.management.commands.btwdb import create_perms
+            create_perms()
+        return super(DisableMigrationsTransactionMixin, self)._fixture_setup()
+
+class DisableMigrationsMixin(object):
+    """
+    This is a mixin that provides the glue necessary for TestCase
+    tests to work if BTW_DISABLE_MIGRATIONS is ``True``. Use
+    ``DisableMigrationsTransactionMixin`` for ``TransactionTestCase``.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from django.conf import settings
+
+        # If we disable migrations, we swallow fixtures under
+        # my_fixtures.  This is so that we can perform our loading
+        # operations in the proper order.
+        if settings.BTW_DISABLE_MIGRATIONS:
+            if cls.fixtures:
+                cls.my_fixtures = cls.fixtures
+                cls.fixtures = None
+            else:
+                cls.my_fixtures = None
+        return super(DisableMigrationsMixin, cls).setUpClass()
+
+    @classmethod
+    def setUpTestData(cls):
+        # We have to create the permissions before fixtures are loaded.
+        from django.conf import settings
+        if settings.BTW_DISABLE_MIGRATIONS:
+            from btw_management.management.commands.btwdb import create_perms
+            create_perms()
+
+            fixtures = cls.my_fixtures
+            if fixtures:
+                from django.core.management import call_command
+                for db_name in cls._databases_names(include_mirrors=False):
+                    try:
+                        call_command('loaddata', *fixtures, **{
+                            'verbosity': 0,
+                            'commit': False,
+                            'database': db_name,
+                        })
+                    except Exception:
+                        cls._rollback_atomics(cls.cls_atomics)
+                        raise
+
+        return super(DisableMigrationsMixin, cls).setUpTestData()
+
 class NoPostMigrateMixin(object):
 
     def _fixture_teardown(self):

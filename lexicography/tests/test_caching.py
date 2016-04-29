@@ -16,6 +16,7 @@ from bibliography.tasks import fetch_items
 from .util import launch_fetch_task, create_valid_article, \
     copy_entry, extract_inter_article_links, \
     extract_unlinked_terms
+from lib.util import DisableMigrationsMixin
 
 dirname = os.path.dirname(__file__)
 cache = caches['article_display']
@@ -92,7 +93,7 @@ get_item_mock = mock.Mock(side_effect=mock_records.get_item)
                    CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
                    BROKER_BACKEND='memory',
                    ROOT_URLCONF='lexicography.tests.urls')
-class CachingTestCase(TestCase):
+class CachingTestCase(DisableMigrationsMixin, TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json"))
 

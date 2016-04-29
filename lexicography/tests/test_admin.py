@@ -8,11 +8,12 @@ from cms.test_utils.testcases import BaseCMSTestCase
 from ..models import Entry
 from ..xml import get_supported_schema_versions
 from . import util as test_util
+from lib.util import DisableMigrationsMixin
 
 dirname = os.path.dirname(__file__)
 
 @override_settings(ROOT_URLCONF='lexicography.tests.urls')
-class EntryViewTestCase(BaseCMSTestCase, WebTest):
+class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json"))
 
@@ -127,7 +128,8 @@ class EntryViewTestCase(BaseCMSTestCase, WebTest):
 
 
 @override_settings(ROOT_URLCONF='lexicography.tests.urls')
-class ChangeRecordViewTestCase(BaseCMSTestCase, WebTest):
+class ChangeRecordViewTestCase(BaseCMSTestCase, DisableMigrationsMixin,
+                               WebTest):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json"))
 

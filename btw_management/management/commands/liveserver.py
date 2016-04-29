@@ -4,6 +4,7 @@ from unittest import TestSuite
 import lxml.etree
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, \
     HASH_SESSION_KEY, authenticate
+from django.contrib.sites.models import Site
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.management.base import BaseCommand
 from django.core.management import execute_from_command_line
@@ -50,15 +51,22 @@ class LexicographyPatcher(object):
         return self.old_changerecord_details(request, *args, **kwargs)
 
 
-class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
+class SeleniumTest(BaseCMSTestCase, util.DisableMigrationsTransactionMixin,
                    LiveServerTestCase):
 
     reset_sequences = True
-    serialized_rollback = True
 
     def setUp(self):
         super(SeleniumTest, self).setUp()
         translation.activate('en-us')
+
+        # We have to perform the job of btwdb set_site_name here
+        # because the cleanup mangles the site name.
+        from django.conf import settings
+        site = Site.objects.get_current()
+        site.name = settings.BTW_SITE_NAME
+        site.save()
+
         from bibliography.models import Item, PrimarySource
         from bibliography.tasks import fetch_items
 
@@ -83,9 +91,8 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         from lib import cmsutil
         cmsutil.refresh_cms_apps()
         from cms.api import create_page, add_plugin
-        self.home_page = \
-            create_page("Home", "generic_page.html",
-                        "en-us")
+        self.home_page = create_page("Home", "generic_page.html",
+                                     "en-us")
         self.home_page.toggle_in_navigation()
         self.home_page.publish('en-us')
         self.lexicography_page = \
@@ -343,18 +350,7 @@ class Runner(DiscoverRunner):
 
     def setup_databases(self, *args, **kwargs):
         unmonkeypatch_databases()
-        ret = super(Runner, self).setup_databases(*args, **kwargs)
-        # Save the serialization of our databases... We have to do
-        # this ourselves here because Django's DiscoverRunner won't
-        # perform a serialization for databases that have a
-        # TEST_MIRROR set, which is our case because we do not want a
-        # migration to happen with every test.
-        from django.db import connections
-        for alias in connections:
-            connection = connections[alias]
-            connection._test_serialized_contents = \
-                connection.creation.serialize_db_to_string()
-        return ret
+        return super(Runner, self).setup_databases(*args, **kwargs)
 
 class Command(BaseCommand):
     help = 'Starts a live server for testing.'

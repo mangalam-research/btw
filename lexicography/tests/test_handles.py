@@ -5,16 +5,16 @@ from django.db import transaction
 
 from .. import handles
 from ..models import Handle
-from lib import util
+from lib.util import DisableMigrationsTransactionMixin
 
 
 dirname = os.path.dirname(__file__)
 
 
-class HandleManagerTestCase(util.NoPostMigrateMixin, TransactionTestCase):
+class HandleManagerTestCase(DisableMigrationsTransactionMixin,
+                            TransactionTestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)
                     for x in ("users.json", "views.json", ))
-    serialized_rollback = True
 
     def setUp(self):
         self.a = handles.HandleManager("a")

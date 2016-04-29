@@ -91,13 +91,14 @@ class ViewsMixin(BaseCMSTestCase):
         return response, entry
 
 @override_settings(ROOT_URLCONF='lexicography.tests.urls')
-class ViewsTestCase(ViewsMixin, WebTest):
+class ViewsTestCase(ViewsMixin, util.DisableMigrationsMixin, WebTest):
     pass
 
 @override_settings(ROOT_URLCONF='lexicography.tests.urls')
-class ViewsTransactionTestCase(ViewsMixin, util.NoPostMigrateMixin,
+class ViewsTransactionTestCase(ViewsMixin,
+                               util.DisableMigrationsTransactionMixin,
                                TransactionWebTest):
-    serialized_rollback = True
+    pass
 
 class DetailsTestCase(ViewsTestCase):
 

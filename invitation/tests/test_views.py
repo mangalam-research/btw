@@ -1,3 +1,5 @@
+import os
+
 from django_webtest import WebTest
 from django.core.urlresolvers import reverse
 from django.core import mail
@@ -11,16 +13,14 @@ from cms.test_utils.testcases import BaseCMSTestCase
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal
 
-import os
-
 from ..models import Invitation
-
 from .util import expire, BAD_KEY
+from lib.util import DisableMigrationsMixin
 
 dirname = os.path.dirname(__file__)
 user_model = get_user_model()
 
-class ViewTestCase(BaseCMSTestCase, WebTest):
+class ViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
 
     def setUp(self):
         super(ViewTestCase, self).setUp()

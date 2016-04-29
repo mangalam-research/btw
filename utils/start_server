@@ -157,6 +157,7 @@ for name, user in name_users:
          name])
 
 subprocess.check_call(['./manage.py', 'migrate'])
+# We need this so that btwcheck will pass...
 subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
 subprocess.check_call(['./manage.py', 'clearcache', '--all'])
 subprocess.check_call(['./manage.py', 'btwworker', 'start', '--all'])
