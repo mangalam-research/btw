@@ -228,7 +228,7 @@ selenium_test/*.feature selenium_test: build-config $(TARGETS)
 	$(MAKE) -f build.mk all
 ifneq ($(strip $(BEHAVE_SAVE)),)
 	(STAMP=$$(date -Iseconds); \
-	behave -f plain $(BEHAVE_PARAMS) -o test_logs/$$STAMP.log $@; \
+	behave $(BEHAVE_PARAMS) -f plain -o test_logs/$$STAMP.log -f pretty $@ ;\
 	ln -s -f $$STAMP.log test_logs/LATEST)
 else
 	behave $(BEHAVE_PARAMS) $@
