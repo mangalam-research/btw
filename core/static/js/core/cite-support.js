@@ -33,10 +33,6 @@ function refreshCitations() {
 }
 
 $picker.on("changeDate", refreshCitations);
-$(download_mods).on("click", function () {
-    form.submit();
-    return false;
-});
 
 refreshCitations();
 
