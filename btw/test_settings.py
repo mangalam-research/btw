@@ -66,13 +66,24 @@ if s.BTW_SELENIUM_TESTS:
 if s.BTW_BUILD_ENV:
     builder = os.environ['BUILDER']
     for db in s.DATABASES.itervalues():
-        test_name = db['NAME'] + '_' + builder
+        name = db['NAME']
+        test_name = name + '_' + builder
         if not test_name.startswith("test_"):
             test_name = "test_" + test_name
         # If we are using TEST_MIRROR then TEST_NAME is not used and thus
         # NAME itself must be altered.
         if not (('TEST_MIRROR' in db) or ('MIRROR' in db.get('TEST', {}))):
-            db['TEST_NAME'] = test_name
+            if 'TEST_NAME' in db:
+                raise ValueError("TEST_NAME already set for " + name)
+
+            TEST = db.get('TEST')
+            if TEST is not None and 'NAME' in TEST:
+                raise ValueError("TEST['NAME'] already set for " + name)
+
+            if TEST is None:
+                TEST = db['TEST'] = {}
+
+            TEST['NAME'] = test_name
         else:
             db['NAME'] = test_name
 
