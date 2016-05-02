@@ -20,6 +20,7 @@
         "velocity-animate": ">=1.2.3 <2",
         "sinon": ">=1.17.3 <2",
         "chai-as-promised": ">=5.2.0 <6",
+        "bluejax": ">=0.0.1 <1",
         "last-resort": ">=0.0.1 <1"
     }
 }

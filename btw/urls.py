@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from allauth.account.views import login, logout
 
 from lib.admin import limited_admin_site
+from .views import ping
 
 admin.autodiscover()
 
@@ -25,6 +26,13 @@ if settings.DEBUG and settings.BTW_DIRECT_APP_MODE:
         url(r'^lexicography/', include('lexicography.urls')),
         url(r'^bibliography/', include('bibliography.urls')),
     )
+
+if settings.DEBUG or settings.BTW_TESTING:
+    # In production, the nginx server should be responsible for
+    # returning a response.
+    urlpatterns += [
+        url(r'^ping$', ping)
+    ]
 
 urlpatterns += i18n_patterns(
     url(r'^core/', include('core.urls')),

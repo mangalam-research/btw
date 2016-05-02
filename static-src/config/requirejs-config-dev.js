@@ -25,15 +25,20 @@ require.config({
    'is-plain-obj': 'external/is-plain-obj',
    velocity: 'external/velocity/velocity.min',
    'velocity-ui': 'external/velocity/velocity.ui.min',
+   bluejax: 'external/bluejax',
    'last-resort': 'external/last-resort'
  },
  // We use this map to force velocity to use Bluebird for promises.
  map: {
     '*': {
-        velocity: 'velocity-glue'
+        velocity: 'velocity-glue',
+        bluebird: 'bluebird-glue'
     },
     'velocity-glue': {
         velocity: 'velocity'
+    },
+    'bluebird-glue': {
+        bluebird: 'bluebird'
     }
  },
  packages: [
