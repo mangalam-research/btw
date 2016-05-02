@@ -449,6 +449,7 @@ Generally:
 5. Run::
 
     $ sudo monit unmonitor [appropriate group name]
+    $ . ../btw_env/bin/activate
     $ ./manage.py btwworker stop --all
 
     # The next command **must** be omitted if BTW is meant to continue
@@ -460,7 +461,6 @@ Generally:
     $ git pull origin
     $ git describe
     [Make sure the description shows what you expect.]
-    $ . ../btw_env/bin/activate
     $ pip install -r requirements.txt
     $ npm install
     $ make
