@@ -665,6 +665,10 @@ Afterwards:
 Notes from Actual Upgrades
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- 1.4.0 to 1.4.1: Upgrade scheduled for 2016/04/30 at 8:00-9:00 EDT. I
+  started a little before to prepare. The upgrade was done at about
+  8:30 EDT.
+
 - 1.3.1 to 1.4.0: The upgrade window was scheduled for 2016/04/06 at
   8:00-12:00 EDT. I actually got busy with something else and did not
   begin until 8:10. The upgrade was finished by about 10:28.
