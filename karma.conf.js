@@ -2,69 +2,26 @@
 // Generated on Thu Apr 02 2015 07:49:34 GMT-0400 (EDT)
 
 module.exports = function(config) {
-  config.set({
-
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
-
-
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['requirejs', 'mocha', 'chai-as-promised', 'chai'],
-
-    // list of files / patterns to load in the browser
-    files: [
-      'sitestatic/config/requirejs-config-dev.js',
-      'test-main.js',
-      {pattern: 'sitestatic/lib/**/*.js', included: false},
-      {pattern: 'sitestatic/js/**/*.js', included: false},
-      {pattern: 'karma_tests/**/*.js', included: false},
-      {pattern: 'semantic_fields/karma_tests/**/*.js', included: false},
-      {pattern: 'node_modules/sinon/lib/**/*.js', included: false}
-    ],
-
-
-    // list of files to exclude
-    exclude: [
-    ],
-
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-    },
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
-
-
-    // web server port
-    port: 9876,
-
-
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
-
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
-
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
-
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
-  });
+    config.set({
+        basePath: '',
+        frameworks: ['requirejs', 'mocha', 'chai-as-promised', 'chai'],
+        files: [
+            'sitestatic/config/requirejs-config-dev.js',
+            'test-main.js',
+            {pattern: 'sitestatic/lib/**/*.js', included: false},
+            {pattern: 'sitestatic/js/**/*.js', included: false},
+            {pattern: 'karma_tests/**/*.js', included: false},
+            {pattern: 'semantic_fields/karma_tests/**/*.js', included: false},
+            {pattern: 'node_modules/sinon/lib/**/*.js', included: false}
+        ],
+        exclude: [],
+        preprocessors: {},
+        reporters: ['progress'],
+        port: 9876,
+        colors: true,
+        logLevel: config.LOG_INFO,
+        autoWatch: true,
+        browsers: ['Chrome'],
+        singleRun: false
+    });
 };
