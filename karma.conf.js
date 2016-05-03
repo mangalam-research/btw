@@ -5,6 +5,11 @@ module.exports = function(config) {
     config.set({
         basePath: '',
         frameworks: ['requirejs', 'mocha', 'chai-as-promised', 'chai'],
+        client: {
+            mocha: {
+                "asyncOnly": true
+            }
+        },
         files: [
             'sitestatic/config/requirejs-config-dev.js',
             'test-main.js',

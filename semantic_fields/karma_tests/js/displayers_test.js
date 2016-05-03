@@ -27,24 +27,20 @@ function promiseFromEvent(el, event) {
     });
 }
 
-var DONE = {};
+var DONE_VAL = {};
+var DONE = Promise.resolve(DONE_VAL);
 
 var it = function it(title, fn) {
     if (fn.length)
         throw new Error("you must update your it replacement to support " +
                         "the done callback or use a promise instead");
     return window.it.call(this, title, function () {
-        var ret = fn();
+        var ret = fn.call(this);
         assert.isDefined(ret,
                          "you forgot to return a value from your test");
-        if (!ret.then)
-            return ret;
 
         return ret.then(function (x) {
-            assert.equal(x, DONE,
-                         "your test must return a promise that resolves " +
-                         "to DONE");
-
+            assert.equal(x, DONE_VAL);
         });
     });
 };

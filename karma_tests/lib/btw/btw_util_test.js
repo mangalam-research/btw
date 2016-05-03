@@ -1,12 +1,14 @@
 define(["btw/btw_util"], function (btw_util) {
 
 var assert = chai.assert;
+var DONE = Promise.resolve(1);
 
 describe("btw_util", function () {
     describe("biblSuggestionSorter", function () {
         var biblSuggestionSorter = btw_util.biblSuggestionSorter;
         it("accepts an empty array", function () {
             assert.sameMembers(biblSuggestionSorter([]), []);
+            return DONE;
         });
 
         it("sorts first on creators", function () {
@@ -28,6 +30,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("sorts second on title", function () {
@@ -49,6 +52,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("sorts third on date", function () {
@@ -70,6 +74,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("sorts fourth on pk", function () {
@@ -91,6 +96,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("moves primary sources in front of their secondary sources",
@@ -126,6 +132,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("sorts primary sources",
@@ -162,6 +169,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
         it("moves primary sources without a secondary source to the front",
@@ -208,6 +216,7 @@ describe("btw_util", function () {
 
             assert.sameMembers(biblSuggestionSorter(initial), expected);
             assert.sameMembers(biblSuggestionSorter(expected), expected);
+            return DONE;
         });
 
     });
