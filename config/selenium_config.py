@@ -1,6 +1,5 @@
 import os
 import subprocess
-import re
 import inspect
 
 from selenium.webdriver.firefox.webdriver import FirefoxProfile, FirefoxBinary
@@ -37,9 +36,9 @@ if 'REMOTE_SERVICE' not in globals():
 if "LOGS" not in globals():
     LOGS = False
 
-# Detect whether we are running in a builder like Buildbot or
-# Jenkins. (Note that this is unrelated to selenic's Builder class.)
-in_builder = os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')
+# Detect whether we are running in a builder like Buildbot. (Note that
+# this is unrelated to selenic's Builder class.)
+in_builder = os.environ.get('BUILDBOT')
 
 # If we are running in a builder, we don't want to have the logs be
 # turned on because we forgot to turn them off. So unless LOGS is set
@@ -135,12 +134,7 @@ browser_env = builder_args.get(
 if browser_env is None:
     raise ValueError("you must specify a browser to run")
 
-# When invoked from a Jenkins setup, the spaces that would
-# normally appear in names like "Windows 8.1" will appear as
-# underscores instead. And the separators will be "-" rather than
-# ",".
-parts = [part or None for part in
-         re.split(r"[,-]", browser_env.replace("_", " "))]
+parts = [part or None for part in browser_env.split(",")]
 CONFIG = selenic.get_config(platform=parts[0], browser=parts[1],
                             version=parts[2])
 
