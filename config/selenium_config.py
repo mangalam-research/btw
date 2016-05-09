@@ -11,6 +11,17 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 dirname = os.path.dirname(os.path.abspath(filename))
 
 
+# Support for older versions of our build setup which do not use builder_args
+if 'builder_args' not in globals():
+    builder_args = {
+        # The config is obtained from the TEST_BROWSER environment variable.
+        'browser': os.environ.get("TEST_BROWSER", None),
+        'service': "saucelabs"
+    }
+
+if 'REMOTE_SERVICE' not in globals():
+    REMOTE_SERVICE = builder_args.get("service")
+
 #
 # LOGS determines whether Selenium tests will capture logs. Turning it
 # on makes the tests much slower.
@@ -26,12 +37,14 @@ dirname = os.path.dirname(os.path.abspath(filename))
 if "LOGS" not in globals():
     LOGS = False
 
-# If we are running in something like Buildbot or Jenkins, we don't
-# want to have the logs be turned on because we forgot to turn them
-# off. So unless LOGS is set to "force", we turn off the logs when
-# running in that environment.
-if LOGS and LOGS != "force" and \
-   (os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')):
+# Detect whether we are running in a builder like Buildbot or
+# Jenkins. (Note that this is unrelated to selenic's Builder class.)
+in_builder = os.environ.get('BUILDBOT') or os.environ.get('JENKINS_HOME')
+
+# If we are running in a builder, we don't want to have the logs be
+# turned on because we forgot to turn them off. So unless LOGS is set
+# to "force", we turn off the logs when running in that environment.
+if LOGS and LOGS != "force" and in_builder:
     LOGS = False
 
 class Config(selenic.Config):
@@ -58,23 +71,42 @@ if suffix:
 describe = subprocess.check_output(["git", "describe"])
 
 caps = {
+    "name": name,
     # We have to turn this on...
     "nativeEvents": True,
-    "name": name,
-    # As of 2014-06-30 2.42.2 fails to load on Saucelabs...
-    "selenium-version": "2.45.0",
-    # We cannot yet use 2.14 due to the change in how an element's
-    # center is determined.
-    "chromedriver-version": "2.21",
     "maxDuration": 2400,
     "build": describe
 }
 
-if not LOGS:
-    caps["record-screenshots"] = "false"
-    caps["record-video"] = "false"
-    caps["record-logs"] = "false"
-    caps["sauce-advisor"] = "false"
+selenium_version = "2.48.2"
+
+if REMOTE_SERVICE == "saucelabs":
+    caps.update({
+        "selenium-version": selenium_version,
+        "chromedriver-version": "2.21",
+    })
+
+    if not LOGS:
+        caps.update({
+            "record-screenshots": "false",
+            "record-video": "false",
+            "record-logs": "false",
+            "sauce-advisor": "false"
+        })
+elif REMOTE_SERVICE == "browserstack":
+    caps.update({
+        'project': 'BTW',
+        'browserstack.selenium_version': selenium_version,
+    })
+
+    if LOGS:
+        caps.update({
+            'browserstack.debug': True
+        })
+    else:
+        caps.update({
+            'browserstack.video': False
+        })
 
 with open(os.path.join(dirname, "./browsers.txt")) as browsers:
     for line in browsers.readlines():
@@ -93,42 +125,45 @@ with open(os.path.join(dirname, "./browsers.txt")) as browsers:
             raise ValueError("bad line: " + line)
 
 
-# Support for older versions of our build setup which do not use builder_args
-if 'builder_args' not in globals():
-    builder_args = {
-        # The config is obtained from the TEST_BROWSER environment variable.
-        'browser': os.environ.get("TEST_BROWSER", None)
-    }
-
 # The 'browser' argument determines what browser we load.
-browser_env = builder_args.get('browser', None)
-if browser_env:
-    # When invoked from a Jenkins setup, the spaces that would
-    # normally appear in names like "Windows 8.1" will appear as
-    # underscores instead. And the separators will be "-" rather than
-    # ",".
-    parts = re.split(r"[,-]", browser_env.replace("_", " "))
-    CONFIG = selenic.get_config(
-        platform=parts[0] or None, browser=parts[1] or None,
-        version=parts[2] or None)
+browser_env = builder_args.get(
+    'browser',
+    # Yep, we now have a default! But not when we are running in a builder.
+    # In a builder we have to explicitly tell what browser we want.
+    'Linux,CH,' if not in_builder else None)
 
-    if CONFIG.browser == "CHROME":
-        CHROME_OPTIONS = Options()
-        #
-        # This prevents getting message shown in Chrome about
-        # --ignore-certificate-errors
-        #
-        # --test-type is an **experimental** option. Reevaluate this
-        # --use.
-        #
-        CHROME_OPTIONS.add_argument("test-type")
+if browser_env is None:
+    raise ValueError("you must specify a browser to run")
 
-    profile = FirefoxProfile()
-    # profile.set_preference("webdriver.log.file",
-    #                        "/tmp/firefox_webdriver.log")
-    # profile.set_preference("webdriver.firefox.logfile",
-    #                         "/tmp/firefox.log")
-    FIREFOX_PROFILE = profile
+# When invoked from a Jenkins setup, the spaces that would
+# normally appear in names like "Windows 8.1" will appear as
+# underscores instead. And the separators will be "-" rather than
+# ",".
+parts = [part or None for part in
+         re.split(r"[,-]", browser_env.replace("_", " "))]
+CONFIG = selenic.get_config(platform=parts[0], browser=parts[1],
+                            version=parts[2])
+
+if CONFIG.browser == "CHROME":
+    CHROME_OPTIONS = Options()
+    #
+    # This prevents getting message shown in Chrome about
+    # --ignore-certificate-errors
+    #
+    # --test-type is an **experimental** option. Reevaluate this
+    # --use.
+    #
+    CHROME_OPTIONS.add_argument("test-type")
+
+profile = FirefoxProfile()
+# profile.set_preference("webdriver.log.file",
+#                        "/tmp/firefox_webdriver.log")
+# profile.set_preference("webdriver.firefox.logfile",
+#                         "/tmp/firefox.log")
+FIREFOX_PROFILE = profile
+
+if CONFIG.remote and not not REMOTE_SERVICE:
+    raise ValueError("you must pass a service argument to behave")
 
 # May be required to get native events.
 # FIREFOX_BINARY = FirefoxBinary("/home/ldd/src/firefox-24/firefox")

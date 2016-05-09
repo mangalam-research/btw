@@ -12,7 +12,7 @@ import types
 
 from slugify import slugify
 import selenic.util
-from selenic import Builder, outil
+from selenic import Builder
 from behave import step_registry
 from behave.tag_matcher import ActiveTagMatcher
 from pyvirtualdisplay import Display
@@ -57,8 +57,7 @@ def cleanup(context, failed):
     builder = context.builder
     if driver:
         try:
-            builder.set_test_status(
-                driver.session_id, not (failed or context.failed))
+            builder.set_test_status(not (failed or context.failed))
         except httplib.HTTPException:
             # Ignore cases where we can't set the status.
             pass
@@ -78,16 +77,15 @@ def cleanup(context, failed):
 
         context.driver = None
 
-    if context.sc_tunnel:
-        context.sc_tunnel.send_signal(signal.SIGTERM)
-        context.sc_tunnel = None
+    if context.tunnel_id:
+        # The tunnel was created by selenic, ask selenic to kill it.
+        builder.stop_tunnel()
+        context.tunnel_id = None
 
-    if context.sc_tunnel_tempdir:
-        if keep_tempdirs:
-            print("Keeping tunnel tempdir:", context.sc_tunnel_tempdir)
-        else:
-            shutil.rmtree(context.sc_tunnel_tempdir, True)
-        context.sc_tunnel_tempdir = None
+    if context.tunnel:
+        # Tunnel created by us...
+        context.tunnel.send_signal(signal.SIGTERM)
+        context.tunnel = None
 
     if context.wm:
         context.wm.send_signal(signal.SIGTERM)
@@ -210,8 +208,8 @@ def before_all(context):
     context.server = None
     context.server_tempdir = None
     context.download_dir = None
-    context.sc_tunnel = None
-    context.sc_tunnel_tempdir = None
+    context.tunnel_id = None
+    context.tunnel = None
     context.builder = None
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
@@ -251,7 +249,6 @@ def before_all(context):
 
     context.active_tag_matcher = ActiveTagMatcher(values)
 
-    desired_capabilities = {}
     if not builder.remote:
         visible = context.visible or \
             context.selenium_quit in ("never", "on-success", "on-enter")
@@ -274,15 +271,13 @@ def before_all(context):
         context.display = None
         context.wm = None
 
-        sc_tunnel_id = os.environ.get("SC_TUNNEL_ID")
-        if not sc_tunnel_id:
-            user, key = builder.SAUCELABS_CREDENTIALS.split(":")
-            context.sc_tunnel, sc_tunnel_id, \
-                context.sc_tunnel_tempdir = \
-                outil.start_sc(builder.SC_TUNNEL_PATH, user, key)
-        desired_capabilities["tunnel-identifier"] = sc_tunnel_id
+        tunnel_id = os.environ.get("TUNNEL_ID")
+        if not tunnel_id:
+            context.tunnel_id = builder.start_tunnel()
+        else:
+            builder.set_tunnel_id(tunnel_id)
 
-    driver = builder.get_driver(desired_capabilities)
+    driver = builder.get_driver()
     context.driver = driver
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
@@ -299,7 +294,7 @@ def before_all(context):
     except AssertionError:
         # Make sure to mark the test as failed.
         try:
-            builder.set_test_status(driver.session_id, False)
+            builder.set_test_status(False)
         except httplib.HTTPException:
             # Ignore cases where we can't set the status.
             pass
@@ -320,7 +315,7 @@ def before_all(context):
         context.server_tempdir, "fifo_from_server")
     os.mkfifo(context.server_read_fifo)
 
-    nginx_port = str(outil.get_unused_sauce_port())
+    nginx_port = str(builder.get_unused_port())
     context.server = subprocess.Popen(
         ["utils/start_server", context.server_write_fifo,
          context.server_read_fifo, nginx_port], close_fds=True)
