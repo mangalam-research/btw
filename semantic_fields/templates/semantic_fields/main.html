@@ -17,8 +17,10 @@
     var displayers = st($table,
         $template[0],
         { ajax_source_url: "{% url 'semantic_fields_table' %}" }).displayers;
+    var create_field_buttons = table_panel.querySelectorAll(".btn.create-field");
+    var create_field_div = table_panel.querySelector("div.create-field");
     {% if request.user.can_add_semantic_fields %}
-    add(displayers);
+    add(create_field_buttons, create_field_div, displayers);
     {% endif %}
   });
 </script>

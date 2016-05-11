@@ -17,6 +17,15 @@
       <tfoot>
       </tfoot>
     </table>
+    {% if request.user.can_add_semantic_fields %}
+    <hr>
+    <div>
+      <div>
+        <label><button class="btn btn-default create-field" data-form-url="{% url 'semantic_fields_semanticfield-add-form' %}" data-create-url="{% url 'semantic_fields_semanticfield-list' %}"><i class="fa fa-plus"></i> Create Field</button> Using this button will create a field without a parent field. It will be at the top of the field hierarchy.</label>
+      </div>
+      <div class="create-field"></div>
+    </div>
+    {% endif %}
   </div>
 </div>
 {% comment %}

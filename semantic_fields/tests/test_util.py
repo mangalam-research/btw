@@ -331,3 +331,52 @@ class ParsedExpressionTest(TestCase):
         """
         child = ParsedExpression("01.01n").make_child('', 2, "aj")
         self.assertEqual(unicode(child), "01.01n/2aj")
+
+    def test_make_related_by_pos_fails_on_bad_pos(self):
+        """
+        ``make_related_by_pos`` with a bad pos should raise an exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^pos is not among valid choices$"):
+            ParsedExpression("01.01n/01.02n").make_related_by_pos("invalid")
+
+    def test_make_related_by_pos_fails_on_specified_reference(self):
+        """
+        ``make_related_by_pos`` with a specified reference should raise an
+        exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot make a field related by pos for a "
+                "specified reference$"):
+            ParsedExpression("01.01n@01.02n").make_related_by_pos("a")
+
+    def test_make_related_by_pos_fails_on_hte_reference(self):
+        """
+        ``make_related_by_pos`` with an HTE reference should raise an
+        exception.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot make a field related by pos for a non-custom field$"):
+            ParsedExpression("01.01n").make_related_by_pos("a")
+
+    def test_make_related_by_pos_fails_on_same_pos(self):
+        """
+        ``make_related_by_pos`` should raise an exception when the new pos
+        is not different from the original one.
+        """
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^trying to make a field related by pos with "
+                "the same pos as the original$"):
+            ParsedExpression("01.01n/1n").make_related_by_pos("n")
+
+    def test_make_related_by_pos_works(self):
+        """
+        ``make_related_by_pos`` should produce a correct value.
+        """
+        self.assertEqual(
+            unicode(ParsedExpression("01.01n/1aj").make_related_by_pos("n")),
+            "01.01n/1n")

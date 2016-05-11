@@ -1,6 +1,6 @@
 import re
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
 from django.utils.html import escape
 
@@ -91,6 +91,49 @@ class SemanticFieldTestCase(TestCase):
         # We now change the path to a value that has no related records.
         c.path = "02.02n"
         self.assertEqual(len(c.related_by_pos), 0)
+
+    def test_possible_new_poses_custom(self):
+        """
+        Test that possible_new_posses has a correct value when the field
+        is custom.
+        """
+
+        # This test hits the database, but we create the data we need
+        # here rather than load from a fixture, which would be
+        # expensive.
+        base_path = "01.01"
+        create_related = ("n", "v", "aj", "av")
+        for pos in create_related:
+            c = SemanticField(path=base_path + pos, heading="foo " + pos)
+            c.save()
+
+        c = SemanticField.objects.get(path=base_path + "n")
+
+        self.assertItemsEqual(
+            c.possible_new_poses,
+            ('', 'cj', 'in', 'p', 'ph', 'vi', 'vm', 'vp', 'vr', 'vt'))
+
+    def test_possible_new_poses_hte(self):
+        """
+        Test that possible_new_posses has a correct value when the field
+        is not custom.
+        """
+
+        # This test hits the database, but we create the data we need
+        # here rather than load from a fixture, which would be
+        # expensive.
+        base_path = "01.01"
+        create_related = ("n", "v", "aj", "av")
+        catid = 333
+        for pos in create_related:
+            c = SemanticField(path=base_path + pos, heading="foo " + pos,
+                              catid=catid)
+            c.save()
+            catid += 1
+
+        c = SemanticField.objects.get(path=base_path + "n")
+
+        self.assertItemsEqual(c.possible_new_poses, set())
 
     def test_link(self):
         """
@@ -266,11 +309,121 @@ class SemanticFieldTestCase(TestCase):
 
     def test_make_child_bad_pos(self):
         """
-        ``make_child`` called twice on the same field will create fields
-        with paths that do no conflict.
+        ``make_child`` with a bad pos fails.
         """
         c = SemanticField(path="01.01n")
         c.save()
         with self.assertRaisesRegexp(ValueError,
                                      "^pos is not among valid choices$"):
             c.make_child("foo", "x")
+
+    def test_make_related_by_pos_non_custom(self):
+        """
+        ``make_related_by_pos`` with a bad pos value fails.
+        """
+        c = SemanticField(path="01.01n")
+        c.save()
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^cannot make a field related by pos for a non-custom field$"):
+            c.make_related_by_pos("foo", "a")
+
+    def test_make_related_by_pos_bad_pos(self):
+        """
+        ``make_related_by_pos`` with a bad pos value fails.
+        """
+        c = SemanticField(path="01.01n/1n")
+        c.save()
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^pos is not among valid choices$"):
+            c.make_related_by_pos("foo", "invalid")
+
+    def test_make_related_by_pos_same_pos(self):
+        """
+        ``make_related_by_pos`` with a bad pos value fails.
+        """
+        c = SemanticField(path="01.01n/1n")
+        c.save()
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^trying to make a field related by pos with the same "
+                "pos as the original$"):
+            c.make_related_by_pos("foo", "n")
+
+    def test_make_related_by_pos(self):
+        """
+        ``make_related_by_pos`` returns a good value.
+        """
+        c = SemanticField(path="01.01n/1n")
+        c.save()
+        rel = c.make_related_by_pos("foo", "v")
+        self.assertEqual(rel.path, "01.01n/1v")
+        self.assertEqual(rel.heading, "foo")
+        self.assertEqual(rel.parent, c.parent)
+        self.assertEqual(rel.catid, None)
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class SemanticFieldTransactionTestCase(TransactionTestCase):
+
+    def test_make_related_by_pos_duplicate(self):
+        """
+        ``make_related_by_pos`` fails when trying to create a duplicate.
+        """
+        c = SemanticField(path="01.01n/1n")
+        c.save()
+        c.make_related_by_pos("foo", "v")
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^There is already a semantic field in the BTW namespace "
+                "with pos 'v'.$"):
+            c.make_related_by_pos("bar", "v")
+
+    def test_make_child_duplicate(self):
+        """
+        ``make_child`` does not allow creating duplicate children.
+        """
+        c = SemanticField(path="01.01n")
+        c.save()
+        c.make_child("foo", "n")
+
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^There is already a semantic field in the BTW namespace "
+                "with pos 'n' and heading 'foo'.$"):
+            c.make_child("foo", "n")
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class SemanticFieldManagerTestCase(TestCase):
+
+    def test_make_field_bad_pos(self):
+        """
+        ``make_field`` with a bad pos fails.
+        """
+        with self.assertRaisesRegexp(ValueError,
+                                     "^pos is not among valid choices$"):
+            SemanticField.objects.make_field("foo", "invalid")
+
+    def test_make_field(self):
+        """
+        ``make_field`` returns a good value.
+        """
+        field = SemanticField.objects.make_field("foo", "n")
+        self.assertEqual(field.path, "/1n")
+        self.assertEqual(field.heading, "foo")
+        self.assertEqual(field.parent, None)
+        self.assertEqual(field.catid, None)
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class SemanticFieldManagerTransactionTestCase(TestCase):
+
+    def test_make_field_duplicate(self):
+        """
+        ``make_child`` does not allow creating duplicate root fields.
+        """
+        SemanticField.objects.make_field("foo", "n")
+        with self.assertRaisesRegexp(
+                ValueError,
+                "^There is already a semantic field in the BTW namespace "
+                "with pos 'n' and heading 'foo'.$"):
+            SemanticField.objects.make_field("foo", "n")

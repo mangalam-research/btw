@@ -6,9 +6,8 @@ from django.test.utils import override_settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django_webtest import WebTest
+from django_webtest import WebTest, TransactionWebTest
 from django.utils import translation
-from django.template.loader import render_to_string
 
 from cms.test_utils.testcases import BaseCMSTestCase
 
@@ -16,29 +15,50 @@ from ..models import SemanticField, SearchWord, Lexeme
 
 user_model = get_user_model()
 
-@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
-class ViewsTestCase(BaseCMSTestCase, WebTest):
+class _Mixin(object):
 
     def setUp(self):
-        super(ViewsTestCase, self).setUp()
+        super(_Mixin, self).setUp()
         translation.activate('en-us')
-        self.noperm = user_model.objects.create(username="foo", password="foo")
-        self.perm = user_model.objects.create(username="bar", password="bar")
-        self.perm.user_permissions.add(Permission.objects.get(
+
+    # This exists so that we can use setUpTestData and setUp later.
+    @classmethod
+    def create_data_for(cls, whom):
+        whom.noperm = user_model.objects.create(username="foo", password="foo")
+        whom.perm = user_model.objects.create(username="bar", password="bar")
+        whom.perm.user_permissions.add(Permission.objects.get(
             content_type=ContentType.objects.get_for_model(SemanticField),
             codename="add_semanticfield"))
-        self.perm.save()
+        whom.perm.save()
 
         # Not a test proper... but make sure that what we expect is
         # the case.
-        assert self.perm.can_add_semantic_fields
+        assert whom.perm.can_add_semantic_fields
+
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class ViewsTestCase(BaseCMSTestCase, _Mixin, WebTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_data_for(cls)
+        super(ViewsTestCase, cls).setUpTestData()
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class ViewsTransactionTestCase(BaseCMSTestCase, _Mixin, TransactionWebTest):
+
+    def setUp(self):
+        super(ViewsTransactionTestCase, self).setUp()
+        self.create_data_for(self)
+
 
 class MainTestCase(ViewsTestCase):
 
-    def setUp(self):
-        super(MainTestCase, self).setUp()
-        self.url = reverse("semantic_fields_main")
-        self.login_url = reverse('login')
+    @classmethod
+    def setUpTestData(cls):
+        super(MainTestCase, cls).setUpTestData()
+        cls.url = reverse("semantic_fields_main")
+        cls.login_url = reverse('login')
 
     def test_not_logged_in(self):
         """
@@ -55,12 +75,36 @@ class MainTestCase(ViewsTestCase):
         """
         self.app.get(self.url, user=self.noperm)
 
+    def create_field_button(self, response):
+        els = response.lxml.cssselect(".btn.create-field")
+        return els[0] if els else None
+
+    def test_creation_possible(self):
+        """
+        Test that when a user with adequate permissions sees the page, the
+        user can create new semantic fields.
+        """
+        response = self.app.get(self.url, user=self.perm)
+        self.assertIsNotNone(self.create_field_button(response),
+                             "the button for creating fields should exist")
+
+    def test_creation_not_possible(self):
+        """
+        Test that when a user without adequate permissions sees the page,
+        the user can create new semantic fields.
+        """
+        response = self.app.get(self.url, user=self.noperm)
+        self.assertIsNone(self.create_field_button(response),
+                          "the button for creating fields should exist")
+
+
 class SearchTableTestCase(ViewsTestCase):
 
-    def setUp(self):
-        super(SearchTableTestCase, self).setUp()
-        self.url = reverse("semantic_fields_table")
-        self.complete_params = {
+    @classmethod
+    def setUpTestData(cls):
+        super(SearchTableTestCase, cls).setUpTestData()
+        cls.url = reverse("semantic_fields_table")
+        cls.complete_params = {
             "search[value]": "foo",
             "aspect": "sf",
             "scope": "all"
@@ -226,10 +270,13 @@ init()
 
 class DetailsTestCaseHTML(ViewsTestCase):
 
-    def setUp(self):
-        super(DetailsTestCaseHTML, self).setUp()
-        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
+    @classmethod
+    def setUpTestData(cls):
+        super(DetailsTestCaseHTML, cls).setUpTestData()
+        cls.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
+        cls.custom = custom = SemanticField(path="/1n", heading="custom")
+        custom.save()
 
     def test_not_logged_in(self):
         """
@@ -243,23 +290,50 @@ class DetailsTestCaseHTML(ViewsTestCase):
                             headers={"Accept": "text/html"},
                             user=user)
 
-    def test_creation_possible(self):
+    def related_by_pos_button(self, response):
+        els = response.lxml.cssselect(".btn.create-related-by-pos")
+        return els[0] if els else None
+
+    def create_child_button(self, response):
+        els = response.lxml.cssselect(".btn.create-child")
+        return els[0] if els else None
+
+    def test_creation_possible_custom_field(self):
         """
         Test that when a user with adequate permissions sees the page, the
         user can create new semantic fields.
         """
+        response = self.query(self.custom.detail_url, self.perm)
+        self.assertIsNotNone(self.create_child_button(response),
+                             "the button for creating children should exist")
+        self.assertIsNotNone(
+            self.related_by_pos_button(response),
+            "the button for creating related-by-pos should exist")
+
+    def test_creation_possible_hte_field(self):
+        """
+        Test that when a user with adequate permissions sees the page, the
+        user can create new semantic fields. However, for a HTE field,
+        the button to create related by pos fields is not present.
+        """
         response = self.query(self.hte.detail_url, self.perm)
-        self.assertEqual(len(response.lxml.cssselect(".create-child")), 1,
-                         "the button for creating children should exist")
+        self.assertIsNotNone(self.create_child_button(response),
+                             "the button for creating children should exist")
+        self.assertIsNone(
+            self.related_by_pos_button(response),
+            "the button for creating related-by-pos should not exist")
 
     def test_creation_not_possible(self):
         """
         Test that when a user without adequate permissions sees the page, the
         user cannot create new semantic fields.
         """
-        response = self.query(self.hte.detail_url, self.noperm)
-        self.assertEqual(len(response.lxml.cssselect(".create-child")), 0,
-                         "the button for creating children should not exist")
+        response = self.query(self.custom.detail_url, self.noperm)
+        self.assertIsNone(self.create_child_button(response),
+                          "the button for creating children should not exist")
+        self.assertIsNone(
+            self.related_by_pos_button(response),
+            "the button for creating related-by-pos should not exist")
 
     def test_hte_link(self):
         """
@@ -367,9 +441,10 @@ class DetailsTestCaseHTML(ViewsTestCase):
 
 class DetailsTestCaseJSON(ViewsTestCase):
 
-    def setUp(self):
-        super(DetailsTestCaseJSON, self).setUp()
-        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
+    @classmethod
+    def setUpTestData(cls):
+        super(DetailsTestCaseJSON, cls).setUpTestData()
+        cls.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
 
     def test_not_logged_in(self):
@@ -392,20 +467,13 @@ class DetailsTestCaseJSON(ViewsTestCase):
                          },
                          "the returned value should be correct")
 
-
-class AddChildFormTestCase(ViewsTestCase):
-
-    def setUp(self):
-        super(AddChildFormTestCase, self).setUp()
-        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
-        hte.save()
+class _AddFormTestCase(ViewsTestCase):
 
     def test_not_logged_in(self):
         """
         Test that the response is 403 when the user is not logged in.
         """
-        response = self.app.get(
-            self.hte.add_child_form_url, expect_errors=True)
+        response = self.app.get(self.url, expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_no_permissions(self):
@@ -413,7 +481,7 @@ class AddChildFormTestCase(ViewsTestCase):
         Test that a user without permission to add semantic fields cannot
         get the form.
         """
-        response = self.app.get(self.hte.add_child_form_url, user=self.noperm,
+        response = self.app.get(self.url, user=self.noperm,
                                 expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
@@ -421,7 +489,7 @@ class AddChildFormTestCase(ViewsTestCase):
         """
         Test that a user who specifies the wrong content type gets an error.
         """
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm,
+        response = self.app.get(self.url, user=self.perm,
                                 headers={
                                     "Accept": "application/json",
                                 },
@@ -432,25 +500,41 @@ class AddChildFormTestCase(ViewsTestCase):
         """
         Test that a user who specifies no content type gets HTML.
         """
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
+        response = self.app.get(self.url, user=self.perm)
         self.assertEqual(response.content_type, "text/html")
 
-class CreateTestCase(ViewsTestCase):
+class AddChildFormTestCase(_AddFormTestCase):
 
     def setUp(self):
-        super(CreateTestCase, self).setUp()
-        self.hte = hte = SemanticField(path="01n", heading="hte", catid="1")
+        super(AddChildFormTestCase, self).setUp()
+        hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
+        self.url = hte.add_child_form_url
 
-        self.duplicate = SemanticField(path="02n", heading="hte2", catid="2")
-        self.duplicate.save()
-        self.duplicate.make_child("DUPLICATE", "")
+
+class AddFormTestCase(_AddFormTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super(AddFormTestCase, cls).setUpTestData()
+        cls.url = reverse('semantic_fields_semanticfield-add-form')
+
+class AddRelatedByPosFormTestCase(_AddFormTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super(AddRelatedByPosFormTestCase, cls).setUpTestData()
+        hte = SemanticField(path="/1n", heading="hte", catid="1")
+        hte.save()
+        cls.url = hte.add_related_by_pos_form_url
+
+class _CreateMixin(object):
 
     def test_not_logged_in(self):
         """
         Test that the response is 403 when the user is not logged in.
         """
-        response = self.app.get(self.hte.add_child_url, expect_errors=True)
+        response = self.app.get(self.url, expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_no_permissions(self):
@@ -458,21 +542,21 @@ class CreateTestCase(ViewsTestCase):
         Test that a user without permission to add semantic fields cannot
         create.
         """
-        response = self.app.post(
-            self.hte.add_child_url, user=self.noperm, expect_errors=True)
+        response = self.app.post(self.url, user=self.noperm,
+                                 expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_bad_accept(self):
         """
         Test that a user who specifies the wrong content type gets an error.
         """
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
+        response = self.app.get(self.form_url, user=self.perm)
         self.assertEqual(response.status_code, 200)
         form = response.form
         form["heading"] = "foo"
         form["pos"] = "n"
 
-        response = self.app.post(self.hte.add_child_url, user=self.perm,
+        response = self.app.post(self.url, user=self.perm,
                                  headers={
                                      "Accept": "text/xml",
                                  },
@@ -480,50 +564,19 @@ class CreateTestCase(ViewsTestCase):
                                  expect_errors=True)
         self.assertEqual(response.status_code, 406)
 
-    def creation_successful(self, accept):
-        """
-        Test that a user can create a new semantic field.
-        """
-        self.assertEqual(self.hte.children.count(), 0)
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
-        self.assertEqual(response.status_code, 200)
-        form = response.form
-        form["heading"] = "foo"
-        form["pos"] = "n"
-
-        response = self.app.post(
-            self.hte.add_child_url,
-            headers={
-                "Accept": accept,
-            },
-            params=form.submit_fields(),
-            user=self.perm)
-        self.assertIsNone(response.content_type)
-        self.assertEqual(response.body, "")
-
-        # Reacquire, and check the values of the child.
-        hte = SemanticField.objects.get(id=self.hte.id)
-        self.assertEqual(hte.children.count(), 1)
-        child = hte.children.first()
-        self.assertEqual(child.parent, hte)
-        self.assertEqual(child.path, hte.path + "/1n")
-        self.assertEqual(child.heading, "foo")
-        self.assertIsNone(child.catid)
-        self.assertEqual(child.children.count(), 0)
-
     def heading_required(self, accept):
         """
         Test that creating a new field without a heading yields an error.
         """
-        self.assertEqual(self.hte.children.count(), 0)
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
+        self.assertCreatedCount(0)
+        response = self.app.get(self.form_url, user=self.perm)
         self.assertEqual(response.status_code, 200)
         form = response.form
         form["heading"] = ""
         form["pos"] = "n"
 
         response = self.app.post(
-            self.hte.add_child_url,
+            self.url,
             headers={
                 "Accept": accept,
             },
@@ -544,26 +597,23 @@ class CreateTestCase(ViewsTestCase):
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
 
-        # Check again that there are no children. We reacquire the
-        # object to make sure caching is not interfering.
-        self.assertEqual(
-            SemanticField.objects.get(id=self.hte.id).children.count(),
-            0)
+        # Check again that there are no children.
+        self.assertCreatedCount(0)
 
     def incorrect_pos(self, accept):
         """
         Test that creating a new field with an incorrect pos yields an
         error.
         """
-        self.assertEqual(self.hte.children.count(), 0)
-        response = self.app.get(self.hte.add_child_form_url, user=self.perm)
+        self.assertCreatedCount(0)
+        response = self.app.get(self.form_url, user=self.perm)
         self.assertEqual(response.status_code, 200)
         form = response.form
         form["heading"] = "foo"
         form["pos"].force_value("xxxxxx")
 
         response = self.app.post(
-            self.hte.add_child_url,
+            self.url,
             headers={
                 "Accept": accept,
             },
@@ -586,27 +636,59 @@ class CreateTestCase(ViewsTestCase):
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
 
-        # Check again that there are no children. We reacquire the
-        # object to make sure caching is not interfering.
-        self.assertEqual(
-            SemanticField.objects.get(id=self.hte.id).children.count(),
-            0)
+        # Check again that there are no children.
+        self.assertCreatedCount(0)
+
+    def creation_successful(self, accept):
+        """
+        Test that a user can create a new semantic field.
+        """
+        self.assertCreatedCount(0)
+        response = self.app.get(self.form_url, user=self.perm)
+        self.assertEqual(response.status_code, 200)
+        form = response.form
+        form["heading"] = "foo"
+        form["pos"] = "n"
+
+        response = self.app.post(
+            self.url,
+            headers={
+                "Accept": accept,
+            },
+            params=form.submit_fields(),
+            user=self.perm)
+        self.assertIsNone(response.content_type)
+        self.assertEqual(response.body, "")
+
+        self.assertCreatedCount(1)
+        self.checkCreated()
+
+
+class _DuplicateMixin(object):
 
     def duplicate(self, accept):
         """
         Test that creating a duplicate field yields an error.
         """
-        orig_child_count = self.duplicate.children.count()
-        self.assertEqual(orig_child_count, 1)
-        response = self.app.get(self.duplicate.add_child_form_url,
-                                user=self.perm)
+
+        response = self.app.get(self.form_url, user=self.perm)
         self.assertEqual(response.status_code, 200)
         form = response.form
         form["heading"] = "DUPLICATE"
         form["pos"] = ""
 
+        # We want to have the duplicate creation here to simulate the
+        # case where a user got the form, when for coffee, and came
+        # back. And in the meantime someone created a field that would
+        # clash with the field the user wants to create. (We have to
+        # do this because forms will sometimes restrict options. So if
+        # we create the duplicate *before* we get the form, we may get
+        # a form error instead of the error we are looking for below.)
+        self.create_duplicate()
+        orig_count = self.assertCreatedCount(1)
+
         response = self.app.post(
-            self.duplicate.add_child_url,
+            self.url,
             headers={
                 "Accept": accept,
             },
@@ -617,8 +699,7 @@ class CreateTestCase(ViewsTestCase):
             "application/json": "application/json"
         }[accept]
         self.assertEqual(response.content_type, expected_content_type)
-        error = u"There is already a semantic field in the namespace '', "\
-                "with pos '' and heading 'DUPLICATE'."
+        error = self.expected_duplicate_error
         if expected_content_type == "text/html":
             el = response.lxml.cssselect(".alert")[0]
             self.assertEqual(el.text.strip(), error)
@@ -628,19 +709,125 @@ class CreateTestCase(ViewsTestCase):
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
 
-        # Check again that there are no new children. We reacquire the
-        # object to make sure caching is not interfering.
-        self.assertEqual(
-            SemanticField.objects.get(id=self.duplicate.id).children.count(),
-            orig_child_count)
+        # Check again that nothing was created after the original.
+        self.assertCreatedCount(orig_count)
+
+
+class _CreateFromParentMixin(_CreateMixin, _DuplicateMixin):
+    # Creation from a parent requires significantly different tests
+    # than creation from a related field so we put those common to
+    # parrents here.
+
+    expected_duplicate_error = \
+        u"There is already a semantic field in the BTW namespace "\
+        "without pos and heading 'DUPLICATE'."
+
+    def assertCreatedCount(self, count):
+        field = self.field
+        children = field.children if field else SemanticField.objects.roots
+        self.assertEqual(children.count(), count)
+        return count
+
+    def create_duplicate(self):
+        field = self.field
+        if field:
+            field.make_child("DUPLICATE", "")
+        else:
+            SemanticField.objects.make_field("DUPLICATE", "")
+
+    def checkCreated(self):
+        field = self.field  # Reacquire from DB.
+        children = field.children if field else SemanticField.objects.roots
+        child = children.first()
+        self.assertEqual(child.parent, field)
+        self.assertEqual(child.path, (field.path if field else "") + "/1n")
+        self.assertEqual(child.heading, "foo")
+        self.assertIsNone(child.catid)
+        self.assertEqual(child.children.count(), 0)
+
+
+class CreateChildTestCase(_CreateFromParentMixin, ViewsTestCase):
+
+    def setUp(self):
+        super(CreateChildTestCase, self).setUp()
+        hte = SemanticField(path="01n", heading="hte", catid="1")
+        hte.save()
+        self.field_id = hte.id
+
+        self.url = hte.add_child_url
+        self.form_url = hte.add_child_form_url
+
+    @property
+    def field(self):
+        return SemanticField.objects.get(id=self.field_id)
+
+
+class CreateFieldTestCase(_CreateFromParentMixin, ViewsTestCase):
+
+    def setUp(self):
+        super(CreateFieldTestCase, self).setUp()
+        self.field = None
+        self.url = reverse('semantic_fields_semanticfield-list')
+        self.form_url = reverse('semantic_fields_semanticfield-add-form')
+
+
+class _CreateRelatedByPosMixin(object):
+
+    def setUp(self):
+        super(_CreateRelatedByPosMixin, self).setUp()
+        field = SemanticField(path="/1v", heading="custom")
+        field.save()
+        self.field_id = field.id
+
+        self.url = field.add_related_by_pos_url
+        self.form_url = field.add_related_by_pos_form_url
+
+    @property
+    def field(self):
+        return SemanticField.objects.get(id=self.field_id)
+
+    def assertCreatedCount(self, count):
+        self.assertEqual(self.field.related_by_pos.count(), count)
+        return count
+
+    def create_duplicate(self):
+        self.field.make_related_by_pos("DUPLICATE", "")
+
+    def checkCreated(self):
+        field = self.field
+        n_variants = [x for x in self.field.related_by_pos if x.pos == "n"]
+        self.assertEqual(len(n_variants), 1)
+        rel = n_variants[0]
+        self.assertEqual(rel.parent, field.parent)
+        self.assertEqual(rel.path, "/1n")
+        self.assertEqual(rel.heading, "foo")
+        self.assertIsNone(rel.catid)
+        self.assertEqual(rel.children.count(), 0)
+
+
+class CreateRelatedByPosTestCase(_CreateRelatedByPosMixin, _CreateMixin,
+                                 ViewsTestCase):
+    pass
+
+
+class CreateRelatedByPosTransactionTestCase(_CreateRelatedByPosMixin,
+                                            _DuplicateMixin,
+                                            ViewsTransactionTestCase):
+    expected_duplicate_error = \
+        u"There is already a semantic field in the BTW namespace "\
+        "without pos."
 
 
 def init():
-    for (accept, test) in itertools.product(
-            ("application/json", "application/x-form"),
-            ("creation_successful", "heading_required", "incorrect_pos",
-             "duplicate")):
-        makefunc(CreateTestCase, getattr(CreateTestCase, test),
+    def make(class_, test, accept):
+        makefunc(class_, getattr(class_, test),
                  "test_{0}_{1}".format(test, accept), accept, accept)
+
+    for accept in ("application/json", "application/x-form"):
+        for test in ("heading_required", "incorrect_pos",
+                     "creation_successful"):
+            make(_CreateMixin, test, accept)
+
+        make(_DuplicateMixin, "duplicate", accept)
 
 init()

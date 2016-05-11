@@ -2,46 +2,71 @@ from django.db import models, IntegrityError
 from django.core.urlresolvers import reverse
 from django.utils.html import mark_safe, escape
 
-from .util import parse_local_reference, POS_TO_VERBOSE, ParsedExpression
+from .util import parse_local_reference, POS_TO_VERBOSE, ParsedExpression, \
+    POS_VALUES_EXPANDED
+
+def format_duplicate_error(uri, pos, heading):
+    pos_description = "with pos '{0}'".format(pos) if pos != '' else \
+                      "without pos"
+
+    namespace_description = "the BTW namespace" if uri == '' \
+                            else "namespace '{0}'".format(uri)
+
+    heading_description = " and heading '{0}'".format(heading) \
+                          if heading else ""
+
+    return ("There is already a semantic field in {0} "
+            "{1}{2}.").format(namespace_description,
+                              pos_description,
+                              heading_description)
+
+
+def make_field(parent, uri, heading, pos):
+    children = parent.children.all() if parent else \
+        SemanticField.objects.roots
+
+    # The siblings use the same URI as the child we want to create
+    siblings = [c for c in children if c.parsed_path.last_uri == uri]
+
+    dupe = any(c for c in siblings if c.pos == pos and c.heading == heading)
+    if dupe:
+        raise ValueError(format_duplicate_error(uri, pos, heading))
+
+    max_child = 0 if len(siblings) == 0 else  \
+        max(c.parsed_path.last_level_number for c in siblings)
+
+    # The looping and exception handling here is to handle a
+    # possible race if two users try to create a new field at
+    # the same time.
+    while True:
+        max_child += 1
+        desired_path = parent.parsed_path.make_child(uri, max_child, pos) \
+            if parent else ParsedExpression.make(uri, max_child, pos)
+
+        sf = SemanticField(path=desired_path, heading=heading, parent=parent)
+        try:
+            sf.save()
+            return sf
+        except IntegrityError as ex:
+            # Verify whether the path is already existing.
+            try:
+                SemanticField.objects.get(path=desired_path)
+                # Ok, so the desired path exists. Loop over and retry.
+            except SemanticField.DoesNotExist:
+                # It is not a path uniqueness problem, reraise.
+                raise ex
+
 
 class SemanticFieldManager(models.Manager):
+
     def make_field(self, heading, pos):
-        uri = ""
-        roots = self.filter(parent__isnull=True)
-        siblings = [c for c in roots if c.parsed_path.last_uri == uri]
+        # Right now we can only create semantic fields in the BTW
+        # namespace, which has the empty string URI.
+        return make_field(None, "", heading, pos)
 
-        dupe = any(c for c in siblings if c.pos == pos and
-                   c.heading == heading)
-        if dupe:
-            raise ValueError(
-                ("There is already a semantic field in the namespace '{0}', "
-                 "with pos '{1}' and heading '{2}'.")
-                .format(uri, pos, heading))
-
-        max_child = 0 if len(siblings) == 0 else  \
-            max(c.parsed_path.last_level_number for c in siblings)
-
-        # The looping and exception handling here is to handle a
-        # possible race if two users try to create a new field at
-        # the same time.
-        while True:
-            max_child += 1
-            desired_path = ParsedExpression.make(uri, max_child, pos)
-            sf = SemanticField(path=desired_path,
-                               heading=heading,
-                               parent=None)
-            try:
-                sf.save()
-                return sf
-            except IntegrityError as ex:
-                # Verify whether the path is already existing.
-                try:
-                    SemanticField.objects.get(path=desired_path)
-                    # Ok, so the desired path exists. Loop over and retry.
-                except SemanticField.DoesNotExist:
-                    # It is not a path uniqueness problem, reraise.
-                    raise ex
-
+    @property
+    def roots(self):
+        return self.filter(parent__isnull=True)
 
 class SemanticField(models.Model):
     objects = SemanticFieldManager()
@@ -51,9 +76,8 @@ class SemanticField(models.Model):
         "self", related_name="children", null=True, blank=True)
     heading = models.TextField()
 
-    def make_child(self, heading, pos):
+    def _branch_assertions(self):
         ref = self.parsed_path
-
         # This will have to be modified when we allow user-based
         # custom fields.
         if ref.branches:
@@ -65,45 +89,51 @@ class SemanticField(models.Model):
             # an empty URI.
             assert branch.uri == ""
 
-        children = self.children.all()
+    def make_child(self, heading, pos):
+        self._branch_assertions()
+        # Right now we can only create semantic fields in the BTW
+        # namespace, which has the empty string URI.
+        return make_field(self, "", heading, pos)
+
+    def make_related_by_pos(self, heading, pos):
+        ref = self.parsed_path
+
+        self._branch_assertions()
 
         # Right now we can only create semantic fields in the BTW
         # namespace, which has the empty string URI.
         uri = ""
 
-        # The siblings use the same URI as the child we want to create
-        siblings = [c for c in children if c.parsed_path.last_uri == uri]
-        dupe = any(c for c in siblings if c.pos == pos and
-                   c.heading == heading)
-        if dupe:
-            raise ValueError(
-                ("There is already a semantic field in the namespace '{0}', "
-                 "with pos '{1}' and heading '{2}'.")
-                .format(uri, pos, heading))
+        desired_path = ref.make_related_by_pos(pos)
+        sf = SemanticField(path=desired_path,
+                           heading=heading,
+                           parent=self.parent)
 
-        max_child = 0 if len(siblings) == 0 else  \
-            max(c.parsed_path.last_level_number for c in siblings)
-
-        # The looping and exception handling here is to handle a
-        # possible race if two users try to create a new field at
-        # the same time.
-        while True:
-            max_child += 1
-            desired_path = ref.make_child(uri, max_child, pos)
-            sf = SemanticField(path=desired_path,
-                               heading=heading,
-                               parent=self)
+        # We try preventing duplication by restricting the list of
+        # possible pos values that we show in user's forms. However, a
+        # race condition is still possible. Alice could bring up the
+        # form and go have a coffee. Then Bob brings up the form and
+        # creates a related by pos with pos X. Then Alice comes back
+        # and tries to do the same. The form will still show X as a
+        # possibility for her.
+        try:
+            sf.save()
+            return sf
+        except IntegrityError as ex:
+            # Verify whether the path is already existing.
             try:
-                sf.save()
-                return sf
-            except IntegrityError as ex:
-                # Verify whether the path is already existing.
-                try:
-                    SemanticField.objects.get(path=desired_path)
-                    # Ok, so the desired path exists. Loop over and retry.
-                except SemanticField.DoesNotExist:
-                    # It is not a path uniqueness problem, reraise.
-                    raise ex
+                SemanticField.objects.get(path=unicode(desired_path))
+                # Already exists, report!
+                raise ValueError(format_duplicate_error(uri, pos, None))
+            except SemanticField.DoesNotExist:
+                # It is not a path uniqueness problem, reraise.
+                raise ex
+
+    @property
+    def is_custom(self):
+        # catid is None for all custom fields. This is the fastest
+        # way to check...
+        return self.catid is None
 
     @property
     def detail_url(self):
@@ -116,8 +146,18 @@ class SemanticField(models.Model):
                        args=(self.pk, ))
 
     @property
+    def add_related_by_pos_url(self):
+        return reverse('semantic_fields_semanticfield-related-by-pos',
+                       args=(self.pk, ))
+
+    @property
     def add_child_form_url(self):
         return reverse('semantic_fields_semanticfield-add-child-form',
+                       args=(self.pk, ))
+
+    @property
+    def add_related_by_pos_form_url(self):
+        return reverse('semantic_fields_semanticfield-add-related-by-pos-form',
                        args=(self.pk, ))
 
     @property
@@ -158,6 +198,19 @@ class SemanticField(models.Model):
                 path__in=(unicode(x) for x in related))
         self._related_by_pos = related
         return related
+
+    @property
+    def possible_new_poses(self):
+        """
+        A set of parts of speech (pos) for which there no relatives of this
+        semantic field exist.
+        """
+        if not self.is_custom:
+            return set()
+
+        existing = set(related.pos for related in self.related_by_pos)
+        existing.add(self.pos)
+        return POS_VALUES_EXPANDED - existing
 
     @property
     def pos(self):

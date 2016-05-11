@@ -6,7 +6,7 @@ from django import forms
 from django.views.decorators.cache import never_cache
 from rest_framework import viewsets, mixins, renderers, parsers, permissions
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
 from rest_framework import serializers
 
@@ -80,6 +80,9 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
+RELATED_BY_POS = "related_by_pos"
+CHILD = "child"
+
 class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                            mixins.CreateModelMixin,
                            viewsets.GenericViewSet):
@@ -100,8 +103,8 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         return super(SemanticFieldViewSet, self) \
             .retrieve(request, *args, **kwargs)
 
-    @detail_route(methods=['get'], url_path='add-child-form')
-    def add_child_form(self, request, pk, *args, **kwargs):
+    @list_route(methods=['get'], url_path="add-form")
+    def add_form(self, request, pk=None, relation=None):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
@@ -111,10 +114,25 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             request.accepted_renderer = FormRenderer()
 
         if request.accepted_renderer.media_type == "application/x-form":
-            form = SemanticFieldForm()
+            title = {
+                RELATED_BY_POS: "New Sibling",
+                CHILD: "New Child",
+                None: "New Semantic Field"
+            }[relation]
+
+            possible_poses = \
+                SemanticField.objects.get(id=pk).possible_new_poses \
+                if relation is RELATED_BY_POS else None
+
+            form = SemanticFieldForm(title=title,
+                                     possible_poses=possible_poses)
             return Response({'form': form}, content_type="text/html")
 
         raise NotAcceptable
+
+    @detail_route(methods=['get'], url_path='add-child-form')
+    def add_child_form(self, request, pk, *args, **kwargs):
+        return self.add_form(request, relation=CHILD, *args, **kwargs)
 
     @detail_route(methods=['post'], url_path='children')
     def add_child(self, request, pk, *args, **kwargs):
@@ -127,6 +145,34 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             try:
                 parent.make_child(form.cleaned_data["heading"],
                                   form.cleaned_data["pos"])
+                return Response()
+            except ValueError as ex:
+                form.add_error(None, forms.ValidationError(ex))
+
+        # The data was invalid... return the errors in a format
+        # appropriate to the request.
+        if request.accepted_renderer.media_type == "application/x-form":
+            return Response({'form': form}, content_type="text/html",
+                            status=400)
+
+        raise serializers.ValidationError(form.errors)
+
+    @detail_route(methods=['get'], url_path='add-related-by-pos-form')
+    def add_related_by_pos_form(self, request, pk, *args, **kwargs):
+        return self.add_form(request, pk, relation=RELATED_BY_POS,
+                             *args, **kwargs)
+
+    @detail_route(methods=['post'], url_path='related-by-pos')
+    def add_related_by_pos(self, request, pk, *args, **kwargs):
+        if not request.user.can_add_semantic_fields:
+            raise PermissionDenied
+
+        form = SemanticFieldForm(request.data)
+        if form.is_valid():
+            parent = SemanticField.objects.get(id=pk)
+            try:
+                parent.make_related_by_pos(form.cleaned_data["heading"],
+                                           form.cleaned_data["pos"])
                 return Response()
             except ValueError as ex:
                 form.add_error(None, forms.ValidationError(ex))

@@ -1,5 +1,6 @@
-define(['module', 'jquery', 'velocity', 'bluebird', 'velocity-ui' ],
-       function (module, $, velocity, bluebird) {
+define(['module', 'jquery', 'velocity', 'bluebird', 'ajax', 'velocity-ui',
+        'bootstrap'],
+       function (module, $, velocity, bluebird, ajax) {
 
 var config = module.config();
 
@@ -409,50 +410,43 @@ Displayer.prototype._refresh = Promise.method(function(options) {
         content.innerHTML = '<i class="fa fa-spinner fa-2x fa-spin"></i>';
     }, this._network_timeout);
 
-    return Promise.resolve(
-        $.ajax({
-            url: url,
-            headers: {
-                Accept: "text/html"
+    return ajax.ajax({
+        url: url,
+        headers: {
+            Accept: "text/html"
+        }
+    }).finally(function () {
+        clearTimeout(spinnerTimeout);
+    }).then(function (data) {
+        removeData(content.childNodes);
+        content.innerHTML = data;
+        content.style.width = "";
+        content.style.height = "";
+        content.style.lineHeight = "";
+        content.style.textAlign = "";
+        if (options.transition) {
+            var transition = {
+                "previous": slideLeftIn,
+                "next": slideRightIn
+            }[options.transition];
+            if (transition) {
+                transition(content);
             }
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            var err = new Error("the loading of the new URL failed");
-            err.jqXHR = jqXHR;
-            err.textStatus = textStatus;
-            err.errorThrown = errorThrown;
-            throw err;
-        })).finally(function () {
-            clearTimeout(spinnerTimeout);
-        }).then(function (data) {
-            removeData(content.childNodes);
-            content.innerHTML = data;
-            content.style.width = "";
-            content.style.height = "";
-            content.style.lineHeight = "";
-            content.style.textAlign = "";
-            if (options.transition) {
-                var transition = {
-                    "previous": slideLeftIn,
-                    "next": slideRightIn
-                }[options.transition];
-                if (transition) {
-                    transition(content);
-                }
-            }
-            var links = content.getElementsByClassName("sf-link");
-            $(links).click(click_handler);
-            /**
-             * (The event is not actually an object. The properties
-             * described here are passed as parameters to the event
-             * handling function given to jQuery.)
-             *
-             * @event module:semantic-field-search~Displayer#display.refresh
-             * @type {jQuery event}
-             * @property {string} url The URL refreshed.
-             */
-            $(self.display_div).trigger("refresh.displayer", [self, url]);
-            return self;
-        });
+        }
+        var links = content.getElementsByClassName("sf-link");
+        $(links).click(click_handler);
+        /**
+         * (The event is not actually an object. The properties
+         * described here are passed as parameters to the event
+         * handling function given to jQuery.)
+         *
+         * @event module:semantic-field-search~Displayer#display.refresh
+         * @type {jQuery event}
+         * @property {string} url The URL refreshed.
+         */
+        $(self.display_div).trigger("refresh.displayer", [self, url]);
+        return self;
+    });
 });
 
 /**

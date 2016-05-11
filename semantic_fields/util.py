@@ -209,9 +209,9 @@ class ParsedExpression():
         # The set of choices we iterate over is different depending on
         # whether we are on a branch or not. Branches can take a blank
         # pos, HTE fields (no branch) cannot.
-        choices = POS_CHOICES_EXPANDED if self.branches else POS_CHOICES
+        choices = POS_VALUES_EXPANDED if self.branches else POS_VALUES
 
-        for (pos, _) in choices:
+        for pos in choices:
             if pos == my_pos:
                 continue
             related = copy.copy(self)
@@ -243,7 +243,7 @@ class ParsedExpression():
         if self.specification:
             raise ValueError("cannot make a child for a specified reference")
 
-        if pos not in POS_TO_VERBOSE:
+        if pos not in POS_VALUES_EXPANDED:
             raise ValueError("pos is not among valid choices")
 
         if number <= 0:
@@ -254,6 +254,27 @@ class ParsedExpression():
         ret = copy.copy(self) if ret is self else ret
         ret.branches = ret.branches[:-1] + \
             (ret.branches[-1].make_child(number, pos), )
+        return ret
+
+    def make_related_by_pos(self, pos):
+        if self.specification:
+            raise ValueError("cannot make a field related by pos for a "
+                             "specified reference")
+
+        if not self.branches:
+            raise ValueError("cannot make a field related by pos for a "
+                             "non-custom field")
+
+        if pos == self.pos:
+            raise ValueError("trying to make a field related by pos with "
+                             "the same pos as the original")
+
+        if pos not in POS_VALUES_EXPANDED:
+            raise ValueError("pos is not among valid choices")
+
+        ret = copy.copy(self)
+        ret.branches = ret.branches[:-1] + \
+            (ret.branches[-1].make_related_by_pos(pos), )
         return ret
 
     def branch_out(self, uri):
@@ -318,7 +339,7 @@ class _ParsedBranch(object):
         return int(self.levels[-1])
 
     def make_child(self, number, pos):
-        if pos not in POS_TO_VERBOSE:
+        if pos not in POS_VALUES_EXPANDED:
             raise ValueError("pos is not among valid choices")
 
         if number <= 0:
@@ -327,6 +348,21 @@ class _ParsedBranch(object):
         ret = copy.copy(self)
         ret.pos = pos
         ret.levels = ret.levels + (str(number), )
+        return ret
+
+    def make_related_by_pos(self, pos):
+        if len(self.levels) == 0:
+            raise ValueError("cannot create a field related by pos when "
+                             "there are no levels")
+        if pos == self.pos:
+            raise ValueError("trying to make a field related by pos with "
+                             "the same pos as the original")
+
+        if pos not in POS_VALUES_EXPANDED:
+            raise ValueError("pos is not among valid choices")
+
+        ret = copy.copy(self)
+        ret.pos = pos
         return ret
 
 POS_CHOICES = (
@@ -347,6 +383,10 @@ POS_CHOICES = (
 
 # HTE fields need a pos, but custom fields may have a blank pos.
 POS_CHOICES_EXPANDED = POS_CHOICES + (('', 'None'), )
+
+POS_VALUES = set(x[0] for x in POS_CHOICES)
+
+POS_VALUES_EXPANDED = set(x[0] for x in POS_CHOICES_EXPANDED)
 
 POS_TO_VERBOSE = dict(POS_CHOICES_EXPANDED)
 

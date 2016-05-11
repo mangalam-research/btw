@@ -1,6 +1,9 @@
 {% load bootstrap_tags %}
 <form class="add-child-form">
-{% csrf_token %}
-{{ form|as_bootstrap }}
-<p><button class="btn btn-default" type="submit">Create</button><button class="btn btn-default cancel" type="button">Cancel</button></p>
+  <h4>{{ form.title }}</h4>
+  <fieldset>
+    {% csrf_token %}
+    {{ form|as_bootstrap }}
+    <p><button class="btn btn-default" type="submit">Create</button><button class="btn btn-default cancel" type="button">Cancel</button></p>
+  </fieldset>
 </form>
