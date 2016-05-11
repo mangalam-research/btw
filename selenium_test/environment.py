@@ -194,6 +194,12 @@ def dump_config(builder):
     print(builder.config)
     print("***")
 
+def remove_server_limit():
+    # Turn off the limit which may have been set during testing.
+    try:
+        os.unlink("sitestatic/LIMIT")
+    except OSError:
+        pass  # The file may not exist.
 
 def before_all(context):
 
@@ -325,6 +331,8 @@ def before_all(context):
     context.builder.SERVER += ":" + nginx_port
 
     context.selenium_logs = os.environ.get("SELENIUM_LOGS", False)
+
+    remove_server_limit()
 
 
 def after_all(context):
@@ -492,6 +500,7 @@ def after_scenario(context, scenario):
         driver.switch_to_window(context.initial_window_handle)
     driver.delete_all_cookies()
 
+    remove_server_limit()
 
 def before_step(context, _step):
     assert_server_alive(context)

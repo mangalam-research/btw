@@ -525,3 +525,12 @@ def step_impl(context, name):
 
     assert_equal(modal.find_element_by_class_name("modal-title").text,
                  name)
+
+@given(ur'there is a network slowdown')
+def step_impl(context):
+    with open("sitestatic/LIMIT", 'w'):
+        pass
+
+@given(ur'the network slowdown is over')
+def step_impl(context):
+    os.unlink("sitestatic/LIMIT")
