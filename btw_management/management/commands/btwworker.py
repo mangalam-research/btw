@@ -199,7 +199,7 @@ Manage workers.
 
             for worker, request in requests:
                 name = worker.name
-                result = request.get()
+                result = request.get(interval=0.1)
                 if result != env:
                     self.error(
                         ("{0}: not using environment {1} "
@@ -291,7 +291,8 @@ Manage workers.
                 # are sure *that* worker handles the request.
                 try:
                     result = get_btw_env.apply_async((), queue=full_name +
-                                                     ".dq").get(timeout=60)
+                                                     ".dq").get(timeout=60,
+                                                                interval=0.1)
                 except TimeoutError:
                     self.stdout.write("failed: timed out")
                     continue
@@ -320,7 +321,7 @@ Manage workers.
                     if name is None else scheduled.get(name, None)
                 if schedule_info is not None:
                     break
-            time.sleep(0.5)
+            time.sleep(0.2)
 
         to_revoke = [scheduled["request"]["id"] for scheduled in
                      schedule_info]
@@ -332,7 +333,7 @@ Manage workers.
                     set(chain.from_iterable(
                         app.control.inspect().revoked().itervalues()))):
                 break
-            time.sleep(0.5)
+            time.sleep(0.2)
 
     def error(self, msg):
         self.stderr.write(msg)
