@@ -147,7 +147,16 @@ class SemanticField(models.Model):
 
     @property
     def add_related_by_pos_url(self):
+        # Adding a related_by_pos to a non-custom field is illegal.
         return reverse('semantic_fields_semanticfield-related-by-pos',
+                       args=(self.pk, )) if self.is_custom else None
+
+    @property
+    def edit_url(self):
+        # We do not check whether the field is custom. In theory,
+        # performing an update that changes nothing to a non-custom
+        # field should be okay.
+        return reverse('semantic_fields_semanticfield-detail',
                        args=(self.pk, ))
 
     @property
@@ -157,7 +166,16 @@ class SemanticField(models.Model):
 
     @property
     def add_related_by_pos_form_url(self):
+        # Adding a related_by_pos to a non-custom field is illegal.
         return reverse('semantic_fields_semanticfield-add-related-by-pos-form',
+                       args=(self.pk, )) if self.is_custom else None
+
+    @property
+    def edit_form_url(self):
+        # We do not check whether the field is custom. In theory,
+        # performing an update that changes nothing to a non-custom
+        # field should be okay.
+        return reverse('semantic_fields_semanticfield-edit-form',
                        args=(self.pk, ))
 
     @property

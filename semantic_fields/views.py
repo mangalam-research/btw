@@ -84,7 +84,7 @@ RELATED_BY_POS = "related_by_pos"
 CHILD = "child"
 
 class SemanticFieldViewSet(mixins.RetrieveModelMixin,
-                           mixins.CreateModelMixin,
+                           mixins.UpdateModelMixin,
                            viewsets.GenericViewSet):
     queryset = SemanticField.objects.all()
     serializer_class = SemanticFieldSerializer
@@ -102,6 +102,27 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         return super(SemanticFieldViewSet, self) \
             .retrieve(request, *args, **kwargs)
+
+    @detail_route(methods=['get'], url_path="edit-form")
+    def edit_form(self, request, *args, **kwargs):
+        if not request.user.can_change_semantic_fields:
+            raise PermissionDenied
+
+        # The default content type for add_child_form, if unspecified
+        # is application/x-form.
+        if request.META.get("HTTP_ACCEPT", None) is None:
+            request.accepted_renderer = FormRenderer()
+
+        if request.accepted_renderer.media_type == "application/x-form":
+            form = SemanticFieldForm(title="Edit Heading",
+                                     initial={
+                                         "heading": self.get_object().heading,
+                                     },
+                                     class_prefix="edit-field",
+                                     possible_poses=())
+            return Response({'form': form}, content_type="text/html")
+
+        raise NotAcceptable
 
     @list_route(methods=['get'], url_path="add-form")
     def add_form(self, request, pk=None, relation=None):
@@ -125,6 +146,8 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                 if relation is RELATED_BY_POS else None
 
             form = SemanticFieldForm(title=title,
+                                     submit_text="Create",
+                                     class_prefix="add-child",
                                      possible_poses=possible_poses)
             return Response({'form': form}, content_type="text/html")
 
@@ -135,13 +158,13 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         return self.add_form(request, relation=CHILD, *args, **kwargs)
 
     @detail_route(methods=['post'], url_path='children')
-    def add_child(self, request, pk, *args, **kwargs):
+    def add_child(self, request, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
         form = SemanticFieldForm(request.data)
         if form.is_valid():
-            parent = SemanticField.objects.get(id=pk)
+            parent = self.get_object()
             try:
                 parent.make_child(form.cleaned_data["heading"],
                                   form.cleaned_data["pos"])
@@ -163,13 +186,13 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                              *args, **kwargs)
 
     @detail_route(methods=['post'], url_path='related-by-pos')
-    def add_related_by_pos(self, request, pk, *args, **kwargs):
+    def add_related_by_pos(self, request, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
 
         form = SemanticFieldForm(request.data)
         if form.is_valid():
-            parent = SemanticField.objects.get(id=pk)
+            parent = self.get_object()
             try:
                 parent.make_related_by_pos(form.cleaned_data["heading"],
                                            form.cleaned_data["pos"])
@@ -194,6 +217,43 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             try:
                 SemanticField.objects.make_field(form.cleaned_data["heading"],
                                                  form.cleaned_data["pos"])
+                return Response()
+            except ValueError as ex:
+                form.add_error(None, forms.ValidationError(ex))
+
+        # The data was invalid... return the errors in a format
+        # appropriate to the request.
+        if request.accepted_renderer.media_type == "application/x-form":
+            return Response({'form': form}, content_type="text/html",
+                            status=400)
+
+        raise serializers.ValidationError(form.errors)
+
+    def update(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if not request.user.can_change_semantic_fields:
+            raise PermissionDenied
+
+        # Anything not specified in the request is going to be
+        # unchanged.  But to get the tests working, we want to
+        # initialize to the unchanged value here.
+        initial = request.data.copy()
+        semantic_field = self.get_object()
+        for field in ("heading", "pos"):
+            if field not in initial:
+                initial[field] = getattr(semantic_field, field)
+
+        form = SemanticFieldForm(initial)
+        if form.is_valid():
+            try:
+                if semantic_field.pos != form.cleaned_data["pos"]:
+                    raise ValueError(
+                        "it is not possible to change the part of speech "
+                        "of a field after creation")
+                semantic_field.heading = form.cleaned_data["heading"]
+                semantic_field.save()
                 return Response()
             except ValueError as ex:
                 form.add_error(None, forms.ValidationError(ex))

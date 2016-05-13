@@ -29,6 +29,9 @@ class _Mixin(object):
         whom.perm.user_permissions.add(Permission.objects.get(
             content_type=ContentType.objects.get_for_model(SemanticField),
             codename="add_semanticfield"))
+        whom.perm.user_permissions.add(Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(SemanticField),
+            codename="change_semanticfield"))
         whom.perm.save()
 
         # Not a test proper... but make sure that what we expect is
@@ -467,13 +470,23 @@ class DetailsTestCaseJSON(ViewsTestCase):
                          },
                          "the returned value should be correct")
 
-class _AddFormTestCase(ViewsTestCase):
+class _AjaxMixin(object):
+
+    ajax_bad_accept = "text/xml"
+
+    @property
+    def ajax_method(self):
+        return self.app.get
+
+    @property
+    def ajax_params(self):
+        return {}
 
     def test_not_logged_in(self):
         """
         Test that the response is 403 when the user is not logged in.
         """
-        response = self.app.get(self.url, expect_errors=True)
+        response = self.ajax_method(self.url, expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_no_permissions(self):
@@ -481,20 +494,35 @@ class _AddFormTestCase(ViewsTestCase):
         Test that a user without permission to add semantic fields cannot
         get the form.
         """
-        response = self.app.get(self.url, user=self.noperm,
-                                expect_errors=True)
+        response = self.ajax_method(self.url, user=self.noperm,
+                                    expect_errors=True)
         self.assertEqual(response.status_code, 403)
 
     def test_bad_accept(self):
         """
         Test that a user who specifies the wrong content type gets an error.
         """
-        response = self.app.get(self.url, user=self.perm,
-                                headers={
-                                    "Accept": "application/json",
-                                },
-                                expect_errors=True)
+        # Getting the params is done by performing a request to the server,
+        # which also populates the cookies.
+        params = self.ajax_params
+        headers = {
+            "Accept": self.ajax_bad_accept,
+        }
+
+        csrftoken = self.app.cookies.get('csrftoken')
+        if csrftoken:
+            headers["X-CSRFToken"] = csrftoken
+
+        response = self.ajax_method(self.url, user=self.perm,
+                                    headers=headers,
+                                    params=params,
+                                    expect_errors=True)
         self.assertEqual(response.status_code, 406)
+
+
+class _FormTestCase(_AjaxMixin, ViewsTestCase):
+    # Make sure json is not accepted
+    ajax_bad_accept = "application/json"
 
     def test_response(self):
         """
@@ -503,66 +531,56 @@ class _AddFormTestCase(ViewsTestCase):
         response = self.app.get(self.url, user=self.perm)
         self.assertEqual(response.content_type, "text/html")
 
-class AddChildFormTestCase(_AddFormTestCase):
+class AddChildFormTestCase(_FormTestCase):
 
-    def setUp(self):
-        super(AddChildFormTestCase, self).setUp()
+    @classmethod
+    def setUpTestData(cls):
+        super(AddChildFormTestCase, cls).setUpTestData()
         hte = SemanticField(path="01n", heading="hte", catid="1")
         hte.save()
-        self.url = hte.add_child_form_url
+        cls.url = hte.add_child_form_url
 
 
-class AddFormTestCase(_AddFormTestCase):
+class AddFormTestCase(_FormTestCase):
 
     @classmethod
     def setUpTestData(cls):
         super(AddFormTestCase, cls).setUpTestData()
         cls.url = reverse('semantic_fields_semanticfield-add-form')
 
-class AddRelatedByPosFormTestCase(_AddFormTestCase):
+class AddRelatedByPosFormTestCase(_FormTestCase):
 
     @classmethod
     def setUpTestData(cls):
         super(AddRelatedByPosFormTestCase, cls).setUpTestData()
-        hte = SemanticField(path="/1n", heading="hte", catid="1")
+        hte = SemanticField(path="/1n", heading="hte")
         hte.save()
         cls.url = hte.add_related_by_pos_form_url
 
-class _CreateMixin(object):
+class EditFormTestCase(_FormTestCase):
 
-    def test_not_logged_in(self):
-        """
-        Test that the response is 403 when the user is not logged in.
-        """
-        response = self.app.get(self.url, expect_errors=True)
-        self.assertEqual(response.status_code, 403)
+    @classmethod
+    def setUpTestData(cls):
+        super(EditFormTestCase, cls).setUpTestData()
+        hte = SemanticField(path="/1n", heading="hte")
+        hte.save()
+        cls.url = hte.edit_form_url
 
-    def test_no_permissions(self):
-        """
-        Test that a user without permission to add semantic fields cannot
-        create.
-        """
-        response = self.app.post(self.url, user=self.noperm,
-                                 expect_errors=True)
-        self.assertEqual(response.status_code, 403)
+class _CreateMixin(_AjaxMixin):
+    ajax_bad_accept = "text/xml"
 
-    def test_bad_accept(self):
-        """
-        Test that a user who specifies the wrong content type gets an error.
-        """
+    @property
+    def ajax_method(self):
+        return self.app.post
+
+    @property
+    def ajax_params(self):
         response = self.app.get(self.form_url, user=self.perm)
         self.assertEqual(response.status_code, 200)
         form = response.form
-        form["heading"] = "foo"
+        form["heading"] = "q"
         form["pos"] = "n"
-
-        response = self.app.post(self.url, user=self.perm,
-                                 headers={
-                                     "Accept": "text/xml",
-                                 },
-                                 params=form.submit_fields(),
-                                 expect_errors=True)
-        self.assertEqual(response.status_code, 406)
+        return form.submit_fields()
 
     def heading_required(self, accept):
         """
@@ -698,6 +716,7 @@ class _DuplicateMixin(object):
             "application/x-form": "text/html",
             "application/json": "application/json"
         }[accept]
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content_type, expected_content_type)
         error = self.expected_duplicate_error
         if expected_content_type == "text/html":
@@ -829,5 +848,103 @@ def init():
             make(_CreateMixin, test, accept)
 
         make(_DuplicateMixin, "duplicate", accept)
+
+init()
+
+class EditTestCase(_AjaxMixin, ViewsTestCase):
+    ajax_bad_accept = "text/xml"
+
+    @property
+    def ajax_method(self):
+        return self.app.put
+
+    @property
+    def ajax_params(self):
+        response = self.app.get(self.form_url, user=self.perm)
+        self.assertEqual(response.status_code, 200)
+        form = response.form
+        form["heading"] = "q"
+        return form.submit_fields()
+
+    @classmethod
+    def setUpTestData(cls):
+        super(EditTestCase, cls).setUpTestData()
+
+        hte = SemanticField(path="/1n", heading="custom")
+        hte.save()
+        cls.field_id = hte.id
+
+        cls.url = hte.edit_url
+        cls.form_url = hte.edit_form_url
+
+    def edit_successful(self, accept):
+        """
+        Test that a user can edit a semantic field.
+        """
+        response = self.app.get(self.form_url, user=self.perm)
+        self.assertEqual(response.status_code, 200)
+        form = response.form
+        self.assertEqual(form["heading"].value, "custom")
+        form["heading"] = "changed"
+
+        response = self.app.put(
+            self.url,
+            headers={
+                "Accept": accept,
+                "X-CSRFToken": self.app.cookies["csrftoken"]
+            },
+            params=form.submit_fields(),
+            user=self.perm)
+        self.assertIsNone(response.content_type)
+        self.assertEqual(response.body, "")
+
+        field = SemanticField.objects.get(id=self.field_id)
+        self.assertEqual(field.heading, "changed")
+
+    def cannot_change_pos(self, accept):
+        """
+        Test that a user cannot edit the pos.
+        """
+        response = self.app.get(self.form_url, user=self.perm)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.app.put(
+            self.url,
+            headers={
+                "Accept": accept,
+                "X-CSRFToken": self.app.cookies["csrftoken"]
+            },
+            params=((u'heading', 'changed'), (u'pos', 'v')),
+            user=self.perm, expect_errors=True)
+        expected_content_type = {
+            "application/x-form": "text/html",
+            "application/json": "application/json"
+        }[accept]
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content_type, expected_content_type)
+        error = ("it is not possible to change the part of speech "
+                 "of a field after creation")
+        if expected_content_type == "text/html":
+            el = response.lxml.cssselect(".alert")[0]
+            self.assertEqual(el.text.strip(), error)
+        elif expected_content_type == "application/json":
+            self.assertEqual(response.json, {u"__all__": [error]})
+        else:
+            raise ValueError("unexpected expected_content_type value: " +
+                             expected_content_type)
+
+        # Check that it has not changed.
+        field = SemanticField.objects.get(id=self.field_id)
+        self.assertEqual(field.heading, "custom")
+        self.assertEqual(field.pos, "n")
+
+def init():
+    def make(class_, test, accept):
+        makefunc(class_, getattr(class_, test),
+                 "test_{0}_{1}".format(test, accept), accept, accept)
+
+    for accept in ("application/json", "application/x-form"):
+        for test in ("edit_successful", ):
+            make(EditTestCase, test, accept)
 
 init()

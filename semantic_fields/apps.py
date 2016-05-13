@@ -38,3 +38,10 @@ class DefaultAppConfig(AppConfig):
             return self.has_perm("semantic_fields.add_semanticfield")
 
         user.add_to_class("can_add_semantic_fields", can_add_semantic_fields)
+
+        @property
+        def can_change_semantic_fields(self):
+            return self.has_perm("semantic_fields.change_semanticfield")
+
+        user.add_to_class(
+            "can_change_semantic_fields", can_change_semantic_fields)
