@@ -32,10 +32,6 @@ class EntryTestCase(util.NoPostMigrateMixin, TransactionTestCase):
         self.foo = user_model.objects.get(username="foo")
         self.foo2 = user_model.objects.get(username="foo2")
         self.entry = Entry.objects.get(id=1)
-        from django.db import connections
-        for db_name in self._databases_names(include_mirrors=False):
-            with open("/tmp/" + db_name, 'w') as f:
-                f.write(connections[db_name]._test_serialized_contents)
 
     def test_dependency_key(self):
         """
