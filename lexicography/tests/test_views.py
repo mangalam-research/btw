@@ -5,7 +5,7 @@ import datetime
 import string
 
 import lxml.etree
-from django_webtest import WebTest
+from django_webtest import WebTest, TransactionWebTest
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
@@ -37,12 +37,11 @@ def set_lemma(tree, new_lemma):
     return test_util.set_lemma(tree.xpath("//*[@id='id_data']")[0].text,
                                new_lemma)
 
-@override_settings(ROOT_URLCONF='lexicography.tests.urls')
-class ViewsTestCase(BaseCMSTestCase, WebTest):
+class ViewsMixin(BaseCMSTestCase):
     fixtures = local_fixtures
 
     def setUp(self):
-        super(ViewsTestCase, self).setUp()
+        super(ViewsMixin, self).setUp()
         translation.activate('en-us')
 
         self.foo = user_model.objects.get(username="foo")
@@ -90,6 +89,15 @@ class ViewsTestCase(BaseCMSTestCase, WebTest):
         self.assertEqual(response.form['logurl'].value,
                          reverse('lexicography_log'))
         return response, entry
+
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class ViewsTestCase(ViewsMixin, WebTest):
+    pass
+
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class ViewsTransactionTestCase(ViewsMixin, util.NoPostMigrateMixin,
+                               TransactionWebTest):
+    serialized_rollback = True
 
 class DetailsTestCase(ViewsTestCase):
 
@@ -1208,7 +1216,7 @@ class MainTestCase(ViewsTestCase):
                           "Older entries should not have an edit link")
 
 
-class EditingTestCase(ViewsTestCase):
+class EditingTestCase(ViewsTransactionTestCase):
 
     def open_new(self, user):
         #
