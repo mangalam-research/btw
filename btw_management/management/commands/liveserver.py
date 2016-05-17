@@ -116,9 +116,7 @@ class SeleniumTest(BaseCMSTestCase, util.NoPostMigrateMixin,
         super(SeleniumTest, self).__init__(*args, **kwargs)
         from django.conf import settings
         self.fixtures = \
-            [os.path.join(settings.TOPDIR, "core", "tests", "fixtures",
-                          "sites.json"),
-             os.path.join(settings.TOPDIR, "semantic_fields", "tests",
+            [os.path.join(settings.TOPDIR, "semantic_fields", "tests",
                           "fixtures", "hte.json")] + \
             list(os.path.join(settings.TOPDIR, "lexicography", "tests",
                               "fixtures", x)
