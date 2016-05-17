@@ -375,11 +375,6 @@ def before_scenario(context, scenario):
         btw_util.require_subsense_recording.get_senses_for_functions(
             matching_funcs)
 
-    # This will block until the server is started.
-    read = server_read(context)
-    if read != 'started':
-        raise ValueError("did not get the 'started' string")
-
     # Each scenario means logging in again.
     context.is_logged_in = False
 
@@ -436,11 +431,16 @@ def before_scenario(context, scenario):
         else:
             raise Exception("unknown tag")
 
+    context.session_id = None
+
+    # This will block until the server is started.
+    read = server_read(context)
+    if read != 'started':
+        raise ValueError("did not get the 'started' string")
+
     if caches:
         server_write(context, 'clearcache ' + ' '.join(caches) + "\n")
         server_read(context)
-
-    context.session_id = None
 
 
 def after_scenario(context, scenario):
@@ -489,6 +489,7 @@ def after_scenario(context, scenario):
     """)
 
     # Reset the server between scenarios.
+
     server_write(context, "restart\n")
 
     # Close all extra tabs.
