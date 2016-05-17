@@ -6,8 +6,10 @@ from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, \
     HASH_SESSION_KEY, authenticate
 from django.contrib.sites.models import Site
 from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.auth.models import Group, Permission, ContentType
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
-from django.core.management import execute_from_command_line
+from django.core.management import execute_from_command_line, call_command
 from django.test import LiveServerTestCase
 from django.test.runner import DiscoverRunner
 from django.core.urlresolvers import reverse, resolve
@@ -15,13 +17,20 @@ from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
 from django.utils import translation
+from django.db import transaction
 from cms.test_utils.testcases import BaseCMSTestCase
+from allauth.account.models import EmailAddress
 
 from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lib import util
 from lexicography.xml import tei_namespace, btw_namespace
 from lib.testutil import unmonkeypatch_databases
+from bibliography.models import Item, PrimarySource
+from bibliography.tasks import fetch_items
+from semantic_fields.models import SemanticField
+from btw_management.management.commands.btwdb import create_perms
+
 
 class LexicographyPatcher(object):
 
@@ -50,9 +59,9 @@ class LexicographyPatcher(object):
 
         return self.old_changerecord_details(request, *args, **kwargs)
 
+User = get_user_model()
 
-class SeleniumTest(BaseCMSTestCase, util.DisableMigrationsTransactionMixin,
-                   LiveServerTestCase):
+class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
 
     reset_sequences = True
 
@@ -62,72 +71,110 @@ class SeleniumTest(BaseCMSTestCase, util.DisableMigrationsTransactionMixin,
 
         # We have to perform the job of btwdb set_site_name here
         # because the cleanup mangles the site name.
-        from django.conf import settings
-        site = Site.objects.get_current()
-        site.name = settings.BTW_SITE_NAME
-        site.save()
+        with transaction.atomic():
+            from django.conf import settings
+            if settings.BTW_DISABLE_MIGRATIONS:
+                create_perms()
 
-        from bibliography.models import Item, PrimarySource
-        from bibliography.tasks import fetch_items
+            site = Site.objects.get_current()
+            site.name = settings.BTW_SITE_NAME
+            site.save()
 
-        # Bleh... by the time we get here the workers are running so
-        # one fetch_items has already run. We need to flush the table
-        # and repopulate it as we want.
-        Item.objects.all().delete()
+            # We must delete the one user created by create_perms or we'll
+            # have a sequence problem.  Note that this replicates the
+            # behavior of loaddata: the user created by create_perms would
+            # be overwritten by the user with the same pk in the loaddata
+            # file.
+            User.objects.all().delete()
 
-        # Id 1
-        item = Item(item_key="3")
-        item.uid = Item.objects.zotero.full_uid
-        item.save()
-        ps = PrimarySource(item=item, reference_title="Foo", genre="SU")
-        ps.save()
-        fetch_items()
+            admin = User.objects.create_superuser(
+                username='admin', email="admin@foo.foo", password="admin")
 
-        # Make a custom field so that we can test searches for it
-        from semantic_fields.models import SemanticField
-        first = SemanticField.objects.first()
-        first.make_child("CUSTOM", "n")
+            foo = User.objects.create_user(username="foo",
+                                           first_name="Foo",
+                                           last_name="Bwip",
+                                           email="foo@foo.foo",
+                                           password="foo")
+            scribe = Group.objects.get(name='scribe')
+            foo.groups.add(scribe)
 
-        from lib import cmsutil
-        cmsutil.refresh_cms_apps()
-        from cms.api import create_page, add_plugin
-        self.home_page = create_page("Home", "generic_page.html",
-                                     "en-us")
-        self.home_page.toggle_in_navigation()
-        self.home_page.publish('en-us')
-        self.lexicography_page = \
-            create_page("Lexicography", "generic_page.html",
-                        "en-us", apphook='LexicographyApp')
-        self.lexicography_page.toggle_in_navigation()
-        self.lexicography_page.publish('en-us')
-        self.bibliography_page = \
-            create_page("Bibliography", "generic_page.html",
-                        "en-us", apphook='BibliographyApp')
-        self.bibliography_page.toggle_in_navigation()
-        self.bibliography_page.publish('en-us')
-        self.cite_page = create_page("Cite", "generic_page.html", "en-us")
-        self.cite_page.toggle_in_navigation()
-        content = self.cite_page.placeholders.get(slot='content')
-        add_plugin(content, "CitePlugin", "en-us")
-        self.cite_page.publish('en-us')
-        self.semantic_fields_page = \
-            create_page("Semantic Fields", "generic_page.html",
-                        "en-us", apphook='SemanticFieldsApp')
-        self.semantic_fields_page.toggle_in_navigation()
-        self.semantic_fields_page.publish('en-us')
+            resolver = util.PermissionResolver(Permission, ContentType)
+            perms = [resolver.resolve(x) for x in [
+                ["add_primarysource", "bibliography", "primarysource"],
+                ["change_primarysource", "bibliography", "primarysource"],
+                ["add_semanticfield", "semantic_fields", "semanticfield"]
+            ]]
+            foo.user_permissions.add(*perms)
+
+            foo2 = User.objects.create_user(username="foo2",
+                                            first_name="Foo",
+                                            last_name="Glerbl",
+                                            email="foo2@foo.foo",
+                                            password="foo")
+            foo2.groups.add(scribe)
+
+            for user in (admin, foo, foo2):
+                EmailAddress.objects.create(user=user, verified=True,
+                                            primary=True, email=user.email)
+
+            # Bleh... by the time we get here the workers are running so
+            # one fetch_items has already run. We need to flush the table
+            # and repopulate it as we want.
+            Item.objects.all().delete()
+
+            fixtures = \
+                [os.path.join(settings.TOPDIR, "semantic_fields", "tests",
+                              "fixtures", "hte.json"),
+                 os.path.join(settings.TOPDIR, "lexicography", "tests",
+                              "fixtures", "views.json")]
+
+            call_command('loaddata', *fixtures, **{'verbosity': 0})
+
+            # Id 1
+            item = Item(item_key="3")
+            item.uid = Item.objects.zotero.full_uid
+            item.save()
+            ps = PrimarySource(item=item, reference_title="Foo", genre="SU")
+            ps.save()
+            fetch_items()
+
+            # Make a custom field so that we can test searches for it
+            first = SemanticField.objects.first()
+            first.make_child("CUSTOM", "n")
+
+            from lib import cmsutil
+            cmsutil.refresh_cms_apps()
+            from cms.api import create_page, add_plugin
+            self.home_page = create_page("Home", "generic_page.html",
+                                         "en-us")
+            self.home_page.toggle_in_navigation()
+            self.home_page.publish('en-us')
+            self.lexicography_page = \
+                create_page("Lexicography", "generic_page.html",
+                            "en-us", apphook='LexicographyApp')
+            self.lexicography_page.toggle_in_navigation()
+            self.lexicography_page.publish('en-us')
+            self.bibliography_page = \
+                create_page("Bibliography", "generic_page.html",
+                            "en-us", apphook='BibliographyApp')
+            self.bibliography_page.toggle_in_navigation()
+            self.bibliography_page.publish('en-us')
+            self.cite_page = create_page("Cite", "generic_page.html", "en-us")
+            self.cite_page.toggle_in_navigation()
+            content = self.cite_page.placeholders.get(slot='content')
+            add_plugin(content, "CitePlugin", "en-us")
+            self.cite_page.publish('en-us')
+            self.semantic_fields_page = \
+                create_page("Semantic Fields", "generic_page.html",
+                            "en-us", apphook='SemanticFieldsApp')
+            self.semantic_fields_page.toggle_in_navigation()
+            self.semantic_fields_page.publish('en-us')
 
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
         self.__control_write = control_write
         self._patcher = patcher
         super(SeleniumTest, self).__init__(*args, **kwargs)
-        from django.conf import settings
-        self.fixtures = \
-            [os.path.join(settings.TOPDIR, "semantic_fields", "tests",
-                          "fixtures", "hte.json")] + \
-            list(os.path.join(settings.TOPDIR, "lexicography", "tests",
-                              "fixtures", x)
-                 for x in ("users.json", "views.json", "allauth.json"))
         self.next = None
 
     def log(self, msg):
