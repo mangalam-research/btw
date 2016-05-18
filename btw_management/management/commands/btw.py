@@ -158,8 +158,12 @@ export UWSGI_DEB_CONFNAME=btw
 
         elif cmd == "list-local-app-paths":
             from django.apps import apps
+            venv = os.environ.get("VIRTUAL_ENV")
             for app in apps.get_app_configs():
-                if subdir(app.path, settings.TOPDIR):
+                # We need to check venv for cases where our virtual env
+                # is a subdir of settings.TOPDIR.
+                if subdir(app.path, settings.TOPDIR) and \
+                   not subdir(app.path, venv):
                     self.stdout.write(app.path)
 
         else:
