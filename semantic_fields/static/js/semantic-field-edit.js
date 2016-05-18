@@ -28,19 +28,25 @@ ButtonTimeout.prototype.clear = function () {
 
 
 /**
- * Adds a button to create children of a semantic field to the HTML
- * that shows a semantic field. Manages this button so as to allow the
- * creation of a new semantic field. When the button is clicked, a
- * form is presented to create a new field. This form has a "Create"
- * button which allows creating a new field and a "Cancel" button to
- * cancel the addition of the field. The HTML shown by the displayers
- * must contain a button of class ``.create-child``, which this code
- * will manage. The button must have an attribute ``data-form-url``
- * which is set to a URL on which a ``GET`` that accepts
+ * Manages the functions needed to create or change custom fields.
+ *
+ * To enable the creation of children, the HTML shown by the
+ * displayers must contain a button of class ``create-child``, which
+ * this code will manage so as to allow the creation of a new semantic
+ * field. When the button is clicked, a form is presented to create a
+ * new field. This form has a "Create" button which allows creating a
+ * new field and a "Cancel" button to cancel the addition of the
+ * field.  The button must have an attribute ``data-form-url`` which
+ * is set to a URL on which a ``GET`` that accepts
  * ``application/x-form`` will result in a HTML form. It must also
- * have a ``data-create-url`` attribute on which a ``POST`` that
+ * have a ``data-post-url`` attribute on which a ``POST`` that
  * accepts ``application/x-form`` will result in either the creation
  * of the field or a form with error messages.
+ *
+ * To enable the creation of pos variants, the HTML show by the
+ * displayers must contain a button of class
+ * ``create-related-by-pos``. The form and the URLs are as described
+ * above.
  *
  * @param create_buttons A list of DOM nodes that are buttons used to create
  * fields at the root of the field hierarchy. This can be an array of
@@ -57,7 +63,7 @@ ButtonTimeout.prototype.clear = function () {
 return function (create_buttons, create_div, displayers) {
     var network_timeout = 200;
 
-    function displayForm(div, submit_url, data) {
+    function displayForm(div, submit_url, method, data) {
         div.innerHTML = data;
         var form = div.getElementsByTagName("form")[0];
         var cancel = form.querySelector("button.cancel");
@@ -74,7 +80,7 @@ return function (create_buttons, create_div, displayers) {
                 var timeout = new ButtonTimeout(submit, network_timeout);
                 fieldset.disabled = true; // Prevent multi clicks.
                 ajax({
-                    type: "POST",
+                    type: method,
                     url: submit_url,
                     data: serialized,
                     headers: {
@@ -86,7 +92,7 @@ return function (create_buttons, create_div, displayers) {
                         if (err.jqXHR.status !== 400) {
                             throw err;
                         }
-                        return displayForm(div, submit_url,
+                        return displayForm(div, submit_url, method,
                                            err.jqXHR.responseText);
                     })
                     .then(resolve);
@@ -102,8 +108,27 @@ return function (create_buttons, create_div, displayers) {
 
     function getAndDisplayForm(button, label, form_div) {
         var form_url = button.attributes["data-form-url"].value;
-        var create_url = button.attributes["data-create-url"].value;
         var timeout = new ButtonTimeout(button, network_timeout);
+
+        var submit_url, method;
+        var methods = ["post", "patch"];
+        for (var i = 0, try_method; (try_method = methods[i]); ++i) {
+            var attr = button.attributes["data-" + try_method + "-url"];
+            if (attr) {
+                if (method !== undefined) {
+                    throw new Error(
+                        "multiple submit methods specified on button " +
+                            "with class " + button.className);
+                }
+                submit_url = attr.value;
+                method = try_method;
+            }
+        }
+
+        if (method === undefined) {
+            throw new Error("button without defined submit method; " +
+                            "the button's class is " + button.className);
+        }
 
         button.disabled = true;
         return ajax({
@@ -117,7 +142,7 @@ return function (create_buttons, create_div, displayers) {
             if (label)
                 label.style.display = "none";
         }).then(function (data) {
-            return displayForm(form_div, create_url, data);
+            return displayForm(form_div, submit_url, method, data);
         }).then(function () {
             create_div.innerHTML = '';
             button.disabled = false;

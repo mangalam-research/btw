@@ -8,8 +8,8 @@
 
 <script>
   require(["jquery", "../js/displayers", "../js/semantic-field-search",
-  "../js/semantic-field-add"],
-  function ($, displayers_mod, st, add) {
+  "../js/semantic-field-edit"],
+  function ($, displayers_mod, st, edit) {
     var $table = $(document.getElementById("semantic-field-table"));
     var table_panel = $table[0].closest(".panel");
     var $template = $(displayers_mod.html_template);
@@ -20,7 +20,7 @@
     var create_field_buttons = table_panel.querySelectorAll(".btn.create-field");
     var create_field_div = table_panel.querySelector("div.create-field");
     {% if request.user.can_add_semantic_fields %}
-    add(create_field_buttons, create_field_div, displayers);
+    edit(create_field_buttons, create_field_div, displayers);
     {% endif %}
   });
 </script>

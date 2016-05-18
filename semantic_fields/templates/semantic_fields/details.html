@@ -9,7 +9,7 @@
   {% if request.user.can_add_semantic_fields and instance.possible_new_poses %}
   <button class="btn btn-default create-related-by-pos"
           data-form-url="{{ instance.add_related_by_pos_form_url }}"
-          data-create-url="{{ instance.add_related_by_pos_url }}"><i class="fa fa-plus"></i> Create New POS</button>
+          data-post-url="{{ instance.add_related_by_pos_url }}"><i class="fa fa-plus"></i> Create New POS</button>
   <div class="create-related-by-pos-div"></div>
   {% endif %}
   </p>
@@ -23,7 +23,7 @@
   {% if request.user.can_add_semantic_fields %}
   <button class="btn btn-default create-child"
           data-form-url="{{ instance.add_child_form_url }}"
-          data-create-url="{{ instance.add_child_url }}"><i class="fa fa-plus"></i> Create Child</button>
+          data-post-url="{{ instance.add_child_url }}"><i class="fa fa-plus"></i> Create Child</button>
   <div class="create-child-div"></div>
   {% endif %}
 </div>
