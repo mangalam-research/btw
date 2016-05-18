@@ -176,6 +176,7 @@ return function (create_buttons, create_div, displayers) {
                          displayer);
         bindButtonAndDiv("button.create-related-by-pos",
                          "div.create-related-by-pos-div", displayer);
+        bindButtonAndDiv("button.edit-field", "div.edit-div", displayer);
     }
 
     $(displayers.template).on("open.displayers", function (ev, displayer) {

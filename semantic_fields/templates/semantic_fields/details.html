@@ -1,7 +1,8 @@
 {% load libsf %}
 <div>
   {% with lexemes=instance.lexeme_set.all children=instance.children.all hte_url=instance.hte_url %}
-  <p>{{ instance.linked_breadcrumbs }} {{ instance.path }}{% if hte_url %} <a href="{{ hte_url }}" title="Open on HTE site." target="_blank"><i class="fa fa-external-link"></i></a>{% endif %}</p>
+  <p>{{ instance.linked_breadcrumbs }} {% if request.user.can_change_semantic_fields and instance.is_custom %}<button class="btn btn-default edit-field" data-form-url="{{ instance.edit_form_url}}" data-patch-url="{{ instance.edit_url }}"><i class="fa fa-edit"></i></button>{% endif %} {{ instance.path }}{% if hte_url %} <a href="{{ hte_url }}" title="Open on HTE site." target="_blank"><i class="fa fa-external-link"></i></a>{% endif %}</p>
+  <div class="edit-div"></div>
   <p>
   {% if instance.related_by_pos %}
   {% include "semantic_fields/other_pos.html" %}</p>

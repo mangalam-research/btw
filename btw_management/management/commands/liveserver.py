@@ -103,7 +103,8 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             perms = [resolver.resolve(x) for x in [
                 ["add_primarysource", "bibliography", "primarysource"],
                 ["change_primarysource", "bibliography", "primarysource"],
-                ["add_semanticfield", "semantic_fields", "semanticfield"]
+                ["add_semanticfield", "semantic_fields", "semanticfield"],
+                ["change_semanticfield", "semantic_fields", "semanticfield"]
             ]]
             foo.user_permissions.add(*perms)
 

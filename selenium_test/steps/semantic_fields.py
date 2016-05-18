@@ -8,11 +8,12 @@ from selenic.util import Condition, Result
 
 step_matcher('re')
 
-@given("the user has loaded the main page of the semantic field application")
-def step_impl(context):
+@given(ur"(?P<user>.+?) has loaded the main page of the semantic "
+       ur"field application")
+def step_impl(context, user):
     context.execute_steps(u"""
-    Given the user has logged in
-    """)
+    Given {0} has logged in
+    """.format(user))
 
     driver = context.driver
     driver.get(context.builder.SERVER + "/semantic-fields")
@@ -251,19 +252,35 @@ def step_impl(context, what):
     button.click()
 
 
-@when(ur'the user clicks on the "Create (?P<which>Child|New POS)" '
-      ur'button in the first detail pane')
+@when(ur'the user clicks on the (?P<which>edit|"Create Child"|'
+      ur'"Create New POS") button in the first detail pane')
 def step_impl(context, which):
     util = context.util
     selector = {
-        "Child": "create-child",
-        "New POS": "create-related-by-pos"
+        '"Create Child"': "create-child",
+        '"Create New POS"': "create-related-by-pos",
+        'edit': 'edit-field'
     }[which]
 
     button = util.wait(EC.visibility_of_element_located(
         (By.CSS_SELECTOR,
          "div.semantic-field-details-panel .btn." + selector)))
     button.click()
+
+
+@then(ur'there is no (?P<which>edit|"Create Child"|'
+      ur'"Create New POS") button in the first detail pane')
+def step_impl(context, which):
+    util = context.util
+    selector = {
+        '"Create Child"': "create-child",
+        '"Create New POS"': "create-related-by-pos",
+        'edit': 'edit-field'
+    }[which]
+
+    util.wait_until_not(EC.visibility_of_element_located(
+        (By.CSS_SELECTOR,
+         "div.semantic-field-details-panel .btn." + selector)))
 
 
 @when(ur'the user clicks on the "Create Field" button under the table')
@@ -273,12 +290,33 @@ def step_impl(context):
     button.click()
 
 
-@then(ur'there is a form for creating a custom field in the first detail pane')
+@then(ur'there is no "Create Field" button under the table')
 def step_impl(context):
-    context.util.find_element(
-        (By.CSS_SELECTOR,
-         "div.semantic-field-details-panel form.add-child-form"))
+    util = context.util
+    util.wait_until_not(EC.visibility_of_element_located(
+        (By.CSS_SELECTOR, ".btn.create-field")))
 
+
+@then(ur'there is (?P<present>a|no) form for '
+      ur'(?P<which>creating|editing) a custom field in '
+      ur'the first detail pane')
+def step_impl(context, present, which):
+    util = context.util
+    css_class = {
+        "creating": "add-child",
+        "editing": "edit-field"
+    }[which]
+
+    selector = (By.CSS_SELECTOR,
+                "div.semantic-field-details-panel form.{0}-form"
+                .format(css_class))
+
+    if present == "a":
+        util.find_element(selector)
+    elif present == "no":
+        util.wait_until_not(EC.presence_of_element_located(selector))
+    else:
+        raise ValueError("present has an unexpected value: " + present)
 
 @then(ur'there is a form for creating a custom field under the table')
 def step_impl(context):
@@ -286,8 +324,8 @@ def step_impl(context):
         (By.CSS_SELECTOR, "form.add-child-form"))
 
 
-@when(ur'the user cancels the form for creating a custom field in the '
-      ur'first detail pane')
+@when(ur'the user cancels the form for (?:editing|creating) a custom '
+      ur'field in the first detail pane')
 def step_impl(context):
     util = context.util
     button = util.find_element(
@@ -295,28 +333,35 @@ def step_impl(context):
     button.click()
 
 
-@then(ur'there is no form for creating a custom field in the first detail '
-      ur'pane')
+@then(ur'the "Heading" field in the first form contains the text "CUSTOM"')
 def step_impl(context):
-    context.util.wait_until_not(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR,
-             "div.semantic-field-details-panel form.add-child-form")))
-
+    util = context.util
+    field = util.find_element(
+        (By.CSS_SELECTOR, "form textarea[name='heading']"))
+    assert_equal(field.get_attribute("value"), "CUSTOM")
 
 @when(ur'the user types "FOO" in the "Heading" field in the first form')
 def step_impl(context):
     util = context.util
     field = util.find_element(
-        (By.CSS_SELECTOR, "form.add-child-form textarea[name='heading']"))
+        (By.CSS_SELECTOR, "form textarea[name='heading']"))
     field.send_keys("FOO")
 
+@when(ur'the user clears the "Heading" field in the first form')
+def step_impl(context):
+    util = context.util
+    driver = context.driver
 
-@when(ur'the user clicks the "Create" button in the first form')
+    field = util.find_element(
+        (By.CSS_SELECTOR, "form textarea[name='heading']"))
+    field.clear()
+
+
+@when(ur'the user clicks the "(?:Create|Submit)" button in the first form')
 def step_impl(context):
     util = context.util
     button = util.find_element(
-        (By.CSS_SELECTOR, "form.add-child-form .btn[type='submit']"))
+        (By.CSS_SELECTOR, "form .btn[type='submit']"))
     button.click()
 
 
@@ -326,7 +371,7 @@ def step_impl(context):
     # The label will acquire .required-field on error
     util.find_element(
         (By.CSS_SELECTOR,
-         "form.add-child-form label[for='id_heading'].required-field"))
+         "form label[for='id_heading'].required-field"))
 
 
 @then(ur'the first detail pane shows the child "FOO"')
@@ -363,20 +408,28 @@ def step_impl(context):
 
     assert_true(result)
 
-@then(ur'the "(?P<button>Create Field|Create)" button '
+@then(ur'the (?P<button>edit|"Create Field"|"Create"|"Submit") button '
       ur'(?P<visible>does not show|shows) a spinner')
 def step_impl(context, button, visible):
-    selector = ".btn.create-field" if button == "Create Field" else \
-               ".btn[type=submit]"
+    selector = {
+        '"Create Field"': ".btn.create-field",
+        '"Create"': ".btn[type=submit]",
+        '"Submit"': ".btn[type=submit]",
+        'edit': '.btn.edit-field',
+    }[button]
+
     cond = EC.invisibility_of_element_located if visible == "does not show" \
         else EC.visibility_of_element_located
     context.util.wait(cond((By.CSS_SELECTOR, selector + " .fa-spinner")))
 
-@then(ur'the "Create (?P<button>Field|Child)" button (?P<visible>is|is not) '
-      ur'visible')
+@then(ur'the (?P<button>edit|"Create Field"|"Create Child") button '
+      ur'(?P<visible>is|is not) visible')
 def step_impl(context, button, visible):
-    selector = ".btn.create-field" if button == "Field" else \
-               ".btn.create-child"
+    selector = {
+        '"Create Field"': ".btn.create-field",
+        '"Create Child"': ".btn.create-child",
+        'edit': '.btn.edit-field',
+    }[button]
     cond = EC.invisibility_of_element_located if visible == "is not" \
         else EC.visibility_of_element_located
     context.util.wait(cond((By.CSS_SELECTOR, selector)))

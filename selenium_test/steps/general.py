@@ -161,19 +161,26 @@ def step_impl(context, choice):
 
 User = collections.namedtuple("User", ["login", "password"])
 
+foo = User("foo", "foo")
+foo2 = User("foo2", "foo")
+
 users = {
-    "the user": User("foo", "foo"),
-    "a user without permission to edit primary sources": User("foo2", "foo")
+    "": foo,
+    "without permission to edit primary sources": foo2,
+    "without permission to create or edit custom semantic fields": foo2,
+    "with permission to create custom semantic fields": foo,
+    "with permission to edit custom semantic fields": foo,
 }
 
 
-@given(ur"(?P<user_desc>the user|a user without permission to edit "
-       ur"primary sources) has logged in")
-@when(ur"(?P<user_desc>the user) logs in")
+@given(ur"(?:the|a) user(?P<user_desc>| (?:without|with) permission to .*?) "
+       ur"has logged in")
+@when(ur"the user (?P<user_desc>) logs in")
 def step_impl(context, user_desc):
     driver = context.driver
     util = context.util
     selenic = context.builder
+    user_desc = user_desc.strip()
 
     user = users[user_desc]
     if not util.can_set_cookies:
