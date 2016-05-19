@@ -1,103 +1,59 @@
+Introduction
 ============
-Dependencies
-============
 
-RequireJS
-=========
+This is the repository holding the code of the `BTW project
+<https://btw.mangalamresearch.org/en-us/>`_.
 
-The requirejs code must be available and its path set in the settings
-of BTW with the variable BTW_REQUIREJS_PATH and BTW_REQUIREJS_CONFIG
-must be set to a javascript fragment that calls requirejs' config.
+Technical documentation can be found in the ``tech_notes.rst`` file.
 
-jQuery
-======
-
-jQuery must be available for wed. If wed is using requirejs, then
-everything is taken care of. Otherwise, it must load before wed.
-
-Bootstrap
-=========
-
-Nothing to say here...
-
-wed
-===
-
-BTW_WED_USE_REQUIREJS must be true if requirejs is used to load wed.
-
-BTW_WED_PATH= must point to the source of wed.
-BTW_WED_CSS = must point to the css of wed.
-
-salve
-=====
-
-...
-
-For testing
------------
-
-* Python's Selenium package.
-* behave (the python package)
-* nginx is highly recommended.
-
-For Contributing
-----------------
-
-If you want to contribute to salve, your code will have to pass the
-checks listed in `<.glerbl/repo_conf.py>`_. So you either have to
-install glerbl to get those checks done for you or run the checks
-through other means. See Contributing_.
-
-=======
-Testing
+License
 =======
 
-See `<tech_notes.rst>`_.
+BTW is released under the `Mozilla Public License version 2.0
+<http://www.mozilla.org/MPL/2.0/>`_. Copyright 2013-2016 Mangalam
+Research Center for Buddhist Languages, Berkeley, CA.
 
-Django Tests
-============
+Acknowledgments
+===============
 
-::
-    $ ./manage.py test
+.. image:: https://www.browserstack.com/images/mail/browserstack-logo-footer.png
+   :target: https://www.browserstack.com
 
-In-Browser Tests
-================
+BTW is tested using `BrowserStack
+<https://www.browserstack.com>`_. BrowserStack provides this service for
+free under their program for supporting open-source software.
 
-::
-    $ ./manage.py runserver
+BTW is also tested using `Sauce Labs <https://saucelabs.com/>`_.  Sauce
+Labs provides this service for free under their Open Sauce program.
 
-Then run a QUnit test by pointing your broswer to
-http://localhost:8000/search/tests/
+Credits
+=======
 
-Selenium Tests
-==============
+The BTW software is developed by Louis-Dominique Dubeau, Director of
+Software Development for the Buddhist Translators Workbench project,
+Mangalam Research Center for Buddhist Languages.
 
+.. image:: https://secure.gravatar.com/avatar/7fc4e7a64d9f789a90057e7737e39b2a
+   :target: http://www.mangalamresearch.org/
 
+This software has been made possible in part by a Level I Digital Humanities
+Start-up Grant and a Level II Digital Humanities Start-up Grant from the
+National Endowment for the Humanities (grant numbers HD-51383-11 and
+HD-51772-13). Any views, findings, conclusions, or recommendations expressed
+in this software do not necessarily represent those of the National Endowment
+for the Humanities.
 
-Issues
-======
+.. image:: http://www.neh.gov/files/neh_logo_horizontal_rgb.jpg
+   :target: http://www.neh.gov/
 
-There seem to be a small leakage of memory upon reloading a window
-with Wed in it.
-
-Tests performed with Chrome's memory profiler by doing:
-
-1. One load.
-2. Issuing a memory profile.
-3. Reload.
-4. Issuing a memory profile.
-
-Show that the whole Walker tree created before the first profile is
-created still exists at the time of the second profile. I do not know
-of a good explanation for this.
-
-============
-Contributing
-============
-
-Contributions must pass the commit checks turned on in
-`<.glerbl/repo_conf.py>`. Use ``glerbl install`` to install the
-hooks. Glerbl itself can be found at
-https://github.com/lddubeau/glerbl. It will eventually make its way to
-the Python package repository so that ``pip install glerbl`` will
-work.
+..  LocalWords:  API html xml xsl wed's config jquery js chai semver
+..  LocalWords:  json minified localhost CSS init pre Makefile saxon
+..  LocalWords:  barebones py TEI Ctrl hoc schemas CDATA HD glyphicon
+..  LocalWords:  getTransformationRegistry getContextualActions addr
+..  LocalWords:  fireTransformation glyphicons github tei onerror ev
+..  LocalWords:  domlistener TreeUpdater makeDecorator jQthis README
+..  LocalWords:  selectionsaverestore CHANGELOG RTL UI setTimeout rst
+..  LocalWords:  nginx SauceLabs SauceLab's OpenSauce readme Glerbl
+..  LocalWords:  reStructuredText namespace namespaces RequireJS NG
+..  LocalWords:  Dubeau Mangalam jsdoc perl selenic glerbl mk Bethel
+..  LocalWords:  io
