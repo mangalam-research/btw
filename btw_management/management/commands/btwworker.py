@@ -42,6 +42,8 @@ class Worker(object):
 _cached_defined_workers = None
 
 def get_defined_workers():
+    # pylint: disable=global-statement
+    global _cached_defined_workers
     if _cached_defined_workers:
         return _cached_defined_workers
 
@@ -58,7 +60,6 @@ def get_defined_workers():
                periodic_fetch_items.delay),
     ]
 
-    global _cached_defined_workers
     _cached_defined_workers = ret
 
     return ret
