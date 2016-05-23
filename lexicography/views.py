@@ -7,11 +7,11 @@
 from functools import wraps
 import os
 import datetime
-import semver
 import json
 import urllib
 import logging
 
+import semver
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
@@ -29,9 +29,9 @@ from django.db import transaction
 from django.utils.http import quote_etag
 from django.utils.html import mark_safe
 from django.contrib.auth import get_user_model
-from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.views.decorators.cache import never_cache
 from django.core.cache import caches
+from django_datatables_view.base_datatable_view import BaseDatatableView
 
 import lib.util as util
 from . import handles
@@ -68,6 +68,7 @@ class SearchTable(BaseDatatableView):
     order_columns = ['lemma', 'schema_version', 'published',
                      'entry__deleted', 'datetime', 'user']
 
+    # pylint: disable=too-many-return-statements
     def render_column(self, row, column):
         if column == "published":
             if row.published:
@@ -154,7 +155,7 @@ class SearchTable(BaseDatatableView):
 
         return qs
 
-    def filter_queryset(self, qs):
+    def filter_queryset(self, qs):  # pylint: disable=too-many-branches
         search_value = self.request.GET.get('search[value]', None)
         lemmata_only = self.request.GET.get('lemmata_only', "false") == \
             "true"
@@ -282,6 +283,7 @@ def mods(request, entry_id, changerecord_id=None):
             surname = ''.join(
                 name.xpath("./tei:surname",
                            namespaces=default_namespace_mapping)[0].itertext())
+            # pylint: disable=invalid-name
             genName = ''.join(
                 name.xpath("./tei:genName",
                            namespaces=default_namespace_mapping)[0].itertext())
@@ -564,10 +566,10 @@ def uses_handle_or_entry_id(view):
                 entry_id = hm.id(handle)
             except ValueError:
                 logger.error(
-                    ("user {0} tried accessing handle {1} which did not exist"
-                     " in the handle manager associated with sesssion {2}")
-                    .format(request.user.username, handle,
-                            request.session.session_key))
+                    "user %s tried accessing handle %s which did not exist"
+                    " in the handle manager associated with sesssion %s",
+                    request.user.username, handle,
+                    request.session.session_key)
                 resp = json.dumps(
                     {'messages': [{'type': 'save_fatal_error'}]},
                     ensure_ascii=False)
@@ -595,7 +597,7 @@ def save_login_required(view):
 
         messages = [{'type': 'save_transient_error',
                      'msg': 'Save failed because you are not logged in. '
-                     'Perhaps you logged out from BTW in another tab?'}]
+                            'Perhaps you logged out from BTW in another tab?'}]
 
         resp = json.dumps({'messages': messages}, ensure_ascii=False)
         return HttpResponse(resp, content_type=JSON_TYPE)
@@ -654,7 +656,7 @@ def _save_command(request, entry_id, handle, command, messages):
                       # Unclean data, no version ...
                       schema_version="")
         chunk.save()
-        logger.error("Unclean chunk: %s, %s" % (chunk.c_hash, unclean))
+        logger.error("Unclean chunk: %s, %s", chunk.c_hash, unclean)
         # Yes, we want to commit...
         messages.append({'type': 'save_fatal_error'})
         return None
@@ -685,7 +687,7 @@ def _save_command(request, entry_id, handle, command, messages):
                 messages.append(
                     {'type': 'save_transient_error',
                      'msg': 'The entry is locked by user %s.'
-                     % lock.owner.username})
+                            % lock.owner.username})
 
                 # Clean up the chunk.
                 try:
@@ -713,7 +715,7 @@ def _save_command(request, entry_id, handle, command, messages):
             messages.append(
                 {'type': 'save_transient_error',
                  'msg': u'There is another entry with the lemma "{0}".'
-                 .format(entry.lemma)})
+                        .format(entry.lemma)})
             return None
 
         # Can't figure it out.
@@ -874,7 +876,7 @@ def entry_testing_mark_valid(request, lemma):
         raise Exception("BTW_TESTING not on!")
 
     entry = Entry.objects.get(lemma=lemma)
-    entry.latest.c_hash._valid = True
+    entry.latest.c_hash._valid = True  # pylint: disable=protected-access
     entry.latest.c_hash.save()
 
     return HttpResponse()
