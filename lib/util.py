@@ -6,11 +6,11 @@ import os
 import subprocess
 from contextlib import contextmanager
 from StringIO import StringIO
-import lxml.etree
 import logging
-import functools32
 from functools import wraps
 
+import lxml.etree
+import functools32
 import semver
 from django.db.models import Q
 from django.utils.timezone import utc
