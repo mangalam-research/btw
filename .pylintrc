@@ -27,12 +27,18 @@ extension-pkg-whitelist=lxml
 #
 # https://bitbucket.org/logilab/pylint/issue/222/having-trouble-linting-schematics-models
 #
+# too-many-ancestors is regularly triggered by deriving from Django code.
+#
 # And reevaluate when new versions of pylint are released.
 
-disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter
-
-[REPORTS]
-include-ids=y
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter,too-many-ancestors,too-few-public-methods,missing-docstring,too-many-instance-attributes
 
 [VARIABLES]
 dummy-variables-rgx=_.*|dummy
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+attr-rgx=[a-z_][a-z0-9_]{0,30}$
+argument-rgx=[a-z_][a-z0-9_]{0,30}$
+function-rgx=[a-z_][a-z0-9_]{0,30}$
+
+# pylint misidentifies constants
+const-rgx=(([a-zA-Z_][a-zA-Z0-9_]{0,30})|(__.*__))$
