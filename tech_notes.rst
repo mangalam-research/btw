@@ -1527,6 +1527,86 @@ how it performs with Django > 1.5.
 
 Django page CMS: compatible with Django 1.5, 1.6 but not 1.7 or 1.8.
 
+Full Text Databases
+===================
+
+XML databases can be used but the quality of these databases is not great.
+
+Elasticsearch
+-------------
+
+The problem with Elasticsearch is that it does not know anything about
+the structure of documents. Putting and querying some simple XML
+documents in Elasticsearch is probably doable without too much
+trouble. But when it comes to multilingual search, there's a
+problem. If I want to match "circus" only in a Latin citation, the
+search has to konw which parts of the text are in Latin. With an
+XML-aware database We'd do this by querying @xml:lang. With
+Elasticsearch, we'd have to setup some sort of tokenizer that extracts
+only the Latin text.
+
+1. Install it through their deb repository.
+
+2. Install the shield plugin: https://www.elastic.co/downloads/shield
+
+  ::
+
+      sudo /usr/share/elasticsearch/bin/plugin install license
+      sudo /usr/share/elasticsearch/bin/plugin install shield
+      sudo service elasticsearch restart
+
+3. Create users::
+
+      sudo /usr/share/elasticsearch/bin/shield/esusers useradd es_admin -r admin
+      # This is for the kibana tool
+      sudo /usr/share/elasticsearch/bin/shield/esusers useradd kibana4_server -r kibana4_server
+
+4. Edit the kibana config so that it uses the user::
+
+      sudo vi /opt/kibana/config/kibana.yml
+
+  Edit it to read:
+
+  > elasticsearch.username: "kibana4_server"
+  > elasticsearch.password: "password"
+
+  While you are at it::
+
+     sudo chmod og-r /opt/kibana/config/kibana.yml
+     sudo chown kibana /opt/kibana/config/kibana.yml
+
+4. Add a ``kibana_user`` role::
+
+kibana_user:
+  cluster:
+      - monitor
+  indices:
+    - names: '.kibana*'
+      privileges:
+        - manage
+        - read
+        - index
+
+5. Add a "btw_admin" role::
+
+btw_admin:
+  indices:
+    - names: 'btw-*'
+      privileges:
+        - all
+
+6. Add a "btw" user::
+
+      sudo /usr/share/elasticsearch/bin/shield/esusers useradd btw -r btw_admin,kibana_user
+
+Solr
+----
+
+You can find a lot of talk about how Solr is able to load XML
+documents. This is a true statement but one that is misleading. It
+means that you can use XML rather than JSON to put documents in Solr,
+not that Solr is able to index XML documents like eXist or BaseX are
+able to.
 
 XML Database choices for BTW
 ============================
