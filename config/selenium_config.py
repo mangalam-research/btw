@@ -149,6 +149,11 @@ if CONFIG.browser == "CHROME":
     #
     CHROME_OPTIONS.add_argument("test-type")
 
+    # Tried these to see if they were stopping a slowdown with Chrome,
+    # did not work.
+    # CHROME_OPTIONS.add_argument('--dns-prefetch-disable')
+    # CHROME_OPTIONS.add_argument('--no-proxy-server')
+
 profile = FirefoxProfile()
 # profile.set_preference("webdriver.log.file",
 #                        "/tmp/firefox_webdriver.log")
