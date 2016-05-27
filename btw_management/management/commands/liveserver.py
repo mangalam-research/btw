@@ -196,7 +196,8 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
         with open(self.__control_write, 'w') as out:
             out.write('started\n')
         while not finished:
-            command = open(self.__control_read, 'r').read().strip()
+            with open(self.__control_read, 'r') as inp:
+                command = inp.read().strip()
             self.log("got command: " + command)
             args = command.split()
             if command == "quit":
@@ -234,6 +235,10 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                     out.write("\n")
             elif command == "patch changerecord_details to time out on ajax":
                 self._patcher.timeout_on_ajax = True
+                with open(self.__control_write, 'w') as out:
+                    out.write("\n")
+            elif command == "patch reset":
+                self._patcher.reset()
                 with open(self.__control_write, 'w') as out:
                     out.write("\n")
             elif command.startswith("changerecord link to entry link "):

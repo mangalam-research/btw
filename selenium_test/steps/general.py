@@ -200,14 +200,11 @@ def step_impl(context, user_desc):
         context.session_id = driver.get_cookie("sessionid")["value"]
     else:
         driver.get(selenic.SERVER)
-        with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("login " + user.login + " " + user.password + "\n")
-        with open(context.server_read_fifo, 'r') as fifo:
-            session_key = fifo.read().strip()
-            driver.add_cookie({'name': 'sessionid',
-                               'value': session_key})
-            driver.add_cookie({'name': 'csrftoken',
-                               'value': 'foo'})
+        context.server.write("login " + user.login + " " +
+                             user.password + "\n")
+        session_key = context.server.read()
+        driver.add_cookie({'name': 'sessionid', 'value': session_key})
+        driver.add_cookie({'name': 'csrftoken', 'value': 'foo'})
         context.session_id = session_key
         #
         # There is no need to reload the page right here. If a test
@@ -324,13 +321,13 @@ def step_impl(context, what):
     elif what in ("bad semantic fields", "good semantic fields"):
         what = "valid article, with " + what
 
-    if (what == "valid article" or what.startswith("valid article, ")) \
-       and not context.created_documents.get(what, False):
-        with open(context.server_write_fifo, 'w') as fifo:
-            fifo.write("create " + what + "\n")
-        with open(context.server_read_fifo, 'r') as fifo:
-            title = fifo.read().strip().decode('utf-8')
-        context.created_documents[what] = True
+    if what == "valid article" or what.startswith("valid article, "):
+        if context.created_documents.get(what) is None:
+            context.server.write("create " + what + "\n")
+            title = context.server.read().decode('utf-8')
+            context.created_documents[what] = title
+        else:
+            title = context.created_documents[what]
 
     if title is None:
         title = WHAT_TO_TITLE[what]

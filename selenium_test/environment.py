@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import time
 import tempfile
@@ -66,13 +67,13 @@ def cleanup(context, failed):
             # we can do if the driver refuses to stop.
             try:
                 driver.quit()
-            except:
+            except:   # pylint: disable=bare-except
                 pass
         elif selenium_quit == "on-enter":
             raw_input("Hit enter to quit")
             try:
                 driver.quit()
-            except:
+            except:  # pylint: disable=bare-except
                 pass
 
         context.driver = None
@@ -95,16 +96,14 @@ def cleanup(context, failed):
         context.display.stop()
         context.display = None
 
+    server = context.server
     if context.server:
-        # Must read started before quitting...
         try:
-            read = server_read(context)
-            if read != 'started':
-                raise ValueError("did not get the 'started' string; "
-                                 "got this instead: {0}".format(read))
-            server_write(context, "quit\n")
+            # Must read started before quitting...
+            context.server.wait_for_start()
+            server.write("quit\n")
             try:
-                context.server.wait()
+                server.wait()
             except KeyboardInterrupt:
                 pass
         except DeadServer:
@@ -128,45 +127,102 @@ def cleanup(context, failed):
 class DeadServer(Exception):
     pass
 
-def server_alive(context):
-    try:
-        assert_server_alive(context)
-    except DeadServer:
+DIRTY = object()
+CLEAN = object()
+
+class ServerControl(object):
+
+    def __init__(self, server, read_fifo, write_fifo):
+        self.server = server
+        self.write_fifo = write_fifo
+        self.read_fifo = read_fifo
+        self.previous_scenario = CLEAN
+        self.previous_feature = None
+
+        # Indicates whether we must wait for a start. We must wait
+        # when the server has just been started, or when the server
+        # has been restarted.
+        self.must_wait_for_start = True
+
+    def wait(self):
+        return self.server.wait()
+
+    def wait_for_start(self):
+        if not self.must_wait_for_start:
+            return
+
+        read = self.read()
+        if read != 'started':
+            raise ValueError("did not get the 'started' string; got " + read)
+        self.must_wait_for_start = False
+
+    def before_scenario(self, feature):
+        # We restart on feature change.
+        if self.previous_feature is not None and \
+           feature is not self.previous_feature:
+            self.restart()
+            self.previous_feature = feature
+            self.previous_scenario = None
+            return True
+
+        # Or if the previous scenario was dirty.
+        self.previous_feature = feature
+        if self.previous_scenario is DIRTY:
+            self.restart()
+            self.previous_scenario = None
+            return True
+
         return False
 
-    return True
+    def restart(self):
+        self.write("restart\n")
+        self.must_wait_for_start = True
 
-def assert_server_alive(context):
-    if context.server is None:
-        raise DeadServer("the server is already dead")
+    def after_scenario(self, cleanliness):
+        self.previous_scenario = cleanliness
 
-    status = context.server.poll()
-    if status is not None:
-        context.server = None
-        if status >= 0:
-            raise DeadServer("server exited with: " + str(status))
-        else:
-            raise DeadServer(
-                "server already with signal: " + str(-status))
+    def is_alive(self):
+        try:
+            self.assert_alive()
+        except DeadServer:
+            return False
 
+        return True
 
-def server_write(context, text):
-    assert_server_alive(context)
-    with open(context.server_write_fifo, 'w') as fifo:
-        fifo.write(text)
+    def assert_alive(self):
+        if self.server is None:
+            raise DeadServer("the server is already dead")
 
-def server_read(context):
-    assert_server_alive(context)
-    try:
-        with open(context.server_read_fifo, 'r') as fifo:
-            return fifo.read().strip()
-    except IOError:
-        # Wait for the server to die.
-        while server_alive(context):
-            time.sleep(0.1)
+        status = self.server.poll()
+        if status is not None:
+            self.server = None
+            if status >= 0:
+                raise DeadServer("server exited with: " + str(status))
+            else:
+                raise DeadServer(
+                    "server already with signal: " + str(-status))
+
+    def patch_reset(self):
+        self.write("patch reset\n")
+        self.read()
+
+    def write(self, text):
+        self.assert_alive()
+        with open(self.write_fifo, 'w') as fifo:
+            fifo.write(text)
+
+    def read(self):
+        self.assert_alive()
+        try:
+            with open(self.read_fifo, 'r') as fifo:
+                return fifo.read().strip()
+        except IOError:
+            # Wait for the server to die.
+            while self.is_alive():
+                time.sleep(0.1)
 
 def sigchld(context):
-    assert_server_alive(context)
+    context.server.assert_alive()
 
 screenshots_dir_path = os.path.join("test_logs", "screenshots")
 
@@ -217,6 +273,7 @@ def before_all(context):
     context.tunnel_id = None
     context.tunnel = None
     context.builder = None
+    context.created_documents = {}
 
     context.selenium_quit = os.environ.get("SELENIUM_QUIT")
     context.behave_keep_tempdirs = os.environ.get("BEHAVE_KEEP_TEMPDIRS")
@@ -260,8 +317,10 @@ def before_all(context):
             context.selenium_quit in ("never", "on-success", "on-enter")
         context.display = Display(visible=visible, size=(1024, 600))
         context.display.start()
+        print("Display started")
         builder.update_ff_binary_env('DISPLAY')
         context.wm = subprocess.Popen(["openbox", "--sm-disable"])
+        print("Window manager started")
 
         chrome_options = builder.local_conf.get("CHROME_OPTIONS", None)
         if chrome_options:
@@ -285,6 +344,7 @@ def before_all(context):
 
     driver = builder.get_driver()
     context.driver = driver
+    print("Obtained driver")
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
                                      5 if builder.remote else 2)
@@ -314,17 +374,19 @@ def before_all(context):
     context.behave_wait = behave_wait and float(behave_wait)
 
     context.server_tempdir = tempfile.mkdtemp()
-    context.server_write_fifo = os.path.join(
+    server_write_fifo = os.path.join(
         context.server_tempdir, "fifo_to_server")
-    os.mkfifo(context.server_write_fifo)
-    context.server_read_fifo = os.path.join(
+    os.mkfifo(server_write_fifo)
+    server_read_fifo = os.path.join(
         context.server_tempdir, "fifo_from_server")
-    os.mkfifo(context.server_read_fifo)
+    os.mkfifo(server_read_fifo)
 
     nginx_port = str(builder.get_unused_port())
-    context.server = subprocess.Popen(
-        ["utils/start_server", context.server_write_fifo,
-         context.server_read_fifo, nginx_port], close_fds=True)
+    server = subprocess.Popen(
+        ["utils/start_server", server_write_fifo,
+         server_read_fifo, nginx_port], close_fds=True)
+    context.server = ServerControl(server, server_read_fifo,
+                                   server_write_fifo)
     signal.signal(signal.SIGCHLD, lambda *_: sigchld(context))
 
     # We must add the port to the server
@@ -346,6 +408,12 @@ def before_scenario(context, scenario):
     if context.active_tag_matcher.should_exclude_with(scenario.effective_tags):
         scenario.skip(reason="Disabled by an active tag")
         return
+
+    # Possibly reset the server between scenarios. We do a reset if
+    # the previous scenario was not clean.
+    if context.server.before_scenario(context.feature):
+        # These documents are not initially present.
+        context.created_documents = {}
 
     driver = context.driver
     driver.set_window_size(context.initial_window_size["width"],
@@ -378,9 +446,6 @@ def before_scenario(context, scenario):
     # Each scenario means logging in again.
     context.is_logged_in = False
 
-    # These documents are not initially present.
-    context.created_documents = {}
-
     context.default_datatable = None
     context.datatables = {}
 
@@ -401,6 +466,7 @@ def before_scenario(context, scenario):
 
     context.register_datatable = types.MethodType(register_datatable, context)
 
+    server = context.server
     #
     # This allows tags like:
     #
@@ -416,12 +482,11 @@ def before_scenario(context, scenario):
         elif tag.startswith(FAIL):
             what = tag[len(FAIL):]
             if what == "on_ajax":
-                server_write(context,
-                             "patch changerecord_details to fail on ajax\n")
-                server_read(context)
+                server.write("patch changerecord_details to fail on ajax\n")
+                server.read()
             else:
                 raise Exception("unknown failure type: " + what)
-        elif tag == "wip" or \
+        elif tag in ("wip", "dirty") or \
                 tag.startswith("not.with_") or \
                 tag.startswith("use.with_") or \
                 tag.startswith("only.with_") or \
@@ -433,14 +498,14 @@ def before_scenario(context, scenario):
 
     context.session_id = None
 
-    # This will block until the server is started.
-    read = server_read(context)
-    if read != 'started':
-        raise ValueError("did not get the 'started' string")
+    # This will block until the server is started. Or will continue
+    # immediately if a restart had not occurred.
+    context.server.wait_for_start()
 
     if caches:
-        server_write(context, 'clearcache ' + ' '.join(caches) + "\n")
-        server_read(context)
+        server = context.server
+        server.write('clearcache ' + ' '.join(caches) + "\n")
+        server.read()
 
 
 def after_scenario(context, scenario):
@@ -488,10 +553,6 @@ def after_scenario(context, scenario):
 
     """)
 
-    # Reset the server between scenarios.
-
-    server_write(context, "restart\n")
-
     # Close all extra tabs.
     if len(handles) > 1:
         for handle in handles:
@@ -501,10 +562,14 @@ def after_scenario(context, scenario):
         driver.switch_to_window(context.initial_window_handle)
     driver.delete_all_cookies()
 
+    context.ajax_timeout_test = False
+    context.server.patch_reset()
+    context.server.after_scenario(
+        DIRTY if "dirty" in scenario.effective_tags else CLEAN)
     remove_server_limit()
 
 def before_step(context, _step):
-    assert_server_alive(context)
+    context.server.assert_alive()
     if context.behave_wait:
         time.sleep(context.behave_wait)
 
@@ -523,7 +588,7 @@ def after_step(context, step):
         except UnexpectedAlertPresentException:
             pass  # There's nothing we can do
 
-    assert_server_alive(context)
+    context.server.assert_alive()
     # Perform this query only if SELENIUM_LOGS is on.
     if context.selenium_logs:
         logs = driver.execute_script("""

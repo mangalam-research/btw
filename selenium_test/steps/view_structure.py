@@ -17,7 +17,6 @@ from selenic.util import Result, Condition
 
 from lexicography.tests import funcs
 from selenium_test import btw_util
-from ..environment import server_write, server_read
 
 step_matcher("re")
 
@@ -113,14 +112,14 @@ def step_impl(context):
 @given(ur"that the next document will be loaded by a "
        ur"(?P<condition>failing|timing-out) AJAX call")
 def step_impl(context, condition):
-    server_write(context, 'clearcache article_display\n')
-    server_read(context)
+    context.server.write('clearcache article_display\n')
+    context.server.read()
     cmd = {
         "failing": "fail on ajax",
         "timing-out": "time out on ajax"
     }[condition]
-    server_write(context, 'patch changerecord_details to {0}\n'.format(cmd))
-    server_read(context)
+    context.server.write('patch changerecord_details to {0}\n'.format(cmd))
+    context.server.read()
     if condition == "timing-out":
         context.ajax_timeout_test = True
 
@@ -506,10 +505,9 @@ def step_impl(context, label):
     hits = funcs.parse_search_results(r.text)
     url = hits[label]["hits"][0]["view_url"]
 
-    with open(context.server_write_fifo, 'w') as fifo:
-        fifo.write("changerecord link to entry link {0}\n".format(url))
-    with open(context.server_read_fifo, 'r') as fifo:
-        entry_url = fifo.read().strip().decode('utf-8')
+    context.server.write(
+        "changerecord link to entry link {0}\n".format(url))
+    entry_url = context.server.read().decode('utf-8')
 
     links = driver.execute_script("""
     var url = arguments[0];
