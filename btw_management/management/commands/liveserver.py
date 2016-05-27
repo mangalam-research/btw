@@ -23,8 +23,9 @@ from allauth.account.models import EmailAddress
 
 from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
+from lexicography.xml import tei_namespace, btw_namespace, \
+    default_namespace_mapping, XMLTree
 from lib import util
-from lexicography.xml import tei_namespace, btw_namespace
 from lib.testutil import unmonkeypatch_databases
 from bibliography.models import Item, PrimarySource
 from bibliography.tasks import fetch_items
@@ -253,18 +254,8 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
         data = get_valid_document_data()
         publish = True
 
-        def alter_lemma_and_convert(tree, lemma):
-            lemmas = tree.xpath(
-                "//btw:lemma",
-                namespaces={
-                    "btw": "http://mangalamresearch.org/ns/btw-storage"
-                })
-            lemmas[0].text = lemma
-            return lxml.etree.tostring(
-                tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
-
         if what == "valid article":
-            pass
+            xmltree = XMLTree(data)
         elif what in ("valid article, with one author",
                       "valid article, with two authors",
                       "valid article, with three authors",
@@ -277,10 +268,9 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             }[what]
 
             publish = True
-            tree = lxml.etree.fromstring(data)
-            authors = tree.xpath(
-                "//btw:credit",
-                namespaces={"btw": btw_namespace})
+            xmltree = XMLTree(data)
+            authors = xmltree.tree.xpath("//btw:credit",
+                                         namespaces=default_namespace_mapping)
 
             assert len(authors) == 2
             if total_authors == 1:
@@ -297,7 +287,8 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
     <genName>GenName {2}</genName></persName>
 </btw:credit>""".format(tei_namespace, btw_namespace, number)))
 
-            data = alter_lemma_and_convert(tree, what)
+            xmltree.alter_lemma(what)
+            data = xmltree.serialize()
         elif what in ("valid article, with one editor",
                       "valid article, with two editors",
                       "valid article, with three editors",
@@ -310,10 +301,9 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             }[what]
 
             publish = True
-            tree = lxml.etree.fromstring(data)
-            editors = tree.xpath(
-                "//tei:editor",
-                namespaces={"tei": tei_namespace})
+            xmltree = XMLTree(data)
+            editors = xmltree.tree.xpath("//tei:editor",
+                                         namespaces=default_namespace_mapping)
 
             assert len(editors) == 1
             if total_editors == 1:
@@ -327,16 +317,14 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
   <genName>GenName {1}</genName></persName>
 </editor>""".format(tei_namespace, number)))
 
-            data = alter_lemma_and_convert(tree, what)
+            xmltree.alter_lemma(what)
+            data = xmltree.serialize()
         elif what in ("valid article, with bad semantic fields",
                       "valid article, with good semantic fields"):
             publish = False
-            tree = lxml.etree.fromstring(data)
-            sfs = tree.xpath(
-                "//btw:sf",
-                namespaces={
-                    "btw": "http://mangalamresearch.org/ns/btw-storage"
-                })
+            xmltree = XMLTree(data)
+            sfs = xmltree.tree.xpath("//btw:sf",
+                                     namespaces=default_namespace_mapping)
             ix = 0
             cases = invalid_sf_cases if what.endswith("bad semantic fields") \
                 else valid_sf_cases
@@ -344,20 +332,29 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                 sfs[ix].text = case
                 ix += 1
 
-            data = alter_lemma_and_convert(tree, what)
+            xmltree.alter_lemma(what)
+            data = xmltree.serialize()
         else:
             print "Unknown document: ", what
-        User = get_user_model()
-        foo = User.objects.get(username='foo')
 
-        now = util.utcnow()
-
-        client = Client()
-        assert client.login(username='foo', password='foo')
-        response = client.post(add_raw_url, {"data": data})
-        assert response.status_code == 302
         from lexicography.models import Entry
-        entry = Entry.objects.get(latest__datetime__gte=now)
+        try:
+            entry = Entry.objects.get(lemma=xmltree.extract_lemma())
+        except Entry.DoesNotExist:
+            entry = None
+
+        if entry is None:
+            User = get_user_model()
+            foo = User.objects.get(username='foo')
+
+            now = util.utcnow()
+
+            client = Client()
+            assert client.login(username='foo', password='foo')
+            response = client.post(add_raw_url, {"data": data})
+            assert response.status_code == 302
+            entry = Entry.objects.get(latest__datetime__gte=now)
+
         if publish:
             assert entry.latest.publish(foo)
         with open(self.__control_write, 'w') as out:

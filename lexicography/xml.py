@@ -230,6 +230,15 @@ Extracts the version from the XML tree.
         version = self.tree.get('version')
         return version.strip() if version is not None else None
 
+    def alter_lemma(self, lemma):
+        lemmas = self.tree.xpath("//btw:lemma",
+                                 namespaces=default_namespace_mapping)
+        lemmas[0].text = lemma
+
+    def serialize(self):
+        return lxml.etree.tostring(
+            self.tree, xml_declaration=True, encoding='utf-8').decode('utf-8')
+
 
 _auth_re = re.compile(r' authority\s*=\s*(["\']).*?\1')
 
@@ -268,5 +277,6 @@ def elements_as_text(els):
         text = element_as_text(el)
         if text:
             yield text
+
 
 #  LocalWords:  xml html xsl xhtml xmlns btw lxml r'authority Za nbsp

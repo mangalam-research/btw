@@ -72,11 +72,11 @@ def step_impl(context, action):
     assert_equal(text, "This change record was {0}.".format(action))
 
 
-@when('the article with lemma "foo" can be published')
-def step_impl(context):
+@when('the article with lemma "(?P<lemma>.*?)" can be published')
+def step_impl(context, lemma):
     driver = context.driver
     r = requests.get(context.builder.SERVER +
-                     "/lexicography/entry/foo/testing-mark-valid",
+                     "/lexicography/entry/{}/testing-mark-valid".format(lemma),
                      cookies={
                          "sessionid":
                          driver.get_cookie("sessionid")["value"]

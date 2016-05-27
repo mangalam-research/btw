@@ -875,7 +875,23 @@ def entry_testing_mark_valid(request, lemma):
     if not settings.BTW_TESTING:
         raise Exception("BTW_TESTING not on!")
 
-    entry = Entry.objects.get(lemma=lemma)
+    try:
+        entry = Entry.objects.get(lemma=lemma)
+    except Entry.DoesNotExist:
+        entry = None
+
+    if entry is None:
+        original = Entry.objects.get(lemma="foo")
+        entry = Entry()
+        data = original.latest.c_hash.data
+        xmltree = XMLTree(data.encode("utf-8"))
+        xmltree.alter_lemma(lemma)
+        data = xmltree.serialize()
+        entry.try_updating(request, original.latest.c_hash, xmltree,
+                           ChangeRecord.CREATE,
+                           ChangeRecord.MANUAL)
+        release_entry_lock(entry, request.user)
+
     entry.latest.c_hash._valid = True  # pylint: disable=protected-access
     entry.latest.c_hash.save()
 
