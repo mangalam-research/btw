@@ -37,7 +37,7 @@
   </tfoot>
 </table>
 <script>
-  require(["jquery", "../js/search-table"], function ($, st) {
+  require(["jquery", "lexicography/search-table"], function ($, st) {
     var $table = $(document.getElementById("search-table"));
     st($table, {
       ajax_source_url: "{% url 'lexicography_search_table' %}",
