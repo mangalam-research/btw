@@ -79,15 +79,14 @@ return function (create_buttons, create_div, displayers) {
                 var serialized = $(form).serialize();
                 var timeout = new ButtonTimeout(submit, network_timeout);
                 fieldset.disabled = true; // Prevent multi clicks.
-                ajax({
+                ajax.ajax({
                     type: method,
                     url: submit_url,
                     data: serialized,
                     headers: {
                         Accept: "application/x-form"
                     }
-                })
-                    .finally(timeout.clear.bind(timeout))
+                }).finally(timeout.clear.bind(timeout))
                     .catch(bluejax.HttpError, function (err) {
                         if (err.jqXHR.status !== 400) {
                             throw err;
@@ -131,7 +130,7 @@ return function (create_buttons, create_div, displayers) {
         }
 
         button.disabled = true;
-        return ajax({
+        return ajax.ajax({
             url: form_url,
             headers: {
                 Accept: "application/x-form"
