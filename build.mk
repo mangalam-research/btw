@@ -122,9 +122,11 @@ GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/r
 COPIED_LOCAL_SOURCES:=$(filter-out $(GENERATED_LOCAL_SOURCES),$(LOCAL_SOURCES))
 BUILD_SCRIPTS:=build/scripts/
 
-DATATABLES_PLUGIN_TARGETS:=$(BUILD_DEST)/lib/external/datatables/js/dataTables.bootstrap.js $(BUILD_DEST)/lib/external/datatables/css/dataTables.bootstrap.css
+EXTERNAL:=$(BUILD_DEST)/lib/external
+externalize=$(foreach f,$1,$(EXTERNAL)/$f)
 
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(BUILD_DEST)/lib/external/jquery.cookie.js $(BUILD_DEST)/lib/external/datatables $(BUILD_DEST)/lib/external/bootstrap3-editable $(BUILD_DEST)/lib/external/jquery-growl/js/jquery.growl.js $(BUILD_DEST)/lib/external/jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) $(BUILD_DEST)/lib/external/bluebird.min.js $(BUILD_DEST)/lib/external/bootstrap-datepicker $(BUILD_DEST)/lib/external/moment.js $(BUILD_DEST)/lib/external/velocity/velocity.min.js $(BUILD_DEST)/lib/external/velocity/velocity.ui.min.js $(BUILD_DEST)/lib/external/last-resort.js $(BUILD_DEST)/lib/external/bluejax.js
+DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -283,11 +285,11 @@ $(EXPANDED_BOOTSTRAP)/%:: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
 	unzip -o -DD -d $(EXPANDED_DEST) $<
 	(cd $(EXPANDED_DEST); ln -sfn $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 
-$(BUILD_DEST)/lib/external/jquery.cookie.js: downloads/$(JQUERY_COOKIE_BASE)
+$(EXTERNAL)/jquery.cookie.js: downloads/$(JQUERY_COOKIE_BASE)
 	unzip -j -o -d $(dir $@) $< $(patsubst %.zip,%,$(JQUERY_COOKIE_BASE))/$(notdir $@)
 	touch $@
 
-$(BUILD_DEST)/lib/external/datatables: downloads/$(DATATABLES_BASE)
+$(EXTERNAL)/datatables: downloads/$(DATATABLES_BASE)
 	rm -rf $@/*
 	mkdir -p $@/temp
 	unzip -o -d $@/temp $<
@@ -295,8 +297,8 @@ $(BUILD_DEST)/lib/external/datatables: downloads/$(DATATABLES_BASE)
 	(cd $@; rm -rf src unit_testing)
 	rm -rf $@/temp
 
-$(DATATABLES_PLUGIN_TARGETS): COMMON_DIR:=$(BUILD_DEST)/lib/external/datatables
-$(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(BUILD_DEST)/lib/external/datatables
+$(DATATABLES_PLUGIN_TARGETS): COMMON_DIR:=$(EXTERNAL)/datatables
+$(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(EXTERNAL)/datatables
 	rm -rf $(COMMON_DIR)/Plugins-master
 	unzip -o -d $(COMMON_DIR) $< Plugins-master/integration/bootstrap/*
 	cp $(COMMON_DIR)/Plugins-master/integration/bootstrap/3/*.js $(COMMON_DIR)/js
@@ -304,32 +306,35 @@ $(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(BUILD_DEST)
 # mv $(COMMON_DIR)/Plugins-master/integration/bootstrap/images/* $(COMMON_DIR)/images
 	rm -rf $(COMMON_DIR)/Plugins-master
 
-$(BUILD_DEST)/lib/external/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
+$(EXTERNAL)/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
 	rm -rf $@
 	unzip -o -d $(dir $@) $< $(notdir $@)/*
 	touch $@
 
-$(BUILD_DEST)/lib/external/bluebird%: node_modules/bluebird/js/browser/bluebird%
+$(EXTERNAL)/bluebird%: node_modules/bluebird/js/browser/bluebird%
 	cp $< $@
 
-$(BUILD_DEST)/lib/external/bluejax.js: node_modules/bluejax/index.js
+$(EXTERNAL)/bluejax.js: node_modules/bluejax/index.js
 	cp $< $@
 
-$(BUILD_DEST)/lib/external/last-resort.js: node_modules/last-resort/index.js
+$(EXTERNAL)/bluejax.try.js: node_modules/bluejax.try/index.js
 	cp $< $@
 
-$(BUILD_DEST)/lib/external/bootstrap-datepicker: node_modules/bootstrap-datepicker/dist
+$(EXTERNAL)/last-resort.js: node_modules/last-resort/index.js
+	cp $< $@
+
+$(EXTERNAL)/bootstrap-datepicker: node_modules/bootstrap-datepicker/dist
 	cp -rp $< $@
 
-$(BUILD_DEST)/lib/external/moment.js: node_modules/moment/moment.js
+$(EXTERNAL)/moment.js: node_modules/moment/moment.js
 	cp -rp $< $@
 
-$(BUILD_DEST)/lib/external/velocity/%: node_modules/velocity-animate/%
+$(EXTERNAL)/velocity/%: node_modules/velocity-animate/%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-$(BUILD_DEST)/lib/external/jquery-growl/%: COMMON_DIR:=$(BUILD_DEST)/lib/external/jquery-growl
-$(BUILD_DEST)/lib/external/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
+$(EXTERNAL)/jquery-growl/%: COMMON_DIR:=$(EXTERNAL)/jquery-growl
+$(EXTERNAL)/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
 	rm -rf $(COMMON_DIR)
 	unzip -o -d $(COMMON_DIR) $<
 	mkdir $(COMMON_DIR)/js
