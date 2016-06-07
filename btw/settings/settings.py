@@ -613,6 +613,26 @@ s.EXISTDB_ROOT_COLLECTION = "/btw"
 # The directory that contains eXist-db's bin.
 s.EXISTDB_HOME_PATH = os.path.join(os.environ["HOME"], "local", "eXist-db")
 
+# This is the default value. We have to populate it with the default
+# if we want ot *modify* it elsewhere because changing the value to
+# something else than the default amounts to cancelling the
+# default. So if we want to *add* a new panel, we have to add to the
+# defaults.
+s.DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+]
+
 exec _env.find_config("btw")  # pylint: disable=exec-used
 
 # Execute per-app overrides.
