@@ -32,6 +32,8 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.cache import never_cache
 from django.core.cache import caches
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django_datatables_view.mixins import LazyEncoder
+from eulexistdb.db import ExistDB
 
 import lib.util as util
 from . import handles
@@ -44,6 +46,9 @@ from .xml import XMLTree, xhtml_to_xml, clean_xml, \
 from .forms import SaveForm
 from . import usermod
 from . import tasks
+from lib.existdb import query_iterator, is_lucene_query_clean, \
+    get_chunk_collection_path
+from lib import xquery
 
 article_display_cache = caches['article_display']
 
@@ -67,6 +72,29 @@ class SearchTable(BaseDatatableView):
                'datetime', 'user']
     order_columns = ['lemma', 'schema_version', 'published',
                      'entry__deleted', 'datetime', 'user']
+
+    def get(self, *args, **kwargs):
+        search_value = self.request.GET.get('search[value]', None)
+
+        if search_value is not None:
+            search_value = search_value.encode("utf-8")
+
+        if search_value is not None and len(search_value):
+            # Provide an early failure if the Lucene query is not
+            # syntactically correct.
+            db = ExistDB()
+            if not is_lucene_query_clean(db, search_value):
+                if self.pre_camel_case_notation:
+                    ret = {'sEcho': int(self._querydict.get('sEcho', 0)),
+                           'badLucene': True}
+                else:
+                    ret = {'draw': int(self._querydict.get('draw', 0)),
+                           'badLucene': True}
+                    ret["result"] = "ok"
+                return self.render_to_response(
+                    json.dumps(ret, cls=LazyEncoder))
+
+        return super(SearchTable, self).get(*args, **kwargs)
 
     # pylint: disable=too-many-return-statements
     def render_column(self, row, column):
@@ -157,6 +185,10 @@ class SearchTable(BaseDatatableView):
 
     def filter_queryset(self, qs):  # pylint: disable=too-many-branches
         search_value = self.request.GET.get('search[value]', None)
+
+        if search_value is not None:
+            search_value = search_value.encode("utf-8")
+
         lemmata_only = self.request.GET.get('lemmata_only', "false") == \
             "true"
 
@@ -194,11 +226,24 @@ class SearchTable(BaseDatatableView):
             active = qs
 
         if search_value:
-            qs = active.filter(util.get_query(search_value, ['lemma']))
-            if not lemmata_only:
-                chunks = Chunk.objects.filter(
-                    util.get_query(search_value, ['data']))
-                qs |= active.filter(c_hash=chunks)
+            db = ExistDB()
+            chunks = []
+            scope = "//btw:lemma" if lemmata_only else "//btw:entry"
+            for query_chunk in query_iterator(db, xquery.format(
+                    """\
+for $m in collection({db}){scope}[ft:query(., {search_text})]
+order by ft:score($m) descending
+return util:document-name($m)""",
+                    db=get_chunk_collection_path(),
+                    scope=xquery.Verbatim(scope),
+                    search_text=search_value)):
+
+                chunks += query_chunk.values
+
+            # We need to get the changerecords that pertain to these chunks
+            # and filter by whether or not the user can see unpublished
+            # records.
+            qs = active.filter(c_hash__in=set(chunks))
         else:
             qs = active
 

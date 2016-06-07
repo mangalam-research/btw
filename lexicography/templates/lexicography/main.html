@@ -40,8 +40,8 @@
   require(["jquery", "lexicography/search-table"], function ($, st) {
     var $table = $(document.getElementById("search-table"));
     st($table, {
-      ajax_source_url: "{% url 'lexicography_search_table' %}",
-      can_author: {{ can_author|yesno:"true,false" }},
+      ajaxSourceURL: "{% url 'lexicography_search_table' %}",
+      canAuthor: {{ can_author|yesno:"true,false" }},
     });
   });
 </script>

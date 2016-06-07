@@ -109,7 +109,7 @@ def step_impl(context):
     util = context.util
 
     button = util.find_element(
-        (By.XPATH, "//a[text()='Yes, I want to unpublish']"))
+        (By.XPATH, "//a[normalize-space(text())='Yes, I want to unpublish']"))
     button.click()
     util.wait_until_not(lambda driver:
                         len(driver.find_elements(
