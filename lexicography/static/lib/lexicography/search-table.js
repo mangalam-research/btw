@@ -7,6 +7,8 @@ define(function searchTableModule(require, exports, _module) {
   var ajax$ = ajaxLib.ajax$;
   var modalTemplate = require("text!./modal.html");
   var advancedSearchTemplate = require("text!./advanced-search.html");
+  var _ = require("lodash");
+  var lqp = require("lucene-query-parser");
   require("datatables.bootstrap");
   require("jquery.bootstrap-growl");
 
@@ -130,10 +132,10 @@ define(function searchTableModule(require, exports, _module) {
           advanced.getElementsByClassName("btw-search-all-history")[0];
 
     $([lemmaCheckbox, publicationSelector, searchAll])
-      .change(function change() {
+      .change(_.debounce(function draw() {
         // eslint-disable-next-line no-use-before-define
-        table.fnDraw();
-      });
+        table.api().draw();
+      }, 500));
 
     function drawCallback() {
       if (!label.parentNode) {
@@ -161,6 +163,40 @@ define(function searchTableModule(require, exports, _module) {
         btn = unpublishBtns[i];
         $(btn).click(checkUnpublish);
       }
+    }
+
+    function preDrawCallback(_settings) {
+      var search = this.api().search();
+      var good = true;
+      try {
+        lqp.parse(search);
+      }
+      catch (ex) {
+        if (!(ex instanceof lqp.SyntaxError)) {
+          throw ex; // Don't swallow exceptions.
+        }
+        good = false;
+      }
+
+      var filter = document.querySelector("#search-table_filter");
+      var cl = filter.classList;
+      if (good) {
+        cl.remove("has-error");
+        $(filter).tooltip("destroy");
+        filter.removeAttribute("aria-invalid");
+      }
+      else {
+        cl.add("has-error");
+        $(filter).tooltip({
+          title: "The search expression is not syntactically valid.",
+          container: "body",
+          placement: "auto bottom",
+          trigger: "hover",
+        });
+        filter.setAttribute("aria-invalid", "true");
+      }
+
+      return good;
     }
 
     // We need to have this custom function so that we can handle the cases
@@ -232,6 +268,13 @@ define(function searchTableModule(require, exports, _module) {
         lengthMenu: "Show _MENU_ " + recordName,
       },
       drawCallback: drawCallback,
+      preDrawCallback: preDrawCallback,
+      createdRow: function createdRow(rowNode, data, _dataIndex) {
+        var row = this.api().row(rowNode);
+        if (data[6] !== "" & !row.child()) {
+          row.child(data[6], "hits").show();
+        }
+      },
     });
 
     $table.data("search-table", table);

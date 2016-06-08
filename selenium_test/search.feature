@@ -11,7 +11,17 @@ Scenario: Author performs a basic lemma search.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
 When the user searches for lemma "foo"
-Then the search results show one entry for "foo".
+Then the search results show one entry for "foo"
+And the search results do not show hit details
+And there is a "Published" column visible
+And there is a "Deleted" column visible
+
+Scenario: Author performs a basic search.
+Given the user has logged in
+And that the user has loaded the top page of the lexicography app
+When the user searches for "foo"
+Then the search results show 6 entries
+And the search results show hit details
 And there is a "Published" column visible
 And there is a "Deleted" column visible
 

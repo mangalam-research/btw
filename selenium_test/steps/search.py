@@ -22,6 +22,13 @@ def step_impl(context, query):
     dt.call_with_search_field("Lemmata only", lambda x: x.click())
     dt.fill_field("Search", query)
 
+
+@when('the user searches for "(?P<query>.*?)"')
+def step_impl(context, query):
+    dt = context.default_datatable
+    dt.fill_field("Search", query)
+
+
 @then(r'the search results show (?P<count>one entry|(?:\d+) entries) for '
       r'"(?P<lemma>.*?)".?')
 def step_impl(context, count, lemma):
@@ -42,6 +49,33 @@ def step_impl(context, count, lemma):
     assert_equal(len(hits), count, "there should be " +
                  str(count) + " results")
 
+
+@then(r'the search results show (?P<count>one entry|(?:\d+) entries)')
+def step_impl(context, count):
+    if count == "one entry":
+        count = 1
+    elif count.endswith("entries"):
+        count = int(count.split()[0])
+    else:
+        raise ValueError("can't parse: " + count)
+
+    driver = context.driver
+    entries = driver.find_elements_by_css_selector(
+        "#{}>tbody>tr[role='row']".format(context.default_datatable.cssid))
+    assert_equal(len(entries), count, "there should be " +
+                 str(count) + " results")
+
+
+@then(r'the search results (?P<show>show|do not show) hit details')
+def step_impl(context, show):
+    hits = context.driver.find_elements_by_css_selector(
+        "#{} tr.hits".format(context.default_datatable.cssid))
+    if show == "show":
+        assert_true(len(hits) > 0)
+    elif show == "do not show":
+        assert_equal(len(hits), 0)
+    else:
+        raise ValueError("unexpected show value: " + show)
 
 @then('the search results show '
       '(?P<kind>published and unpublished|(?:un)?published) entries')

@@ -30,6 +30,7 @@ require.config({
     bluejax: "external/bluejax",
     "bluejax.try": "external/bluejax.try",
     "last-resort": "external/last-resort",
+    "lucene-query-parser": "external/lucene-query-parser",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {

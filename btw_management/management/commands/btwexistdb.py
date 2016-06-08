@@ -11,8 +11,6 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from eulexistdb.db import ExistDB
 from lib.existdb import get_admin_db, get_chunk_collection_path, running
-from lib import xquery
-from lexicography.xml import wrap_btw_document
 
 from lexicography.models import Chunk
 
@@ -220,9 +218,11 @@ Manage the eXist server used by BTW.
         assert_running()
 
         db = get_admin_db()
-        db.createCollection(settings.EXISTDB_ROOT_COLLECTION)
-        db.server.setPermissions(settings.EXISTDB_ROOT_COLLECTION,
-                                 self.server_user, self.btw_group, 0770)
+        for collection in [settings.EXISTDB_ROOT_COLLECTION,
+                           get_chunk_collection_path()]:
+            db.createCollection(collection)
+            db.server.setPermissions(collection,
+                                     self.server_user, self.btw_group, 0770)
 
     def dropdb(self, _options):  # pylint: disable=no-self-use
         """
@@ -240,18 +240,11 @@ Manage the eXist server used by BTW.
         assert_running()
 
         db = ExistDB()
-        # We first garbage collect unreachable chunks...
-        Chunk.objects.collect()
-
         chunk_collection_path = get_chunk_collection_path()
         if db.hasCollection(chunk_collection_path):
             db.removeCollection(chunk_collection_path)
-        for chunk in Chunk.objects.filter(is_normal=True):
-            published = chunk.changerecord_set.filter(published=True).count()
-            path = os.path.join(chunk_collection_path, chunk.c_hash)
-            data = wrap_btw_document(chunk.data.encode("utf-8"),
-                                     published)
-            db.load(data, path)
+
+        Chunk.objects.sync_with_exist()
 
     def loadindex(self, _options):
         """

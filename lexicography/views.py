@@ -34,6 +34,7 @@ from django.core.cache import caches
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django_datatables_view.mixins import LazyEncoder
 from eulexistdb.db import ExistDB
+import lxml.etree
 
 import lib.util as util
 from . import handles
@@ -69,11 +70,12 @@ def main(request):
 class SearchTable(BaseDatatableView):
     model = ChangeRecord
     columns = ['lemma', 'schema_version', 'published', 'entry__deleted',
-               'datetime', 'user']
+               'datetime', 'user', 'hit']
     order_columns = ['lemma', 'schema_version', 'published',
-                     'entry__deleted', 'datetime', 'user']
+                     'entry__deleted', 'datetime', 'user', '']
 
     def get(self, *args, **kwargs):
+        self.chunk_to_hits = {}
         search_value = self.request.GET.get('search[value]', None)
 
         if search_value is not None:
@@ -142,6 +144,15 @@ class SearchTable(BaseDatatableView):
                     'satisfy the new schema.">!</span>'
                 )
             return row.schema_version + warn
+
+        if column == "hit":
+            hit = self.chunk_to_hits.get(row.c_hash.c_hash, None)
+
+            if hit is not None and len(hit):
+                return lxml.etree.tostring(hit,
+                                           xml_declaration=True,
+                                           encoding='utf-8').decode("utf-8")
+            return ""
 
         ret = super(SearchTable, self).render_column(row, column)
         #
@@ -228,21 +239,32 @@ class SearchTable(BaseDatatableView):
         if search_value:
             db = ExistDB()
             chunks = []
-            scope = "//btw:lemma" if lemmata_only else "//btw:entry"
+            if lemmata_only:
+                scope = "//btw:lemma"
+                # When we do a lemma search, hits are not useful.
+                hit = ""
+            else:
+                scope = "//btw:entry"
+                hit = "{kwic:summarize($m, <config width='80'/>)}"
+
             for query_chunk in query_iterator(db, xquery.format(
                     """\
+import module namespace kwic="http://exist-db.org/xquery/kwic";
 for $m in collection({db}){scope}[ft:query(., {search_text})]
 order by ft:score($m) descending
-return util:document-name($m)""",
+return <result><doc>{doc}</doc><hit>{hit}</hit></result>""",
                     db=get_chunk_collection_path(),
                     scope=xquery.Verbatim(scope),
+                    doc=xquery.Verbatim("{util:document-name($m)}"),
+                    hit=xquery.Verbatim(hit),
                     search_text=search_value)):
 
-                chunks += query_chunk.values
+                for result in query_chunk.results:
+                    chunk = result[0].text  # Content of <doc>.
+                    self.chunk_to_hits[chunk] = result[1]
+                    chunks.append(chunk)
 
-            # We need to get the changerecords that pertain to these chunks
-            # and filter by whether or not the user can see unpublished
-            # records.
+            # We need to get the changerecords that pertain to these chunks.
             qs = active.filter(c_hash__in=set(chunks))
         else:
             qs = active

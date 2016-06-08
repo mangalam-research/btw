@@ -65,6 +65,9 @@ if s.BTW_SELENIUM_TESTS:
 
         TEST['MIRROR'] = name
 
+# As a base we change the root collection to /test_...
+s.EXISTDB_ROOT_COLLECTION = "/test_btw"
+
 if s.BTW_BUILD_ENV:
     builder = os.environ['BUILDER']
     for db in s.DATABASES.itervalues():
@@ -88,5 +91,9 @@ if s.BTW_BUILD_ENV:
             TEST['NAME'] = test_name
         else:
             db['NAME'] = test_name
+
+    # When we are in a builder we want to use the builder name as part
+    # of the root name.
+    s.EXISTDB_ROOT_COLLECTION = "/test_" + builder
 
 globals().update(s.as_dict())

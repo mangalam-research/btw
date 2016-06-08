@@ -7,8 +7,10 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.db import transaction
+from eulexistdb.db import ExistDB
 
 from lib import util
+from lib.existdb import get_chunk_collection_path, list_collection
 from . import usermod
 from . import xml
 from . import signals
@@ -432,6 +434,20 @@ class ChunkManager(models.Manager):
 
         return chunks
 
+    def sync_with_exist(self):
+        self.collect()
+        db = ExistDB()
+        present = set()
+        for chunk in self.filter(is_normal=True):
+            chunk.sync_with_exist(db)
+            present.add(chunk.c_hash)
+
+        chunk_collection_path = get_chunk_collection_path()
+        for path in list_collection(db, chunk_collection_path):
+            parts = path.split("/")
+            if parts[-1] not in present:
+                db.removeDocument(path)
+
 
 class Chunk(models.Model):
     objects = ChunkManager()
@@ -497,9 +513,36 @@ class Chunk(models.Model):
         sha1.update(self.data.encode('utf-8'))
         self.c_hash = sha1.hexdigest()
 
+    @property
+    def exist_path(self):
+        chunk_collection_path = get_chunk_collection_path()
+        return "/".join([chunk_collection_path, self.c_hash])
+
+    def sync_with_exist(self, db=None):
+        # We do not put "abnormal" chunks in exist.
+        if not self.is_normal:
+            return
+
+        db = db or ExistDB()
+        data = self.data
+        if not db.load(data.encode("utf-8"), self.exist_path):
+            raise Exception("could not sync with eXist database")
+
     def save(self, *args, **kwargs):
         self.clean()
-        super(Chunk, self).save(*args, **kwargs)
+        self.sync_with_exist()
+        return super(Chunk, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # We were not saved in the first place. Remember that chunks
+        # are immutable. So a normal chunk cannot become abnormal, or
+        # vice-versa.
+        if not self.is_normal:
+            return
+
+        db = ExistDB()
+        db.removeDocument(self.exist_path)
+        return super(Chunk, self).delete(*args, **kwargs)
 
 
 class PublicationChange(models.Model):
@@ -534,8 +577,8 @@ class DeletionChange(models.Model):
 if getattr(settings, 'LEXICOGRAPHY_LOCK_EXPIRY') is None:
     raise ImproperlyConfigured('LEXICOGRAPHY_LOCK_EXPIRY not set')
 
-LEXICOGRAPHY_LOCK_EXPIRY = \
-    datetime.timedelta(hours=settings.LEXICOGRAPHY_LOCK_EXPIRY)
+LEXICOGRAPHY_LOCK_EXPIRY = datetime.timedelta(
+    hours=settings.LEXICOGRAPHY_LOCK_EXPIRY)
 
 
 class EntryLock(models.Model):

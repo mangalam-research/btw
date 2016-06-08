@@ -12,7 +12,7 @@ from StringIO import StringIO
 import lxml.etree
 
 
-def parse_search_results(data):
+def parse_search_results(data):  # pylint: disable=too-many-locals
     """
     Parses the results obtained from the
     :class:`lexicography.SearchTable` view. This is a view that
@@ -42,7 +42,7 @@ def parse_search_results(data):
 
     ret = {}
     for row in rows:
-        assert len(row) == 6, "unexpected row length"
+        assert len(row) == 7, "unexpected row length"
         cell = row[0]
         tree = lxml.etree.parse(StringIO(cell), parser)
         els = tree.xpath("//a")
@@ -53,8 +53,8 @@ def parse_search_results(data):
             view_link = els[1]
             edit_link = els[0]
         else:
-            raise ValueError("unexpected number of links in first cell: "
-                             + str(len(els)))
+            raise ValueError("unexpected number of links in first cell: " +
+                             str(len(els)))
 
         cell = row[1]
         tree = lxml.etree.parse(StringIO(cell), parser)
@@ -78,8 +78,8 @@ def parse_search_results(data):
         lemma = view_link.text
         hit = {
             # Must test with "is not None" to satisfy lxml.
-            "edit_url": edit_link.get("href") if edit_link is not None
-            else None,
+            "edit_url": (edit_link.get("href") if edit_link is not None
+                         else None),
             "view_url": view_link.get("href"),
             "publish_url":
             publish_link.get("href") if publish_link is not None else None,

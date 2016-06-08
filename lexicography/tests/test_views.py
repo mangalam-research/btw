@@ -42,6 +42,8 @@ class ViewsMixin(BaseCMSTestCase):
 
     def setUp(self):
         super(ViewsMixin, self).setUp()
+        # We must populate the eXist database.
+        Chunk.objects.sync_with_exist()
         translation.activate('en-us')
 
         self.foo = user_model.objects.get(username="foo")

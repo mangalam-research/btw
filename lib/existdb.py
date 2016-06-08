@@ -92,3 +92,10 @@ def query_iterator(db, xquery, **kwargs):
     finally:
         if session is not None and release:
             db.query(release=session)
+
+def list_collection(db, path):
+    items = set()
+    for query_chunk in query_iterator(db, xquery.format("""\
+for $x in collection({path}) return document-uri($x)""", path=path)):
+        items |= set(str(value) for value in query_chunk.values)
+    return items
