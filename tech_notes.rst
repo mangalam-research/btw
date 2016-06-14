@@ -1661,6 +1661,63 @@ XQuery Update and XQuery Full Text provide.
 Overall, when we *are* ready to add an XML-based database to BTW this
 should be the choice.
 
+eXist-db vs lxml
+----------------
+
+It is difficult to quantify the speed difference between using
+``lxml`` to extract data from XML documents and using eXist-db. The
+tests conducted using the custom ``extract`` command (which extracts
+semantic fields from articles) did not show much difference in
+speed. Mind you, this test is one which does not actually take full
+advantage of eXist-db. The query made is pretty simple (get all
+``btw:sf`` elements from the documents) so there is not much
+optimization that eXist-db can perform on the query. It is likely that
+more sophisticated queries would operate faster with eXist-db than
+custom ``lxml`` code.
+
+Backend Transformations
+=======================
+
+We checked how fast it would be to apply the transformations performed
+by ``btw_view.js`` to an article in the backend (server-side). For
+these tests we converted the prasada article 10 times. The Chrome and
+Phantom tests were conducted by contacting a tornado server that
+started Chrome or Phantom and passed the data to them and retrieved it
+back. See the notes under the Saxon test to see how it differs.
+
+Chrome 51:
+
+real    0m6.173s
+user    0m0.080s
+sys     0m0.020s
+
+PhantomJS 2.1.1
+
+real    0m3.399s
+user    0m0.068s
+sys     0m0.032s
+
+Saxon 9.4.0.4 with an XSL 2 transform:
+
+real    0m6.241s
+user    0m14.260s
+sys     0m0.780s
+
+The Saxon test is really an underestimate of the cost of running an
+XLST 2 transform because the transform used was the xml-to-html
+transform which does almost nothing. None of the reordering and
+processing of semantic fields, for instance was done. Moreover this
+was done with a bash script whereas the 2 earlier tests were done with
+a Tornado server receiving queries on a Unix socket. So the cost of
+processing the queries is not accounted for in this test.
+
+I may actually be possible to improve this by having saxon be a
+service rather than restarting it for every iteration. The time spent
+compiling the stylesheet would be saved. However, there is no ready
+way to test this. And the stylesheet is super simple so the time saved
+is not great. Even halving the time would make it similar to Phantom
+in performance.
+
 Backup System Choice for BTW
 ============================
 
