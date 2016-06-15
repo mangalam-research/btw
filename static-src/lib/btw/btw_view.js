@@ -3,58 +3,57 @@
  * @desc Code for viewing documents edited by btw-mode.
  * @author Louis-Dominique Dubeau
  */
+define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
+                                                                    exports,
+                                                                    _module) {
+  "use strict";
 
-define(/** @lends module:wed/modes/btw/btw_view */
-    function (require, exports, module) {
-'use strict';
-
-var convert = require("wed/convert");
-var TreeUpdater = require("wed/tree_updater").TreeUpdater;
-var util = require("wed/util");
-var domutil = require("wed/domutil");
-var oop = require("wed/oop");
-var dloc = require("wed/dloc");
-var SimpleEventEmitter =
+  var convert = require("wed/convert");
+  var TreeUpdater = require("wed/tree_updater").TreeUpdater;
+  var util = require("wed/util");
+  var domutil = require("wed/domutil");
+  var oop = require("wed/oop");
+  var dloc = require("wed/dloc");
+  var SimpleEventEmitter =
         require("wed/lib/simple_event_emitter").SimpleEventEmitter;
-var Conditioned = require("wed/lib/conditioned").Conditioned;
-var transformation = require("wed/transformation");
-var btw_meta = require("./btw_meta");
-var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
-var btw_refmans = require("./btw_refmans");
-var DispatchMixin = require("./btw_dispatch").DispatchMixin;
-var id_manager = require("./id_manager");
-var name_resolver = require("salve/name_resolver");
-var $ = require("jquery");
-var _ = require("lodash");
-var btw_util = require("./btw_util");
+  var Conditioned = require("wed/lib/conditioned").Conditioned;
+  var transformation = require("wed/transformation");
+  var btwMeta = require("./btw_meta");
+  var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
+  var btwRefmans = require("./btw_refmans");
+  var DispatchMixin = require("./btw_dispatch").DispatchMixin;
+  var idManager = require("./id_manager");
+  var nameResolver = require("salve/name_resolver");
+  var $ = require("jquery");
+  var _ = require("lodash");
+  var btwUtil = require("./btw_util");
 
-var _slice = Array.prototype.slice;
-var _indexOf = Array.prototype.indexOf;
-var closest = domutil.closest;
+  var _slice = Array.prototype.slice;
+  var closest = domutil.closest;
 
-/**
- * @param {Element} root The element of ``wed-document`` class that is
- * meant to hold the viewed document.
- * @param {string} edit_url The url through which the document may be
- * edited.
- * @param {string} fetch_url The url through which the document may be
- * fetched for displaying. If set, it is a URL from which to get the
- * XML, and ``data`` is ignored.
- * @param {string} data The document, as XML.
- * @param {string} bibl_data The bibliographical data. This is a
- * mapping of targets (i.e. the targets given to the ``ref`` tags that
- * point to bibliographical items) to dictionaries that contain the
- * same values those returned as when asking the server to resolve
- * these targets individually. This mapping must be
- * complete. Otherwise, it is an internal error.
- * @param {string} language_prefix The language prefix currently used
- * in URLs. Django will prefix URLs with something like "/en-us" when
- * the user is using the American English setup. It could be inferable
- * from the URLs passed in other parameter or from the URL of the
- * currrent page but it is preferable to get an actual value than try
- * to guess it.
- */
-function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
+  /**
+   * @param {Element} root The element of ``wed-document`` class that is
+   * meant to hold the viewed document.
+   * @param {string} editUrl The url through which the document may be
+   * edited.
+   * @param {string} fetchUrl The url through which the document may be
+   * fetched for displaying. If set, it is a URL from which to get the
+   * XML, and ``data`` is ignored.
+   * @param {string} data The document, as XML.
+   * @param {string} biblData The bibliographical data. This is a
+   * mapping of targets (i.e. the targets given to the ``ref`` tags that
+   * point to bibliographical items) to dictionaries that contain the
+   * same values those returned as when asking the server to resolve
+   * these targets individually. This mapping must be
+   * complete. Otherwise, it is an internal error.
+   * @param {string} languagePrefix The language prefix currently used
+   * in URLs. Django will prefix URLs with something like "/en-us" when
+   * the user is using the American English setup. It could be inferable
+   * from the URLs passed in other parameter or from the URL of the
+   * currrent page but it is preferable to get an actual value than try
+   * to guess it.
+   */
+  function Viewer(root, editUrl, fetchUrl, data, biblData, languagePrefix) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
@@ -63,15 +62,15 @@ function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
     this._root = root;
     this._doc = doc;
     this._win = win;
-    this._refmans = new btw_refmans.WholeDocumentManager();
-    this._meta = new btw_meta.Meta();
+    this._refmans = new btwRefmans.WholeDocumentManager();
+    this._meta = new btwMeta.Meta();
     this._load_timeout = 30000;
-    this._language_prefix = language_prefix;
+    this._language_prefix = languagePrefix;
 
-    this._resolver = new name_resolver.NameResolver();
+    this._resolver = new nameResolver.NameResolver();
     var mappings = this._meta.getNamespaceMappings();
-    Object.keys(mappings).forEach(function (key) {
-        this._resolver.definePrefix(key, mappings[key]);
+    Object.keys(mappings).forEach(function definePrefix(key) {
+      this._resolver.definePrefix(key, mappings[key]);
     }.bind(this));
 
     //
@@ -79,47 +78,49 @@ function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
     // which is shared with btw_decorator.
     //
     this._editor = {
-        toDataNode: function (node) { return node; }
+      toDataNode: function toDataNode(node) {
+        return node;
+      },
     };
 
     this._mode = {
-        nodesAroundEditableContents: function (el) {
-            return [null, null];
-        }
+      nodesAroundEditableContents: function nodesAroundEditableContents(_el) {
+        return [null, null];
+      },
     };
 
-    this._sense_subsense_id_manager = new id_manager.IDManager("S.");
-    this._example_id_manager = new id_manager.IDManager("E.");
+    this._sense_subsense_id_manager = new idManager.IDManager("S.");
+    this._example_id_manager = new idManager.IDManager("E.");
 
-    this._sense_tooltip_selector =
-        "btw:english-term-list>btw:english-term";
+    this._sense_tooltip_selector = "btw:english-term-list>btw:english-term";
 
-    var collapse = btw_util.makeCollapsible(doc, "default",
+    var collapse = btwUtil.makeCollapsible(doc, "default",
                                             "toolbar-heading",
                                             "toolbar-collapse", {
-                                                group: "horizontal"
+                                              group: "horizontal",
                                             });
     var frame = doc.getElementsByClassName("wed-frame")[0];
-    collapse.heading.innerHTML = "<span class='fa fa-bars' style='width: 0.4em; overflow: hidden'></span>";
+    collapse.heading.innerHTML =
+      "<span class='fa fa-bars' style='width: 0.4em; overflow: hidden'></span>";
 
-    var buttons = '<span>';
-    if (edit_url) {
-        buttons += _.template(
-'<a class="btw-edit-btn btn btn-default" title="Edit"\
-      href="<%= edit_url %>"><i class="fa fa-fw fa-pencil-square-o"></i>\
-  </a>')({ edit_url: edit_url });
+    var buttons = "<span>";
+    if (editUrl) {
+      buttons += _.template(
+        "<a class='btw-edit-btn btn btn-default' title='Edit'\
+      href='<%= editUrl %>'><i class='fa fa-fw fa-pencil-square-o'></i>\
+  </a>")({ editUrl: editUrl });
     }
     buttons +=
-'<a class="btw-expand-all-btn btn btn-default" title="Expand All" href="#">\
-        <i class="fa fa-fw fa-caret-down"></i></a>\
-<a class="btw-collapse-all-btn btn btn-default" title="Collapse All" \
-    href="#">\
-        <i class="fa fa-fw fa-caret-right"></i></a></span>';
+      "<a class='btw-expand-all-btn btn btn-default' title='Expand All' href='#'>\
+        <i class='fa fa-fw fa-caret-down'></i></a>\
+<a class='btw-collapse-all-btn btn btn-default' title='Collapse All' \
+    href='#'>\
+        <i class='fa fa-fw fa-caret-right'></i></a></span>";
 
     collapse.content.innerHTML = buttons;
 
     // Make it so that it floats above everything else.
-    collapse.group.style.position = 'fixed';
+    collapse.group.style.position = "fixed";
     collapse.group.style.zIndex = "10";
 
     // This is necessary so that it collapses horizontally.
@@ -127,243 +128,246 @@ function Viewer(root, edit_url, fetch_url, data, bibl_data, language_prefix) {
 
     frame.insertBefore(collapse.group, frame.firstChild);
 
-    var expand_all = collapse.content
-            .getElementsByClassName("btw-expand-all-btn")[0];
-    $(expand_all).on('click', function (ev) {
-        var to_open = doc.querySelectorAll(
-            ".wed-document .collapse:not(.in)");
-        $(to_open).collapse('show');
-        $(collapse.content.parentNode).collapse('hide');
-        ev.preventDefault();
+    var expandAll = collapse.content
+          .getElementsByClassName("btw-expand-all-btn")[0];
+    $(expandAll).on("click", function clickHandler(ev) {
+      var toOpen = doc.querySelectorAll(".wed-document .collapse:not(.in)");
+      $(toOpen).collapse("show");
+      $(collapse.content.parentNode).collapse("hide");
+      ev.preventDefault();
     });
 
-    var collapse_all = collapse.content
-            .getElementsByClassName("btw-collapse-all-btn")[0];
-    $(collapse_all).on('click', function (ev) {
-        var to_close = doc.querySelectorAll(".wed-document .collapse.in");
-        $(to_close).collapse('hide');
-        $(collapse.content.parentNode).collapse('hide');
-        ev.preventDefault();
+    var collapseAll = collapse.content
+          .getElementsByClassName("btw-collapse-all-btn")[0];
+    $(collapseAll).on("click", function clickHandler(ev) {
+      var toClose = doc.querySelectorAll(".wed-document .collapse.in");
+      $(toClose).collapse("hide");
+      $(collapse.content.parentNode).collapse("hide");
+      ev.preventDefault();
     });
 
-    // If we are passed a fetch_url, then we have to fetch the
+    // If we are passed a fetchUrl, then we have to fetch the
     // data from the site.
-    if (fetch_url) {
-        // Show the loading alert.
-        var loading = document.querySelector(".wed-document>.loading");
-        loading.style.display = '';
-        var start = Date.now();
-        var fetch = function () {
-            $.ajax({
-                url: fetch_url,
-                headers: {
-                    Accept: "application/json"
-                }
-            })
-                .done(function (data) {
-                    this.processData(data.xml, data.bibl_data);
-                }.bind(this))
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status === 404) {
-                        if (Date.now() - start > this._load_timeout) {
-                            this.failedLoading(
-                                loading,
-                                "The server has not sent the required " +
-                                "data within a reasonable time frame.");
-                        }
-                        else
-                            window.setTimeout(fetch, 200);
-                    }
-                    else
-                        this.failedLoading(loading);
-                }.bind(this));
-        }.bind(this);
-        fetch();
+    if (fetchUrl) {
+      // Show the loading alert.
+      var loading = document.querySelector(".wed-document>.loading");
+      loading.style.display = "";
+      var start = Date.now();
+      var fetch = function _fetch() {
+        $.ajax({
+          url: fetchUrl,
+          headers: {
+            Accept: "application/json",
+          },
+        })
+          .done(function done(ajaxData) {
+            this.processData(ajaxData.xml, ajaxData.bibl_data);
+          }.bind(this))
+          .fail(function fail(jqXHR, textStatus, _errorThrown) {
+            if (jqXHR.status === 404) {
+              if (Date.now() - start > this._load_timeout) {
+                this.failedLoading(
+                  loading,
+                  "The server has not sent the required " +
+                    "data within a reasonable time frame.");
+              }
+              else {
+                window.setTimeout(fetch, 200);
+              }
+            }
+            else {
+              this.failedLoading(loading);
+            }
+          }.bind(this));
+      }.bind(this);
+      fetch();
     }
-    else
-        this.processData(data, bibl_data);
-}
+    else {
+      this.processData(data, biblData);
+    }
+  }
 
-Viewer.prototype.failedLoading = function (loading, msg) {
+  Viewer.prototype.failedLoading = function failedLoading(loading, msg) {
     loading.classList.remove("alert-info");
     loading.classList.add("alert-danger");
     loading.innerHTML = msg || "Cannot load the document.";
     this._setCondition("done", this);
-};
+  };
 
-Viewer.prototype.processData = function (data, bibl_data) {
-    this._bibl_data = bibl_data;
+  Viewer.prototype.processData = function processData(data, biblData) {
+    this._bibl_data = biblData;
 
     var doc = this._doc;
     var win = this._win;
     var root = this._root;
 
     // Clear the root.
-    root.innerHTML = '';
+    root.innerHTML = "";
 
 
     var parser = new doc.defaultView.DOMParser();
-    var data_doc = parser.parseFromString(data, "text/xml");
+    var dataDoc = parser.parseFromString(data, "text/xml");
 
-    root.appendChild(convert.toHTMLTree(doc, data_doc.firstChild));
+    root.appendChild(convert.toHTMLTree(doc, dataDoc.firstChild));
 
-    new dloc.DLocRoot(root);
-    var gui_updater = new TreeUpdater(root);
+    new dloc.DLocRoot(root); // eslint-disable-line no-new
+    var guiUpdater = new TreeUpdater(root);
 
-    this._data_doc = data_doc;
-    this._gui_updater = gui_updater;
+    this._data_doc = dataDoc;
+    this._gui_updater = guiUpdater;
 
-    var heading_map = {
-        "btw:overview": "• OVERVIEW",
-        "btw:sense-discrimination": "• SENSE DISCRIMINATION",
-        "btw:historico-semantical-data": "• HISTORICO-SEMANTICAL DATA",
-        "btw:credits": "• CREDITS"
+    var headingMap = {
+      "btw:overview": "• OVERVIEW",
+      "btw:sense-discrimination": "• SENSE DISCRIMINATION",
+      "btw:historico-semantical-data": "• HISTORICO-SEMANTICAL DATA",
+      "btw:credits": "• CREDITS",
     };
 
     // Override the head specs with those required for
     // viewing.
     this._heading_decorator = new HeadingDecorator(
-        this._refmans, gui_updater,
-        heading_map, false /* implied_brackets */);
+      this._refmans, guiUpdater,
+      headingMap, false /* implied_brackets */);
 
-    this._heading_decorator.addSpec({selector: "btw:definition",
-                                     heading: null});
-    this._heading_decorator.addSpec({selector: "btw:english-rendition",
-                                     heading: null});
-    this._heading_decorator.addSpec({selector: "btw:english-renditions",
-                                     heading: null});
-    this._heading_decorator.addSpec({selector: "btw:semantic-fields",
-                                     heading: null});
-    this._heading_decorator.addSpec(
-    {
-        selector: "btw:sense",
-        heading: "",
-        label_f: this._refmans.getSenseLabelForHead.bind(this._refmans),
-        suffix: "."
+    this._heading_decorator.addSpec({ selector: "btw:definition",
+                                     heading: null });
+    this._heading_decorator.addSpec({ selector: "btw:english-rendition",
+                                     heading: null });
+    this._heading_decorator.addSpec({ selector: "btw:english-renditions",
+                                     heading: null });
+    this._heading_decorator.addSpec({ selector: "btw:semantic-fields",
+                                     heading: null });
+    this._heading_decorator.addSpec({
+      selector: "btw:sense",
+      heading: "",
+      label_f: this._refmans.getSenseLabelForHead.bind(this._refmans),
+      suffix: ".",
     });
-    this._heading_decorator.addSpec(
-        {selector: "btw:sense>btw:explanation",
-         heading: null});
-    this._heading_decorator.addSpec(
-        {selector: "btw:subsense>btw:explanation",
-         heading: null});
-    this._heading_decorator.addSpec(
-        {selector: "btw:english-renditions>btw:semantic-fields-collection",
-         heading: "semantic fields",
-         collapse: {
-             kind: "default",
-             additional_classes: "sf-collapse"
-         }
-        });
+    this._heading_decorator.addSpec({ selector: "btw:sense>btw:explanation",
+                                      heading: null });
+    this._heading_decorator.addSpec({ selector: "btw:subsense>btw:explanation",
+                                      heading: null });
+    this._heading_decorator.addSpec({
+      selector: "btw:english-renditions>btw:semantic-fields-collection",
+      heading: "semantic fields",
+      collapse: {
+        kind: "default",
+        additional_classes: "sf-collapse",
+      },
+    });
 
     this._heading_decorator.addSpec({
-        selector: "btw:contrastive-section",
-        heading: "contrastive section",
-        collapse: "default"
+      selector: "btw:contrastive-section",
+      heading: "contrastive section",
+      collapse: "default",
     });
     this._heading_decorator.addSpec({
-        selector: "btw:antonyms",
-        heading: "antonyms",
-        collapse: "default"
+      selector: "btw:antonyms",
+      heading: "antonyms",
+      collapse: "default",
     });
     this._heading_decorator.addSpec({
-        selector: "btw:cognates",
-        heading: "cognates",
-        collapse: "default"
+      selector: "btw:cognates",
+      heading: "cognates",
+      collapse: "default",
     });
     this._heading_decorator.addSpec({
-        selector: "btw:conceptual-proximates",
-        heading: "conceptual proximates",
-        collapse: "default"
+      selector: "btw:conceptual-proximates",
+      heading: "conceptual proximates",
+      collapse: "default",
     });
 
+    this._heading_decorator.addSpec({
+      selector: "btw:cognate-term-list>btw:semantic-fields-collection",
+      heading: "semantic fields",
+      collapse: {
+        kind: "default",
+        additional_classes: "sf-collapse",
+      },
+    });
     this._heading_decorator.addSpec(
-        {selector: "btw:cognate-term-list>btw:semantic-fields-collection",
-         heading: "semantic fields",
-         collapse: {
-             kind: "default",
-             additional_classes: "sf-collapse"
-         }
-        });
-    this._heading_decorator.addSpec(
-        {selector: "btw:semantic-fields-collection>btw:semantic-fields",
-         heading: null});
-    this._heading_decorator.addSpec(
-        {selector: "btw:sense>btw:semantic-fields",
-         heading: "all semantic fields in the citations of this sense",
-         collapse: {
-             kind: "default",
-             additional_classes: "sf-collapse"
-         }
-        });
-    this._heading_decorator.addSpec(
-        {selector: "btw:overview>btw:semantic-fields",
-         heading: "all semantic fields",
-         collapse: {
-             kind: "default",
-             additional_classes: "sf-collapse"
-         }
-        });
-    this._heading_decorator.addSpec(
-        {selector: "btw:semantic-fields",
-         heading: "semantic fields",
-         collapse: {
-             kind: "default",
-             additional_classes: "sf-collapse"
-         }
-        });
+      { selector: "btw:semantic-fields-collection>btw:semantic-fields",
+        heading: null });
     this._heading_decorator.addSpec({
-        selector: "btw:subsense>btw:citations",
-        heading: null
+      selector: "btw:sense>btw:semantic-fields",
+      heading: "all semantic fields in the citations of this sense",
+      collapse: {
+        kind: "default",
+        additional_classes: "sf-collapse",
+      },
     });
     this._heading_decorator.addSpec({
-        selector: "btw:sense>btw:citations",
-        heading: null
+      selector: "btw:overview>btw:semantic-fields",
+      heading: "all semantic fields",
+      collapse: {
+        kind: "default",
+        additional_classes: "sf-collapse",
+      },
     });
     this._heading_decorator.addSpec({
-        selector: "btw:antonym>btw:citations",
-        heading: null
+      selector: "btw:semantic-fields",
+      heading: "semantic fields",
+      collapse: {
+        kind: "default",
+        additional_classes: "sf-collapse",
+      },
     });
     this._heading_decorator.addSpec({
-        selector: "btw:cognate>btw:citations",
-        heading: null
+      selector: "btw:subsense>btw:citations",
+      heading: null,
     });
     this._heading_decorator.addSpec({
-        selector: "btw:conceptual-proximate>btw:citations",
-        heading: null
+      selector: "btw:sense>btw:citations",
+      heading: null,
     });
     this._heading_decorator.addSpec({
-        selector: "btw:citations-collection>btw:citations",
-        heading: null
+      selector: "btw:antonym>btw:citations",
+      heading: null,
     });
     this._heading_decorator.addSpec({
-        selector: "btw:sense>btw:other-citations",
-        heading: "more citations",
-        collapse: "default"
+      selector: "btw:cognate>btw:citations",
+      heading: null,
     });
     this._heading_decorator.addSpec({
-        selector: "btw:other-citations",
-        heading: "more citations",
-        collapse: "default"
+      selector: "btw:conceptual-proximate>btw:citations",
+      heading: null,
+    });
+    this._heading_decorator.addSpec({
+      selector: "btw:citations-collection>btw:citations",
+      heading: null,
+    });
+    this._heading_decorator.addSpec({
+      selector: "btw:sense>btw:other-citations",
+      heading: "more citations",
+      collapse: "default",
+    });
+    this._heading_decorator.addSpec({
+      selector: "btw:other-citations",
+      heading: "more citations",
+      collapse: "default",
     });
 
-    var i, limit, id;
-    var senses_subsenses = root.querySelectorAll(domutil.toGUISelector(
-        "btw:sense, btw:subsense"));
-    for(i = 0, limit = senses_subsenses.length; i < limit; ++i) {
-        var s = senses_subsenses[i];
-        id = s.getAttribute(util.encodeAttrName("xml:id"));
-        if (id)
-            this._sense_subsense_id_manager.seen(id, true);
+    var i;
+    var limit;
+    var id;
+    var sensesSubsenses = root.querySelectorAll(domutil.toGUISelector(
+      "btw:sense, btw:subsense"));
+    for (i = 0, limit = sensesSubsenses.length; i < limit; ++i) {
+      var s = sensesSubsenses[i];
+      id = s.getAttribute(util.encodeAttrName("xml:id"));
+      if (id) {
+        this._sense_subsense_id_manager.seen(id, true);
+      }
     }
 
     var examples = root.querySelectorAll(domutil.toGUISelector(
-        "btw:example, btw:example-explained"));
-    for(i = 0, limit = examples.length; i < limit; ++i) {
-        var ex = examples[i];
-        id = ex.getAttribute(util.encodeAttrName("xml:id"));
-        if (id)
-            this._example_id_manager.seen(id, true);
+      "btw:example, btw:example-explained"));
+    for (i = 0, limit = examples.length; i < limit; ++i) {
+      var ex = examples[i];
+      id = ex.getAttribute(util.encodeAttrName("xml:id"));
+      if (id) {
+        this._example_id_manager.seen(id, true);
+      }
     }
 
     //
@@ -371,22 +375,29 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // btw_mode, these would be handled by triggers.
     //
     var senses = root.getElementsByClassName("btw:sense");
-    var sense;
-    for(i = 0, sense; (sense = senses[i]) !== undefined; ++i) {
-        this.idDecorator(root, sense);
-        this._heading_decorator.sectionHeadingDecorator(sense);
+    for (i = 0; i < senses.length; ++i) {
+      var sense = senses[i];
+      this.idDecorator(root, sense);
+      this._heading_decorator.sectionHeadingDecorator(sense);
     }
 
     var subsenses = root.getElementsByClassName("btw:subsense");
-    var subsense;
-    for(i = 0, subsense; (subsense = subsenses[i]) !== undefined; ++i) {
-        this.idDecorator(root, subsense);
-        var explanation = domutil.childByClass(subsense, "btw:explanantion");
-        if (explanation)
-            this.explanationDecorator(root, explanation);
+    for (i = 0; i < subsenses.length; ++i) {
+      var subsense = subsenses[i];
+      this.idDecorator(root, subsense);
+      var explanation = domutil.childByClass(subsense, "btw:explanantion");
+      if (explanation) {
+        this.explanationDecorator(root, explanation);
+      }
     }
 
-    var terms, term, div, t_ix, clone, html, sfs;
+    var terms;
+    var term;
+    var div;
+    var tIx;
+    var clone;
+    var html;
+    var sfs;
 
     //
     // We also need to perform the changes that are purely due to the
@@ -395,48 +406,54 @@ Viewer.prototype.processData = function (data, bibl_data) {
     //
 
     // Transform English renditions to the viewing format.
-    var english_renditions =
-            root.getElementsByClassName("btw:english-renditions");
-    var ers_el; // English renditions element
-    for (i = 0; (ers_el = english_renditions[i]) !== undefined; ++i) {
-        var first_er = domutil.childByClass(ers_el, "btw:english-rendition");
-        //
-        // Make a list of btw:english-terms that will appear at the
-        // start of the btw:english-renditions.
-        //
+    var englishRenditions =
+          root.getElementsByClassName("btw:english-renditions");
+    for (i = 0; i < englishRenditions.length; ++i) {
+      // English renditions element
+      var englishRenditionsEl = englishRenditions[i];
+      var firstEnglishRendition = domutil.childByClass(englishRenditionsEl,
+                                                       "btw:english-rendition");
+      //
+      // Make a list of btw:english-terms that will appear at the
+      // start of the btw:english-renditions.
+      //
 
-        // Slicing it prevents this list from growing as we add the clones.
-        terms = _slice.call(ers_el.getElementsByClassName("btw:english-term"));
-        div = doc.createElement("div");
-        div.classList.add("btw:english-term-list");
-        div.classList.add("_real");
-        for (t_ix = 0, term; (term = terms[t_ix]) !== undefined; ++t_ix) {
-            clone = term.cloneNode(true);
-            clone.classList.add("_inline");
-            div.appendChild(clone);
-            if (t_ix < terms.length - 1)
-                div.appendChild(doc.createTextNode(", "));
+      // Slicing it prevents this list from growing as we add the clones.
+      terms = _slice.call(
+        englishRenditionsEl.getElementsByClassName("btw:english-term"));
+      div = doc.createElement("div");
+      div.classList.add("btw:english-term-list");
+      div.classList.add("_real");
+      for (tIx = 0; tIx < terms.length; ++tIx) {
+        term = terms[tIx];
+        clone = term.cloneNode(true);
+        clone.classList.add("_inline");
+        div.appendChild(clone);
+        if (tIx < terms.length - 1) {
+          div.appendChild(doc.createTextNode(", "));
         }
-        ers_el.insertBefore(div, first_er);
+      }
+      englishRenditionsEl.insertBefore(div, firstEnglishRendition);
 
-        //
-        // Combine the contents of all btw:english-rendition into one
-        // btw:semantic-fields element
-        //
-        // Slicing to prevent changes to the list as we remove elements.
-        var ers = _slice.call(
-            ers_el.getElementsByClassName("btw:english-rendition"));
-        html = [];
-        for (var e_ix = 0, er; (er = ers[e_ix]) !== undefined; ++e_ix) {
-            html.push(er.innerHTML);
-            er.parentNode.removeChild(er);
-        }
-        sfs = doc.createElement("div");
-        sfs.classList.add("btw:semantic-fields-collection");
-        sfs.classList.add("_real");
-        sfs.innerHTML = html.join("");
-        ers_el.appendChild(sfs);
-        this._heading_decorator.sectionHeadingDecorator(sfs);
+      //
+      // Combine the contents of all btw:english-rendition into one
+      // btw:semantic-fields element
+      //
+      // Slicing to prevent changes to the list as we remove elements.
+      var ers = _slice.call(
+        englishRenditionsEl.getElementsByClassName("btw:english-rendition"));
+      html = [];
+      for (var eIx = 0; eIx < ers.length; ++eIx) {
+        var er = ers[eIx];
+        html.push(er.innerHTML);
+        er.parentNode.removeChild(er);
+      }
+      sfs = doc.createElement("div");
+      sfs.classList.add("btw:semantic-fields-collection");
+      sfs.classList.add("_real");
+      sfs.innerHTML = html.join("");
+      englishRenditionsEl.appendChild(sfs);
+      this._heading_decorator.sectionHeadingDecorator(sfs);
     }
 
     //
@@ -452,8 +469,8 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // itself.
     //
     domutil.linkTrees(root, root);
-    gui_updater.addEventListener("insertNodeAt", function (ev) {
-        domutil.linkTrees(ev.node, ev.node);
+    guiUpdater.addEventListener("insertNodeAt", function insertNodeAt(ev) {
+      domutil.linkTrees(ev.node, ev.node);
     });
 
     //
@@ -462,33 +479,35 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // here so id decorations need to be performed before anything
     // else is done so that when hyperlinks are decorated, everthing
     // is available for them to be decorated.
-    var with_ids = root.querySelectorAll("[" + util.encodeAttrName("xml:id") +
+    var withIds = root.querySelectorAll("[" + util.encodeAttrName("xml:id") +
                                          "]");
-    var with_id;
-    for(i = 0; (with_id = with_ids[i]) !== undefined; ++i)
-        this.idDecorator(root, with_id);
+    for (i = 0; i < withIds.length; ++i) {
+      var withId = withIds[i];
+      this.idDecorator(root, withId);
+    }
 
     // We unwrap the contents of all "resp" elements.
     var resps = root.getElementsByClassName("resp");
-    var resp;
     // As we process each element, it is removed from the live list
     // returned by getElementsByClassName.
-    while ((resp = resps[0])) {
-        var parent = resp.parentNode;
-        var child = resp.firstChild;
-        while (child) {
-            parent.insertBefore(child, resp);
-            child = resp.firstChild;
-        }
-        parent.removeChild(resp);
+    while (resps.length) {
+      var resp = resps[0];
+      var respParent = resp.parentNode;
+      var child = resp.firstChild;
+      while (child) {
+        respParent.insertBefore(child, resp);
+        child = resp.firstChild;
+      }
+      respParent.removeChild(resp);
     }
 
     // We want to process all ref elements earlier so that hyperlinks
     // to examples are created properly.
     var refs = root.getElementsByClassName("ref");
-    var ref;
-    for (i = 0; (ref = refs[i]); ++i)
-        this.process(root, ref);
+    for (i = 0; i < refs.length; ++i) {
+      var ref = refs[i];
+      this.process(root, ref);
+    }
 
     this.process(root, root.firstElementChild);
 
@@ -497,380 +516,397 @@ Viewer.prototype.processData = function (data, bibl_data) {
     // the has to jQuery as a CSS selector and jQuery silently fails
     // to find the object.
     var targets = root.querySelectorAll("[id]");
-    for (var target_ix = 0, target; (target = targets[target_ix]);
-        ++target_ix) {
-        target.id = target.id.replace(/\./g, "_");
+    for (var targetIx = 0; targetIx < targets.length; ++targetIx) {
+      var target = targets[targetIx];
+      target.id = target.id.replace(/\./g, "_");
     }
 
     var links = root.getElementsByTagName("a");
-    for (var link_ix = 0, link; (link = links[link_ix]); ++link_ix) {
-        if (link.attributes.href &&
-            link.attributes.href.value.lastIndexOf("#", 0) !== 0)
-            continue;
-        link.attributes.href.value =
-            link.attributes.href.value.replace(/\./g, "_");
+    for (var linkIx = 0; linkIx < links.length; ++linkIx) {
+      var link = links[linkIx];
+      if (link.attributes.href &&
+          link.attributes.href.value.lastIndexOf("#", 0) !== 0) {
+        continue;
+      }
+      link.attributes.href.value =
+        link.attributes.href.value.replace(/\./g, "_");
     }
 
     // Create the affix
     var affix = doc.getElementById("btw-article-affix");
-    var top_ul = affix.getElementsByTagName("ul")[0];
+    var topUl = affix.getElementsByTagName("ul")[0];
     var anchors = root.querySelectorAll(
-        domutil.toGUISelector("btw:subsense, .head"));
-    var ul_stack = [top_ul];
-    var container_stack = [];
-    var prev_container;
+      domutil.toGUISelector("btw:subsense, .head"));
+    var ulStack = [topUl];
+    var containerStack = [];
+    var prevContainer;
     var ul;
-    for (var anchor_ix = 0, anchor; (anchor = anchors[anchor_ix]); ++anchor_ix) {
-        if (prev_container && prev_container.contains(anchor)) {
-            container_stack.unshift(prev_container);
-            ul = doc.createElement("ul");
-            ul.className = "nav";
-            ul_stack[0].lastElementChild.appendChild(ul);
-            ul_stack.unshift(ul);
+    for (var anchorIx = 0; anchorIx < anchors.length; ++anchorIx) {
+      var anchor = anchors[anchorIx];
+      if (prevContainer && prevContainer.contains(anchor)) {
+        containerStack.unshift(prevContainer);
+        ul = doc.createElement("ul");
+        ul.className = "nav";
+        ulStack[0].lastElementChild.appendChild(ul);
+        ulStack.unshift(ul);
+      }
+      else {
+        while (containerStack[0] && !containerStack[0].contains(anchor)) {
+          containerStack.shift();
+          ulStack.shift();
         }
-        else {
-            while(container_stack[0] &&
-                  !container_stack[0].contains(anchor)) {
-                container_stack.shift();
-                ul_stack.shift();
-            }
-            if (ul_stack.length === 0)
-                ul_stack = [top_ul];
+        if (ulStack.length === 0) {
+          ulStack = [topUl];
         }
+      }
 
 
-        var orig = util.getOriginalName(anchor);
+      var orig = util.getOriginalName(anchor);
 
-        var heading;
-        switch(orig) {
-        case 'head':
-            heading = anchor.textContent.replace("•", "").trim();
-            // Special cases
-            var parent = anchor.parentNode;
-            var parent_orig = util.getOriginalName(parent);
-            switch(parent_orig) {
-            case 'btw:sense':
-                var terms = parent.querySelector(
-                    domutil.toGUISelector("btw:english-term-list"));
-                heading += " " + (terms ? terms.textContent : "");
-                break;
-            case 'btw:antonym-term-list':
-            case 'btw:cognate-term-list':
-            case 'btw:conceptual-proximate-term-list':
-                // We suppress these.
-                heading = '';
-                break;
-            }
-            prev_container = anchor.parentNode;
-            break;
-        case 'btw:subsense':
-            heading = anchor.getElementsByClassName("btw:explanation")[0]
-                .textContent;
-            prev_container = anchor;
-            break;
+      var heading;
+      switch (orig) {
+      case "head":
+        heading = anchor.textContent.replace("•", "").trim();
+        // Special cases
+        var parent = anchor.parentNode;
+        switch (util.getOriginalName(parent)) {
+        case "btw:sense":
+          terms = parent.querySelector(
+            domutil.toGUISelector("btw:english-term-list"));
+          heading += " " + (terms ? terms.textContent : "");
+          break;
+        case "btw:antonym-term-list":
+        case "btw:cognate-term-list":
+        case "btw:conceptual-proximate-term-list":
+          // We suppress these.
+          heading = "";
+          break;
         default:
-            throw new Error("unknown element type: " + orig);
+          break;
         }
+        prevContainer = anchor.parentNode;
+        break;
+      case "btw:subsense":
+        heading = anchor.getElementsByClassName("btw:explanation")[0]
+          .textContent;
+        prevContainer = anchor;
+        break;
+      default:
+        throw new Error("unknown element type: " + orig);
+      }
 
-        if (heading) {
-            var li = domutil.htmlToElements(
-                _.template(
-                    '<li><a href="#<%= target %>"><%= heading %></a></li>')
-                ({ target: anchor.id, heading: heading}), doc)[0];
-            ul_stack[0].appendChild(li);
-        }
+      if (heading) {
+        var li = domutil.htmlToElements(
+          _.template("<li><a href='#<%= target %>'><%= heading %></a></li>")(
+            { target: anchor.id, heading: heading }), doc)[0];
+        ulStack[0].appendChild(li);
+      }
     }
 
     $(affix).affix({
-        offset: {
-            top: 1,
-            bottom: 1
-        }
+      offset: {
+        top: 1,
+        bottom: 1,
+      },
     });
 
-    $(doc.body).scrollspy({target: "#btw-article-affix"});
+    $(doc.body).scrollspy({ target: "#btw-article-affix" });
 
-    var expandable_toggle = affix.querySelector(".expandable-heading .btn");
-    var $expandable_toggle = $(expandable_toggle);
-    var affix_constrainer = domutil.closest(affix, "div");
-    var affix_overflow = affix.getElementsByClassName("overflow")[0];
+    var expandableToggle = affix.querySelector(".expandable-heading .btn");
+    var $expandableToggle = $(expandableToggle);
+    var affixConstrainer = domutil.closest(affix, "div");
+    var affixOverflow = affix.getElementsByClassName("overflow")[0];
     var $affix = $(affix);
 
     var frame = doc.getElementsByClassName("wed-frame")[0];
     function expandHandler(ev) {
-        if (affix.classList.contains("expanding"))
-            return;
+      if (affix.classList.contains("expanding")) {
+        return;
+      }
 
-        var frame_rect = frame.getBoundingClientRect();
-        var constrainer_rect = affix_constrainer.getBoundingClientRect();
+      var frameRect = frame.getBoundingClientRect();
+      var constrainerRect = affixConstrainer.getBoundingClientRect();
 
-        if (!affix.classList.contains("expanded")) {
-            affix.classList.add("expanding");
-            affix.style.left = constrainer_rect.left + "px";
-            affix.style.width = affix_constrainer.offsetWidth + "px";
-            $affix.animate({
-                left: frame_rect.left,
-                width: frame_rect.width
-            }, 1000, function () {
-                affix.classList.remove("expanding");
-                affix.classList.add("expanded");
-            });
-        }
-        else {
-            var constrainer_style =
-                    window.getComputedStyle(affix_constrainer);
-            $affix.animate({
-                left: constrainer_rect.left +
-                    parseInt(constrainer_style.paddingLeft, 10),
-                width: $(affix_constrainer).innerWidth() -
-                    parseInt(constrainer_style.paddingLeft, 10)
-            }, 1000, function () {
-                affix.style.left = "";
-                affix.style.top = "";
-                affix.classList.remove("expanded");
-            });
-        }
-        ev.stopPropagation();
+      if (!affix.classList.contains("expanded")) {
+        affix.classList.add("expanding");
+        affix.style.left = constrainerRect.left + "px";
+        affix.style.width = affixConstrainer.offsetWidth + "px";
+        $affix.animate({
+          left: frameRect.left,
+          width: frameRect.width,
+        }, 1000, function done() {
+          affix.classList.remove("expanding");
+          affix.classList.add("expanded");
+        });
+      }
+      else {
+        var constrainerStyle = window.getComputedStyle(affixConstrainer);
+        $affix.animate({
+          left: constrainerRect.left +
+            parseInt(constrainerStyle.paddingLeft, 10),
+          width: $(affixConstrainer).innerWidth() -
+            parseInt(constrainerStyle.paddingLeft, 10),
+        }, 1000, function done() {
+          affix.style.left = "";
+          affix.style.top = "";
+          affix.classList.remove("expanded");
+        });
+      }
+      ev.stopPropagation();
     }
 
     var container = doc.getElementsByClassName("container")[0];
     function resizeHandler() {
-        $expandable_toggle.off("click");
-        $affix.off("click");
-        var container_rect = container.getBoundingClientRect();
-        var constrainer_rect = affix_constrainer.getBoundingClientRect();
-        if (constrainer_rect.width < container_rect.width / 4) {
-            $expandable_toggle.on("click", expandHandler);
-            $affix.on("click", "a", expandHandler);
-            affix.classList.add("expandable");
-        }
-        else {
-            affix.classList.remove("expanded");
-            affix.classList.remove("expanding");
-            affix.classList.remove("expandable");
-            affix.style.left = "";
-        }
+      $expandableToggle.off("click");
+      $affix.off("click");
+      var containerRect = container.getBoundingClientRect();
+      var constrainerRect = affixConstrainer.getBoundingClientRect();
+      if (constrainerRect.width < containerRect.width / 4) {
+        $expandableToggle.on("click", expandHandler);
+        $affix.on("click", "a", expandHandler);
+        affix.classList.add("expandable");
+      }
+      else {
+        affix.classList.remove("expanded");
+        affix.classList.remove("expanding");
+        affix.classList.remove("expandable");
+        affix.style.left = "";
+      }
 
-        var style = window.getComputedStyle(affix);
-        var constrainer_style =
-                window.getComputedStyle(affix_constrainer);
-        if (affix.classList.contains("expanded")) {
-            var frame_rect = frame.getBoundingClientRect();
-            affix.style.width = frame_rect.width + "px";
-            affix.style.left = frame_rect.left + "px";
-        }
-        else {
-            // This prevents the affix from popping wider when we scroll
-            // the window. Because a "detached" affix has "position:
-            // fixed", it is taken out of the flow and thus its "width" is
-            // no longer constrained by its parent.
+      var style = window.getComputedStyle(affix);
+      var constrainerStyle = window.getComputedStyle(affixConstrainer);
+      if (affix.classList.contains("expanded")) {
+        var frameRect = frame.getBoundingClientRect();
+        affix.style.width = frameRect.width + "px";
+        affix.style.left = frameRect.left + "px";
+      }
+      else {
+        // This prevents the affix from popping wider when we scroll
+        // the window. Because a "detached" affix has "position:
+        // fixed", it is taken out of the flow and thus its "width" is
+        // no longer constrained by its parent.
 
-            affix.style.width = $(affix_constrainer).innerWidth() -
-                parseInt(constrainer_style.paddingLeft, 10) + "px";
-        }
-        var rect = affix_overflow.getBoundingClientRect();
-        affix_overflow.style.height =
-            (window.innerHeight - rect.top -
-             parseInt(style.marginBottom, 10) - 5) + "px";
+        affix.style.width = $(affixConstrainer).innerWidth() -
+          parseInt(constrainerStyle.paddingLeft, 10) + "px";
+      }
+      var rect = affixOverflow.getBoundingClientRect();
+      affixOverflow.style.height =
+        (window.innerHeight - rect.top -
+         parseInt(style.marginBottom, 10) - 5) + "px";
     }
     win.addEventListener("resize", resizeHandler);
     win.addEventListener("scroll", resizeHandler);
     resizeHandler();
 
-    $(doc.body).on("activate.bs.scrollspy", function (ev) {
-        // Scroll the affix if needed.
-        var actives = affix.querySelectorAll(".active>a");
-        var affix_rect = affix_overflow.getBoundingClientRect();
-        for (var i = 0, active; (active = actives[i]); ++i) {
-            if (active.getElementsByClassName("active").length)
-                continue;
-            var active_rect = active.getBoundingClientRect();
-            affix_overflow.scrollTop = Math.floor(active_rect.top - affix_rect.top);
+    $(doc.body).on("activate.bs.scrollspy", function activateScrollSpy(_ev) {
+      // Scroll the affix if needed.
+      var actives = affix.querySelectorAll(".active>a");
+      var affixRect = affixOverflow.getBoundingClientRect();
+      for (i = 0; i < actives.length; ++i) {
+        var active = actives[i];
+        if (active.getElementsByClassName("active").length) {
+          continue;
         }
+        var activeRect = active.getBoundingClientRect();
+        affixOverflow.scrollTop = Math.floor(activeRect.top - affixRect.top);
+      }
     });
 
 
-    function showTarget() {
-        var hash = win.location.hash;
-        if (!hash)
-            return;
-
-        var target = doc.getElementById(hash.slice(1));
-        if (!target)
-            return;
-
-        var parents = [];
-        var parent = closest(target, ".collapse:not(.in)");
-        while (parent) {
-            parents.unshift(parent);
-            parent = parent.parentNode;
-            parent = parent && closest(parent, ".collapse:not(.in)");
-        }
-
-        function next(parent) {
-            var $parent = $(parent);
-            $parent.one('shown.bs.collapse', function () {
-                if (parents.length) {
-                    next(parents.shift());
-                    return;
-                }
-                // We get here only once all sections have been expanded.
-                target.scrollIntoView(true);
-            });
-            $parent.collapse('show');
-        }
-        if (parents.length)
-            next(parents.shift());
-        else
-            target.scrollIntoView(true);
-    }
-    win.addEventListener('popstate', showTarget);
+    var bound = this._showTarget.bind(this);
+    win.addEventListener("popstate", bound);
     // This also catches hitting the Enter key on a link.
-    $(root).on('click', 'a[href]:not([data-toggle], [href="#"])',
-               function (ev) {
-        setTimeout(showTarget, 0);
-    });
-    showTarget();
+    $(root).on("click", "a[href]:not([data-toggle], [href='#'])",
+               function click() {
+                 setTimeout(bound, 0);
+               });
+    this._showTarget();
 
     this._setCondition("done", this);
-}
+  };
 
-oop.implement(Viewer, DispatchMixin);
-oop.implement(Viewer, SimpleEventEmitter);
-oop.implement(Viewer, Conditioned);
+  oop.implement(Viewer, DispatchMixin);
+  oop.implement(Viewer, SimpleEventEmitter);
+  oop.implement(Viewer, Conditioned);
 
-Viewer.prototype.process = function (root, el) {
+  Viewer.prototype._showTarget = function _showTarget() {
+    var hash = this._win.location.hash;
+    if (!hash) {
+      return;
+    }
+
+    var target = this._doc.getElementById(hash.slice(1));
+    if (!target) {
+      return;
+    }
+
+    var parents = [];
+    var parent = closest(target, ".collapse:not(.in)");
+    while (parent) {
+      parents.unshift(parent);
+      parent = parent.parentNode;
+      parent = parent && closest(parent, ".collapse:not(.in)");
+    }
+
+    function next(level) {
+      var $level = $(level);
+      $level.one("shown.bs.collapse", function shown() {
+        if (parents.length) {
+          next(parents.shift());
+          return;
+        }
+        // We get here only once all sections have been expanded.
+        target.scrollIntoView(true);
+      });
+      $level.collapse("show");
+    }
+
+    if (parents.length) {
+      next(parents.shift());
+    }
+    else {
+      target.scrollIntoView(true);
+    }
+  };
+
+  Viewer.prototype.process = function process(root, el) {
     this.dispatch(root, el);
     el.classList.remove("_phantom");
 
     // Process the children...
     var children = el.children;
-    for(var i = 0, limit = children.length; i < limit; ++i)
-        this.process(root, children[i]);
-};
-
-Viewer.prototype.listDecorator = function (el, sep) {
-    // If sep is a string, create an appropriate div.
-    var sep_node;
-    if (typeof sep === "string") {
-        sep_node = el.ownerDocument.createTextNode(sep);
+    for (var i = 0, limit = children.length; i < limit; ++i) {
+      this.process(root, children[i]);
     }
-    else
-        sep_node = sep;
+  };
+
+  Viewer.prototype.listDecorator = function listDecorator(el, sep) {
+    // If sep is a string, create an appropriate div.
+    var sepNode;
+    if (typeof sep === "string") {
+      sepNode = el.ownerDocument.createTextNode(sep);
+    }
+    else {
+      sepNode = sep;
+    }
 
     var first = true;
     var child = el.firstElementChild;
-    while(child) {
-        if (child.classList.contains("_real")) {
-            if (!first)
-                this._gui_updater.insertBefore(el, sep_node.cloneNode(true),
-                                               child);
-            else
-                first = false;
+    while (child) {
+      if (child.classList.contains("_real")) {
+        if (!first) {
+          this._gui_updater.insertBefore(el, sepNode.cloneNode(true), child);
         }
-        child = child.nextElementSibling;
+        else {
+          first = false;
+        }
+      }
+      child = child.nextElementSibling;
     }
-};
+  };
 
-Viewer.prototype.languageDecorator = function () {
-};
+  Viewer.prototype.languageDecorator = function languageDecorator() {
+  };
 
-Viewer.prototype.noneDecorator = function () {
-};
+  Viewer.prototype.noneDecorator = function noneDecorator() {
+  };
 
-Viewer.prototype.elementDecorator = function (root, el) {
+  Viewer.prototype.elementDecorator = function elementDecorator(root, el) {
     var name = util.getOriginalName(el);
 
-    switch(name) {
+    switch (name) {
     case "persName":
-        this.persNameDecorator(root, el);
-        break;
+      this.persNameDecorator(root, el);
+      break;
     case "editor":
-        this.editorDecorator(root, el);
-        break;
+      this.editorDecorator(root, el);
+      break;
+    default:
     }
-};
+  };
 
-function prependLabel(name, text, el, dec) {
+  function prependLabel(name, text, el, dec) {
     var class_ = "_" + name + "_label";
     var label = domutil.childByClass(el, class_);
     if (!label) {
-        label = el.ownerDocument.createElement("div");
-        label.className = "_text _phantom " + class_;
-        label.textContent = text;
-        dec._gui_updater.insertBefore(el, label, el.firstChild);
+      label = el.ownerDocument.createElement("div");
+      label.className = "_text _phantom " + class_;
+      label.textContent = text;
+      dec._gui_updater.insertBefore(el, label, el.firstChild);
     }
-}
+  }
 
-Viewer.prototype.editorDecorator = function (root, el) {
+  Viewer.prototype.editorDecorator = function editorDecorator(root, el) {
     prependLabel("editor", "Editor: ", el, this);
-};
+  };
 
-Viewer.prototype.persNameDecorator = function (root, el) {
+  Viewer.prototype.persNameDecorator = function persNameDecorator(root, el) {
     var dec = this;
     el.classList.add("_inline");
 
     function handleSeparator(class_, where, text) {
-        var separator_class = "_" + class_ + "_separator";
-        var child = domutil.childByClass(el, class_);
-        var exists = child && child.childNodes.length;
-        var old_separator = domutil.childByClass(el,
-                                                 separator_class);
+      var separatorClass = "_" + class_ + "_separator";
+      var child = domutil.childByClass(el, class_);
+      var exists = child && child.childNodes.length;
+      var oldSeparator = domutil.childByClass(el, separatorClass);
 
-        if (exists) {
-            if (!old_separator) {
-                var separator = el.ownerDocument.createElement("div");
-                separator.className = "_text _phantom " + separator_class;
-                separator.textContent = text;
-                var before;
-                switch(where) {
-                case "after":
-                    before = child.nextSibling;
-                    break;
-                case "before":
-                    before = child;
-                    break;
-                default:
-                    throw new Error("unknown value for where: " + where);
-                }
-                dec._gui_updater.insertBefore(el, separator, before);
-            }
+      if (exists) {
+        if (!oldSeparator) {
+          var separator = el.ownerDocument.createElement("div");
+          separator.className = "_text _phantom " + separatorClass;
+          separator.textContent = text;
+          var before;
+          switch (where) {
+          case "after":
+            before = child.nextSibling;
+            break;
+          case "before":
+            before = child;
+            break;
+          default:
+            throw new Error("unknown value for where: " + where);
+          }
+          dec._gui_updater.insertBefore(el, separator, before);
         }
-        else if (old_separator)
-            dec._gui_updater.removeNode(old_separator);
+      }
+      else if (oldSeparator) {
+        dec._gui_updater.removeNode(oldSeparator);
+      }
     }
 
     handleSeparator("forename", "after", " ");
     handleSeparator("genName", "before", ", ");
 
-    var name_separator_class = "_persNamename_separator";
-    var old_name_separator = domutil.childByClass(el, name_separator_class);
+    var nameSeparatorClass = "_persNamename_separator";
+    var oldNameSeparator = domutil.childByClass(el, nameSeparatorClass);
 
-    if (!old_name_separator) {
-        var separator = el.ownerDocument.createElement("div");
-        separator.className = "_text _phantom " + name_separator_class;
-        separator.textContent = " ";
-        dec._gui_updater.insertBefore(el, separator, el.firstChild);
+    if (!oldNameSeparator) {
+      var separator = el.ownerDocument.createElement("div");
+      separator.className = "_text _phantom " + nameSeparatorClass;
+      separator.textContent = " ";
+      dec._gui_updater.insertBefore(el, separator, el.firstChild);
     }
-};
+  };
 
 
-Viewer.prototype._transformContrastiveItems = function(root, name) {
-    // A "group" here is an element that combines a bunch of elements
-    // of the same kind: btw:antonyms is a group of btw:antonym,
-    // btw:cognates is a group of btw:cognates, etc. The elements of
-    // the same kind are called "items" later in this code.
+  Viewer.prototype._transformContrastiveItems =
+    function _transformContrastiveItems(root, name) {
+      // A "group" here is an element that combines a bunch of elements
+      // of the same kind: btw:antonyms is a group of btw:antonym,
+      // btw:cognates is a group of btw:cognates, etc. The elements of
+      // the same kind are called "items" later in this code.
 
-    var group_class = "btw:" + name + "s";
-    var doc = root.ownerDocument;
-    // groups are those elements that act as containers (btw:cognates,
-    // btw:antonyms, etc.)
-    var groups = _slice.call(root.getElementsByClassName(group_class));
-    for(var i = 0, group; (group = groups[i]) !== undefined; ++i) {
+      var groupClass = "btw:" + name + "s";
+      var doc = root.ownerDocument;
+      // groups are those elements that act as containers (btw:cognates,
+      // btw:antonyms, etc.)
+      var groups = _slice.call(root.getElementsByClassName(groupClass));
+      for (var i = 0; i < groups.length; ++i) {
+        var group = groups[i];
         if (group.getElementsByClassName("btw:none").length) {
-            // The group is empty. Remove the group and move on.
-            group.parentNode.removeChild(group);
-            continue;
+          // The group is empty. Remove the group and move on.
+          group.parentNode.removeChild(group);
+          continue;
         }
 
         // This div will contain the list of all terms in the group.
@@ -889,32 +925,33 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         // loop: 1) adds each wrapper to the .btw:...-term-list. and
         // b) replaces each term with a clone of the wrapper.
         var wrappers = [];
-        for (var t_ix = 0, term; (term = terms[t_ix]) !== undefined; ++t_ix) {
-            var clone = term.cloneNode(true);
-            clone.classList.add("_inline");
-            var wrapper = doc.createElement("div");
-            wrapper.classList.add("btw:" + name + "-term-item");
-            wrapper.classList.add("_real");
-            wrapper.textContent = name.replace("-", " ") + " " +
-                (t_ix + 1) + ": ";
-            wrapper.appendChild(clone);
-            div.appendChild(wrapper);
+        for (var tIx = 0; tIx < terms.length; ++tIx) {
+          var term = terms[tIx];
+          var clone = term.cloneNode(true);
+          clone.classList.add("_inline");
+          var termWrapper = doc.createElement("div");
+          termWrapper.classList.add("btw:" + name + "-term-item");
+          termWrapper.classList.add("_real");
+          termWrapper.textContent = name.replace("-", " ") + " " +
+            (tIx + 1) + ": ";
+          termWrapper.appendChild(clone);
+          div.appendChild(termWrapper);
 
-            var parent = term.parentNode;
+          var parent = term.parentNode;
 
-            // This effectively replaces the term element in
-            // btw:antonym, btw:cognate, etc. with an element that
-            // contains the "name i: " prefix.
-            parent.insertBefore(wrapper.cloneNode(true), term);
-            parent.removeChild(term);
-            wrappers.push(wrapper);
+          // This effectively replaces the term element in
+          // btw:antonym, btw:cognate, etc. with an element that
+          // contains the "name i: " prefix.
+          parent.insertBefore(termWrapper.cloneNode(true), term);
+          parent.removeChild(term);
+          wrappers.push(termWrapper);
         }
 
-        var first_term = group.querySelector(".btw\\:" + name);
-        group.insertBefore(div, first_term);
+        var firstTerm = group.querySelector(".btw\\:" + name);
+        group.insertBefore(div, firstTerm);
         var hr = document.createElement("hr");
         hr.className = "hr _phantom";
-        group.insertBefore(hr, first_term);
+        group.insertBefore(hr, firstTerm);
 
         //
         // Combine the contents of all of the items into one
@@ -923,13 +960,14 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         // Slicing to prevent changes to the list as we remove elements.
         var items = _slice.call(group.getElementsByClassName("btw:" + name));
         var html = [];
-        for (var a_ix = 0, item; (item = items[a_ix]) !== undefined; ++a_ix) {
-            // What we are doing here is pushing on html the contents
-            // of a btw:antonym, btw:cognate, etc. element. At this
-            // point, that's only btw:citations elements plus
-            // btw:...-term-item elements.
-            html.push(item.outerHTML);
-            item.parentNode.removeChild(item);
+        for (var aIx = 0; aIx < items.length; ++aIx) {
+          var item = items[aIx];
+          // What we are doing here is pushing on html the contents
+          // of a btw:antonym, btw:cognate, etc. element. At this
+          // point, that's only btw:citations elements plus
+          // btw:...-term-item elements.
+          html.push(item.outerHTML);
+          item.parentNode.removeChild(item);
         }
         var coll = this.makeElement("btw:citations-collection");
         coll.innerHTML = html.join("");
@@ -940,110 +978,115 @@ Viewer.prototype._transformContrastiveItems = function(root, name) {
         // the list of terms.
         //
         if (name === "cognate") {
-            var cognates = coll.getElementsByClassName("btw:cognate");
-            for (var cognate_ix = 0, cognate; (cognate = cognates[cognate_ix]);
-                 ++cognate_ix) {
-                // We get only the first one, which is the one that
-                // contains the combined semantic fields for the whole
-                // cognate.
-                var sfss = cognate.getElementsByClassName(
-                    "btw:semantic-fields")[0];
-                var wrapper = wrappers[cognate_ix];
-                wrapper.parentNode.insertBefore(sfss, wrapper.nextSibling);
-            }
+          var cognates = coll.getElementsByClassName("btw:cognate");
+          for (var cognateIx = 0; cognateIx < cognates.length; ++cognateIx) {
+            var cognate = cognates[cognateIx];
+            // We get only the first one, which is the one that
+            // contains the combined semantic fields for the whole
+            // cognate.
+            var sfss = cognate.getElementsByClassName(
+              "btw:semantic-fields")[0];
+            var wrapper = wrappers[cognateIx];
+            wrapper.parentNode.insertBefore(sfss, wrapper.nextSibling);
+          }
         }
-    }
-};
+      }
+    };
 
-Viewer.prototype.fetchAndFillBiblData = function (target_id, el, abbr) {
-    var data = this._bibl_data[target_id];
-    if (!data)
+  Viewer.prototype.fetchAndFillBiblData =
+    function fetchAndFillBiblData(targetId, el, abbr) {
+      var data = this._bibl_data[targetId];
+      if (!data) {
         throw new Error("missing bibliographical data");
-    this.fillBiblData(el, abbr, data);
-};
+      }
+      this.fillBiblData(el, abbr, data);
+    };
 
-Viewer.prototype.refDecorator = function (root, el) {
-    var orig_target = el.getAttribute(util.encodeAttrName("target"));
-    if (!orig_target)
-        orig_target = "";
-
-    orig_target = orig_target.trim();
-
-    var bibl_prefix = "/bibliography/";
-    var entry_prefix = this._language_prefix + "/lexicography/entry/";
-    var a, child;
-    if (orig_target.lastIndexOf(bibl_prefix, 0) === 0) {
-        // We want to remove any possible a element before we give
-        // control to the overriden function.
-        a = domutil.childByClass(el, 'a');
-        if (a) {
-            child = a.firstChild;
-            while (child) {
-                el.insertBefore(child, a);
-                child = a.firstChild;
-            }
-            el.removeChild(a);
-        }
-
-        DispatchMixin.prototype.refDecorator.call(this, root, el);
-
-        // Bibliographical reference...
-        var target_id = orig_target;
-
-        var data = this._bibl_data[target_id];
-        if (!data)
-            throw new Error("missing bibliographical data");
-
-        // We also want a hyperlink into the Zotero library.
-        a = el.ownerDocument.createElement("a");
-        a.className = "a _phantom_wrap";
-        // When the item is a secondary source, ``zotero_url`` is at the
-        // top level. If it is a secondary source, ``zotero_url`` is
-        // inside the ``item`` field.
-        a.href = (data.zotero_url ?
-                  data.zotero_url : data.item.zotero_url);
-        a.setAttribute("target", "_blank");
-
-        child = el.firstChild;
-        el.appendChild(a);
-        while (child && child !== a) {
-            a.appendChild(child);
-            child = el.firstChild;
-        }
+  Viewer.prototype.refDecorator = function refDecorator(root, el) {
+    var origTarget = el.getAttribute(util.encodeAttrName("target"));
+    if (!origTarget) {
+      origTarget = "";
     }
-    else if (orig_target.lastIndexOf(entry_prefix, 0) === 0) {
-        a = domutil.childByClass(el, 'a');
-        if (a) {
-            child = a.firstChild;
-            while (child) {
-                el.insertBefore(child, a);
-                child = a.firstChild;
-            }
-            el.removeChild(a);
+
+    origTarget = origTarget.trim();
+
+    var biblPrefix = "/bibliography/";
+    var entryPrefix = this._language_prefix + "/lexicography/entry/";
+    var a;
+    var child;
+    if (origTarget.lastIndexOf(biblPrefix, 0) === 0) {
+      // We want to remove any possible a element before we give
+      // control to the overriden function.
+      a = domutil.childByClass(el, "a");
+      if (a) {
+        child = a.firstChild;
+        while (child) {
+          el.insertBefore(child, a);
+          child = a.firstChild;
         }
+        el.removeChild(a);
+      }
 
-        a = el.ownerDocument.createElement("a");
-        a.className = "a _phantom_wrap";
-        a.href = orig_target;
-        a.setAttribute("target", "_blank");
+      DispatchMixin.prototype.refDecorator.call(this, root, el);
 
+      // Bibliographical reference...
+      var targetId = origTarget;
+
+      var data = this._bibl_data[targetId];
+      if (!data) {
+        throw new Error("missing bibliographical data");
+      }
+
+      // We also want a hyperlink into the Zotero library.
+      a = el.ownerDocument.createElement("a");
+      a.className = "a _phantom_wrap";
+      // When the item is a secondary source, ``zotero_url`` is at the
+      // top level. If it is a secondary source, ``zotero_url`` is
+      // inside the ``item`` field.
+      a.href = (data.zotero_url ?
+                data.zotero_url : data.item.zotero_url);
+      a.setAttribute("target", "_blank");
+
+      child = el.firstChild;
+      el.appendChild(a);
+      while (child && child !== a) {
+        a.appendChild(child);
         child = el.firstChild;
-        el.appendChild(a);
-        while (child && child !== a) {
-            a.appendChild(child);
-            child = el.firstChild;
-        }
+      }
     }
-    else
-        DispatchMixin.prototype.refDecorator.call(this, root, el);
-};
+    else if (origTarget.lastIndexOf(entryPrefix, 0) === 0) {
+      a = domutil.childByClass(el, "a");
+      if (a) {
+        child = a.firstChild;
+        while (child) {
+          el.insertBefore(child, a);
+          child = a.firstChild;
+        }
+        el.removeChild(a);
+      }
 
-Viewer.prototype.makeElement = function (name, attrs) {
+      a = el.ownerDocument.createElement("a");
+      a.className = "a _phantom_wrap";
+      a.href = origTarget;
+      a.setAttribute("target", "_blank");
+
+      child = el.firstChild;
+      el.appendChild(a);
+      while (child && child !== a) {
+        a.appendChild(child);
+        child = el.firstChild;
+      }
+    }
+    else {
+      DispatchMixin.prototype.refDecorator.call(this, root, el);
+    }
+  };
+
+  Viewer.prototype.makeElement = function makeElement(name, attrs) {
     var ename = this._resolver.resolveName(name);
     var e = transformation.makeElement(this._data_doc, ename.ns, name, attrs);
     return convert.toHTMLTree(this._doc, e);
-};
+  };
 
-return Viewer;
-
+  return Viewer;
 });
