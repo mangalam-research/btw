@@ -27,6 +27,8 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
   var $ = require("jquery");
   var _ = require("lodash");
   var btwUtil = require("./btw_util");
+  var ajax = require("ajax").ajax;
+  var bluejax = require("bluejax");
 
   var _slice = Array.prototype.slice;
   var closest = domutil.closest;
@@ -154,16 +156,16 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
       loading.style.display = "";
       var start = Date.now();
       var fetch = function _fetch() {
-        $.ajax({
+        ajax({
           url: fetchUrl,
           headers: {
             Accept: "application/json",
           },
-        })
-          .done(function done(ajaxData) {
-            this.processData(ajaxData.xml, ajaxData.bibl_data);
-          }.bind(this))
-          .fail(function fail(jqXHR, textStatus, _errorThrown) {
+        }).then(function then(ajaxData) {
+          this.processData(ajaxData.xml, ajaxData.bibl_data);
+        }.bind(this))
+          .catch(bluejax.HttpError, function error(err) {
+            var jqXHR = err.jqXHR;
             if (jqXHR.status === 404) {
               if (Date.now() - start > this._load_timeout) {
                 this.failedLoading(
@@ -176,8 +178,12 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
               }
             }
             else {
-              this.failedLoading(loading);
+              throw err;
             }
+          }.bind(this))
+          .catch(function done(err) {
+            this._setCondition("done", this);
+            throw err;
           }.bind(this));
       }.bind(this);
       fetch();

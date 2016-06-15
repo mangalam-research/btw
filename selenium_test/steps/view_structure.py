@@ -454,15 +454,17 @@ def step_impl(context, text):
 def step_impl(context, what):
     util = context.util
 
-    alert = util.wait(
-        EC.visibility_of_element_located((By.CSS_SELECTOR,
-                                          ".alert.alert-danger")))
-    msg = {
-        "loading": "Cannot load the document.",
-        "time out": "The server has not sent the required data within "
-        "a reasonable time frame."
-    }[what]
-    assert_equal(alert.text.strip(), msg)
+    if what == "loading":
+        # We don't care what the modal contains. We just want it to be up.
+        util.wait(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, "div.modal.btw-fatal-modal")))
+    elif what == "timeout":
+        alert = util.wait(
+            EC.visibility_of_element_located((By.CSS_SELECTOR,
+                                              ".alert.alert-danger")))
+        msg = ("The server has not sent the required data within "
+               "a reasonable time frame.")
+        assert_equal(alert.text.strip(), msg)
 
 
 @then(ur"there is (?P<exists>an|no) alert indicating the document "
