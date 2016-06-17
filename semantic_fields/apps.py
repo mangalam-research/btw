@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 
 class DefaultAppConfig(AppConfig):
     name = 'semantic_fields'
@@ -39,9 +40,15 @@ class DefaultAppConfig(AppConfig):
 
         user.add_to_class("can_add_semantic_fields", can_add_semantic_fields)
 
+        setattr(AnonymousUser, "can_add_semantic_fields",
+                can_add_semantic_fields)
+
         @property
         def can_change_semantic_fields(self):
             return self.has_perm("semantic_fields.change_semanticfield")
 
         user.add_to_class(
             "can_change_semantic_fields", can_change_semantic_fields)
+
+        setattr(AnonymousUser, "can_change_semantic_fields",
+                can_change_semantic_fields)

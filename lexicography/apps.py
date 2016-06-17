@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from . import usermod
 
 class DefaultAppConfig(AppConfig):
@@ -13,3 +14,5 @@ class DefaultAppConfig(AppConfig):
             return usermod.can_author(self)
 
         user.add_to_class("can_author", can_author)
+
+        setattr(AnonymousUser, "can_author", can_author)
