@@ -166,7 +166,7 @@ class ParsedExpression():
 
         self_copy = copy.copy(self)
         self_copy.specification = None
-        return [self_copy] + spec.specification_to_array()
+        return [self_copy] + spec.specification_to_list()
 
     @property
     def pos(self):
