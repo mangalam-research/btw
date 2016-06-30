@@ -1,17 +1,22 @@
 import urllib
-import itertools
+import json
+import mock
 
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django_webtest import WebTest, TransactionWebTest
 from django.utils import translation
+from django.conf import settings
+from django_webtest import WebTest, TransactionWebTest
 
 from cms.test_utils.testcases import BaseCMSTestCase
 
+from .util import MinimalQuery, FakeChangeRecord
 from ..models import SemanticField, SearchWord, Lexeme
+from ..serializers import SemanticFieldSerializer
+from lib import util
 
 user_model = get_user_model()
 
@@ -40,7 +45,8 @@ class _Mixin(object):
 
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
-class ViewsTestCase(BaseCMSTestCase, _Mixin, WebTest):
+class ViewsTestCase(BaseCMSTestCase, _Mixin, util.DisableMigrationsMixin,
+                    WebTest):
 
     @classmethod
     def setUpTestData(cls):
@@ -48,7 +54,9 @@ class ViewsTestCase(BaseCMSTestCase, _Mixin, WebTest):
         super(ViewsTestCase, cls).setUpTestData()
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
-class ViewsTransactionTestCase(BaseCMSTestCase, _Mixin, TransactionWebTest):
+class ViewsTransactionTestCase(BaseCMSTestCase, _Mixin,
+                               util.DisableMigrationsTransactionMixin,
+                               TransactionWebTest):
 
     def setUp(self):
         super(ViewsTransactionTestCase, self).setUp()
@@ -283,10 +291,9 @@ class DetailsTestCaseHTML(ViewsTestCase):
 
     def test_not_logged_in(self):
         """
-        Test that the response is 403 when the user is not logged in.
+        Test that users that are not logged in can access the page.
         """
-        response = self.app.get(self.hte.detail_url, expect_errors=True)
-        self.assertEqual(response.status_code, 403)
+        self.app.get(self.hte.detail_url)
 
     def query(self, url, user):
         return self.app.get(url,
@@ -452,23 +459,25 @@ class DetailsTestCaseJSON(ViewsTestCase):
 
     def test_not_logged_in(self):
         """
-        Test that the response is 403 when the user is not logged in.
+        Test that users that are not logged in can access the view.
         """
-        response = self.app.get(self.hte.detail_url, expect_errors=True)
-        self.assertEqual(response.status_code, 403)
+        self.app.get(self.hte.detail_url)
 
     def test_logged_in(self):
         """
         Test that a logged in user gets a response.
         """
         response = self.app.get(self.hte.detail_url, user=self.perm)
-        self.assertEqual(response.json,
-                         {
-                             "path": "01n",
-                             "heading": "hte",
-                             "parent": None
-                         },
-                         "the returned value should be correct")
+        self.assertEqual(
+            response.json,
+            {
+                "path": "01n",
+                "heading": "hte",
+                "parent": None,
+                "hte_url":
+                "http://historicalthesaurus.arts.gla.ac.uk/category/?id=1",
+            },
+            "the returned value should be correct")
 
 class _AjaxMixin(object):
 
@@ -948,3 +957,171 @@ def init():
             make(EditTestCase, test, accept)
 
 init()
+
+class ListTestCase(ViewsTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super(ListTestCase, cls).setUpTestData()
+        cls.url = reverse("semantic_fields_semanticfield-list")
+
+        cat1 = cls.cat1 = SemanticField(path="01n", heading="term")
+        cat1.save()
+
+        cat2 = cls.cat2 = SemanticField(path="02n", heading="aaaa", catid="1")
+        cat2.save()
+
+        cat3 = cls.cat3 = SemanticField(path="01.01n", heading="bwip",
+                                        parent=cat1)
+        cat3.save()
+
+    def test_not_logged_in_no_csrf_token(self):
+        """
+        A user who is not logged in and has no csrf token should fail to get.
+        """
+        response = self.app.get(self.url, headers={
+            "Accept": "application/json",
+        }, expect_errors=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_logged_in_no_csrf_token(self):
+        """
+        A user who is logged in but has no csrf token should fail to get.
+        """
+        response = self.app.get(self.url, headers={
+            "Accept": "application/json",
+        }, user=self.noperm, expect_errors=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_not_logged_in_with_csrf_token(self):
+        """
+        A user who is not logged in but has a csrf token should get without
+        problem.
+        """
+        # We simulate what happens if a CSRF token has been set by
+        # Django in a previous request. We set the value to "foo" and
+        # set the header value to "foo" too, which is a match.
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.get(self.url,
+                     {"paths": "01n"},
+                     headers={
+                         "Accept": "application/json",
+                         "X-CSRFToken": "foo"
+                     })
+
+    def test_logged_in_with_csrf_token(self):
+        """
+        A user who is logged in and has a csrf token should get without
+        problem.
+        """
+        # We simulate what happens if a CSRF token has been set by
+        # Django in a previous request. We set the value to "foo" and
+        # set the header value to "foo" too, which is a match.
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.get(self.url,
+                     {"paths": "01n"},
+                     headers={
+                         "Accept": "application/json",
+                         "X-CSRFToken": "foo"
+                     }, user=self.noperm)
+
+    def test_bad_accept(self):
+        """
+        Accept with an incorrect value yields an error.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        response = self.app.get(self.url, headers={
+            "Accept": "text/html",
+            "X-CSRFToken": "foo"
+        }, expect_errors=True)
+        self.assertEqual(response.status_code, 406)
+
+    def test_no_paths(self):
+        """
+        A query without a ``paths`` parameter yields an error.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        response = self.app.get(self.url, headers={
+            "Accept": "application/json",
+            "X-CSRFToken": "foo"
+        }, expect_errors=True)
+        self.assertEqual(response.status_code, 400)
+
+    def test_paths(self):
+        """
+        A query with proper paths yields results.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        response = self.app.get(self.url,
+                                {"paths": "01.01n;02n;99n"},
+                                headers={
+                                    "Accept": "application/json",
+                                    "X-CSRFToken": "foo"
+                                })
+
+        serializer = SemanticFieldSerializer(
+            [self.cat2, self.cat3],
+            scope=SemanticFieldSerializer.DEFAULT_SCOPE,
+            unpublished=False,
+            many=True)
+        transformed = json.loads(json.dumps(serializer.data))
+        self.assertItemsEqual(response.json, transformed)
+
+    def test_expanded_scope(self):
+        """
+        A query with expanded scope yields results.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+
+        with mock.patch("semantic_fields.serializers.ChangeRecord"
+                        ".objects.with_semantic_field") as mocked:
+            mocked.return_value = MinimalQuery([
+                FakeChangeRecord(lemma="foo", url="/lexicography/foo",
+                                 datetime="2000-01-01", published=True)
+            ])
+            response = self.app.get(self.url,
+                                    {"paths": "01.01n;02n;99n",
+                                     "scope": "wide"},
+                                    headers={
+                                        "Accept": "application/json",
+                                        "X-CSRFToken": "foo"
+                                    })
+
+            serializer = SemanticFieldSerializer(
+                [self.cat2, self.cat3],
+                scope=SemanticFieldSerializer.WIDE_SCOPE,
+                unpublished=False,
+                many=True)
+            transformed = json.loads(json.dumps(serializer.data))
+            self.assertItemsEqual(response.json, transformed)
+
+    def test_complex_paths(self):
+        """
+        A query with complex paths yields the expected results.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+
+        response = self.app.get(self.url,
+                                {"paths": "01.01n@02n;01n@02n;02n"},
+                                headers={
+                                    "Accept": "application/json",
+                                    "X-CSRFToken": "foo"
+                                })
+
+        self.assertItemsEqual(response.json,
+                              [{
+                                  "path": "01.01n@02n",
+                                  "parent": None,
+                                  "hte_url": None,
+                                  "heading": "bwip @ aaaa"
+                              }, {
+                                  "path": "01n@02n",
+                                  "parent": None,
+                                  "hte_url": None,
+                                  "heading": "term @ aaaa"
+                              }, {
+                                  "path": "02n",
+                                  "parent": None,
+                                  "hte_url": self.cat2.hte_url,
+                                  "heading": "aaaa"
+                              }])

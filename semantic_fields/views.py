@@ -4,7 +4,10 @@ from django.template.loader import render_to_string
 from django.core.exceptions import PermissionDenied
 from django import forms
 from django.views.decorators.cache import never_cache
-from rest_framework import viewsets, mixins, renderers, parsers, permissions
+from django.middleware.csrf import CsrfViewMiddleware
+from django.http import HttpResponseBadRequest
+from rest_framework import viewsets, mixins, renderers, parsers, permissions, \
+    generics, filters
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
@@ -13,6 +16,7 @@ from rest_framework import serializers
 from .models import SemanticField
 from .serializers import SemanticFieldSerializer
 from .forms import SemanticFieldForm
+from .util import parse_local_references
 
 class SearchTable(BaseDatatableView):
     model = SemanticField
@@ -80,20 +84,59 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
+
+class SemanticFieldFilter(filters.BaseFilterBackend):
+
+    def filter_queryset(self, request, queryset, view):
+        paths = request.GET.get('paths', None)
+        ids = request.GET.get('ids', None)
+
+        if paths is not None:
+            queryset = queryset.filter(path__in=set(paths.split(";")))
+
+        if ids is not None:
+            queryset = queryset.filter(ids__in=set(ids.split(";")))
+
+        return queryset
+
+
+def make_specified_sf(path, fields):
+    """
+    Create a "fake" semantic field that is the product of a complex
+    semantic field expression.
+    """
+    return SemanticField(path=path,
+                         heading=" @ ".join(field["heading"] for field in
+                                            fields))
+
+
 RELATED_BY_POS = "related_by_pos"
 CHILD = "child"
 
+
 class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                            mixins.UpdateModelMixin,
+                           generics.ListAPIView,
                            viewsets.GenericViewSet):
     queryset = SemanticField.objects.all()
     serializer_class = SemanticFieldSerializer
     lookup_field = "pk"
 
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     renderer_classes = (
         renderers.JSONRenderer, SemanticFieldHTMLRenderer, FormRenderer)
     parser_classes = (parsers.FormParser, )
+    filter_backends = (SemanticFieldFilter, )
+
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+
+        scope = self.request.GET.get("scope",
+                                     SemanticFieldSerializer.DEFAULT_SCOPE)
+
+        kwargs["scope"] = scope
+        kwargs["unpublished"] = self.request.user.can_author
+        return serializer_class(*args, **kwargs)
 
     @never_cache
     def retrieve(self, request, *args, **kwargs):
@@ -102,6 +145,78 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         return super(SemanticFieldViewSet, self) \
             .retrieve(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        saved_method = request.method
+        request.method = "POST"
+        request.csrf_processing_done = False
+        reason = CsrfViewMiddleware().process_view(request, None, (), {})
+        request.method = saved_method
+
+        if reason:
+            return reason
+
+        # If not specified, we use the JSON renderer.
+        if request.META.get("HTTP_ACCEPT", None) is None:
+            request.accepted_renderer = renderers.JSONRenderer()
+
+        # And we can return only JSON.
+        if request.accepted_renderer.media_type != "application/json":
+            raise NotAcceptable
+
+        # We have to check that these are set *here* because there's
+        # nowhere else to check for them. The filter cannot do it.
+        paths = request.GET.get('paths', None)
+        ids = request.GET.get('ids', None)
+
+        if paths is None and ids is None:
+            return HttpResponseBadRequest("paths or ids must be specified")
+
+        complex_paths = set()
+        if paths is not None:
+            # This interface accepts queries on semantic field
+            # *expressions*. To perform such search, we split any
+            # expression in its constituent parts and pass that to the
+            # search. We then build "fake" semantic fields that we
+            # return.
+            paths = set(paths.split(";"))
+            cleaned = set()
+            for path in paths:
+                refs = parse_local_references(path)
+                cleaned |= set(unicode(ref) for ref in refs)
+                if len(refs) > 1:
+                    complex_paths.add(path)
+
+            if len(complex_paths) > 0:
+                request.GET = request.GET.copy()  # Make it mutable.
+                request.GET["paths"] = ";".join(cleaned)
+
+        ret = super(SemanticFieldViewSet, self).list(request, *args, **kwargs)
+
+        if len(complex_paths) > 0:
+            # The return value is a response to the modified `paths`
+            # we created. We need to modify it:
+            #
+            # a) to remove those semantic fields that are *only* the
+            # result of breaking down a complex expression, and
+            #
+            # b) to add the result of complex expressions.
+
+            # First, we add.
+            sf_by_path = {sf["path"]: sf for sf in ret.data}
+            for path in complex_paths:
+                refs = parse_local_references(path)
+                combined = self.get_serializer(
+                    make_specified_sf(path,
+                                      [sf_by_path[unicode(ref)] for ref in
+                                       refs]))
+                sf_by_path[path] = combined.data
+
+            # This filters out what we need to remove.
+            ret.data = [sf for path, sf in sf_by_path.iteritems()
+                        if path in paths]
+
+        return ret
 
     @detail_route(methods=['get'], url_path="edit-form")
     def edit_form(self, request, *args, **kwargs):
