@@ -4,6 +4,8 @@ from django.utils.html import mark_safe, escape
 
 from .util import parse_local_reference, POS_TO_VERBOSE, ParsedExpression, \
     POS_VALUES_EXPANDED
+from .signals import semantic_field_updated
+from lib.util import on_change
 
 def format_duplicate_error(uri, pos, heading):
     pos_description = "with pos '{0}'".format(pos) if pos != '' else \
@@ -318,6 +320,12 @@ class SemanticField(models.Model):
 
     def __unicode__(self):
         return self.heading + " " + self.path
+
+def emit_change_signal(instance):
+    semantic_field_updated.send(instance.__class__, instance=instance)
+
+# The only thing that may change is the heading.
+on_change(SemanticField, lambda sf: sf.heading, emit_change_signal)
 
 class Lexeme(models.Model):
 

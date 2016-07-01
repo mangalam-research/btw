@@ -2,12 +2,45 @@ import os
 
 import requests
 from django.conf import settings
-from eulexistdb.db import ExistDB
+import eulexistdb.db
 from eulexistdb import patch
 from eulexistdb.exceptions import ExistDBException
 from . import xquery
 
 patch.request_patching(patch.XMLRpcLibPatch)
+
+class ExistDB(eulexistdb.db.ExistDB):
+
+    def getDocument(self, name):
+        # This does pretty much what the default getDocument does
+        # but it adds the _indent=no parameter.
+        eulexistdb.db.logger.debug('getDocument %s' % self.restapi_path(name))
+        response = self.session.get(self.restapi_path(name), stream=False,
+                                    params={"_indent": "no"},
+                                    **self.session_opts)
+        if response.status_code == requests.codes.ok:
+            return response.content
+        if response.status_code == requests.codes.not_found:
+            raise ExistDBException('%s not found' % name)
+
+    # Note that there is no atomicity here. It would be possible for
+    # removeCollection to fail because the collection does not exist
+    # and then hasCollection to succeed because another process
+    # created the collection in-between.
+    def removeCollection(self, collection_name, ignore_nonexistent=False):
+        try:
+            return super(ExistDB, self).removeCollection(collection_name)
+        except ExistDBException:
+            if not ignore_nonexistent or self.hasCollection(collection_name):
+                raise
+
+    # See comment above regarding atomicity. It applies here too.
+    def removeDocument(self, name, ignore_nonexistent=False):
+        try:
+            return super(ExistDB, self).removeDocument(name)
+        except ExistDBException:
+            if not ignore_nonexistent or self.hasDocument(name):
+                raise
 
 def running():
     try:
@@ -25,8 +58,21 @@ def get_admin_db():
                    username=settings.BTW_EXISTDB_SERVER_ADMIN_USER,
                    password=settings.BTW_EXISTDB_SERVER_ADMIN_PASSWORD)
 
+def get_collection_path(what):
+    if what not in ("chunks", "display", None):
+        raise ValueError("unknown value for what: " + what)
+
+    if what is None:
+        return settings.EXISTDB_ROOT_COLLECTION
+
+    return "/".join([settings.EXISTDB_ROOT_COLLECTION, what])
+
+def get_path_for_chunk_hash(kind, c_hash):
+    return "/".join([get_collection_path(kind), c_hash])
+
+
 def get_chunk_collection_path():
-    return os.path.join(settings.EXISTDB_ROOT_COLLECTION, "chunks")
+    return get_collection_path("chunks")
 
 def is_lucene_query_clean(db, query):
     """

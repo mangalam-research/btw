@@ -37,5 +37,4 @@ class DependencyManager(object):
             return None
         return ret
 
-lemma = DependencyManager(u"lemma")
 bibl = DependencyManager(u"bibl")

@@ -1,16 +1,21 @@
 import hashlib
 import datetime
+import logging
 
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.core.cache import caches
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.db import transaction
-from eulexistdb.db import ExistDB
+from eulexistdb.exceptions import ExistDBException
 
 from lib import util
-from lib.existdb import get_chunk_collection_path, list_collection
+from lib import existdb
+from lib.existdb import get_collection_path, list_collection, \
+    query_iterator, get_path_for_chunk_hash, ExistDB
+from lib import xquery
 from . import usermod
 from . import xml
 from . import signals
@@ -18,6 +23,13 @@ from . import signals
 # loaded. Django 1.6 does not have a neat way to do this. We could
 # load caching in __init__.py but it has side-effects.
 from . import caching as _
+from .caching import make_display_key
+from semantic_fields.models import SemanticField
+
+cache = caches['article_display']
+
+logger = logging.getLogger("lexicography")
+
 
 class EntryManager(models.Manager):
 
@@ -45,7 +57,6 @@ class EntryManager(models.Manager):
         # An entry is inactive if the latest change record for it is a
         # deletion.
         return self.exclude(deleted=True)
-
 
 class Entry(models.Model):
     objects = EntryManager()
@@ -267,7 +278,22 @@ class Entry(models.Model):
         return True
 
 
+class ChangeRecordManager(models.Manager):
+
+    def with_semantic_field(self, sf, include_unpublished=False):
+        chunks = Chunk.objects.hashes_with_semantic_field(sf)
+        qs = self.filter(c_hash__in=chunks)
+        if not include_unpublished:
+            qs = qs.filter(published=True)
+
+        # Reduce it only to the set of change records that are for active
+        # entries.
+        qs = qs.filter(entry__in=Entry.objects.active_entries())
+
+        return qs
+
 class ChangeRecord(models.Model):
+    objects = ChangeRecordManager()
 
     CREATE = 'C'
     UPDATE = 'U'
@@ -368,25 +394,6 @@ class ChangeRecord(models.Model):
             return True
         return False
 
-    def article_display_key(self, published=None):
-        """
-        Retuns the key to be used in the article_display cache for this
-        ChangeRecord. The key is built from the publication status of
-        the record (which may be overriden) and from the hash of the
-        Chunk corresponding to the record. If it so happens that two
-        ChangeRecords share the same Chunk (which may happen) then
-        they will share the same pair of possible keys (published and
-        unpublished), which is what we want.
-
-        :param published: Override the publication status of this
-                          record for the sake of computing the key.
-        :type published: :class:`bool`
-        """
-        if published is None:
-            published = self.published
-
-        return "{0}_{1}".format(self.c_hash.c_hash, published)
-
     @property
     def schema_version(self):
         """
@@ -400,7 +407,6 @@ class ChangeRecord(models.Model):
     def __unicode__(self):
         return self.entry.lemma + " " + self.user.username + " " + \
             str(self.datetime)
-
 
 class ChunkManager(models.Manager):
 
@@ -442,12 +448,48 @@ class ChunkManager(models.Manager):
             chunk.sync_with_exist(db)
             present.add(chunk.c_hash)
 
-        chunk_collection_path = get_chunk_collection_path()
-        for path in list_collection(db, chunk_collection_path):
-            parts = path.split("/")
-            if parts[-1] not in present:
-                db.removeDocument(path)
+        self._remove_absent(db, present, get_collection_path("chunks"))
 
+    def prepare(self, kind, synchronous):
+        if kind != "xml":
+            raise ValueError("the manager only supports preparing XML data; "
+                             "future versions may support other kinds")
+
+        self.collect()
+        db = ExistDB()
+        present = set()
+        for chunk in self.filter(is_normal=True):
+            chunk.prepare("xml", synchronous)
+            present.add(chunk.c_hash)
+
+        self._remove_absent(db, present, get_collection_path("display"))
+
+    @staticmethod
+    def _remove_absent(db, present, collection_path):
+        for path in list_collection(db, collection_path):
+            base = path.rsplit("/", 1)[-1]
+            if base not in present:
+                db.removeDocument(path, True)
+
+    def hashes_with_semantic_field(self, sf):
+        """
+        Returns a set of chunk *hashes* that contain the semantic field
+        requested.
+        """
+        db = ExistDB()
+        chunks = set()
+
+        for query_chunk in query_iterator(db, xquery.format(
+                """\
+for $m in collection({db})//btw:sf[@ref = {path}]
+return util:document-name($m)""",
+                db=get_collection_path("display"),
+                path=sf)):
+
+            for result in query_chunk.values:
+                chunks.add(result)
+
+        return chunks
 
 class Chunk(models.Model):
     objects = ChunkManager()
@@ -479,6 +521,16 @@ class Chunk(models.Model):
         "<code>valid</code>."
     )
     data = models.TextField()
+
+    def __init__(self, *args, **kwargs):
+        super(Chunk, self).__init__(*args, **kwargs)
+        # We have to create new instances for each instance of Chunk.
+        self._prepare_xml_throttled = util.throttle(
+            settings.LEXICOGRAPHY_THROTTLING, "prepare xml",
+            logger)(self.prepare)
+        self._prepare_bibl_throttled = util.throttle(
+            settings.LEXICOGRAPHY_THROTTLING, "prepare bibl",
+            logger)(self.prepare)
 
     @property
     def valid(self):
@@ -513,10 +565,27 @@ class Chunk(models.Model):
         sha1.update(self.data.encode('utf-8'))
         self.c_hash = sha1.hexdigest()
 
+    def exist_path(self, kind):
+        return existdb.get_path_for_chunk_hash(kind, self.c_hash)
+
     @property
-    def exist_path(self):
-        chunk_collection_path = get_chunk_collection_path()
-        return "/".join([chunk_collection_path, self.c_hash])
+    def published(self):
+        """
+        Indicates whether this chunk is accessible from a published
+        ``ChangeRecord``. Note that chunks themselves are neither
+        published nor unpublished. A single chunk could *in theory*
+        belong to two different ``ChangeRecord`` objects: one
+        published and one unpublished.
+
+        Note that while this value can change over time, it does not
+        change the fact that the ``Chunk``s themselves are
+        immutable. This is a *property*, not a field of the ``Chunk``
+        objects.
+        """
+        return self.changerecord_set.filter(published=True).exists()
+
+    def display_key(self, kind):
+        return make_display_key(kind, self.pk)
 
     def sync_with_exist(self, db=None):
         # We do not put "abnormal" chunks in exist.
@@ -524,24 +593,93 @@ class Chunk(models.Model):
             return
 
         db = db or ExistDB()
-        data = self.data
-        if not db.load(data.encode("utf-8"), self.exist_path):
+        # Reminder: chunks are immutable. So if a chunk has been put
+        # in eXist already, then we do not want to reput that data. If
+        # we were to overwrite the data with the same value, it is not
+        # clear at all whether eXist would stupidly reindex the new
+        # data. We proactively avoid the situation.
+        path = self.exist_path("chunks")
+        if not db.hasDocument(path) and \
+           not db.load(self.data.encode("utf-8"), path):
             raise Exception("could not sync with eXist database")
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        self.sync_with_exist()
-        return super(Chunk, self).save(*args, **kwargs)
+    def prepare(self, kind, synchronous=False):
+        from .tasks import prepare_xml, prepare_bibl
 
-    def delete(self, *args, **kwargs):
-        # We were not saved in the first place. Remember that chunks
-        # are immutable. So a normal chunk cannot become abnormal, or
-        # vice-versa.
+        # We do not prepare abnormal chunks
         if not self.is_normal:
             return
 
-        db = ExistDB()
-        db.removeDocument(self.exist_path)
+        try:
+            task = {
+                "xml": prepare_xml,
+                "bibl": prepare_bibl
+            }[kind]
+        except KeyError:
+            raise ValueError("unknown kind: " + kind)
+
+        if synchronous:
+            return task(self.pk)
+
+        return task.delay(self.pk)
+
+    def _fetch_xml(self, kind):
+        from .tasks import fetch_xml
+        xml = fetch_xml(self.c_hash)
+        if xml:
+            return xml
+
+        return self._prepare_xml_throttled(kind)
+
+    def get_cached_value(self, kind):
+        key = self.display_key(kind)
+        data = cache.get(key)
+        if data is None:
+            logger.debug("%s is missing from article_display, launching task",
+                         key)
+            prepare_method = {
+                "xml": self._fetch_xml,
+                "bibl": self._prepare_bibl_throttled,
+            }[kind]
+            prepare_method(kind)
+            return None
+
+        if isinstance(data, dict) and 'task' in data:
+            logger.debug("%s is being computed by task %s", key,
+                         data["task"])
+            return None
+
+        return data
+
+    def get_display_data(self):
+        xml = self.get_cached_value("xml")
+        bibl = self.get_cached_value("bibl")
+        if not (xml is not None and bibl is not None):
+            return None
+
+        return {
+            "xml": xml,
+            "bibl_data": bibl
+        }
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        ret = super(Chunk, self).save(*args, **kwargs)
+        self.sync_with_exist()
+        self.prepare("xml")
+        return ret
+
+    def delete(self, *args, **kwargs):
+        if self.is_normal:
+            db = ExistDB()
+            db.removeDocument(self.exist_path("chunks"), True)
+            db.removeDocument(self.exist_path("display"), True)
+
+            cache.delete(self.c_hash)
+        # else:
+        # We were not saved there in the first place. Remember that chunks
+        # are immutable. So a normal chunk cannot become abnormal, or
+        # vice-versa.
         return super(Chunk, self).delete(*args, **kwargs)
 
 
@@ -559,6 +697,15 @@ class PublicationChange(models.Model):
                              on_delete=models.PROTECT)
     datetime = models.DateTimeField()
 
+
+class ChunkMetadata(models.Model):
+    chunk = models.OneToOneField(Chunk)
+    xml_hash = models.CharField(
+        max_length=40,
+        help_text="This is the hash of the last XML we processed for "
+        "this chunk."
+    )
+    semantic_fields = models.ManyToManyField(SemanticField)
 
 class DeletionChange(models.Model):
     DELETE = 'D'

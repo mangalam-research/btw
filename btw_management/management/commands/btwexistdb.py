@@ -11,8 +11,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from lib import existdb
 from lib.existdb import ExistDB
-from lib.existdb import get_admin_db, get_collection_path, get_display_path, \
-    running
+from lib.existdb import get_admin_db, get_collection_path, running
 
 from lexicography.models import Chunk, ChangeRecord
 
@@ -253,10 +252,10 @@ Manage the eXist server used by BTW.
 
         Chunk.objects.sync_with_exist()
 
-        display_path = get_display_path(existdb.PUBLISHED_OR_UNPUBLISHED)
+        display_path = get_collection_path("display")
         if db.hasCollection(display_path):
             db.removeCollection(display_path)
-        Chunk.objects.prepare(True)
+        Chunk.objects.prepare("xml", True)
 
     def loadindex(self, _options):
         """

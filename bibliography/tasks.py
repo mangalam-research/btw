@@ -30,7 +30,8 @@ def fetch_the_items(task, test=None):
         test = {}
 
     # There's another task running.
-    if not acquire_mutex(cache, FETCH_KEY, task.request.id, logger):
+    if task.request.id is not None and \
+       not acquire_mutex(cache, FETCH_KEY, task.request.id, logger):
         return
 
     # Simulate a task that mysteriously stops working after it has

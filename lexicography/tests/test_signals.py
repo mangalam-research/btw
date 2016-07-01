@@ -15,32 +15,12 @@ from ..models import Entry, ChangeRecord, Chunk
 from .. import xml
 from .util import launch_fetch_task, get_valid_document_data
 from lib.util import DisableMigrationsMixin
+from lib.testutil import SignalGrabber
 
 launch_fetch_task()
 
 dirname = os.path.dirname(__file__)
 user_model = get_user_model()
-
-class SignalGrabber(object):
-
-    def __init__(self, signals):
-        self.received = None
-        self.signals = signals
-
-    def __enter__(self):
-        self.received = {signal: [] for signal in self.signals}
-        for signal in self.signals:
-            signal.connect(self.handler)
-        return self
-
-    def handler(self, sender, **kwargs):
-        # Yes, we remove the "signal" key from kwargs.
-        signal = kwargs.pop("signal")
-        self.received[signal].append(kwargs)
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        for signal in self.signals:
-            signal.disconnect(self.handler)
 
 valid_editable = get_valid_document_data()
 xmltree = xml.XMLTree(valid_editable)

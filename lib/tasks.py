@@ -1,3 +1,18 @@
+from .util import utcnow
+
+TIMEOUT = 60
+
+class Falsy(object):
+
+    def __nonzero__(self):
+        return False
+
+    __bool__ = __nonzero__  # Python 3 compat.
+
+
+HELD = Falsy()
+SET = Falsy()
+
 def acquire_mutex(cache, key, task_id, logger):
     """
     Attempt acquiring a mutex from the cache. This relies on the cache
@@ -15,20 +30,30 @@ def acquire_mutex(cache, key, task_id, logger):
     :type task_id: :class:`str`
     :param logger: The logger on which to record failure.
     """
+    if task_id is None:
+        raise ValueError(
+            "task_id cannot be None; if your task is synchronous "
+            "please create a unique fake id")
 
     # We attempt to claim this key for ourselves. nx=True is a feature
     # of the Redis backend. The key will be atomically set if not yet
     # set. A return value of True means it was set.
-    ours = cache.set(key, {"task": task_id}, nx=True)
+    value = {"task": task_id, "datetime": utcnow()}
+    ours = cache.set(key, value, nx=True, timeout=TIMEOUT)
     if ours:
-        return True
+        return value
 
     prev = cache.get(key)
-    other = prev.get("task")
+    other = isinstance(prev, dict) and prev.get("task")
+
+    # We still own the mutex
+    if other is not None and other == task_id:
+        return prev
+
     if other:
         logger.debug("%s is held by %s; ending task.",
                      key, other)
-    else:
-        logger.debug("%s is set; ending task.", key)
+        return HELD
 
-    return False
+    logger.debug("%s is set; ending task.", key)
+    return SET

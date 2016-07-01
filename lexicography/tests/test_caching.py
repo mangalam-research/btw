@@ -135,45 +135,24 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
         ps.save()
 
     def _generic_article_available(self, entries, op, expect_data):
+        cache.clear()
         dep_keys = []
 
         for entry in entries:
             cr = entry.latest
-            tasks.prepare_changerecord_for_display.delay(cr.pk).get()
-            key = cr.article_display_key()
+            key = cr.c_hash.display_key("bibl")
+            tasks.prepare_bibl.delay(cr.c_hash.c_hash).get()
             dep_keys.append(key)
-            result = cache.get(key)
 
-            tree = lxml.etree.fromstring(result["xml"])
-            refs_by_term = extract_inter_article_links(tree)
-
-            expected = {
-                'foo': reverse("lexicography_entry_details", args=(2,)),
-                'abcd': reverse("lexicography_entry_details", args=(1,)),
-            }
-
-            if cr.lemma == u"prasāda copy":
-                expected[u"prasāda"] = Entry.objects.get(
-                    lemma=u"prasāda").get_absolute_url()
-
-            self.assertEqual(refs_by_term,
-                             expected,
-                             "the article should have the right links")
-
-            # Yes, we overwrite this with every iteration but it does
-            # not matter.
-            term = extract_unlinked_terms(tree)[0]
-
-        self.assertItemsEqual(depman.lemma.get(term), dep_keys)
         self.assertItemsEqual(
             depman.bibl.get(self.item.abstract_url), dep_keys)
         self.assertItemsEqual(depman.bibl.get(self.ps.abstract_url), dep_keys)
 
-        op(term)
+        op()
 
         for entry in entries:
             cr = entry.latest
-            result = cache.get(cr.article_display_key())
+            result = cache.get(entry.latest.c_hash.c_hash)
             if not expect_data:
                 self.assertIsNone(
                     result,
@@ -186,256 +165,6 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
                     (u"there should be information about "
                      u"article {0} in the article_display cache")
                     .format(entry.lemma))
-
-    def test_article_added(self):
-        """
-        Adding an article removes from the cache the articles
-        that depend on it.
-        """
-        self._create_bibl()
-
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        def op(term):
-            # An article is created for the term we've saved, which
-            # should trigger invalidation of the cache for the two
-            # entries.
-            new_entry = Entry()
-            new_entry.update(
-                orig.latest.user,
-                "q",
-                orig.latest.c_hash,
-                term,
-                ChangeRecord.CREATE,
-                ChangeRecord.MANUAL)
-
-            self.assertIsNone(
-                depman.lemma.get(term),
-                "there should no longer be any dependency "
-                "information regarding the term that has been "
-                "added")
-
-        self._generic_article_available(entries, op, False)
-
-    def test_article_undeleted(self):
-        """
-        Adding an article removes from the cache the articles
-        that depend on it.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        cr = orig.latest
-        tasks.prepare_changerecord_for_display.delay(cr.pk).get()
-        result = cache.get(cr.article_display_key())
-
-        tree = lxml.etree.fromstring(result["xml"])
-        term = extract_unlinked_terms(tree)[0]
-
-        new_entry = Entry()
-        new_entry.update(
-            orig.latest.user,
-            "q",
-            orig.latest.c_hash,
-            term,
-            ChangeRecord.CREATE,
-            ChangeRecord.MANUAL)
-        new_entry.mark_deleted(orig.latest.user)
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            new_entry.undelete(orig.latest.user)
-
-            self.assertIsNone(
-                depman.lemma.get(term),
-                "there should no longer be any dependency "
-                "information regarding the term that has been "
-                "added")
-
-        self._generic_article_available(entries, op, False)
-
-    def test_article_deleted(self):
-        """
-        Deleting an article removes from the cache the articles
-        that depend on it.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            foo = Entry.objects.get(lemma="foo")
-            foo.mark_deleted(orig.latest.user)
-
-            self.assertIsNone(
-                depman.lemma.get("foo"),
-                "there should no longer be any dependency "
-                "information regarding the term that has been "
-                "removed")
-
-        self._generic_article_available(entries, op, False)
-
-    def test_article_published(self):
-        """
-        Publishing an article removes from the cache the articles
-        that depend on it.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            foo = Entry.objects.get(lemma="foo")
-            foo.latest.c_hash._valid = True
-            foo.latest.c_hash.save()
-            self.assertTrue(foo.latest.publish(foo.latest.user))
-
-            self.assertIsNone(
-                depman.lemma.get("foo"),
-                "there should no longer be any dependency "
-                "information regarding the term that has been "
-                "published")
-
-        self._generic_article_available(entries, op, False)
-
-    def test_article_published_again(self):
-        """
-        Republishing an article does not from the cache the articles
-        that depend on it.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        foo = Entry.objects.get(lemma="foo")
-        foo.latest.c_hash._valid = True
-        foo.latest.c_hash.save()
-        self.assertTrue(foo.latest.publish(foo.latest.user))
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            foo = Entry.objects.get(lemma="foo")
-            foo.update(
-                orig.latest.user,
-                "q",
-                orig.latest.c_hash,
-                foo.lemma,
-                ChangeRecord.UPDATE,
-                ChangeRecord.MANUAL)
-            self.assertTrue(foo.latest.publish(foo.latest.user))
-            self.assertIsNotNone(
-                depman.lemma.get("foo"),
-                "there should be dependency "
-                "information regarding the term that has been "
-                "published")
-
-        self._generic_article_available(entries, op, True)
-
-    def test_article_unpublished(self):
-        """
-        Publishing an article removes from the cache the articles
-        that depend on it.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        foo = Entry.objects.get(lemma="foo")
-        foo.latest.c_hash._valid = True
-        foo.latest.c_hash.save()
-        self.assertTrue(foo.latest.publish(foo.latest.user))
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            foo = Entry.objects.get(lemma="foo")
-            self.assertTrue(foo.latest.unpublish(foo.latest.user))
-            self.assertIsNone(
-                depman.lemma.get("foo"),
-                "there should no longer be any dependency "
-                "information regarding the term that has been "
-                "published")
-
-        self._generic_article_available(entries, op, False)
-
-    def test_article_incomplete_unpublish(self):
-        """
-        Unpublishing a change record of an article does not from the cache
-        the articles that depend on it, when there is another change
-        record which *is* published.
-        """
-
-        self._create_bibl()
-        # We'll have two articles with the same dependencies.
-        orig = create_valid_article()
-        copy = copy_entry(orig)
-
-        entries = [orig, copy]
-
-        foo = Entry.objects.get(lemma="foo")
-        foo.latest.c_hash._valid = True
-        foo.latest.c_hash.save()
-        self.assertTrue(foo.latest.publish(foo.latest.user))
-
-        foo = Entry.objects.get(lemma="foo")
-        foo.update(
-            orig.latest.user,
-            "q",
-            orig.latest.c_hash,
-            foo.lemma,
-            ChangeRecord.UPDATE,
-            ChangeRecord.MANUAL)
-        self.assertTrue(foo.latest.publish(foo.latest.user))
-        foo = Entry.objects.get(lemma="foo")
-
-        # Clear the cache so that we start from a blank state.
-        cache.clear()
-
-        def op(_term):
-            self.assertTrue(foo.latest.unpublish(foo.latest.user))
-            self.assertIsNotNone(
-                depman.lemma.get("foo"),
-                "there should be dependency "
-                "information regarding the term that has been "
-                "published")
-
-        self._generic_article_available(entries, op, True)
 
     def test_item_changed(self):
         """
@@ -450,7 +179,7 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
 
         entries = [orig, copy]
 
-        def op(term):
+        def op():
             self.item.title += "bis"
             self.item.save()
             self.assertIsNone(
@@ -474,7 +203,7 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
 
         entries = [orig, copy]
 
-        def op(term):
+        def op():
             self.ps.reference_title += "bis"
             self.ps.save()
             self.assertIsNone(

@@ -1,6 +1,7 @@
 import re
 import operator
 import datetime
+import time
 import tempfile
 import os
 import subprocess
@@ -17,6 +18,7 @@ from django.utils.timezone import utc
 from django.conf import settings
 from django.core.cache import caches
 from django.core.exceptions import PermissionDenied
+from django.db.models.signals import post_save, post_init
 import django_redis
 
 # We effectively reexport this function here.
@@ -474,3 +476,57 @@ def ajax_login_required(view):
             raise PermissionDenied
         return view(request, *args, **kwargs)
     return wrapper
+
+class throttle(object):
+
+    def __init__(self, seconds, name=None, logger=None):
+        self.last = 0
+        self.period = seconds
+        self.logger = logger
+        self.name = name
+
+    def __call__(self, fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            now = time.time()
+            if now - self.last > self.period:
+                self.last = now
+                return fn(*args, **kwargs)
+            else:
+                if self.logger:
+                    self.logger.debug("throttling %s", self.name)
+
+        return wrapper
+
+
+def on_change(cls, get_state, fn):
+    """
+    Call a function whenever a model instance changes.
+
+    :param cls: The model we are interested in. (This is a class.)
+
+    :param get_state: A function that gets state from a model
+                      instance. A change is a change in state.
+
+    :param fn: The function to call when there is a change.
+    """
+    def _set_state(sender, **kwargs):
+        instance = kwargs.get('instance')
+        instance._prev_state = get_state(instance)
+
+    def _post_save(sender, **kwargs):
+        instance = kwargs.get('instance')
+        created = kwargs.get('created')
+        state = get_state(instance)
+
+        # We do not emit a signal when the object has just been created.
+        if not created and state != instance._prev_state:
+            fn(instance)
+
+        # The item could still be changed again, so...
+        instance._prev_state = state
+
+    # We have to have weak=False to prevent garbage collection of these
+    # handlers.
+    post_save.connect(_post_save, sender=cls, weak=False)
+    post_init.connect(_set_state, sender=cls, weak=False)

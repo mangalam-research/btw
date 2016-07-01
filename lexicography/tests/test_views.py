@@ -22,6 +22,7 @@ from . import funcs
 import lib.util as util
 from .util import inner_normalized_html, launch_fetch_task, \
     create_valid_article
+from lib.testutil import wipd
 
 launch_fetch_task()
 
@@ -44,6 +45,7 @@ class ViewsMixin(BaseCMSTestCase):
         super(ViewsMixin, self).setUp()
         # We must populate the eXist database.
         Chunk.objects.sync_with_exist()
+        Chunk.objects.prepare("xml", True)
         translation.activate('en-us')
 
         self.foo = user_model.objects.get(username="foo")
@@ -1806,6 +1808,9 @@ version="0.10" authority="/1">
             ChangeRecord.UPDATE,
             ChangeRecord.MANUAL)
 
+        # We force the preparation, otherwise, we'd have to wait for the
+        # automatic asynchronous task to be done.
+        c.prepare("xml", True)
         response, _ = self.open_abcd('foo')
 
         entry = Entry.objects.get(lemma="abcd")

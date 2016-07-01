@@ -12,6 +12,7 @@ from django.core.validators import RegexValidator
 
 from .zotero import Zotero, zotero_settings
 from . import signals
+from lib.util import on_change
 
 # This is an arbitrary limit on the size of a Zotero URL fragment that
 # uniquely identifies a Zotero entry.
@@ -166,13 +167,6 @@ class Item(models.Model):
     dict. This is not stored in the database.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(Item, self).__init__(*args, **kwargs)
-        # We use as_dict as a convenient way to record the values that
-        # matter for signaling. It also records ``pk`` and
-        # ``zotero_url`` but these are immutable.
-        self._orig_dict = self.as_dict()
-
     def refresh(self, zotero_item):
         """
         Refresh this item with the Zotero item.
@@ -251,29 +245,6 @@ class Item(models.Model):
 
         return item["links"]["alternate"]["href"]
 
-    def save(self, *args, **kwargs):
-        pk = self.pk
-        new_dict = self.as_dict()
-
-        ret = super(Item, self).save(*args, **kwargs)
-
-        # If pk is None, we did not exist before this save so we don't
-        # want to emit a signal marking a *change*.
-        if pk is not None and new_dict != self._orig_dict:
-            signals.item_updated.send(self.__class__, instance=self)
-
-            # We also have to signal all the primary sources that
-            # depend on this item.
-            if self.primary_sources.exists():
-                signals.primary_source_updated.send(
-                    self.__class__,
-                    instances=list(self.primary_sources.all()))
-
-        # The item could still be changed, so...
-        self._orig_dict = new_dict
-
-        return ret
-
     def as_dict(self):
         """
         Converts a database item to a dictionary of values. The set of
@@ -288,6 +259,19 @@ class Item(models.Model):
         return {k: getattr(self, k)
                 for k in ("pk", "date", "title", "creators",
                           "zotero_url")}
+
+def emit_item_updated(instance):
+    signals.item_updated.send(instance.__class__, instance=instance)
+
+    # We also have to signal all the primary sources that
+    # depend on this item.
+    if instance.primary_sources.exists():
+        signals.primary_source_updated.send(
+            instance.__class__,
+            instances=list(instance.primary_sources.all()))
+
+on_change(Item, lambda item: item.as_dict(), emit_item_updated)
+
 
 class PrimarySource(models.Model):
     SUTRA = "SU"
@@ -306,29 +290,13 @@ class PrimarySource(models.Model):
     class Meta(object):
         verbose_name_plural = "Primary sources"
 
-    def __init__(self, *args, **kwargs):
-        super(PrimarySource, self).__init__(*args, **kwargs)
-        self._original_reference_title = self.reference_title
-
     def __unicode__(self):
         return self.reference_title
 
     def save(self, *args, **kwargs):
-        pk = self.pk
+        # We want to save a clean reference_title.
         self.full_clean()
-        ret = super(PrimarySource, self).save(*args, **kwargs)
-
-        # If pk is None, we have not been saved yet so we don't
-        # want to emit a signal marking a *change*.
-        if pk is not None and self.reference_title != \
-           self._original_reference_title:
-            signals.primary_source_updated.send(self.__class__,
-                                                instances=[self])
-
-        # The item could be updated again, so...
-        self._original_reference_title = self.reference_title
-
-        return ret
+        return super(PrimarySource, self).save(*args, **kwargs)
 
     def clean(self):
         if self.reference_title is not None:
@@ -380,3 +348,10 @@ class PrimarySource(models.Model):
                for k in ("reference_title", "genre", "pk")}
         ret["item"] = self.item.as_dict()
         return ret
+
+def emit_primary_source_updated(instance):
+    signals.primary_source_updated.send(instance.__class__,
+                                        instances=[instance])
+
+on_change(PrimarySource, lambda ps: ps.reference_title,
+          emit_primary_source_updated)
