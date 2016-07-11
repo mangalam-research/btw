@@ -9,10 +9,12 @@ from django.core.management.base import BaseCommand, CommandError, \
     CommandParser
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from eulexistdb.db import ExistDB
-from lib.existdb import get_admin_db, get_chunk_collection_path, running
+from lib import existdb
+from lib.existdb import ExistDB
+from lib.existdb import get_admin_db, get_collection_path, get_display_path, \
+    running
 
-from lexicography.models import Chunk
+from lexicography.models import Chunk, ChangeRecord
 
 def assert_running():
     if not running():
@@ -61,19 +63,19 @@ Manage the eXist server used by BTW.
         self.subcommands = {}
 
         for cmd in ["start", "stop", "createuser", "dropuser", "createdb",
-                    "dropdb", "load", "loadindex", "checkdb"]:
+                    "dropdb", "load", "loadindex", "dropindex", "checkdb"]:
             self.register_subcommand(cmd, getattr(self, cmd))
 
     def register_subcommand(self, name, method):
         self.subcommands[name] = method
 
     def add_arguments(self, parser):
-        cmd = self
+        top = self
 
         class SubParser(CommandParser):
 
             def __init__(self, **kwargs):
-                super(SubParser, self).__init__(cmd, **kwargs)
+                super(SubParser, self).__init__(top, **kwargs)
 
         subparsers = parser.add_subparsers(title="subcommands",
                                            parser_class=SubParser)
@@ -219,7 +221,8 @@ Manage the eXist server used by BTW.
 
         db = get_admin_db()
         for collection in [settings.EXISTDB_ROOT_COLLECTION,
-                           get_chunk_collection_path()]:
+                           get_collection_path("chunks"),
+                           get_collection_path("display")]:
             db.createCollection(collection)
             db.server.setPermissions(collection,
                                      self.server_user, self.btw_group, 0770)
@@ -230,7 +233,7 @@ Manage the eXist server used by BTW.
         """
         assert_running()
         db = get_admin_db()
-        db.removeCollection(settings.EXISTDB_ROOT_COLLECTION)
+        db.removeCollection(settings.EXISTDB_ROOT_COLLECTION, True)
 
     def load(self, _options):  # pylint: disable=no-self-use
         """
@@ -239,12 +242,21 @@ Manage the eXist server used by BTW.
         """
         assert_running()
 
+        from django.utils import translation
+        translation.activate('en-us')
+
         db = ExistDB()
-        chunk_collection_path = get_chunk_collection_path()
+        chunk_collection_path = get_collection_path("chunks")
+
         if db.hasCollection(chunk_collection_path):
             db.removeCollection(chunk_collection_path)
 
         Chunk.objects.sync_with_exist()
+
+        display_path = get_display_path(existdb.PUBLISHED_OR_UNPUBLISHED)
+        if db.hasCollection(display_path):
+            db.removeCollection(display_path)
+        Chunk.objects.prepare(True)
 
     def loadindex(self, _options):
         """
@@ -252,9 +264,15 @@ Manage the eXist server used by BTW.
         """
         assert_running()
         db = get_admin_db()
-        chunk_collection = get_chunk_collection_path()
-        db.loadCollectionIndex(chunk_collection, open(self.chunk_index, 'r'))
-        db.reindexCollection(chunk_collection)
+        collection = get_collection_path(None)
+        db.loadCollectionIndex(collection, open(self.chunk_index, 'r'))
+        db.reindexCollection(collection)
+
+    def dropindex(self, _options):
+        assert_running()
+        db = get_admin_db()
+        collection = get_collection_path(None)
+        db.removeCollectionIndex(collection)
 
     def checkdb(self, _options):
         """
