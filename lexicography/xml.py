@@ -173,12 +173,13 @@ Get all targets that point to bibliographical references.
 :returns: The targets.
 :rtype: :class:`set` of strings.
 """
-        refs = self.tree.xpath("//tei:ref",
-                               namespaces=default_namespace_mapping)
+        refs = self.tree.findall(".//tei:ref",
+                                 namespaces=default_namespace_mapping)
 
         return set([target for target in
                     [ref.get('target') for ref in refs]
-                    if target.startswith('/bibliography/')])
+                    if target is not None and
+                    target.startswith('/bibliography/')])
 
     def extract_lemma(self):
         """
@@ -188,13 +189,10 @@ btw:lemma element.
 :returns: The lemma.
 :rtype: str
 """
-        lemma = self.tree.xpath("btw:lemma",
-                                namespaces=default_namespace_mapping)
+        lemma = self.tree.find("btw:lemma",
+                               namespaces=default_namespace_mapping)
 
-        if not len(lemma):
-            return None
-
-        lemma = lemma[0].text
+        lemma = lemma.text if lemma is not None else None
 
         if lemma is None:
             return None
@@ -231,9 +229,9 @@ Extracts the version from the XML tree.
         return version.strip() if version is not None else None
 
     def alter_lemma(self, lemma):
-        lemmas = self.tree.xpath("//btw:lemma",
-                                 namespaces=default_namespace_mapping)
-        lemmas[0].text = lemma
+        el = self.tree.find("btw:lemma",
+                            namespaces=default_namespace_mapping)
+        el.text = lemma
 
     def serialize(self):
         return lxml.etree.tostring(
