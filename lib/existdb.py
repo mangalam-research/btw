@@ -71,9 +71,6 @@ def get_path_for_chunk_hash(kind, c_hash):
     return "/".join([get_collection_path(kind), c_hash])
 
 
-def get_chunk_collection_path():
-    return get_collection_path("chunks")
-
 def is_lucene_query_clean(db, query):
     """
     Use a cost-effective way to determine whether a Lucene query has a

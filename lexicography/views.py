@@ -37,18 +37,15 @@ from eulexistdb.db import ExistDB
 import lxml.etree
 
 import lib.util as util
-from . import handles
+from . import handles, usermod, article, models
 from .models import Entry, ChangeRecord, Chunk, EntryLock
-from . import models
 from .locking import release_entry_lock, drop_entry_lock, \
     entry_lock_required
 from .xml import XMLTree, xhtml_to_xml, clean_xml, \
     get_supported_schema_versions, default_namespace_mapping
 from .forms import SaveForm
-from . import usermod
-from . import tasks
 from lib.existdb import query_iterator, is_lucene_query_clean, \
-    get_chunk_collection_path
+    get_collection_path
 from lib import xquery
 
 article_display_cache = caches['article_display']
@@ -253,7 +250,7 @@ import module namespace kwic="http://exist-db.org/xquery/kwic";
 for $m in collection({db}){scope}[ft:query(., {search_text})]
 order by ft:score($m) descending
 return <result><doc>{doc}</doc><hit>{hit}</hit></result>""",
-                    db=get_chunk_collection_path(),
+                    db=get_collection_path("display"),
                     scope=xquery.Verbatim(scope),
                     doc=xquery.Verbatim("{util:document-name($m)}"),
                     hit=xquery.Verbatim(hit),
@@ -392,14 +389,12 @@ def changerecord_details(request, changerecord_id):
 
     if request.is_ajax():
         published = not usermod.can_author(request.user)
-        prepared = article_display_cache.get(
-            cr.article_display_key(published))
-
-        # If there is something in the cache but it contains a `task`
-        # field, this means that a task is currently processing the
-        # article.
-        if prepared is None or 'task' in prepared:
+        prepared = cr.c_hash.get_display_data()
+        if not prepared:
             raise Http404
+
+        prepared["xml"] = \
+            article.hyperlink_prepared_data(prepared, published)
 
         return HttpResponse(json.dumps(prepared),
                             content_type=JSON_TYPE)
@@ -436,24 +431,13 @@ def _show_changerecord(request, cr):
 
     show_published = not can_author
 
-    key = cr.article_display_key(show_published)
-    prepared = article_display_cache.get(key)
+    prepared = cr.c_hash.get_display_data()
 
-    if prepared is None or 'task' in prepared:
-        if prepared is None:
-            logger.debug("%s is missing from article_display, launching task",
-                         key)
-            tasks.prepare_changerecord_for_display.delay(cr.pk,
-                                                         show_published)
-        else:
-            logger.debug("%s is being computed by task %s",
-                         key, prepared["task"])
-
+    if prepared is None:
         data = None
         bibl_data = '{}'
     else:
-        logger.debug("%s is present in article_display, reusing", key)
-        data = prepared["xml"]
+        data = article.hyperlink_prepared_data(prepared, show_published)
         bibl_data = json.dumps(prepared["bibl_data"])
 
     # We want an edit option only if this record is the latest and if
@@ -496,6 +480,8 @@ def _show_changerecord(request, cr):
             },
             'page_title': cr.lemma,
             'fetch_url': fetch_url,
+            'semantic_field_fetch_url':
+            reverse("semantic_fields_semanticfield-list"),
             'data': data,
             'bibl_data': bibl_data,
             'edit_url': edit_url,
