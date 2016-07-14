@@ -9,6 +9,7 @@ from lib.testutil import unmonkeypatch_databases
 class Runner(NoseTestSuiteRunner):
 
     created_exist_db = False
+    loaded_index = False
 
     def setup_databases(self, *args, **kwargs):
         unmonkeypatch_databases()
