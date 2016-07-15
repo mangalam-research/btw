@@ -1,0 +1,22 @@
+<%
+if (keys.length === 0) {
+   %><p>Unknown field.</p><%
+}
+_.forEach(keys, function (key, index) {
+  var field = resolved[key];
+%>
+  <div>
+    <h4><%- field.heading %></h4>
+    <% if (field.tree.length !== 0) { %>
+      <p>Other uses:
+        <div class="tree"></div>
+      </p>
+      <% }
+        else { %>
+          <p>Not used elsewhere.</p>
+      <% }
+      if (index < keys.length - 1) { %>
+        <hr/>
+      <% } %>
+  </div>
+<%  }); %>

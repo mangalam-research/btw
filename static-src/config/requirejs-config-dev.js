@@ -31,6 +31,8 @@ require.config({
     "bluejax.try": "external/bluejax.try",
     "last-resort": "external/last-resort",
     "lucene-query-parser": "external/lucene-query-parser",
+    urijs: "external/urijs",
+    "bootstrap-treeview": "external/bootstrap-treeview.min",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {
@@ -77,6 +79,10 @@ require.config({
         "use strict";
         jQuery.noConflict();
       },
+    },
+    "bootstrap-treeview": {
+      deps: ["bootstrap"],
+      exports: "jQuery.fn.treeview",
     },
     "external/rangy/rangy-core": {
       exports: "rangy",

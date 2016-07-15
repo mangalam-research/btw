@@ -235,3 +235,24 @@ Scenario Outline: the user can get citation records with correct editors
   | two editors   | Eds. Lovelace, Ada and Forename 2 Surname 2, GenName 2 |
   | three editors | Eds. Lovelace, Ada, Forename 2 Surname 2, GenName 2 and Forename 3 Surname 3, GenName 3 |
   | four editors  | Eds. Lovelace, Ada, et al.  |
+
+Scenario: the user can show and hide a semantic field popover by clicking on a semantic field button
+  Given a valid document
+  And the view has finished rendering
+  When the user clicks the expand all button
+  Then all collapsible sections are expanded
+  When the user clicks the first semantic field button
+  Then a semantic field popover is visible
+  When the user clicks the first semantic field button
+  Then a semantic field popover is not visible
+
+Scenario: the user can hide a semantic field popover by clicking outside the popover
+  Given a valid document
+  And the view has finished rendering
+  When the user clicks the expand all button
+  Then all collapsible sections are expanded
+  When wait 1 seconds
+  When the user clicks the first semantic field button
+  Then a semantic field popover is visible
+  When the user clicks outside the semantic field popover
+  Then a semantic field popover is not visible

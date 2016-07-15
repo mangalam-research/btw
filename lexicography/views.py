@@ -21,6 +21,7 @@ from django.http import HttpResponse, HttpResponseNotFound, \
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods, etag
+from django.middleware.csrf import get_token
 from django.template import RequestContext
 from django.db import IntegrityError
 from django.db.models import ProtectedError, F
@@ -424,8 +425,8 @@ def changerecord_unpublish(request, changerecord_id):
 
     return HttpResponse("This change record was unpublished.")
 
-
 def _show_changerecord(request, cr):
+    get_token(request)
 
     can_author = usermod.can_author(request.user)
 

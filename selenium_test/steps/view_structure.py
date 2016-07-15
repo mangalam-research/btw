@@ -11,6 +11,7 @@ import requests
 from selenium.webdriver.support.wait import TimeoutException
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 from nose.tools import assert_equal, assert_true, assert_false
 from behave import step_matcher  # pylint: disable=E0611
 from selenic.util import Result, Condition
@@ -255,10 +256,10 @@ def step_impl(context, state):
 
     driver.execute_script("""
     var collapsed_desired = arguments[0];
-    var collapsing = document.getElementsByClassName("collapsing");
+    var collapsing = btw_viewer._root.getElementsByClassName("collapsing");
     if (collapsing.length)
       return [false, "no element should be collapsing"];
-    var collapse = document.getElementsByClassName("collapse");
+    var collapse = btw_viewer._root.getElementsByClassName("collapse");
     var not_collapsed = Array.prototype.filter.call(collapse, function (x) {
         return x.classList.contains("in");
     });
@@ -746,3 +747,32 @@ def step_impl(context, names):
     """)
 
     assert_equal(names, editors)
+
+@when(ur'the user clicks the first semantic field button')
+def step_impl(context):
+    util = context.util
+    button = util.find_element((By.CLASS_NAME, r"btw\:sf"))
+    button.click()
+
+@when(ur'the user clicks outside the semantic field popover')
+def step_impl(context):
+    util = context.util
+    popover = util.find_element((By.CLASS_NAME, "sf-popover"))
+    # We click outside the popover
+    coords = util.element_page_coordinates(popover)
+    x = -5 if coords["left"] > 5 else coords["width"] + 5
+    y = -5 if coords["top"] > 5 else coords["height"] + 5
+    ActionChains(context.driver) \
+        .move_to_element_with_offset(popover, x, y) \
+        .click() \
+        .perform()
+
+
+@then(ur'a semantic field popover is (?P<visibility>(?:not )?visible)')
+def step_impl(context, visibility):
+    util = context.util
+    condition = EC.visibility_of_element_located((By.CLASS_NAME, "sf-popover"))
+    if visibility == "visible":
+        util.wait(condition)
+    else:
+        util.wait_until_not(condition)

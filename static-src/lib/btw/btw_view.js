@@ -26,36 +26,48 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
   var nameResolver = require("salve/name_resolver");
   var $ = require("jquery");
   var _ = require("lodash");
+  require("bootstrap");
+  require("bootstrap-treeview");
   var btwUtil = require("./btw_util");
   var ajax = require("ajax").ajax;
   var bluejax = require("bluejax");
+  var sfTemplate = require("text!./btw_view_sf_template.html");
+  var SFFetcher = require("./semantic_field_fetcher");
 
   var _slice = Array.prototype.slice;
   var closest = domutil.closest;
 
   /**
-   * @param {Element} root The element of ``wed-document`` class that is
-   * meant to hold the viewed document.
-   * @param {string} editUrl The url through which the document may be
-   * edited.
-   * @param {string} fetchUrl The url through which the document may be
-   * fetched for displaying. If set, it is a URL from which to get the
-   * XML, and ``data`` is ignored.
+   * @param {Element} root The element of ``wed-document`` class that is meant
+   * to hold the viewed document.
+   *
+   * @param {string} editUrl The url through which the document may be edited.
+   *
+   * @param {string} fetchUrl The url through which the document may be fetched
+   * for displaying. If set, it is a URL from which to get the
+   *
+   *
+   * @param {string} semanticFieldFetchUrl The url through which semantic field
+   * information is to be fetched.
+   *
+   *
    * @param {string} data The document, as XML.
-   * @param {string} biblData The bibliographical data. This is a
-   * mapping of targets (i.e. the targets given to the ``ref`` tags that
-   * point to bibliographical items) to dictionaries that contain the
-   * same values those returned as when asking the server to resolve
-   * these targets individually. This mapping must be
-   * complete. Otherwise, it is an internal error.
-   * @param {string} languagePrefix The language prefix currently used
-   * in URLs. Django will prefix URLs with something like "/en-us" when
-   * the user is using the American English setup. It could be inferable
-   * from the URLs passed in other parameter or from the URL of the
-   * currrent page but it is preferable to get an actual value than try
-   * to guess it.
+   *
+   * @param {string} biblData The bibliographical data. This is a mapping of
+   * targets (i.e. the targets given to the ``ref`` tags that point to
+   * bibliographical items) to dictionaries that contain the same values those
+   * returned as when asking the server to resolve these targets
+   * individually. This mapping must be complete. Otherwise, it is an internal
+   * error.
+   *
+   * @param {string} languagePrefix The language prefix currently used in
+   * URLs. Django will prefix URLs with something like "/en-us" when the user is
+   * using the American English setup. It could be inferable from the URLs
+   * passed in other parameter or from the URL of the currrent page but it is
+   * preferable to get an actual value than try to guess it.
    */
-  function Viewer(root, editUrl, fetchUrl, data, biblData, languagePrefix) {
+  function Viewer(root, editUrl, fetchUrl, semanticFieldFetchUrl,
+                  data, biblData, languagePrefix) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
     var doc = root.ownerDocument;
@@ -68,12 +80,16 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     this._meta = new btwMeta.Meta();
     this._load_timeout = 30000;
     this._language_prefix = languagePrefix;
+    this._semanticFieldFetchUrl = semanticFieldFetchUrl;
 
     this._resolver = new nameResolver.NameResolver();
     var mappings = this._meta.getNamespaceMappings();
     Object.keys(mappings).forEach(function definePrefix(key) {
       this._resolver.definePrefix(key, mappings[key]);
     }.bind(this));
+
+    this._sfFetcher = new SFFetcher(this._semanticFieldFetchUrl,
+                                    this._win.location.href);
 
     //
     // We provide minimal objects that are used by some of the logic
@@ -529,13 +545,11 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
 
     var links = root.getElementsByTagName("a");
     for (var linkIx = 0; linkIx < links.length; ++linkIx) {
-      var link = links[linkIx];
-      if (link.attributes.href &&
-          link.attributes.href.value.lastIndexOf("#", 0) !== 0) {
+      var href = links[linkIx].attributes.href;
+      if (!href || href.value.lastIndexOf("#", 0) !== 0) {
         continue;
       }
-      link.attributes.href.value =
-        link.attributes.href.value.replace(/\./g, "_");
+      href.value = href.value.replace(/\./g, "_");
     }
 
     // Create the affix
@@ -719,6 +733,15 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     });
 
 
+    $(doc.body).on("click", function bodyClick(ev) {
+      var $target = $(ev.target);
+      // We are not using $.Event because setting bubbles to `false` does not
+      // seem possible with `$.Event`.
+      var $for = $target.closest("[data-toggle='popover']");
+      $("[aria-describedby][data-toggle='popover']").not($for)
+        .popover("destroy");
+    });
+
     var bound = this._showTarget.bind(this);
     win.addEventListener("popstate", bound);
     // This also catches hitting the Enter key on a link.
@@ -827,6 +850,9 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     case "editor":
       this.editorDecorator(root, el);
       break;
+    case "btw:sf":
+      this.sfDecorator(root, el);
+      break;
     default:
     }
   };
@@ -892,6 +918,132 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
       separator.textContent = " ";
       dec._gui_updater.insertBefore(el, separator, el.firstChild);
     }
+  };
+
+
+  Viewer.prototype.sfDecorator = function sfDecorator(root, el) {
+    var initialContent = "<i class='fa fa-spinner fa-2x fa-spin'></i>";
+    var a = el.ownerDocument.createElement("a");
+    a.className = "btn btn-default sf-popover-button";
+    a.setAttribute("role", "button");
+    a.setAttribute("tabindex", "0");
+    a.setAttribute("data-toggle", "popover");
+
+    var parent = el.parentNode;
+    parent.insertBefore(a, el);
+    a.appendChild(el);
+    var $a = $(a);
+    var dataWedRef = el.attributes["data-wed-ref"];
+    var ref;
+    if (dataWedRef) {
+      ref = el.attributes["data-wed-ref"].value;
+    }
+
+    // We do not decorate if we have no references.
+    if (ref === undefined) {
+      return;
+    }
+
+    var alreadyResolved;
+    var makeContent = function makeContent() {
+      if (!alreadyResolved) {
+        this._sfFetcher.fetch([ref]).then(function then(resolved) {
+          alreadyResolved = resolved;
+          // This causes rerendering of the popover and makeContent to be
+          // called again.
+          $a.popover("show");
+        });
+
+        return initialContent;
+      }
+
+      var popover = $a.data("bs.popover");
+      var $tip = popover.tip();
+      var tip = $tip[0];
+
+      var content = tip.getElementsByClassName("popover-content")[0];
+      var keys = Object.keys(alreadyResolved).sort();
+      var keyIx = 0;
+
+      content.innerHTML = _.template(sfTemplate)({ keys: keys,
+                                                   resolved: alreadyResolved });
+
+      var treeDivs = tip.getElementsByClassName("tree");
+      for (var treeDivIx = 0; treeDivIx < treeDivs.length; ++treeDivIx) {
+        var treeDiv = treeDivs[treeDivIx];
+        var key = keys[keyIx++];
+        var field = alreadyResolved[key];
+
+        if (field.tree.length === 0) {
+          continue; // Nothing to show!
+        }
+
+        // If there is only one element at the top of the tree, and this element
+        // has only one child, then what we have is a single entry which would
+        // have only one version available. There's no need to have a proper
+        // tree for this.
+        if (field.tree.length === 1 && field.tree[0].nodes.length <= 1) {
+          var node = field.tree[0];
+          var link = treeDiv.ownerDocument.createElement("a");
+          link.textContent = node.text;
+          link.href = node.href;
+          treeDiv.appendChild(link);
+          continue;
+        }
+
+        // Otherwise: build a tree.
+        $(treeDiv).treeview({
+          data: field.tree,
+          enableLinks: true,
+          levels: 0,
+        });
+      }
+
+      // Inform that the popover has been fully rendered. This is used mainly in
+      // testing.
+      $a.trigger("fully-rendered.btw-view.sf-popover");
+
+      return Array.prototype.slice.call(content.childNodes);
+    }.bind(this);
+
+    $a.on("click", function click() {
+      // If there is already a popover existing for this element, this call
+      // won't create a new one.
+      $a.popover({
+        html: true,
+        trigger: "manual",
+        content: makeContent,
+      });
+
+      var popover = $a.data("bs.popover");
+
+      // The stock hasContent is very expensive.
+      popover.hasContent = function hasContent() {
+        return true;
+      };
+
+      var $tip = popover.tip();
+      var tip = $tip[0];
+
+      // Note that we destroy the popover when we "close" it. This is also why
+      // we add the event handlers below for every click that shows the
+      // popup. If the popover is recreated, then ``tip`` will be new, and
+      // destroying the popup removes the event handlers that were created.
+      var method = tip.classList.contains("in") ? "destroy" : "show";
+      popover[method]();
+
+      // If we're not showing the popup, then we are done.
+      if (method !== "show") {
+        return;
+      }
+
+      // Otherwise, we need to set handlers.
+      tip.classList.add("sf-popover");
+
+      $tip.on("click", function tipClick(ev) {
+        ev.stopPropagation();
+      });
+    });
   };
 
 

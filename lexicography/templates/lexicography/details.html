@@ -28,136 +28,7 @@
   There is a <a href="{{ latest_unpublished.get_absolute_url }}">newer unpublished version</a> of this article.
 </div>
 {% endif %}
-<div class="modal fade" id="cite-modal" tabindex="-1" role="dialog" aria-labelledby="cite-modal-label">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="how-to-cite-label">Cite</h4>
-      </div>
-      <div class="modal-body">
-        <form action="mods">
-          <div class="form-group">
-            <label for="access-date">Desired access date:</label><input name="access-date" id="access-date" type="text" type="text" class="form-control" />
-            <p class="help-block">
-              Bibliographical references to web sites normally include an
-              access date. You may change it if needed (the format is
-              YYYY-MM-DD).
-            </p>
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" name="version-specific" id="version-specific"> Include a version-specific link.
-            </label>
-            <p class="help-block">
-              If this checkbox is unchecked, the link included in the
-              citation will always point to the <strong>latest
-              published version</strong> of this article. If this
-              checkbox is checked, then the link included in the
-              citation will always point to <strong>the version of the
-              article you are currently viewing</strong>.
-            </p>
-          </div>
-          <p>If your bibliographical management software is able to
-            import the MODS format, it is preferable to save the MODS
-            record for this page and import it into your bibliographical
-            management software.</p>
-          <button type="submit" class="btn btn-default" id="download-mods">
-            Get the MODS Record</button>
-        </form>
-        <hr />
-        <p>Otherwise you may cut and paste the following preformatted
-          text, according to the style you prefer.</p>
-        <p>Chicago:
-          <blockquote>
-            <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, s.v. "{{ page_title }}," by <span id="chicago_authors"></span>, accessed <span class="accessed"></span> <a class="url"></a>.
-          </blockquote>
-        </p>
-        <p>MLA:
-          <blockquote>
-            <span id="mla_authors"></span>. "{{ page_title }}." <i>The Buddhist Translators Workbench</i>. <span id="mla_editors"></span>. Version {{ bibliographical_data.version }}. Berkeley: Mangalam Research Center for Buddhist Languages, <span id="mla_year"></span>. Web. <span class="accessed"></span>. <a class="url"></a>.
-          </blockquote>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="link-modal" tabindex="-1" role="dialog" aria-labelledby="link-modal-label">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="link-modal-label">Links</h4>
-      </div>
-      <div class="modal-body">
-        <p>
-          <a href="{{ permalink }}">Permalink</a> to
-          <strong>the latest published version</strong> of this
-          article. This link will always point to the latest published
-          version of this article.
-        </p>
-        <hr />
-        <p>
-          <a href="{{ version_permalink }}">Permalink</a>
-          to <strong>this version</strong> of the article. This link will
-          always point to the version of the article you are currently
-          viewing.
-          {% if not is_published %}
-          <strong>Note that you are currently viewing an unpublished
-            version of the article. If you provide this link to someone
-            who cannot edit BTW articles, they will not be able to use
-            the link, unless this exact version is published before they
-            use the link.</strong>
-          {% endif %}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="history-modal" tabindex="-1" role="dialog" aria-labelledby="history-modal-label">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="history-modal-label">Article History</h4>
-      </div>
-      <div class="modal-body">
-        {% if can_author %}
-        <p>This list here shows only those versions that have been
-        published. If you need to see unpublished versions, please use
-        the main <a href="{% url "lexicography_main" %}">
-            lexicography page</a> to perform a search there.</p>
-        {% endif %}
-        <p>All times are UTC.</p>
-        <ul class="fa-ul">
-        {% for h in history %}
-        <li>{% if h.url == version_permalink %}<i class="fa-li fa fa-arrow-right"></i>{% endif %}<a href="{{ h.url }}">{{ h.date }}</a>{% if h.url == version_permalink %} You are currently looking at this version.{% endif %}</li>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row well well-sm">
-  <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#history-modal">Article history</a> | <a href="#" class="btn btn-link" role="button" data-toggle="modal" data-target="#link-modal">Link to this article</a> | <a href="#" class="btn btn-link disabled" role="button" data-toggle="modal" data-target="#cite-modal">Cite this article</a>
-</div>
-<div class="wed-frame row">
-  <div class="wed-document col-lg-9 col-md-9 col-sm-11 col-xs-11">
-    <div class="alert alert-info loading" style="display: none">
-      Loading the document... <i class="fa fa-spinner fa-spin"></i>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-3 col-sm-1 col-xs-1">
-    <nav id="btw-article-affix" class="well well-sm">
-        <div class="expandable-heading">
-          <button class="btn btn-default btn-block" title="Table of Contents"><i class="fa fa-bars"></i></button>
-        </div>
-        <div class="overflow">
-          <ul class="nav nav-stacked"></ul>
-        </div>
-    </nav>
-  </div>
-</div>
+{% include "lexicography/viewer.html" %}
 <script>
 {% get_current_language as LANGUAGE_CODE %}
 require(['btw/btw_view', '../js/lexicography/view-support'],
@@ -166,7 +37,8 @@ function(Viewer, sup) {
   var data = document.getElementById("wed-data").textContent;
 
   var viewer = new Viewer(wed_document, "{{edit_url}}",
-                          "{{ fetch_url }}", data,
+                          "{{ fetch_url }}", "{{ semantic_field_fetch_url }}",
+                          data,
       {% autoescape off %}{{ bibl_data }}{% endautoescape %},
                           // We have to build the prefix from
                           // the language code.

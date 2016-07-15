@@ -538,3 +538,8 @@ def step_impl(context):
 @given(ur'the network slowdown is over')
 def step_impl(context):
     os.unlink("sitestatic/LIMIT")
+
+@when(ur'fail')
+@then(ur'fail')
+def step_impl(context):
+    raise Exception("failing, as requested!")

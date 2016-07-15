@@ -57,8 +57,11 @@ BUILD_DIR:=build
 # This cannot be the same URL as in wed. We want to the *source*
 # version of Bootstrap, not the distribution version which does not
 # contain the less files.
-BOOTSTRAP_URL=https://github.com/twbs/bootstrap/archive/v3.3.6.zip
-BOOTSTRAP_BASE=bootstrap-3.3.6.zip
+BOOTSTRAP_URL:=https://github.com/twbs/bootstrap/archive/v3.3.6.zip
+BOOTSTRAP_BASE:=bootstrap-3.3.6.zip
+
+BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
+BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
 
 JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
 # This creates a file name that a) identifies what it is an b) happens
@@ -126,12 +129,14 @@ EXTERNAL:=$(BUILD_DEST)/lib/external
 externalize=$(foreach f,$1,$(EXTERNAL)/$f)
 
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
 WED_FILES:=$(shell find $(WED_BUILD) -type f)
 FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST)/%,$f))
+
+TEST_DATA_FILES:=$(foreach f,prepared_published_prasada.xml,build/test-data/$f)
 
 .DELETE_ON_ERROR:
 
@@ -251,7 +256,14 @@ test-django: test-django-menu $(TARGETS)
 test-django-menu: $(TARGETS)
 	$(DJANGO_MANAGE) test --attr=isolation=menu
 
-.PHONY: test-karma
+.PHONY: test-data
+test-data: $(TEST_DATA_FILES)
+
+build/test-data/prepared_published_prasada.xml: utils/schemas/prasada.xml
+	mkdir -p $(dir $@)
+	$(DJANGO_MANAGE) lexicography prepare-article $< $@ $(@:.xml=.json)
+
+.PHONY: test-karma test-data
 test-karma: all
 	xvfb-run ./node_modules/.bin/karma start --single-run
 
@@ -347,6 +359,12 @@ $(EXTERNAL)/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
 	rm -rf $(COMMON_DIR)/jquery-growl-*
 	touch $(COMMON_DIR)/js/* $(COMMON_DIR)/css/*
 
+$(EXTERNAL)/bootstrap-treeview.%: UNZIPPED:=downloads/$(BOOTSTRAP_TREEVIEW_BASE:.zip=)
+$(EXTERNAL)/bootstrap-treeview.%: downloads/$(BOOTSTRAP_TREEVIEW_BASE)
+	unzip -o -d downloads $<
+	cp $(UNZIPPED)/dist/* $(EXTERNAL)
+	rm -rf $(UNZIPPED)
+
 downloads build:
 	mkdir $@
 
@@ -370,6 +388,11 @@ downloads/$(JQUERY_GROWL_BASE): | downloads
 
 downloads/$(BOOTSTRAP_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_URL)'
+
+# We do not install the npm due to the nonsensical decision that the dev
+# has made to include dev dependencies among the regular dependencies.
+downloads/$(BOOTSTRAP_TREEVIEW_BASE): | downloads
+	$(WGET) -O $@ '$(BOOTSTRAP_TREEVIEW_URL)'
 
 .PHONY: venv
 venv:

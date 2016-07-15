@@ -6,11 +6,11 @@
         "chai": ">=3 <4",
         "mocha": ">=2.4.5 <3",
         "requirejs": ">=2.1.17 <3",
-        "karma": ">=0.12.31  <1",
-        "karma-chrome-launcher": ">=0.2.0 <1",
-        "karma-mocha": ">=0.1.10 <1",
+        "karma": "^1.1.0",
+        "karma-chrome-launcher": "^1.0.1",
+        "karma-mocha": "^1.1.1",
         "karma-chai": ">=0.1.0 <1",
-        "karma-requirejs": ">=0.2.2 <1",
+        "karma-requirejs": "^1.0.0",
         "karma-chai-as-promised": ">=0.1.2 <1",
         "less": ">=2 <3",
         "moment": ">=2.10.3 <3",
@@ -21,6 +21,10 @@
         "sinon": ">=1.17.3 <2",
         "chai-as-promised": ">=5.2.0 <6",
         "bluejax": "^0.2.0",
-        "last-resort": ">=0.0.1 <1"
+        "last-resort": ">=0.0.1 <1",
+        "karma-fixture": "^0.2.6",
+        "karma-json-fixtures-preprocessor": "^0.0.6",
+        "karma-html2js-preprocessor": "^1.0.0",
+        "karma-mocha-reporter": "^2.0.4"
     }
 }
