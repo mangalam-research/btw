@@ -43,6 +43,7 @@ Scenario: deleting a subsense that has a hyperlink deletes the subsense hyperlin
   And the user clicks the context menu option "Delete this element"
   Then there is no hyperlink with the label "[a1]".
 
+@dirty
 Scenario: sense hyperlinks are saved
   Given a document with senses and subsenses
   When the user brings up a context menu in the text in the definition
