@@ -47,6 +47,7 @@ if not __SILENT:
         'level': 'NOTSET',
         'propagate': True,
     }
+    del s.LOGGING['handlers']['console']['filters']
 
 if s.BTW_SELENIUM_TESTS:
     for name in s.DATABASES.keys():
