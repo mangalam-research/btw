@@ -2,7 +2,8 @@ define(['jquery', 'last-resort', 'bootstrap'], function ($, last_resort) {
 
 var $modal = $(
         '\
-<div class="modal btw-fatal-modal" style="position: absolute" tabindex="1">\
+<div class="modal btw-fatal-modal" style="position: fixed; top: 0; left: 0" \
+     tabindex="1">\
   <div class="modal-dialog">\
     <div class="modal-content">\
       <div class="modal-header">\
