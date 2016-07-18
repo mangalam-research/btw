@@ -3,6 +3,7 @@ import cookielib as http_cookiejar
 import os
 import datetime
 import string
+import difflib
 
 import lxml.etree
 from django_webtest import WebTest, TransactionWebTest
@@ -16,7 +17,7 @@ from .. import models
 from ..models import Entry, EntryLock, ChangeRecord, Chunk, PublicationChange
 from ..views import REQUIRED_WED_VERSION
 from ..xml import get_supported_schema_versions, mods_schema_path, XMLTree, \
-    default_namespace_mapping
+    default_namespace_mapping, strip_xml_decl
 from . import util as test_util
 from . import funcs
 import lib.util as util
@@ -1787,18 +1788,51 @@ class EditingTestCase(ViewsTransactionTestCase):
         """
         entry = Entry.objects.get(lemma="abcd")
 
-        c = Chunk(data="""
+        original = """
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
-  xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
-version="0.10" authority="/1">
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
   <btw:lemma>abcd</btw:lemma>
-  <p>
-  <ref target="/bibliography/1">foo</ref>
-  <ref target="/bibliography/2"/>
-  <ref target="/bibliography/2"/>
-  </p>
-</btw:entry>
-        """, schema_version="0.10")
+  <btw:sense>
+    <btw:english-renditions>
+      <btw:english-rendition>
+        <btw:english-term>clarity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.04.08.01|02.07n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+      <btw:english-rendition>
+        <btw:english-term>serenity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+    </btw:english-renditions>
+    <btw:subsense xml:id="S.a-1">
+      <btw:explanation>[...]</btw:explanation>
+      <btw:citations>
+        <btw:example>
+          <btw:semantic-fields>
+            <btw:sf>01.04.08n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="sa-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example>
+        <btw:example-explained>
+          <btw:explanation>[...]</btw:explanation>
+          <btw:semantic-fields>
+            <btw:sf>01.04.04n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="pi-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example-explained>
+      </btw:citations>
+    </btw:subsense>
+  </btw:sense>
+</btw:entry>"""
+        c = Chunk(data=original, schema_version="0.10")
         c.save()
         entry.update(
             self.foo,
@@ -1811,22 +1845,42 @@ version="0.10" authority="/1">
         # We force the preparation, otherwise, we'd have to wait for the
         # automatic asynchronous task to be done.
         c.prepare("xml", True)
-        response, _ = self.open_abcd('foo')
+        self.open_abcd('foo')
 
         entry = Entry.objects.get(lemma="abcd")
-        self.assertEqual(entry.latest.c_hash.data,
-                         u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
-xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
-version="1.0">
-  <btw:lemma>abcd</btw:lemma>
-  <p>
-  <ref target="/bibliography/1">foo</ref>
-  <ref target="/bibliography/2"/>
-  <ref target="/bibliography/2"/>
-  </p>
-</btw:entry>""")
+        self.assertEqual("".join(difflib.unified_diff(
+            original.splitlines(True),
+            strip_xml_decl(entry.latest.c_hash.data)[1].splitlines(True))),
+            """\
+--- \n\
++++ \n\
+@@ -1,19 +1,15 @@
+ \n\
+-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
++<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.1">
+   <btw:lemma>abcd</btw:lemma>
+   <btw:sense>
+     <btw:english-renditions>
+       <btw:english-rendition>
+         <btw:english-term>clarity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.04.08.01|02.07n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+       <btw:english-rendition>
+         <btw:english-term>serenity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+     </btw:english-renditions>
+     <btw:subsense xml:id="S.a-1">
+""")
 
 
 class CommonPublishUnpublishCases(object):

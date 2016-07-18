@@ -2,7 +2,9 @@
 import unittest
 import os
 from collections import OrderedDict
+import difflib
 
+from lxml.etree import XSLTApplyError
 import lib.util as util
 from .. import xml
 
@@ -94,7 +96,8 @@ class XMLTestCase(unittest.TestCase):
         expected = OrderedDict([
             ("0.9", xml.VersionInfo(can_revert=False, can_validate=True)),
             ("0.10", xml.VersionInfo(can_revert=False, can_validate=True)),
-            ("1.0", xml.VersionInfo(can_revert=True, can_validate=True))
+            ("1.0", xml.VersionInfo(can_revert=False, can_validate=True)),
+            ("1.1", xml.VersionInfo(can_revert=True, can_validate=True))
         ])
         self.assertEqual(versions, expected)
 
@@ -145,6 +148,201 @@ version="1.0">
   <ref target="/bibliography/2"/>
   </p>
 </btw:entry>""")
+
+    def test_convert_to_version_1_0_to_1_1(self):
+        """
+        The function convert_to_version converts 1.0 to 1.1.
+        """
+        original = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="1.0">
+  <btw:sense>
+    <btw:english-renditions>
+      <btw:english-rendition>
+        <btw:english-term>clarity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.04.08.01|02.07n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+      <btw:english-rendition>
+        <btw:english-term>serenity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+    </btw:english-renditions>
+    <btw:subsense xml:id="S.a-1">
+      <btw:explanation>[...]</btw:explanation>
+      <btw:citations>
+        <btw:example>
+          <btw:semantic-fields>
+            <btw:sf>01.04.08n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="sa-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example>
+        <btw:example-explained>
+          <btw:explanation>[...]</btw:explanation>
+          <btw:semantic-fields>
+            <btw:sf>01.04.04n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="pi-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example-explained>
+      </btw:citations>
+    </btw:subsense>
+  </btw:sense>
+</btw:entry>"""
+        result = xml.convert_to_version(original, "1.0", "1.1")
+
+        # We need to use \n\ to protect trailing spaces from being removed from
+        # the diff.
+        self.assertEqual("".join(difflib.unified_diff(
+            original.splitlines(True),
+            xml.strip_xml_decl(result)[1].splitlines(True))), """\
+--- \n\
++++ \n\
+@@ -1,18 +1,14 @@
+ \n\
+-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.0">
++<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.1">
+   <btw:sense>
+     <btw:english-renditions>
+       <btw:english-rendition>
+         <btw:english-term>clarity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.04.08.01|02.07n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+       <btw:english-rendition>
+         <btw:english-term>serenity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+     </btw:english-renditions>
+     <btw:subsense xml:id="S.a-1">
+""")
+
+    def test_convert_to_version_0_10_to_1_1(self):
+        """
+        The function convert_to_version converts 0.10 to 1.1.
+        """
+        original = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
+  <btw:sense>
+    <btw:english-renditions>
+      <btw:english-rendition>
+        <btw:english-term>clarity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.04.08.01|02.07n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+      <btw:english-rendition>
+        <btw:english-term>serenity</btw:english-term>
+        <btw:semantic-fields>
+          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+        </btw:semantic-fields>
+      </btw:english-rendition>
+    </btw:english-renditions>
+    <btw:subsense xml:id="S.a-1">
+      <btw:explanation>[...]</btw:explanation>
+      <btw:citations>
+        <btw:example>
+          <btw:semantic-fields>
+            <btw:sf>01.04.08n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="sa-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example>
+        <btw:example-explained>
+          <btw:explanation>[...]</btw:explanation>
+          <btw:semantic-fields>
+            <btw:sf>01.04.04n</btw:sf>
+          </btw:semantic-fields>
+          <btw:cit><ref target="/bibliography/1">XXX</ref>
+          <foreign xml:lang="pi-Latn">[...]</foreign></btw:cit>
+          <btw:tr>[...]</btw:tr>
+        </btw:example-explained>
+      </btw:citations>
+    </btw:subsense>
+  </btw:sense>
+</btw:entry>"""
+        result = xml.convert_to_version(original, "0.10", "1.1")
+
+        # We need to use \n\ to protect trailing spaces from being removed from
+        # the diff.
+        self.assertEqual("".join(difflib.unified_diff(
+            original.splitlines(True),
+            xml.strip_xml_decl(result)[1].splitlines(True))), """\
+--- \n\
++++ \n\
+@@ -1,18 +1,14 @@
+ \n\
+-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
++<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.1">
+   <btw:sense>
+     <btw:english-renditions>
+       <btw:english-rendition>
+         <btw:english-term>clarity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.04.08.01|02.07n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+       <btw:english-rendition>
+         <btw:english-term>serenity</btw:english-term>
+-        <btw:semantic-fields>
+-          <btw:sf>01.02.11.02.01|08.01n</btw:sf>
+-        </btw:semantic-fields>
++        \n\
+       </btw:english-rendition>
+     </btw:english-renditions>
+     <btw:subsense xml:id="S.a-1">
+""")
+
+    def test_convert_to_version_1_0_to_1_1_fails_on_bad_version(self):
+        """
+        The function convert_to_version fails if the version number is not
+        1.0 in the input.
+        """
+        original = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.9">
+</btw:entry>"""
+        with self.assertRaisesRegexp(
+                XSLTApplyError,
+                "The input XML has version 0.9 rather than version 1.0."):
+            xml.convert_to_version(original, "1.0", "1.1")
+
+    def test_convert_to_version_0_10_to_1_1_fails_on_bad_version(self):
+        """
+        The function convert_to_version fails if the version number is not
+        0.10 in the input.
+        """
+        original = """
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+version="0.9">
+</btw:entry>"""
+        with self.assertRaisesRegexp(
+                XSLTApplyError,
+                "The input XML has version 0.9 rather than version 0.10."):
+            xml.convert_to_version(original, "0.10", "1.1")
 
     def test_strip_xml_decl_without_decl(self):
         """

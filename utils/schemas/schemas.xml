@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+  <uri resource="prasada.xml" uri="out/btw-storage-1.1/btw-storage.rnc"/>
   <uri resource="prasada.xml" uri="out/btw-storage-1.0/btw-storage.rnc"/>
   <uri resource="btw-storage.xml" uri="../../../../../../../../../usr/share/xml/tei/odd/p5odds.rnc"/>
 </locatingRules>

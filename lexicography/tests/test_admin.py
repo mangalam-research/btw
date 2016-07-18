@@ -58,7 +58,7 @@ class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
         form.submit()
         entry = Entry.objects.get(lemma='foo copy')
         chunk = entry.latest.c_hash
-        self.assertEqual(chunk.schema_version, "1.0")
+        self.assertEqual(chunk.schema_version, "1.1")
         self.assertTrue(chunk.is_normal)
         self.assertEqual(chunk.data, data)
 

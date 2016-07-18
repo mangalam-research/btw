@@ -20,7 +20,7 @@ Scenario: Author performs a basic search.
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
 When the user searches for "foo"
-Then the search results show 6 entries
+Then the search results show 7 entries
 And the search results show hit details
 And there is a "Published" column visible
 And there is a "Deleted" column visible

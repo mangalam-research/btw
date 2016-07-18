@@ -13,6 +13,7 @@ from ..models import ChangeRecord, Entry
 from .util import launch_fetch_task, create_valid_article, \
     extract_inter_article_links
 from lib.util import DisableMigrationsMixin
+from lib.testutil import wipd
 
 dirname = os.path.dirname(__file__)
 hte_fixture = os.path.join(
@@ -970,3 +971,59 @@ class HyperlinkPreparedDataTestCase(DisableMigrationsMixin, TestCase):
                 'abcd': reverse("lexicography_entry_details", args=(1,))
             },
             "the published xml should not contain correct article links")
+
+@override_settings(ROOT_URLCONF='lexicography.tests.urls')
+class AddSemanticFieldsToEnglishRenditionsTestCase(DisableMigrationsMixin,
+                                                   TestCase):
+    fixtures = [hte_fixture]
+
+    def test_no_english_rendition(self):
+        """
+        Tests that the result is the same as the original data when there
+        are no English renditions.
+        """
+        original = """\
+<btw:entry xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
+xmlns:tei="http://www.tei-c.org/ns/1.0"/>"""
+        tree = xml.XMLTree(original)
+        modified = article.add_semantic_fields_to_english_renditions(tree)
+        self.assertFalse(modified)
+        self.assertEqual(lxml.etree.tostring(tree.tree), original)
+
+    def test_english_renditions(self):
+        """
+        Tests that English renditions get their semantic fields.
+        """
+        original = """\
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
+  <btw:sense>
+    <btw:english-renditions>
+      <btw:english-rendition>
+        <btw:english-term>clarity</btw:english-term>
+      </btw:english-rendition>
+      <btw:english-rendition>
+        <btw:english-term>serenity</btw:english-term>
+      </btw:english-rendition>
+    </btw:english-renditions>
+  </btw:sense>
+</btw:entry>"""
+        tree = xml.XMLTree(original)
+        modified = article.add_semantic_fields_to_english_renditions(tree)
+        self.assertTrue(modified)
+        self.assertEqual(lxml.etree.tostring(tree.tree), """\
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
+xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
+version="0.10">
+  <btw:sense>
+    <btw:english-renditions>
+      <btw:english-rendition>
+        <btw:english-term>clarity</btw:english-term>
+      <btw:semantic-fields><btw:sf>02.01.08.01.02|03n</btw:sf><btw:sf>02.01.10.01n</btw:sf></btw:semantic-fields></btw:english-rendition>
+      <btw:english-rendition>
+        <btw:english-term>serenity</btw:english-term>
+      </btw:english-rendition>
+    </btw:english-renditions>
+  </btw:sense>
+</btw:entry>""")

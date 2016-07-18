@@ -19,6 +19,10 @@
     - Semantic fields in displayed articles are now buttons which
       bring up a popover of links to other articles when clicked.
 
+    - English renditions no longer accept semantic fields when
+      editing. For displaying articles, the fields are added to
+      English renditions by software.
+
 * 1.4.1:
 
   + Upgrade from Django 1.7 to Django 1.8. This could no longer be

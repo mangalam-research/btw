@@ -8,7 +8,7 @@ from .models import Entry
 from .xml import XMLTree, default_namespace_mapping, elements_as_text, \
     element_as_text
 from bibliography.views import targets_to_dicts
-from semantic_fields.models import SemanticField
+from semantic_fields.models import SemanticField, SearchWord
 from semantic_fields.util import parse_local_references
 from lib.sqlutil import select_for_share
 
@@ -47,6 +47,7 @@ def prepare_article_data(data):
     modified = combine_sense_semantic_fields(tree)
     modified = combine_all_semantic_fields(tree) or modified
     modified = combine_cognate_semantic_fields(tree) or modified
+    modified = add_semantic_fields_to_english_renditions(tree) or modified
     modified, sf_records = name_semantic_fields(tree) or modified
 
     if modified:
@@ -172,8 +173,9 @@ def combine_all_semantic_fields(xml):
         combine_semantic_fields_into(sfs, all_sfs, 3)
         overview = xml.tree.find("btw:overview",
                                  namespaces=default_namespace_mapping)
-        overview.append(all_sfs)
-        return True
+        if overview is not None:
+            overview.append(all_sfs)
+            return True
 
     return False
 
@@ -269,24 +271,64 @@ def truncate_to(text, depth):
 
 key_re = re.compile(r"(?<!\d)(\d{2})(?!\d)")
 
+def key_from_path(x):
+    # We add a leading 0 to numbers that do not have it because the
+    # HTE project has at least *some* semantic field codes that are
+    # 100, 101, etc but they did *not* redesign the codes to be padded
+    # with an additional 0. So without the padding we do here, we
+    # would sort incorrectly sometimes.
+    #
+    # The replacement of "." with "~" is done to sort properly. The
+    # problem is that "." comes before [a-z] in lexical order. So
+    # "01.01.02" would come **before** "01.01aj", even if it is a
+    # child of the latter. Mapping "." to "~" takes care of this
+    # sorting issue.
+    return key_re.sub(r"0\1", x.replace(".", "~"))
+
+def key_from_sf(x):
+    return key_from_path(x.path)
+
 def combine_semantic_fields(texts, depth=None):
     return sorted(set(texts if depth is None else (truncate_to(text, depth)
                                                    for text in texts)),
-                  # We add a leading 0 to numbers that do not have it
-                  # because the HTE project has at least *some*
-                  # semantic field codes that are 100, 101, etc but
-                  # they did *not* redesign the codes to be padded
-                  # with an additional 0. So without the padding we do
-                  # here, we would sort incorrectly sometimes.
-                  #
-                  # The replacement of "." with "~" is done to sort
-                  # properly. The problem is that "." comes before
-                  # [a-z] in lexical order. So "01.01.02" would come
-                  # **before** "01.01aj", even if it is a child of the
-                  # latter. Mapping "." to "~" takes care of this
-                  # sorting issue.
-                  key=lambda x: key_re.sub(r"0\1", x.replace(".", "~")))
+                  key=key_from_path)
 
+
+def add_semantic_fields_to_english_renditions(xml):
+    renditions = xml.tree.findall(".//btw:english-rendition",
+                                  namespaces=default_namespace_mapping)
+    terms = [x.find("btw:english-term", namespaces=default_namespace_mapping)
+             for x in renditions]
+    modified = False
+    rendition_to_fields = {}
+    for term in set(elements_as_text(terms)):
+        fields = [x.htid.semantic_field for x in SearchWord.objects.filter(
+            searchword=term).select_related()]
+        rendition_to_fields[term] = fields
+
+    for rendition in renditions:
+        term = terms.pop(0)
+        text = element_as_text(term)
+
+        # It can be empty when the article is being composed.
+        if not len(text):
+            continue
+        fields = rendition_to_fields[text]
+        if len(fields) > 0:
+            sfs = lxml.etree.Element(
+                "{{{0}}}semantic-fields".format(
+                    default_namespace_mapping["btw"]),
+                nsmap=default_namespace_mapping)
+            for field in sorted(fields, key=key_from_sf):
+                sf = lxml.etree.Element(
+                    "{{{0}}}sf".format(default_namespace_mapping["btw"]),
+                    nsmap=default_namespace_mapping)
+                sf.text = field.path
+                sfs.append(sf)
+            rendition.append(sfs)
+            modified = True
+
+    return modified
 
 def name_semantic_fields(xml):
     sfs = xml.tree.findall(".//btw:sf",

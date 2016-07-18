@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.0">
+<btw:entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.1">
   <btw:lemma>prasāda</btw:lemma>
   <btw:overview><!-- UNIT 1: OVERVIEW -->
     <btw:definition><!-- Definition -->
@@ -12,26 +12,9 @@
       <btw:english-renditions>
         <btw:english-rendition>
           <btw:english-term>clarity</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>01.04.08.01|02.07n</btw:sf>
-            <btw:sf>01.04.08.09n</btw:sf>
-            <btw:sf>01.07.04.01.02|07n</btw:sf>
-            <btw:sf>02.01.08.01.02|03n</btw:sf>
-            <btw:sf>02.01.10.01n</btw:sf>
-            <btw:sf>02.01.10.02.03|04n</btw:sf>
-            <btw:sf>17.05.03|07n</btw:sf>
-            <btw:sf>03.11.03.03.05.01n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>serenity</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>01.02.11.02.01|08.01n</btw:sf>
-            <btw:sf>01.05.05.09.01|00n</btw:sf>
-            <btw:sf>02.02.18n</btw:sf>
-            <btw:sf>02.02.19.06n</btw:sf>
-            <btw:sf>03.01.06.01.03.03|09.06n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
       <btw:subsense xml:id="S.a-1"> <!-- a1 -->
@@ -290,58 +273,12 @@
       <btw:english-renditions>
         <btw:english-rendition>
           <btw:english-term>confidence</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>02.01.12.10.04|02n</btw:sf>
-            <btw:sf>02.01.12.10.04|02.01n</btw:sf>
-            <btw:sf>02.01.13.02n</btw:sf>
-            <btw:sf>02.01n</btw:sf>
-            <btw:sf>02.01.13.08.11n</btw:sf>
-            <btw:sf>02.01.14.05.05|00n</btw:sf>
-            <btw:sf>02.02.22.15|11.01.01n</btw:sf>
-            <btw:sf>02.02.28.05n</btw:sf>
-            <btw:sf>02.02.31.02n</btw:sf>
-            <btw:sf>02.02.31.08n</btw:sf>
-            <btw:sf>03.04.13.18.05|13.04n</btw:sf>
-            <btw:sf>03.05.01.03.01n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>trust</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>01.02.08.03.08.14|01.04n</btw:sf>
-            <btw:sf>01.05.05.15.01.05|15.03n</btw:sf>
-            <btw:sf>01.05.05.15.01.05|15.05n</btw:sf>
-            <btw:sf>02.01.13.02|00n</btw:sf>
-            <btw:sf>15.05n</btw:sf>
-            <btw:sf>02.01.13.02|02n</btw:sf>
-            <btw:sf>02.01.14.05.05n</btw:sf>
-            <btw:sf>03.04.13.18.05|13.03n</btw:sf>
-            <btw:sf>03.04.13.18.05|13.03.02n</btw:sf>
-            <btw:sf>03.04.13.18.05|13.04n</btw:sf>
-            <btw:sf>03.05.01.03.01n</btw:sf>
-            <btw:sf>03.05.01|02n</btw:sf>
-            <btw:sf>03.05.01|05.01n</btw:sf>
-            <btw:sf>03.10.05.02|12n</btw:sf>
-            <btw:sf>03.10.05.02|15n</btw:sf>
-            <btw:sf>03.10.13.02|05.06n</btw:sf>
-            <btw:sf>03.10.13.20.03|03n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
         <btw:english-rendition>
           <btw:english-term>faith</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>02.01.13|02n</btw:sf>
-            <btw:sf>02.01.13.02n</btw:sf>
-            <btw:sf>02.01.13.02.02n</btw:sf>
-            <btw:sf>02.01.13.08.11.01.01n</btw:sf>
-            <btw:sf>02.08.03.13.02|06n</btw:sf>
-            <btw:sf>03.05.01.03.01n</btw:sf>
-            <btw:sf>03.05.04.04n</btw:sf>
-            <btw:sf>03.07.00n</btw:sf>
-            <btw:sf>03.07.00.02|01n</btw:sf>
-            <btw:sf>03.07.00.05.01n</btw:sf>
-            <btw:sf>03.10.13.10.02|02n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
       <btw:subsense xml:id="S.b-1">
@@ -549,15 +486,6 @@
       <btw:english-renditions>
         <btw:english-rendition>
           <btw:english-term>favor</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>01.03.07.10.03n</btw:sf>
-            <btw:sf>01.05.05.12.01n</btw:sf>
-            <btw:sf>01.05.05.12.01.03.02n</btw:sf>
-            <btw:sf>02.01.17.01n</btw:sf>
-            <btw:sf>02.02.22.01n</btw:sf>
-            <btw:sf>02.04.06n</btw:sf>
-            <btw:sf>03.08.13.03n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
       <btw:explanation>In the sense of granting a favor:</btw:explanation>
@@ -599,13 +527,6 @@
       <btw:english-renditions>
         <btw:english-rendition>
           <btw:english-term>devotion</btw:english-term>
-          <btw:semantic-fields>
-            <btw:sf>01.05.05.14.01n</btw:sf>
-            <btw:sf>03.05.01.03.01.01n</btw:sf>
-            <btw:sf>03.07.00.22.02n</btw:sf>
-            <btw:sf>03.07.03n</btw:sf>
-            <btw:sf>03.07.00.23n</btw:sf>
-          </btw:semantic-fields>
         </btw:english-rendition>
       </btw:english-renditions>
       <btw:explanation>Powerful feeling of reverential devotion, often compounded with <foreign xml:lang="sa-Latn">saṃvega</foreign> or <foreign xml:lang="sa-Latn">tīvra</foreign></btw:explanation>

@@ -59,4 +59,4 @@ class RawSaveFormTest(SimpleTestCase):
         form = RawSaveForm(data={'data': valid_editable.decode('utf-8')})
         self.assertTrue(form.is_valid())
         chunk = form.save(commit=False)
-        self.assertEqual(chunk.schema_version, "1.0")
+        self.assertEqual(chunk.schema_version, "1.1")
