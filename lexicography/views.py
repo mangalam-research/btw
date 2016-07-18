@@ -67,10 +67,12 @@ def main(request):
 
 class SearchTable(BaseDatatableView):
     model = ChangeRecord
-    columns = ['lemma', 'schema_version', 'published', 'entry__deleted',
+    # django-datatables-view takes a dot-notation to refer to fields
+    # in related models rather than Django's native ``__`` system.
+    columns = ['lemma', 'c_hash.schema_version', 'published', 'entry.deleted',
                'datetime', 'user', 'hit']
-    order_columns = ['lemma', 'schema_version', 'published',
-                     'entry__deleted', 'datetime', 'user', '']
+    order_columns = ['lemma', 'c_hash.schema_version', 'published',
+                     'entry.deleted', 'datetime', 'user', '']
 
     def get(self, *args, **kwargs):
         self.chunk_to_hits = {}
@@ -124,10 +126,10 @@ class SearchTable(BaseDatatableView):
         if column == "user":
             return row.user.username
 
-        if column == "entry__deleted":
+        if column == "entry.deleted":
             return "Yes" if row.entry.deleted else "No"
 
-        if column == "schema_version":
+        if column == "c_hash.schema_version":
             warn = ""
             # We do not want to generate the warning for change
             # records that we cannot edit. The only thing we can edit
