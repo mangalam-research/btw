@@ -187,7 +187,7 @@ class SearchTable(BaseDatatableView):
         # view. So for them, the initial queryset must be restricted
         # rather than let filtering do the job.
 
-        qs = ChangeRecord.objects
+        qs = ChangeRecord.objects.select_related()
         if not usermod.can_author(self.request.user):
             qs = qs.filter(entry__in=Entry.objects.active_entries()) \
                    .filter(entry__latest_published=F('pk'))
