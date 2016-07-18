@@ -1,3 +1,24 @@
+* 1.5.0 (upcoming):
+
+  + New features:
+
+    - It is possible to create new BTW-specific custom fields.
+
+    - BTW now has a site-wide error catcher which a) prevent software
+      errors from going undetected, b) will help in diagnosing
+      problems.
+
+    - Added eXist-db ("eXist", for short) to BTW to allow for a
+      full-featured full text search facility and to support searches
+      that are aware of the structure of XML documents.
+
+    - Search in lexicographical articles now uses eXist, can make
+      use of the Lucene search syntax and provide context with the
+      hits.
+
+    - Semantic fields in displayed articles are now buttons which
+      bring up a popover of links to other articles when clicked.
+
 * 1.4.1:
 
   + Upgrade from Django 1.7 to Django 1.8. This could no longer be
