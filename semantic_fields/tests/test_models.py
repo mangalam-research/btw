@@ -4,11 +4,15 @@ from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
 from django.utils.html import escape
 
-from ..models import SemanticField
+from ..models import SemanticField, SpecifiedSemanticField
 from ..util import ParsedExpression
+from lib.testutil import wipd
 
 sep_re = re.compile(r"(\s+(?:>|::)\s+)")
 pos_re = re.compile(r" \((.*)\)$")
+
+def to_str(path):
+    return "@".join(unicode(x) for x in path)
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
 class SemanticFieldTestCase(TestCase):
@@ -19,9 +23,9 @@ class SemanticFieldTestCase(TestCase):
         changes.
         """
         c = SemanticField(path="01.01n")
-        self.assertEqual(unicode(c.parsed_path), "01.01n")
+        self.assertEqual(to_str(c.parsed_path), "01.01n")
         c.path = "01.01v"
-        self.assertEqual(unicode(c.parsed_path), "01.01v")
+        self.assertEqual(to_str(c.parsed_path), "01.01v")
 
     def test_pos(self):
         """
@@ -362,6 +366,97 @@ class SemanticFieldTestCase(TestCase):
         self.assertEqual(rel.heading, "foo")
         self.assertEqual(rel.parent, c.parent)
         self.assertEqual(rel.catid, None)
+
+
+@override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
+class SpecifiedSemanticFieldTestCase(TestCase):
+
+    def test_pos(self):
+        """
+        Test that ``pos`` returns a proper value when ``path`` changes.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        self.assertEqual(unicode(c.pos), "n")
+        c.path = "01.01v@01.02n"
+        self.assertEqual(unicode(c.pos), "v")
+
+    def test_verbose_pos(self):
+        """
+        Test that ``verbose_pos`` returns a proper value when ``path``
+        changes.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        self.assertEqual(c.verbose_pos, "Noun")
+        c.path = "01.01v@01.02n"
+        self.assertEqual(c.verbose_pos, "Verb")
+
+    def test_is_subcat(self):
+        """
+        Test that ``is_subcat`` returns ``False`` even if the participating
+        fields are subcats.
+        """
+        c = SpecifiedSemanticField(path="01.01|01n@01.02|02v")
+        self.assertFalse(c.is_subcat)
+
+    def test_heading_and_pos(self):
+        """
+        Test that ``heading_and_pos`` returns a proper value when ``path``
+        changes.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v", heading="foo")
+        self.assertEqual(unicode(c.heading_and_pos), "foo (Noun)")
+        c.path = "01.01v@01.02n"
+        self.assertEqual(unicode(c.heading_and_pos), "foo (Verb)")
+
+    def test_related_by_pos(self):
+        """
+        Test that related_by_pos returns en empty set.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v", heading="foo")
+        self.assertEqual(len(c.related_by_pos), 0)
+
+    def test_possible_new_poses(self):
+        """
+        Test that ``possible_new_poses`` is empty.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v", heading="foo")
+        self.assertEqual(len(c.possible_new_poses), 0)
+
+    def test_hte_url(self):
+        """
+        ``hte_url`` should be ``None``.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        self.assertIsNone(c.hte_url)
+
+    def test_save_raises(self):
+        """
+        ``save`` raises an exception.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        with self.assertRaisesRegexp(Exception,
+                                     "cannot save a specified semantic field"):
+            c.save()
+
+    def test_make_child_raises(self):
+        """
+        ``make_child`` raises an exception.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        with self.assertRaisesRegexp(Exception,
+                                     "cannot make a child of a "
+                                     "SpecifiedSemanticField"):
+            c.make_child("foo", "n")
+
+    def test_make_related_by_pos_raises(self):
+        """
+        ``make_child`` raises an exception.
+        """
+        c = SpecifiedSemanticField(path="01.01n@01.02v")
+        with self.assertRaisesRegexp(Exception,
+                                     "cannot make a related field for a "
+                                     "SpecifiedSemanticField"):
+            c.make_related_by_pos("foo", "n")
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
 class SemanticFieldTransactionTestCase(TransactionTestCase):

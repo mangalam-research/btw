@@ -14,7 +14,7 @@ define(function factory(require, _exports, _module) {
     var excludeUrl = window.location.href;
 
     beforeEach(function beforeEach() {
-      fetcher = new Fetcher(fetchUrl, excludeUrl);
+      fetcher = new Fetcher(fetchUrl, excludeUrl, ["changerecords"]);
       server = sinon.fakeServer.create({
         respondImmediately: true,
       });
@@ -38,7 +38,8 @@ define(function factory(require, _exports, _module) {
             published: true,
           }],
         }];
-        server.respondWith("GET", fetchUrl + "?paths=01.01n&scope=wide",
+        server.respondWith("GET",
+                           fetchUrl + "?paths=01.01n&fields=changerecords",
           [200, { "Content-Type": "application/json" },
            JSON.stringify(response)]);
         return assert.isFulfilled(fetcher.fetch(["01.01n"]));
@@ -121,7 +122,9 @@ define(function factory(require, _exports, _module) {
             published: true,
           }],
         }];
-        server.respondWith("GET", fetchUrl + "?paths=01.01n%3B01.02n&scope=wide",
+        server.respondWith("GET",
+                           fetchUrl +
+                           "?paths=01.01n%3B01.02n&fields=changerecords",
                            [200, { "Content-Type": "application/json" },
                             JSON.stringify(response)]);
         return fetcher.fetch(["01.01n", "01.02n"]).then(function then(data) {
@@ -155,7 +158,8 @@ define(function factory(require, _exports, _module) {
                published: true,
              }],
            }];
-           server.respondWith("GET", fetchUrl + "?paths=01.01n&scope=wide",
+           server.respondWith("GET",
+                              fetchUrl + "?paths=01.01n&fields=changerecords",
                               [200, { "Content-Type": "application/json" },
                                JSON.stringify(response)]);
            return fetcher.fetch(["01.01n"]).then(function then(data) {
@@ -190,7 +194,8 @@ define(function factory(require, _exports, _module) {
             published: true,
           }],
         }];
-        server.respondWith("GET", fetchUrl + "?paths=01.01n&scope=wide",
+        server.respondWith("GET",
+                           fetchUrl + "?paths=01.01n&fields=changerecords",
                            [200, { "Content-Type": "application/json" },
                             JSON.stringify(response)]);
         return fetcher.fetch(["01.01n"]).then(function then(data) {
@@ -225,7 +230,8 @@ define(function factory(require, _exports, _module) {
         }];
 
         beforeEach(function beforeEach() {
-          server.respondWith("GET", fetchUrl + "?paths=01.01n&scope=wide",
+          server.respondWith("GET",
+                             fetchUrl + "?paths=01.01n&fields=changerecords",
                              [200, { "Content-Type": "application/json" },
                               JSON.stringify(response)]);
         });

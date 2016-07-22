@@ -4,6 +4,7 @@ import mock
 
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
+from django.test import RequestFactory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -17,8 +18,12 @@ from .util import MinimalQuery, FakeChangeRecord
 from ..models import SemanticField, SearchWord, Lexeme
 from ..serializers import SemanticFieldSerializer
 from lib import util
+from lib.testutil import wipd
 
 user_model = get_user_model()
+
+def _make_test_url(sf):
+    return "http://localhost:80" + sf.detail_url
 
 class _Mixin(object):
 
@@ -47,6 +52,7 @@ class _Mixin(object):
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
 class ViewsTestCase(BaseCMSTestCase, _Mixin, util.DisableMigrationsMixin,
                     WebTest):
+    maxDiff = None
 
     @classmethod
     def setUpTestData(cls):
@@ -467,15 +473,15 @@ class DetailsTestCaseJSON(ViewsTestCase):
         """
         Test that a logged in user gets a response.
         """
-        response = self.app.get(self.hte.detail_url, user=self.perm)
+        response = self.app.get(_make_test_url(self.hte), user=self.perm)
         self.assertEqual(
             response.json,
             {
-                "path": "01n",
-                "heading": "hte",
-                "parent": None,
-                "hte_url":
-                "http://historicalthesaurus.arts.gla.ac.uk/category/?id=1",
+                u"url": _make_test_url(self.hte),
+                u"path": u"01n",
+                u"heading": u"hte",
+                u"verbose_pos": u"Noun",
+                u"is_subcat": False,
             },
             "the returned value should be correct")
 
@@ -975,6 +981,14 @@ class ListTestCase(ViewsTestCase):
                                         parent=cat1)
         cat3.save()
 
+        # We build this factory this way for consistency between the
+        # URLs produced through ``app`` and those produced using
+        # requests from the factory.
+        request_factory = RequestFactory(SERVER_NAME="localhost",
+                                         HTTP_HOST="localhost:80")
+        request = request_factory.get("/foo")
+        cls.context = {"request": request}
+
     def test_not_logged_in_no_csrf_token(self):
         """
         A user who is not logged in and has no csrf token should fail to get.
@@ -1061,7 +1075,7 @@ class ListTestCase(ViewsTestCase):
 
         serializer = SemanticFieldSerializer(
             [self.cat2, self.cat3],
-            scope=SemanticFieldSerializer.DEFAULT_SCOPE,
+            context=self.context,
             unpublished=False,
             many=True)
         transformed = json.loads(json.dumps(serializer.data))
@@ -1069,7 +1083,7 @@ class ListTestCase(ViewsTestCase):
 
     def test_expanded_scope(self):
         """
-        A query with expanded scope yields results.
+        A query requesting changerecords gets them.
         """
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
 
@@ -1081,7 +1095,7 @@ class ListTestCase(ViewsTestCase):
             ])
             response = self.app.get(self.url,
                                     {"paths": "01.01n;02n;99n",
-                                     "scope": "wide"},
+                                     "fields": "changerecords"},
                                     headers={
                                         "Accept": "application/json",
                                         "X-CSRFToken": "foo"
@@ -1089,7 +1103,8 @@ class ListTestCase(ViewsTestCase):
 
             serializer = SemanticFieldSerializer(
                 [self.cat2, self.cat3],
-                scope=SemanticFieldSerializer.WIDE_SCOPE,
+                fields=["changerecords"],
+                context=self.context,
                 unpublished=False,
                 many=True)
             transformed = json.loads(json.dumps(serializer.data))
@@ -1108,20 +1123,69 @@ class ListTestCase(ViewsTestCase):
                                     "X-CSRFToken": "foo"
                                 })
 
+        url = "http://localhost:80" + self.url
+
         self.assertItemsEqual(response.json,
                               [{
+                                  "url": url + "?paths=01.01n@02n",
                                   "path": "01.01n@02n",
-                                  "parent": None,
-                                  "hte_url": None,
-                                  "heading": "bwip @ aaaa"
+                                  "heading": "bwip @ aaaa",
+                                  "is_subcat": False,
+                                  "verbose_pos": "Noun",
                               }, {
+                                  "url": url + "?paths=01n@02n",
                                   "path": "01n@02n",
-                                  "parent": None,
-                                  "hte_url": None,
-                                  "heading": "term @ aaaa"
+                                  "heading": "term @ aaaa",
+                                  "is_subcat": False,
+                                  "verbose_pos": "Noun",
                               }, {
+                                  "url": _make_test_url(self.cat2),
                                   "path": "02n",
-                                  "parent": None,
-                                  "hte_url": self.cat2.hte_url,
-                                  "heading": "aaaa"
+                                  "heading": "aaaa",
+                                  "is_subcat": False,
+                                  "verbose_pos": "Noun",
                               }])
+
+    def test_paging(self):
+        """
+        A search query paginates.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+
+        response = self.app.get(self.url,
+                                {
+                                    "search": "aaaa",
+                                    "aspect": "sf",
+                                    "scope": "all",
+                                },
+                                headers={
+                                    "Accept": "application/json",
+                                    "X-CSRFToken": "foo"
+                                })
+
+        result = response.json
+        self.assertEqual(result["unfiltered_count"], 3)
+        self.assertEqual(result["count"], 1)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_parent_unbound(self):
+        """
+        A search with unbound ``parent``, returns parent relations.
+        """
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        response = self.app.get(self.url,
+                                {
+                                    "ids": self.cat3.id,
+                                    "fields": "parent",
+                                    "depths.parent": "-1",
+                                },
+                                headers={
+                                    "Accept": "application/json",
+                                    "X-CSRFToken": "foo"
+                                })
+
+        data = SemanticFieldSerializer(self.cat3, context=self.context,
+                                       fields=["parent"],
+                                       depths={"parent": -1},
+                                       unpublished=True).data
+        self.assertEqual(response.json[0], data)

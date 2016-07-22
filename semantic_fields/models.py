@@ -2,8 +2,8 @@ from django.db import models, IntegrityError
 from django.core.urlresolvers import reverse
 from django.utils.html import mark_safe, escape
 
-from .util import parse_local_reference, POS_TO_VERBOSE, ParsedExpression, \
-    POS_VALUES_EXPANDED
+from .util import parse_local_reference, parse_local_references, \
+    POS_TO_VERBOSE, ParsedExpression, POS_VALUES_EXPANDED
 from .signals import semantic_field_updated
 from lib.util import on_change
 
@@ -24,25 +24,28 @@ def format_duplicate_error(uri, pos, heading):
 
 
 def make_field(parent, uri, heading, pos):
+    if parent and len(parent.parsed_path) > 1:
+        raise ValueError("cannot use make_field on a specified field")
+
     children = parent.children.all() if parent else \
         SemanticField.objects.roots
 
     # The siblings use the same URI as the child we want to create
-    siblings = [c for c in children if c.parsed_path.last_uri == uri]
+    siblings = [c for c in children if c.parsed_path[0].last_uri == uri]
 
     dupe = any(c for c in siblings if c.pos == pos and c.heading == heading)
     if dupe:
         raise ValueError(format_duplicate_error(uri, pos, heading))
 
     max_child = 0 if len(siblings) == 0 else  \
-        max(c.parsed_path.last_level_number for c in siblings)
+        max(c.parsed_path[0].last_level_number for c in siblings)
 
     # The looping and exception handling here is to handle a
     # possible race if two users try to create a new field at
     # the same time.
     while True:
         max_child += 1
-        desired_path = parent.parsed_path.make_child(uri, max_child, pos) \
+        desired_path = parent.parsed_path[0].make_child(uri, max_child, pos) \
             if parent else ParsedExpression.make(uri, max_child, pos)
 
         sf = SemanticField(path=desired_path, heading=heading, parent=parent)
@@ -79,7 +82,7 @@ class SemanticField(models.Model):
     heading = models.TextField()
 
     def _branch_assertions(self):
-        ref = self.parsed_path
+        ref = self.parsed_path[0]
         # This will have to be modified when we allow user-based
         # custom fields.
         if ref.branches:
@@ -98,7 +101,7 @@ class SemanticField(models.Model):
         return make_field(self, "", heading, pos)
 
     def make_related_by_pos(self, heading, pos):
-        ref = self.parsed_path
+        ref = self.parsed_path[0]
 
         self._branch_assertions()
 
@@ -107,7 +110,7 @@ class SemanticField(models.Model):
         uri = ""
 
         desired_path = ref.make_related_by_pos(pos)
-        sf = SemanticField(path=desired_path,
+        sf = SemanticField(path=unicode(desired_path),
                            heading=heading,
                            parent=self.parent)
 
@@ -189,6 +192,11 @@ class SemanticField(models.Model):
         self._path = val
         self._parsed_path = None
         self._related_by_pos = None
+        self._validate_path()
+
+    def _validate_path(self):
+        if len(self.parsed_path) > 1:
+            raise ValueError("paths cannot have specifications")
 
     _parsed_path = None
 
@@ -198,7 +206,7 @@ class SemanticField(models.Model):
         if pp is not None:
             return pp
 
-        parsed = parse_local_reference(self.path)
+        parsed = parse_local_references(self.path)
         self._parsed_path = parsed
         return parsed
 
@@ -211,7 +219,7 @@ class SemanticField(models.Model):
         if rp is not None:
             return rp
 
-        ref = self.parsed_path
+        ref = self.parsed_path[0]
         related = ref.related_by_pos()
         related = \
             SemanticField.objects.filter(
@@ -234,7 +242,7 @@ class SemanticField(models.Model):
 
     @property
     def pos(self):
-        return self.parsed_path.pos
+        return self.parsed_path[0].pos
 
     @property
     def verbose_pos(self):
@@ -246,7 +254,7 @@ class SemanticField(models.Model):
 
     @property
     def is_subcat(self):
-        return self.parsed_path.hte_subcats is not None
+        return self.parsed_path[0].hte_subcats is not None
 
     def make_link(self, text=None, css_class=""):
         """
@@ -320,6 +328,77 @@ class SemanticField(models.Model):
 
     def __unicode__(self):
         return self.heading + " " + self.path
+
+
+class SpecifiedSemanticField(SemanticField):
+    """
+    A "specified" semantic field is a kind of field that has a path
+    specification (with "@"). These are not *real* fields but we do
+    return such fields in search queries to the REST API, for instance
+    so it is useful to have a fake class for them.
+    """
+
+    def save(self, *args, **kwargs):
+        "We cannot save SpecifiedSemanticField objects to the database."
+        raise Exception("cannot save a specified semantic field")
+
+    def _validate_path(self):
+        self.parsed_path  # pylint: disable=pointless-statement
+
+    @property
+    def is_subcat(self):
+        return False
+
+    @property
+    def is_custom(self):
+        return False
+
+    @property
+    def related_by_pos(self):
+        return SemanticField.objects.none()
+
+    @property
+    def possible_new_poses(self):
+        return set()
+
+    def make_child(self, *args, **kwargs):
+        raise Exception("cannot make a child of a SpecifiedSemanticField")
+
+    def make_related_by_pos(self, *args, **kwargs):
+        raise Exception("cannot make a related field for a "
+                        "SpecifiedSemanticField")
+
+    @property
+    def detail_url(self):
+        # They do not have a real detail url. Querying the list
+        # endpoint with "?paths=p:" + path will return constructed
+        # records.
+        return reverse('semantic_fields_semanticfield-list') + \
+            "?paths=" + self.path
+
+    @property
+    def add_child_url(self):
+        return None
+
+    @property
+    def add_related_by_pos_url(self):
+        return None
+
+    @property
+    def edit_url(self):
+        return None
+
+    @property
+    def add_child_form_url(self):
+        return None
+
+    @property
+    def add_related_by_pos_form_url(self):
+        return None
+
+    @property
+    def edit_form_url(self):
+        return None
 
 def emit_change_signal(instance):
     semantic_field_updated.send(instance.__class__, instance=instance)

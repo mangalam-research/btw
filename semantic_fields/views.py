@@ -7,16 +7,44 @@ from django.views.decorators.cache import never_cache
 from django.middleware.csrf import CsrfViewMiddleware
 from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, mixins, renderers, parsers, permissions, \
-    generics, filters
+    generics, filters, pagination, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
-from rest_framework import serializers
+from grako.exceptions import FailedParse
 
-from .models import SemanticField
+from .models import SemanticField, SpecifiedSemanticField
 from .serializers import SemanticFieldSerializer
 from .forms import SemanticFieldForm
 from .util import parse_local_references
+
+def filter_by_search_params(qs, search, aspect, scope):
+    search = search.strip()
+
+    if search == "":
+        return SemanticField.objects.none()
+
+    if search[0] == '"' and search[-1] == '"':
+        exact = ""  # Exact field lookup
+        search = search[1:-1]  # Dump the quotes!
+    else:
+        exact = "__icontains"  # Inexact field lookup
+
+    field = {"sf": "heading",
+             "lexemes": "lexeme__searchword__searchword"}[aspect]
+
+    if scope == "all":
+        pass
+    elif scope == "hte":
+        qs = qs.filter(catid__isnull=False)
+    elif scope == "btw":
+        qs = qs.filter(catid__isnull=True)
+    else:
+        raise ValueError("unknown value for scope: " + scope)
+
+    qs = qs.filter(**{field + exact: search})
+
+    return qs
 
 class SearchTable(BaseDatatableView):
     model = SemanticField
@@ -41,31 +69,7 @@ class SearchTable(BaseDatatableView):
         aspect = self.request.GET['aspect']
         scope = self.request.GET['scope']
 
-        search_value = search_value.strip()
-
-        if search_value == "":
-            return SemanticField.objects.none()
-
-        if search_value[0] == '"' and search_value[-1] == '"':
-            exact = ""  # Exact field lookup
-            search_value = search_value[1:-1]  # Dump the quotes!
-        else:
-            exact = "__icontains"  # Inexact field lookup
-
-        field = {"sf": "heading",
-                 "lexemes": "lexeme__searchword__searchword"}[aspect]
-
-        if scope == "all":
-            pass
-        elif scope == "hte":
-            qs = qs.filter(catid__isnull=False)
-        elif scope == "btw":
-            qs = qs.filter(catid__isnull=True)
-        else:
-            raise ValueError("unknown value for scope: " + scope)
-
-        return qs.filter(**{field + exact: search_value})
-
+        return filter_by_search_params(qs, search_value, aspect, scope)
 
 class SemanticFieldHTMLRenderer(renderers.TemplateHTMLRenderer):
     media_type = "text/html"
@@ -87,17 +91,22 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
 
 class SemanticFieldFilter(filters.BaseFilterBackend):
 
-    def filter_queryset(self, request, queryset, view):
+    def filter_queryset(self, request, qs, view):
         paths = request.GET.get('paths', None)
         ids = request.GET.get('ids', None)
 
         if paths is not None:
-            queryset = queryset.filter(path__in=set(paths.split(";")))
+            qs = qs.filter(path__in=set(paths.split(";")))
 
         if ids is not None:
-            queryset = queryset.filter(ids__in=set(ids.split(";")))
+            qs = qs.filter(id__in=set(ids.split(";")))
 
-        return queryset
+        search = request.GET.get('search', None)
+        if search is not None:
+            aspect = request.GET['aspect']
+            scope = request.GET['scope']
+            qs = filter_by_search_params(qs, search, aspect, scope)
+        return qs
 
 
 def make_specified_sf(path, fields):
@@ -105,14 +114,30 @@ def make_specified_sf(path, fields):
     Create a "fake" semantic field that is the product of a complex
     semantic field expression.
     """
-    return SemanticField(path=path,
-                         heading=" @ ".join(field["heading"] for field in
-                                            fields))
+    return SpecifiedSemanticField(path=path,
+                                  heading=" @ ".join(field["heading"] for
+                                                     field in fields))
 
 
 RELATED_BY_POS = "related_by_pos"
 CHILD = "child"
 
+class SemanticFieldPagination(pagination.LimitOffsetPagination):
+    default_limit = 10
+    unfiltered_count = None
+
+    def paginate_queryset(self, queryset, request, view=None):
+
+        ret = super(SemanticFieldPagination, self) \
+            .paginate_queryset(queryset, request, view)
+        self.unfiltered_count = queryset.model.objects.count()
+        return ret
+
+    def get_paginated_response(self, data):
+        base = super(SemanticFieldPagination,
+                     self).get_paginated_response(data)
+        base.data["unfiltered_count"] = self.unfiltered_count
+        return base
 
 class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                            mixins.UpdateModelMixin,
@@ -120,6 +145,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                            viewsets.GenericViewSet):
     queryset = SemanticField.objects.all()
     serializer_class = SemanticFieldSerializer
+    pagination_class = SemanticFieldPagination
     lookup_field = "pk"
 
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
@@ -131,12 +157,27 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
 
-        scope = self.request.GET.get("scope",
-                                     SemanticFieldSerializer.DEFAULT_SCOPE)
+        fields = self.request.GET.get("fields", None)
+        if fields is not None:
+            fields = fields.split(",")
+            kwargs["fields"] = fields
 
-        kwargs["scope"] = scope
+        depths = {key[7:]: int(value) for (key, value) in
+                  self.request.GET.iteritems() if key.startswith("depths.")}
+        if len(depths):
+            kwargs["depths"] = depths
+
         kwargs["unpublished"] = self.request.user.can_author
-        return serializer_class(*args, **kwargs)
+        return serializer_class(context={"request": self.request},
+                                *args, **kwargs)
+
+    @property
+    def paginator(self):
+        # We want a paginator only if we are doing a search.
+        search = self.request.GET.get('search', None)
+        if search is None:
+            return None
+        return super(SemanticFieldViewSet, self).paginator
 
     @never_cache
     def retrieve(self, request, *args, **kwargs):
@@ -147,6 +188,95 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             .retrieve(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
+        """
+        We support multiple arguments for listing semantic fields.
+
+        Exact fields
+        ============
+
+        You can use one of:
+
+        * ``paths`` with a semi-colon separated list of paths to retrieve.
+
+        * ``ids`` with a semi-colon separated list of ids to retreive.
+
+        Searching
+        =========
+
+        Searching is mutually exclusive with returning exact
+        fields. You must use ``search``, ``aspect``, ``scope``:
+
+        * ``search`` is the search text
+
+        * ``aspect`` is where to search:
+
+          + ``sf`` the semantic field headings
+
+          + ``lexemes`` the lexemes
+
+        * ``scope`` is the scope of the search:
+
+          + ``all`: all semantic fields
+
+          + ``hte`: only the fields from the HTE
+
+          + ``btw``: only the fields created for BTW
+
+        Pagination
+        ==========
+
+        When using ``search``, pagination is turned on. You can set
+        pagination parameters with ``limit`` and ``offset``. ``limit``
+        indicates how many records to return, ``offset`` indicates
+        where to start in the set of results.  When paging is turned
+        on, the results are returned as a dictionary containing:
+
+        * ``count``: the number of matching results,
+
+        * ``next`` and ``previous``: URLs to the next and previous set
+          of results,
+
+        * ``results`` an array of results.
+
+        * ``unfiltered_count``: the total count of records that exist,
+          ignoring filtering.
+
+        When paging is off (not searching), the results are just an
+        array of matching records.
+
+        Selecting Fields
+        ================
+
+        You can reduce or expand the set of returned fields by using
+        the ``fields`` parameter, which is a comma separated list of
+        field names or field sets. The field sets exist:
+
+        * The default: ``url``, ``path``, ``heading``, ``is_subcat``,
+          ``verbose_pos``
+
+        * The ``@search`` field set: ``parent``, ``related_by_pos``
+
+        * The ``@details`` field set: ``parent``, ``related_by_pos``,
+          ``lexemes``, ``children``
+
+        See
+        `:class:semantic_fields.serializers.SemanticFieldSerializer`
+        for the full syntax.
+
+        Depths of Relations
+        ===================
+
+        Using ``depths.<fieldname>`` allows to set a depth of
+        expansion when following relationships. For instance without
+        any specified ``depth``, the ``parent`` relation would be
+        serialized as a URL to the parent. With ``depths.parent=1`` it
+        would be realized as a serialization of the parent and the
+        parent would itself contain a URL to its own
+        parent. ``depths.parent=-1`` makes the depth infinite.
+
+        ..warning:: Be careful when setting an infinite depth, as it
+                    could cause an enormous amount of queries.
+        """
         saved_method = request.method
         request.method = "POST"
         request.csrf_processing_done = False
@@ -168,9 +298,11 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         # nowhere else to check for them. The filter cannot do it.
         paths = request.GET.get('paths', None)
         ids = request.GET.get('ids', None)
+        search = request.GET.get('search', None)
 
-        if paths is None and ids is None:
-            return HttpResponseBadRequest("paths or ids must be specified")
+        if paths is None and ids is None and search is None:
+            return HttpResponseBadRequest(
+                "paths or ids or search must be specified")
 
         complex_paths = set()
         if paths is not None:
@@ -182,7 +314,11 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             paths = set(paths.split(";"))
             cleaned = set()
             for path in paths:
-                refs = parse_local_references(path)
+                try:
+                    refs = parse_local_references(path)
+                except FailedParse:
+                    continue
+
                 cleaned |= set(unicode(ref) for ref in refs)
                 if len(refs) > 1:
                     complex_paths.add(path)
@@ -205,7 +341,10 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             # First, we add.
             sf_by_path = {sf["path"]: sf for sf in ret.data}
             for path in complex_paths:
-                refs = parse_local_references(path)
+                try:
+                    refs = parse_local_references(path)
+                except FailedParse:
+                    continue
                 combined = self.get_serializer(
                     make_specified_sf(path,
                                       [sf_by_path[unicode(ref)] for ref in

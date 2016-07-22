@@ -12,9 +12,10 @@ define(/** @lends module:lib/btw/semantic_field_fetcher */ function btwView(
   var Promise = require("bluebird");
   var URI = require("urijs/URI");
 
-  function Fetcher(fetchUrl, excludeUrl) {
+  function Fetcher(fetchUrl, excludeUrl, fields) {
     this.fetchUrl = fetchUrl;
     this.excludeUrl = excludeUrl;
+    this.fields = fields && fields.join(",");
     this._cache = Object.create(null);
   }
 
@@ -44,7 +45,7 @@ define(/** @lends module:lib/btw/semantic_field_fetcher */ function btwView(
       url: this.fetchUrl,
       data: {
         paths: unresolved.join(";"),
-        scope: "wide",
+        fields: this.fields,
       },
       headers: {
         Accept: "application/json",
