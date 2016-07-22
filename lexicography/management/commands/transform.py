@@ -1,4 +1,5 @@
-import itertools
+from __future__ import absolute_import
+
 import os
 
 from django.core.management.base import BaseCommand, CommandError
@@ -7,8 +8,8 @@ from django.utils.termcolors import colorize
 from optparse import make_option
 
 from lexicography.models import Entry, Chunk, ChangeRecord
-from lib import util
 from lexicography import xml
+from lib import util
 
 
 class Command(BaseCommand):
