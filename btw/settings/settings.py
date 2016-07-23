@@ -226,6 +226,18 @@ s.CMS_TEMPLATES = (
 
 s.CMS_PERMISSION = True
 
+# Setting it to ``True`` prevents the toolbar from being shown on
+# pages that are not "CMS pages", meaning pages that do not have
+# editable contents in the CMS. This effectively prevents the
+# ``cms.middleware.toolbar`` middleware from acting on pages served
+# statically. If we do not prevent it, it hits the database for each
+# static file served and causes issues with running out of
+# connections.
+#
+# In some versions of the 3.1.x series, setting it to ``True`` would
+# cause errors.
+s.CMS_TOOLBAR_HIDE = True
+
 s.LANGUAGES = [
     ('en-us', 'English'),
 ]
