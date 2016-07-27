@@ -323,7 +323,7 @@ class SemanticFieldTestCase(TestCase):
 
     def test_make_related_by_pos_non_custom(self):
         """
-        ``make_related_by_pos`` with a bad pos value fails.
+        ``make_related_by_pos`` with non-custom field fails.
         """
         c = SemanticField(path="01.01n")
         c.save()
@@ -345,7 +345,8 @@ class SemanticFieldTestCase(TestCase):
 
     def test_make_related_by_pos_same_pos(self):
         """
-        ``make_related_by_pos`` with a bad pos value fails.
+        ``make_related_by_pos`` with a pos which is the same as the
+        original fails.
         """
         c = SemanticField(path="01.01n/1n")
         c.save()
