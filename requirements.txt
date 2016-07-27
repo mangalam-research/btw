@@ -21,7 +21,7 @@ django-cache-management>=1.0.0,<2
 # 3.0.35 borks.
 kombu==3.0.34
 celery[redis]==3.1.23
-djangorestframework>=3.1.1,<4
+djangorestframework>=3.4.0,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
 django-cms==3.2.3
