@@ -551,6 +551,12 @@ def after_scenario(context, scenario):
     localStorage.clear()
     sessionStorage.clear()
 
+    // If it is defined we want to stop appenders so that we don't get a
+    // cookie error.
+    if (typeof log4javascript !== "undefined") {
+      log4javascript.getLogger("wed").removeAllAppenders();
+    }
+
     """)
 
     # Close all extra tabs.
@@ -564,8 +570,8 @@ def after_scenario(context, scenario):
 
     context.ajax_timeout_test = False
     context.server.patch_reset()
-    context.server.after_scenario(
-        DIRTY if "dirty" in scenario.effective_tags else CLEAN)
+    dirtiness = DIRTY if "dirty" in scenario.effective_tags else CLEAN
+    context.server.after_scenario(dirtiness)
     remove_server_limit()
 
 def before_step(context, _step):
