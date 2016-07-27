@@ -47,6 +47,8 @@ def make_field(parent, uri, heading, pos):
         max_child += 1
         desired_path = parent.parsed_path[0].make_child(uri, max_child, pos) \
             if parent else ParsedExpression.make(uri, max_child, pos)
+        # We need a string
+        desired_path = unicode(desired_path)
 
         sf = SemanticField(path=desired_path, heading=heading, parent=parent)
         try:

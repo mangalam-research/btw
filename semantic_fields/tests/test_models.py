@@ -505,6 +505,7 @@ class SemanticFieldManagerTestCase(TestCase):
         """
         field = SemanticField.objects.make_field("foo", "n")
         self.assertEqual(field.path, "/1n")
+        self.assertFalse(isinstance(field.path, ParsedExpression))
         self.assertEqual(field.heading, "foo")
         self.assertEqual(field.parent, None)
         self.assertEqual(field.catid, None)
