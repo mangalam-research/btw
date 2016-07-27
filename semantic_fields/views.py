@@ -31,7 +31,7 @@ def filter_by_search_params(qs, search, aspect, scope):
         exact = "__icontains"  # Inexact field lookup
 
     field = {"sf": "heading",
-             "lexemes": "lexeme__searchword__searchword"}[aspect]
+             "lexemes": "lexemes__searchword__searchword"}[aspect]
 
     if scope == "all":
         pass

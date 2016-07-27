@@ -415,7 +415,7 @@ class Lexeme(models.Model):
     htid = models.IntegerField(primary_key=True)
     # This field is our real foreign key. We convert the HTE
     # field catid to it.
-    semantic_field = models.ForeignKey(SemanticField)
+    semantic_field = models.ForeignKey(SemanticField, related_name="lexemes")
     word = models.CharField(max_length=60)
     fulldate = models.CharField(max_length=90)
     catorder = models.IntegerField()
