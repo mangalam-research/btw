@@ -34,6 +34,15 @@ require.config({
     "lucene-query-parser": "external/lucene-query-parser",
     urijs: "external/urijs",
     "bootstrap-treeview": "external/bootstrap-treeview.min",
+    backbone: "external/backbone",
+    marionette: "external/backbone.marionette",
+    "backbone-forms": "external/backbone-forms/backbone-forms",
+    "backbone.paginator": "external/backbone.paginator",
+    "backbone-relational": "external/backbone-relational",
+    underscore: "external/underscore-min",
+    handlebars: "external/handlebars.min",
+    "backbone.radio": "external/backbone.radio.min",
+    "twbs-pagination": "external/jquery.twbsPagination",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {
@@ -41,6 +50,8 @@ require.config({
       velocity: "velocity-glue",
       bluebird: "bluebird-glue",
       jquery: "jquery-glue",
+      backbone: "backbone-glue",
+      marionette: "marionette-glue",
     },
     "jquery-glue": {
       jquery: "jquery",
@@ -50,6 +61,20 @@ require.config({
     },
     "bluebird-glue": {
       bluebird: "bluebird",
+    },
+    "backbone-glue": {
+      backbone: "backbone",
+    },
+    "marionette-glue": {
+      marionette: "marionette",
+    },
+    marionette: {
+      backbone: "backbone",
+      marionette: "marionette",
+    },
+    "backbone-marionette-glue": {
+      backbone: "backbone",
+      marionette: "marionette",
     },
   },
   packages: [
@@ -122,6 +147,10 @@ require.config({
     typeahead: {
       deps: ["jquery"],
       exports: "Bloodhound",
+    },
+    "twbs-pagination": {
+      deps: ["bootstrap"],
+      exports: "jQuery.fn.twbsPagination",
     },
   },
   config: {

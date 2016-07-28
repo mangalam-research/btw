@@ -19,6 +19,13 @@
         require.config({
           baseUrl: '{% static 'lib/' %}'
         });
+        {% if debug %}
+        require.config({
+          config: {
+            "backbone-glue": { debug: true },
+          }
+        });
+        {% endif %}
         require(["bootstrap"]);
       </script>
       <link href="{{ btw_globals.btw_bootstrap_css_path }}" type="text/css" media="screen" rel="stylesheet" />

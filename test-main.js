@@ -30,6 +30,7 @@ require.config({
   paths: {
     js: "../js",
     sinon: "../../node_modules/sinon/lib/sinon",
+    Squire: "../../node_modules/squirejs/src/Squire",
   },
 
   // We need these so that they behave nicely in testing.

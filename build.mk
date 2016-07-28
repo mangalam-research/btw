@@ -128,8 +128,16 @@ BUILD_SCRIPTS:=build/scripts/
 EXTERNAL:=$(BUILD_DEST)/lib/external
 externalize=$(foreach f,$1,$(EXTERNAL)/$f)
 
+# Function for automatically adding a map when the map is derived by
+# adding .map to the name of the .js file.
+and_map=$1 $1.map
+
+# Function for automatically adding a map when the .js is replaced by .map.
+map=$1 $(patsubst %.js,%.map,$1)
+
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js)
+
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -364,6 +372,46 @@ $(EXTERNAL)/bootstrap-treeview.%: downloads/$(BOOTSTRAP_TREEVIEW_BASE)
 	unzip -o -d downloads $<
 	cp $(UNZIPPED)/dist/* $(EXTERNAL)
 	rm -rf $(UNZIPPED)
+
+$(EXTERNAL)/backbone%: node_modules/backbone/backbone%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone.marionette.%: node_modules/backbone.marionette/lib/backbone.marionette.%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone.paginator.%: node_modules/backbone.paginator/lib/backbone.paginator.%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone-relational%: node_modules/backbone-relational/backbone-relational%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone.radio%: node_modules/backbone.radio/build/backbone.radio%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone-forms/backbone-forms.js: node_modules/backbone-forms/distribution.amd/backbone-forms.js
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/backbone-forms/bootstrap3.%: node_modules/backbone-forms/distribution.amd/templates/bootstrap3.%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/underscore%: node_modules/underscore/underscore%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/handlebars%: node_modules/handlebars/dist/handlebars%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/jquery.twbsPagination%: node_modules/twbs-pagination/jquery.twbsPagination%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
 
 downloads build:
 	mkdir $@
