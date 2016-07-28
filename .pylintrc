@@ -31,7 +31,7 @@ extension-pkg-whitelist=lxml
 #
 # And reevaluate when new versions of pylint are released.
 
-disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter,too-many-ancestors,too-few-public-methods,missing-docstring,too-many-instance-attributes
+disable=W0613,W0232,E1101,E1103,W0142,missing-docstring,pointless-string-statement,catching-non-exception,no-value-for-parameter,too-many-ancestors,too-few-public-methods,missing-docstring,too-many-instance-attributes,too-many-arguments
 
 [VARIABLES]
 dummy-variables-rgx=_.*|dummy
