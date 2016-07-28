@@ -1,7 +1,11 @@
 from django.conf.urls import url
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from django.core.urlresolvers import reverse_lazy
 
 from . import views
+from lib.views.generics import ContextTemplateView
 
 urlpatterns = [
     url(r'^$', views.main, name='lexicography_main'),
@@ -36,6 +40,17 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += [
         url(r'^editing_data$', views.editing_data),
+    ]
+
+if settings.DEBUG or settings.BTW_TESTING:
+    urlpatterns += [
+        url(r'^sf_editor_test/$', never_cache(login_required(
+            ContextTemplateView.as_view(
+                template_name="lexicography/sf_editor_test.html",
+                context={
+                    'semantic_field_fetch_url':
+                    reverse_lazy("semantic_fields_semanticfield-list"),
+                })))),
     ]
 
 # These are views used only in testing.

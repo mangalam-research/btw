@@ -16,6 +16,8 @@ def global_context_processor(request):
             'btw_datatables_css_path': settings.BTW_DATATABLES_CSS_PATH,
             'btw_bootstrap_editable_css_path':
             settings.BTW_BOOTSTRAP_EDITABLE__CSS_PATH,
+            'wed_css': settings.BTW_WED_CSS,
+            'btw_mode_css': settings.BTW_MODE_CSS,
             'wed_polyfills': settings.BTW_WED_POLYFILLS,
             'demo': settings.BTW_DEMO,
             'editors': settings.BTW_EDITORS,

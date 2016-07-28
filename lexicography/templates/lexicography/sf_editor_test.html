@@ -1,0 +1,34 @@
+{% extends "lexicography/base.html" %}
+{% load staticfiles %}
+{% load sekizai_tags %}
+{% block content %}
+{% addtoblock "css" %}
+{% for sheet in btw_globals.wed_css %}
+<link href="{% static sheet %}" type="text/css" media="screen" rel="stylesheet" />
+{% endfor %}
+<link href="{% static btw_globals.btw_mode_css %}" type="text/css" media="screen" rel="stylesheet" />
+{% endaddtoblock %}
+<div class="wed-frame">
+  <div id="test-body" class="wed-document"></div>
+</div>
+<script>
+require(["btw/semantic_field_editor/app", "btw/semantic_field_fetcher",
+         "semantic-fields/util", "lodash"],
+  function (app, SFFetcher, sfUtil, _) {
+    var fetcher = new SFFetcher("{{ semantic_field_fetch_url }}",
+                                undefined);
+
+
+    fetcher.fetch(["02.02.18n", "02.02.19n", "01.04.04n"]).then(
+      function (resolved) {
+      var fields = sfUtil.sortSemanticFields(_.values(resolved));
+      window.editor = new app.SFEditor({
+        container: document.getElementById("test-body"),
+        fields: fields,
+        fetcher: fetcher,
+        searchUrl: "{{ semantic_field_fetch_url }}",
+      });
+    });
+});
+</script>
+{% endblock %}
