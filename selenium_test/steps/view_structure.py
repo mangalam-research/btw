@@ -362,7 +362,8 @@ def step_impl(context, what, title=None):
 
     var panel = panel_title.parentNode.parentNode;
     var collapse = panel.getElementsByClassName("collapse")[0];
-    return [collapse.textContent.trim(), ""];
+    return [collapse.textContent.trim().replace(/\s+/g, " ")
+              .replace(/\s+;;/g, ";;"), ""];
     """, what, title)
     assert_true(result[0], result[1])
     assert_equal(result[0], context.text.strip(),
@@ -751,7 +752,8 @@ def step_impl(context, names):
 @when(ur'the user clicks the first semantic field button')
 def step_impl(context):
     util = context.util
-    button = util.find_element((By.CLASS_NAME, r"btw\:sf"))
+    button = util.find_element(
+        (By.CSS_SELECTOR, r".field-view .popover-button"))
     button.click()
 
 @when(ur'the user clicks outside the semantic field popover')

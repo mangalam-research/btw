@@ -126,7 +126,7 @@ describe("BreadcrumbView", () => {
       for (const child of firstField.children) {
         const link = links.shift();
         assert.equal(link.href, child.url);
-        assert.equal(link.textContent, child.heading);
+        assert.equal(link.textContent, child.heading_for_display);
       }
       assert.isTrue(links.length === 0);
       return Promise.resolve();

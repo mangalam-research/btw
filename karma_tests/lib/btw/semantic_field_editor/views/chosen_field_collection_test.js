@@ -49,6 +49,7 @@ class TestServer extends Server {
         path => ({
           path,
           heading: "semantic field foo",
+          heading_for_display: "semantic field foo",
           parent: undefined,
           changerecords: this.changeRecords,
         }));

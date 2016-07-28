@@ -4,10 +4,15 @@ import collections
 
 
 from selenium.webdriver.support.wait import TimeoutException
+from selenium.webdriver.common.by import By
 import wedutil
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
+
+from selenic.tables import Table
+from selenic.util import Condition, Result
+
 
 GET_CITATION_TEXT = ur"""
 function getCitationText(cit) {
@@ -372,3 +377,180 @@ def velocity_mock(driver, value):
       done();
     });
     """, value)
+
+info_re = re.compile(ur"^Showing (\d+) to (\d+) of (\d+) entries")
+
+class SFModalTable(Table):
+
+    def __init__(self, *args, **kwargs):
+        super(SFModalTable, self).__init__(*args, **kwargs)
+        # The table is initialized as soon as it is in the DOM.
+        self.initialized_locator = (By.ID, self.cssid)
+        self.field_selectors = [".sf-search .search-form"]
+
+    def setup_redraw_check(self):
+        self.util.driver.execute_script("""
+        var cssid = arguments[0];
+        var table = document.getElementById(cssid);
+        var viewEl = table.closest("[data-backbone-view]");
+        var view = viewEl.backboneView;
+        view.__seleniumTestingRefreshed = false;
+        view.collection.once("update reset", function () {
+          view.__seleniumTestingRefreshed = true;
+        });
+        """, self.cssid)
+
+    def wait_for_redraw(self):
+        self.util.driver.execute_async_script("""
+        var cssid = arguments[0];
+        var done = arguments[1];
+        var table = document.getElementById(cssid);
+        var viewEl = table.closest("[data-backbone-view]");
+        var view = viewEl.backboneView;
+        function check() {
+          if (view.__seleniumTestingRefreshed) {
+            delete view.__seleniumTestingRefreshed;
+            return done();
+          }
+          setTimeout(check, 100);
+        }
+        check();
+        """, self.cssid)
+
+    def wait_for_results(self, expected_total):
+        def check(driver):
+            infos = driver.find_elements_by_css_selector(
+                "#" + self.cssid + " .footer-information")
+
+            if len(infos) == 0:
+                total = 0
+            else:
+                text = infos[0].text
+
+                match = info_re.match(text)
+                if not match:
+                    return Result(False, 0)
+
+                total = int(match.group(3))
+            return Result(total == expected_total, total)
+
+        result = Condition(self.util, check).wait()
+
+        return result.payload
+
+    def get_result(self, number):
+        return self.util.find_elements(
+            (By.CSS_SELECTOR, "#" + self.cssid + ">table>tbody>tr"))[number]
+
+
+class SemanticFieldCollection(object):
+    top_selector = ""
+
+    def __init__(self, util):
+        self.util = util
+        self._fields = None
+
+    @property
+    def field_selector(self):
+        return self.top_selector + " .field-view"
+
+    def reset(self):
+        self._fields = None
+
+    @property
+    def fields(self):
+        if self._fields is not None:
+            return self._fields
+
+        self._fields = self.util.driver.find_elements_by_css_selector(
+            self.field_selector)
+        return self._fields
+
+    def count(self):
+        return len(self.fields)
+
+    def delete(self, index):
+        if index != 0:
+            raise ValueError("index other than 0 not implemented yet")
+
+        orig_count = self.count()
+        button = self.util.find_element(
+            (By.CSS_SELECTOR, self.field_selector + " .delete-button"))
+        self.reset()
+        button.click()
+        self.util.wait(lambda *_: self.count() < orig_count)
+
+    def add(self, index):
+        if index != 0:
+            raise ValueError("index other than 0 not implemented yet")
+
+    def get_field_labels(self):
+        return self.util.driver.execute_script(r"""
+        var selector = arguments[0];
+        var els = document.querySelectorAll(selector);
+        return Array.prototype.map.call(els, function (x) {
+          return x.textContent.trim().replace(/\s+/, ' ');
+        });
+        """, self.field_selector)
+
+
+class ChosenSemanticFields(SemanticFieldCollection):
+    top_selector = ".sf-field-list"
+
+class CombinatorElements(SemanticFieldCollection):
+    top_selector = ".combinator-elements"
+
+class NavigatorCollection(object):
+    top_selector = ".sf-navigators"
+
+    def __init__(self, util):
+        self.util = util
+        self._navigators = None
+
+    def reset(self):
+        self._navigators = None
+
+    @property
+    def navigators(self):
+        if self._navigators is not None:
+            return self._navigators
+
+        self._navigators = self.util.find_elements(
+            (By.CSS_SELECTOR,
+             self.top_selector + " .semantic-field-details-panel"))
+        return self._navigators
+
+    def count(self):
+        return len(self.navigators)
+
+def get_add_button_in(util, top):
+    return util.wait(lambda *_: top.find_element_by_css_selector(".sf-add"))
+
+def get_combine_button_in(util, top):
+    return util.wait(lambda *_:
+                     top.find_element_by_css_selector(".sf-combine"))
+
+def register_sf_modal_on_context(context):
+    util = context.util
+    driver = context.driver
+
+    # We have to wait for the table before moving on.
+    table_el = util.find_element((By.CSS_SELECTOR,
+                                  ".results [data-backbone-view]"))
+
+    # The table does not get an id by default. We assign one to it.
+    cssid = driver.execute_script("""
+    var table = arguments[0];
+    var id = "selenium-test-id-" + Date.now();
+    table.id = id;
+    return id;
+    """, table_el)
+
+    table = SFModalTable(util, "semantic field search",
+                         cssid)
+    context.register_table(table, True)
+
+    context.semantic_field_collections = {
+        "chosen semantic fields": ChosenSemanticFields(util),
+        "combinator elements": CombinatorElements(util),
+    }

@@ -567,7 +567,7 @@ class ChunkManagerTestCase(util.DisableMigrationsMixin, TestCase):
                     uid=Item.objects.zotero.full_uid)
         item.save()
 
-        sf = SemanticField(path="01.02n",
+        sf = SemanticField(path="01.05n",
                            heading="foo")
         sf.save()
         Chunk.objects.prepare("xml", True)
@@ -588,7 +588,7 @@ class ChunkManagerTestCase(util.DisableMigrationsMixin, TestCase):
         Returns a match when something matches.
         """
         self.assertEqual(
-            len(self.manager.hashes_with_semantic_field("01.02n")), 1)
+            len(self.manager.hashes_with_semantic_field("01.05n")), 1)
 
 # We separate this test from the other manager tests because they have
 # different initialization needs.

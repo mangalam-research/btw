@@ -10,6 +10,7 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
   "use strict";
 
   var $ = require("jquery");
+  var _ = require("lodash");
   var oop = require("wed/oop");
   var util = require("wed/util");
   var btwUtil = require("./btw_util");
@@ -17,6 +18,8 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
   var domutil = require("wed/domutil");
   // Yep, Bloodhound is provided by typeahead.
   var Bloodhound = require("typeahead");
+  var SFEditor = require("./semantic_field_editor/app");
+  var sfUtil = require("semantic-fields/util");
 
   function SensePtrDialogAction() {
     Action.apply(this, arguments);
@@ -383,4 +386,111 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
   };
 
   exports.InsertBiblPtrAction = InsertBiblPtrAction;
+
+  var EDIT_SF_MODAL_KEY = "btw_mode.btw_actions.edit_sf_modal";
+  function getEditSemanticFieldModal(editor) {
+    var modal = editor.getModeData(EDIT_SF_MODAL_KEY);
+    if (modal) {
+      return modal;
+    }
+
+    modal = editor.makeModal({
+      resizable: true,
+      draggable: true,
+    });
+    modal.setTitle("Edit Semantic Fields");
+    modal.addButton("Commit", true);
+    modal.addButton("Cancel");
+    var body = modal.getTopLevel()[0]
+      .getElementsByClassName("modal-body")[0];
+    body.classList.add("sf-editor-modal-body");
+    editor.setModeData(EDIT_SF_MODAL_KEY, modal);
+
+    return modal;
+  }
+
+  function EditSemanticFieldsAction() {
+    Action.apply(this, arguments);
+  }
+
+  oop.inherit(EditSemanticFieldsAction, Action);
+
+  EditSemanticFieldsAction.prototype.execute = function execute(data) {
+    var editor = this._editor;
+    var dataCaret = editor.getDataCaret(true);
+    var guiCaret = editor.fromDataLocation(dataCaret);
+    var guiSfsContainer = domutil.closestByClass(guiCaret.node,
+                                                 "btw:semantic-fields",
+                                                 editor.gui_root);
+    if (!guiSfsContainer) {
+      throw new Error("unable to acquire btw:semantic-fields");
+    }
+
+    var sfsContainer = editor.toDataNode(guiSfsContainer);
+    var sfs = domutil.dataFindAll(sfsContainer, "btw:sf");
+
+    if (sfs.length === 0) {
+      throw new Error("unable to acquire btw:sf");
+    }
+
+    var paths = sfs.map(function map(sf) {
+      return sf.textContent;
+    });
+
+    var modal = getEditSemanticFieldModal(editor);
+    var mode = editor.mode;
+    var fetcher = editor.decorator._sfFetcher;
+
+    function fieldToPath(f) {
+      return f.get("path");
+    }
+
+    var sfEditor;
+    var primary = modal.getPrimary()[0];
+    primary.classList.add("disabled");
+    modal.setBody("<i class='fa fa-spinner fa-2x fa-spin'></i>");
+
+    modal.modal(function dismiss() {
+      var clicked = modal.getClicked()[0];
+      if (clicked && clicked === primary) {
+        if (!sfEditor) {
+          throw new Error("modal dismissed with primary button " +
+                          "while sfEditor is non-existent");
+        }
+
+        data.newPaths = sfEditor.getChosenFields().map(fieldToPath);
+        editor.mode.replaceSemanticFields.execute(data);
+      }
+    });
+
+    fetcher.fetch(paths).then(function then(resolved) {
+      var fields = _.values(resolved);
+
+      // We grab the list of paths from the resolved fields because initially we
+      // may have unknown fields, and the list of resolve fields may be shorter
+      // than ``paths``.
+      // Reminder: fields are plain old JS objects.
+      var initialPaths = _.map(fields, "path");
+
+      // Clear it before the editor is started.
+      modal.setBody("");
+      sfEditor = new SFEditor({
+        container: modal.getTopLevel()[0]
+          .getElementsByClassName("modal-body")[0],
+        fields: fields,
+        fetcher: fetcher,
+        searchUrl: mode._semanticFieldFetchUrl,
+      });
+      sfEditor.start();
+
+      sfEditor.on("sf:chosen:change", function change() {
+        var newPaths = sfEditor.getChosenFields().map(fieldToPath);
+        var method = _.isEqual(initialPaths, newPaths) ? "add" : "remove";
+        primary.classList[method]("disabled");
+      });
+    });
+  };
+
+  exports.EditSemanticFieldsAction = EditSemanticFieldsAction;
+
 });

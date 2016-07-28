@@ -12,10 +12,24 @@ define(/** @lends module:lib/btw/semantic_field_fetcher */ function btwView(
   var Promise = require("bluebird");
   var URI = require("urijs/URI");
 
-  function Fetcher(fetchUrl, excludeUrl, fields) {
+  function Fetcher(fetchUrl, excludeUrl, fields, depths) {
     this.fetchUrl = fetchUrl;
     this.excludeUrl = excludeUrl;
+
+    // We marshal fields into the value we pass to requests.
     this.fields = fields && fields.join(",");
+
+    // We also marshal depth into the value we pass to requests.
+    var depthParams = this.depthParams = {};
+    if (depths) {
+      var keys = Object.keys(depths);
+      for (var keyIx = 0; keyIx < keys.lends; ++keyIx) {
+        var key = keys[keyIx];
+        var value = depths[key];
+        depthParams["depths." + key] = value;
+      }
+    }
+
     this._cache = Object.create(null);
   }
 
@@ -43,10 +57,10 @@ define(/** @lends module:lib/btw/semantic_field_fetcher */ function btwView(
     // We fetch what is missing, and merge it into the resolved map.
     return ajax({
       url: this.fetchUrl,
-      data: {
+      data: _.extend({
         paths: unresolved.join(";"),
         fields: this.fields,
-      },
+      }, this.depthParams),
       headers: {
         Accept: "application/json",
       },
@@ -63,16 +77,23 @@ define(/** @lends module:lib/btw/semantic_field_fetcher */ function btwView(
         //
         // We transform the responses to make them fit for this page:
         //
-        field.changerecords = _.chain(field.changerecords)
-        // 1. Remove changerecords that link back here. This is going to
-        // happen all the time because this article necessarily contains the
-        // semantic field we are searching for. The REST interface does not
-        // know or care that we do not want to link back to this article, so
-        // we have to do this ourselves.
-          .filter(filter)
+        var chained = _.chain(field.changerecords);
+
+        // href may be undefined if we do not filter anything.
+        if (href) {
+          // 1. Remove changerecords that link back here. This is going to
+          // happen all the time because this article necessarily contains the
+          // semantic field we are searching for. The REST interface does not
+          // know or care that we do not want to link back to this article, so
+          // we have to do this ourselves.
+
+          chained = chained.filter(filter);
+        }
+
         // 2. Order changerecords by ascending lemma, and descending datetime (if
         // datetime is present). Doing the ordering here allows the next groupBy
         // to have each lemma key have its values already ordered by datetime.
+        field.changerecords = chained
           .orderBy(["lemma", "datetime"], ["asc", "desc"])
         // 3. Group by lemma so that we can hide long lists.
           .groupBy("lemma")

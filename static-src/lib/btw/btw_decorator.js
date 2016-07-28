@@ -16,7 +16,6 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
   var log = require("wed/log");
   var inputTriggerFactory = require("wed/input_trigger_factory");
   var keyConstants = require("wed/key_constants");
-  var key = require("wed/key");
   var domutil = require("wed/domutil");
   var transformation = require("wed/transformation");
   var updaterDOMListener = require("wed/updater_domlistener");
@@ -31,11 +30,13 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
   require("wed/jquery.findandself");
   var closestByClass = domutil.closestByClass;
   var closest = domutil.closest;
+  var SFFetcher = require("./semantic_field_fetcher");
 
   var _indexOf = Array.prototype.indexOf;
 
-  function BTWDecorator(mode, meta) {
-    Decorator.apply(this, Array.prototype.slice.call(arguments, 2));
+  function BTWDecorator(semanticFieldFetchUrl, mode, meta) {
+    Decorator.apply(this, Array.prototype.slice.call(arguments, 3));
+    DispatchMixin.call(this);
 
     this._gui_root = this._editor.gui_root;
     this._gui_domlistener =
@@ -48,6 +49,8 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
     this._heading_decorator = new HeadingDecorator(
       this._refmans, this._gui_updater);
     this._sense_tooltip_selector = "btw:english-rendition>btw:english-term";
+    this._sfFetcher = new SFFetcher(semanticFieldFetchUrl, undefined,
+                                    ["changerecords"]);
 
     this._senses_for_refresh_subsenses = [];
 
@@ -303,13 +306,6 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
       this._editor,
       "p",
       keyConstants.ENTER,
-      keyConstants.BACKSPACE,
-      keyConstants.DELETE);
-
-    inputTriggerFactory.makeSplitMergeInputTrigger(
-      this._editor,
-      "btw:sf",
-      key.makeKey(";"),
       keyConstants.BACKSPACE,
       keyConstants.DELETE);
   };

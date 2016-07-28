@@ -12,7 +12,7 @@ step_matcher('re')
 
 @given('the search table is loaded')
 def step_impl(context):
-    assert_true(context.default_table.is_initialized(),
+    assert_true(context.default_table.wait_for_initialized(),
                 "the search table should be initialized")
 
 

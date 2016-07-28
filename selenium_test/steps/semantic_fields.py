@@ -20,8 +20,8 @@ def step_impl(context, user):
     driver = context.driver
     driver.get(context.builder.SERVER + "/semantic-fields")
 
-    dt = Datatable("semantic field search", "semantic-field-table",
-                   context.util)
+    dt = Datatable(context.util, "semantic field search",
+                   "semantic-field-table")
     context.register_table(dt, True)
     velocity_mock(driver, True)
 
@@ -238,10 +238,18 @@ def step_impl(context, what):
 def step_impl(context, what):
     util = context.util
 
-    selector = {
-        "close the pane": "close-panel",
-        "close all panes": "close-all-panels"
-    }[what]
+    if context.sf_editor_test:
+        selectors = {
+            "close the pane": "close-navigator",
+            "close all panes": "close-all-navigators"
+        }
+    else:
+        selectors = {
+            "close the pane": "close-panel",
+            "close all panes": "close-all-panels"
+        }
+
+    selector = selectors[what]
 
     button = util.find_element(
         (By.CSS_SELECTOR, "div.semantic-field-details-panel .btn." + selector))

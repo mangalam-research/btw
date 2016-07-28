@@ -231,28 +231,6 @@ Scenario: removing a paragraph with delete
   And the user types DELETE
   Then the definition contains 1 paragraph
 
-Scenario: splitting a semantic field
-  Given a document with some semantic fields
-  And the document contains 2 semantic fields
-  When the user clicks in the first semantic field
-  And the user types ";"
-  Then the document contains 3 semantic fields
-
-Scenario: removing a semantic field with backspace
-  Given a document with some semantic fields
-  And the document contains 2 semantic fields
-  When the user clicks at the start of the second semantic field
-  And the user types BACKSPACE
-  Then the document contains 1 semantic field
-
-Scenario: removing a semantic field with delete
-  Given a document with some semantic fields
-  And the document contains 2 semantic fields
-  When the user clicks at the start of the second semantic field
-  And the user hits the left arrow
-  And the user types DELETE
-  Then the document contains 1 semantic field
-
 Scenario: creating a sense emphasis
   Given a document with a definition that has been filled
   When the user wraps the text "clarity" in a btw:sense-emphasis in btw:definition

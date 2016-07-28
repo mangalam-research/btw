@@ -27,11 +27,9 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
   var $ = require("jquery");
   var _ = require("lodash");
   require("bootstrap");
-  require("bootstrap-treeview");
   var btwUtil = require("./btw_util");
   var ajax = require("ajax").ajax;
   var bluejax = require("bluejax");
-  var sfTemplate = require("text!./btw_view_sf_template.html");
   var SFFetcher = require("./semantic_field_fetcher");
 
   var _slice = Array.prototype.slice;
@@ -70,6 +68,7 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
                   data, biblData, languagePrefix) {
     SimpleEventEmitter.call(this);
     Conditioned.call(this);
+    DispatchMixin.call(this);
     var doc = root.ownerDocument;
     var win = doc.defaultView;
 
@@ -89,7 +88,8 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     }.bind(this));
 
     this._sfFetcher = new SFFetcher(this._semanticFieldFetchUrl,
-                                    this._win.location.href);
+                                    this._win.location.href,
+                                    ["changerecords"]);
 
     //
     // We provide minimal objects that are used by some of the logic
@@ -931,133 +931,6 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
       dec._gui_updater.insertBefore(el, separator, el.firstChild);
     }
   };
-
-
-  Viewer.prototype.sfDecorator = function sfDecorator(root, el) {
-    var initialContent = "<i class='fa fa-spinner fa-2x fa-spin'></i>";
-    var a = el.ownerDocument.createElement("a");
-    a.className = "btn btn-default sf-popover-button";
-    a.setAttribute("role", "button");
-    a.setAttribute("tabindex", "0");
-    a.setAttribute("data-toggle", "popover");
-
-    var parent = el.parentNode;
-    parent.insertBefore(a, el);
-    a.appendChild(el);
-    var $a = $(a);
-    var dataWedRef = el.attributes["data-wed-ref"];
-    var ref;
-    if (dataWedRef) {
-      ref = el.attributes["data-wed-ref"].value;
-    }
-
-    // We do not decorate if we have no references.
-    if (ref === undefined) {
-      return;
-    }
-
-    var alreadyResolved;
-    var makeContent = function makeContent() {
-      if (!alreadyResolved) {
-        this._sfFetcher.fetch([ref]).then(function then(resolved) {
-          alreadyResolved = resolved;
-          // This causes rerendering of the popover and makeContent to be
-          // called again.
-          $a.popover("show");
-        });
-
-        return initialContent;
-      }
-
-      var popover = $a.data("bs.popover");
-      var $tip = popover.tip();
-      var tip = $tip[0];
-
-      var content = tip.getElementsByClassName("popover-content")[0];
-      var keys = Object.keys(alreadyResolved).sort();
-      var keyIx = 0;
-
-      content.innerHTML = _.template(sfTemplate)({ keys: keys,
-                                                   resolved: alreadyResolved });
-
-      var treeDivs = tip.getElementsByClassName("tree");
-      for (var treeDivIx = 0; treeDivIx < treeDivs.length; ++treeDivIx) {
-        var treeDiv = treeDivs[treeDivIx];
-        var key = keys[keyIx++];
-        var field = alreadyResolved[key];
-
-        if (field.tree.length === 0) {
-          continue; // Nothing to show!
-        }
-
-        // If there is only one element at the top of the tree, and this element
-        // has only one child, then what we have is a single entry which would
-        // have only one version available. There's no need to have a proper
-        // tree for this.
-        if (field.tree.length === 1 && field.tree[0].nodes.length <= 1) {
-          var node = field.tree[0];
-          var link = treeDiv.ownerDocument.createElement("a");
-          link.textContent = node.text;
-          link.href = node.href;
-          treeDiv.appendChild(link);
-          continue;
-        }
-
-        // Otherwise: build a tree.
-        $(treeDiv).treeview({
-          data: field.tree,
-          enableLinks: true,
-          levels: 0,
-        });
-      }
-
-      // Inform that the popover has been fully rendered. This is used mainly in
-      // testing.
-      $a.trigger("fully-rendered.btw-view.sf-popover");
-
-      return Array.prototype.slice.call(content.childNodes);
-    }.bind(this);
-
-    $a.on("click", function click() {
-      // If there is already a popover existing for this element, this call
-      // won't create a new one.
-      $a.popover({
-        html: true,
-        trigger: "manual",
-        content: makeContent,
-      });
-
-      var popover = $a.data("bs.popover");
-
-      // The stock hasContent is very expensive.
-      popover.hasContent = function hasContent() {
-        return true;
-      };
-
-      var $tip = popover.tip();
-      var tip = $tip[0];
-
-      // Note that we destroy the popover when we "close" it. This is also why
-      // we add the event handlers below for every click that shows the
-      // popup. If the popover is recreated, then ``tip`` will be new, and
-      // destroying the popup removes the event handlers that were created.
-      var method = tip.classList.contains("in") ? "destroy" : "show";
-      popover[method]();
-
-      // If we're not showing the popup, then we are done.
-      if (method !== "show") {
-        return;
-      }
-
-      // Otherwise, we need to set handlers.
-      tip.classList.add("sf-popover");
-
-      $tip.on("click", function tipClick(ev) {
-        ev.stopPropagation();
-      });
-    });
-  };
-
 
   Viewer.prototype._transformContrastiveItems =
     function _transformContrastiveItems(root, name) {

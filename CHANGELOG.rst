@@ -23,6 +23,10 @@
       editing. For displaying articles, the fields are added to
       English renditions by software.
 
+    - Semantic field editing in articles is now done with a modal
+      dialog rather than by typing field numbers directly in the
+      article.
+
 * 1.4.1:
 
   + Upgrade from Django 1.7 to Django 1.8. This could no longer be

@@ -40,6 +40,8 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
     };
     this._bibl_url = options.bibl_url;
     delete options.bibl_url;
+    this._semanticFieldFetchUrl = options.semanticFieldFetchUrl;
+    delete options.semanticFieldFetchUrl;
     // We can initiate this right away.
     this._getBibliographicalInfo();
     Mode.call(this, options);
@@ -53,7 +55,7 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
       authors: ["Louis-Dominique Dubeau"],
       description: "This is a mode for use with BTW.",
       license: "MPL 2.0",
-      copyright: "2013 Mangalam Research Center for Buddhist Languages",
+      copyright: "2013-2016 Mangalam Research Center for Buddhist Languages",
     };
 
     this._wed_options.label_levels.max = 2;
@@ -89,7 +91,7 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
 
     this.replaceSelectionWithRefTr = new transformation.Transformation(
       editor, "wrap", "Replace the selection with a reference",
-      btwTr.replaceSelectionWithRefTr);
+      btwTr.replaceSelectionWithRef);
 
     this.swapWithPrevTr = new transformation.Transformation(
       editor, "swap-with-previous", "Swap with previous sibling", undefined,
@@ -140,6 +142,13 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
       "",
       "<i class='fa fa-book fa-fw'></i>",
       true);
+
+    this.editSemanticFieldAction = new btwActions.EditSemanticFieldsAction(
+      editor, "Edit semantic fields",
+      undefined, "<i class='fa fa-plus fa-fw'></i>", true);
+
+    this.replaceSemanticFields = new transformation.Transformation(
+      editor, undefined, "Replace semantic fields", btwTr.replaceSemanticFields);
 
     this._toolbar = new Toolbar(this, editor);
     var toolbarTop = this._toolbar.getTopElement();
@@ -208,6 +217,16 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
      * getContextualActions method is called.
      */
     this.transformationFilters = [
+      {
+        selector: domutil.toGUISelector("btw:sf, btw:semantic-fields"),
+        pass: {
+          "btw:sf": true,
+        },
+        substitute: [
+          { tag: "btw:sf", type: "insert",
+            actions: [this.editSemanticFieldAction] },
+        ],
+      },
       { selector: domutil.toGUISelector(
         ["btw:overview",
          "btw:definition"].join(",")),
@@ -346,10 +365,11 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
   });
 
   BTWModeP.makeDecorator = function makeDecorator(_domlistener) {
+    // Wed calls this with (domlistener, editor, gui_updater).
     var obj = Object.create(BTWDecorator.prototype);
     // Make arg an array and add our extra argument(s).
     var args = Array.prototype.slice.call(arguments);
-    args = [this, this._meta].concat(args);
+    args = [this._semanticFieldFetchUrl, this, this._meta].concat(args);
     BTWDecorator.apply(obj, args);
 
     // This is as good a place as any where to attach listeners to the
@@ -443,6 +463,8 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
    *      of any of the substitutions in the list, then return the
    *      ``actions`` property of the substitution.
    *
+   *    + if ``filter.add`` is defined as a list, this list of actions is added.
+   *
    *  - if the method has not returned earlier return the
    *  transformations from the transformation registry.
    *
@@ -512,6 +534,10 @@ define(/** @lends module:wed/modes/btw/btw_mode */ function btwMode(require,
 
           ret = ret.concat(Mode.prototype.getContextualActions.call(
             this, t, tag, container, offset));
+        }
+
+        if (filter.add) {
+          ret = ret.concat(filter.add);
         }
 
         // First match of a selector ends the process.

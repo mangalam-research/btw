@@ -25,7 +25,7 @@ def user_load_lexicography(context):
     driver = context.driver
     driver.get(context.builder.SERVER + "/lexicography")
     context.clear_tables()
-    dt = Datatable("lexicographical search", "search-table", context.util)
+    dt = Datatable(context.util, "lexicographical search", "search-table")
     context.register_table(dt, True)
 
 
@@ -542,3 +542,16 @@ def step_impl(context):
 @then(ur'fail')
 def step_impl(context):
     raise Exception("failing, as requested!")
+
+@when(ur'the user clicks on the "(?P<what>.*?)" button in the modal dialog')
+def step_impl(context, what):
+    util = context.util
+
+    # Searching by class in XPath sucks, and searching by text with a
+    # CSS selector sucks too. So here we are.
+    modal = util.find_element((By.CSS_SELECTOR, ".modal.in .modal-footer"))
+    button = modal.find_element_by_link_text(what)
+    button.click()
+    util.wait_until_not(lambda driver:
+                        len(driver.find_elements(
+                            (By.CSS_SELECTOR, ".modal-body"))) != 0)

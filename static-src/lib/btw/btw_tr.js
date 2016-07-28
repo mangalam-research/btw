@@ -266,6 +266,46 @@ define(/** @lends module:wed/modes/btw/btw_tr */ function (require,
       });
   }
 
+  function replaceSemanticFields(editor, data) {
+    var editor = this._editor;
+    var dataCaret = editor.getDataCaret(true);
+    var guiCaret = editor.fromDataLocation(dataCaret);
+    var guiSfsContainer = domutil.closestByClass(guiCaret.node,
+                                                 "btw:semantic-fields",
+                                                 editor.gui_root);
+    if (!guiSfsContainer) {
+      throw new Error("unable to acquire btw:semantic-fields");
+    }
+
+    var sfsContainer = editor.toDataNode(guiSfsContainer);
+    var sfsParent = sfsContainer.parentNode;
+    var sfsIndex = _indexOf.call(sfsParent.childNodes, sfsContainer);
+    // Remove the container from the tree.
+    editor.data_updater.removeNode(sfsContainer);
+
+    // and manipulate it off-line.
+    while (sfsContainer.firstChild) {
+      sfsContainer.removeChild(sfsContainer.firstChild);
+    }
+
+    var doc = sfsContainer.ownerDocument;
+    var newPaths = data.newPaths;
+    var ename = editor.mode.getAbsoluteResolver().resolveName("btw:sf");
+
+    for (var pathIx = 0; pathIx < newPaths.length; ++pathIx) {
+      var path = newPaths[pathIx];
+      var sf = makeElement(doc, ename.ns, "btw:sf");
+      sf.textContent = path;
+      sfsContainer.appendChild(sf);
+    }
+
+    // Finally, reintroduce it to the data tree.
+    editor.data_updater.insertNodeAt(sfsParent, sfsIndex, sfsContainer);
+    editor.setDataCaret(sfsContainer, 0);
+  }
+
+
+  oop.inherit(RemoveMixedTr, Transformation);
 
   exports.insertPtr = insertPtr;
   exports.insertRef = insertRef;
@@ -273,4 +313,5 @@ define(/** @lends module:wed/modes/btw/btw_tr */ function (require,
   exports.SetTextLanguageTr = SetTextLanguageTr;
   exports.RemoveMixedTr = RemoveMixedTr;
   exports.makeReplaceNone = makeReplaceNone;
+  exports.replaceSemanticFields = replaceSemanticFields;
 });

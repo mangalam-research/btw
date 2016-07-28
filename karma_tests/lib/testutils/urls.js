@@ -1,5 +1,5 @@
 export function detailURLFromId(id) {
-  return `http://localhost/en-us/semantic-fields/semanticfield/${id}/`;
+  return `http://localhost/en-us/semantic_fields/semanticfield/${id}/`;
 }
 
 export function queryURLFromDetailURL(url) {

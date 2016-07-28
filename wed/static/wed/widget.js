@@ -32,6 +32,13 @@
 
         var csrftoken = $.cookie("csrftoken");
         var $parentform = $widget.parents("form").first();
+
+        options.mode = {
+          options: {
+            semanticFieldFetchUrl:
+            $parentform.find("#id_sf_fetch_url").val(),
+          },
+        };
         options.ajaxlog = {
           url: $parentform.find("#id_logurl").val(),
           headers: {

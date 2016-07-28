@@ -431,7 +431,7 @@
 },
 {
   "fields": {
-    "c_hash": "cf87231a665578c63bfa74365340b24ea72efb09",
+    "c_hash": "ed79a362b2c8712237f3df36d70e14be92308423",
     "ctype": "C",
     "datetime": "2014-06-09T20:08:31.629Z",
     "note": "",
@@ -787,13 +787,13 @@
 },
 {
   "fields": {
-    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"1.1\"><btw:lemma>some semantic fields</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term>foo</btw:term><btw:citations><btw:example><btw:semantic-fields><btw:sf>01.02n</btw:sf><btw:sf>01.01n</btw:sf></btw:semantic-fields><btw:cit/><btw:tr/></btw:example></btw:citations></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"1.1\"><btw:lemma>some semantic fields</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:antonym><btw:term>foo</btw:term><btw:citations><btw:example><btw:semantic-fields><btw:sf>03.10n</btw:sf><btw:sf>01.05n</btw:sf></btw:semantic-fields><btw:cit/><btw:tr/></btw:example></btw:citations></btw:antonym></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "_valid": false,
     "schema_version": "1.1",
     "is_normal": true
   },
   "model": "lexicography.chunk",
-  "pk": "cf87231a665578c63bfa74365340b24ea72efb09"
+  "pk": "ed79a362b2c8712237f3df36d70e14be92308423"
 },
 {
   "fields": {

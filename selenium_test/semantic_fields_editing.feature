@@ -1,4 +1,6 @@
-Feature: semantic fields editing
+Feature: editing custom semantic fields
+# This is the editing done to the field *themselves*, not the editing done
+# in articles.
 
 Background: a user with permission to edit custom semantic fields is on the main page of the semantic field application
 Given a user with permission to edit custom semantic fields has loaded the main page of the semantic field application

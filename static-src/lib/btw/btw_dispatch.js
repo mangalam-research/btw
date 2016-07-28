@@ -11,10 +11,20 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
   var $ = require("jquery");
   var tooltip = require("wed/gui/tooltip").tooltip;
   var domutil = require("wed/domutil");
+  var Decorator = require("wed/decorator").Decorator;
   var btwUtil = require("./btw_util");
+  var FieldView = require("./semantic_field_editor/views/field/inline");
+  var Field = require("./semantic_field_editor/models/field");
+  require("bootstrap-treeview");
 
-
+  /**
+   * This mixin is made to be used by the {@link module:wed/decorator~Decorator
+   * Decorator} created for BTW's mode and by {@link
+   * module:wed/modes/btw/btw_view~Viewer Viewer}. It combines decoration
+   * methods that are common to editing and viewing articles.
+   */
   function DispatchMixin() {
+    this._inMode = this instanceof Decorator;
   }
 
   var DispatchMixinP = DispatchMixin.prototype;
@@ -49,6 +59,10 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
     case "btw:semantic-fields":
       this._heading_decorator.sectionHeadingDecorator(el);
       this.listDecorator(el, ";; ");
+      break;
+    case "btw:sf":
+      this.sfDecorator(root, el);
+      skipDefault = true;
       break;
     case "ptr":
       this.ptrDecorator(root, el);
@@ -434,6 +448,72 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
     setTitle($el, data.item ? data.item : data);
     this._gui_updater.insertText(abbr, 0,
                                  btwUtil.biblDataToReferenceText(data));
+  };
+
+  DispatchMixinP.sfDecorator = function sfDecorator(root, el) {
+    //
+    // When editing them, btw:sf contains the semantic field paths, and there
+    // are no names.
+    //
+    // When displaying articles, the paths are in @data-wed-ref, and the btw:sf
+    // elements contain the names + path of the semantic fields.
+    //
+
+    // We're already wrapped.
+    if (domutil.closestByClass(el, "field-view", root)) {
+      return;
+    }
+
+    var inMode = this._inMode;
+    var parent = el.parentNode;
+    var before = el.previousSibling;
+
+    var ref;
+    if (!inMode) {
+      var dataWedRef = el.attributes["data-wed-ref"];
+      if (dataWedRef) {
+        ref = el.attributes["data-wed-ref"].value;
+      }
+
+      // We do not decorate if we have no references.
+      if (ref === undefined) {
+        return;
+      }
+    }
+    else {
+      var dataNode = this._editor.toDataNode(el);
+      ref = dataNode.textContent;
+    }
+
+    var view = new FieldView({
+      // We start the view with a fake field. This will be fixed later.
+      model: new Field({
+        heading: "",
+        path: ref,
+      }),
+
+      fetcher: this._sfFetcher,
+    });
+    view.render();
+    view.ui.field[0].innerHTML = "";
+    view.ui.field[0].appendChild(el);
+    this._gui_updater.insertBefore(
+      parent, view.el,
+      before ? before.nextSibling : parent.firstChild);
+
+    if (inMode) {
+      // When we are editing we want to fill the semantic field with
+      // its name and path.
+      this._sfFetcher.fetch([ref]).then(function then(resolved) {
+        var resolvedRef = resolved[ref];
+        if (resolvedRef) {
+          el.textContent = resolvedRef.heading + " (" + ref + ")";
+        }
+        else {
+          el.textContent = "Unknown field (" + ref + ")";
+        }
+      });
+    }
   };
 
 

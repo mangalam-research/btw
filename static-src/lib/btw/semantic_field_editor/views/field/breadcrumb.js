@@ -8,14 +8,14 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   var linkTemplate = Handlebars.compile(
     "<a class='btn btn-default btn-sm sf-link' href='{{url}}'>" +
-      "{{heading}}{{#if includePos}} ({{verbose_pos}}){{/if}}</a>");
+      "{{#if display}}{{heading_for_display}}{{else}}{{heading}}{{/if}}{{#if includePos}} ({{verbose_pos}}){{/if}}</a>");
 
   Handlebars.partials["field/linkTemplate"] = linkTemplate;
 
   var otherPosTemplate = Handlebars.compile("\
 <p><label> Other parts of speech: \
 {{#each related_by_pos}} \
-<span class='sf-other-pos'>{{> field/linkTemplate includePos=true }}</span> \
+<span class='sf-other-pos'>{{> field/linkTemplate display=true includePos=true}}</span> \
 {{/each}}\
 </label></p>");
 
@@ -25,7 +25,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 {{#if parent}}\
 {{> field/breadcrumbTemplate parent includePos=false}} {{#if is_subcat}}::{{else}}>{{/if}} \
 {{/if}}\
-{{> field/linkTemplate includePos=includePos}} \
+{{> field/linkTemplate display=false includePos=includePos}} \
 ");
 
   Handlebars.partials["field/breadcrumbTemplate"] = breadcrumbTemplate;
@@ -60,7 +60,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 {{#if children}}\
 <p><label>Children: \
 <span class='sf-children'>\
-{{#each children}}{{>field/linkTemplate}}{{#unless @last}} {{/unless}}\
+{{#each children}}{{>field/linkTemplate display=true}}{{#unless @last}} {{/unless}}\
 {{/each}}\
 </span>\
 </label></p>\

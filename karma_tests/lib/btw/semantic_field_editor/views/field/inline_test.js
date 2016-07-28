@@ -11,6 +11,7 @@ import Server from "testutils/server";
 import * as urls from "testutils/urls";
 import Bb from "backbone";
 import Mn from "marionette";
+import _ from "lodash";
 
 const assert = chai.assert;
 
@@ -25,7 +26,6 @@ describe("InlineView", () => {
   // eslint-disable-next-line prefer-const
   let keep = false;
   const verboseServer = false;
-  let canDelete = null;
 
   before(() => {
     // Yes, we use the navigators fixture.
@@ -52,19 +52,20 @@ describe("InlineView", () => {
     velocity.mock = false;
   });
 
-  beforeEach(() => {
-    renderDiv = document.createElement("div");
-    document.body.appendChild(renderDiv);
-    if (canDelete === null) {
-      throw new Error("canDelete cannot be null");
-    }
+  function makeAndRender(field, canDelete) {
+    // Yes we leak into the upper scope.
     view = new InlineView({
       el: renderDiv,
-      model: new Field(firstField),
+      model: new Field(field),
       fetch: new SFFetcher(),
       canDelete,
     });
     view.render();
+  }
+
+  beforeEach(() => {
+    renderDiv = document.createElement("div");
+    document.body.appendChild(renderDiv);
   });
 
   afterEach(() => {
@@ -77,14 +78,21 @@ describe("InlineView", () => {
     }
   });
 
-  describe("with canDelete false", () => {
-    before(() => {
-      canDelete = false;
+  describe("", () => {
+    // We create a fake field rather than add one to the fixture.
+    const fakeField = _.extend({}, firstField, {
+      heading: "fake heading",
+      heading_for_display: "fake heading for display",
+      is_subcat: true,
     });
+    beforeEach(() => makeAndRender(fakeField, false));
 
-    after(() => {
-      canDelete = null;
-    });
+    it("uses the heading for display", () =>
+       waitFor(() => isInViewText(view, fakeField.heading_for_display)));
+  });
+
+  describe("with canDelete false", () => {
+    beforeEach(() => makeAndRender(firstField, false));
 
     it("does not show a delete button", () =>
        waitFor(() => isInViewText(view, firstField.path)).then(() => {
@@ -98,13 +106,7 @@ describe("InlineView", () => {
   });
 
   describe("with canDelete true", () => {
-    before(() => {
-      canDelete = true;
-    });
-
-    after(() => {
-      canDelete = null;
-    });
+    beforeEach(() => makeAndRender(firstField, true));
 
     it("does shows a delete button", () =>
        waitFor(() => isInViewText(view, firstField.path)).then(() => {

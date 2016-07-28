@@ -496,7 +496,9 @@ def before_scenario(context, scenario):
         else:
             raise Exception("unknown tag")
 
+    # Initialize some default values.
     context.session_id = None
+    context.sf_editor_test = False
 
     # This will block until the server is started. Or will continue
     # immediately if a restart had not occurred.
