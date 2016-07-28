@@ -501,6 +501,18 @@ Generally:
 
 See below for specific upgrade cases.
 
+1.4.1 to ?
+~~~~~~~~~~
+
+- Remove the "Login required" flag for the semantic fields page.
+
+- Install eXist.
+
+- Clear the "article_display" and "page" caches.
+
+- Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
+  ``loadindex``, ``load``.
+
 1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~
 
@@ -1427,6 +1439,64 @@ data is laid out as follows:
   the cache checks with the server whether the item has changed.
 
   This cache can be destroyed safely.
+
+Preparing and Caching ``Chunk`` Objects
+=======================================
+
+Chunks are cached in Redis and in eXist.
+
+Cached Data of the "xml" Kind
+-----------------------------
+
+Before they are displayed, ``Chunk`` objects need to have their XML
+"prepared" to sort and combine semantic fields and to provide human
+readable names for those fields. This process needs the following
+inputs:
+
+* The XML data of the ``Chunk``, which is immutable.
+
+* The names of the semantic fields, which are mutable.
+
+The prepared XML is deemed to be display information of the kind "xml".
+
+This data is created when a ``Chunk`` is saved: a task is launched to
+create and save it. It is refreshed when any of the semantic field
+names on which a ``Chunk`` depends are changed.
+
+This is cached in Redis but expires there after 30 minutes. It is also
+stored in eXist for searches. eXist is a cache *of sorts* in that
+putting the chunk data in it allows us to perform XML-based searches
+(with XQuery) and perform full-text searches.
+
+If the data has expired from the cache but is still in eXist, it is
+refreshed from eXist.
+
+Cached Data of the "bibl" Kind
+------------------------------
+
+Moreover, this prepared XML needs the following adjuncts before it can
+be displayed to the user:
+
+* The links to other articles need to be created (this is currently
+  done just before the XML is sent to the client).
+
+* The names and URLs of the works referenced need to be provided. This
+  information is passed to the client, which folds it into the
+  structure shown to the user. This is deemed to be display
+  information of the kind "bibl".
+
+This "bibl" data is created "on demand" when it is needed to display
+an article. It exists only in the cache and never expires. It is
+recomputed when any of the bibliographical entries on which an article
+depends are changed.
+
+Performance Notes
+-----------------
+
+On 2016/07/06 loading the data dumped from BTW with ``btwexistdb
+load`` takes about 6 minutes. The size of the chunk data is about
+50mb. That's 1030 chunks.
+
 
 Bibliographical Formats
 =======================
