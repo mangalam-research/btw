@@ -738,8 +738,20 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
       // We are not using $.Event because setting bubbles to `false` does not
       // seem possible with `$.Event`.
       var $for = $target.closest("[data-toggle='popover']");
-      $("[aria-describedby][data-toggle='popover']").not($for)
-        .popover("destroy");
+      $("[aria-describedby][data-toggle='popover']").not($for).each(
+        function destroy() {
+          // We have to work around an issue in Bootstrap 3.3.7. If destroy is
+          // called more than once on a popover or tooltip, it may cause an
+          // error. We work around the issue by making sure we call it only if
+          // the tip is .in.
+          var popover = $.data(this, "bs.popover");
+          if (popover) {
+            var $tip = popover.tip();
+            if ($tip && $tip[0].classList.contains("in")) {
+              popover.destroy();
+            }
+          }
+        });
     });
 
     var bound = this._showTarget.bind(this);
