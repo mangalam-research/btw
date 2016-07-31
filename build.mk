@@ -57,8 +57,8 @@ BUILD_DIR:=build
 # This cannot be the same URL as in wed. We want to the *source*
 # version of Bootstrap, not the distribution version which does not
 # contain the less files.
-BOOTSTRAP_URL:=https://github.com/twbs/bootstrap/archive/v3.3.6.zip
-BOOTSTRAP_BASE:=bootstrap-3.3.6.zip
+BOOTSTRAP_URL:=https://github.com/twbs/bootstrap/archive/v3.3.7.zip
+BOOTSTRAP_BASE:=bootstrap-3.3.7.zip
 
 BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
 BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
