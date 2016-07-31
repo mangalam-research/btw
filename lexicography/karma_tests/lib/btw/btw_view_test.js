@@ -133,6 +133,10 @@ define(function factory(require, _exports, _module) {
     });
 
     after(function after() {
+      // The xhr field is actually a reference to FakeXMLHttpRequest, which is
+      // global. So restoring is not enough, we have to turn it off here.
+      server.xhr.useFilters = false;
+      server.xhr.filters = [];
       server.restore();
       $.fn.tooltip.Constructor.TRANSITION_DURATION = savedDuration;
     });
