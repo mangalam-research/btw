@@ -76,6 +76,11 @@ define(function factory(require, _exports, _module) {
       });
   }
 
+  function popoverTriggerFromBtwSf(btwSf) {
+    return $(btwSf).closest(".sf-popover-button")
+          .find(".popover-button");
+  }
+
 
   describe("btw_viewer", function btwViewerBlock() {
     var data;
@@ -157,11 +162,14 @@ define(function factory(require, _exports, _module) {
     it("makes all semantic fields into popover triggers", function it() {
       function check(el) {
         return Promise.try(function start() {
-          var $trigger = $(el).closest("a.btn");
+          var $trigger = popoverTriggerFromBtwSf(el);
           return clickThenShown($trigger).then(function shown() {
             var popover = $trigger.data("bs.popover");
             assert.isDefined(popover);
-            popover.destroy();
+            // Wait until the popover is hidden.
+            return doThenHidden($trigger, function () {
+              popover.destroy();
+            });
           });
         });
       }
@@ -178,7 +186,7 @@ define(function factory(require, _exports, _module) {
         // Reminder: getElementsByClassName returns a *live* list which
         // changes as elements are added or removed.
         var popovers = fixture.el.getElementsByClassName("popover");
-        var $trigger = $(el).closest("a.btn");
+        var $trigger = popoverTriggerFromBtwSf(el);
 
         // Make sure we start from a clean slate.
         assert.equal(popovers.length, 0);
@@ -199,7 +207,7 @@ define(function factory(require, _exports, _module) {
         // Reminder: getElementsByClassName returns a *live* list which
         // changes as elements are added or removed.
         var popovers = fixture.el.getElementsByClassName("popover");
-        var $trigger = $(el).closest("a.btn");
+        var $trigger = popoverTriggerFromBtwSf(el);
 
         // Make sure we start from a clean slate.
         assert.equal(popovers.length, 0);
@@ -222,7 +230,7 @@ define(function factory(require, _exports, _module) {
         // Reminder: getElementsByClassName returns a *live* list which
         // changes as elements are added or removed.
         var popovers = fixture.el.getElementsByClassName("popover");
-        var $trigger = $(el).closest("a.btn");
+        var $trigger = popoverTriggerFromBtwSf(el);
 
         // Make sure we start from a clean slate.
         assert.equal(popovers.length, 0);
@@ -251,7 +259,7 @@ define(function factory(require, _exports, _module) {
            // Reminder: getElementsByClassName returns a *live* list which
            // changes as elements are added or removed.
            var popovers = fixture.el.getElementsByClassName("popover");
-           var $trigger = $(el).closest("a.btn");
+           var $trigger = popoverTriggerFromBtwSf(el);
 
            return clickThenRenderedAndShown($trigger)
              .then(function shown() {
@@ -280,7 +288,7 @@ define(function factory(require, _exports, _module) {
            // Reminder: getElementsByClassName returns a *live* list which
            // changes as elements are added or removed.
            var popovers = fixture.el.getElementsByClassName("popover");
-           var $trigger = $(el).closest("a.btn");
+           var $trigger = popoverTriggerFromBtwSf(el);
 
            return clickThenRenderedAndShown($trigger)
              .then(function shown() {
@@ -318,7 +326,7 @@ define(function factory(require, _exports, _module) {
            // Reminder: getElementsByClassName returns a *live* list which
            // changes as elements are added or removed.
            var popovers = fixture.el.getElementsByClassName("popover");
-           var $trigger = $(el).closest("a.btn");
+           var $trigger = popoverTriggerFromBtwSf(el);
 
            return clickThenRenderedAndShown($trigger)
              .then(function shown() {
@@ -356,7 +364,7 @@ define(function factory(require, _exports, _module) {
            // Reminder: getElementsByClassName returns a *live* list which
            // changes as elements are added or removed.
            var popovers = fixture.el.getElementsByClassName("popover");
-           var $trigger = $(el).closest("a.btn");
+           var $trigger = popoverTriggerFromBtwSf(el);
 
            return clickThenRenderedAndShown($trigger)
              .then(function shown() {
