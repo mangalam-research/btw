@@ -22,8 +22,7 @@ aria-hidden="true">&times;</button>\
 
 var modal = $modal[0];
 
-var onerror = last_resort.setOnError(window, { force: true,
-                                               noChaining: true });
+var onerror = last_resort.install(window, { force: true });
 onerror.register(function (ev) {
     console.log("error-handler: caught an unhandled error!");
 

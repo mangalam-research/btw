@@ -2,7 +2,7 @@
     // This is a minimalistic error handler meant to be loaded ASAP
     // and that depends on nothing, except last-resort having been
     // loaded through a script tag.
-    var oe = LastResort.setOnError(window);
+    var oe = LastResort.install(window);
     oe.register(function (ev) {
         var msg = "";
         if (ev.type === "error") {
