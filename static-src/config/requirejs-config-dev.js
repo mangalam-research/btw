@@ -3,6 +3,7 @@ require.config({
   baseUrl: "/static/lib/",
   paths: {
     text: "requirejs/text",
+    optional: "requirejs/optional",
     jquery: "external/jquery",
     bootstrap: "external/bootstrap/js/bootstrap.min",
     log4javascript: "external/log4javascript",
