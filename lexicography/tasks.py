@@ -74,9 +74,18 @@ def prepare_xml(pk):
         sha1 = hashlib.sha1()
         sha1.update(xml.encode('utf-8'))
         xml_hash = sha1.hexdigest()
-        if meta.xml_hash != xml_hash:
-            db = ExistDB()
-            path = get_path_for_chunk_hash("display", pk)
+        db = ExistDB()
+        path = get_path_for_chunk_hash("display", pk)
+        absent = not db.hasDocument(path)
+        if meta.xml_hash != xml_hash or absent:
+            # This is something that should not happen ever. It has
+            # happened once in development but it is unclear what could
+            # have been the cause.
+            if meta.xml_hash == xml_hash and absent:
+                logger.error("%s was missing from eXist but had a value "
+                             "already set and equal to the new hash; this "
+                             "should not happen!", path)
+
             meta.semantic_fields = sf_records
             # Technically, if it was created then xml_hash is already
             # set, but putting this in an conditional block does not
