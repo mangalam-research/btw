@@ -6,21 +6,7 @@ from django.core.management.base import BaseCommand, CommandError, \
 
 from ...article import prepare_article_data
 from lib import util
-
-class SubCommand(object):
-    name = None
-
-    def __call__(self, command, options):
-        raise NotImplementedError()
-
-    def add_to_parser(self, subparsers):
-        sp = subparsers.add_parser(
-            self.name,
-            description=self.__doc__,
-            help=self.__doc__,
-            formatter_class=argparse.RawTextHelpFormatter)
-        sp.set_defaults(subcommand=self)
-        return sp
+from lib.command import SubCommand, SubParser
 
 class PrepareArticle(SubCommand):
     """
@@ -38,6 +24,7 @@ class PrepareArticle(SubCommand):
                         help='Where to save the XML of the article.')
         sp.add_argument("bibl",
                         help='Where to save the bibliographical data.')
+        return sp
 
     def __call__(self, command, options):
         from django.utils import translation
@@ -70,15 +57,8 @@ Management commands for the lexicography app.
         self.subcommands.append(cmd)
 
     def add_arguments(self, parser):
-        top = self
-
-        class SubParser(CommandParser):
-
-            def __init__(self, **kwargs):
-                super(SubParser, self).__init__(top, **kwargs)
-
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser)
+                                           parser_class=SubParser(self))
 
         for cmd in self.subcommands:
             cmd_instance = cmd()
