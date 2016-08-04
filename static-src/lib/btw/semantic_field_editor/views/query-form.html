@@ -1,3 +1,23 @@
-<label>Search:<input type="search" class="form-control input-sm" name="search" placeholder=""></label> <i class="fa fa-question-circle text-info search-help"></i>
-<label>in <select class="form-control input-sm" name="aspect"><option value="sf">semantic field names</option><option value="lexemes">lexemes</option></select></label> <i class="fa fa-question-circle text-info aspect-help"></i>
-<label>among <select class="form-control input-sm" name="scope"><option value="all">all fields</option><option value="hte">HTE fields</option><option value="btw">custom BTW fields</option></select></label> <i class="fa fa-question-circle text-info scope-help"></i>
+<label>Search:<input type="search" class="form-control input-sm" name="search" placeholder=""></label>
+<i class="fa fa-question-circle text-info search-help"></i>
+<p class="search-help" style='display: none;'>Type the text you want to
+    search for in this field. If you surround the text with double
+    quotes, the search will be "exact". For instance, if you search
+    for <code>"Speak"</code>, it will match only the
+    word <code>Speak</code>, not <code>Speaking</code>,
+    or <code>speak</code>.</p>
+<label>in <select class="form-control input-sm" name="aspect"><option value="sf">semantic field names</option><option value="lexemes">lexemes</option></select></label>
+<i class="fa fa-question-circle text-info aspect-help"></i>
+<p class="aspect-help" style='display: none;'>This selector determines
+  what aspect of the semantic fields you want to
+  search: <code>semantic field names</code> will search only the names
+  of the semantic fields, <code>lexemes</code> will search only the
+  lexemes associated with the fields.</p>
+<label>among <select class="form-control input-sm" name="scope"><option value="all">all fields</option><option value="hte">HTE fields</option><option value="btw">custom BTW fields</option></select></label>
+<i class="fa fa-question-circle text-info scope-help"></i>
+<p class="scope-help" style='display: none;'>This selector determines what the scope of the
+  search is. Use <code>HTE fields</code> to select only those fields
+  provided with the Historical Thesaurus of
+  English. Use <code>custom BTW fields</code> to search those fields
+  created for the BTW project. Use <code>all fields</code> to search
+  all fields.</p>

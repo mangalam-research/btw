@@ -1,12 +1,14 @@
 define(/** @lends auto */ function factory(require, exports, _module) {
   "use strict";
   var Mn = require("marionette");
+  var Bb = require("backbone");
   var Handlebars = require("handlebars");
   var _ = require("lodash");
+  var tools = require("../../tools");
 
   var linkTemplate = Handlebars.compile(
-    "<a class='btn btn-default btn-sm sf-link' href='{{ url }}'>" +
-      "{{ heading }}{{#if includePos}} ({{verbose_pos}}){{/if}}</a>");
+    "<a class='btn btn-default btn-sm sf-link' href='{{url}}'>" +
+      "{{heading}}{{#if includePos}} ({{verbose_pos}}){{/if}}</a>");
 
   Handlebars.partials["field/linkTemplate"] = linkTemplate;
 
@@ -21,7 +23,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   var breadcrumbTemplate = Handlebars.compile("\
 {{#if parent}}\
-{{> field/breadcrumbTemplate parent includePos=false}} > \
+{{> field/breadcrumbTemplate parent includePos=false}} {{#if is_subcat}}::{{else}}>{{/if}} \
 {{/if}}\
 {{> field/linkTemplate includePos=includePos}} \
 ");
@@ -29,12 +31,22 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   Handlebars.partials["field/breadcrumbTemplate"] = breadcrumbTemplate;
 
   var breadcrumbWrapperTemplate = Handlebars.compile("\
-<p><span class='sf-breadcrumbs'>{{> field/breadcrumbTemplate includePos=true}} \
-{{path}}</span></p>\
+<table class='sf-breadcrumb-view'>\
+<tbody>\
+<tr>\
+{{#if helpers.canBeAdded}}\
+<td class='control-column'>\
+<a href='#' class='btn btn-default sf-add'><i class='fa fa-fw fa-thumbs-up'></i></a><br/>\
+<a href='#' class='btn btn-default sf-combine'><i class='fa fa-fw fa-at'></i></a>\
+</td>\
+{{/if}}\
+<td>\
+<p><span class='sf-breadcrumbs'>{{> field/breadcrumbTemplate includePos=true}}\
+</span>{{#if helpers.allDetails}} {{path}}{{/if}}</p>\
 {{#if related_by_pos }}\
 {{> field/otherPosTemplate }}\
 {{/if}}\
-{{#if allDetails}}\
+{{#if helpers.allDetails}}\
 {{#if lexemes}}\
 <p><label>Lexemes: \
 <span class='sf-lexemes'>\
@@ -54,19 +66,32 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 </label></p>\
 {{/if}}\
 {{/if}}\
+</td>\
+</tr>\
+</tbody>\
+</table>\
 ");
 
   var BreadcrumbView = Mn.ItemView.extend({
+    __classname__: "BreadcrumbView",
     initialize: function initialize(options) {
       this.details = this.details || options.details;
+      this.canBeAdded = this.canBeAdded || options.canBeAdded;
+      this._cachedApplication = null;
+      this._cachedChannel = null;
 
-      Mn.ItemView.prototype.initialize.call(this, _.omit(options, "details"));
+      tools.GettersMixin.call(this);
+      BreadcrumbView.__super__.initialize.call(
+        this, _.omit(options, ["details", "canBeAdded"]));
     },
 
     template: breadcrumbWrapperTemplate,
     templateHelpers: function templateHelpers() {
       return {
-        allDetails: this.details === "all",
+        helpers: {
+          allDetails: this.details === "all",
+          canBeAdded: this.canBeAdded,
+        },
       };
     },
 
@@ -76,16 +101,39 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     ui: {
       link: ".sf-link",
+      addButton: ".sf-add",
+      combineButton: ".sf-combine",
     },
 
     events: {
+      "mousedown .btn": "preventDefault",
       "click @ui.link": "onLinkClick",
+      "click @ui.addButton": "onAddButtonClick",
+      "click @ui.combineButton": "onCombineButtonClick",
+    },
+
+    getters: tools.communicationGetters,
+
+    preventDefault: function preventDefault(ev) {
+      ev.preventDefault();
     },
 
     onLinkClick: function onLinkClick(ev) {
       ev.stopPropagation();
       ev.preventDefault();
       this.triggerMethod("sf:selected", ev.currentTarget.href);
+    },
+
+    onAddButtonClick: function onAddButtonClick(ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.channel.trigger("sf:add", this, this.model);
+    },
+
+    onCombineButtonClick: function onCombineButtonClick(ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.channel.trigger("sf:combine", this, this.model);
     },
   });
 

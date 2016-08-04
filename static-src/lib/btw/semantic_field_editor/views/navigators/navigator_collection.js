@@ -9,6 +9,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   var Mn = require("marionette");
   var NavigatorView = require("./navigator");
   var Navigator = require("../../models/navigator");
+  var Promise = require("bluebird");
+  var _ = require("lodash");
 
   function id(x) {
     return function innerId() {
@@ -22,43 +24,72 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   var NavigatorCollectionView = Mn.CollectionView.extend({
     __classname__: "NavigatorCollectionView",
-    initialize: function initialize() {
+    initialize: function initialize(options) {
+      this.canAddResults = options.canAddResults;
       this.collection = new NavigatorCollection();
-      Mn.CollectionView.prototype.initialize.apply(this, arguments);
+      NavigatorCollectionView.__super__.initialize.call(
+        this, _.omit(options, ["canAddResults"]));
     },
     template: id("<div class='navigators'></div>"),
     childView: NavigatorView,
+
+    childViewOptions: function childViewOptions() {
+      return {
+        canAddResults: this.canAddResults,
+      };
+    },
 
     childEvents: {
       "navigator:closeAll": "closeAllNavigators",
       "navigator:close": "closeNavigator",
     },
 
-    closeNavigator: function closeNavigator(view) {
+    closeNavigator: Promise.method(function closeNavigator(view) {
+      var promise = view.makeDOMRemovedPromise();
+
+      // This is possible if the view was already removed.
+      if (promise === null) {
+        promise = Promise.resolve(view);
+      }
+
       this.collection.remove(view.model);
-    },
+      return promise;
+    }),
 
-    closeAllNavigators: function closeAllNavigators() {
+    closeAllNavigators: Promise.method(function closeAllNavigators() {
+      var p = Promise.all(this.children.map(function map(view) {
+        var promise = view.makeDOMRemovedPromise();
+
+        // This is possible if the view was already removed.
+        if (promise === null) {
+          promise = Promise.resolve(view);
+        }
+
+        return promise;
+      }));
       this.collection.reset();
-    },
+      return p.return(this);
+    }),
 
-    openUrl: function openUrl(url) {
+    openUrl: Promise.method(function openUrl(url) {
       var existing = this.collection.find(function find(navigator) {
-        return navigator.get("url") === url;
+        return navigator.getCurrentUrl() === url;
       });
 
       if (existing) {
-        this.focusNavigator(existing);
+        return this.focusNavigator(existing);
       }
 
       var navigator = new Navigator(url);
-      this.collection.add([navigator]);
-    },
+      this.collection.add([navigator], { at: 0 });
+      var childView = this.children.findByModel(navigator);
+      return childView.makeDOMDisplayedPromise();
+    }),
 
-    focusNavigator: function focusNavigator(navigator) {
+    focusNavigator: Promise.method(function focusNavigator(navigator) {
       var view = this.children.findByModel(navigator);
-      return view.focus();
-    },
+      return view._focus();
+    }),
   });
 
   return NavigatorCollectionView;

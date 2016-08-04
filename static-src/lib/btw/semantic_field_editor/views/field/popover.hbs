@@ -1,0 +1,18 @@
+{{#unless resolved}}
+  <p>Unknown field.</p>
+{{/unless}}
+{{#each resolved}}
+  <div>
+    <h4>{{heading}}</h4>
+    {{#if tree}}
+      <p>Other uses:
+        <div class="tree"></div>
+      </p>
+    {{else}}
+      <p>Not used elsewhere.</p>
+    {{/if}}
+    {{#unless @last}}
+      <hr/>
+    {{/unless}}
+  </div>
+{{/each}}

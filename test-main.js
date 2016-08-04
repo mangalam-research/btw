@@ -1,37 +1,43 @@
-var allTestFiles = [];
-var TEST_REGEXP = /_test\.js$/i;
-
 function pathToModule(path) {
   "use strict";
+  var module = path;
   if (/^\/base\/sitestatic\//.test(path)) {
-    return path.replace(/^\/base\/sitestatic\//,
-                        "../").replace(/\.js$/, "");
+    module = path.replace(/^\/base\/sitestatic\//, "../");
   }
-  else if (/^\/base\/karma_test\//.test(path)) {
-    return path.replace(/^\/base\//,
-                        "../../").replace(/\.js$/, "");
+  else if (/^\/base\/karma_tests\/lib\/testutils\//.test(path)) {
+    module = path.replace(/^\/base\/karma_tests\/lib\//, "");
+  }
+  else if (/^\/base\/karma_tests\//.test(path)) {
+    module = path.replace(/^\/base\//, "");
   }
 
-  return path;
+  return module.replace(/\.(es5)?\.js$/, "");
 }
 
+var paths = {
+  js: "../js",
+  sinon: "../../node_modules/sinon/lib/sinon",
+  Squire: "../../node_modules/squirejs/src/Squire",
+};
+var allTestModules = [];
+var TEST_REGEXP = /_test$/i;
 Object.keys(window.__karma__.files).forEach(function filterTests(file) {
   "use strict";
-  if (TEST_REGEXP.test(file)) {
+  var moduleName = pathToModule(file);
+  if (TEST_REGEXP.test(moduleName)) {
     // Normalize paths to RequireJS module names.
-    allTestFiles.push(pathToModule(file));
+    allTestModules.push(moduleName);
+  }
+
+  if (/.es5.js$/.test(file)) {
+    paths[moduleName] = file.slice(0, -3);
   }
 });
 
 require.config({
   baseUrl: "/base/sitestatic/lib/",
 
-  // We need this so that the test files can find the files in "js".
-  paths: {
-    js: "../js",
-    sinon: "../../node_modules/sinon/lib/sinon",
-    Squire: "../../node_modules/squirejs/src/Squire",
-  },
+  paths: paths,
 
   // We need these so that they behave nicely in testing.
   config: {
@@ -73,6 +79,6 @@ require(["bluebird", "wed/wed"], function init(bluebird) {
   });
 
   // eslint-disable-next-line global-require
-  require(allTestFiles, window.__karma__.start.bind(window.__karma__,
+  require(allTestModules, window.__karma__.start.bind(window.__karma__,
                                                     window.__karma__.config));
 });

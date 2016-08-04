@@ -9,6 +9,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   var queryFormTemplate = require("text!./query-form.html");
   var BreadcrumbView = require("./field/breadcrumb");
   var Field = require("../models/field");
+  require("bootstrap");
   require("backbone.paginator");
   require("twbs-pagination");
 
@@ -34,6 +35,17 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       pageSize: 10,
       totalRecords: 10,
       unfilteredTotal: 0,
+      totalPages: 0,
+    },
+
+    // Init it empty so that immediate calls to getPage won't crash.
+    searchParams: {
+    },
+
+    fetch: function fetch(options) {
+      options = options || {};
+      options.reset = true;
+      return ResultCollection.__super__.fetch.call(this, options);
     },
 
     sync: function sync(method, model, options) {
@@ -80,6 +92,11 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   var ResultRowView = BreadcrumbView.extend({
     tagName: "tr",
+    template: function template() {
+      var html = ResultRowView.__super__.template.apply(this, arguments);
+      // We need to wrap the original HTML in a td element.
+      return "<td>" + html + "</td>";
+    },
   });
 
   var NoResultView = Mn.LayoutView.extend({
@@ -92,29 +109,47 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     };
   }
 
-  // CompositeView is deprected in v3 but there is no way to easily avoid it in
+  // CompositeView is deprecated in v3 but there is no way to easily avoid it in
   // v2.4.5.
   var ResultCollectionView = Mn.CompositeView.extend({
     __classname__: "ResultCollectionView",
-    initialize: function initialize() {
-      Mn.CompositeView.prototype.initialize.apply(this, arguments);
+    initialize: function initialize(options) {
+      this.canAddResults = options.canAddResults;
+      ResultCollectionView.__super__.initialize.call(
+        this, _.omit(options, ["canAddResults"]));
     },
-    tagName: "table",
-    className: "table table-striped",
-    template: id("<tbody></tbody><tfoot></tfoot>"),
+    attributes: {
+      // We need this for the spinner to be positioned properly.
+      style: "position: relative;",
+    },
+    template: id("\
+<table class='table table-striped'><tbody></tbody><tfoot></tfoot></table>\
+<div class='table-processing' style='display: none;'>\
+<i class='fa fa-spinner fa-2x fa-spin'></i>\
+</div>\
+"),
     childView: ResultRowView,
+    childViewOptions: function childViewOptions() {
+      // Yes, the name is different on the child. If the result collection can
+      // add results, then the results themselves can be added.
+      return {
+        canBeAdded: this.canAddResults,
+      };
+    },
     emptyView: NoResultView,
     childViewContainer: "tbody",
 
     ui: {
+      table: "table",
       foot: "tfoot",
+      processing: ".table-processing",
     },
 
     footTemplate: Handlebars.compile("\
 <div class='row'>\
-  <div class='col-sm-5'>\
-    Showing {{ start }} to {{ end }} of {{ totalRecords }} entries \
-    (filtered from {{ unfilteredTotal }} total entries)\
+  <div class='col-sm-5 footer-information'>\
+    Showing {{start}} to {{end}} of {{totalRecords}} entries \
+    (filtered from {{unfilteredTotal}} total entries)\
   </div>\
   <div class='col-sm-7'>\
     <div class='table-pagination'>\
@@ -126,17 +161,38 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 </div>"),
 
     collectionEvents: {
-      update: "footRefresh",
+      reset: "_footRefresh",
+      request: "_onRequest",
+      sync: "_onSync",
     },
 
-    footRefresh: function footRefresh() {
+    _onRequest: function _onRequest() {
+      this.ui.table[0].classList.add("loading");
+      this.ui.processing[0].style.display = "";
+    },
+
+    _onSync: function _onSync() {
+      this.ui.table[0].classList.remove("loading");
+      this.ui.processing[0].style.display = "none";
+    },
+
+    _footRefresh: function footRefresh() {
       var foot = this.ui.foot[0];
       var collection = this.collection;
-      var state = this.collection.state;
+      var state = collection.state;
+
+      if (state.totalRecords === 0) {
+        foot.innerHTML = "";
+        return;
+      }
+
       var start = state.currentPage * state.pageSize;
       foot.innerHTML = this.footTemplate({
-        start: start,
-        end: start + state.pageSize,
+        // Make it 1-based for non-devs.
+        start: start + 1,
+        // The first argument is simplified from
+        // (start + 1) + (state.pageSize - 1).
+        end: Math.min(start + state.pageSize, state.totalRecords),
         totalRecords: state.totalRecords,
         unfilteredTotal: state.unfilteredTotal,
       });
@@ -157,16 +213,28 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  var QueryForm = Mn.LayoutView.extend({
+  function makeHelpPopover(el, content) {
+    $(el).popover({
+      placement: "auto",
+      content: content,
+      html: "true",
+    });
+  }
+
+
+  var QueryForm = Mn.ItemView.extend({
     className: "form-inline",
     template: id(queryFormTemplate),
     ui: {
       search: "[name=search]",
-      searchHelp: ".search-help",
+      searchHelpLabel: "i.search-help",
+      searchHelp: "p.search-help",
       aspect: "[name=aspect]",
-      aspectHelp: ".aspect-help",
+      aspectHelpLabel: "i.aspect-help",
+      aspectHelp: "p.aspect-help",
       scope: "[name=scope]",
-      scopeHelp: ".scope-help",
+      scopeHelpLabel: "i.scope-help",
+      scopeHelp: "p.scope-help",
     },
 
     triggers: {
@@ -184,35 +252,55 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       }
       return ret;
     },
+
+    onRender: function onRender() {
+      var names = ["searchHelp", "aspectHelp", "scopeHelp"];
+      for (var i = 0; i < names.length; ++i) {
+        var name = names[i];
+        makeHelpPopover(this.ui[name + "Label"], this.ui[name][0].innerHTML);
+      }
+    },
   });
 
   var SearchView = Mn.LayoutView.extend({
     initialize: function initialize(options) {
       this.searchUrl = options.searchUrl;
-      delete options.searchUrl;
+      this.canAddResults = options.canAddResults;
+      this.debounceTimeout = options.debounceTimeout !== undefined ?
+        options.debounceTimeout : 500;
 
       this.collection = new ResultCollection(null, {
         url: this.searchUrl,
       });
 
       this.queryForm = new QueryForm();
-      this.queryForm.on(
-        "change",
-        _.debounce(function change() {
-          this.triggerMethod("change",
-                             this.queryForm.serializeData());
-        }.bind(this), 500));
 
-      Mn.LayoutView.prototype.initialize.apply(this, arguments);
+      var change = function change() {
+        this.triggerMethod("change", this.queryForm.serializeData());
+      }.bind(this);
+
+      this.queryForm.on("change",
+                        this.debounceTimeout !== 0 ?
+                        _.debounce(change, this.debounceTimeout) :
+                        change);
+
+      SearchView.__super__.initialize.call(
+        this,
+        _.omit(options, ["searchUrl", "canAddResults", "debounceTimeout"]));
     },
 
     template: Handlebars.compile(panelTemplate),
 
-    templateHelpers: {
-      panelTitle: "Semantic Field Search",
-      panelBody: new Handlebars.SafeString(
-        "<div class='search-form'></div><hr />" +
-          "<div class='results'></div>"),
+    templateHelpers: function templateHelpers() {
+      return {
+        collapse: true,
+        headingId: "sf-editor-collapse-heading-" + this.cid,
+        collapseId: "sf-editor-collapse-" + this.cid,
+        panelTitle: "Semantic Field Search",
+        panelBody: new Handlebars.SafeString(
+          "<div class='search-form'></div><hr />" +
+            "<div class='results'></div>"),
+      };
     },
 
     regions: {
@@ -225,16 +313,16 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
 
     onChange: function onChange(params) {
-      if (this.shown) {
+      if (this.isRendered && params.search !== "") {
         this.collection.searchParams = params;
         this.collection.getPage(0);
       }
     },
 
-    onShow: function onShow() {
-      this.shown = true;
+    onRender: function onRender() {
       this.showChildView("results", new ResultCollectionView({
         collection: this.collection,
+        canAddResults: this.canAddResults,
       }));
       this.showChildView("searchForm", this.queryForm);
     },

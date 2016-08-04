@@ -31,9 +31,6 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  // We used to have this be a RelationalModel instance but the events generated
-  // by backbone-relational do not check whether the view they affect has been
-  // destroyed. So we would get errors about updates on destroyed views.
   var Navigator = Bb.Model.extend({
     __classname__: "Navigator",
     defaults: {
@@ -48,8 +45,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     addPage: function addPage(url) {
       var page = new Page({}, { url: url });
-      page.on("change", function change() {
-        this.trigger("pageChange", page);
+      page.on("sync", function change() {
+        this.trigger("pageSync", page);
       }.bind(this));
       var index = this.get("index") + 1;
       var pages = this.get("pages").models.slice(0, index);
@@ -88,7 +85,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
 
     getCurrentUrl: function getCurrentUrl() {
-      return this.getCurrentPage().get("url");
+      return this.getCurrentPage().url;
     },
 
     getCurrentPage: function getCurrentPage() {

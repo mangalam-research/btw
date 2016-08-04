@@ -8,9 +8,12 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   var $ = require("jquery");
   var _ = require("lodash");
   var Mn = require("marionette");
-  var fieldTemplate = require("text!./inline.html");
-  var sfTemplate = require("text!btw/btw_view_sf_template.html");
+  var fieldTemplate = require("text!./inline.hbs");
+  var popoverTemplate = require("text!./popover.hbs");
+  var Handlebars = require("handlebars");
   require("bootstrap-treeview");
+
+  var popoverTemplateCompiled = Handlebars.compile(popoverTemplate);
 
   function attachPopover(a, ref, sfFetcher, forEditing) {
     var initialContent = "<i class='fa fa-spinner fa-2x fa-spin'></i>";
@@ -38,8 +41,10 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       var keys = Object.keys(alreadyResolved).sort();
       var keyIx = 0;
 
-      content.innerHTML = _.template(sfTemplate)({ keys: keys,
-                                                   resolved: alreadyResolved });
+      var resolved = keys.map(function map(key) {
+        return alreadyResolved[key];
+      });
+      content.innerHTML = popoverTemplateCompiled({ resolved: resolved });
 
       var treeDivs = tip.getElementsByClassName("tree");
       for (var treeDivIx = 0; treeDivIx < treeDivs.length; ++treeDivIx) {
@@ -106,12 +111,12 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
       // Note that we destroy the popover when we "close" it. This is also why
       // we add the event handlers below for every click that shows the
-      // popup. If the popover is recreated, then ``tip`` will be new, and
-      // destroying the popup removes the event handlers that were created.
+      // popover. If the popover is recreated, then ``tip`` will be new, and
+      // destroying the popover removes the event handlers that were created.
       var method = tip.classList.contains("in") ? "destroy" : "show";
       popover[method]();
 
-      // If we're not showing the popup, then we are done.
+      // If we're not showing the popover, then we are done.
       if (method !== "show") {
         return;
       }
@@ -119,8 +124,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       // Otherwise, we need to set handlers.
       tip.classList.add("sf-popover");
 
-      function stopPropagation(ev) {
-        ev.stopPropagation();
+      function stopPropagation(stopEv) {
+        stopEv.stopPropagation();
       }
 
       $tip.on("click mousedown contextmenu", stopPropagation);
@@ -128,25 +133,23 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   }
 
   var InlineView = Mn.LayoutView.extend({
+    __classname__: "InlineView",
     initialize: function initialize(options) {
       this.fetcher = options.fetcher;
       this.canDelete = options.canDelete;
-      delete options.fetcher;
-      delete options.canDelete;
-      Mn.LayoutView.prototype.initialize.apply(this, arguments);
+      Mn.LayoutView.prototype.initialize.call(
+        this, _.omit(options, ["fetcher", "canDelete"]));
     },
 
     tagName: "span",
-
-    className: "btn btn-default sf-popover-button _phantom_wrap " +
-      "_gui _inline field-view",
+    className: "_phantom_wrap",
 
     attributes: {
       role: "button",
       contenteditable: "false",
     },
 
-    template: _.template(fieldTemplate),
+    template: Handlebars.compile(fieldTemplate),
 
     templateHelpers: function templateHelpers() {
       return {
@@ -161,11 +164,13 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
 
     events: {
-      "click @ui.deleteButton": "deleteSF",
+      "click @ui.deleteButton": "onDeleteClick",
     },
 
-    deleteSF: function remove() {
-      this.model.destroy();
+    onDeleteClick: function onDeleteClick(ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.triggerMethod("sf:delete", this.model);
     },
 
     onRender: function onRender() {

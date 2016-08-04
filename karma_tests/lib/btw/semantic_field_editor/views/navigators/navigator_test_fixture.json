@@ -1,0 +1,339 @@
+{
+  "http://localhost/en-us/semantic-fields/semanticfield/225241/?fields=%40details&depths.parent=-1&depths.related_by_pos=1&depths.children=1": {
+    "verbose_pos": "Adjective", 
+    "is_subcat": false, 
+    "parent": {
+      "verbose_pos": "Adjective", 
+      "is_subcat": false, 
+      "parent": {
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "parent": {
+          "verbose_pos": "Adjective", 
+          "is_subcat": false, 
+          "parent": null, 
+          "url": "http://localhost/en-us/semantic-fields/semanticfield/5/", 
+          "path": "01aj", 
+          "heading": "Pertaining to world"
+        }, 
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/12/", 
+        "path": "01.01aj", 
+        "heading": "Pertaining to surface"
+      }, 
+      "url": "http://localhost/en-us/semantic-fields/semanticfield/2234/", 
+      "path": "01.01.06.01aj", 
+      "heading": "Europe"
+    }, 
+    "related_by_pos": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225242/", 
+        "path": "01.01.06.01.01av", 
+        "verbose_pos": "Adverb", 
+        "is_subcat": false, 
+        "heading": "British Isles"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2242/", 
+        "path": "01.01.06.01.01n", 
+        "verbose_pos": "Noun", 
+        "is_subcat": false, 
+        "heading": "British Isles"
+      }
+    ], 
+    "url": "http://localhost/en-us/semantic-fields/semanticfield/225241/", 
+    "heading": "British Isles", 
+    "lexemes": [], 
+    "path": "01.01.06.01.01aj", 
+    "children": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2251/", 
+        "path": "01.01.06.01.01|01aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "Britain"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2252/", 
+        "path": "01.01.06.01.01|02aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "the borders"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2253/", 
+        "path": "01.01.06.01.01|03aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "north of Britain"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2268/", 
+        "path": "01.01.06.01.01.01aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "England"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2291/", 
+        "path": "01.01.06.01.01.02aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Scotland"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2301/", 
+        "path": "01.01.06.01.01.03aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Wales"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2309/", 
+        "path": "01.01.06.01.01.04aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Irish"
+      }
+    ]
+  }, 
+  "http://localhost/en-us/semantic-fields/semanticfield/2234/?fields=%40details&depths.parent=-1&depths.related_by_pos=1&depths.children=1": {
+    "verbose_pos": "Adjective", 
+    "is_subcat": false, 
+    "parent": {
+      "verbose_pos": "Adjective", 
+      "is_subcat": false, 
+      "parent": {
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "parent": null, 
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/5/", 
+        "path": "01aj", 
+        "heading": "Pertaining to world"
+      }, 
+      "url": "http://localhost/en-us/semantic-fields/semanticfield/12/", 
+      "path": "01.01aj", 
+      "heading": "Pertaining to surface"
+    }, 
+    "related_by_pos": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2241/", 
+        "path": "01.01.06.01av", 
+        "verbose_pos": "Adverb", 
+        "is_subcat": false, 
+        "heading": "Europe"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2226/", 
+        "path": "01.01.06.01n", 
+        "verbose_pos": "Noun", 
+        "is_subcat": false, 
+        "heading": "Europe"
+      }
+    ], 
+    "url": "http://localhost/en-us/semantic-fields/semanticfield/2234/", 
+    "heading": "Europe", 
+    "lexemes": [
+      {
+        "word": "European", 
+        "fulldate": "1603\u2013"
+      }, 
+      {
+        "word": "Europaeo-", 
+        "fulldate": "1841\u2013"
+      }, 
+      {
+        "word": "Pan-European", 
+        "fulldate": "1901\u2013"
+      }, 
+      {
+        "word": "Intra-European", 
+        "fulldate": "1949\u2013"
+      }, 
+      {
+        "word": "Western-European", 
+        "fulldate": "1949\u2013"
+      }, 
+      {
+        "word": "Euro-", 
+        "fulldate": "1952\u2013"
+      }
+    ], 
+    "path": "01.01.06.01aj", 
+    "children": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2235/", 
+        "path": "01.01.06.01|01aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "continental Europe"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2236/", 
+        "path": "01.01.06.01|02aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "central Europe"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2238/", 
+        "path": "01.01.06.01|04aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "pertaining to Europe"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2240/", 
+        "path": "01.01.06.01|05aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "Germanic regions"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2335/", 
+        "path": "01.01.06.01.03aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Germanic region"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2345/", 
+        "path": "01.01.06.01.04aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Low countries"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2372/", 
+        "path": "01.01.06.01.06aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Greece"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2380/", 
+        "path": "01.01.06.01.07aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "France"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2387/", 
+        "path": "01.01.06.01.08aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Switzerland"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2397/", 
+        "path": "01.01.06.01.09aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Italy"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225241/", 
+        "path": "01.01.06.01.01aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "British Isles"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225245/", 
+        "path": "01.01.06.01.02aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Scandinavia and Iceland"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225247/", 
+        "path": "01.01.06.01.05aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Eastern Europe"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2237/", 
+        "path": "01.01.06.01|03aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": true, 
+        "heading": "countries north of the Alps"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2407/", 
+        "path": "01.01.06.01.10aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Malta/Gozo/Cyprus"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2414/", 
+        "path": "01.01.06.01.11aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "Iberian peninsula and islands"
+      }
+    ]
+  }, 
+  "http://localhost/en-us/semantic-fields/semanticfield/225242/?fields=%40details&depths.parent=-1&depths.related_by_pos=1&depths.children=1": {
+    "verbose_pos": "Adverb", 
+    "is_subcat": false, 
+    "parent": {
+      "verbose_pos": "Adverb", 
+      "is_subcat": false, 
+      "parent": {
+        "verbose_pos": "Adverb", 
+        "is_subcat": false, 
+        "parent": {
+          "verbose_pos": "Adverb", 
+          "is_subcat": false, 
+          "parent": null, 
+          "url": "http://localhost/en-us/semantic-fields/semanticfield/7/", 
+          "path": "01av", 
+          "heading": "Earthly"
+        }, 
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/14/", 
+        "path": "01.01av", 
+        "heading": "In manner of surface"
+      }, 
+      "url": "http://localhost/en-us/semantic-fields/semanticfield/2241/", 
+      "path": "01.01.06.01av", 
+      "heading": "Europe"
+    }, 
+    "related_by_pos": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225241/", 
+        "path": "01.01.06.01.01aj", 
+        "verbose_pos": "Adjective", 
+        "is_subcat": false, 
+        "heading": "British Isles"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2242/", 
+        "path": "01.01.06.01.01n", 
+        "verbose_pos": "Noun", 
+        "is_subcat": false, 
+        "heading": "British Isles"
+      }
+    ], 
+    "url": "http://localhost/en-us/semantic-fields/semanticfield/225242/", 
+    "heading": "British Isles", 
+    "lexemes": [], 
+    "path": "01.01.06.01.01av", 
+    "children": [
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/2254/", 
+        "path": "01.01.06.01.01|01av", 
+        "verbose_pos": "Adverb", 
+        "is_subcat": true, 
+        "heading": "Britain"
+      }, 
+      {
+        "url": "http://localhost/en-us/semantic-fields/semanticfield/225243/", 
+        "path": "01.01.06.01.01.01av", 
+        "verbose_pos": "Adverb", 
+        "is_subcat": false, 
+        "heading": "England"
+      }
+    ]
+  }
+}

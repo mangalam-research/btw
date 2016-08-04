@@ -14,20 +14,21 @@
 <script>
 require(["btw/semantic_field_editor/app", "btw/semantic_field_fetcher",
          "semantic-fields/util", "lodash"],
-  function (app, SFFetcher, sfUtil, _) {
+  function (SFEditor, SFFetcher, sfUtil, _) {
     var fetcher = new SFFetcher("{{ semantic_field_fetch_url }}",
                                 undefined);
 
 
     fetcher.fetch(["02.02.18n", "02.02.19n", "01.04.04n"]).then(
       function (resolved) {
-      var fields = sfUtil.sortSemanticFields(_.values(resolved));
-      window.editor = new app.SFEditor({
+      var fields = _.values(resolved);
+      var app = window.editor = new SFEditor({
         container: document.getElementById("test-body"),
         fields: fields,
         fetcher: fetcher,
         searchUrl: "{{ semantic_field_fetch_url }}",
       });
+      app.start();
     });
 });
 </script>

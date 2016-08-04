@@ -17,11 +17,13 @@ module.exports = function configure(config) {
     files: [
       "sitestatic/config/requirejs-config-dev.js",
       "test-main.js",
-      { pattern: "sitestatic/lib/**/*.html", included: false },
+      "node_modules/babel-polyfill/dist/polyfill.js",
+      { pattern: "sitestatic/lib/**/@(*.html|*.hbs)", included: false },
       { pattern: "build/test-data/**/*", included: false },
       { pattern: "sitestatic/lib/**/*.js", included: false },
       { pattern: "sitestatic/js/**/*.js", included: false },
       { pattern: "karma_tests/**/*.js", included: false },
+      { pattern: "karma_tests/**/*.json" },
       { pattern: "semantic_fields/karma_tests/**/*.js", included: false },
       { pattern: "lexicography/karma_tests/**/*.js", included: false },
       { pattern: "lexicography/templates/lexicography/viewer.html" },
@@ -32,9 +34,37 @@ module.exports = function configure(config) {
     preprocessors: {
       "**/karma_tests/*.html": ["html2js"],
       "**/templates/**/*.html": ["html2js"],
-      "**/karma_tests/*.json": ["json_fixtures"],
+      "**/karma_tests/**/*.json": ["json_fixtures"],
+      "karma_tests/lib/btw/semantic_field_editor/**/*.js": ["babelModule"],
+      "karma_tests/lib/testutils/**/*.js": ["babelModule"],
     },
-    reporters: ["mocha"],
+    jsonFixturesPreprocessor: {
+      variableName: "__json__",
+    },
+    customPreprocessors: {
+      babelModule: {
+        base: "babel",
+        options: {
+          plugins: ["transform-es2015-modules-amd"],
+        },
+      },
+    },
+    babelPreprocessor: {
+      options: {
+        presets: ["es2015"],
+        ignore: [
+          "node_modules",
+        ],
+        sourceMap: "inline",
+      },
+      filename: function filename(file) {
+        return file.originalPath.replace(/\.js$/, ".es5.js");
+      },
+      sourceFileName: function sourceFileName(file) {
+        return file.originalPath;
+      },
+    },
+    // reporters: ["mocha"],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

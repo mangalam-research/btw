@@ -5,7 +5,7 @@ require.config({
     text: "requirejs/text",
     optional: "requirejs/optional",
     jquery: "external/jquery",
-    bootstrap: "external/bootstrap/js/bootstrap.min",
+    bootstrap: "external/bootstrap/js/bootstrap",
     log4javascript: "external/log4javascript",
     "jquery.bootstrap-growl": "external/jquery.bootstrap-growl",
     "font-awesome": "external/font-awesome",
@@ -43,6 +43,7 @@ require.config({
     handlebars: "external/handlebars.min",
     "backbone.radio": "external/backbone.radio.min",
     "twbs-pagination": "external/jquery.twbsPagination",
+    dragula: "external/dragula",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {

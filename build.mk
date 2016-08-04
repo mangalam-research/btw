@@ -136,7 +136,7 @@ and_map=$1 $1.map
 map=$1 $(patsubst %.js,%.map,$1)
 
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.ui.min.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js last-resort.js bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css)
 
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
@@ -410,6 +410,10 @@ $(EXTERNAL)/handlebars%: node_modules/handlebars/dist/handlebars%
 	cp -rp $< $@
 
 $(EXTERNAL)/jquery.twbsPagination%: node_modules/twbs-pagination/jquery.twbsPagination%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/dragula%: node_modules/dragula/dist/dragula%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
