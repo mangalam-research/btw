@@ -18,7 +18,9 @@ urlpatterns = i18n_patterns(
     url(r'^logout/$', logout, name="logout"),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^invitation/', include('invitation.urls')),
-    url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')))
+    url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^semantic_fields/', include("semantic_fields.rest_urls")),
+)
 
 # These have to be inserted before the CMS pattern.
 if settings.DEBUG and settings.BTW_DIRECT_APP_MODE:
