@@ -101,10 +101,6 @@ require.config({
     bootstrap: {
       deps: ["jquery"],
       exports: "jQuery.fn.popover",
-      init: function init() {
-        "use strict";
-        jQuery.noConflict();
-      },
     },
     "bootstrap-treeview": {
       deps: ["bootstrap"],

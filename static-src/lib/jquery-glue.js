@@ -1,5 +1,8 @@
 define(function jqueryGlue(require, exports, module) {
   var $ = require("jquery");
+
+  $.noConflict();
+
   var originalAjax = $.ajax;
   var ajax;
 
