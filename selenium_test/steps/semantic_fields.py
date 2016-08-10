@@ -20,7 +20,7 @@ def step_impl(context, user):
 
     dt = Datatable("semantic field search", "semantic-field-table",
                    context.util)
-    context.register_datatable(dt, True)
+    context.register_table(dt, True)
     # driver.execute_async_script("""
     # var done = arguments[0];
     # require(["velocity"], function (velocity) {
@@ -59,13 +59,13 @@ def step_impl(context, what):
     util = context.util
 
     if what == "search field":
-        selector = ".semantic-field-search-help .search-help"
+        selector = "p.search-help"
         index = 0
     elif what == "aspect combo box":
-        selector = ".semantic-field-search-help .aspect-help"
+        selector = "p.aspect-help"
         index = 1
     elif what == "scope combo box":
-        selector = ".semantic-field-search-help .scope-help"
+        selector = "p.scope-help"
         index = 2
     else:
         raise ValueError("unexpected value for ``what``: " + what)
@@ -95,7 +95,7 @@ def step_impl(context):
 
 @when(ur'the user searches (?P<mode>literally |)for "(?P<search>.*?)"')
 def step_impl(context, mode, search):
-    dt = context.default_datatable
+    dt = context.default_table
 
     if mode == "literally ":
         search = '"' + search + '"'
@@ -105,27 +105,27 @@ def step_impl(context, mode, search):
 
 @then(ur"there is one result")
 def step_impl(context):
-    actual = context.default_datatable.wait_for_results(1)
+    actual = context.default_table.wait_for_results(1)
     assert_equal(actual, 1)
 
 
 @then(ur"there are (?P<count>\d+|no) results")
 def step_impl(context, count):
     count = 0 if count == "no" else int(count)
-    actual = context.default_datatable.wait_for_results(count)
+    actual = context.default_table.wait_for_results(count)
     assert_equal(actual, count)
 
 
 @then(ur"the first result shows: (?P<result>.*)")
 def step_impl(context, result):
-    row = context.default_datatable.get_result(0)
+    row = context.default_table.get_result(0)
     text = row.find_element_by_class_name("sf-breadcrumbs").text
     assert_equal(text, result)
 
 
 @when(ur"the user changes the search to search for lexemes")
 def step_impl(context):
-    context.default_datatable.set_select_option("in", "lexemes")
+    context.default_table.set_select_option("in", "lexemes")
 
 @when(ur"the user changes the search to search for (?P<what>BTW|HTE|all) "
       ur"fields")
@@ -139,7 +139,7 @@ def step_impl(context, what):
     else:
         raise ValueError("unexpected value: " + what)
 
-    context.default_datatable.set_select_option("among", value)
+    context.default_table.set_select_option("among", value)
 
 
 @when(ur'the user clicks on "(?P<what>.*)" in the (?P<which>first|second) '
@@ -150,7 +150,7 @@ def step_impl(context, what, which):
         "first": 0,
         "second": 1
     }[which]
-    result = context.default_datatable.get_result(result_ix)
+    result = context.default_table.get_result(result_ix)
 
     def find(*_):
         links = result.find_elements_by_link_text(what)

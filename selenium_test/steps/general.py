@@ -24,10 +24,9 @@ from selenic.datatables import Datatable
 def user_load_lexicography(context):
     driver = context.driver
     driver.get(context.builder.SERVER + "/lexicography")
-    context.clear_datatables()
-    dt = Datatable("lexicographical search", "search-table",
-                   context.util)
-    context.register_datatable(dt, True)
+    context.clear_tables()
+    dt = Datatable("lexicographical search", "search-table", context.util)
+    context.register_table(dt, True)
 
 
 @then("the user gets the top page of the lexicography app")

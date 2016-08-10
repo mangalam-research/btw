@@ -446,25 +446,25 @@ def before_scenario(context, scenario):
     # Each scenario means logging in again.
     context.is_logged_in = False
 
-    context.default_datatable = None
-    context.datatables = {}
+    context.default_table = None
+    context.tables = {}
 
-    def clear_datatables(self):
-        self.default_datatable = None
-        self.datatables = {}
+    def clear_tables(self):
+        self.default_table = None
+        self.tables = {}
 
-    context.clear_datatables = types.MethodType(clear_datatables, context)
+    context.clear_tables = types.MethodType(clear_tables, context)
 
-    def register_datatable(self, datatable, default=False):
-        name = datatable.name
-        if name in self.datatables:
-            raise ValueError("trying to register a datatable with a duplicate "
+    def register_table(self, table, default=False):
+        name = table.name
+        if name in self.tables:
+            raise ValueError("trying to register a table with a duplicate "
                              "name: " + name)
         if default:
-            self.default_datatable = datatable
-        self.datatables[name] = datatable
+            self.default_table = table
+        self.tables[name] = table
 
-    context.register_datatable = types.MethodType(register_datatable, context)
+    context.register_table = types.MethodType(register_table, context)
 
     server = context.server
     #

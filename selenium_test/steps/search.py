@@ -12,20 +12,20 @@ step_matcher('re')
 
 @given('the search table is loaded')
 def step_impl(context):
-    assert_true(context.default_datatable.is_initialized(),
+    assert_true(context.default_table.is_initialized(),
                 "the search table should be initialized")
 
 
 @when('the user searches for lemma "(?P<query>.*?)"')
 def step_impl(context, query):
-    dt = context.default_datatable
+    dt = context.default_table
     dt.call_with_search_field("Lemmata only", lambda x: x.click())
     dt.fill_field("Search", query)
 
 
 @when('the user searches for "(?P<query>.*?)"')
 def step_impl(context, query):
-    dt = context.default_datatable
+    dt = context.default_table
     dt.fill_field("Search", query)
 
 
@@ -61,7 +61,7 @@ def step_impl(context, count):
 
     driver = context.driver
     entries = driver.find_elements_by_css_selector(
-        "#{}>tbody>tr[role='row']".format(context.default_datatable.cssid))
+        "#{}>tbody>tr[role='row']".format(context.default_table.cssid))
     assert_equal(len(entries), count, "there should be " +
                  str(count) + " results")
 
@@ -69,7 +69,7 @@ def step_impl(context, count):
 @then(r'the search results (?P<show>show|do not show) hit details')
 def step_impl(context, show):
     hits = context.driver.find_elements_by_css_selector(
-        "#{} tr.hits".format(context.default_datatable.cssid))
+        "#{} tr.hits".format(context.default_table.cssid))
     if show == "show":
         assert_true(len(hits) > 0)
     elif show == "do not show":
@@ -155,7 +155,7 @@ def step_impl(context, kind):
 @when('the user switches the search to (?P<kind>(?:un)?published) articles')
 def step_impl(context, kind):
     util = context.util
-    dt = context.default_datatable
+    dt = context.default_table
     dt.setup_redraw_check()
     context.driver.execute_script("""
     var collapse = document.getElementById("advanced-search-collapse");
@@ -175,7 +175,7 @@ def step_impl(context, kind):
 @when('the user sets the search to search all records')
 def step_impl(context):
     util = context.util
-    dt = context.default_datatable
+    dt = context.default_table
     dt.setup_redraw_check()
     context.driver.execute_script("""
     var collapse = document.getElementById("advanced-search-collapse");
