@@ -362,3 +362,13 @@ def assert_senses_in_order(util, viewing=False):
                                      "subsense head text")
                 subsense_label_ix += 1
         sense_label_ix += 1
+
+def velocity_mock(driver, value):
+    driver.execute_async_script("""
+    var value = arguments[0];
+    var done = arguments[1];
+    require(["velocity"], function (velocity) {
+      velocity.mock = value;
+      done();
+    });
+    """, value)

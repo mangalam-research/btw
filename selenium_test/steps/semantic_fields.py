@@ -6,6 +6,8 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenic.datatables import Datatable
 from selenic.util import Condition, Result
 
+from ..btw_util import velocity_mock
+
 step_matcher('re')
 
 @given(ur"(?P<user>.+?) has loaded the main page of the semantic "
@@ -21,13 +23,7 @@ def step_impl(context, user):
     dt = Datatable("semantic field search", "semantic-field-table",
                    context.util)
     context.register_table(dt, True)
-    # driver.execute_async_script("""
-    # var done = arguments[0];
-    # require(["velocity"], function (velocity) {
-    #   velocity.mock = true;
-    #   done();
-    # });
-    # """)
+    velocity_mock(driver, True)
 
 
 @then("no popovers are visible")
