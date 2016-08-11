@@ -19,7 +19,7 @@
         require.config({
           baseUrl: '{% static 'lib/' %}'
         });
-        {% if debug %}
+        {% if debug or btw_globals.testing %}
         require.config({
           config: {
             "backbone-glue": { debug: true },
