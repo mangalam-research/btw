@@ -143,7 +143,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                            mixins.UpdateModelMixin,
                            generics.ListAPIView,
                            viewsets.GenericViewSet):
-    queryset = SemanticField.objects.all()
+    queryset = SemanticField.objects.all().order_by("path")
     serializer_class = SemanticFieldSerializer
     pagination_class = SemanticFieldPagination
     lookup_field = "pk"
