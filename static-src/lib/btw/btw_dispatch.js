@@ -58,7 +58,6 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
       break;
     case "btw:semantic-fields":
       this._heading_decorator.sectionHeadingDecorator(el);
-      this.listDecorator(el, ";; ");
       break;
     case "btw:sf":
       this.sfDecorator(root, el);
