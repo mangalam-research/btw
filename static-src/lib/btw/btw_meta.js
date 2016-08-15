@@ -1,39 +1,39 @@
-define(function (require, exports, module) {
-'use strict';
+define(function factory(require, exports, _module) {
+  "use strict";
 
-var $ = require("jquery");
-var oop = require("wed/oop");
-var util = require("wed/util");
-var TEIMeta = require("wed/modes/generic/metas/tei_meta").Meta;
+  var $ = require("jquery");
+  var oop = require("wed/oop");
+  var util = require("wed/util");
+  var TEIMeta = require("wed/modes/generic/metas/tei_meta").Meta;
 
-/**
- * @classdesc Meta-information for BTW's schema.
- *
- * @extends module:modes/generic/metas/tei_meta~Meta
- *
- * @constructor
- * @param {Object} options The options to pass to the Meta.
- */
-function BTWMeta() {
+  /**
+   * @classdesc Meta-information for BTW's schema.
+   *
+   * @extends module:modes/generic/metas/tei_meta~Meta
+   *
+   * @constructor
+   * @param {Object} options The options to pass to the Meta.
+   */
+  function BTWMeta() {
     TEIMeta.apply(this, arguments);
-}
+  }
 
-oop.inherit(BTWMeta, TEIMeta);
+  oop.inherit(BTWMeta, TEIMeta);
 
-BTWMeta.prototype.isInline = function (node) {
+  BTWMeta.prototype.isInline = function isInline(node) {
     // We need to normalize the name to fit the names we have below.
-    var original_name = util.getOriginalName(node);
-    var parts = original_name.split(":");
+    var originalName = util.getOriginalName(node);
+    var parts = originalName.split(":");
     // XXX this is taking a shortcut. We should instead find the
     // namespace of the node and convert it to an appropriate prefix
     // to use below.
     if (parts.length === 1) {
-        parts[1] = parts[0];
-        parts[0] = "tei";
+      parts[1] = parts[0];
+      parts[0] = "tei";
     }
     var name = parts.join(":");
 
-    switch(name) {
+    switch (name) {
     case "btw:sf":
     case "btw:lemma-instance":
     case "btw:antonym-instance":
@@ -42,40 +42,41 @@ BTWMeta.prototype.isInline = function (node) {
     case "btw:lang":
     case "btw:sense-emphasis":
     case "btw:todo":
-        return true;
+      return true;
     case "tei:editor":
     case "tei:persName":
     case "tei:resp":
-        return false;
+      return false;
     case "btw:none":
     case "btw:english-term":
     case "btw:term":
     case "tei:ptr":
-        if (node.parentNode &&
-            util.getOriginalName(node.parentNode) === "btw:citations")
-            return false;
-        /* falls through */
+      if (node.parentNode &&
+          util.getOriginalName(node.parentNode) === "btw:citations") {
+        return false;
+      }
+      /* falls through */
     default:
-        return TEIMeta.prototype.isInline.call(this, node);
+      return TEIMeta.prototype.isInline.call(this, node);
     }
-};
+  };
 
-var cached_mapping;
+  var cachedMapping;
 
-BTWMeta.prototype.getNamespaceMappings = function () {
+  BTWMeta.prototype.getNamespaceMappings = function getNamespaceMappings() {
     // BTW's mapping is identical to TEI's but with the addition of
     // the "btw" prefix.
-    if (cached_mapping)
-        return cached_mapping;
+    if (cachedMapping) {
+      return cachedMapping;
+    }
 
     var ret = TEIMeta.prototype.getNamespaceMappings.call(this);
     ret = $.extend({}, ret, {
-        "btw": "http://mangalamresearch.org/ns/btw-storage"
+      btw: "http://mangalamresearch.org/ns/btw-storage",
     });
-    cached_mapping = ret;
+    cachedMapping = ret;
     return ret;
-};
+  };
 
-exports.Meta = BTWMeta;
-
+  exports.Meta = BTWMeta;
 });
