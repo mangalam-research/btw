@@ -53,6 +53,7 @@ require.config({
       jquery: "jquery-glue",
       backbone: "backbone-glue",
       marionette: "marionette-glue",
+      bootstrap: "wed/patches/bootstrap",
     },
     "jquery-glue": {
       jquery: "jquery",
@@ -76,6 +77,9 @@ require.config({
     "backbone-marionette-glue": {
       backbone: "backbone",
       marionette: "marionette",
+    },
+    "wed/patches/bootstrap": {
+      bootstrap: "bootstrap",
     },
   },
   packages: [
