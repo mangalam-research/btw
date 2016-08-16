@@ -72,12 +72,19 @@ define(function factory(require, exports, _module) {
       var ret = [];
       for (var i = 0; i < els.length; ++i) {
         var el = els[i];
-        var surname = el.getElementsByClassName("surname")[0]
-              .textContent.trim();
-        var forename = el.getElementsByClassName("forename")[0]
-              .textContent.trim();
-        var genName = el.getElementsByClassName("genName")[0]
-              .textContent.trim();
+        var surname = el.getElementsByClassName("surname")[0];
+        var forename = el.getElementsByClassName("forename")[0];
+        var genName = el.getElementsByClassName("genName")[0];
+
+        // If anything is missing, we abort the conversion. The document is not
+        // ready.
+        if (!(surname && forename && genName)) {
+          return [];
+        }
+
+        surname = surname.textContent.trim();
+        forename = forename.textContent.trim();
+        genName = genName.textContent.trim();
 
         if (genName === "") {
           genName = undefined;
@@ -152,6 +159,10 @@ define(function factory(require, exports, _module) {
 
 
     viewer.whenCondition("done", function done() {
+      // We need to wait until the document is "done" rendering so
+      // that we can grab the author information and editor
+      // information for the citations.
+
       var root = viewer._root;
 
       if (!root.querySelector(".btw\\:credits")) {
@@ -164,12 +175,17 @@ define(function factory(require, exports, _module) {
         return;
       }
 
-      // We need to wait until the document is "done" rendering so
-      // that we can grab the author information and editor
-      // information for the citations.
       var authors = convertNames(
         root.querySelectorAll(".btw\\:credit .persName"));
       var editors = convertNames(root.querySelectorAll(".editor .persName"));
+
+      if (!(authors.length && editors.length)) {
+        // Leave the button disabled but add an explanatory title.
+        citeButton.setAttribute(
+          "title",
+          "This article does not yet have authors and editors recorded.");
+        return;
+      }
 
       var mlaAuthors = document.getElementById("mla_authors");
       mlaAuthors.textContent = combineNames(authors, true, 3);
