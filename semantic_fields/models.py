@@ -137,6 +137,24 @@ class SemanticField(models.Model):
                 raise ex
 
     @property
+    def heading_for_display(self):
+        """
+        This is the heading value we should be using for displaying the
+        field to the user. For fields that are not subcategories,
+        that's just the heading. For fields that are subcategories,
+        that's the heading plus ``" :: "`` separating it from the
+        parent's heading.
+
+        This value is useful when the semantic field is meant to be
+        shown to the user in isolation. If the semantic field is going
+        to be part of a list displaying it and its ancestors (e.g. the
+        breadcrubs), then it is better to use ``heading``
+        directly. Otherwise, the parent will appear twice in the list.
+        """
+        return self.heading if not self.is_subcat else \
+            self.parent.heading_for_display + " :: " + self.heading
+
+    @property
     def is_custom(self):
         # catid is None for all custom fields. This is the fastest
         # way to check...
@@ -255,6 +273,10 @@ class SemanticField(models.Model):
         return "{0} ({1})".format(self.heading, self.verbose_pos)
 
     @property
+    def heading_for_display_and_pos(self):
+        return "{0} ({1})".format(self.heading_for_display, self.verbose_pos)
+
+    @property
     def is_subcat(self):
         return self.parsed_path[0].hte_subcats is not None
 
@@ -270,7 +292,7 @@ class SemanticField(models.Model):
         :returns: The HTML of the link.
         """
         if text is None:
-            text = self.heading
+            text = self.heading_for_display
 
         if css_class != "":
             css_class = " " + css_class
@@ -330,6 +352,15 @@ class SemanticField(models.Model):
 
     def __unicode__(self):
         return self.heading + " " + self.path
+
+def make_specified_sf(fields):
+    """
+    Create a "fake" semantic field that is the product of a complex
+    semantic field expression.
+    """
+    return SpecifiedSemanticField(
+        path="@".join(field.path for field in fields),
+        heading=" @ ".join(field.heading_for_display for field in fields))
 
 
 class SpecifiedSemanticField(SemanticField):

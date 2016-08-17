@@ -17,12 +17,14 @@ class SemanticFieldSerializer(DynamicFieldsSerializerMixin,
     class Meta:
         model = SemanticField
         fields = ("url", "path", "heading", "parent", "is_subcat",
+                  "heading_for_display",
                   "changerecords", "related_by_pos", "lexemes", "children",
                   "verbose_pos")
 
     field_sets = {
         # Define a default field set.
-        "": ("url", "path", "heading", "is_subcat", "verbose_pos"),
+        "": ("url", "path", "heading", "heading_for_display",
+             "is_subcat", "verbose_pos"),
         "search": ("parent", "related_by_pos"),
         "details": ("parent", "related_by_pos", "lexemes", "children")
     }

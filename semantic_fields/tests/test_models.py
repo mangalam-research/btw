@@ -56,6 +56,23 @@ class SemanticFieldTestCase(TestCase):
         c.path = "01.01v"
         self.assertFalse(c.is_subcat)
 
+    def test_heading_for_display_not_subcat(self):
+        """
+        Test that ``heading_for_display`` is equal to ``heading`` when the
+        object is not a subcategory.
+        """
+        c = SemanticField(path="01.01n", heading="foo")
+        self.assertEqual(c.heading_for_display, c.heading)
+
+    def test_heading_for_display_subcat(self):
+        """
+        Test that ``heading_for_display`` combines headings properly when
+        the object is a subcategory.
+        """
+        parent = SemanticField(path="01.01n", heading="parent")
+        c = SemanticField(path="01.01|01n", heading="subcat", parent=parent)
+        self.assertEqual(unicode(c.heading_for_display), "parent :: subcat")
+
     def test_heading_and_pos(self):
         """
         Test that ``heading_and_pos`` returns a proper value when ``path``
@@ -65,6 +82,16 @@ class SemanticFieldTestCase(TestCase):
         self.assertEqual(unicode(c.heading_and_pos), "foo (Noun)")
         c.path = "01.01v"
         self.assertEqual(unicode(c.heading_and_pos), "foo (Verb)")
+
+    def test_heading_for_display_and_pos_subcat(self):
+        """
+        Test that ``heading_for_display_and_pos`` combines headings
+        properly when the object is a subcategory.
+        """
+        parent = SemanticField(path="01.01n", heading="parent")
+        c = SemanticField(path="01.01|01n", heading="subcat", parent=parent)
+        self.assertEqual(unicode(c.heading_for_display_and_pos),
+                         "parent :: subcat (Noun)")
 
     def test_related_by_pos(self):
         """
@@ -241,7 +268,7 @@ class SemanticFieldTestCase(TestCase):
             parts = sep_re.split(expected)
             expected = "".join(
                 [(escape(p) if sep_re.match(p) else
-                  SemanticField.objects.get(heading=p).link)
+                  SemanticField.objects.get(heading=p).make_link(p))
                  for p in parts[:-1]])
 
             last = SemanticField.objects.get(
