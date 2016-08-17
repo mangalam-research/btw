@@ -271,7 +271,8 @@ WHAT_TO_TITLE = {
     u"citations everywhere possible (subsense)",
     u"an empty surname": u"empty surname",
     u"a missing editor": u"empty surname",
-    u"a missing author": u"no author"
+    u"a missing author": u"no author",
+    u"a specified semantic field": u"article with combined fields",
 }
 
 

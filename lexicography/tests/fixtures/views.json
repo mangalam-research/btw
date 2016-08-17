@@ -251,6 +251,16 @@
 },
 {
   "fields": {
+    "deleted": false,
+    "lemma": "article with combined fields",
+    "latest_published": null,
+    "latest": 28
+  },
+  "model": "lexicography.entry",
+  "pk": 26
+},
+{
+  "fields": {
     "c_hash": "83bf3b7b3b63fca7497ab57bdc46658221f91045",
     "ctype": "U",
     "datetime": "2013-09-06T19:57:52.120Z",
@@ -737,6 +747,24 @@
 },
 {
   "fields": {
+    "c_hash": "de7df0f43bf80b0d1de262edff46207b596e76a7",
+    "ctype": "U",
+    "datetime": "2016-08-16T15:52:25.998Z",
+    "note": "",
+    "lemma": "article with combined fields",
+    "session": "14f2maqsywn32hpljl49doso0gy0gffc",
+    "user": [
+      "admin"
+    ],
+    "published": false,
+    "csubtype": "M",
+    "entry": 26
+  },
+  "model": "lexicography.changerecord",
+  "pk": 28
+},
+{
+  "fields": {
     "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"1.1\"><btw:lemma>senses, subsenses and hyperlinks</btw:lemma><btw:overview><btw:definition><p>Something.<ptr target=\"#S.0\"/><ptr target=\"#S.2\"/></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense xml:id=\"S.0\"><btw:english-renditions><btw:english-rendition><btw:english-term>sense a</btw:english-term></btw:english-rendition></btw:english-renditions><btw:subsense xml:id=\"S.2\"><btw:explanation>sense a1</btw:explanation><btw:citations><btw:example><btw:cit/><btw:tr/></btw:example><btw:example-explained><btw:explanation>explanation</btw:explanation><btw:cit><foreign xml:lang=\"pi-Latn\">pali</foreign></btw:cit><btw:tr/></btw:example-explained></btw:citations></btw:subsense><btw:subsense><btw:explanation>sense a2</btw:explanation><btw:citations/></btw:subsense><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:none/></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term>sense b</btw:english-term></btw:english-rendition></btw:english-renditions><btw:subsense><btw:explanation>sense b1</btw:explanation><btw:citations/></btw:subsense></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data></btw:entry>",
     "_valid": false,
     "schema_version": "1.1",
@@ -994,6 +1022,16 @@
   },
   "model": "lexicography.chunk",
   "pk": "fea1ace2a375020bff9e920d224d028dd2cd72be"
+},
+{
+  "fields": {
+    "data": "<btw:entry xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:btw=\"http://mangalamresearch.org/ns/btw-storage\" version=\"1.1\"><btw:lemma>article with combined fields</btw:lemma><btw:overview><btw:definition><p><btw:todo>Fill definition.</btw:todo></p></btw:definition></btw:overview><btw:sense-discrimination><btw:sense><btw:english-renditions><btw:english-rendition><btw:english-term><btw:todo>Fill term.</btw:todo></btw:english-term></btw:english-rendition></btw:english-renditions><btw:contrastive-section><btw:antonyms><btw:none/></btw:antonyms><btw:cognates><btw:cognate><btw:term>one</btw:term><btw:citations><btw:example><btw:semantic-fields><btw:sf>01.05n@03.05.01|02n</btw:sf></btw:semantic-fields><btw:cit><ref target=\"/bibliography/1\"/>Something</btw:cit><btw:tr/></btw:example></btw:citations></btw:cognate></btw:cognates><btw:conceptual-proximates><btw:none/></btw:conceptual-proximates></btw:contrastive-section></btw:sense></btw:sense-discrimination><btw:historico-semantical-data><btw:etymology><p/></btw:etymology></btw:historico-semantical-data><btw:credits><btw:credit><resp><btw:todo>Fill responsibility.</btw:todo></resp><persName><btw:todo>Fill name.</btw:todo></persName></btw:credit></btw:credits></btw:entry>",
+    "_valid": null,
+    "schema_version": "1.1",
+    "is_normal": true
+  },
+  "model": "lexicography.chunk",
+  "pk": "de7df0f43bf80b0d1de262edff46207b596e76a7"
 },
 {
   "fields": {

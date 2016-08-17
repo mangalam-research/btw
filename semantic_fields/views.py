@@ -13,7 +13,7 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
 from grako.exceptions import FailedParse
 
-from .models import SemanticField, SpecifiedSemanticField
+from .models import SemanticField, SpecifiedSemanticField, make_specified_sf
 from .serializers import SemanticFieldSerializer
 from .forms import SemanticFieldForm
 from .util import parse_local_references
@@ -107,16 +107,6 @@ class SemanticFieldFilter(filters.BaseFilterBackend):
             scope = request.GET['scope']
             qs = filter_by_search_params(qs, search, aspect, scope)
         return qs
-
-
-def make_specified_sf(path, fields):
-    """
-    Create a "fake" semantic field that is the product of a complex
-    semantic field expression.
-    """
-    return SpecifiedSemanticField(path=path,
-                                  heading=" @ ".join(field["heading"] for
-                                                     field in fields))
 
 
 RELATED_BY_POS = "related_by_pos"
@@ -346,8 +336,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                 except FailedParse:
                     continue
                 combined = self.get_serializer(
-                    make_specified_sf(path,
-                                      [sf_by_path[unicode(ref)] for ref in
+                    make_specified_sf([sf_by_path[unicode(ref)] for ref in
                                        refs]))
                 sf_by_path[path] = combined.data
 

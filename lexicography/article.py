@@ -8,7 +8,7 @@ from .models import Entry
 from .xml import XMLTree, default_namespace_mapping, elements_as_text, \
     element_as_text
 from bibliography.views import targets_to_dicts
-from semantic_fields.models import SemanticField, SearchWord
+from semantic_fields.models import SemanticField, SearchWord, make_specified_sf
 from semantic_fields.util import parse_local_references
 from lib.sqlutil import select_for_share
 
@@ -389,38 +389,21 @@ def name_semantic_fields(xml):
             # articles.
             continue
 
-        ref_sf_records = [(ref, path_to_record.get(unicode(ref), None))
-                          for ref in refs]
+        records = [path_to_record.get(unicode(ref), None) for ref in refs]
+        success = all(records)  # Whether we have a record for all references.
 
-        sep = ''
-        if ref_sf_records:
+        records_len = len(records)
+        if success and records_len > 0:
             del sf[:]
-            sf.text = ''
-            if len(ref_sf_records) > 1:
-                sep = " @"
-            sf.attrib["ref"] = text.strip()
+            sf.text = u''
+            ref = unicode(text.strip())
+            sf.attrib["ref"] = ref
 
-        for (ref, sf_record) in ref_sf_records:
-            initial_ref = ref
-            heading = ""
-            failed = False
-            while True:
-                if sf_record is None:
-                    failed = True
-                    break
+            record = records[0] if records_len == 1 else \
+                make_specified_sf(records)
 
-                heading = sf_record.heading + heading
-                if not ref.hte_subcats:
-                    break
+            heading = record.heading_for_display
 
-                # We need to add the parent heading to this one.
-                ref = ref.parent()
-                sf_record = path_to_record.get(unicode(ref), None)
-                heading = " :: " + heading
-
-            sf.text = unicode(initial_ref) if failed \
-                else heading + " (" + unicode(initial_ref) + ")"
-
-            sf.text += sep
+            sf.text += ref if heading is None else heading + u" (" + ref + u")"
 
     return True, sf_records

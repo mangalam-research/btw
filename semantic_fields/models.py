@@ -358,9 +358,18 @@ def make_specified_sf(fields):
     Create a "fake" semantic field that is the product of a complex
     semantic field expression.
     """
-    return SpecifiedSemanticField(
-        path="@".join(field.path for field in fields),
-        heading=" @ ".join(field.heading_for_display for field in fields))
+    paths = []
+    headings = []
+    for field in fields:
+        if isinstance(field, dict):
+            paths.append(field["path"])
+            headings.append(field["heading_for_display"])
+        else:
+            paths.append(field.path)
+            headings.append(field.heading_for_display)
+
+    return SpecifiedSemanticField(path="@".join(paths),
+                                  heading=" @ ".join(headings))
 
 
 class SpecifiedSemanticField(SemanticField):

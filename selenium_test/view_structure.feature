@@ -256,3 +256,13 @@ Scenario: the user can hide a semantic field popover by clicking outside the pop
   Then a semantic field popover is visible
   When the user clicks outside the semantic field popover
   Then a semantic field popover is not visible
+
+@wip
+Scenario: specified semantic fields are properly shown
+  Given the user has logged in
+  And a document with a specified semantic field
+  And the view has finished rendering
+  Then the cognate "one" has the semantic fields
+    """
+    Animals @ Written laws :: code of laws (01.05n@03.05.01|02n)
+    """
