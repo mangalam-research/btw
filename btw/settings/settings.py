@@ -613,7 +613,7 @@ s.EXISTDB_SERVER_PASSWORD = None
 # This is the default location, port and URL when using eXist as
 # a standalone server.
 def _server_url(s):
-    host = "http://localhost"
+    host = "http://127.0.0.1"
     return {
         "standalone": host + ":8088/",
         "full": host + ":8080/exist/"
