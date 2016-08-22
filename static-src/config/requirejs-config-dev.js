@@ -10,7 +10,7 @@ require.config({
     "jquery.bootstrap-growl": "external/jquery.bootstrap-growl",
     "font-awesome": "external/font-awesome",
     "jquery.cookie": "external/jquery.cookie",
-    datatables: "external/datatables/js/jquery.dataTables.min",
+    "datatables.net": "external/datatables/js/jquery.dataTables.min",
     "datatables.bootstrap": "external/datatables/js/dataTables.bootstrap",
     "bootstrap-editable": "external/bootstrap3-editable/js/bootstrap-editable",
     "bootstrap-datepicker":
@@ -54,6 +54,7 @@ require.config({
       backbone: "backbone-glue",
       marionette: "marionette-glue",
       bootstrap: "wed/patches/bootstrap",
+      datatables: "datatables.net",
     },
     "jquery-glue": {
       jquery: "jquery",
