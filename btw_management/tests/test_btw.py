@@ -184,15 +184,15 @@ cd "foo"
             open(os.path.join(tmpdir, "start-uwsgi")).read(),
             """\
 #!/bin/sh
-run_dir=/run/uwsgi/app/btw
+run_dir=/run/uwsgi/app/testing
 mkdir -p $run_dir
 chown btw:btw $run_dir
 # We need to export these so that the variable expansion performed in
 # /etc/uwsgi/default.ini can happen.
 export UWSGI_DEB_CONFNAMESPACE=app
-export UWSGI_DEB_CONFNAME=btw
+export UWSGI_DEB_CONFNAME=testing
 /usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
-/etc/uwsgi/apps-enabled/btw.ini --daemonize /var/log/uwsgi/app/btw.log
+/etc/uwsgi/apps-enabled/testing.ini --daemonize /var/log/uwsgi/app/testing.log
 """)
 
         self.assertEqual(stdout, "")
@@ -219,15 +219,15 @@ cd "foo"
                 open(os.path.join(tmpdir, "start-uwsgi")).read(),
                 """\
 #!/bin/sh
-run_dir=/run/uwsgi/app/btw
+run_dir=/run/uwsgi/app/testing
 mkdir -p $run_dir
 chown btw:btw $run_dir
 # We need to export these so that the variable expansion performed in
 # /etc/uwsgi/default.ini can happen.
 export UWSGI_DEB_CONFNAMESPACE=app
-export UWSGI_DEB_CONFNAME=btw
+export UWSGI_DEB_CONFNAME=testing
 /usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
-/etc/uwsgi/apps-enabled/btw.ini --daemonize /var/log/uwsgi/app/btw.log
+/etc/uwsgi/apps-enabled/testing.ini --daemonize /var/log/uwsgi/app/testing.log
 """)
 
             self.assertEqual(stdout, "")

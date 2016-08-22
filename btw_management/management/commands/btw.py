@@ -141,16 +141,16 @@ cd "{proj_path}"
             with open(start_uwsgi_path, 'w') as script:
                 script.write("""\
 #!/bin/sh
-run_dir=/run/uwsgi/app/btw
+run_dir=/run/uwsgi/app/{site}
 mkdir -p $run_dir
 chown btw:btw $run_dir
 # We need to export these so that the variable expansion performed in
 # /etc/uwsgi/default.ini can happen.
 export UWSGI_DEB_CONFNAMESPACE=app
-export UWSGI_DEB_CONFNAME=btw
+export UWSGI_DEB_CONFNAME={site}
 /usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
-/etc/uwsgi/apps-enabled/btw.ini --daemonize /var/log/uwsgi/app/btw.log
-""")
+/etc/uwsgi/apps-enabled/{site}.ini --daemonize /var/log/uwsgi/app/{site}.log
+""".format(site=settings.BTW_SLUGIFIED_SITE_NAME))
 
             for path in [manage_path, start_uwsgi_path]:
                 st = os.stat(path)
