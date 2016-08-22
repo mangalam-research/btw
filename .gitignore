@@ -18,3 +18,4 @@ local.mk
 /*.sql.gz
 /*.sql.bz2
 /.btw-venv
+env
