@@ -99,12 +99,34 @@ adapt the instructions so as to not use virtualenv.
     uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
     sub   1024g/BFABA9D0 2001-11-27
 
-6. You can try connecting to the server on port 80 to see that nginx
+6. Install eXist-db::
+
+   $ mkdir /usr/local/eXist-db
+   $ mkdir -p /var/eXist-db/btw/data
+   $ chown btw.btw /var/eXist-db/btw
+   $ chown btw.btw /var/eXist-db/btw/data
+   # You should save the installer somewhere else than the path above.
+   $ wget [path to eXist-db installer.jar]
+   $ cd !:$
+   $ java -jar eXist-setup-[version]-revXXXXX.jar -console
+
+  Responses:
+
+    * Select target path: ``/usr/local/eXist-db``
+    * Data path: ``/var/eXist-db/btw/data``
+    * Enter password: [create a new password for admin]
+    * Maximum memory in mb: 2024
+    * Cache memory in mb: 600
+
+7. Make sure to install the jetty.xml file from the config tree. It
+   restricts connections to eXist-db to those from localhost.
+
+8. You can try connecting to the server on port 80 to see that nginx
    is running. Then stop nginx and::
 
     $ rm /etc/nginx/sites-enabled/default
 
-7. Create a top directory for the site::
+9. Create a top directory for the site::
 
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
@@ -114,7 +136,7 @@ adapt the instructions so as to not use virtualenv.
   install a server and check the section named "FS Structure" to use
   the proper structure.
 
-8. Create the virtual environment for BTW::
+10. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ pip install virtualenv
@@ -291,14 +313,20 @@ Run::
 
   $ make
   $ ./manage.py btwredis start
-  $ ./manage.py btwworker start
+  $ mkdir -p var/run/btw var/log/btw
+  $ ./manage.py btwexistdb start
+  $ ./manage.py btwexistdb createuser
+  $ ./manage.py btwexistdb createdb
+  $ ./manage.py btwexistdb loadindex
+  $ ./manage.py btwexistdb load
+  $ ./manage.py btwworker start --all
   $  ./manage.py btwworker generate-monit-config build/scripts
   # Install the config generated.
   $ ./manage.py btwcheck
   $ make test-django
   [The Zotero tests will necessarily fail because the server is set
    to connect to the production Zotero database.]
-  $ sudo monit monitor btw_worker
+  $ sudo monit monitor btw
 
 If you have not yet done so, create the log directory for the nginx
 process responsible for serving BTW::
