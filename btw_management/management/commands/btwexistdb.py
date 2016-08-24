@@ -79,21 +79,7 @@ Manage the eXist server used by BTW.
         subparsers = parser.add_subparsers(title="subcommands",
                                            parser_class=SubParser)
 
-        start_sp = subparsers.add_parser(
-            "start",
-            description="Start the existdb server",
-            help="Start the existdb server",
-            formatter_class=argparse.RawTextHelpFormatter)
-
-        start_sp.set_defaults(method=self.start)
-        start_sp.add_argument("--full",
-                              action='store_true',
-                              default=False,
-                              help='Start a full server.')
-
         commands = set(self.subcommands.keys())
-        commands.remove("start")
-
         for cmd in commands:
             method = self.subcommands[cmd]
             sp = subparsers.add_parser(
@@ -113,7 +99,13 @@ Manage the eXist server used by BTW.
         if running():
             raise CommandError("eXist appears to be running already.")
 
-        full = options["full"]
+        server_type = settings.BTW_EXISTDB_SERVER_TYPE
+
+        if server_type not in ("full", "standalone"):
+            raise ImproperlyConfigured("BTW_EXISTDB_SERVER_TYPE should have "
+                                       "the values 'full' or 'standalone'")
+
+        full = server_type == "full"
         bin_path = os.path.join(self.home_path, "bin")
         executable = os.path.join(bin_path,
                                   "startup.sh" if full else "server.sh")
