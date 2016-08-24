@@ -91,7 +91,7 @@ class BTWCheckTestCase(SimpleTestCase):
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(c.stderr, "")
 
@@ -107,7 +107,7 @@ BaseX instance is alive.
 Redis instance is alive.
 Checking worker {0}.worker... failed: no pidfile
 Checking worker {0}.bibliography.worker... failed: no pidfile
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(c.stderr, "")
 
@@ -126,7 +126,7 @@ BaseX instance is alive.
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr, "settings.BTW_EDITORS is not set\n")
@@ -146,7 +146,7 @@ BaseX instance is alive.
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
@@ -177,7 +177,7 @@ BaseX instance is alive.
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
                 self.assertEqual(
                     c.stderr,
@@ -210,7 +210,7 @@ settings.BTW_EDITORS is not of the right format
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,
@@ -235,7 +235,7 @@ settings.BTW_RUN_PATH_FOR_BTW ("@@foo@@") does not exist
 Redis instance is alive.
 Checking worker {0}.worker... passed
 Checking worker {0}.bibliography.worker... passed
-BaseX instance is alive.
+eXist-db instance is alive.
 """.format(self.worker_prefix))
             self.assertEqual(
                 c.stderr,

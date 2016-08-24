@@ -278,4 +278,4 @@ Manage the eXist server used by BTW.
         Checks that the server is running.
         """
         assert_running()
-        self.stdout.write("BaseX instance is alive.")
+        self.stdout.write("eXist-db instance is alive.")
