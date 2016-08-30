@@ -506,7 +506,7 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
       this._sfFetcher.fetch([ref]).then(function then(resolved) {
         var resolvedRef = resolved[ref];
         if (resolvedRef) {
-          el.textContent = resolvedRef.heading + " (" + ref + ")";
+          el.textContent = resolvedRef.heading_for_display + " (" + ref + ")";
         }
         else {
           el.textContent = "Unknown field (" + ref + ")";
