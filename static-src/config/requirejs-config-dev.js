@@ -55,6 +55,12 @@ require.config({
       marionette: "marionette-glue",
       bootstrap: "wed/patches/bootstrap",
       datatables: "datatables.net",
+      // We use the last resort glue provided with wed so that bluebird
+      // is always loaded with last-resort.
+      "last-resort": "wed/glue/last-resort",
+    },
+    "wed/glue/last-resort": {
+      "last-resort": "last-resort",
     },
     "jquery-glue": {
       jquery: "jquery",
