@@ -1,5 +1,5 @@
-// This code is purposely written without using jQuery or similar
-// libraries.
+// This top-level function is purposely written so that it does not need jQuery
+// or similar libraries.
 (function startWed(require) {
   "use strict";
 
