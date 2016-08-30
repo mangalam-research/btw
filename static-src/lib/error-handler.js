@@ -41,7 +41,7 @@ onerror.register(function (ev) {
             msg = filename + ":" + lineno;
             if (colno) {
                 msg += "." + colno;
-        }
+            }
             msg += ": " + message;
         }
     }
