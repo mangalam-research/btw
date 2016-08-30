@@ -9,7 +9,7 @@
     // to be used to set the environment so that wed exists and
     // has the appropriate value.
     require = function fakeRequire(dummy, f) {
-      return f(wed); // eslint-disable-line no-undef
+      return f(wed, $); // eslint-disable-line no-undef
     };
   }
 
