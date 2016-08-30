@@ -362,7 +362,13 @@ def step_impl(context, what, title=None):
 
     var panel = panel_title.parentNode.parentNode;
     var collapse = panel.getElementsByClassName("collapse")[0];
-    return [collapse.textContent.trim().replace(/\s+/g, " "), ""];
+    var text = Array.prototype.reduce.call(
+      collapse.getElementsByClassName("btw:sf"),
+      function (prev, current) {
+        return prev + " " + current.textContent.trim().replace(/\s+/g, " ");
+    }, "");
+
+    return [text.trim(), ""];
     """, what, title)
     assert_true(result[0], result[1])
     assert_equal(result[0], context.text.strip(),

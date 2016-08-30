@@ -17,6 +17,6 @@ Scenario: making an edit
   When the user clicks on "code of laws (Noun)" in the first result
   Then there is one detail pane
   When the user clicks on the add button in the first detail pane
-  Then the chosen semantic fields are "Travel and travelling (03.10n)", "Animals (01.05n)", "code of laws (03.05.01|02n)"
+  Then the chosen semantic fields are "Travel and travelling (03.10n)", "Animals (01.05n)", "Written laws :: code of laws (03.05.01|02n)"
   When the user clicks on the "Commit" button in the modal dialog
-  Then the document contains the fields "Travel and travelling (03.10n)", "Animals (01.05n)", "code of laws (03.05.01|02n)"
+  Then the document contains the fields "Travel and travelling (03.10n)", "Animals (01.05n)", "Written laws :: code of laws (03.05.01|02n)"
