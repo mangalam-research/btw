@@ -2,6 +2,6 @@
 
 WED_OPTIMIZED_ADDITION='\
 "lodash": ["lodash/modern/utilities/template"],\
-"wed/wed": ["wed/convert", "wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation", "wed/lib/simple_event_emitter", "wed/lib/conditioned", "wed/decorator", "salve/name_resolver", "salve/validate", "wed/gui/tooltip", "wed/modes/generic/metas/tei_meta"],'
+"wed/wed": ["wed/convert", "wed/tree_updater", "wed/util", "wed/jqutil", "wed/domutil", "wed/oop", "wed/dloc", "wed/transformation", "wed/lib/simple_event_emitter", "wed/lib/conditioned", "wed/decorator", "wed/onerror", "salve/name_resolver", "salve/validate", "wed/gui/tooltip", "wed/modes/generic/metas/tei_meta"],'
 
 sed -e"/^ *bundles *: *{ *$/ a $WED_OPTIMIZED_ADDITION" "$1"
