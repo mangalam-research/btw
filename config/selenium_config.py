@@ -161,7 +161,7 @@ profile = FirefoxProfile()
 #                         "/tmp/firefox.log")
 FIREFOX_PROFILE = profile
 
-if CONFIG.remote and not not REMOTE_SERVICE:
+if CONFIG.remote and not REMOTE_SERVICE:
     raise ValueError("you must pass a service argument to behave")
 
 # May be required to get native events.
