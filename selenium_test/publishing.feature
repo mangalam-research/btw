@@ -3,6 +3,7 @@ Feature: Publishing and unpublishing articles.
 Scenario: An author publishes an invalid version of an article
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
+And the search table is loaded
 When the user searches for lemma "foo"
 Then the search results show one entry for "foo"
 When the user clicks the button to publish "foo"
@@ -15,6 +16,7 @@ Then there is a message indicating failure to publish
 Scenario: An author publishes a valid version of an article
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
+And the search table is loaded
 When the article with lemma "foo two" can be published
 And the user searches for lemma "foo two"
 Then the search results show one entry for "foo two"
@@ -24,6 +26,7 @@ Then there is a message indicating that the article was published
 Scenario: An author unpublishes an article, but cancels
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
+And the search table is loaded
 When the article with lemma "foo three" can be published
 And the user searches for lemma "foo three"
 Then the search results show one entry for "foo three"
@@ -39,6 +42,7 @@ And the user clicks the button to unpublish "foo three"
 Scenario: An author unpublishes an article
 Given the user has logged in
 And that the user has loaded the top page of the lexicography app
+And the search table is loaded
 When the article with lemma "foo four" can be published
 And the user searches for lemma "foo four"
 Then the search results show one entry for "foo four"
