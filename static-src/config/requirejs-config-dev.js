@@ -43,7 +43,7 @@ require.config({
     handlebars: "external/handlebars.min",
     "backbone.radio": "external/backbone.radio.min",
     "twbs-pagination": "external/jquery.twbsPagination",
-    dragula: "external/dragula",
+    dragula: "external/dragula.min",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {
