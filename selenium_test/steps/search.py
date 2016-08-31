@@ -19,7 +19,9 @@ def step_impl(context):
 @when('the user searches for lemma "(?P<query>.*?)"')
 def step_impl(context, query):
     dt = context.default_table
+    dt.setup_redraw_check()
     dt.call_with_search_field("Lemmata only", lambda x: x.click())
+    dt.wait_for_redraw()
     dt.fill_field("Search", query)
 
 
