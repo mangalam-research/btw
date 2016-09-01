@@ -211,7 +211,10 @@ define(function factory(require, exports, _module) {
             collapse.kind,
             this._collapseHeadingIdManager.generate(),
             this._collapseIdManager.generate(),
-            { panel: collapse.additional_classes });
+            {
+              panel: collapse.additional_classes,
+              toggle: "arrow-toggle",
+            });
           var group = collapsible.group;
           var panelBody = collapsible.content;
           collapsible.heading.textContent = headStr;

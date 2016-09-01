@@ -61,7 +61,7 @@ define(/** @lends module:wed/modes/btw/btw_util */ function btwUtil(
  <div class='_phantom_wrap panel panel-<%= kind %><%= panel_classes %>'>\
   <div class='_phantom_wrap panel-heading' role='tab' id='<%= heading_id %>'>\
    <h4 class='_phantom_wrap panel-title'>\
-    <a class='_phantom collapsed' data-toggle='collapse' \
+    <a class='_phantom collapsed<%= toggle_classes %>' data-toggle='collapse' \
        href='#<%= collapse_id %>' aria-expanded='true' \
        aria-controls='<%= collapse_id %>'>\
     </a>\
@@ -102,6 +102,7 @@ define(/** @lends module:wed/modes/btw/btw_util */ function btwUtil(
     additionalClasses = additionalClasses || {};
     var additionalGroupClasses = additionalClasses.group;
     var additionalPanelClasses = additionalClasses.panel;
+    var additionalToggleClasses = additionalClasses.toggle;
 
     additionalPanelClasses =
       additionalPanelClasses ? " " + additionalPanelClasses : "";
@@ -109,11 +110,15 @@ define(/** @lends module:wed/modes/btw/btw_util */ function btwUtil(
     additionalGroupClasses =
       additionalGroupClasses ? " " + additionalGroupClasses : "";
 
+    additionalToggleClasses =
+      additionalToggleClasses ? " " + additionalToggleClasses : "";
+
     var el = domutil.htmlToElements(
       _.template(collapsibleTemplate)({
         kind: kind,
         group_classes: additionalGroupClasses,
         panel_classes: additionalPanelClasses,
+        toggle_classes: additionalToggleClasses,
         heading_id: headingId,
         collapse_id: collapseId,
       }), document)[0];
