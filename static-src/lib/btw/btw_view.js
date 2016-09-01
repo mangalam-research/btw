@@ -249,7 +249,7 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     // viewing.
     this._heading_decorator = new HeadingDecorator(
       this._refmans, guiUpdater,
-      headingMap, false /* implied_brackets */);
+      headingMap, false /* impliedBrackets */);
 
     this._heading_decorator.addSpec({ selector: "btw:definition",
                                      heading: null });
@@ -262,7 +262,7 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     this._heading_decorator.addSpec({
       selector: "btw:sense",
       heading: "",
-      label_f: this._refmans.getSenseLabelForHead.bind(this._refmans),
+      labelF: this._refmans.getSenseLabelForHead.bind(this._refmans),
       suffix: ".",
     });
     this._heading_decorator.addSpec({ selector: "btw:sense>btw:explanation",
