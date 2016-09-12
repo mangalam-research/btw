@@ -1,10 +1,10 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.conf import settings
-
-from optparse import make_option
 from django.contrib.sites.models import Site
+
 from lexicography.perms import create_perms as lex_create_perms
 from core.perms import create_perms as core_create_perms
+from lexicography.models import Chunk
 
 def create_perms():
     lex_create_perms()
@@ -33,5 +33,9 @@ from the server.
             print "Set the site name..."
         elif command == "create_perms":
             create_perms()
+        elif command == "collect":
+            chunks = Chunk.objects.collect()
+            # We don't use count because the chunks are gone.
+            print "Collected %d chunks." % len(chunks)
         else:
             raise ValueError("unknown command: " + command)
