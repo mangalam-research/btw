@@ -13,6 +13,10 @@ from django.contrib.auth.models import Group
 
 
 def can_author(user):
+    # Don't perform the test if this is a superuser...
+    if user.is_superuser:
+        return True
+
     scribe = Group.objects.get(name='scribe')
     for perm in scribe.permissions.all():
         if not user.has_perm("{0.content_type.app_label}.{0.codename}"
