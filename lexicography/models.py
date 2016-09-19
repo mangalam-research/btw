@@ -292,6 +292,9 @@ class ChangeRecordManager(models.Manager):
 
         return qs
 
+    def active(self):
+        return self.exclude(hidden=True)
+
 class ChangeRecord(models.Model):
     objects = ChangeRecordManager()
 
@@ -327,6 +330,13 @@ class ChangeRecord(models.Model):
     csubtype = models.CharField(max_length=1, choices=SUBTYPE_CHOICES)
     c_hash = models.ForeignKey('Chunk', on_delete=models.PROTECT)
     published = models.BooleanField(default=False)
+
+    # A "hidden" ChangeRecord is one that no longer participates in
+    # regular searches. We should eventually probably partition the
+    # table for this model on this field, but support for partitions
+    # in Django does not seem mature yet.
+    hidden = models.BooleanField(default=False, db_index=True)
+
     # Here too we arbitrarily limit the size.
     note = models.CharField(max_length=1024, blank=True)
 
