@@ -298,6 +298,9 @@ class ChangeRecordManager(models.Manager):
 class ChangeRecord(models.Model):
     objects = ChangeRecordManager()
 
+    class Meta(object):
+        unique_together = (("entry", "datetime", "ctype"), )
+
     CREATE = 'C'
     UPDATE = 'U'
     REVERT = 'R'
@@ -410,9 +413,6 @@ class ChangeRecord(models.Model):
         The schema version of this update.
         """
         return self.c_hash.schema_version
-
-    class Meta(object):
-        unique_together = (("entry", "datetime", "ctype"), )
 
     def __unicode__(self):
         return self.entry.lemma + " " + self.user.username + " " + \
