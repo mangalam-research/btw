@@ -625,6 +625,11 @@ s.EXISTDB_ROOT_COLLECTION = "/btw"
 # The directory that contains eXist-db's bin.
 s.EXISTDB_HOME_PATH = os.path.join(os.environ["HOME"], "local", "eXist-db")
 
+# Do not collapse those ChangeRecord objects that are younger than
+# this number of days.
+s.BTW_COLLAPSE_CRS_OLDER_THAN = 30
+s.BTW_CLEAN_CRS_OLDER_THAN = 180
+
 # This is the default value. We have to populate it with the default
 # if we want ot *modify* it elsewhere because changing the value to
 # something else than the default amounts to cancelling the
