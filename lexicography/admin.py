@@ -69,7 +69,7 @@ class ChangeRecordMixin(object):
 class ChangeRecordInline(admin.TabularInline, ChangeRecordMixin):
 
     model = ChangeRecord
-    fields = ('lemma', 'user', 'datetime', 'session', 'ctype',
+    fields = ('lemma', 'hidden', 'user', 'datetime', 'session', 'ctype',
               'csubtype', 'c_hash', 'revert')
     readonly_fields = fields
     ordering = ('-datetime', )
@@ -269,10 +269,10 @@ def my_submit_row(context):
 
 class ChangeRecordAdmin(admin.ModelAdmin, ChangeRecordMixin):
 
-    list_display = ('entry', 'lemma', 'user', 'datetime', 'session',
+    list_display = ('entry', 'lemma', 'hidden', 'user', 'datetime', 'session',
                     'ctype', 'csubtype', 'published', 'revert', 'chunk_link')
 
-    list_filter = ('entry', 'lemma', 'published',
+    list_filter = ('hidden', 'entry', 'lemma', 'published',
                    'user', 'session', 'ctype', 'csubtype')
 
     chunk_link = make_link_method('c_hash', "Chunk")
