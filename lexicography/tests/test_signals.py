@@ -36,7 +36,9 @@ class SignalTestCase(DisableMigrationsMixin, TestCase):
         self.signals = (signals.entry_available,
                         signals.entry_unavailable,
                         signals.entry_newly_published,
-                        signals.entry_unpublished)
+                        signals.entry_unpublished,
+                        signals.changerecord_hidden,
+                        signals.changerecord_shown)
         c = Chunk(data=valid_editable,
                   schema_version=schema_version,
                   # Yes, we cheat by setting _value to True right here
@@ -70,7 +72,8 @@ class SignalTestCase(DisableMigrationsMixin, TestCase):
                 ChangeRecord.CREATE,
                 ChangeRecord.MANUAL)
             self.assertSignals(grabber, {
-                signals.entry_available: [{'instance': entry}]
+                signals.entry_available: [{'instance': entry}],
+                signals.changerecord_shown: [{'instance': entry.latest}]
             })
 
     def test_entry_deletion_sends_entry_unavailable(self):
@@ -126,7 +129,9 @@ class SignalTestCase(DisableMigrationsMixin, TestCase):
                 ChangeRecord.UPDATE,
                 ChangeRecord.MANUAL)
             self.assertTrue(entry.latest.publish(self.foo))
-            self.assertSignals(grabber, {})
+            self.assertSignals(grabber, {
+                signals.changerecord_shown: [{'instance': entry.latest}]
+            })
 
     def test_unpublishing_does_not_send_entry_newly_published(self):
         entry = self.valid
@@ -160,3 +165,32 @@ class SignalTestCase(DisableMigrationsMixin, TestCase):
             self.assertSignals(grabber, {
                 signals.entry_unpublished: [{'instance': entry}]
             })
+
+    def test_hiding_a_changerecord_sends_changerecord_hidden(self):
+        cr = self.valid.latest
+        cr.hidden = True
+        with SignalGrabber(self.signals) as grabber:
+            cr.save()
+            self.assertSignals(grabber, {
+                signals.changerecord_hidden: [{'instance': cr}]
+            })
+
+    def test_showing_a_changerecord_sends_changerecord_shown(self):
+        cr = self.valid.latest
+        cr.hidden = True
+        cr.save()
+        cr.hidden = False
+        with SignalGrabber(self.signals) as grabber:
+            cr.save()
+            self.assertSignals(grabber, {
+                signals.changerecord_shown: [{'instance': cr}]
+            })
+
+    def test_saving_a_changerecord_sends_nothing(self):
+        """
+        Saving without change sends no signal.
+        """
+        cr = self.valid.latest
+        with SignalGrabber(self.signals) as grabber:
+            cr.save()
+            self.assertSignals(grabber, {})

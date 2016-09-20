@@ -811,7 +811,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
     chunk_collection_path = get_collection_path("chunks")
     display_collection_path = get_collection_path("display")
 
-    prepare_kinds = ("bibl", "xml")
+    prepare_kinds = Chunk.key_kinds
 
     @classmethod
     def setUpTestData(cls):
@@ -945,6 +945,70 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         e.latest.publish(self.foo)
         self.assertTrue(c.published)
 
+    def test_chunks_start_hidden(self):
+        """
+        ``hidden`` is ``True`` for new chunks.
+        """
+        c = Chunk(data="<div/>", is_normal=True)
+        c.save()
+        self.assertTrue(c.hidden)
+
+    def test_chunks_with_all_hidden_records_are_hidden(self):
+        """
+        ``hidden`` is ``True`` if all ``ChangeRecord``s are hidden.
+        """
+        c = Chunk(data="<div/>", is_normal=True)
+        c.save()
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+        e.latest.hidden = True
+        e.latest.save()
+
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo2",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+        e.latest.hidden = True
+        e.latest.save()
+        self.assertTrue(c.hidden)
+
+    def test_chunks_with_one_shown_record_are_shown(self):
+        """
+        ``hidden`` is ``False`` if one ``ChangeRecord`` is shown.
+        """
+        c = Chunk(data="<div/>", is_normal=True)
+        c.save()
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+        e.latest.hidden = True
+        e.latest.save()
+
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo2",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+        self.assertFalse(c.hidden)
+
     def test_exist_path(self):
         """
         ``exist_path`` returns good values.
@@ -1030,6 +1094,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         """
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
+        c._create_cached_data()
         # We have to launch the bibl data preparation ourselves.
         c.prepare("bibl", True)
 
@@ -1064,7 +1129,6 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
     def check_sync_normal_chunks(self, op, collection, *args):
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
-        c.chunkmetadata.delete()
 
         # We have to delete the collection because merely saving the
         # chunk causes it to be synced, but this is not what we are
@@ -1094,6 +1158,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         db.removeCollection(self.chunk_collection_path, True)
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
+        c.sync_with_exist()
 
         self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
                          1)
@@ -1136,36 +1201,15 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
             # can call ``get``.
             ret.get()
 
-    def test_save_syncs_and_prepares(self):
+    def check_remove_data_from_exist_and_cache(self, op):
         """
-        Saving a chunk syncs it and prepares it for display.
-        """
-        db = ExistDB()
-        db.removeCollection(self.chunk_collection_path, True)
-        db.removeCollection(self.display_collection_path, True)
-        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
-                         0)
-        self.assertEqual(len(list_collection(db,
-                                             self.display_collection_path)),
-                         0)
-
-        c = Chunk(data="<div/>", is_normal=True)
-        c.save()
-
-        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
-                         1)
-        self.assertEqual(len(list_collection(db,
-                                             self.display_collection_path)),
-                         1)
-
-    def test_delete_removes_data_from_exist_and_cache(self):
-        """
-        Deleting a chunk removes its associated data from eXist and from
-        the cache.
+        Check that invoking ``op`` will remove the data from the eXist
+        database and the cache.
         """
         db = ExistDB()
         c = Chunk(data="<div/>", is_normal=True)
         c.clean()
+        method = op if callable(op) else getattr(c, op)
         cache.delete(c.c_hash)
         db.removeCollection(self.chunk_collection_path, True)
         db.removeCollection(self.display_collection_path, True)
@@ -1179,6 +1223,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
             self.assertIsNone(cache.get(c.display_key(kind)))
 
         c.save()
+        c._create_cached_data()
         keys = [c.display_key(kind) for kind in self.prepare_kinds]
 
         # Only the "xml" data is created on save.
@@ -1189,7 +1234,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
                                              self.display_collection_path)),
                          1)
 
-        c.delete()
+        method()
         self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
                          0)
         self.assertEqual(len(list_collection(db,
@@ -1198,15 +1243,25 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         for key in keys:
             self.assertIsNone(cache.get(key))
 
-    def test_delete_abnormal_does_not_touch_exist_or_cache(self):
+    def test_delete_removes_data_from_exist_and_cache(self):
         """
-        Deleting an abnormal chunk removes its associated data from eXist
-        and from the cache.
+        Deleting a chunk removes its associated data from eXist and from
+        the cache.
         """
+        self.check_remove_data_from_exist_and_cache("delete")
+
+    def test_delete_cached_data_removes_data_from_exist_and_cache(self):
+        """
+        _delete_cached_data removes data from eXist and the cache.
+        """
+        self.check_remove_data_from_exist_and_cache("_delete_cached_data")
+
+    def check_abnormal_remove_data_from_exist_and_cache(self, op):
         db = ExistDB()
         c = Chunk(data="<div/>", is_normal=False)
         c.clean()
         cache.delete(c.c_hash)
+        method = getattr(c, op)
         db.removeCollection(self.chunk_collection_path, True)
         db.removeCollection(self.display_collection_path, True)
 
@@ -1223,7 +1278,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
 
         with mock.patch('lexicography.models.ExistDB.removeDocument') as \
                 remove_mock:
-            c.delete()
+            method()
             self.assertEqual(remove_mock.call_count, 0)
 
         self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
@@ -1233,3 +1288,102 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
                          0)
         for key in keys:
             self.assertIsNone(cache.get(key))
+
+    def test_delete_abnormal_does_not_touch_exist_or_cache(self):
+        """
+        Deleting an abnormal chunk does not touch the cache or the database.
+        """
+        self.check_abnormal_remove_data_from_exist_and_cache("delete")
+
+    def test_delete_cached_data_abnormal_does_not_touch_exist_or_cache(self):
+        """
+        ``_delete_cached_data`` on an abnormal chunk does not touch the
+        cache or the database.
+        """
+        self.check_abnormal_remove_data_from_exist_and_cache(
+            "_delete_cached_data")
+
+    def test_when_chunk_becomes_hidden_cached_data_is_cleared(self):
+        """
+        When a ``Chunk`` becomes hidden, then its cached data is deleted.
+        """
+        c = Chunk(data="<div/>", is_normal=True)
+        c.save()
+        keys = [c.display_key(kind) for kind in self.prepare_kinds]
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+
+        db = ExistDB()
+        self.assertIsNotNone(cache.get(c.display_key("xml")))
+        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
+                         1)
+        self.assertEqual(len(list_collection(db,
+                                             self.display_collection_path)),
+                         1)
+
+        e.latest.hidden = True
+        e.latest.save()
+
+        for key in keys:
+            self.assertIsNone(cache.get(key))
+        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
+                         0)
+        self.assertEqual(len(list_collection(db,
+                                             self.display_collection_path)),
+                         0)
+
+    def test_when_chunk_becomes_shown_cached_data_is_created(self):
+        """
+        When a ``Chunk`` becomes shown, then its cached data is created.
+        """
+        c = Chunk(data="<div/>", is_normal=True)
+        c.save()
+        keys = [c.display_key(kind) for kind in self.prepare_kinds]
+        e = Entry()
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+
+        db = ExistDB()
+        self.assertIsNotNone(cache.get(c.display_key("xml")))
+        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
+                         1)
+        self.assertEqual(len(list_collection(db,
+                                             self.display_collection_path)),
+                         1)
+
+        e.latest.hidden = True
+        e.latest.save()
+
+        for key in keys:
+            self.assertIsNone(cache.get(key))
+        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
+                         0)
+        self.assertEqual(len(list_collection(db,
+                                             self.display_collection_path)),
+                         0)
+
+        e.update(
+            self.foo,
+            "q",
+            c,
+            "foo",
+            ChangeRecord.CREATE,
+            ChangeRecord.MANUAL)
+
+        self.assertIsNotNone(cache.get(c.display_key("xml")))
+        self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
+                         1)
+        self.assertEqual(len(list_collection(db,
+                                             self.display_collection_path)),
+                         1)

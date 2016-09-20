@@ -24,3 +24,16 @@ entry_unpublished = django.dispatch.Signal(providing_args=["instance"])
 Sent when an entry becomes unpublished, which means that no
 version of this entry is published.
 """
+
+changerecord_hidden = django.dispatch.Signal(providing_args=["instance"])
+"""
+Sent when an changerecord becomes hidden. If a a changerecord is
+created hidden, then this signal will be sent.
+"""
+
+changerecord_shown = django.dispatch.Signal(providing_args=["instance"])
+"""
+Sent when an changerecord was hidden but becomes shown (not
+hidden). Note that we do not send this signal when a change record is
+*created*.
+"""

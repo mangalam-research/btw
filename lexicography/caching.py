@@ -2,6 +2,7 @@ from django.dispatch import receiver
 from django.core.cache import caches
 
 from . import depman
+from . import signals
 from bibliography import signals as bibsignals
 from semantic_fields import signals as semsignals
 
@@ -49,3 +50,10 @@ def make_display_key(kind, pk):
     if kind not in ("bibl", "xml"):
         raise ValueError("unknown display key kind {}".format(kind))
     return "{}_{}".format(pk, kind)
+
+@receiver(signals.changerecord_hidden)
+@receiver(signals.changerecord_shown)
+def recheck_chunk(sender, **kwargs):
+    instance = kwargs['instance']
+
+    instance.c_hash.visibility_update()

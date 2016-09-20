@@ -479,6 +479,7 @@ class _BaseCheckerTestCase(CheckerTestCaseMixin, TestCase):
         cls.foo = user_model.objects.create_superuser(
             username="foo", email="foo@example.com", password="foo")
         cls.chunk = Chunk(data="<div/>", is_normal=True, _valid=True)
+        cls.chunk.save()
 
     def setUp(self):
         self.entry = Entry()

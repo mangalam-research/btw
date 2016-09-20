@@ -12,6 +12,7 @@ from django.db import transaction
 from eulexistdb.exceptions import ExistDBException
 
 from lib import util
+from lib.util import on_change
 from lib import existdb
 from lib.existdb import get_collection_path, list_collection, \
     query_iterator, get_path_for_chunk_hash, ExistDB
@@ -293,7 +294,23 @@ class ChangeRecordManager(models.Manager):
         return qs
 
     def active(self):
-        return self.exclude(hidden=True)
+        """
+        Return a query that covers only the objects that are active. That
+        is, the objects that are meant to participate in searches,
+        views, etc.
+        """
+        return self.filter(hidden=False)
+
+    def inactive(self):
+        """
+        Return a query that covers only the objects that are
+        inactive. That is, the objects that are meant to be invisible
+        to users through the regular interface. They are excluded from
+        searches, views, and the like. The only way to see such
+        objects is to use the administrative interface or query the
+        database directly.
+        """
+        return self.filter(hidden=True)
 
 class ChangeRecord(models.Model):
     objects = ChangeRecordManager()
@@ -346,6 +363,13 @@ class ChangeRecord(models.Model):
     def get_absolute_url(self):
         return reverse('lexicography_entry_details',
                        args=(self.entry.id, self.id, ))
+
+    def save(self, *args, **kwargs):
+        was_nonexistent = self.pk is None
+        ret = super(ChangeRecord, self).save(*args, **kwargs)
+        if was_nonexistent:
+            emit_changerecord_hidden_or_shown(self)
+        return ret
 
     @property
     def etag(self):
@@ -417,6 +441,15 @@ class ChangeRecord(models.Model):
     def __unicode__(self):
         return self.entry.lemma + " " + self.user.username + " " + \
             str(self.datetime)
+
+def emit_changerecord_hidden_or_shown(instance):
+    signal = signals.changerecord_hidden if instance.hidden else \
+        signals.changerecord_shown
+    signal.send(instance.__class__, instance=instance)
+
+on_change(ChangeRecord, lambda obj: obj.hidden,
+          emit_changerecord_hidden_or_shown)
+
 
 class ChunkManager(models.Manager):
 
@@ -592,10 +625,33 @@ class Chunk(models.Model):
 
         Note that while this value can change over time, it does not
         change the fact that the ``Chunk``s themselves are
-        immutable. This is a *property*, not a field of the ``Chunk``
+        immutable. This is a *property*, not a field of ``Chunk``
         objects.
         """
         return self.changerecord_set.filter(published=True).exists()
+
+    @property
+    def hidden(self):
+        """
+        Indicates whether this chunk is inaccessible from a visible
+        ``ChangeRecord``. Note that chunks themselves are neither
+        hidden or visible. A single chunk could *in theory*
+        belong to two different ``ChangeRecord`` objects: one
+        hidden and one visible.
+
+        Note that while this value can change over time, it does not
+        change the fact that the ``Chunk``s themselves are
+        immutable. This is a *property*, not a field of ``Chunk``
+        objects.
+
+        This is important because ``Chunk`` objects that are hidden
+        are no longer accessible through searches. So we do not need
+        to cache their display information, and they do not need to be
+        stored in ExistDB.
+        """
+        # A Chunk is hidden if there are no visible (hidden=False)
+        # ChangeRecords that point to it.
+        return not self.changerecord_set.filter(hidden=False).exists()
 
     key_kinds = set(("xml", "bibl"))
     """
@@ -684,12 +740,9 @@ class Chunk(models.Model):
             "bibl_data": bibl
         }
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        ret = super(Chunk, self).save(*args, **kwargs)
+    def _create_cached_data(self):
         self.sync_with_exist()
         self.prepare("xml")
-        return ret
 
     def _delete_cached_data(self):
         if self.is_normal:
@@ -704,10 +757,21 @@ class Chunk(models.Model):
         # are immutable. So a normal chunk cannot become abnormal, or
         # vice-versa.
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        ret = super(Chunk, self).save(*args, **kwargs)
+        self.visibility_update()
+        return ret
+
+    def visibility_update(self):
+        if self.hidden:
+            self._delete_cached_data()
+        else:
+            self._create_cached_data()
+
     def delete(self, *args, **kwargs):
         self._delete_cached_data()
         return super(Chunk, self).delete(*args, **kwargs)
-
 
 class PublicationChange(models.Model):
     PUBLISH = 'P'
