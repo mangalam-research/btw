@@ -576,6 +576,9 @@ class Chunk(models.Model):
         self.c_hash = sha1.hexdigest()
 
     def exist_path(self, kind):
+        if self.pk is None:
+            raise ValueError("trying to get a path on a chunk that has no"
+                             "primary key")
         return existdb.get_path_for_chunk_hash(kind, self.c_hash)
 
     @property
