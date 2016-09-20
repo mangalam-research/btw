@@ -1179,6 +1179,8 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
             self.assertIsNone(cache.get(c.display_key(kind)))
 
         c.save()
+        keys = [c.display_key(kind) for kind in self.prepare_kinds]
+
         # Only the "xml" data is created on save.
         self.assertIsNotNone(cache.get(c.display_key("xml")))
         self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
@@ -1193,8 +1195,8 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         self.assertEqual(len(list_collection(db,
                                              self.display_collection_path)),
                          0)
-        for kind in self.prepare_kinds:
-            self.assertIsNone(cache.get(c.display_key(kind)))
+        for key in keys:
+            self.assertIsNone(cache.get(key))
 
     def test_delete_abnormal_does_not_touch_exist_or_cache(self):
         """
@@ -1209,6 +1211,8 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         db.removeCollection(self.display_collection_path, True)
 
         c.save()
+        keys = [c.display_key(kind) for kind in self.prepare_kinds]
+
         for kind in self.prepare_kinds:
             self.assertIsNone(cache.get(c.display_key(kind)))
         self.assertEqual(len(list_collection(db, self.chunk_collection_path)),
@@ -1227,5 +1231,5 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         self.assertEqual(len(list_collection(db,
                                              self.display_collection_path)),
                          0)
-        for kind in self.prepare_kinds:
-            self.assertIsNone(cache.get(c.display_key(kind)))
+        for key in keys:
+            self.assertIsNone(cache.get(key))

@@ -594,7 +594,16 @@ class Chunk(models.Model):
         """
         return self.changerecord_set.filter(published=True).exists()
 
+    key_kinds = set(("xml", "bibl"))
+    """
+    The set of acceptable kinds used for prepare methods and
+    generating keys.
+    """
+
     def display_key(self, kind):
+        if self.pk is None:
+            raise ValueError("trying to make a display key on an object "
+                             "that has no primary key")
         return make_display_key(kind, self.pk)
 
     def sync_with_exist(self, db=None):
@@ -679,17 +688,21 @@ class Chunk(models.Model):
         self.prepare("xml")
         return ret
 
-    def delete(self, *args, **kwargs):
+    def _delete_cached_data(self):
         if self.is_normal:
             db = ExistDB()
             db.removeDocument(self.exist_path("chunks"), True)
             db.removeDocument(self.exist_path("display"), True)
 
-            cache.delete(self.c_hash)
+            cache.delete_many(self.display_key(kind)
+                              for kind in self.key_kinds)
         # else:
         # We were not saved there in the first place. Remember that chunks
         # are immutable. So a normal chunk cannot become abnormal, or
         # vice-versa.
+
+    def delete(self, *args, **kwargs):
+        self._delete_cached_data()
         return super(Chunk, self).delete(*args, **kwargs)
 
 
