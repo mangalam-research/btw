@@ -180,14 +180,14 @@ class SearchTable(BaseDatatableView):
         return ret
 
     def get_initial_queryset(self):
-        # Random users search only what is published and cannot
-        # search history. If we set their initial queryset to all
-        # ChangeRecord then they'll see a count ("filtered down
+        # Random users search only what is not hidden, published and
+        # cannot search history. If we set their initial queryset to
+        # all ChangeRecord then they'll see a count ("filtered down
         # from...)" which does not make sense from their point of
         # view. So for them, the initial queryset must be restricted
         # rather than let filtering do the job.
 
-        qs = ChangeRecord.objects.select_related()
+        qs = ChangeRecord.objects.active().select_related()
         if not usermod.can_author(self.request.user):
             qs = qs.filter(entry__in=Entry.objects.active_entries()) \
                    .filter(entry__latest_published=F('pk'))

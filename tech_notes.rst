@@ -1515,6 +1515,58 @@ On 2016/07/06 loading the data dumped from BTW with ``btwexistdb
 load`` takes about 6 minutes. The size of the chunk data is about
 50mb. That's 1030 chunks.
 
+Cleaning
+========
+
+BTW cleans old ``ChangeRecord`` objects from the database.
+
+This cleaning process hides old intermediary versions of the articles
+we have. BTW is very agressive in how frequently it saves data. This
+is useful both to prevent data loss and to help in diagnosing eventual
+problems. However, this means that BTW stores a lot of versions of an
+article. So over time the data usage grows and this becomes
+problematic in two major ways:
+
+1. People who have access to the entire history of an article see a
+   lot of versions that are not particularly useful.
+
+2. Searches go through data that is not interesting. This makes
+   full-text searches in particular slower than they should.
+
+The cleanup algorithms go through the database and mark old records as
+"hidden", which excludes them from the interface presented to users
+and from searches. The administrative interface always shows all
+records, hidden or not.
+
+So two types of cleanup have been implemented:
+
+* Collapsing versions: the principle here is that if there are
+  multiple ``ChangeRecord`` objects pointing to the same ``Chunk``,
+  the records are "collapsed", which mean that among all objects
+  pointing to the same ``Chunk``, we keep one visible and hide the
+  rest. This reduces the list of versions shown but does not make any
+  ``Chunk`` invisible. This collapsing operation operates only on
+  records that are older than 30 days.
+
+* Cleaning old versions: this algorithm hides old records that were
+  created for purposes of recovery (which happens when the editor has
+  a fatal failure), or that were auto-saves. This operation can make
+  some ``Chunk`` objects invisible. This operation is done only on records
+  that are older than 90 days.
+
+Important points:
+
+* The algorithms are designed to never ever make a article completely
+  invisible.
+
+* Published versions are not hidden, ever.
+
+* The latest ``Chunk`` of an article is never hidden. At most, *may* become
+  accessible only through an earlier version that points to the ``Chunk``.
+
+When cleaning was run in September 2016 on a copy of the deployed
+database, it reduced the number of visible versions by more than 50%!
+
 
 Bibliographical Formats
 =======================

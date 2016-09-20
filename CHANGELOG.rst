@@ -27,6 +27,8 @@
       dialog rather than by typing field numbers directly in the
       article.
 
+    - BTW now perform automatic cleaning of old records.
+
 * 1.4.1:
 
   + Upgrade from Django 1.7 to Django 1.8. This could no longer be
