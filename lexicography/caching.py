@@ -30,7 +30,11 @@ def invalidate_bibl_dependents(sender, **kwargs):
 
     all_urls = [instance.abstract_url for instance in instances]
 
+    # Find all articles that need recomputing.
     deps = depman.bibl.get_union(all_urls)
+
+    # We invalidate the dependency information of all the instances
+    # that have changed.
     depman.bibl.delete_many(all_urls)
 
     #

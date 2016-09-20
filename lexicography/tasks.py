@@ -179,6 +179,7 @@ def prepare_bibl(self, pk, test=None):
     data = chunk.data
     (targets, bibl_data) = get_bibliographical_data(data)
 
+    # We record that this article (i.e. key) depends on all the targets.
     for target in targets:
         depman.bibl.record(target, key)
 
