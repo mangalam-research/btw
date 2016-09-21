@@ -1,9 +1,9 @@
-{% load bootstrap_tags %}
+{% load bootstrap3 %}
 <form class="{{ form.class_prefix }}-form">
   <h4>{{ form.title }}</h4>
   <fieldset>
     {% csrf_token %}
-    {{ form|as_bootstrap }}
-    <p><button class="btn btn-default" type="submit">{{ form.submit_text }}</button><button class="btn btn-default cancel" type="button">Cancel</button></p>
+    {% bootstrap_form form %}
+    <p>{% buttons %}<a class="btn btn-default submit" href="#">{{ form.submit_text }}</a><a class="btn btn-default cancel" href="#">Cancel</a>{% endbuttons %}</p>
   </fieldset>
 </form>

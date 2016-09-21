@@ -322,7 +322,7 @@ s.INSTALLED_APPS = (
     # 'allauth.socialaccount.providers.vimeo',
     # 'allauth.socialaccount.providers.vk',
     # 'allauth.socialaccount.providers.weibo',
-    'django_forms_bootstrap',
+    'bootstrap3',
     'django_cache_management',
     # Django CMS
     'cms',

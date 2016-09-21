@@ -365,17 +365,23 @@ def step_impl(context):
 def step_impl(context):
     util = context.util
     button = util.find_element(
-        (By.CSS_SELECTOR, "form .btn[type='submit']"))
+        (By.CSS_SELECTOR, "form .btn.submit"))
     button.click()
 
 
 @then(ur'the first form\'s heading field has an error')
 def step_impl(context):
     util = context.util
-    # The label will acquire .required-field on error
-    util.find_element(
-        (By.CSS_SELECTOR,
-         "form label[for='id_heading'].required-field"))
+
+    def cond(driver):
+        return driver.execute_script("""
+        var $ = jQuery;
+        var $msg = $("form *[name='heading']")
+            .next(".help-block").children(".help-block");
+        return $msg.text() !== "";
+        """)
+
+    util.wait(cond)
 
 
 @then(ur'the first detail pane shows the child "FOO"')
@@ -417,8 +423,8 @@ def step_impl(context):
 def step_impl(context, button, visible):
     selector = {
         '"Create Field"': ".btn.create-field",
-        '"Create"': ".btn[type=submit]",
-        '"Submit"': ".btn[type=submit]",
+        '"Create"': ".btn.submit",
+        '"Submit"': ".btn.submit",
         'edit': '.btn.edit-field',
     }[button]
 

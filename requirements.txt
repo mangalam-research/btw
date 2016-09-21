@@ -8,7 +8,7 @@ mitmproxy>=0.11.0,<0.12.0
 django-allauth>=0.25.2,<0.26
 django-datatables-view==1.13
 psycopg2>=2.5.2,<3
-django-forms-bootstrap>=3.0.0,<4
+django-bootstrap3>=7.1.0,<8
 requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
 selenium==2.49.0

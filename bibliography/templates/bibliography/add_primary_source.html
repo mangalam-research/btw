@@ -1,5 +1,5 @@
-{% load bootstrap_tags %}
+{% load bootstrap3 %}
 <form class="primary-source-form">
-{% csrf_token %}
-{{ form|as_bootstrap }}
+  {% csrf_token %}
+  {% bootstrap_form form %}
 </form>

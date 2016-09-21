@@ -623,8 +623,8 @@ class _CreateMixin(_AjaxMixin):
         self.assertEqual(response.content_type, expected_content_type)
         error = "This field is required."
         if expected_content_type == "text/html":
-            el = response.lxml.cssselect("#error_id_heading_1")[0]
-            self.assertEqual(el.text, error)
+            el = response.lxml.cssselect(".help-block")[0]
+            self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
             self.assertEqual(response.json, {u"heading": [error]})
         else:
@@ -662,8 +662,8 @@ class _CreateMixin(_AjaxMixin):
             u"Select a valid choice. xxxxxx is not one of the " \
             u"available choices."
         if expected_content_type == "text/html":
-            el = response.lxml.cssselect("#error_id_pos_1")[0]
-            self.assertEqual(el.text, error)
+            el = response.lxml.cssselect(".help-block")[0]
+            self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
             self.assertEqual(response.json, {u"pos": [error]})
         else:
@@ -736,8 +736,10 @@ class _DuplicateMixin(object):
         self.assertEqual(response.content_type, expected_content_type)
         error = self.expected_duplicate_error
         if expected_content_type == "text/html":
+            import lxml
             el = response.lxml.cssselect(".alert")[0]
-            self.assertEqual(el.text.strip(), error)
+            self.assertEqual("".join(el.itertext()).replace(
+                u"\xd7", "").strip(), error)
         elif expected_content_type == "application/json":
             self.assertEqual(response.json, {u"__all__": [error]})
         else:

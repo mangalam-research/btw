@@ -449,8 +449,7 @@ class PrimarySourceMixin(object):
                                expect_errors=True)
         self.assertContains(
             response,
-            '<span id="error_id_reference_title_1" class="error-msg">'
-            'This field is required.</span>',
+            'This field is required.',
             status_code=400)
 
     def test_post_form_duplicate_title(self):
@@ -467,8 +466,7 @@ class PrimarySourceMixin(object):
                                expect_errors=True)
         self.assertContains(
             response,
-            '<span id="error_id_reference_title_1" class="error-msg">'
-            'Primary source with this Reference title already exists.</span>',
+            'Primary source with this Reference title already exists.',
             status_code=400)
 
     def test_post_latin1_charset(self):

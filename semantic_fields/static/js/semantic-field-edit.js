@@ -74,13 +74,14 @@ define(function factory(require) {
     function displayForm(div, submitUrl, method, data) {
       div.innerHTML = data;
       var form = div.getElementsByTagName("form")[0];
-      var cancel = form.querySelector("button.cancel");
-      var submit = form.querySelector("button[type=submit]");
+      var cancel = form.querySelector("a.btn.cancel");
+      var submit = form.querySelector("a.btn.submit");
+
       // There should be a single top fieldset encompassing all fields.
       var fieldset = form.getElementsByTagName("fieldset")[0];
 
       return new Promise(function makePromise(resolve, _reject) {
-        $(form).on("submit", function clickSubmit() {
+        $(submit).on("click", function clickSubmit() {
           // We have to serialize before disabling because disabling
           // excludes the fields from the serialization!
           var serialized = $(form).serialize();
