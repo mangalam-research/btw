@@ -81,10 +81,6 @@ require.config({
       backbone: "backbone",
       marionette: "marionette",
     },
-    "backbone-marionette-glue": {
-      backbone: "backbone",
-      marionette: "marionette",
-    },
     "wed/patches/bootstrap": {
       bootstrap: "bootstrap",
     },
