@@ -389,7 +389,7 @@ $(EXTERNAL)/backbone-relational%: node_modules/backbone-relational/backbone-rela
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-$(EXTERNAL)/backbone.radio%: node_modules/backbone.radio/build/backbone.radio%
+$(EXTERNAL)/backbone.radio%: node_modules/backbone.marionette/node_modules/backbone.radio/build/backbone.radio%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
