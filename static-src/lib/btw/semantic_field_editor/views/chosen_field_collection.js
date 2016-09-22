@@ -18,7 +18,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     };
   }
 
-  var EmptyCollectionView = Mn.ItemView.extend({
+  var EmptyCollectionView = Mn.View.extend({
     template: id("No fields."),
   });
 
@@ -36,6 +36,10 @@ define(/** @lends auto */ function factory(require, exports, _module) {
         fetcher: this.fetcher,
         canDelete: this.canDelete,
       };
+    },
+
+    childViewTriggers: {
+      "sf:delete": "sf:delete", // bubble up
     },
 
     emptyView: EmptyCollectionView,
@@ -115,12 +119,12 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   });
 
-  var ChosenFieldCollectionView = Mn.LayoutView.extend({
+  var ChosenFieldCollectionView = Mn.View.extend({
     initialize: function initialize(options) {
       this.fetcher = this.fetcher || options.fetcher;
       this.panelTitle = this.panelTitle || options.panelTitle;
       this.canDelete = this.canDelete || options.canDelete;
-      Mn.LayoutView.prototype.initialize.call(
+      Mn.View.prototype.initialize.call(
         this,
         _.omit(options, ["fetcher", "panelTitle", "canDelete"]));
     },
@@ -129,7 +133,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     template: Handlebars.compile(template),
 
-    templateHelpers: function templateHelpers() {
+    templateContext: function templateContext() {
       return {
         panelTitle: this.panelTitle,
         panelBody: "",
@@ -140,11 +144,11 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       body: ".panel-body",
     },
 
-    childEvents: {
+    childViewEvents: {
       "sf:delete": "_deleteSF",
     },
 
-    _deleteSF: function _deleteSF(view, model) {
+    _deleteSF: function _deleteSF(model) {
       this.deleteSF(model);
     },
 

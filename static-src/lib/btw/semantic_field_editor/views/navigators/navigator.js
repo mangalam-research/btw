@@ -66,7 +66,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  var NavigatorView = Mn.LayoutView.extend({
+  var NavigatorView = Mn.View.extend({
     __classname__: "NavigatorView",
     initialize: function initialize(options) {
       this.canAddResults = options.canAddResults;
@@ -102,7 +102,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       "click @ui.closeAllNavigators": "navigator:closeAll",
     },
 
-    childEvents: {
+    childViewEvents: {
       "sf:selected": "_showSF",
     },
 
@@ -113,7 +113,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       };
     },
 
-    _showSF: function _showSF(view, url) {
+    _showSF: function _showSF(url) {
       if (url !== this.model.getCurrentUrl()) {
         this.model.addPage(url);
       }
@@ -193,7 +193,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     _isRemoving: false,
 
-    remove: function remove() {
+    destroy: function destroy() {
       // If it is not in the DOM, don't do anything.
       //
       // We check parentNode because using the standard Backbone functions would
@@ -207,7 +207,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       this._isRemoving = true;
       // Otherwise, we perform an animation and then remove it.
       velocity(this.el, "transition.expandOut").then(function removed() {
-        NavigatorView.__super__.remove.call(this);
+        NavigatorView.__super__.destroy.call(this);
         this.triggerMethod("dom:removed");
       }.bind(this));
 

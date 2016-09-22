@@ -206,7 +206,6 @@ describe("CombinatorView", () => {
          view, "sf:add",
          () => view.resultView.ui.addButton.click()))
        .spread((eventView, model) => {
-         assert.equal(eventView, view);
          assert.equal(model.get("path"),
                       view.elementsCollection.at(0).get("path"));
        }));

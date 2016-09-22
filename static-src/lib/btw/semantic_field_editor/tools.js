@@ -7,6 +7,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   "use strict";
   var $ = require("jquery");
   var Bb = require("backbone");
+  var Radio = require("backbone.radio");
 
   /**
    * Identifies a DOM element as an application element. This allows using
@@ -80,7 +81,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     channel: function channel() {
       if (!this._cachedChannel) {
         var channelName = this.application.channels.global;
-        this._cachedChannel = Bb.Radio.channel(channelName);
+        this._cachedChannel = Radio.channel(channelName);
       }
       return this._cachedChannel;
     },

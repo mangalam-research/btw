@@ -39,7 +39,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       };
     },
 
-    childEvents: {
+    childViewEvents: {
       "navigator:closeAll": "closeAllNavigators",
       "navigator:close": "closeNavigator",
     },

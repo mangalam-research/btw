@@ -72,7 +72,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 </table>\
 ");
 
-  var BreadcrumbView = Mn.ItemView.extend({
+  var BreadcrumbView = Mn.View.extend({
     __classname__: "BreadcrumbView",
     initialize: function initialize(options) {
       this.details = this.details || options.details;
@@ -86,7 +86,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
 
     template: breadcrumbWrapperTemplate,
-    templateHelpers: function templateHelpers() {
+    templateContext: function templateContext() {
       return {
         helpers: {
           allDetails: this.details === "all",

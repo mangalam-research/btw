@@ -9,6 +9,7 @@ from "testutils/backbone";
 import { waitFor } from "testutils/util";
 import * as urls from "testutils/urls";
 import Bb from "backbone";
+import Radio from "backbone.radio";
 import Mn from "marionette";
 import _ from "lodash";
 
@@ -209,7 +210,7 @@ describe("BreadcrumbView", () => {
     function clickAndWait(eventName, $uiElement) {
       const fakeApp = makeFakeApplication();
       view._cachedApplication = fakeApp;
-      const global = Bb.Radio.channel(fakeApp.channels.global);
+      const global = Radio.channel(fakeApp.channels.global);
       return new Promise((resolve) => {
         global.once(eventName,
                     (eventView, model) => resolve([eventView, model]));

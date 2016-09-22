@@ -98,17 +98,17 @@ describe("NavigatorView", () => {
 
   describe("#_showSF", () => {
     it("adds a new page", () => {
-      view._showSF(undefined, secondUrl);
+      view._showSF(secondUrl);
       assertNumberOfPages(view, 2);
       return Promise.resolve(1);
     });
 
     it("scraps the history tail", () => {
-      view._showSF(undefined, secondUrl);
-      view._showSF(undefined, thirdUrl);
+      view._showSF(secondUrl);
+      view._showSF(thirdUrl);
       assertNumberOfPages(view, 3);
       view.model.moveToFirstPage();
-      view._showSF(undefined, thirdUrl);
+      view._showSF(thirdUrl);
       assertNumberOfPages(view, 2);
       assert.equal(view.model.get("pages").at(0).url, firstUrl);
       assert.equal(view.model.get("pages").at(1).url, thirdUrl);
@@ -116,20 +116,20 @@ describe("NavigatorView", () => {
     });
 
     it("is a no-op if the url is the same as the one already displayed", () => {
-      view._showSF(undefined, firstUrl);
+      view._showSF(firstUrl);
       assertNumberOfPages(view, 1);
       return Promise.resolve(1);
     });
 
     it("causes a dom:display event", () => {
       const p = view.makeDOMDisplayedPromise();
-      view._showSF(undefined, secondUrl);
+      view._showSF(secondUrl);
       return p;
     });
 
     it("shows the url contents", () => {
       assert.isFalse(isInViewText(view, secondField.path));
-      view._showSF(undefined, secondUrl);
+      view._showSF(secondUrl);
 
       return waitForView(view, () => isInViewText(view, secondField.path));
     });
@@ -140,7 +140,7 @@ describe("NavigatorView", () => {
       // We wait for the initial animation to be done.
       return waitForView(view, () => wasAnimated(el)).then(() => {
         assert.isTrue(!wasAnimated(pagedContent));
-        view._showSF(undefined, secondUrl);
+        view._showSF(secondUrl);
         // When a subsequent page is added, the animation is done on
         // the paged content rather than the root element.
         return waitForView(view, () => wasAnimated(pagedContent));
@@ -151,8 +151,8 @@ describe("NavigatorView", () => {
   describe("clicking to show", () => {
     describe("the first page should", () => {
       function moveToFirst() {
-        view._showSF(undefined, secondUrl);
-        view._showSF(undefined, thirdUrl);
+        view._showSF(secondUrl);
+        view._showSF(thirdUrl);
         const pagedContent = view.ui.pagedContent[0];
         return waitForView(view, () => isInViewText(view, thirdField.path))
           .then(() => {
@@ -185,8 +185,8 @@ describe("NavigatorView", () => {
 
     describe("the previous page should", () => {
       function moveToPrevious() {
-        view._showSF(undefined, secondUrl);
-        view._showSF(undefined, thirdUrl);
+        view._showSF(secondUrl);
+        view._showSF(thirdUrl);
         return waitForView(view, () => isInViewText(view, thirdField.path))
           .then(() => {
             // One of the tests needs this. It does not harm other tests.
@@ -220,8 +220,8 @@ describe("NavigatorView", () => {
 
     describe("the last page should", () => {
       function moveToLast() {
-        view._showSF(undefined, secondUrl);
-        view._showSF(undefined, thirdUrl);
+        view._showSF(secondUrl);
+        view._showSF(thirdUrl);
         return waitForView(view, () => isInViewText(view, thirdField.path))
           .then(() => {
             assert.isFalse(isInViewText(view, firstField.path));
@@ -257,8 +257,8 @@ describe("NavigatorView", () => {
 
     describe("the next page should", () => {
       function moveToNext() {
-        view._showSF(undefined, secondUrl);
-        view._showSF(undefined, thirdUrl);
+        view._showSF(secondUrl);
+        view._showSF(thirdUrl);
         return waitForView(view, () => isInViewText(view, thirdField.path))
           .then(() => {
             assert.isFalse(isInViewText(view, firstField.path));

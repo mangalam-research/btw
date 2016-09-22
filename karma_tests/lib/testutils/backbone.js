@@ -1,5 +1,6 @@
 /* global chai */
 import Bb from "backbone";
+import Radio from "backbone.radio";
 import Promise from "bluebird";
 const assert = chai.assert;
 
@@ -128,7 +129,7 @@ export function doAndWaitForRadio(view, eventName, fn) {
     throw new Error("your view does not seem to have the communication " +
                     "getters and setters");
   }
-  const global = Bb.Radio.channel(fakeApp.channels.global);
+  const global = Radio.channel(fakeApp.channels.global);
   return new Promise((resolve) => {
     global.once(eventName, (...args) => resolve(args));
     fn();

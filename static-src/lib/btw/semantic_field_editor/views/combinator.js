@@ -59,7 +59,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  var CombinatorView = Mn.LayoutView.extend({
+  var CombinatorView = Mn.View.extend({
+    __classname__: "CombinatorView",
     initialize: function initialize(options) {
       this.fetcher = options.fetcher;
       this.resultCollection = new ChosenFieldCollection();
@@ -68,15 +69,15 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       this.elementsCollection.on("update reset",
                                  this.onElementsUpdated.bind(this));
       tools.GettersMixin.call(this);
-      Mn.LayoutView.prototype.initialize.call(this, _.omit(options,
-                                                           ["fetcher"]));
+      CombinatorView.__super__.initialize.call(this,
+                                               _.omit(options, ["fetcher"]));
     },
 
     tagName: "div",
 
     template: Handlebars.compile(template),
 
-    templateHelpers: function templateHelpers() {
+    templateContext: function templateContext() {
       return {
         collapse: true,
         headingId: "sf-editor-collapse-heading-" + this.cid,
@@ -100,7 +101,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
 
     // This uses the chidview:* magic.
-    onChildviewSfAdd: function onSfAdd(view, model) {
+    onChildviewSfAdd: function onSfAdd(model) {
       this.channel.trigger("sf:add", this, model);
     },
 

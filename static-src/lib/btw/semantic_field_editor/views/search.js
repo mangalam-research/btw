@@ -99,15 +99,9 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  var NoResultView = Mn.LayoutView.extend({
+  var NoResultView = Mn.View.extend({
     template: id("<p>No results</p>"),
   });
-
-  function bubble(name) {
-    return function bubbleUp(view, ev) {
-      this.triggerMethod(name, ev);
-    };
-  }
 
   // CompositeView is deprecated in v3 but there is no way to easily avoid it in
   // v2.4.5.
@@ -222,7 +216,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
   }
 
 
-  var QueryForm = Mn.ItemView.extend({
+  var QueryForm = Mn.View.extend({
     className: "form-inline",
     template: id(queryFormTemplate),
     ui: {
@@ -262,7 +256,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     },
   });
 
-  var SearchView = Mn.LayoutView.extend({
+  var SearchView = Mn.View.extend({
     initialize: function initialize(options) {
       this.searchUrl = options.searchUrl;
       this.canAddResults = options.canAddResults;
@@ -291,7 +285,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     template: Handlebars.compile(panelTemplate),
 
-    templateHelpers: function templateHelpers() {
+    templateContext: function templateContext() {
       return {
         collapse: true,
         headingId: "sf-editor-collapse-heading-" + this.cid,
@@ -308,8 +302,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
       results: ".results",
     },
 
-    childEvents: {
-      "sf:selected": bubble("sf:selected"),
+    childViewTriggers: {
+      "sf:selected": "sf:selected",
     },
 
     onChange: function onChange(params) {

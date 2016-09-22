@@ -166,7 +166,6 @@ describe("SFEditor", () => {
 
   it("launches navigators", Promise.coroutine(function* display() {
     yield searchSomething();
-
     assert.equal(app._chosenFieldCollection.length, 3);
     assert.equal(app.combinatorView.elementsCollection.length, 0);
     assert.equal(app.navigatorsView.collection.length, 0);

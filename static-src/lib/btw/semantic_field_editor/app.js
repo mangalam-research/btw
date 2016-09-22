@@ -9,6 +9,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
   var $ = require("jquery");
   var Bb = require("backbone");
   var Mn = require("marionette");
+  var Radio = require("backbone.radio");
   var ajax = require("ajax").ajax$;
   var layoutTemplate = require("text!./layout.html");
   var ChosenFieldCollectionView = require("./views/chosen_field_collection");
@@ -32,7 +33,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
     return result.xhr;
   };
 
-  var LayoutView = Mn.LayoutView.extend({
+  var LayoutView = Mn.View.extend({
     template: layoutTemplate,
     regions: {
       fieldList: ".sf-field-list",
@@ -47,6 +48,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       var container = this.container = options.container;
       this.fields = options.fields;
       this.fetcher = options.fetcher;
+      this.searchUrl = options.searchUrl;
       tools.setApplication(container, this);
       this.channelPrefix = options.channelPrefix || "SFEditor:";
       this.channels = {
@@ -54,7 +56,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       };
 
       SFEditor.__super__.initialize.call(
-        this, _.omit(options, ["container", "fields", "fetcher"]));
+        this, _.omit(options, ["container", "fields", "fetcher", "searchUrl"]));
     },
 
     onStart: function onStart() {
@@ -67,7 +69,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       this.layoutView = new LayoutView({
         el: this.container,
 
-        childEvents: {
+        childViewEvents: {
           "sf:selected": this.navigateSF.bind(this),
         },
       });
@@ -96,7 +98,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       });
       this.layoutView.showChildView("navigators", this.navigatorsView);
 
-      var global = Bb.Radio.channel(this.channels.global);
+      var global = Radio.channel(this.channels.global);
       global.on("sf:add", function onAdd(view, model) {
         chosenFieldCollectionView.addSF(model);
       });
@@ -106,7 +108,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       });
     },
 
-    navigateSF: function navigateSF(view, url) {
+    navigateSF: function navigateSF(url) {
       this.navigatorsView.openUrl(url);
     },
 

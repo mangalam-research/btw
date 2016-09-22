@@ -132,12 +132,12 @@ define(/** @lends auto */ function factory(require, exports, _module) {
     });
   }
 
-  var InlineView = Mn.LayoutView.extend({
+  var InlineView = Mn.View.extend({
     __classname__: "InlineView",
     initialize: function initialize(options) {
       this.fetcher = options.fetcher;
       this.canDelete = options.canDelete;
-      Mn.LayoutView.prototype.initialize.call(
+      InlineView.__super__.initialize.call(
         this, _.omit(options, ["fetcher", "canDelete"]));
     },
 
@@ -151,7 +151,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
     template: Handlebars.compile(fieldTemplate),
 
-    templateHelpers: function templateHelpers() {
+    templateContext: function templateContext() {
       return {
         canDelete: this.canDelete,
       };
