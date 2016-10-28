@@ -41,6 +41,7 @@ server = None
 tmpdir = None
 tmpconf = None
 clean_databases = False
+keep_tmpdir = False
 
 def cleanup_databases():
     for name, _ in name_users:
@@ -108,7 +109,8 @@ def cleanup(*_whatever):
         tmpconf = None
 
     if tmpdir:
-        shutil.rmtree(tmpdir, ignore_errors=True)
+        if not keep_tmpdir:
+            shutil.rmtree(tmpdir, ignore_errors=True)
         tmpdir = None
 
 atexit.register(cleanup)
@@ -116,6 +118,8 @@ signal.signal(signal.SIGINT, cleanup)
 signal.signal(signal.SIGTERM, cleanup)
 
 tmpdir = tempfile.mkdtemp(prefix='btw-nginx-tmp')
+if keep_tmpdir:
+    print "Temp dir:", tmpdir
 tmpconf = os.path.join(tmpdir, "nginx.conf")
 
 for d in ["var/run", "var/log", "var/lib/nginx", "var/log/btw"]:
