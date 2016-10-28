@@ -499,7 +499,7 @@ def step_impl(context, what):
     button.click()
 
 
-@then(ur"the first paragraph in btw:defintion (?P<test>does not contain"
+@then(ur"the first paragraph in btw:definition (?P<test>does not contain"
       ur"|contains) formatted text")
 def step_impl(context, test):
     util = context.util

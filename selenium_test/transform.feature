@@ -200,9 +200,9 @@ Scenario: using the Latin button when there is no selection
 
 Scenario: clearing formatting from text
   Given a document with a definition with formatted text
-  Then the first paragraph in btw:defintion contains formatted text
+  Then the first paragraph in btw:definition contains formatted text
   When the user clears formatting from the first paragraph in btw:definition
-  Then the first paragraph in btw:defintion does not contain formatted text
+  Then the first paragraph in btw:definition does not contain formatted text
 
 Scenario: clearing formatting from text, when the selection straddles.
   Given a document with a definition with formatted text
