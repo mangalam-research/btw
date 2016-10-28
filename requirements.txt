@@ -16,7 +16,7 @@ behave>=1.2.5,<2
 selenic>=0.7.0,<1
 wedutil>=0.19.0,<1
 pebble>=3.1.8,<4
-django-redis>=3.8.4,<4
+django-redis>=4,<5
 django-cache-management>=1.0.0,<2
 # 3.0.35 borks.
 kombu==3.0.34
