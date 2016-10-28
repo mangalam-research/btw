@@ -228,6 +228,13 @@ Manage workers.
             for name in get_worker_names(force_all=True):
                 self.stdout.write(name)
 
+        elif cmd == "lognames":
+            check_no_arguments(args, cmd)
+            check_no_all(options, cmd)
+
+            for w in workers:
+                self.stdout.write(w.logfile)
+
         elif cmd == "stop":
             worker_names = get_worker_names()
             running_workers = get_running_workers(error_equals_no_worker=True)

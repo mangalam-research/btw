@@ -10,6 +10,7 @@ import signal
 import datetime
 import sys
 import types
+import re
 
 from slugify import slugify
 import selenic.util
@@ -221,6 +222,49 @@ class ServerControl(object):
             while self.is_alive():
                 time.sleep(0.1)
 
+celery_log_re = re.compile(
+    r"^\[(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2}) "
+    r"(?P<hour>\d{2}):(?P<minute>\d{2}):(?P<second>\d{2}),\d+: (?P<level>.*?)/"
+    r"(?P<worker>.*?)\]")
+
+# A LogChecker is meant to check Celery worker logs for errors that
+# may be reported there. The Django unit tests that we run all run the
+# workers with CELERY_ALWAYS_EAGER, which does not allow detecting
+# errors that may be caused by race conditions. So the Selenium tests
+# are the only place where we can see errors caused by a race
+# condition. Unfortunately, this is not a sure thing either because
+# some race conditions are hard to reproduce. But this is better than
+# nothing. Had it been implemented beforehand, it actually **would**
+# have been able to find a race condition that occured in Summer-Fall
+# 2016 that remained undetected until it made its way onto the demo
+# site.
+class LogChecker(object):
+
+    def __init__(self, path):
+        self.path = path
+
+        if not os.path.exists(path):
+            raise ValueError("this log does not exist: " + path)
+
+        stat = os.stat(self.path)
+        self.size_at_prev_check = stat.st_size
+
+    def hasErrors(self):
+        stat = os.stat(self.path)
+
+        if stat.st_size > self.size_at_prev_check:
+            with open(self.path, 'r') as log:
+                log.seek(self.size_at_prev_check)
+                for line in log:
+                    match = celery_log_re.match(line)
+                    if match and match.group('level') not in \
+                       ("DEBUG", "INFO", "WARNING"):
+                        return line
+
+            self.size_at_prev_check = stat.st_size
+
+        return False
+
 def sigchld(context):
     context.server.assert_alive()
 
@@ -396,10 +440,21 @@ def before_all(context):
 
     remove_server_limit()
 
+    lognames = subprocess.check_output(
+        ["./manage.py", "btwworker", "lognames"])
+
+    context.log_checkers = [LogChecker(name) for name in lognames.splitlines()]
+
+def check_logs(context):
+    for checker in context.log_checkers:
+        failure = checker.hasErrors()
+        if failure:
+            raise AssertionError("Error in log {0}: {1}".format(checker.path,
+                                                                failure))
 
 def after_all(context):
     cleanup(context, False)
-
+    check_logs(context)
 
 CLEARCACHE = "clearcache:"
 FAIL = "fail:"
@@ -509,6 +564,7 @@ def before_scenario(context, scenario):
         server.write('clearcache ' + ' '.join(caches) + "\n")
         server.read()
 
+    check_logs(context)
 
 def after_scenario(context, scenario):
     if scenario.status == "skipped":
@@ -575,6 +631,8 @@ def after_scenario(context, scenario):
     dirtiness = DIRTY if "dirty" in scenario.effective_tags else CLEAN
     context.server.after_scenario(dirtiness)
     remove_server_limit()
+
+    check_logs(context)
 
 def before_step(context, _step):
     context.server.assert_alive()
