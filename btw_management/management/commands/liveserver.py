@@ -410,6 +410,7 @@ class Runner(DiscoverRunner):
 class Command(BaseCommand):
     help = 'Starts a live server for testing.'
     args = "address control_read control_write"
+    requires_system_checks = False
 
     def handle(self, *args, **options):
         server_address, control_read, control_write = args
