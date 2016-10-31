@@ -165,7 +165,7 @@ for name, user in name_users:
         ['psql', '-c', 'CREATE TABLE created_by_start_server (id integer);',
          name])
 
-subprocess.check_call(['./manage.py', 'migrate'])
+subprocess.check_call(['./manage.py', 'migrate', '--run-syncdb'])
 # We need this so that btwcheck will pass...
 subprocess.check_call(['./manage.py', 'btwdb', 'set_site_name'])
 subprocess.check_call(['./manage.py', 'clearcache', '--all'])
