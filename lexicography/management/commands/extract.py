@@ -1,4 +1,4 @@
-from optparse import make_option
+from __future__ import absolute_import
 
 from django.core.management.base import BaseCommand, CommandError
 from eulexistdb.db import ExistDB
@@ -17,25 +17,22 @@ sfs: extracts all the semantic field numbers found in the database
 """
     args = "command"
 
-    option_list = BaseCommand.option_list + (
-        make_option('--only',
-                    action='store',
-                    dest='only',
-                    default=False,
-                    choices=('published', 'latest-published'),
-                    help='Narrow the set of changerecord processed.'),
-        make_option('--lemmas',
-                    action='store_true',
-                    dest='lemmas',
-                    default=False,
-                    help='Output the lemma with the semantic field.')
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("command")
+        parser.add_argument('--only',
+                            action='store',
+                            dest='only',
+                            default=False,
+                            choices=('published', 'latest-published'),
+                            help='Narrow the set of changerecord processed.')
+        parser.add_argument('--lemmas',
+                            action='store_true',
+                            dest='lemmas',
+                            default=False,
+                            help='Output the lemma with the semantic field.')
 
     def handle(self, *args, **options):
-        if len(args) < 1:
-            raise CommandError("you must specify a command.")
-
-        cmd = args[0]
+        cmd = options["command"]
 
         if cmd == "sfs":
             self.extract_sfs(args, options)

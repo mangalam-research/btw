@@ -3,7 +3,6 @@ import signal
 import subprocess
 import errno
 import time
-from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from lib.redis import Config
@@ -20,24 +19,19 @@ class Command(BaseCommand):
     help = """\
 Manage the redis server used by BTW.
 """
-    args = "command"
     requires_system_checks = False
 
-    option_list = BaseCommand.option_list + (
-        make_option('--delete-dump',
-                    action='store_true',
-                    dest='delete_dump',
-                    default=False,
-                    help='Delete the dump file before starting redis or '
-                    'after stopping it.'),
-    )
-
-    requires_system_checks = False
+    def add_arguments(self, parser):
+        parser.add_argument("command")
+        parser.add_argument(
+            '--delete-dump',
+            action='store_true',
+            dest='delete_dump',
+            default=False,
+            help='Delete the dump file before starting redis or '
+            'after stopping it.')
 
     def handle(self, *args, **options):
-        if len(args) == 0:
-            raise CommandError("you must specify a command.")
-
         config = Config()
 
         def running():
@@ -49,7 +43,7 @@ Manage the redis server used by BTW.
 
             return out == "OK\n"
 
-        cmd = args[0]
+        cmd = options["command"]
         if cmd == "start":
             if running():
                 raise CommandError("redis appears to be running already.")

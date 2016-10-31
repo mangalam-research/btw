@@ -150,12 +150,6 @@ class Command(BaseCommand):
                             CreatePerms, Collect, CollapseChangeRecords,
                             CleanOldEntryVersions]
 
-        for cmd in []:
-            self.register_subcommand(cmd)
-
-    def register_subcommand(self, cmd):
-        self.subcommands.append(cmd)
-
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            parser_class=SubParser(self))

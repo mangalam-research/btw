@@ -90,8 +90,7 @@ class BTWRedisTestCase(unittest.TestCase):
         Tests that btwredis requires a command.
         """
         c = Caller()
-        with self.assertRaisesRegexp(CommandError,
-                                     r"you must specify a command\."):
+        with self.assertRaisesRegexp(CommandError, r"too few arguments"):
             c.call_command("btwredis")
         self.assertNoOutput(c)
 

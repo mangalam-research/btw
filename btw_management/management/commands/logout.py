@@ -6,21 +6,17 @@ from django.conf import settings
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
 
-from optparse import make_option
-
-
 class Command(BaseCommand):
     help = """\
 Logs all users out of the server.
 """
 
-    option_list = BaseCommand.option_list + (
-        make_option('--noop',
-                    action='store_true',
-                    dest='noop',
-                    default=False,
-                    help='Do everything except performing the transformation'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--noop',
+                            action='store_true',
+                            dest='noop',
+                            default=False,
+                            help='Do everything except performing the change.')
 
     def handle(self, *args, **options):
         engine = import_module(settings.SESSION_ENGINE)

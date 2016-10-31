@@ -62,9 +62,7 @@ class BTWTestCase(SimpleTestCase):
 
     def check_no_dir(self, cmd):
         c = Caller()
-        with self.assertRaisesRegexp(CommandError,
-                                     cmd + r" needs the directory that "
-                                     r"contains BTW's generated scripts\."):
+        with self.assertRaisesRegexp(CommandError, r"too few arguments"):
             c.call_command("btw", cmd)
 
         self.assertNoOutput(c)
@@ -72,8 +70,7 @@ class BTWTestCase(SimpleTestCase):
     def check_too_many_args(self, cmd):
         c = Caller()
         with self.assertRaisesRegexp(CommandError,
-                                     cmd + r" takes at most 2 "
-                                     r"arguments\."):
+                                     r"unrecognized arguments: bar"):
             c.call_command("btw", cmd, "foo", "bar")
 
         self.assertNoOutput(c)

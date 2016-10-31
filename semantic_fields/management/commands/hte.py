@@ -8,7 +8,6 @@ import random
 import time
 import datetime
 import re
-from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ValidationError
@@ -19,6 +18,7 @@ from django.conf import settings
 from semantic_fields.models import SemanticField, Lexeme, SearchWord
 from semantic_fields.util import ParsedExpression, _make_from_hte, \
     parse_local_reference, POS_CHOICES
+from lib.command import SubCommand, SubParser
 
 def get_csv_reader(csv_file, expected_headers):
     reader = csv.reader(csv_file,
@@ -211,54 +211,95 @@ def using(point=""):
             if line.startswith("VmSize:"):
                 return line.strip()
 
-class Command(BaseCommand):
-    help = """\
-Performs HTE commands on the database.
+class FixParentsMixin(object):
 
-load: loads the HTE csv files into the database. This command is destructive.
+    def fix_parents(self):
+        values = SemanticField.objects.values("path", "id")
+        path_to_id_cache = {d["path"]: d["id"] for d in values}
 
-extract-sfs: extracts all the semantic field numbers found in the database
-"""
-    args = "command"
+        def find_parent(path):
+            parsed = ParsedExpression(path)
 
-    option_list = BaseCommand.option_list + (
-        make_option('--skip-to',
-                    default='category',
-                    choices=('category', 'lexeme', 'lexeme_search_words'),
-                    help='Skip to loading that csv file rather '
-                         'than load all of them.'),
-        make_option('--checks-only',
-                    action="store_true",
-                    default=False,
-                    help='Only perform the checks. Does not load any data.'),
-        make_option('--force-overwrite',
-                    action="store_true",
-                    default=False,
-                    help='Force overwriting the database if the tables '
-                    'already exist. Otherwise, the command will fail.'),
-    )
+            ret = None
+            while True:
+                parent_path = parsed.parent()
 
-    def handle(self, *args, **options):
-        if len(args) < 1:
-            raise CommandError("you must specify a command.")
+                if parent_path is None:
+                    break  # No parent.
 
-        cmd = args[0]
+                parent_path_str = unicode(parent_path)
+                parent = path_to_id_cache.get(parent_path_str, None)
+                if parent is not None:
+                    ret = parent
+                    break  # Found the parent.
 
-        if cmd == "load":
-            self.loadcmd(args, options)
-        elif cmd == "fix":
-            self.fix(args, options)
-        elif cmd == "dump-subset":
-            self.dump_subset(args, options)
-        elif cmd == "timing-test":
-            self.timing_test(args, options)
-        elif cmd == "analyze":
-            self.analyze()
-        else:
-            raise ValueError("unknown command: " + cmd)
+                # Move up to check the parent.
+                parsed = parent_path
 
-    def loadcmd(self, args, options):
-        directory = args[1]
+            return ret
+
+        id_to_parent = {id: find_parent(path)
+                        for (path, id) in path_to_id_cache.iteritems()}
+
+        count = 0
+        # We now need to link up the records to their parent nodes.
+        with connection.cursor() as cursor:
+            for (id, parent) in id_to_parent.iteritems():
+                count += 1
+                if parent is not None:
+                    cursor.execute("UPDATE semantic_fields_semanticfield "
+                                   "SET parent_id = %s WHERE id = %s",
+                                   [parent, id])
+
+                if count % 1000 == 0:
+                    # In DEBUG mode Django will record all queries made to
+                    # the database, which can easily use all memory. Don't
+                    # prevent DEBUG=True but flush the queries periodically.
+                    if settings.DEBUG:
+                        reset_queries()
+                    self.stdout.write("set parents of {0} records"
+                                      .format(count))
+                    self.stdout.write(using())
+
+
+class Load(FixParentsMixin, SubCommand):
+    """
+    Load the HTE data from a HTE dump.
+    """
+
+    name = "load"
+
+    def __init__(self, *args, **kwargs):
+        super(Load, self).__init__(*args, **kwargs)
+        self.stdout = None
+        self.stderr = None
+
+    def add_to_parser(self, subparsers):
+        sp = super(Load, self).add_to_parser(subparsers)
+        sp.add_argument("dir")
+        sp.add_argument(
+            '--skip-to',
+            default='category',
+            choices=('category', 'lexeme', 'lexeme_search_words'),
+            help='Skip to loading that csv file rather '
+            'than load all of them.')
+        sp.add_argument(
+            '--checks-only',
+            action="store_true",
+            default=False,
+            help='Only perform the checks. Does not load any data.')
+        sp.add_argument(
+            '--force-overwrite',
+            action="store_true",
+            default=False,
+            help='Force overwriting the database if the tables '
+            'already exist. Otherwise, the command will fail.')
+        return sp
+
+    def __call__(self, command, options):
+        self.stderr = command.stderr
+        self.stdout = command.stdout
+        directory = options["dir"]
 
         categories_path = os.path.join(directory, "category.csv")
         lexemes_path = os.path.join(directory, "lexeme.csv")
@@ -371,120 +412,6 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 row[header_to_csv_index["searchword"]] != ""])
             skipped = True
 
-    def fix(self, args, options):
-        self.fix_parents()
-
-    def dump_subset(self, args, options):
-        with open(args[1]) as f:
-            to_serialize = {}
-            total_count = 0
-            for sf in f:
-                parsed = parse_local_reference(sf)
-                total_count += 1
-                cat = None
-                try:
-                    cat = SemanticField.objects.get(path=unicode(parsed))
-                except SemanticField.DoesNotExist:
-                    self.stderr.write("{0} did not exist".format(parsed))
-
-                if cat:
-                    to_serialize[cat.id] = cat
-
-        if len(to_serialize) < total_count:
-            self.stderr.write("found {0}% of the semantic fields"
-                              .format(len(to_serialize) * 100 / total_count))
-        parents = {}
-        for cat in to_serialize.itervalues():
-            parent = cat.parent
-            while parent is not None:
-                parents[parent.id] = parent
-                parent = parent.parent
-
-        to_serialize.update(parents)
-
-        lexemes = Lexeme.objects.filter(
-            semantic_field__in=to_serialize.keys())
-        searchword = SearchWord.objects.filter(htid__in=lexemes)
-
-        self.stdout.write(serializers.serialize("json",
-                                                itertools.chain(
-                                                    to_serialize.itervalues(),
-                                                    lexemes,
-                                                    searchword),
-                                                use_natural_foreign_keys=True,
-                                                use_natural_primary_keys=True,
-                                                indent=2))
-
-    def timing_test(self, args, options):
-        # Generate random requests
-        what = args[1]
-        directory = args[2]
-
-        categories_path = os.path.join(directory, "category.csv")
-        categories_sum = md5sum(categories_path)
-        categories_filters = categories_filters_by_md5.get(
-            categories_sum, [])
-
-        requests = []
-        with open(categories_path) as csv_file:
-            reader = get_csv_reader(csv_file, expected_category_headers)
-            rows = list(reader)
-
-            header_to_csv_index = headers_to_map(expected_category_headers)
-
-            # This allows getting a set number of **different** random
-            # rows. If randint produces the same row index more than
-            # once, adding to the set does not increase the set's
-            # length.
-            row_indexes = set()
-            while len(row_indexes) < 10000:
-
-                candidate = random.randint(0, len(rows) - 1)
-                row = rows[candidate]
-
-                # Make sure we do not land on a row that was excluded
-                # from the import.
-                if any(not include(row, header_to_csv_index)
-                       for include in categories_filters):
-                    continue
-
-                row_indexes.add(candidate)
-
-            for index in row_indexes:
-                row = rows[index]
-                requests.append(str(_make_from_hte(
-                    **{key: row[header_to_csv_index[key]]
-                       for key in
-                       ("t1", "t2", "t3", "t4", "t5", "t6", "t7",
-                        "subcat", "pos")})))
-
-        start = time.time()
-        found = 0
-        if what == "get":
-            for request in requests:
-                try:
-                    SemanticField.objects.get(path=request)
-                    found += 1
-                except SemanticField.DoesNotExist:
-                    self.stdout.write("cannot find: " + request)
-                    pass
-        elif what == "children":
-            found = 0
-            for request in requests:
-                try:
-                    node = SemanticField.objects.get(path=request)
-                    found += 1
-                except SemanticField.DoesNotExist:
-                    self.stdout.write("cannot find: " + request)
-                    node = None
-                if node:
-                    list(node.children.all())
-        self.stdout.write("elapsed time: {0}"
-                          .format(str(datetime.timedelta(
-                              seconds=time.time() - start))))
-        self.stdout.write("{0} hits out of {1} requests"
-                          .format(found, len(requests)))
-
     def load_categories(self, path, include_filters):
         header_to_csv_index = headers_to_map(expected_category_headers)
 
@@ -550,54 +477,6 @@ extract-sfs: extracts all the semantic field numbers found in the database
                     "loading {0} failed: stopping".format(path))
 
         return truncations
-
-    def fix_parents(self):
-        values = SemanticField.objects.values("path", "id")
-        path_to_id_cache = {d["path"]: d["id"] for d in values}
-
-        def find_parent(path):
-            parsed = ParsedExpression(path)
-
-            ret = None
-            while True:
-                parent_path = parsed.parent()
-
-                if parent_path is None:
-                    break  # No parent.
-
-                parent_path_str = unicode(parent_path)
-                parent = path_to_id_cache.get(parent_path_str, None)
-                if parent is not None:
-                    ret = parent
-                    break  # Found the parent.
-
-                # Move up to check the parent.
-                parsed = parent_path
-
-            return ret
-
-        id_to_parent = {id: find_parent(path)
-                        for (path, id) in path_to_id_cache.iteritems()}
-
-        count = 0
-        # We now need to link up the records to their parent nodes.
-        with connection.cursor() as cursor:
-            for (id, parent) in id_to_parent.iteritems():
-                count += 1
-                if parent is not None:
-                    cursor.execute("UPDATE semantic_fields_semanticfield "
-                                   "SET parent_id = %s WHERE id = %s",
-                                   [parent, id])
-
-                if count % 1000 == 0:
-                    # In DEBUG mode Django will record all queries made to
-                    # the database, which can easily use all memory. Don't
-                    # prevent DEBUG=True but flush the queries periodically.
-                    if settings.DEBUG:
-                        reset_queries()
-                    self.stdout.write("set parents of {0} records"
-                                      .format(count))
-                    self.stdout.write(using())
 
     def process_category_row(self, row, header_to_csv_index, records,
                              truncations, failures):
@@ -788,7 +667,165 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 raise CommandError(
                     "loading {0} failed: stopping".format(path))
 
-    def analyze(self):
+
+class Fix(FixParentsMixin, SubCommand):
+
+    name = "fix"
+
+    def __init__(self, *args, **kwargs):
+        super(Fix, self).__init__(*args, **kwargs)
+        self.stdout = None
+        self.stderr = None
+
+    def __call__(self, command, options):
+        self.stdout = command.stdout
+        self.stderr = command.stderr
+        self.fix_parents()
+
+class DumpSubset(SubCommand):
+
+    name = "dump-subset"
+
+    def add_to_parser(self, subparsers):
+        sp = super(DumpSubset, self).add_to_parser(subparsers)
+        sp.add_argument(
+            "sfs",
+            help="a text file having one semantic field number per line")
+        return sp
+
+    def __call__(self, command, options):
+        with open(options["sfs"]) as f:
+            to_serialize = {}
+            total_count = 0
+            for sf in f:
+                parsed = parse_local_reference(sf)
+                total_count += 1
+                cat = None
+                try:
+                    cat = SemanticField.objects.get(path=unicode(parsed))
+                except SemanticField.DoesNotExist:
+                    command.stderr.write("{0} did not exist".format(parsed))
+
+                if cat:
+                    to_serialize[cat.id] = cat
+
+        if len(to_serialize) < total_count:
+            command.stderr.write(
+                "found {0}% of the semantic fields"
+                .format(len(to_serialize) * 100 / total_count))
+        parents = {}
+        for cat in to_serialize.itervalues():
+            parent = cat.parent
+            while parent is not None:
+                parents[parent.id] = parent
+                parent = parent.parent
+
+        to_serialize.update(parents)
+
+        lexemes = Lexeme.objects.filter(
+            semantic_field__in=to_serialize.keys())
+        searchword = SearchWord.objects.filter(htid__in=lexemes)
+
+        command.stdout.write(serializers.serialize(
+            "json",
+            itertools.chain(
+                to_serialize.itervalues(),
+                lexemes,
+                searchword),
+            use_natural_foreign_keys=True,
+            use_natural_primary_keys=True,
+            indent=2))
+
+class TimingTest(SubCommand):
+
+    name = "timing-test"
+
+    def add_to_parser(self, subparsers):
+        sp = super(TimingTest, self).add_to_parser(subparsers)
+        sp.add_argument(
+            "what",
+            choices=("get", "children"),
+            help="the type of query to perform")
+        sp.add_argument(
+            "dir",
+            help="the directory that contains the HTE file ``category.csv``")
+        return sp
+
+    def __call__(self, command, options):
+        # Generate random requests
+        what = options["what"]
+        directory = options["dir"]
+
+        categories_path = os.path.join(directory, "category.csv")
+        categories_sum = md5sum(categories_path)
+        categories_filters = categories_filters_by_md5.get(
+            categories_sum, [])
+
+        requests = []
+        with open(categories_path) as csv_file:
+            reader = get_csv_reader(csv_file, expected_category_headers)
+            rows = list(reader)
+
+            header_to_csv_index = headers_to_map(expected_category_headers)
+
+            # This allows getting a set number of **different** random
+            # rows. If randint produces the same row index more than
+            # once, adding to the set does not increase the set's
+            # length.
+            row_indexes = set()
+            while len(row_indexes) < 10000:
+
+                candidate = random.randint(0, len(rows) - 1)
+                row = rows[candidate]
+
+                # Make sure we do not land on a row that was excluded
+                # from the import.
+                if any(not include(row, header_to_csv_index)
+                       for include in categories_filters):
+                    continue
+
+                row_indexes.add(candidate)
+
+            for index in row_indexes:
+                row = rows[index]
+                requests.append(str(_make_from_hte(
+                    **{key: row[header_to_csv_index[key]]
+                       for key in
+                       ("t1", "t2", "t3", "t4", "t5", "t6", "t7",
+                        "subcat", "pos")})))
+
+        start = time.time()
+        found = 0
+        if what == "get":
+            for request in requests:
+                try:
+                    SemanticField.objects.get(path=request)
+                    found += 1
+                except SemanticField.DoesNotExist:
+                    command.stdout.write("cannot find: " + request)
+        elif what == "children":
+            found = 0
+            for request in requests:
+                try:
+                    node = SemanticField.objects.get(path=request)
+                    found += 1
+                except SemanticField.DoesNotExist:
+                    command.stdout.write("cannot find: " + request)
+                    node = None
+                if node:
+                    list(node.children.all())
+        command.stdout.write("elapsed time: {0}"
+                             .format(str(datetime.timedelta(
+                                 seconds=time.time() - start))))
+        command.stdout.write("{0} hits out of {1} requests"
+                             .format(found, len(requests)))
+
+
+class Analyze(SubCommand):
+
+    name = "analyze"
+
+    def __call__(self, command, options):
         pos_re = re.compile("[a-z]+$")
         paths = set(SemanticField.objects.all().values_list("path",
                                                             flat=True))
@@ -806,7 +843,26 @@ extract-sfs: extracts all the semantic field numbers found in the database
                 if cat.is_subcat:
                     subcats += 1
 
-        self.stdout.write("{0} fields total".format(total))
-        self.stdout.write("{0} fields have no noun equivalent"
-                          .format(total_missing))
-        self.stdout.write("{0} of them are subcategories".format(subcats))
+        command.stdout.write("{0} fields total".format(total))
+        command.stdout.write("{0} fields have no noun equivalent"
+                             .format(total_missing))
+        command.stdout.write("{0} of them are subcategories".format(subcats))
+
+class Command(BaseCommand):
+    help = """\
+Performs HTE commands on the database.
+"""
+
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
+        self.subcommands = [Load, Fix, DumpSubset, TimingTest, Analyze]
+
+    def add_arguments(self, parser):
+        subparsers = parser.add_subparsers(title="subcommands",
+                                           parser_class=SubParser(self))
+        for cmd in self.subcommands:
+            cmd_instance = cmd()
+            cmd_instance.add_to_parser(subparsers)
+
+    def handle(self, *args, **options):
+        options["subcommand"](self, options)

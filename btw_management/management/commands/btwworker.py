@@ -8,14 +8,13 @@ from functools32 import lru_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from celery.bin.multi import multi_args, NamespacedOptionParser, MultiTool
+from celery.exceptions import TimeoutError
 
 from btw.celery import app
 from core.tasks import get_btw_env
 from lib.util import join_prefix
 from bibliography.tasks import periodic_fetch_items
-from optparse import make_option
-from celery.bin.multi import multi_args, NamespacedOptionParser, MultiTool
-from celery.exceptions import TimeoutError
 
 class Worker(object):
 
@@ -92,8 +91,8 @@ def check_no_all(options, cmd):
     if options["all"]:
         raise CommandError("{0} does not take the --all option.".format(cmd))
 
-def check_no_arguments(args, cmd):
-    if len(args) > 1:
+def check_no_names(options, cmd):
+    if len(options["worker_names"]):
         raise CommandError("{0} does not take arguments.".format(cmd))
 
 
@@ -125,15 +124,15 @@ class Command(BaseCommand):
     help = """\
 Manage workers.
 """
-    args = "command"
 
-    option_list = BaseCommand.option_list + (
-        make_option('--all',
-                    action='store_true',
-                    dest='all',
-                    default=False,
-                    help='Operate on all workers.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument("command")
+        parser.add_argument("worker_names", nargs="*")
+        parser.add_argument('--all',
+                            action='store_true',
+                            dest='all',
+                            default=False,
+                            help='Operate on all workers.')
 
     error_count = 0
 
@@ -141,19 +140,13 @@ Manage workers.
 
         from btw.settings._env import env
 
-        if not isinstance(args, list):
-            args = list(args)
-
         workers = get_defined_workers()
-
-        if len(args) < 1:
-            raise CommandError("you must specify a command.")
 
         workers_by_name = {w.name: w for w in workers}
 
         def get_worker_names(force_all=False):
             get_all = force_all or options["all"]
-            worker_names = args[1:]
+            worker_names = options["worker_names"]
             if len(worker_names):
                 for name in worker_names:
                     if name not in workers_by_name:
@@ -165,7 +158,7 @@ Manage workers.
                 raise CommandError("must specify a worker name or use --all")
             return worker_names
 
-        cmd = args[0]
+        cmd = options["command"]
 
         if cmd == "start":
             worker_names = get_worker_names()
@@ -222,14 +215,14 @@ Manage workers.
                 self.stdout.write("{0} has started.".format(name))
 
         elif cmd == "names":
-            check_no_arguments(args, cmd)
+            check_no_names(options, cmd)
             check_no_all(options, cmd)
 
             for name in get_worker_names(force_all=True):
                 self.stdout.write(name)
 
         elif cmd == "lognames":
-            check_no_arguments(args, cmd)
+            check_no_names(options, cmd)
             check_no_all(options, cmd)
 
             for w in workers:
@@ -252,7 +245,7 @@ Manage workers.
                     self.stdout.write("{0} was not running.".format(name))
 
         elif cmd == "ping":
-            check_no_arguments(args, cmd)
+            check_no_names(options, cmd)
             check_no_all(options, cmd)
 
             full_names = get_full_names([w.name for w in workers])
@@ -275,7 +268,7 @@ Manage workers.
                                       (repr(result[0].get(full_name)) or ""))
 
         elif cmd == "check":
-            check_no_arguments(args, cmd)
+            check_no_names(options, cmd)
             check_no_all(options, cmd)
 
             if not settings.CELERY_WORKER_DIRECT:
