@@ -531,7 +531,9 @@ See below for specific upgrade cases.
 - Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
 ``loadindex``, ``load``.
 
-- Force django-polymorphic to be at 0.8.1
+- Force django-polymorphic to be at 0.8.1.
+
+- Run ``pip uninstall django-treebeard`` and then ``pip install git+https://github.com/tabo/django-treebeard#79bdb7c``.
 
 1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~
