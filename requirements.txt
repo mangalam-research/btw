@@ -19,7 +19,7 @@ pebble>=3.1.8,<4
 # We cannot use versions greater than 4.3.0 until this is fixed:
 # https://github.com/niwinz/django-redis/issues/223
 django-redis==4.3.0
-django-cache-management>=1.0.0,<2
+django-cache-management>=2,<3
 # 3.0.35 borks.
 kombu==3.0.34
 celery[redis]==3.1.23
