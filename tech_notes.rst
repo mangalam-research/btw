@@ -529,7 +529,9 @@ See below for specific upgrade cases.
 - Clear the "article_display" and "page" caches.
 
 - Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
-  ``loadindex``, ``load``.
+``loadindex``, ``load``.
+
+- Force django-polymorphic to be at 0.8.1
 
 1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~

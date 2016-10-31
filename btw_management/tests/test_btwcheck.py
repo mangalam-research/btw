@@ -2,7 +2,7 @@ import os
 import mock
 from contextlib import contextmanager
 
-from django.test import SimpleTestCase
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.contrib.sites.models import Site
 from django.core.management.base import CommandError
@@ -49,6 +49,7 @@ def fake_pidfiles():
 
     FakeFile = mock.MagicMock(spec=file, **{'read.return_value': ["1"]})
 
+    orig_open = open
     try:
         real_exists = os.path.exists
         with mock.patch("btw_management.management.commands.btwworker"
@@ -58,14 +59,14 @@ def fake_pidfiles():
                        args[0] is fake or real_exists(*args, **kwargs)), \
             mock.patch("__builtin__.open",
                        side_effect=lambda *args, **kwargs: FakeFile() if
-                       args[0] is fake else open(*args, **kwargs)):
+                       args[0] is fake else orig_open(*args, **kwargs)):
             yield
     finally:
         btwworker.flush_caches()
 
 
 @override_settings(BTW_SITE_NAME="testing")
-class BTWCheckTestCase(SimpleTestCase):
+class BTWCheckTestCase(TestCase):
     maxDiff = None
 
     def setUp(self):
