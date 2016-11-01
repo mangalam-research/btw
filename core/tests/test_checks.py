@@ -5,6 +5,7 @@ from django.core.management.base import SystemCheckError
 from django.core.management import call_command
 
 class CheckTestCase(TestCase):
+
     def test_no_error(self):
         """
         Tests that there is no error reported by default.
@@ -27,4 +28,4 @@ only makes attacks somewhat harder, whereas the BTW's JavaScript code needs \
 to get the CSRF token, and getting it from a cookie is the easiest way.
 
 System check identified 1 issue (0 silenced).""")):
-                call_command("check")
+                call_command("check", "--no-color")
