@@ -1,10 +1,44 @@
-import sys
-import subprocess
-
 from django.core.management import call_command
+from django.test.testcases import TransactionTestCase, TestCase
 from django_nose import NoseTestSuiteRunner
+from cms.utils.permissions import set_current_user
+from cms.test_utils.testcases import BaseCMSTestCase
 
 from lib.testutil import unmonkeypatch_databases
+
+#
+# When upgrading to Django 1.10 it turned out that the problem with
+# Django CMS's "current user" spread everywhere. We basically need to
+# reset it between each test. Doing so where the tests are would
+# require widespread changes. Instead, we monkeypatch
+# TransactionTestCase so that Django CMS set_current_user(None) is
+# issued before each test.
+#
+old_setUp = getattr(TransactionTestCase, "setUp", None)
+def setUp(self):
+    set_current_user(None)
+    if old_setUp:
+        old_setUp(self)
+
+TransactionTestCase.setUp = setUp
+
+# We also need to patch setUpTestData because it can be called before
+# "setUp".
+old_setUpTestData = getattr(TestCase, "setUpTestData", None)
+
+@classmethod
+def setUpTestData(cls):
+    set_current_user(None)
+    if old_setUpTestData:
+        old_setUpTestData()
+
+TestCase.setUpTestData = setUpTestData
+
+#
+# From Django CMS 3.4 or so BaseCMSTestCase acquired this method,
+# which looks to nose like a test. Mark it as a non-test.
+#
+BaseCMSTestCase.get_permissions_test_page.__func__.__test__ = False
 
 class Runner(NoseTestSuiteRunner):
 
