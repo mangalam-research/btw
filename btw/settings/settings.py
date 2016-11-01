@@ -208,6 +208,9 @@ s.MIDDLEWARE_CLASSES = (
     'cms.middleware.language.LanguageCookieMiddleware',
 )
 
+# Don't use a unicode value for this. Webtest does not like it.
+s.CSRF_COOKIE_NAME = "csrftoken"
+
 s.CACHE_MIDDLEWARE_KEY_PREFIX = lambda s: s.BTW_SITE_NAME
 
 s.CACHE_MIDDLEWARE_ALIAS = 'page'
