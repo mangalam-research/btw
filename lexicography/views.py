@@ -15,14 +15,13 @@ import semver
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, \
     HttpResponseRedirect, HttpResponseBadRequest, Http404, QueryDict
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_GET, \
     require_http_methods, etag
 from django.middleware.csrf import get_token
-from django.template import RequestContext
 from django.db import IntegrityError
 from django.db.models import ProtectedError, F
 from django.conf import settings
@@ -475,9 +474,10 @@ def _show_changerecord(request, cr):
             'date': version.datetime
         })
 
-    return render_to_response(
+    return render(
+        request,
         'lexicography/details.html',
-        {
+        context={
             'bibliographical_data': {
                 'version': util.version()
             },
@@ -495,8 +495,7 @@ def _show_changerecord(request, cr):
             'version_permalink': cr.get_absolute_url(),
             'can_author': can_author,
             'history': history
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 # entry_new and entry_update do not call the handle_update directly
