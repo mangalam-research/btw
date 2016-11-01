@@ -6,9 +6,11 @@ import lxml.etree
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.test.utils import override_settings
+from django.test.client import RequestFactory
 from cms.test_utils.testcases import CMSTestCase
 from cms.models import Placeholder
 from cms.api import add_plugin
+from cms.plugin_rendering import ContentRenderer
 from sekizai.context import SekizaiContext
 
 from core.cms_plugins import CitePlugin
@@ -24,8 +26,8 @@ class CiteTestCase(CMSTestCase):
             CitePlugin,
             'en',
         )
-        context = SekizaiContext()
-        html = model_instance.render_plugin(context)
+        renderer = ContentRenderer(request=RequestFactory())
+        html = renderer.render_plugin(model_instance, {})
         parser = lxml.etree.HTMLParser(encoding="utf8")
         tree = lxml.etree.parse(StringIO(html.encode("utf8")), parser)
         self.chicago_authors = \

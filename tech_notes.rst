@@ -535,6 +535,8 @@ See below for specific upgrade cases.
 
 - Run ``pip uninstall django-treebeard`` and then ``pip install git+https://github.com/tabo/django-treebeard#79bdb7c``.
 
+- Run ``./manage.py cms fix-tree``
+
 1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~
 
