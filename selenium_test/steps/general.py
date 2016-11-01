@@ -13,12 +13,17 @@ import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from behave import then, when, given, Given, \
     step_matcher  # pylint: disable=E0611
+try:
+    from django.middleware.csrf import CSRF_TOKEN_LENGTH
+except:
+    CSRF_TOKEN_LENGTH = 10
 
 import lexicography.tests.funcs as funcs
 import wedutil
 from selenium_test import btw_util
 from selenic.datatables import Datatable
 
+FAKE_CSRF = "x" * CSRF_TOKEN_LENGTH
 
 @when("the user loads the top page of the lexicography app")
 def user_load_lexicography(context):
@@ -210,7 +215,7 @@ def step_impl(context, user_desc):
                              user.password + "\n")
         session_key = context.server.read()
         driver.add_cookie({'name': 'sessionid', 'value': session_key})
-        driver.add_cookie({'name': 'csrftoken', 'value': 'foo'})
+        driver.add_cookie({'name': 'csrftoken', 'value': FAKE_CSRF})
         context.session_id = session_key
         #
         # There is no need to reload the page right here. If a test

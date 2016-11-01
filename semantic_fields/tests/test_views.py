@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
 from django.conf import settings
 from django_webtest import WebTest, TransactionWebTest
+from django.middleware.csrf import CSRF_TOKEN_LENGTH
 
 from cms.test_utils.testcases import BaseCMSTestCase
 
@@ -24,6 +25,8 @@ user_model = get_user_model()
 
 def _make_test_url(sf):
     return "http://localhost:80" + sf.detail_url
+
+FAKE_CSRF = "x" * CSRF_TOKEN_LENGTH
 
 class _Mixin(object):
 
@@ -1018,12 +1021,12 @@ class ListTestCase(ViewsTestCase):
         # We simulate what happens if a CSRF token has been set by
         # Django in a previous request. We set the value to "foo" and
         # set the header value to "foo" too, which is a match.
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         self.app.get(self.url,
                      {"paths": "01n"},
                      headers={
                          "Accept": "application/json",
-                         "X-CSRFToken": "foo"
+                         "X-CSRFToken": FAKE_CSRF
                      })
 
     def test_logged_in_with_csrf_token(self):
@@ -1034,22 +1037,22 @@ class ListTestCase(ViewsTestCase):
         # We simulate what happens if a CSRF token has been set by
         # Django in a previous request. We set the value to "foo" and
         # set the header value to "foo" too, which is a match.
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         self.app.get(self.url,
                      {"paths": "01n"},
                      headers={
                          "Accept": "application/json",
-                         "X-CSRFToken": "foo"
+                         "X-CSRFToken": FAKE_CSRF
                      }, user=self.noperm)
 
     def test_bad_accept(self):
         """
         Accept with an incorrect value yields an error.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url, headers={
             "Accept": "text/html",
-            "X-CSRFToken": "foo"
+            "X-CSRFToken": FAKE_CSRF
         }, expect_errors=True)
         self.assertEqual(response.status_code, 406)
 
@@ -1057,10 +1060,10 @@ class ListTestCase(ViewsTestCase):
         """
         A query without a ``paths`` parameter yields an error.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url, headers={
             "Accept": "application/json",
-            "X-CSRFToken": "foo"
+            "X-CSRFToken": FAKE_CSRF
         }, expect_errors=True)
         self.assertEqual(response.status_code, 400)
 
@@ -1068,12 +1071,13 @@ class ListTestCase(ViewsTestCase):
         """
         A query with proper paths yields results.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url,
                                 {"paths": "01.01n;02n;99n"},
                                 headers={
                                     "Accept": "application/json",
-                                    "X-CSRFToken": "foo"
+                                    "X-CSRFToken": FAKE_CSRF,
+                                    "Referer": "localhost:80"
                                 })
 
         serializer = SemanticFieldSerializer(
@@ -1088,7 +1092,7 @@ class ListTestCase(ViewsTestCase):
         """
         A query requesting changerecords gets them.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
 
         with mock.patch("semantic_fields.serializers.ChangeRecord"
                         ".objects.with_semantic_field") as mocked:
@@ -1101,7 +1105,7 @@ class ListTestCase(ViewsTestCase):
                                      "fields": "changerecords"},
                                     headers={
                                         "Accept": "application/json",
-                                        "X-CSRFToken": "foo"
+                                        "X-CSRFToken": FAKE_CSRF,
                                     })
 
             serializer = SemanticFieldSerializer(
@@ -1117,13 +1121,13 @@ class ListTestCase(ViewsTestCase):
         """
         A query with complex paths yields the expected results.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
 
         response = self.app.get(self.url,
                                 {"paths": "01.01n@02n;01n@02n;02n"},
                                 headers={
                                     "Accept": "application/json",
-                                    "X-CSRFToken": "foo"
+                                    "X-CSRFToken": FAKE_CSRF,
                                 })
 
         url = "http://localhost:80" + self.url
@@ -1156,7 +1160,7 @@ class ListTestCase(ViewsTestCase):
         """
         A search query paginates.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
 
         response = self.app.get(self.url,
                                 {
@@ -1166,7 +1170,7 @@ class ListTestCase(ViewsTestCase):
                                 },
                                 headers={
                                     "Accept": "application/json",
-                                    "X-CSRFToken": "foo"
+                                    "X-CSRFToken": FAKE_CSRF,
                                 })
 
         result = response.json
@@ -1178,7 +1182,7 @@ class ListTestCase(ViewsTestCase):
         """
         A search with unbound ``parent``, returns parent relations.
         """
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, "foo")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url,
                                 {
                                     "ids": self.cat3.id,
@@ -1187,7 +1191,7 @@ class ListTestCase(ViewsTestCase):
                                 },
                                 headers={
                                     "Accept": "application/json",
-                                    "X-CSRFToken": "foo"
+                                    "X-CSRFToken": FAKE_CSRF,
                                 })
 
         data = SemanticFieldSerializer(self.cat3, context=self.context,
