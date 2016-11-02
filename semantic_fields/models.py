@@ -380,6 +380,10 @@ class SpecifiedSemanticField(SemanticField):
     so it is useful to have a fake class for them.
     """
 
+    class Meta:
+        managed = False
+        abstract = True
+
     def save(self, *args, **kwargs):
         "We cannot save SpecifiedSemanticField objects to the database."
         raise Exception("cannot save a specified semantic field")
