@@ -412,8 +412,15 @@ class Command(BaseCommand):
     args = "address control_read control_write"
     requires_system_checks = False
 
+    def add_arguments(self, parser):
+        parser.add_argument("server_address")
+        parser.add_argument("control_read")
+        parser.add_argument("control_write")
+
     def handle(self, *args, **options):
-        server_address, control_read, control_write = args
+        server_address = options["server_address"]
+        control_read = options["control_read"]
+        control_write = options["control_write"]
 
         print "Starting server at:", server_address
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
