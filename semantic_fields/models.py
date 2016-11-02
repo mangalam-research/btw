@@ -209,6 +209,9 @@ class SemanticField(models.Model):
 
     @path.setter
     def path(self, val):
+        # Assign to __dict__ to work around this:
+        # https://code.djangoproject.com/ticket/27419
+        self.__dict__["path"] = val
         self._path = val
         self._parsed_path = None
         self._related_by_pos = None
