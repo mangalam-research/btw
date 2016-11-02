@@ -1,5 +1,11 @@
 * 1.5.0 (upcoming):
 
+  + Upgrade from Django 1.8 to Django 1.10. Django 1.10 has features
+    that were needed by BTW.
+
+  + Upgrade from Django CMS 3.2.3 to 3.4.1. This was required by the
+    move to Django 1.10.
+
   + New features:
 
     - It is possible to create new BTW-specific custom fields.
