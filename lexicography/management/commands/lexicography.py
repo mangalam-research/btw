@@ -4,7 +4,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError, \
     CommandParser
 
-from ...article import prepare_article_data
+from ...article import prepare_article_data, get_bibliographical_data
 from lib import util
 from lib.command import SubCommand, SubParser
 
@@ -31,13 +31,14 @@ class PrepareArticle(SubCommand):
         translation.activate('en-us')
 
         with open(options["src"], 'r') as src:
-            prepared = prepare_article_data(src.read().decode("utf-8"), True)
+            source = src.read().decode("utf-8")
+            prepared, _ = prepare_article_data(source)
             with open(options["dst"], 'w') as dst:
                 data = util.run_xsltproc(
-                    "utils/xsl/strip.xsl", prepared["xml"])
+                    "utils/xsl/strip.xsl", prepared)
                 dst.write(data.encode("utf-8"))
             with open(options["bibl"], 'w') as bibl:
-                bibl.write(json.dumps(prepared["bibl_data"]).encode("utf-8"))
+                bibl.write(json.dumps(get_bibliographical_data(source)[1]))
 
 
 class Command(BaseCommand):
