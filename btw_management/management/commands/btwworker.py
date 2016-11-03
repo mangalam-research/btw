@@ -124,6 +124,7 @@ class Command(BaseCommand):
     help = """\
 Manage workers.
 """
+    requires_system_checks = False
 
     def add_arguments(self, parser):
         parser.add_argument("command")
