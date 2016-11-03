@@ -530,3 +530,25 @@ def on_change(cls, get_state, fn):
     # handlers.
     post_save.connect(_post_save, sender=cls, weak=False)
     post_init.connect(_set_state, sender=cls, weak=False)
+
+def dump_urls():
+    from btw.urls import urlpatterns
+    _dump_urls(urlpatterns)
+
+def _dump_urls(patterns, depth=0):
+    for pat in patterns:
+        items = []
+        if depth > 0:
+            items.append("." * depth)
+
+        items.append(pat.regex.pattern)
+
+        callback = pat.callback
+        if callback:
+            callback = "{0}.{1}".format(
+                callback.__module__, callback.func_name)
+            items.append(callback)
+
+        print " ".join(items)
+        if hasattr(pat, 'url_patterns'):
+            _dump_urls(pat.url_patterns, depth + 1)

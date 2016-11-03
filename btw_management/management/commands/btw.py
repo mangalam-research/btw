@@ -166,6 +166,17 @@ class ListLocalAppPaths(SubCommand):
                not subdir(app.path, venv):
                 command.stdout.write(app.path)
 
+class DumpUrls(SubCommand):
+    """
+    Dump the URL configuration.
+    """
+
+    name = "dump-urls"
+
+    def __call__(self, command, options):
+        from lib.util import dump_urls
+        dump_urls()
+
 class Command(BaseCommand):
     help = """\
 BTW-specific commands.
@@ -175,7 +186,7 @@ BTW-specific commands.
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         self.subcommands = [GenerateMonitConfig, GenerateScripts,
-                            ListLocalAppPaths]
+                            ListLocalAppPaths, DumpUrls]
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
