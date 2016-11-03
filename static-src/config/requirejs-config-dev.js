@@ -163,7 +163,7 @@ require.config({
       mode: {
         path: "btw/btw_mode",
         options: {
-          bibl_url: "/bibliography/all",
+          bibl_url: "/rest/bibliography/all",
         },
       },
     },

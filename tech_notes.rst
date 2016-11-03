@@ -1424,6 +1424,29 @@ ran into the issues mentioned above or ran smack dab into Django
 bugs. (Like `this one
 <https://code.djangoproject.com/ticket/20600>`__.)
 
+Celery Tasks and Django CMS
+===========================
+
+In a basic Django application the url patterns used for determining
+which view will serve a request are static: they are set in ``.py``
+files do not change until the application is upgraded, which is an
+administrative act.
+
+With Django CMS, the above principle no longer holds true. It is
+possible to have a page load an app (using "apphooks"). Since CMS
+pages can be created at run time, this means that the url patterns can
+change at any time while the site is running. This is not a problem
+for those processes which are launched by the WSGI app server. By the
+use of the appropriate middleware, these processes periodically check
+for changes and do what is necessary.
+
+However, Celery tasks do not have the machinery necessary to detect
+these changes. Right now, BTW dodges the issue by having the Celery
+tasks be dependent only on "REST urls". These are stored in
+``rest_url.py`` files and operate in the same way as the "basic Django
+application" scenario described above: they don't change at run
+time. Changes caused by the CMS do not affect how the tasks run.
+
 Why not pyzotero?
 =================
 

@@ -107,11 +107,11 @@ def targets_to_dicts(targets):
     """
     ret = {}
     for target in targets:
-        # We add a language code because the targets in the article
-        # are absolute (they do not contain a language). The way we
-        # use the urls here, adding the language allows to use
-        # ``resolve`` but has no other effect.
-        resolved = resolve("/en-us" + target)
+        # We add the "/rest" prefix because the targets in the article
+        # are "absolute" (independent of any concrete site
+        # organization). The way we use the urls here, adding the
+        # prefix allows to use ``resolve`` but has no other effect.
+        resolved = resolve("/rest" + target)
         try:
             class_ = {
                 "bibliography_primary_sources": PrimarySource,

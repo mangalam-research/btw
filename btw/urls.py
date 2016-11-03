@@ -22,6 +22,11 @@ urlpatterns = i18n_patterns(
     url(r'^semantic_fields/', include("semantic_fields.rest_urls")),
 )
 
+urlpatterns += [
+    url(r'^rest/bibliography/', include("bibliography.rest_urls")),
+]
+
+
 # These have to be inserted before the CMS pattern.
 if settings.DEBUG and settings.BTW_DIRECT_APP_MODE:
     urlpatterns += i18n_patterns(
