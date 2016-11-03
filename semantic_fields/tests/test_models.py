@@ -174,7 +174,7 @@ class SemanticFieldTestCase(TestCase):
         c.save()
         self.assertEqual(c.link,
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
+                          "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_make_link_default(self):
@@ -185,7 +185,7 @@ class SemanticFieldTestCase(TestCase):
         c.save()
         self.assertEqual(c.make_link(),
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
+                          "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_make_link_text(self):
@@ -196,7 +196,7 @@ class SemanticFieldTestCase(TestCase):
         c.save()
         self.assertEqual(c.make_link("bar"),
                          ("<a class='btn btn-default btn-sm sf-link' "
-                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
+                          "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "bar</a>").format(c.id))
 
     def test_make_link_css_class(self):
@@ -207,7 +207,7 @@ class SemanticFieldTestCase(TestCase):
         c.save()
         self.assertEqual(c.make_link(css_class="bar"),
                          ("<a class='btn btn-default btn-sm sf-link bar' "
-                          "href='/en-us/semantic_fields/semanticfield/{0}/'>"
+                          "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
     def test_breadcrumbs_parent_mixed(self):

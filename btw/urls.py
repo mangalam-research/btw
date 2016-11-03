@@ -19,10 +19,10 @@ urlpatterns = i18n_patterns(
     url(r'^accounts/', include('allauth.urls')),
     url(r'^invitation/', include('invitation.urls')),
     url(r'^full-admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^semantic_fields/', include("semantic_fields.rest_urls")),
 )
 
 urlpatterns += [
+    url(r'^rest/semantic_fields/', include("semantic_fields.rest_urls")),
     url(r'^rest/bibliography/', include("bibliography.rest_urls")),
 ]
 
