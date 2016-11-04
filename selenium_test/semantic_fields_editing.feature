@@ -6,7 +6,6 @@ Background: a user with permission to edit custom semantic fields is on the main
 Given a user with permission to edit custom semantic fields has loaded the main page of the semantic field application
 And the search table is loaded
 
-@dirty
 Scenario: the user can edit a custom field
 When the user searches for "CUSTOM"
 And the user clicks on "CUSTOM (Noun)" in the first result

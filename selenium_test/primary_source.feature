@@ -28,7 +28,6 @@ Scenario: the user sorts the original titles
   When the user clicks on the icon for sorting original titles
   Then the items are sorted by descending original titles.
 
-@dirty
 Scenario: the user can add a primary source
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0
@@ -37,7 +36,6 @@ Scenario: the user can add a primary source
   And row 0 shows there is 1 primary source
   And row 0 shows a primary source in subtable row 0 with reference title of "AAAA" and a genre of "Literary Text"
 
-@dirty
 Scenario: the user can edit a primary source
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0
@@ -51,7 +49,6 @@ Scenario: the user can edit a primary source
   And row 0 shows there is 1 primary source
   And row 0 shows a primary source in subtable row 0 with reference title of "BBBB" and a genre of "Sūtra"
 
-@dirty
 Scenario: the user cannot submit a primary source with duplicate reference title
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0
@@ -79,7 +76,6 @@ Scenario: the user filters the items
   And the user types "Title 1"
   Then there is 1 row
 
-@dirty
 Scenario: the user filters on a reference title
   Given all rows are loaded
   When the user clicks on the button to add a primary source of row 0
@@ -103,7 +99,6 @@ Scenario: the user filters on a reference title
   Then row 1 shows a primary source in subtable row 0 with reference title of "AAAAA" and a genre of "Literary Text"
   And row 1 shows a subtable that has 1 row
 
-@dirty
 Scenario: the user can open and close all rows
   Given all rows are loaded
   When the user clicks on the button to add a primary source of row 0
@@ -119,7 +114,6 @@ Scenario: the user can open and close all rows
   Then row 0 is closed
   Then row 1 is closed
 
-@dirty
 Scenario: the system remembers which rows are opened
   Given all rows are loaded
   When the user clicks on the button to add a primary source of row 0
@@ -130,7 +124,6 @@ Scenario: the system remembers which rows are opened
   When the user selects the menu to show 25 entries
   Then row 0 is open
 
-@dirty
 Scenario: the system remembers which rows are closed
   Given all rows are loaded
   When the user clicks on the button to add a primary source of row 0
@@ -149,7 +142,6 @@ Scenario: the system remembers which rows are closed
   Then row 0 is closed
   And row 1 is closed
 
-@dirty
 Scenario: the user can correct an error in the form
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0
@@ -159,7 +151,6 @@ Scenario: the user can correct an error in the form
   When the user submits the dialog with reference title of "ZZZ" and a genre of "Literary Text"
   Then row 0 shows there is 1 primary source
 
-@dirty
 Scenario: a user getting a search hit on a secondary source will see the associated primary sources
   Given that the items are sorted by ascending creators
   When the user clicks on the button to add a primary source of row 0

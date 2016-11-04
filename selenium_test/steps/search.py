@@ -31,41 +31,41 @@ def step_impl(context, query):
     dt.fill_field("Search", query)
 
 
-@then(r'the search results show (?P<count>one entry|(?:\d+) entries) for '
-      r'"(?P<lemma>.*?)".?')
-def step_impl(context, count, lemma):
+@then(r'the search results show '
+      r'(?P<count>one entry|(?:\d+) (?:or more )?entries)(?: for '
+      r'"(?P<lemma>.*?)")?.?')
+def step_impl(context, count, lemma=None):
+    test = "=="
     if count == "one entry":
         count = 1
     elif count.endswith("entries"):
+        if "or more" in count:
+            test = ">="
         count = int(count.split()[0])
     else:
         raise ValueError("can't parse: " + count)
 
     driver = context.driver
-    hits = driver.execute_script("""
-    var lemma = arguments[0];
-    var table = document.getElementById("search-table");
-    var links = Array.prototype.slice.call(table.getElementsByTagName("a"));
-    return links.filter(function (x) { return x.textContent === lemma; });
-    """, lemma)
-    assert_equal(len(hits), count, "there should be " +
-                 str(count) + " results")
-
-
-@then(r'the search results show (?P<count>one entry|(?:\d+) entries)')
-def step_impl(context, count):
-    if count == "one entry":
-        count = 1
-    elif count.endswith("entries"):
-        count = int(count.split()[0])
+    if lemma is not None:
+        hits = driver.execute_script("""
+        var lemma = arguments[0];
+        var table = document.getElementById("search-table");
+        var links = Array.prototype.slice.call(
+          table.getElementsByTagName("a"));
+        return links.filter(function (x) { return x.textContent === lemma; });
+        """, lemma)
     else:
-        raise ValueError("can't parse: " + count)
+        hits = driver.find_elements_by_css_selector(
+            "#{}>tbody>tr[role='row']".format(context.default_table.cssid))
 
-    driver = context.driver
-    entries = driver.find_elements_by_css_selector(
-        "#{}>tbody>tr[role='row']".format(context.default_table.cssid))
-    assert_equal(len(entries), count, "there should be " +
-                 str(count) + " results")
+    if test == "==":
+        assert_equal(len(hits), count,
+                     "there should be " + str(count) + " results")
+    elif test == ">=":
+        assert_true(len(hits) >= count,
+                    "there should be at least " + str(count) + " results")
+    else:
+        raise ValueError("unexpected test: " + test)
 
 
 @then(r'the search results (?P<show>show|do not show) hit details')

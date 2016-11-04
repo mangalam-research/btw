@@ -131,17 +131,12 @@ def cleanup(context, failed):
 class DeadServer(Exception):
     pass
 
-DIRTY = object()
-CLEAN = object()
-
 class ServerControl(object):
 
     def __init__(self, server, read_fifo, write_fifo):
         self.server = server
         self.write_fifo = write_fifo
         self.read_fifo = read_fifo
-        self.previous_scenario = CLEAN
-        self.previous_feature = None
 
         # Indicates whether we must wait for a start. We must wait
         # when the server has just been started, or when the server
@@ -160,30 +155,17 @@ class ServerControl(object):
             raise ValueError("did not get the 'started' string; got " + read)
         self.must_wait_for_start = False
 
-    def before_scenario(self, feature):
-        # We restart on feature change.
-        if self.previous_feature is not None and \
-           feature is not self.previous_feature:
-            self.restart()
-            self.previous_feature = feature
-            self.previous_scenario = None
-            return True
-
-        # Or if the previous scenario was dirty.
-        self.previous_feature = feature
-        if self.previous_scenario is DIRTY:
-            self.restart()
-            self.previous_scenario = None
-            return True
-
-        return False
+    def before_scenario(self):
+        self.wait_for_start()
+        self.new_test()
 
     def restart(self):
         self.write("restart\n")
         self.must_wait_for_start = True
 
-    def after_scenario(self, cleanliness):
-        self.previous_scenario = cleanliness
+    def new_test(self):
+        self.write("newtest\n")
+        self.read()
 
     def is_alive(self):
         try:
@@ -467,12 +449,6 @@ def before_scenario(context, scenario):
         scenario.skip(reason="Disabled by an active tag")
         return
 
-    # Possibly reset the server between scenarios. We do a reset if
-    # the previous scenario was not clean.
-    if context.server.before_scenario(context.feature):
-        # These documents are not initially present.
-        context.created_documents = {}
-
     driver = context.driver
     driver.set_window_size(context.initial_window_size["width"],
                            context.initial_window_size["height"])
@@ -544,7 +520,7 @@ def before_scenario(context, scenario):
                 server.read()
             else:
                 raise Exception("unknown failure type: " + what)
-        elif tag in ("wip", "dirty") or \
+        elif tag == "wip" or \
                 tag.startswith("not.with_") or \
                 tag.startswith("use.with_") or \
                 tag.startswith("only.with_") or \
@@ -560,7 +536,7 @@ def before_scenario(context, scenario):
 
     # This will block until the server is started. Or will continue
     # immediately if a restart had not occurred.
-    context.server.wait_for_start()
+    context.server.before_scenario()
 
     if caches:
         server = context.server
@@ -631,8 +607,6 @@ def after_scenario(context, scenario):
 
     context.ajax_timeout_test = False
     context.server.patch_reset()
-    dirtiness = DIRTY if "dirty" in scenario.effective_tags else CLEAN
-    context.server.after_scenario(dirtiness)
     remove_server_limit()
 
     check_logs(context)

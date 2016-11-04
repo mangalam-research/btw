@@ -25,7 +25,7 @@ from core.tests.common_zotero_patch import patch as zotero_patch
 from lexicography.tests.data import invalid_sf_cases, valid_sf_cases
 from lexicography.xml import tei_namespace, btw_namespace, \
     default_namespace_mapping, XMLTree
-from lexicography.models import Chunk
+from lexicography.models import Chunk, Entry, ChangeRecord
 from lib import util
 from lib.testutil import unmonkeypatch_databases
 from bibliography.models import Item, PrimarySource
@@ -91,6 +91,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
 
             admin = User.objects.create_superuser(
                 username='admin', email="admin@foo.foo", password="admin")
+            self.admin = admin
 
             foo = User.objects.create_user(username="foo",
                                            first_name="Foo",
@@ -145,10 +146,6 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             ps.save()
             fetch_items()
 
-            # Make a custom field so that we can test searches for it
-            first = SemanticField.objects.first()
-            first.make_child("CUSTOM", "n")
-
             from lib import cmsutil
             cmsutil.refresh_cms_apps()
             from cms.api import create_page, add_plugin
@@ -176,6 +173,10 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                             "en-us", apphook='SemanticFieldsApp')
             self.semantic_fields_page.toggle_in_navigation()
             self.semantic_fields_page.publish('en-us')
+
+            self.snapshot_entries()
+            self.initial_primary_sources = \
+                list(PrimarySource.objects.values_list("pk", flat=True))
 
     def __init__(self, control_read, control_write, patcher, *args, **kwargs):
         self.__control_read = control_read
@@ -228,6 +229,10 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                 s.save()
                 with open(self.__control_write, 'w') as out:
                     out.write(s.session_key + "\n")
+            elif args[0] == "newtest":
+                self.new_test()
+                with open(self.__control_write, 'w') as out:
+                    out.write("\n")
             elif args[0] == "create":
                 what = " ".join(args[1:])
                 self.create_document(what)
@@ -258,6 +263,48 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                                       args=(cr.entry.id, )) + "\n")
             else:
                 print "Unknown command: ", command
+
+    def new_test(self):
+        # We want to reset the state of the database in a way more
+        # adapted to our case than what Django does by default.
+
+        # We delete all custom semantic fields.
+        SemanticField.objects.filter(catid__isnull=True).delete()
+
+        # Make a custom field so that we can test searches for it
+        first = SemanticField.objects.first()
+        first.make_child("CUSTOM", "n")
+
+        # Delete all created primary sources.
+        PrimarySource.objects.\
+            exclude(id__in=self.initial_primary_sources).delete()
+
+        self.revert_entries_to_snapshot()
+
+    def snapshot_entries(self):
+        self.entry_snapshot = \
+            {x["id"]: x for x in Entry.objects.all().values('id', 'latest')}
+
+    def revert_entries_to_snapshot(self):
+        for entry in Entry.objects.all():
+            if entry.id in self.entry_snapshot:
+                snapshot = self.entry_snapshot[entry.id]
+                if snapshot["latest"] != entry.latest.id:
+                    cr = ChangeRecord.objects.get(id=snapshot["latest"])
+                    entry.update(
+                        self.admin,
+                        "",
+                        cr.c_hash,
+                        cr.lemma,
+                        ChangeRecord.REVERT,
+                        ChangeRecord.AUTOMATIC)
+            else:
+                # The entry was created during the previous test
+                # add it to the snapshot.
+                self.entry_snapshot[entry.id] = {
+                    "id": entry.id,
+                    "latest": entry.latest.id,
+                }
 
     def create_document(self, what):
         add_raw_url = reverse("full-admin:lexicography_entry_rawnew")

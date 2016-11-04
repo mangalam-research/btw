@@ -973,13 +973,69 @@ it there. Run make again after you made modifications. The only
 processing done on nginx's file is to change all instances of
 ``@PWD@`` with the top of the code tree.
 
-The Django server started by `start_server` is based on
-`LiveServerTestCase` and consequently organises its run time
-environment in the same way. The test suite sends a signal to the
-server so that with each new feature, the server resets itself. This
-means that database changes do not propagate from feature to
-feature. This mirrors the way the Django tests normally run. A test
-will not see the database changes performed by another test.
+The Django Server
+-----------------
+
+The Django server started by ``start_server`` is based on
+``LiveServerTestCase`` and consequently organises its run time
+environment in the same way.
+
+Originally, we had the test suite send a signal to the server so that
+with each test, the server would reset itself. The "reset" operation
+meant that the ``LiveServerTestCase`` instance ended, which caused the
+creation of a new instance. This entailed letting Django's test
+framework perform the cleanup and setup operations on the
+database. This way, a test would not see the database changes
+performed by another test. The cleanup performed by Django's test
+framework was extremely slow, however. So we modified the suite so
+that some tests would be deemed "dirty" and would require a
+reset. This helped speed up the suite quite a bit.
+
+However, we eventually ran into more problems. Once we started using
+``transaction.on_commit``, we found that Celery tasks launched at
+commit time would not be able to find the ``Chunk`` objects they were
+supposed to work on, because they had been deleted by the test
+cleanup!! This is something which **by design** cannot happen in
+production because ``Chunk`` objects are never deleted. (They may be
+hidden, but not deleted.) All solutions which involved allowing the
+suite to perform Django's generic cleanup were problematic:
+
+* The Celery tasks could have failed silently. However, since in
+  production a failure would be indicative of a fatal structural
+  problem, we do not want to mask such problems but instead have them
+  cause an alarm. (The project sends an email to the administrators.)
+  Moreover, even in testing, ignoring the failure could mean ignoring
+  a real problem (like a race condition).
+
+* The Celery tasks could have run eagerly. This would actually mask
+  problems that occur due to race conditions.
+
+* The suite could have been modified to try to allow the Celery tasks
+  to complete before deleting the data. This would have made the suite
+  slower across the board and would have complicated the logic of the
+  tests or the tasks quite a bit. And this would be only to take care
+  of a problem that occurs in testing.
+
+The solution we settled on is to turn off Django's generic cleanup by
+running all the Behave tests inside of a single ``LiveServerTestCase``
+instance. The "reset" message is no longer used but instead a
+"newtest" message is sent from the Behave runner to the live
+server. This causes the live server to run ad-hoc cleanup code. In
+this way ``Chunk`` objects are never deleted, which mirrors exactly
+what happens in production. The cleanup code currently performs a few
+changes, like deleting some bibliographical records, some custom
+semantic fields and reverting articles to the version they were when
+the suite started. Beyond this, tests should try to depend as little
+as possible on a specific state. They should as much as possible
+figure what state existed when they started and then check how the
+state was changed. (e.g. If I test the creation of a new X object in
+the database, cound the number of X objects before the test, and check
+that there are X + 1 objects after the operation that creates a new
+object.)
+
+A nice bonus is that this also makes the suite faster since it does
+not perform the database churn that Django's generic database cleanup
+and setup does.
 
 Running the Suite
 -----------------

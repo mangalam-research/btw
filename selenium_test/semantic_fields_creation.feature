@@ -27,7 +27,6 @@ When the user clicks on the "Create Child" button in the first detail pane
 Then there is a form for creating a custom field in the first detail pane
 And the "Create" button does not show a spinner
 
-@dirty
 Scenario: the user can create a custom field as a child of another field
 When the user searches for "clarity"
 Then the first result shows: The mind > Mental capacity > Understanding > Intelligence, cleverness > Sharpness, shrewdness, insight :: clarity (Noun)
@@ -63,7 +62,6 @@ When the user clicks the "Create" button in the first form
 Then the "Create" button shows a spinner
 And the first form's heading field has an error
 
-@dirty
 Scenario: the user can create a custom field at the root
 When the user clicks on the "Create Field" button under the table
 Then there is a form for creating a custom field under the table
@@ -99,7 +97,6 @@ And there is a form for creating a custom field under the table
 And the "Create Field" button does not show a spinner
 And the "Create Field" button is not visible
 
-@dirty
 Scenario: the user can create a field related by pos for a custom field
 When the user searches for "CUSTOM"
 And the user clicks on "CUSTOM (Noun)" in the first result
