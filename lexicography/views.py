@@ -647,7 +647,7 @@ def get_etag(request, entry_id, handle):
 def save_login_required(view):
     @wraps(view)
     def wrapper(request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return view(request, *args, **kwargs)
 
         messages = [{'type': 'save_transient_error',

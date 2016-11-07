@@ -79,8 +79,8 @@ class SemanticField(models.Model):
     objects = SemanticFieldManager()
     catid = models.IntegerField(unique=True, null=True)
     _path = models.TextField(unique=True, name="path", db_column="path")
-    parent = models.ForeignKey(
-        "self", related_name="children", null=True, blank=True)
+    parent = models.ForeignKey("self", on_delete=models.CASCADE,
+                               related_name="children", null=True, blank=True)
     heading = models.TextField()
 
     def _branch_assertions(self):
@@ -464,13 +464,14 @@ class Lexeme(models.Model):
     htid = models.IntegerField(primary_key=True)
     # This field is our real foreign key. We convert the HTE
     # field catid to it.
-    semantic_field = models.ForeignKey(SemanticField, related_name="lexemes")
+    semantic_field = models.ForeignKey(SemanticField, on_delete=models.CASCADE,
+                                       related_name="lexemes")
     word = models.CharField(max_length=60)
     fulldate = models.CharField(max_length=90)
     catorder = models.IntegerField()
 
 class SearchWord(models.Model):
     sid = models.IntegerField(primary_key=True)
-    htid = models.ForeignKey(Lexeme)
+    htid = models.ForeignKey(Lexeme, on_delete=models.CASCADE)
     searchword = models.CharField(max_length=60, db_index=True)
     type = models.CharField(max_length=3)

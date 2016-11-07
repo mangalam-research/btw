@@ -58,7 +58,8 @@ class ZoteroAPIKeyField(models.CharField):
 
 
 class ZoteroUser(models.Model):
-    btw_user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    btw_user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                    on_delete=models.CASCADE)
     uid = ZoteroUIDField()
     api_key = ZoteroAPIKeyField()
 
@@ -318,7 +319,8 @@ class PrimarySource(models.Model):
     genre = models.CharField(max_length=2, choices=GENRE_CHOICES, default=None)
     """The genre to which this primary source belongs."""
 
-    item = models.ForeignKey(Item, related_name="primary_sources")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE,
+                             related_name="primary_sources")
     """The bibliographical item to which it corresponds."""
 
     @property

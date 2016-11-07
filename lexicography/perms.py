@@ -45,7 +45,7 @@ def create_perms(apps=None):
         ["delete_entrylock", "lexicography", "entrylock"],
     ]]
     scribe = Group.objects.create(name="scribe")
-    scribe.permissions = scribe_perms
+    scribe.permissions.set(scribe_perms)
     scribe.save()
 
     editor_perms = [resolver.resolve(x) for x in [
@@ -59,5 +59,5 @@ def create_perms(apps=None):
         ["delete_entrylock", "lexicography", "entrylock"],
     ]]
     editor = Group.objects.create(name="editor")
-    editor.permissions = editor_perms
+    editor.permissions.set(editor_perms)
     editor.save()

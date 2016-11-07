@@ -73,8 +73,11 @@ class Entry(models.Model):
     lemma = models.CharField(max_length=1024)
     # This field must be allowed to be null because there is a
     # circular reference between ``Entry`` and ``ChangeRecord``.
-    latest = models.ForeignKey('ChangeRecord', related_name='+', null=True)
-    latest_published = models.ForeignKey('ChangeRecord', related_name="+",
+    latest = models.ForeignKey('ChangeRecord', on_delete=models.CASCADE,
+                               related_name='+', null=True)
+    latest_published = models.ForeignKey('ChangeRecord',
+                                         on_delete=models.CASCADE,
+                                         related_name="+",
                                          null=True)
     deleted = models.BooleanField(default=False, db_index=True)
 
@@ -338,7 +341,7 @@ class ChangeRecord(models.Model):
         (RECOVERY, "Recovery")
     )
 
-    entry = models.ForeignKey(Entry)
+    entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
     # Yep, arbitrarily limited to 1K. CharField() needs a limit. We
     # could use TextField() but the flexibility there comes at a cost.
     lemma = models.CharField(max_length=1024)
@@ -781,7 +784,7 @@ class PublicationChange(models.Model):
         (UNPUBLISH, "Unpublish")
     )
 
-    changerecord = models.ForeignKey(ChangeRecord)
+    changerecord = models.ForeignKey(ChangeRecord, on_delete=models.CASCADE)
     ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
@@ -789,7 +792,7 @@ class PublicationChange(models.Model):
 
 
 class ChunkMetadata(models.Model):
-    chunk = models.OneToOneField(Chunk)
+    chunk = models.OneToOneField(Chunk, on_delete=models.CASCADE)
     xml_hash = models.CharField(
         max_length=40,
         help_text="This is the hash of the last XML we processed for "
@@ -805,7 +808,7 @@ class DeletionChange(models.Model):
         (UNDELETE, "Undelete")
     )
 
-    entry = models.ForeignKey(Entry)
+    entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
     ctype = models.CharField(max_length=1, choices=TYPE_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.PROTECT)
@@ -825,9 +828,10 @@ class EntryLock(models.Model):
         verbose_name_plural = "Entry locks"
         unique_together = (("entry"), )
 
-    entry = models.ForeignKey(Entry)
+    entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
     # The owner is who benefits from this lock.
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE)
     datetime = models.DateTimeField()
 
     @property
@@ -854,4 +858,4 @@ class Handle(models.Model):
 
     session = models.CharField(max_length=100)
     handle = models.IntegerField()
-    entry = models.ForeignKey(Entry, null=True)
+    entry = models.ForeignKey(Entry, on_delete=models.CASCADE, null=True)

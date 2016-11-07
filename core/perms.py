@@ -44,7 +44,7 @@ def create_perms(apps=None):
     perms.append(resolver.resolve(("use_structure", "cms", "placeholder")))
 
     pg = PageUserGroup.objects.create(name="CMS scribe", created_by=fake)
-    pg.permissions = perms
+    pg.permissions.set(perms)
     pg.save()
 
     # We create a GlobalPagePermission for our new group with default

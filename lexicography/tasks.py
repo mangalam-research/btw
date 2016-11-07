@@ -86,7 +86,7 @@ def prepare_xml(pk):
                              "already set and equal to the new hash; this "
                              "should not happen!", path)
 
-            meta.semantic_fields = sf_records
+            meta.semantic_fields.set(sf_records)
             # Technically, if it was created then xml_hash is already
             # set, but putting this in an conditional block does not
             # provide for better performance.

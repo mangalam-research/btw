@@ -12,8 +12,8 @@ from .views import ping
 admin.autodiscover()
 
 urlpatterns = i18n_patterns(
-    url(r'^admin/', include(limited_admin_site.urls)),
-    url(r'^full-admin/', include(admin.site.urls)),
+    url(r'^admin/', limited_admin_site.urls),
+    url(r'^full-admin/', admin.site.urls),
     url(r'^login/$', login, name="login"),
     url(r'^logout/$', logout, name="logout"),
     url(r'^accounts/', include('allauth.urls')),
