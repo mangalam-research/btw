@@ -564,6 +564,13 @@ def step_impl(context):
     sfs.click()
 
 
+@when(ur"the user clicks in the first semantic field list")
+def step_impl(context):
+    sfs = context.util.find_element(
+        (By.CSS_SELECTOR, r".btw\:semantic-fields"))
+    sfs.click()
+
+
 @when(ur"the user clicks at the start of the second semantic field")
 def step_impl(context):
     util = context.util

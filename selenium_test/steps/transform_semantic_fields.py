@@ -27,10 +27,16 @@ def step_impl(context, fields):
     result = Condition(context.util, check).wait()
     assert_equal(result.payload, fields)
 
+
+@given("the document does not contain any semantic fields")
+def step_impl(context):
+    driver = context.driver
+    assert_equal(len(driver.find_elements_by_class_name(r"btw\:sf")), 0)
+
 @when("the user brings up the semantic field editing dialog")
 def step_impl(context):
     context.execute_steps(u"""
-    When the user clicks in the first semantic field
+    When the user clicks in the first semantic field list
     And the user brings up the context menu
     And the user clicks the context menu option "Edit semantic fields"
     Then there is a modal dialog titled "Edit Semantic Fields" visible

@@ -429,10 +429,6 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
     var sfsContainer = editor.toDataNode(guiSfsContainer);
     var sfs = domutil.dataFindAll(sfsContainer, "btw:sf");
 
-    if (sfs.length === 0) {
-      throw new Error("unable to acquire btw:sf");
-    }
-
     var paths = sfs.map(function map(sf) {
       return sf.textContent;
     });
