@@ -257,7 +257,6 @@ Scenario: the user can hide a semantic field popover by clicking outside the pop
   When the user clicks outside the semantic field popover
   Then a semantic field popover is not visible
 
-@wip
 Scenario: specified semantic fields are properly shown
   Given the user has logged in
   And a document with a specified semantic field
