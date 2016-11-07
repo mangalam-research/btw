@@ -482,6 +482,7 @@ Generally:
     $ pip install -r requirements.txt
     $ npm install
     $ make
+    $ ./manate.py btwredis start
     $ ./manage.py migrate
 
     # This is the perfect time to perform a full vacuum on the database.
@@ -531,7 +532,9 @@ See below for specific upgrade cases.
 - Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
 ``loadindex``, ``load``.
 
-- Force django-polymorphic to be at 0.8.1.
+- Force django-polymorphic to be at 1.0.2.
+
+- Force django to be at 1.10.x.
 
 - Run ``pip uninstall django-treebeard`` and then ``pip install git+https://github.com/tabo/django-treebeard#79bdb7c``.
 
