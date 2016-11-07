@@ -12,7 +12,8 @@ from django.utils import translation
 from django.db import connection
 import lxml.etree
 
-from ..models import Entry, ChangeRecord, PublicationChange, Chunk
+from ..models import Entry, ChangeRecord, PublicationChange, Chunk, \
+    ChunkMetadata
 from .. import locking, xml, models
 from .test_xml import as_editable
 import lib.util as util
@@ -681,7 +682,11 @@ class ChunkManagerSimpleTestCase(util.DisableMigrationsMixin, TestCase):
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
         self.make_reachable(c)
-        c.chunkmetadata.delete()
+        # If it does not have metadata yet, that's fine.
+        try:
+            c.chunkmetadata.delete()
+        except ChunkMetadata.DoesNotExist:
+            pass
 
         # We have to delete the collection because merely saving the
         # chunk causes it to be synced, but this is not what we are
@@ -718,7 +723,12 @@ class ChunkManagerSimpleTestCase(util.DisableMigrationsMixin, TestCase):
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
         entry = self.make_reachable(c)
-        c.chunkmetadata.delete()
+
+        # If it does not have metadata yet, that's fine.
+        try:
+            c.chunkmetadata.delete()
+        except ChunkMetadata.DoesNotExist:
+            pass
 
         # We have to delete the collection because merely saving the
         # chunk causes it to be synced, but this is not what we are
@@ -1302,6 +1312,29 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         """
         self.check_abnormal_remove_data_from_exist_and_cache(
             "_delete_cached_data")
+
+# Some test depend on being able to see transactions. So we split them
+# from the rest.
+@override_settings(CELERY_ALWAYS_EAGER=True,
+                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
+                   BROKER_BACKEND='memory')
+class ChunkTransactionTestCase(util.DisableMigrationsTransactionMixin,
+                               TransactionTestCase):
+    chunk_collection_path = get_collection_path("chunks")
+    display_collection_path = get_collection_path("display")
+
+    prepare_kinds = Chunk.key_kinds
+
+    def setUp(self):
+        self.foo = foo = user_model.objects.create(
+            username="foo", password="foo")
+        scribe = Group.objects.get(name='scribe')
+        foo.groups.add(scribe)
+        cache.clear()
+        db = ExistDB()
+        db.removeCollection(self.chunk_collection_path, True)
+        db.removeCollection(self.display_collection_path, True)
+        return super(ChunkTransactionTestCase, self).setUp()
 
     def test_when_chunk_becomes_hidden_cached_data_is_cleared(self):
         """

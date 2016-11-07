@@ -767,6 +767,22 @@ class Chunk(models.Model):
         return ret
 
     def visibility_update(self):
+        """
+        Perform updates that may be needed by a change in visibility at
+        the next commit. Or if we are not in a transaction,
+        immediately.
+        """
+        transaction.on_commit(self._visibility_update)
+
+    def _visibility_update(self):
+        """
+        Perform updates that may be needed by a change in visibility
+        immedately. Unless you are absolutely positive you must do it
+        immediately, you should be using :meth:`visibility_update`,
+        which issues performs the updates on the next commit. Not
+        doing so may result in a Celery worker failing because the
+        Chunk is not accessible yet.
+        """
         if self.hidden:
             self._delete_cached_data()
         else:
