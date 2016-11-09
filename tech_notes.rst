@@ -540,6 +540,9 @@ See below for specific upgrade cases.
 
 - Run ``./manage.py cms fix-tree``
 
+- Add the ``can_add_semantic_fields`` and
+  ``can_change_semantic_fields`` to all users that need it.
+
 1.4.0 to 1.4.1
 ~~~~~~~~~~~~~~
 
