@@ -3,7 +3,7 @@
  * @desc A view for a single navigator.
  * @author Louis-Dominique Dubeau
  */
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
   var Mn = require("marionette");
   var velocity = require("velocity");
@@ -29,14 +29,16 @@ define(/** @lends auto */ function factory(require, exports, _module) {
 
   function slideRightIn(el) {
     return velocity(el,
-                    { opacity: [1, 0], translateX: [0, "100%"],
+                    { opacity: [1, 0],
+                      translateX: [0, "100%"],
                       translateZ: 0 },
                     { duration: 500 });
   }
 
   function slideLeftIn(el) {
     return velocity(el,
-                    { opacity: [1, 0], translateX: [0, "-100%"],
+                    { opacity: [1, 0],
+                      translateX: [0, "-100%"],
                       translateZ: 0 },
                     { duration: 500 });
   }

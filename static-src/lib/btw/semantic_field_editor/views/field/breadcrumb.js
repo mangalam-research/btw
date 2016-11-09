@@ -1,7 +1,6 @@
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
   var Mn = require("marionette");
-  var Bb = require("backbone");
   var Handlebars = require("handlebars");
   var _ = require("lodash");
   var tools = require("../../tools");

@@ -1,4 +1,5 @@
-define(function jqueryGlue(require, exports, module) {
+define(function jqueryGlue(require) {
+  "use strict";
   var $ = require("jquery");
 
   $.noConflict();

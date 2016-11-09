@@ -6,7 +6,6 @@
 define(/** @lends auto */ function factory(require, exports, _module) {
   "use strict";
   var $ = require("jquery");
-  var Bb = require("backbone");
   var Radio = require("backbone.radio");
 
   /**

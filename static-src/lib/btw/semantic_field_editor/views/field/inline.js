@@ -3,7 +3,7 @@
  * @desc An inline view for esmantic fields.
  * @author Louis-Dominique Dubeau
  */
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
   var $ = require("jquery");
   var _ = require("lodash");
@@ -53,7 +53,8 @@ define(/** @lends auto */ function factory(require, exports, _module) {
         var field = alreadyResolved[key];
 
         if (field.tree.length === 0) {
-          continue; // Nothing to show!
+          // Nothing to show!
+          continue; // eslint-disable-line no-continue
         }
 
         // If there is only one element at the top of the tree, and this element
@@ -66,7 +67,7 @@ define(/** @lends auto */ function factory(require, exports, _module) {
           link.textContent = node.text;
           link.href = node.href;
           treeDiv.appendChild(link);
-          continue;
+          continue; // eslint-disable-line no-continue
         }
 
         // Otherwise: build a tree.

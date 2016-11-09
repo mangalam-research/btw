@@ -3,7 +3,7 @@
  * @desc Collection of chosen fields.
  * @author Louis-Dominique Dubeau
  */
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
   var Bb = require("backbone");
   var Field = require("../models/field");

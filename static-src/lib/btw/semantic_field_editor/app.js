@@ -4,9 +4,8 @@
  * @author Louis-Dominique Dubeau
  */
 define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
-  require, exports, _module) {
+  require, _exports, _module) {
   "use strict";
-  var $ = require("jquery");
   var Bb = require("backbone");
   var Mn = require("marionette");
   var Radio = require("backbone.radio");
@@ -28,7 +27,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
     }
 
     var result = ajax(options);
-    result.promise.asCallback(function () {});
+    result.promise.asCallback(function callback() {});
 
     return result.xhr;
   };
@@ -112,7 +111,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       this.navigatorsView.openUrl(url);
     },
 
-    getChosenFields: function () {
+    getChosenFields: function getChosenFields() {
       return this._chosenFieldCollection.toArray();
     },
 

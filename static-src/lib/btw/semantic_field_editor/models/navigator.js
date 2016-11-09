@@ -3,7 +3,7 @@
  * @desc A model for navigators.
  * @author Louis-Dominique Dubeau
  */
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
 
   var Bb = require("backbone");

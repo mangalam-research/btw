@@ -3,7 +3,7 @@
  * @desc Semantic field combinator.
  * @author Louis-Dominique Dubeau
  */
-define(/** @lends auto */ function factory(require, exports, _module) {
+define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
   var Mn = require("marionette");
   var Handlebars = require("handlebars");
