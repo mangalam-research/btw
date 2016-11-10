@@ -85,14 +85,19 @@ Validator.prototype.validateDocument = function () {
     for (i = 0; (sf = sfs[i]); ++i) {
         var data_sf = $.data(sf, "wed_mirror_node");
         var text = data_sf.textContent;
-        if (!/^\s*\d{2}(?:\.\d{2})*(?:\s*\|\s*\d{2}(?:\.\d{2})*)?(?:aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)\s*$/.test(text)) {
-            ret.push({
-                error: new ValidationError(
-                    "semantic field is not in a recognized format"),
-                node: data_sf.parentNode,
-                index: _indexOf.call(data_sf.parentNode.childNodes,
-                                     data_sf)
-            });
+        var parts = text.split("@");
+
+        for (var partIx = 0; partIx < parts.length; ++partIx) {
+            var part = parts[partIx];
+            if (!/^\s*\d{2}(?:\.\d{2})*(?:\s*\|\s*\d{2}(?:\.\d{2})*)?(?:aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)\s*$/.test(part)) {
+                ret.push({
+                    error: new ValidationError(
+                        "semantic field is not in a recognized format"),
+                    node: data_sf.parentNode,
+                    index: _indexOf.call(data_sf.parentNode.childNodes,
+                                         data_sf)
+                });
+            }
         }
     }
 

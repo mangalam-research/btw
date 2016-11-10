@@ -39,3 +39,8 @@ Scenario: a document without an author results in an error
 Given a document with a missing author
 And the document is completely validated
 Then there is an error reporting a missing author
+
+Scenario: a specified semantic field does not result in an error
+Given a document with a specified semantic field
+And the document is completely validated
+Then there are no errors reporting a bad semantic field

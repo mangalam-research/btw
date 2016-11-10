@@ -15,6 +15,23 @@
   <iso:title>Validation Schema for btw-schema-0.10 files.</iso:title>
   <iso:ns prefix="btw" uri="http://mangalamresearch.org/ns/btw-storage"/>
   <iso:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
+  <iso:ns prefix="local" uri="local"/>
+  <!-- We use replace(...) to convert the \s patterns to something
+       equivalent to what \s matches in JavaScript regular expressions.
+       \f (#x000c) and \v (#x000b) are missing as they are not valid
+       characters in XML. -->
+  <xsl:variable name="sf-regexp" select="replace('^\s*\d{2}(\.\d{2})*(\s*\|\s*\d{2}(\.\d{2})*)?(aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)\s*$', '\\s', '[ \\n\\r\\t&#x00a0;&#x1680;&#x180e;&#x2000;&#x2001;&#x2002;&#x2003;&#x2004;&#x2005;&#x2006;&#x2007;&#x2008;&#x2009;&#x200a;&#x2028;&#x2029;&#x202f;&#x205f;&#x3000;]')"/>
+  <xsl:function name="local:check-sf" as="xs:boolean">
+    <xsl:param name="sf" as="xs:string *"/>
+    <xsl:variable name="bad-tokens" as="xs:string *">
+      <xsl:for-each select="tokenize($sf, '@')">
+        <xsl:if test="not(matches(., $sf-regexp))">
+          <xsl:sequence select="."/>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:value-of select="not(empty($sf)) and empty($bad-tokens)"/>
+  </xsl:function>
   <iso:pattern>
     <iso:rule context="btw:sense">
       <iso:assert test="count(.//btw:sf[not(ancestor::btw:contrastive-section | ancestor::btw:english-rendition)])">
@@ -27,11 +44,7 @@
       </iso:assert>
     </iso:rule>
     <iso:rule context="btw:sf">
-      <!-- We use replace(...) to convert the \s patterns to something
-           equivalent to what \s matches in JavaScript regular expressions. -->
-           \f (#x000c) and \v (#x000b) are missing as they are not valid
-           characters in XML. -->
-      <iso:assert test="matches(text(), replace('^\s*\d{2}(\.\d{2})*(\s*\|\s*\d{2}(\.\d{2})*)?(aj|av|cj|in|n|p|ph|v|vi|vm|vp|vr|vt)\s*$', '\\s', '[ \\n\\r\\t&#x00a0;&#x1680;&#x180e;&#x2000;&#x2001;&#x2002;&#x2003;&#x2004;&#x2005;&#x2006;&#x2007;&#x2008;&#x2009;&#x200a;&#x2028;&#x2029;&#x202f;&#x205f;&#x3000;]'))">
+      <iso:assert test="local:check-sf(text())">
 	Semantic field in an incorrect format.
       </iso:assert>
     </iso:rule>

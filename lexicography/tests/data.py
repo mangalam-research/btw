@@ -27,4 +27,5 @@ invalid_sf_cases = [
 
 valid_sf_cases = [
     u"\u00a0 01.02n",  # Leading non-breakable space
+    u"01.02n@01.03n",  # Specified semantic field
 ]

@@ -1,5 +1,5 @@
 # pylint: disable=E0611
-from nose.tools import assert_equal, assert_true
+from nose.tools import assert_equal, assert_true, assert_false
 
 from lexicography.tests.data import invalid_sf_cases
 
@@ -50,7 +50,8 @@ def step_impl(context, label):
     return false;
     """, label))
 
-def find_error(context, expected_error_text, expected_tag, child=True):
+def check_error(context, expected_error_text, expected_tag=None, child=True,
+                existing=True):
     """
     Generic function for finding errors.
 
@@ -67,17 +68,24 @@ def find_error(context, expected_error_text, expected_tag, child=True):
     """
     driver = context.driver
 
-    assert_true(driver.execute_script("""
+    test = assert_true if existing else assert_false
+
+    test(driver.execute_script("""
     var expected_error_text = arguments[0];
     var expected_tag = arguments[1];
     var child = arguments[2];
     var errors = wed_editor._validation_errors;
     for (var i = 0, error; (error = errors[i]); ++i) {
         if (error.error.toString() === expected_error_text) {
+            if (!expected_tag) {
+                return true;
+            }
+
             var node = child ? error.node.childNodes[error.index]: error.node;
             var gui_node = jQuery.data(node, "wed_mirror_node");
-            if (gui_node.classList.contains(expected_tag))
+            if (gui_node.classList.contains(expected_tag)) {
                 return true;
+            }
         }
     }
     return false;
@@ -87,26 +95,32 @@ def find_error(context, expected_error_text, expected_tag, child=True):
 @then(r'there is an error reporting that a cognate is without semantic '
       r'fields')
 def step_impl(context):
-    find_error(context, "cognate without semantic fields", "btw:cognate")
+    check_error(context, "cognate without semantic fields", "btw:cognate")
 
 
 @then(r'there are errors reporting the bad semantic fields')
 def step_impl(context):
-    find_error(
+    check_error(
         context, "semantic field is not in a recognized format", "btw:sf")
 
 
 @then(r'there is an error reporting an empty surname')
 def step_impl(context):
-    find_error(context, "surname cannot be empty", "surname", False)
+    check_error(context, "surname cannot be empty", "surname", False)
 
 
 @then(r'there is an error reporting a missing editor')
 def step_impl(context):
-    find_error(context, "there must be at least one editor",
-               "btw:credits", False)
+    check_error(context, "there must be at least one editor",
+                "btw:credits", False)
 
 @then(r'there is an error reporting a missing author')
 def step_impl(context):
-    find_error(context, "there must be at least one author",
-               "btw:credits", False)
+    check_error(context, "there must be at least one author",
+                "btw:credits", False)
+
+@then(r'there are no errors reporting a bad semantic field')
+def step_impl(context):
+    check_error(
+        context, "semantic field is not in a recognized format",
+        existing=False)
