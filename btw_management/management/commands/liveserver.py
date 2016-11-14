@@ -272,7 +272,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
         SemanticField.objects.filter(catid__isnull=True).delete()
 
         # Make a custom field so that we can test searches for it
-        first = SemanticField.objects.first()
+        first = SemanticField.objects.get(path="01n")
         first.make_child("CUSTOM", "n")
 
         # Delete all created primary sources.

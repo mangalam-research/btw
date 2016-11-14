@@ -69,6 +69,9 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       scope: function scope() {
         return this.searchParams.scope;
       },
+      root: function root() {
+        return this.searchParams.root;
+      },
       aspect: function aspect() {
         return this.searchParams.aspect;
       },
@@ -229,16 +232,20 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       scope: "[name=scope]",
       scopeHelpLabel: "i.scope-help",
       scopeHelp: "p.scope-help",
+      root: "[name=root]",
+      rootHelpLabel: "i.root-help",
+      rootHelp: "p.root-help",
     },
 
     triggers: {
       "input @ui.search": "change",
       "change @ui.aspect": "change",
       "change @ui.scope": "change",
+      "change @ui.root": "change",
     },
 
     serializeData: function serializeData() {
-      var fields = ["search", "aspect", "scope"];
+      var fields = ["search", "aspect", "scope", "root"];
       var ret = {};
       for (var i = 0; i < fields.length; ++i) {
         var field = fields[i];
@@ -248,7 +255,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
     },
 
     onRender: function onRender() {
-      var names = ["searchHelp", "aspectHelp", "scopeHelp"];
+      var names = ["searchHelp", "aspectHelp", "scopeHelp", "rootHelp"];
       for (var i = 0; i < names.length; ++i) {
         var name = names[i];
         makeHelpPopover(this.ui[name + "Label"], this.ui[name][0].innerHTML);

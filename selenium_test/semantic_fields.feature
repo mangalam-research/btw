@@ -16,6 +16,10 @@ When the user closes the open popover
 Then no popovers are visible
 When the user clicks on the help for the scope combo box
 Then the help for the scope combo box is visible
+When the user closes the open popover
+Then no popovers are visible
+When the user clicks on the help for the root combo box
+Then the help for the root combo box is visible
 
 Scenario: the user can search
 When the user searches for "clarity"
@@ -42,6 +46,14 @@ Then there are no results
 When the user changes the search to search for BTW fields
 Then there is one result
 When the user changes the search to search for all fields
+Then there is one result
+
+Scenario: the user can search in specific roots
+When the user searches for "CUSTOM"
+Then there is one result
+When the user changes the search to search for fields under Society (03)
+Then there are no results
+When the user changes the search to search for fields under all roots
 Then there is one result
 
 Scenario: the user can open field details

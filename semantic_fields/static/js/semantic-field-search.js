@@ -29,22 +29,29 @@ define(function factory(require) {
     var displayers = new Displayers(displayDiv);
 
     var template = "\
- <i class='fa fa-question-circle text-info'></i> <label>in \
+ <i class='fa fa-question-circle text-info search-help'></i> <label>in \
 <select class='form-control input-sm' name='aspect'>\
 <option value='sf'>semantic field names</option>\
 <option value='lexemes'>lexemes</option>\
 </select></label>\
- <i class='fa fa-question-circle text-info'></i> <label>among \
+ <i class='fa fa-question-circle text-info aspect-help'></i> <label>among \
 <select class='form-control input-sm' name='scope'>\
 <option value='all'>all fields</option>\
 <option value='hte'>HTE fields</option>\
 <option value='btw'>custom BTW fields</option>\
 </select></label>\
- <i class='fa fa-question-circle text-info'></i>\
+ <i class='fa fa-question-circle text-info scope-help'></i> <label>under \
+<select class='form-control input-sm' name='root'>\
+<option value='all'>all fields</option>\
+<option value='01'>The world (01)</option>\
+<option value='02'>The mind (02)</option>\
+<option value='03'>Society (03)</option>\
+</select></label>\
+ <i class='fa fa-question-circle text-info root-help'></i>\
 ";
 
-    var searchAspect = null;
-    var searchScope = null;
+    var parameterNames = ["aspect", "scope", "root"];
+    var guiElements = Object.create(null);
 
     function makeHelpPopover(el, _class) {
       $(el).popover({
@@ -66,49 +73,58 @@ define(function factory(require) {
       state = {
         aspect: "sf",
         scope: "all",
+        root: "all",
       };
     }
 
     function guiFromState() {
-      var aspect = state.aspect;
-      if (searchAspect && aspect) {
-        searchAspect.value = aspect;
-      }
-
-      var scope = state.scope;
-      if (searchScope && scope) {
-        searchScope.value = scope;
+      for (var nameIx = 0; nameIx < parameterNames.length; ++nameIx) {
+        var name = parameterNames[nameIx];
+        var stateValue = state[name];
+        var guiElement = guiElements[name];
+        if (guiElement && stateValue) {
+          guiElement.value = stateValue;
+        }
       }
     }
 
     function stateFromGUI() {
-      if (searchAspect) {
-        state.aspect = searchAspect.value;
-      }
-
-      if (searchScope) {
-        state.scope = searchScope.value;
+      for (var nameIx = 0; nameIx < parameterNames.length; ++nameIx) {
+        var name = parameterNames[nameIx];
+        var guiElement = guiElements[name];
+        if (guiElement) {
+          state[name] = guiElement.value;
+        }
       }
     }
 
     function drawCallback() {
+      var searchAspect = guiElements.aspect;
       if (!searchAspect || !searchAspect.parentNode) {
         var filter =
               doc.getElementById("semantic-field-table_wrapper")
               .getElementsByClassName("dataTables_filter")[0];
         var input = filter.getElementsByTagName("input")[0];
         input.parentNode.insertAdjacentHTML("afterend", template);
-        searchAspect = filter.querySelector("select[name='aspect']");
-        searchScope = filter.querySelector("select[name='scope']");
+        var els = [];
+        for (var nameIx = 0; nameIx < parameterNames.length; ++nameIx) {
+          var name = parameterNames[nameIx];
+          var el = guiElements[name] = filter.querySelector("select[name='" +
+                                                            name +
+                                                            "']");
+          els.push(el);
 
-        var helpEls = filter
-              .getElementsByClassName("fa-question-circle");
+          var helpClass = name + "-help";
+          var helpEl = filter.querySelector(".fa-question-circle." + helpClass);
+          makeHelpPopover(helpEl, helpClass);
+        }
+
+        // The search parameter and gui element is special.
+        var helpEls = filter.getElementsByClassName("fa-question-circle");
         makeHelpPopover(helpEls[0], "search-help");
-        makeHelpPopover(helpEls[1], "aspect-help");
-        makeHelpPopover(helpEls[2], "scope-help");
 
         guiFromState();
-        $([searchAspect, searchScope]).change(function onChange() {
+        $(els).change(function onChange() {
           stateFromGUI();
           table.api().draw(); // eslint-disable-line no-use-before-define
         });
@@ -138,8 +154,10 @@ define(function factory(require) {
       order: [[1, "asc"]],
       stateSaveParams: function stateSaveParams(settings, data) {
         data.btw_token = token;
-        data.aspect = state.aspect;
-        data.scope = state.scope;
+        for (var nameIx = 0; nameIx < parameterNames.length; ++nameIx) {
+          var name = parameterNames[nameIx];
+          data[name] = state[name];
+        }
       },
       stateLoadParams: function stateLoadParams(settings, data) {
         if (data.btw_token !== token) {
@@ -151,24 +169,16 @@ define(function factory(require) {
         return undefined;
       },
       stateLoaded: function stateLoaded(settings, data) {
-        var aspect = data.aspect;
-        if (aspect && !/^[a-z]+$/.test(aspect)) {
-          data.aspect = undefined; // Corrupt data, reset.
-        }
-
-        var scope = data.scope;
-        if (scope && !/^[a-z]+$/.test(scope)) {
-          data.scope = undefined; // Corrupt data, reset.
-        }
-
         state = data;
         guiFromState();
       },
       ajax: {
         url: options.ajax_source_url,
         data: function data(params) {
-          params.aspect = state.aspect;
-          params.scope = state.scope;
+          for (var nameIx = 0; nameIx < parameterNames.length; ++nameIx) {
+            var name = parameterNames[nameIx];
+            params[name] = state[name];
+          }
         },
       },
       columnDefs: [{

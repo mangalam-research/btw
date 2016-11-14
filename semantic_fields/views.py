@@ -18,7 +18,7 @@ from .serializers import SemanticFieldSerializer
 from .forms import SemanticFieldForm
 from .util import parse_local_references
 
-def filter_by_search_params(qs, search, aspect, scope):
+def filter_by_search_params(qs, search, aspect, scope, root):
     search = search.strip()
 
     if search == "":
@@ -41,6 +41,13 @@ def filter_by_search_params(qs, search, aspect, scope):
         qs = qs.filter(catid__isnull=True)
     else:
         raise ValueError("unknown value for scope: " + scope)
+
+    if root == "all":
+        pass
+    elif root in ("01", "02", "03"):
+        qs = qs.filter(path__startswith=root)
+    else:
+        raise ValueError("unknown value for root: " + root)
 
     qs = qs.filter(**{field + exact: search})
 
@@ -68,8 +75,9 @@ class SearchTable(BaseDatatableView):
         search_value = self.request.GET.get('search[value]', None)
         aspect = self.request.GET['aspect']
         scope = self.request.GET['scope']
+        root = self.request.GET['root']
 
-        return filter_by_search_params(qs, search_value, aspect, scope)
+        return filter_by_search_params(qs, search_value, aspect, scope, root)
 
 class SemanticFieldHTMLRenderer(renderers.TemplateHTMLRenderer):
     media_type = "text/html"
@@ -105,7 +113,8 @@ class SemanticFieldFilter(filters.BaseFilterBackend):
         if search is not None:
             aspect = request.GET['aspect']
             scope = request.GET['scope']
-            qs = filter_by_search_params(qs, search, aspect, scope)
+            root = request.GET['root']
+            qs = filter_by_search_params(qs, search, aspect, scope, root)
         return qs
 
 
@@ -194,7 +203,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         =========
 
         Searching is mutually exclusive with returning exact
-        fields. You must use ``search``, ``aspect``, ``scope``:
+        fields. You must use ``search``, ``aspect``, ``scope``, ``root``:
 
         * ``search`` is the search text
 
@@ -211,6 +220,13 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
           + ``hte`: only the fields from the HTE
 
           + ``btw``: only the fields created for BTW
+
+        * ``root`` is the root of the search:
+
+          + ``all``: all semantic fields
+
+          + ``01``, ``02``, ``03``: all fields that have a path
+          starting with this number.
 
         Pagination
         ==========

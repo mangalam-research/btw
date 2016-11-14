@@ -50,7 +50,7 @@ def step_impl(context):
 
 
 @when(ur"the user clicks on the help for the (?P<what>search field|"
-      ur"aspect combo box|scope combo box)")
+      ur"aspect combo box|scope combo box|root combo box)")
 def step_impl(context, what):
     util = context.util
 
@@ -63,6 +63,9 @@ def step_impl(context, what):
     elif what == "scope combo box":
         selector = "p.scope-help"
         index = 2
+    elif what == "root combo box":
+        selector = "p.root-help"
+        index = 3
     else:
         raise ValueError("unexpected value for ``what``: " + what)
 
@@ -77,7 +80,8 @@ def step_impl(context, what):
 
     popover.click()
 
-@then("the help for the (?:search field|aspect combo box|scope combo box) "
+@then("the help for the (?:search field|aspect combo box|"
+      "scope combo box|root combo box) "
       "is visible")
 def step_impl(context):
     util = context.util
@@ -136,6 +140,19 @@ def step_impl(context, what):
         raise ValueError("unexpected value: " + what)
 
     context.default_table.set_select_option("among", value)
+
+
+@when(ur"the user changes the search to search for fields under "
+      ur"(?P<what>all roots|Society \(03\))")
+def step_impl(context, what):
+    if what == "all roots":
+        value = "all fields"
+    elif what == "Society (03)":
+        value = "Society (03)"
+    else:
+        raise ValueError("unexpected value: " + what)
+
+    context.default_table.set_select_option("under", value)
 
 
 @when(ur'the user clicks on "(?P<what>.*)" in the (?P<which>first|second) '

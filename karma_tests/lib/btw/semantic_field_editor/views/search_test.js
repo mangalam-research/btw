@@ -115,6 +115,7 @@ describe("SearchView", () => {
       ["search", "input"],
       ["aspect", "change"],
       ["scope", "change"],
+      ["root", "change"],
     ];
 
     for (const [uiElement, event] of inputsAndEvents) {
@@ -242,11 +243,13 @@ describe("SearchView", () => {
         const searchInput = view.queryForm.ui.search[0];
         const aspect = view.queryForm.ui.aspect[0];
         const scope = view.queryForm.ui.scope[0];
+        const root = view.queryForm.ui.root[0];
         const baseQuery = _.extend({
           limit: "10",
           offset: "0",
           scope: "all",
           aspect: "sf",
+          root: "all",
         }, constantFields);
 
         searchInput.value = "Foo";
@@ -262,6 +265,7 @@ describe("SearchView", () => {
         searchInput.value = "Bar";
         aspect.value = "lexemes";
         scope.value = "btw";
+        root.value = "all";
         grabber.clear();
         $(searchInput).trigger("input");
         yield waitFor(() => grabber.hasRequests());
@@ -274,6 +278,7 @@ describe("SearchView", () => {
           search: "Bar",
           aspect: "lexemes",
           scope: "btw",
+          root: "all",
         }));
       }));
 
@@ -283,6 +288,7 @@ describe("SearchView", () => {
         scope: "all",
         aspect: "sf",
         search: "Foo",
+        root: "all",
       });
 
       yield Promise.coroutine(threePageQuery)();
@@ -370,6 +376,7 @@ describe("SearchView", () => {
         scope: "all",
         aspect: "sf",
         search: "Foo",
+        root: "all",
       });
 
       const footerTemplate = Handlebars.compile(
@@ -477,7 +484,7 @@ describe("SearchView", () => {
       return waitFor(() => view.el.querySelector(".popover") !== null);
     }
 
-    for (const label of ["search", "aspect", "scope"]) {
+    for (const label of ["search", "aspect", "scope", "root"]) {
       it(`clicking the ${label} help label brings a popover`,
          () => labelTest(label));
     }

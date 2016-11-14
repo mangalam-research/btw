@@ -12,8 +12,8 @@ from django.utils import translation
 from django.conf import settings
 from django_webtest import WebTest, TransactionWebTest
 from django.middleware.csrf import CSRF_TOKEN_LENGTH
-
 from cms.test_utils.testcases import BaseCMSTestCase
+from nose.tools import nottest
 
 from .util import MinimalQuery, FakeChangeRecord
 from ..models import SemanticField, SearchWord, Lexeme
@@ -118,7 +118,91 @@ class MainTestCase(ViewsTestCase):
                           "the button for creating fields should exist")
 
 
-class SearchTableTestCase(ViewsTestCase):
+class ParameterChecksMixin(object):
+
+    def scope_check(self, scope, headings):
+        """
+        Test that setting the scope produces correct results.
+        """
+        hte = SemanticField(path="01n", heading="hte", catid="1")
+        hte.save()
+
+        nonhte = SemanticField(path="02n", heading="nonhte")
+        nonhte.save()
+
+        self.make_request_and_check({
+            "search[value]": "h",
+            "scope": scope,
+            "aspect": "sf",
+            "root": "all",
+        }, total=2, headings=headings)
+
+    def aspect_check(self, aspect, headings):
+        """
+        Test that setting the root produces correct results.
+        """
+        cat1 = SemanticField(path="01n", heading="term")
+        cat1.save()
+
+        cat2 = SemanticField(path="02n", heading="aaaa")
+        cat2.save()
+
+        lexeme = Lexeme(htid=1, semantic_field=cat2, word="term",
+                        fulldate="q", catorder=0)
+        lexeme.save()
+
+        word = SearchWord(sid=1, htid=lexeme, searchword="term", type="oed")
+        word.save()
+
+        self.make_request_and_check({
+            "search[value]": "term",
+            "scope": "all",
+            "aspect": aspect,
+            "root": "all",
+        }, total=2, headings=headings)
+
+    def root_check(self, root, headings):
+        """
+        Test that setting the root produces correct results.
+        """
+        cat1 = SemanticField(path="01n", heading="term one")
+        cat1.save()
+
+        cat2 = SemanticField(path="01.01n", heading="term two", parent=cat1)
+        cat2.save()
+
+        cat3 = SemanticField(path="02.02n", heading="term three")
+        cat3.save()
+
+        self.make_request_and_check({
+            "search[value]": "term",
+            "scope": "all",
+            "aspect": "sf",
+            "root": root,
+        }, total=3, headings=headings)
+
+    @staticmethod
+    @nottest
+    def make_tests(c):
+        for (scope_setting, headings) in (("all", ["hte", "nonhte"]),
+                                          ("hte", ["hte"]),
+                                          ("btw", ["nonhte"])):
+            makefunc(c, c.scope_check, "test_scope_" + scope_setting,
+                     scope_setting, scope_setting, headings)
+
+        for (aspect_setting, headings) in (("sf", ["term"]),
+                                           ("lexemes", ["aaaa"])):
+            makefunc(c, c.aspect_check, "test_aspect_" + aspect_setting,
+                     aspect_setting, aspect_setting, headings)
+
+        for (root_setting, headings) in (("all", ["term one", "term two",
+                                                  "term three"]),
+                                         ("01", ["term one", "term two"]),
+                                         ("02", ["term three"])):
+            makefunc(c, c.root_check, "test_root_" + root_setting,
+                     root_setting, root_setting, headings)
+
+class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -127,7 +211,8 @@ class SearchTableTestCase(ViewsTestCase):
         cls.complete_params = {
             "search[value]": "foo",
             "aspect": "sf",
-            "scope": "all"
+            "scope": "all",
+            "root": "all",
         }
 
     def test_not_logged_in(self):
@@ -161,6 +246,13 @@ class SearchTableTestCase(ViewsTestCase):
             response.json["error"],
             "\nAn error occured while processing an AJAX request.")
 
+    def make_request_and_check(self, params, total, headings):
+        response = self.app.get(self.url,
+                                params=params,
+                                user=self.noperm)
+
+        self.assertDataTablesResponse(response, total=total, names=headings)
+
     def test_correct_params(self):
         """
         Test that a query with the correct params does not return an error.
@@ -184,53 +276,6 @@ class SearchTableTestCase(ViewsTestCase):
 
         self.assertItemsEqual([row[1] for row in json["data"]], headings)
 
-    def scope_check(self, scope, headings):
-        """
-        Test that setting the scope produces correct results.
-        """
-        hte = SemanticField(path="01n", heading="hte", catid="1")
-        hte.save()
-
-        nonhte = SemanticField(path="02n", heading="nonhte")
-        nonhte.save()
-
-        response = self.app.get(self.url,
-                                params={
-                                    "search[value]": "h",
-                                    "scope": scope,
-                                    "aspect": "sf",
-                                },
-                                user=self.noperm)
-
-        self.assertDataTablesResponse(response, total=2, names=headings)
-
-    def aspect_check(self, aspect, headings):
-        """
-        Test that setting the aspect produces correct results.
-        """
-        cat1 = SemanticField(path="01n", heading="term")
-        cat1.save()
-
-        cat2 = SemanticField(path="02n", heading="aaaa")
-        cat2.save()
-
-        lexeme = Lexeme(htid=1, semantic_field=cat2, word="term",
-                        fulldate="q", catorder=0)
-        lexeme.save()
-
-        word = SearchWord(sid=1, htid=lexeme, searchword="term", type="oed")
-        word.save()
-
-        response = self.app.get(self.url,
-                                params={
-                                    "search[value]": "term",
-                                    "scope": "all",
-                                    "aspect": aspect,
-                                },
-                                user=self.noperm)
-
-        self.assertDataTablesResponse(response, total=2, names=headings)
-
     def test_exact_search(self):
         """
         Test that using quotes in a search results in an exact search.
@@ -246,6 +291,7 @@ class SearchTableTestCase(ViewsTestCase):
                                     "search[value]": '"term"',
                                     "scope": "all",
                                     "aspect": "sf",
+                                    "root": "all",
                                 },
                                 user=self.noperm)
 
@@ -269,22 +315,13 @@ def makefunc(class_, f, name, docstring, *params):
 def init():
     c = SearchTableTestCase
 
-    for param in ("aspect", "scope"):
+    for param in ("aspect", "scope", "root"):
         makefunc(c, c.missing_parameter, "test_missing_" + param,
                  param, param)
 
         makefunc(c, c.bad_value, "test_bad_" + param, param, param)
 
-    for (scope_setting, headings) in (("all", ["hte", "nonhte"]),
-                                      ("hte", ["hte"]),
-                                      ("btw", ["nonhte"])):
-        makefunc(c, c.scope_check, "test_scope_" + scope_setting,
-                 scope_setting, scope_setting, headings)
-
-    for (aspect_setting, headings) in (("sf", ["term"]),
-                                       ("lexemes", ["aaaa"])):
-        makefunc(c, c.aspect_check, "test_aspect_" + aspect_setting,
-                 aspect_setting, aspect_setting, headings)
+    ParameterChecksMixin.make_tests(c)
 
 init()
 
@@ -1167,6 +1204,7 @@ class ListTestCase(ViewsTestCase):
                                     "search": "aaaa",
                                     "aspect": "sf",
                                     "scope": "all",
+                                    "root": "all",
                                 },
                                 headers={
                                     "Accept": "application/json",
@@ -1199,3 +1237,33 @@ class ListTestCase(ViewsTestCase):
                                        depths={"parent": -1},
                                        unpublished=True).data
         self.assertEqual(response.json[0], data)
+
+class ListParameterTestCases(ParameterChecksMixin, ViewsTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super(ListParameterTestCases, cls).setUpTestData()
+        cls.url = reverse("semantic_fields_semanticfield-list")
+
+    def make_request_and_check(self, params, total, headings):
+        params["search"] = params.pop("search[value]")
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
+
+        response = self.app.get(self.url,
+                                params=params,
+                                headers={
+                                    "Accept": "application/json",
+                                    "X-CSRFToken": FAKE_CSRF,
+                                })
+
+        result = response.json
+        self.assertEqual(result["unfiltered_count"], total)
+        self.assertEqual(result["count"], len(headings))
+        self.assertEqual(len(result["results"]), len(headings))
+        response_headings = [x["heading"] for x in result["results"]]
+        self.assertItemsEqual(response_headings, headings)
+
+def init():
+    ParameterChecksMixin.make_tests(ListParameterTestCases)
+
+init()
