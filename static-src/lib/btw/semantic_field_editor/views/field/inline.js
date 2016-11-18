@@ -8,7 +8,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
   var $ = require("jquery");
   var _ = require("lodash");
   var Mn = require("marionette");
-  var fieldTemplate = require("text!./inline.hbs");
+  var fieldTemplate = require("text!./inline.hbs").replace(/\\\n/g, "");
   var popoverTemplate = require("text!./popover.hbs");
   var Handlebars = require("handlebars");
   require("bootstrap-treeview");

@@ -181,3 +181,36 @@ Then there are 4 fields in the chosen semantic fields
 # Given the chosen semantic fields are "Person (01.04.04n)", "Beautification (02.02.18n)", "Lack of beauty (02.02.19n)"
 # When the user swaps the first and second chosen semantic fields by drag and drop
 # Then the chosen semantic fields are "Beautification (02.02.18n)", "Person (01.04.04n)", "Lack of beauty (02.02.19n)"
+
+Scenario: scroll buttons in the right column come up when content is bigger than dialog body
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are not visible
+When the user searches for "laws"
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are visible
+When the user searches for "lawss"
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are not visible
+
+Scenario: scroll buttons in the left column come up when content is bigger than dialog body
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are not visible
+When the user searches for "Law"
+Then there are 3 results
+And the right column scroll buttons and scrollbar are visible
+When the user clicks on "code of laws (Noun)" in the first result
+Then there is one detail pane
+And the left column scroll buttons and scrollbar are visible
+When the user clicks on the first pane's button to close all panes
+Then there are no detail panes
+And the left column scroll buttons and scrollbar are not visible
+
+Scenario: scroll buttons come up when window is resized.
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are not visible
+When the modal dialog's height is resized to 200px
+Then the left column scroll buttons and scrollbar are visible
+And the right column scroll buttons and scrollbar are visible
+When the modal dialog's height is resized to 500px
+Then the left column scroll buttons and scrollbar are not visible
+And the right column scroll buttons and scrollbar are not visible

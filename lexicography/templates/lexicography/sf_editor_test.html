@@ -6,12 +6,18 @@
 {% for sheet in btw_globals.wed_css %}
 <link href="{% static sheet %}" type="text/css" media="screen" rel="stylesheet" />
 {% endfor %}
-<link href="{% static btw_globals.btw_mode_css %}" type="text/css" media="screen" rel="stylesheet" />
+<link href="{{ btw_globals.btw_mode_css }}" type="text/css" media="screen" rel="stylesheet" />
 {% endaddtoblock %}
 <div class="wed-frame">
-  <div id="test-body" class="wed-document"></div>
+  <div class="wed-document">
+    <div id="test-body" class="sf-editor-modal-body">
+    </div>
+  </div>
 </div>
 <script>
+var testBody = document.getElementById("test-body");
+// This is an arbitrary size.
+testBody.style.height = "500px";
 require(["btw/semantic_field_editor/app", "btw/semantic_field_fetcher",
          "semantic-fields/util", "lodash"],
   function (SFEditor, SFFetcher, sfUtil, _) {
@@ -23,7 +29,7 @@ require(["btw/semantic_field_editor/app", "btw/semantic_field_fetcher",
       function (resolved) {
       var fields = _.values(resolved);
       var app = window.editor = new SFEditor({
-        container: document.getElementById("test-body"),
+        container: testBody,
         fields: fields,
         fetcher: fetcher,
         searchUrl: "{{ semantic_field_fetch_url }}",

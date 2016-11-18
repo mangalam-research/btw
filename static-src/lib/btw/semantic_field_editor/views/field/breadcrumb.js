@@ -6,7 +6,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
   var tools = require("../../tools");
 
   var linkTemplate = Handlebars.compile(
-    "<a class='btn btn-default btn-sm sf-link' href='{{url}}'>" +
+    "<a class='sf-link' href='{{url}}'>" +
       "{{#if display}}{{heading_for_display}}{{else}}{{heading}}{{/if}}{{#if includePos}} ({{verbose_pos}}){{/if}}</a>");
 
   Handlebars.partials["field/linkTemplate"] = linkTemplate;

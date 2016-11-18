@@ -98,3 +98,55 @@ def step_impl(context):
         .move_to_element_with_offset(third_field) \
         .release() \
         .perform()
+
+@then(ur"the (?P<column>left|right) column scroll buttons are "
+      ur"(?P<visibility>visible|not visible)")
+def step_impl(context, column, visibility):
+    driver = context.driver
+
+    buttons = \
+        driver.find_elements_by_css_selector(
+            ".sf-editor-modal-body .scroll-buttons")
+    button = buttons[0 if column == "left" else 1]
+
+    def check(driver):
+        displayed = button.is_displayed()
+        if visibility == "not visible":
+            return not displayed
+
+        return displayed
+
+    context.util.wait(check)
+
+@then(ur"the (?P<column>left|right) column scrollbar is "
+      ur"(?P<visibility>visible|not visible)")
+def step_impl(context, column, visibility):
+    driver = context.driver
+
+    is_visible = driver.execute_script("""
+    var column = arguments[0];
+    var scroller = document.querySelectorAll(".sf-editor-modal-body .scroller")
+      [column === "left" ? 0 : 1];
+    return (scroller.scrollHeight > scroller.clientHeight);
+    """, column)
+
+    assert_equal(is_visible, visibility == "visible",
+                 "expected {} scroll bar".format(
+                     "a visible" if visibility == "visible"
+                     else "an invisible"))
+
+@then(ur"the (?P<column>left|right) column scroll buttons and scrollbar are "
+      ur"(?P<visibility>visible|not visible)")
+def step_impl(context, column, visibility):
+    context.execute_steps(ur"""
+    Then the {column} column scroll buttons are {visibility}
+    Then the {column} column scrollbar is {visibility}
+    """.format(**{"column": column, "visibility": visibility}))
+
+@when(ur"the modal dialog's height is resized to (?P<size>\d+)px")
+def step_impl(context, size):
+    context.driver.execute_script("""
+    var size = arguments[0];
+    var body = document.getElementsByClassName("sf-editor-modal-body")[0];
+    body.style.height = size + "px";
+    """, int(size))

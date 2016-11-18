@@ -44,10 +44,24 @@ div.wed-widget {
     @import "../../../bibliography/static/stylesheets/bibsearch.less";
 }
 
+.sf-border {
+    border: 0px;
+    border-left: 2px;
+    border-right: 2px;
+    border-style: solid;
+    border-color: black;
+    padding: 0.25em;
+}
+
 // sf-popover-buttons can happen everywhere.
 .sf-popover-button {
-    background-color: #b3d5e6;
-    border-color: black;
+    white-space: pre;
+    font-size: initial;
+    .sf-border;
+
+    .field {
+        white-space: normal;
+    }
 }
 
 .popover.sf-popover {
@@ -67,9 +81,44 @@ div.wed-widget {
     }
 }
 
+.sf-other-pos .sf-link {
+    .sf-border;
+}
+
+.sf-children .sf-link {
+    .sf-border;
+}
+
 .sf-editor-modal-body {
     font-size: initial;
+    line-height: initial;
+
+    .row {
+        height: 100%;
+
+        >div {
+            height: 100%;
+
+            .scroller {
+                height: 100%;
+                overflow-y: auto;
+                margin-left: 1em;
+            }
+        }
+
+        .scroll-buttons {
+            position: absolute;
+            height: 100%;
+
+            .scroll-buttons-wrapper {
+                position: absolute;
+                top: 50%;
+            }
+        }
+
+    }
 }
+
 
 div.wed-frame {
     div.wed-document {

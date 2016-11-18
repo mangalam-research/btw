@@ -404,6 +404,7 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
     var body = modal.getTopLevel()[0]
       .getElementsByClassName("modal-body")[0];
     body.classList.add("sf-editor-modal-body");
+    body.style.overflowY = "hidden";
     editor.setModeData(EDIT_SF_MODAL_KEY, modal);
 
     return modal;
@@ -446,6 +447,15 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
     primary.classList.add("disabled");
     modal.setBody("<i class='fa fa-spinner fa-2x fa-spin'></i>");
 
+    var $modalTop = modal.getTopLevel();
+    var body = $modalTop[0].getElementsByClassName("modal-body")[0];
+
+    $modalTop.on("shown.bs.modal.modal", function shown() {
+      // Once we have shown the modal we set its height to the max-height so
+      // that the children of the body can use height percentages.
+      body.style.height = body.style.maxHeight;
+    });
+
     modal.modal(function dismiss() {
       var clicked = modal.getClicked()[0];
       if (clicked && clicked === primary) {
@@ -471,8 +481,7 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
       // Clear it before the editor is started.
       modal.setBody("");
       sfEditor = new SFEditor({
-        container: modal.getTopLevel()[0]
-          .getElementsByClassName("modal-body")[0],
+        container: body,
         fields: fields,
         fetcher: fetcher,
         searchUrl: mode._semanticFieldFetchUrl,

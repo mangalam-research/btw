@@ -42,6 +42,7 @@
         "babel-preset-es2015": "^6.3.3",
         "karma-babel-preprocessor": "^6.0.1",
         "dragula": "^3.7.1",
-        "lucene-query-parser": "^1.0.1"
+        "lucene-query-parser": "^1.0.1",
+        "resize-observer-polyfill": "^1.2.1"
     }
 }

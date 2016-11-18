@@ -16,6 +16,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
   var SearchView = require("./views/search");
   var NavigatorCollectionView = require("./views/navigators/navigator_collection");
   var ChosenFieldCollection = require("./collections/chosen_field");
+  var ScrollButtons = require("./gui/scroll_buttons");
   var tools = require("./tools");
   var _ = require("lodash");
 
@@ -39,6 +40,15 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       combinator: ".sf-combinator",
       search: ".sf-search",
       navigators: ".sf-navigators",
+    },
+
+    render: function render() {
+      var ret = LayoutView.__super__.render.apply(this, arguments);
+      var scrollers = this.el.querySelectorAll(".scroller");
+      for (var i = 0; i < scrollers.length; ++i) {
+        new ScrollButtons(scrollers[i]);
+      }
+      return ret;
     },
   });
 
