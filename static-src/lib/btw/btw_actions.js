@@ -449,16 +449,23 @@ define(/** @lends module:wed/modes/btw/btw_actions */ function btwTr(require,
 
     var $modalTop = modal.getTopLevel();
     var body = $modalTop[0].getElementsByClassName("modal-body")[0];
+    var content = $modalTop[0].getElementsByClassName("modal-content")[0];
+    var header = $modalTop[0].getElementsByClassName("modal-header")[0];
+    var footer = $modalTop[0].getElementsByClassName("modal-footer")[0];
 
     $modalTop.on("shown.bs.modal.modal", function shown() {
       // Once we have shown the modal we set its height to the max-height so
       // that the children of the body can use height percentages.
-      body.style.height = body.style.maxHeight;
+      content.style.height = content.style.maxHeight;
+      var contentHeight = content.getBoundingClientRect().height;
+      body.style.height = (contentHeight -
+                           header.getBoundingClientRect().height -
+                           footer.getBoundingClientRect().height) + "px";
     });
 
     modal.modal(function dismiss() {
-      var clicked = modal.getClicked()[0];
-      if (clicked && clicked === primary) {
+      var clicked = modal.getClickedAsText();
+      if (clicked === "Commit") {
         if (!sfEditor) {
           throw new Error("modal dismissed with primary button " +
                           "while sfEditor is non-existent");

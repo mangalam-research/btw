@@ -561,3 +561,12 @@ def step_impl(context, what):
     util.wait_until_not(lambda driver:
                         len(driver.find_elements(
                             (By.CSS_SELECTOR, ".modal-body"))) != 0)
+
+@when(ur'the user dismisses the modal by using the close button in the '
+      ur'modal header')
+def step_impl(context):
+    util = context.util
+
+    button = util.find_element((By.CSS_SELECTOR,
+                                ".modal.in .modal-header .close"))
+    button.click()

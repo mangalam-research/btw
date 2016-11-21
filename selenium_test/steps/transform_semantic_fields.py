@@ -28,7 +28,7 @@ def step_impl(context, fields):
     assert_equal(result.payload, fields)
 
 
-@given("the document does not contain any semantic fields")
+@step("the document does not contain any semantic fields")
 def step_impl(context):
     driver = context.driver
     assert_equal(len(driver.find_elements_by_class_name(r"btw\:sf")), 0)
