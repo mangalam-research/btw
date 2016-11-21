@@ -457,6 +457,12 @@ venv:
 .PHONY: dev-venv
 dev-venv: venv
 	.btw-venv/bin/pip install -r requirements.txt
+# We need to force Django's version right now because Django CMS interferes.
+	.btw-venv/bin/pip install `grep Django requirements.txt`
+# Sigh... this is temporarily needed to work with Django 1.10.
+	.btw-venv/bin/pip install django-polymorphic==1.0.2
+	.btw-venv/bin/pip uninstall django-treebeard --yes
+	.btw-venv/bin/pip install 'git+https://github.com/tabo/django-treebeard#79bdb7c'
 
 .PHONY: clean
 clean::
