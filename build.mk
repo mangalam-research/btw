@@ -389,7 +389,9 @@ $(EXTERNAL)/backbone-relational%: node_modules/backbone-relational/backbone-rela
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-$(EXTERNAL)/backbone.radio%: node_modules/backbone.marionette/node_modules/backbone.radio/build/backbone.radio%
+# backbone.radio may be installed in different locations.
+BACKBONE_RADIO:=$(or $(wildcard node_modules/backbone.radio),$(wildcard node_modules/backbone.marionette/node_modules/backbone.radio))
+$(EXTERNAL)/backbone.radio%: $(BACKBONE_RADIO)/build/backbone.radio%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
