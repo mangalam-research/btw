@@ -30,7 +30,7 @@ django-cms==3.4.1
 # These are required by django-cms
 django-treebeard>=4,<5
 django-sekizai==0.10.0
-django-classy-tags==0.6.2
+django-classy-tags>=0.8.0,<0.9
 djangocms-admin-style==1.1.0
 html5lib==0.999
 # Optional, recommended packages for django-cms
