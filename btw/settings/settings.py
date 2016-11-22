@@ -156,19 +156,16 @@ s.STATICFILES_FINDERS = (
 # We need this for ``pipeline``.
 s.STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
-s.PIPELINE_CSS = {}
-
-s.PIPELINE_JS = {}
-
-s.PIPELINE_CSS_COMPRESSOR = None
-
-s.PIPELINE_JS_COMPRESSOR = None
-
-s.PIPELINE_COMPILERS = (
-    'pipeline.compilers.less.LessCompiler',
-)
-
-s.PIPELINE_LESS_BINARY = os.path.join(s.TOPDIR, "./node_modules/.bin/lessc")
+s.PIPELINE = {
+    "STYLESHEETS": {},
+    "JAVASCRIPT": {},
+    "CSS_COMPRESSOR": None,
+    "JS_COMPRESSOR": None,
+    "COMPILERS": (
+        'pipeline.compilers.less.LessCompiler',
+    ),
+    "LESS_BINARY": os.path.join(s.TOPDIR, "./node_modules/.bin/lessc"),
+}
 
 #
 # This must be set in the installation-specific files.

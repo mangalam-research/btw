@@ -1,6 +1,6 @@
 from lib.settings import s
 
-s.PIPELINE_CSS['semantic_fields'] = {
+s.PIPELINE["STYLESHEETS"]["semantic_fields"] = {
     'source_filenames': (
         'css/semantic_fields.less',
     ),
