@@ -271,8 +271,8 @@ build/test-data/prepared_published_prasada.xml: utils/schemas/prasada.xml
 	mkdir -p $(dir $@)
 	$(DJANGO_MANAGE) lexicography prepare-article $< $@ $(@:.xml=.json)
 
-.PHONY: test-karma test-data
-test-karma: all
+.PHONY: test-karma
+test-karma: all test-data
 	xvfb-run ./node_modules/.bin/karma start --single-run
 
 .PHONY: keep-latest
