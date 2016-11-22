@@ -160,8 +160,11 @@ all: _all
 	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
 	  { echo "There appear to be a difference between the \
 	  bootstrap downloaded by BTW and the one in wed." && exit 1; }
-#
-	$(DJANGO_MANAGE) collectstatic --noinput
+# We use --clear for two reasons: a) we want old crap to be removed
+# and b) there are situations where the timestamps of files installed
+# with NPM can trip us. Trying to fix it as part of the Makefile is
+# onerous.
+	$(DJANGO_MANAGE) collectstatic --noinput --clear
 
 
 
