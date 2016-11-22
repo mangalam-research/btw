@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError, \
     CommandParser
 
 from ...article import prepare_article_data, get_bibliographical_data
-from lib import util
+from lib import util, testutil
 from lib.command import SubCommand, SubParser
 
 class PrepareArticle(SubCommand):
@@ -29,6 +29,8 @@ class PrepareArticle(SubCommand):
     def __call__(self, command, options):
         from django.utils import translation
         translation.activate('en-us')
+
+        testutil.unmonkeypatch_databases()
 
         with open(options["src"], 'r') as src:
             source = src.read().decode("utf-8")

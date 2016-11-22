@@ -11,7 +11,13 @@ if __name__ == "__main__":
             (len(sys.argv) < 3 or "--nostatic" not in sys.argv[2:])):
         sys.argv.append("--nostatic")
 
-    testing = len(sys.argv) > 1 and sys.argv[1] == "test"
+    # lexicography prepare-article is considered a "testing" command.
+    testing = (len(sys.argv) > 1 and sys.argv[1] == "test") or \
+              (len(sys.argv) > 2 and
+               sys.argv[1:3] == ["lexicography",
+                                 "prepare-article"])
+
+    need_redis = testing
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
                           "btw.test_settings" if testing else "btw.settings")
@@ -25,7 +31,7 @@ if __name__ == "__main__":
         # Starting redis cannot be moved to the test runner because it
         # needs to happen before the runner gains control.
         started_redis = False
-        if testing:
+        if need_redis:
             # We cannot use call_command here because Django is not
             # yet bootstrapped.
             subprocess.check_call([sys.argv[0], "btwredis", "start",
