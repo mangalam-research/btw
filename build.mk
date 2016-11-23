@@ -469,6 +469,12 @@ dev-venv: venv
 	.btw-venv/bin/pip uninstall django-treebeard --yes
 	.btw-venv/bin/pip install 'git+https://github.com/tabo/django-treebeard#79bdb7c'
 
+.PHONY: shrinkwrap
+shrinkwrap:
+	npm prune
+	npm shrinkwrap
+
+
 .PHONY: clean
 clean::
 	-rm -rf build
