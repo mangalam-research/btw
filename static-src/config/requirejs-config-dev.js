@@ -44,7 +44,8 @@ require.config({
     "backbone.radio": "external/backbone.radio.min",
     "twbs-pagination": "external/jquery.twbsPagination",
     dragula: "external/dragula.min",
-    "ResizeObserver": "external/ResizeObserver",
+    ResizeObserver: "external/ResizeObserver",
+    salve: "external/salve.min",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {

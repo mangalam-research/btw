@@ -23,7 +23,7 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
   var btwRefmans = require("./btw_refmans");
   var DispatchMixin = require("./btw_dispatch").DispatchMixin;
   var idManager = require("./id_manager");
-  var nameResolver = require("salve/name_resolver");
+  var NameResolver = require("salve").NameResolver;
   var $ = require("jquery");
   var _ = require("lodash");
   require("bootstrap");
@@ -81,7 +81,7 @@ define(/** @lends module:wed/modes/btw/btw_view */ function btwView(require,
     this._language_prefix = languagePrefix;
     this._semanticFieldFetchUrl = semanticFieldFetchUrl;
 
-    this._resolver = new nameResolver.NameResolver();
+    this._resolver = new NameResolver();
     var mappings = this._meta.getNamespaceMappings();
     Object.keys(mappings).forEach(function definePrefix(key) {
       this._resolver.definePrefix(key, mappings[key]);

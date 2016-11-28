@@ -23,7 +23,7 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
   var idManager = require("./id_manager");
   var contextMenu = require("wed/gui/context_menu");
   var tooltip = require("wed/gui/tooltip").tooltip;
-  var validate = require("salve/validate");
+  var salve = require("salve");
   var makeDLoc = require("wed/dloc").makeDLoc;
   var DispatchMixin = require("./btw_dispatch").DispatchMixin;
   var HeadingDecorator = require("./btw_heading_decorator").HeadingDecorator;
@@ -449,8 +449,7 @@ define(/** @lends module:wed/modes/btw/btw_decorator */ function btwDecorator(
 
         var ename = this._mode._resolver.resolveName(spec);
         var locations = this._editor.validator.possibleWhere(
-          node, new validate.Event("enterStartTag", ename.ns,
-                                   ename.name));
+          node, new salve.Event("enterStartTag", ename.ns, ename.name));
 
         // Narrow it down to locations where adding the element
         // won't cause a subsequent problem.

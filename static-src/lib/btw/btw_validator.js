@@ -9,7 +9,7 @@ define(/** @lends module:wed/modes/btw/btw_validator */
 
 var oop = require("wed/oop");
 var ModeValidator = require("wed/mode_validator").ModeValidator;
-var ValidationError = require("salve/validate").ValidationError;
+var ValidationError = require("salve").ValidationError;
 var domutil = require("wed/domutil");
 var $ = require("jquery");
 
