@@ -185,7 +185,7 @@ Then there are 4 fields in the chosen semantic fields
 Scenario: scroll buttons in the right column come up when content is bigger than dialog body
 Then the left column scroll buttons and scrollbar are not visible
 And the right column scroll buttons and scrollbar are not visible
-When the user searches for "laws"
+When the user searches for "la"
 Then the left column scroll buttons and scrollbar are not visible
 And the right column scroll buttons and scrollbar are visible
 When the user searches for "lawss"
