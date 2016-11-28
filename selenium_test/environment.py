@@ -228,11 +228,14 @@ class LogChecker(object):
     def __init__(self, path):
         self.path = path
 
-        if not os.path.exists(path):
-            raise ValueError("this log does not exist: " + path)
+        try:
+            stat = os.stat(self.path)
+        except OSError:
+            stat = None
 
-        stat = os.stat(self.path)
-        self.size_at_prev_check = stat.st_size
+        # We do not want to check old stuff so we record the size of the
+        # file at the start.
+        self.size_at_prev_check = stat.st_size if stat is not None else 0
 
     def hasErrors(self):
         stat = os.stat(self.path)
