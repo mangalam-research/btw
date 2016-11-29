@@ -1,7 +1,8 @@
-define(['jquery', 'lodash/modern/string/template',
-        'jquery.cookie', 'datatables.bootstrap'],
-       function ($, template) {
+define(['jquery', 'lodash', 'jquery.cookie', 'datatables.bootstrap'],
+       function ($, _) {
 var csrftoken = $.cookie('csrftoken');
+
+var template = _.template;
 
 var $modal = $(
        '\
