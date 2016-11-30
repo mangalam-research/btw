@@ -43,14 +43,16 @@ if settings.DEBUG:
     ]
 
 if settings.DEBUG or settings.BTW_TESTING:
+    from django.views.decorators.csrf import ensure_csrf_cookie
     urlpatterns += [
         url(r'^sf_editor_test/$', never_cache(login_required(
-            ContextTemplateView.as_view(
-                template_name="lexicography/sf_editor_test.html",
-                context={
-                    'semantic_field_fetch_url':
-                    reverse_lazy("semantic_fields_semanticfield-list"),
-                })))),
+            ensure_csrf_cookie(
+                ContextTemplateView.as_view(
+                    template_name="lexicography/sf_editor_test.html",
+                    context={
+                        'semantic_field_fetch_url':
+                        reverse_lazy("semantic_fields_semanticfield-list"),
+                    }))))),
     ]
 
 # These are views used only in testing.
