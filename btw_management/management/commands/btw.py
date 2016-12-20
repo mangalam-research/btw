@@ -87,7 +87,7 @@ check process btw pidfile "{btw_pidfile}"
       group {group}
       depends on {workers}, btw-redis
       start program = "{script_dir}/start-uwsgi"
-      stop program = "/usr/bin/uwsgi --stop {btw_pidfile}
+      stop program = "/usr/bin/uwsgi --stop {btw_pidfile}"
       if does not exist then start
 """
         command.stdout.write(template.format(

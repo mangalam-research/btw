@@ -123,7 +123,7 @@ check process btw pidfile "/run/uwsgi/app/btw/pid"
       group testing
       depends on testing.worker, testing.bibliography.worker, btw-redis
       start program = "{script_dir}/start-uwsgi"
-      stop program = "/usr/bin/uwsgi --stop /run/uwsgi/app/btw/pid
+      stop program = "/usr/bin/uwsgi --stop /run/uwsgi/app/btw/pid"
       if does not exist then start
 
 check process testing.worker pidfile "foo/var/run/btw/testing.worker.pid"
