@@ -498,7 +498,7 @@ Generally:
 
     $ ./manage.py btwworker start --all
     $ ./manage.py btwcheck
-    $ ./manage.py btwworker generate-monit-config build/scripts
+    $ ./manage.py btw generate-monit-config build/scripts
     # Check the generated config against what is already installed, update
     # if needed. Copy into /etc/monit/conf.d if update needed.
     # Issue ``service monit reload`` to have it read its configuration.
@@ -523,14 +523,15 @@ See below for specific upgrade cases.
 1.4.1 to 2.0.0
 ~~~~~~~~~~~~~~
 
-- Remove the "Login required" flag for the semantic fields page.
+Before all:
 
 - Install eXist.
 
-- Clear the "article_display" and "page" caches.
+After pulling the new code:
 
-- Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
-``loadindex``, ``load``.
+- Add the ``settings`` for eXist.
+
+After ``pip install -r requirements.txt``:
 
 - Force django-polymorphic to be at 1.0.2.
 
@@ -538,7 +539,20 @@ See below for specific upgrade cases.
 
 - Run ``pip uninstall django-treebeard`` and then ``pip install git+https://github.com/tabo/django-treebeard#79bdb7c``.
 
+After starting redis:
+
 - Run ``./manage.py cms fix-tree``
+
+- Clear the "article_display" and "page" caches.
+
+After ``./manage.py migrate``:
+
+- Run ``btwexistdb`` commands: ``createuser``, ``createdb``,
+``loadindex``, ``load``.
+
+After the install:
+
+- Remove the "Login required" flag for the semantic fields page.
 
 - Add the ``can_add_semantic_fields`` and
   ``can_change_semantic_fields`` to all users that need it.
