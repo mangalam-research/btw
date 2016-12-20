@@ -520,8 +520,8 @@ Generally:
 
 See below for specific upgrade cases.
 
-1.4.1 to ?
-~~~~~~~~~~
+1.4.1 to 2.0.0
+~~~~~~~~~~~~~~
 
 - Remove the "Login required" flag for the semantic fields page.
 
