@@ -485,6 +485,10 @@ Generally:
     $ ./manate.py btwredis start
     $ ./manage.py migrate
 
+    # This is the perfect time to clean old records.
+    $ ./manage.py btwdb collapse_change_records
+    $ ./manage.py btwdb clean_old_versions
+
     # This is the perfect time to perform a full vacuum on the database.
     # Do this if you've locked the users out of the system already.
     # This command will lock tables while they are being vacuumed. We use
