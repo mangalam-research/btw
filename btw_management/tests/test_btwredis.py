@@ -12,6 +12,7 @@ from django.core.management.base import CommandError
 from django.test.utils import override_settings
 
 from .util import Caller, call_command
+from lib.settings import join_prefix
 
 tmpdir = None
 runpath = None
@@ -135,12 +136,14 @@ class BTWRedisTestCase(unittest.TestCase):
                 __times = 0
 
                 def communicate(self, *args, **kwargs):
+                    fake = False
                     if args[0].startswith("auth "):
                         MockPopen.__times += 1
                         if MockPopen.__times >= 2:
-                            return ("NOAUTH", "")
+                            fake = True
 
-                    return super(MockPopen, self).communicate(*args, **kwargs)
+                    ret = super(MockPopen, self).communicate(*args, **kwargs)
+                    return ("NOAUTH", "") if fake else ret
 
             with mock.patch("subprocess.Popen", new=MockPopen):
                 c.call_command("btwredis", "start")
