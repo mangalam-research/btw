@@ -21,9 +21,7 @@ pebble>=3.1.8,<4
 # Will probably be fixed in 4.6.0, which is still unreleased.
 django-redis==4.3.0
 django-cache-management>=2,<3
-# 3.0.35 borks.
-kombu==3.0.34
-celery[redis]==3.1.23
+celery[redis]==4.0.2
 djangorestframework>=3.4.0,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4

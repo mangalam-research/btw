@@ -26,6 +26,17 @@ from semantic_fields.models import SemanticField
 
 cache = caches['article_display']
 
+class override_common_settings(override_settings):
+
+    def __init__(self, **kwargs):
+        complete = {
+            "CELERY_TASK_ALWAYS_EAGER": True,
+            "CELERY_BROKER_TRANSPORT": 'memory',
+            "ROOT_URLCONF": 'lexicography.tests.urls',
+        }
+        complete.update(kwargs)
+        super(override_common_settings, self).__init__(**complete)
+
 mock_records = mock_zotero.Records([
     {
         "data":
@@ -540,13 +551,9 @@ class EntryLockTestCase(util.DisableMigrationsTransactionMixin,
         lock._force_expiry()
         self.assertTrue(lock.expirable)
 
-
 @mock.patch.multiple("bibliography.zotero.Zotero", get_all=get_all_mock,
                      get_item=get_item_mock)
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory',
-                   ROOT_URLCONF='lexicography.tests.urls')
+@override_common_settings()
 class ChunkManagerTestCase(util.DisableMigrationsMixin, TestCase):
     fixtures = local_fixtures
 
@@ -593,9 +600,7 @@ class ChunkManagerTestCase(util.DisableMigrationsMixin, TestCase):
 
 # We separate this test from the other manager tests because they have
 # different initialization needs.
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+@override_common_settings()
 class ChunkManagerSimpleTestCase(util.DisableMigrationsMixin, TestCase):
     chunk_collection_path = get_collection_path("chunks")
     display_collection_path = get_collection_path("display")
@@ -814,9 +819,7 @@ class ChunkManagerSimpleTestCase(util.DisableMigrationsMixin, TestCase):
                                      self.display_collection_path,
                                      "xml", True)
 
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+@override_common_settings()
 class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
     chunk_collection_path = get_collection_path("chunks")
     display_collection_path = get_collection_path("display")
@@ -1315,9 +1318,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
 
 # Some test depend on being able to see transactions. So we split them
 # from the rest.
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+@override_common_settings()
 class ChunkTransactionTestCase(util.DisableMigrationsTransactionMixin,
                                TransactionTestCase):
     chunk_collection_path = get_collection_path("chunks")

@@ -93,9 +93,8 @@ hte_fixture = os.path.join(
 get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory',
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True,
+                   CELERY_BROKER_TRANSPORT='memory',
                    ROOT_URLCONF='lexicography.tests.urls')
 class TaskTestCase(DisableMigrationsMixin, TestCase):
 
@@ -135,6 +134,8 @@ class TaskTestCase(DisableMigrationsMixin, TestCase):
             self.task.delay(chunk.c_hash, test={"fail": True}).get()
         except Exception as ex:  # pylint: disable=broad-except
             self.assertEqual(str(ex), "failing")
+        else:
+            self.assertFalse("did not fail!")
 
         self.assertIsNone(
             cache.get(chunk.display_key(self.kind)),

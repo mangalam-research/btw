@@ -8,8 +8,9 @@ from functools32 import lru_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from celery.bin.multi import multi_args, NamespacedOptionParser, MultiTool
+from celery.bin.multi import MultiParser, NamespacedOptionParser, MultiTool
 from celery.exceptions import TimeoutError
+from celery.utils import worker_direct
 
 from btw.celery import app
 from core.tasks import get_btw_env
@@ -53,7 +54,7 @@ def get_defined_workers():
 
     ret = [
         Worker(join_prefix(prefix, "worker"),
-               [settings.CELERY_DEFAULT_QUEUE]),
+               [settings.CELERY_TASK_DEFAULT_QUEUE]),
         Worker(join_prefix(prefix, "bibliography.worker"),
                [settings.BTW_CELERY_BIBLIOGRAPHY_QUEUE],
                periodic_fetch_items.delay),
@@ -78,9 +79,9 @@ def get_full_names(names):
 
 @lru_cache()
 def _get_full_names(names):
-    return dict(
-        zip(names,
-            (w.name for w in multi_args(NamespacedOptionParser(names)))))
+    options = NamespacedOptionParser(names)
+    options.parse()
+    return dict(zip(names, (w.name for w in MultiParser().parse(options))))
 
 def flush_caches():
     _get_full_names.cache_clear()
@@ -189,12 +190,13 @@ Manage workers.
                 # We send the task directly to the worker so that we
                 # are sure *that* worker handles the request.
                 requests.append((worker,
-                                 get_btw_env.apply_async((), queue=full_name +
-                                                         ".dq")))
+                                 get_btw_env.apply_async(
+                                     (),
+                                     queue=worker_direct(full_name))))
 
             for worker, request in requests:
                 name = worker.name
-                result = request.get(interval=0.1)
+                result = request.get()
                 if result != env:
                     self.error(
                         ("{0}: not using environment {1} "
@@ -292,9 +294,9 @@ Manage workers.
                 # We send the task directly to the worker so that we
                 # are sure *that* worker handles the request.
                 try:
-                    result = get_btw_env.apply_async((), queue=full_name +
-                                                     ".dq").get(timeout=60,
-                                                                interval=0.1)
+                    result = get_btw_env.apply_async(
+                        (),
+                        queue=worker_direct(full_name)).get(timeout=60)
                 except TimeoutError:
                     self.stdout.write("failed: timed out")
                     continue

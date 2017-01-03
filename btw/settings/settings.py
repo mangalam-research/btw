@@ -480,21 +480,21 @@ s.CELERY_WORKER_DIRECT = True
 # must use. The full name must be <prefix>.<suffix> where suffix is
 # whatever is needed.
 s.BTW_CELERY_WORKER_PREFIX = lambda s: s.BTW_SLUGIFIED_SITE_NAME
-s.CELERY_DEFAULT_QUEUE = \
+s.CELERY_TASK_DEFAULT_QUEUE = \
     lambda s: s.BTW_CELERY_WORKER_PREFIX + ".default"
 s.BTW_CELERY_BIBLIOGRAPHY_QUEUE = \
     lambda s: s.BTW_CELERY_WORKER_PREFIX + ".bibliography"
 
-s.CELERY_DEFAULT_EXCHANGE = 'default'
-s.CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
-s.CELERY_DEFAULT_ROUTING_KEY = 'default'
+s.CELERY_TASK_DEFAULT_EXCHANGE = 'default'
+s.CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
+s.CELERY_TASK_DEFAULT_ROUTING_KEY = 'default'
 
-s.CELERY_QUEUES = lambda s: (
-    Queue(s.CELERY_DEFAULT_QUEUE, routing_key='default'),
+s.CELERY_TASK_QUEUES = lambda s: (
+    Queue(s.CELERY_TASK_DEFAULT_QUEUE, routing_key='default'),
     Queue(s.BTW_CELERY_BIBLIOGRAPHY_QUEUE, routing_key='bibliography'),
 )
 
-s.CELERY_ROUTES = lambda s: {
+s.CELERY_TASK_ROUTES = lambda s: {
     'bibliography.tasks.fetch_items': {
         'queue': s.BTW_CELERY_BIBLIOGRAPHY_QUEUE,
         'routing_key': 'bibliography',

@@ -89,9 +89,8 @@ launch_fetch_task()
 get_all_mock = mock.Mock(side_effect=lambda: mock_records.values)
 get_item_mock = mock.Mock(side_effect=mock_records.get_item)
 
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory',
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True,
+                   CELERY_BROKER_TRANSPORT='memory',
                    ROOT_URLCONF='lexicography.tests.urls')
 class CachingTestCase(DisableMigrationsMixin, TestCase):
     fixtures = list(os.path.join(dirname, "fixtures", x)

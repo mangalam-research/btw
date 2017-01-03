@@ -18,10 +18,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'btw.settings')
 #
 # Without the following patch, Celery crashes.
 #
-if celery.VERSION > (3, 1, 23, '', ''):
+if celery.VERSION > (3, 1, 24, '', '') and celery.VERSION < (4,):
     raise ValueError("check whether celery still needs a patch")
 
-if celery.VERSION == (3, 1, 23, '', ''):
+if celery.VERSION >= (3, 1, 23, '', '') and celery.VERSION < (4,):
     from celery.backends.redis import RedisBackend
 
     def patched_create_client(self, **params):
@@ -71,5 +71,5 @@ app = Celery('btw')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-app.config_from_object('django.conf:settings')
+app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)

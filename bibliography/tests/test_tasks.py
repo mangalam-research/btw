@@ -13,9 +13,8 @@ from lib.util import WithStringIO, utcnow
 
 cache = caches['bibliography']
 
-@override_settings(CELERY_ALWAYS_EAGER=True,
-                   CELERY_ALWAYS_EAGER_PROPAGATES_EXCEPTIONS=True,
-                   BROKER_BACKEND='memory')
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True,
+                   CELERY_BROKER_TRANSPORT='memory')
 class TasksTestCase(TestCase):
     __metaclass__ = TestMeta
 
