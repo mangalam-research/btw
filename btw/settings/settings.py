@@ -392,6 +392,8 @@ s.INVITATION_EXPIRY_DAYS = 5
 
 s.TEST_RUNNER = 'core.runner.Runner'
 
+s.NOSE_ARGS = ['--with-progressive']
+
 class TestingFilter(Filter):
 
     def filter(self, record):
