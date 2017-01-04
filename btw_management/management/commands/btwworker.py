@@ -65,11 +65,16 @@ def get_defined_workers():
     return ret
 _cached_defined_workers = None
 
-def get_running_workers(error_equals_no_worker=False):
+def get_running_workers(no_celery_access=False):
     workers = get_defined_workers()
     ret = []
+
+    running = {} if no_celery_access else (app.control.inspect().ping() or {})
+    full_names = get_full_names([w.name for w in workers])
+
     for worker in workers:
-        if not worker_does_not_exist(worker):
+        if full_names[worker.name] in running or \
+           not worker_does_not_exist(worker):
             ret.append(worker)
     return ret
 
@@ -165,7 +170,7 @@ Manage workers.
         if cmd == "start":
             worker_names = get_worker_names()
 
-            running_workers = get_running_workers(error_equals_no_worker=True)
+            running_workers = get_running_workers()
             full_names = get_full_names(worker_names)
             requests = []
             for name in worker_names:
@@ -233,7 +238,7 @@ Manage workers.
 
         elif cmd == "stop":
             worker_names = get_worker_names()
-            running_workers = get_running_workers(error_equals_no_worker=True)
+            running_workers = get_running_workers()
 
             for name in worker_names:
                 worker = workers_by_name[name]

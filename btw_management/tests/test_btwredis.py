@@ -1,5 +1,6 @@
 import unittest
 import os
+import signal
 import tempfile
 import shutil
 import subprocess
@@ -10,9 +11,9 @@ from nose.tools import nottest
 
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
+from django.conf import settings
 
 from .util import Caller, call_command
-from lib.settings import join_prefix
 
 tmpdir = None
 runpath = None
@@ -76,10 +77,11 @@ class BTWRedisTestCase(unittest.TestCase):
     def tearDown(self):
         super(BTWRedisTestCase, self).tearDown()
         # Make sure that we don't leave redis running...
-        try:
-            call_command('btwredis', 'stop')
-        except CommandError:
-            pass
+        with with_fake_settings():
+            try:
+                call_command('btwredis', 'stop')
+            except CommandError:
+                pass
 
     def assertNoOutput(self, c):
         self.assertTrue(c.called)
@@ -163,11 +165,21 @@ class BTWRedisTestCase(unittest.TestCase):
         """
         Test that ``btwredis stop`` fails if there is no pid file.
         """
+        fake_pidfile_dir = os.path.join(runpath, "redis")
+        fake_pidfile_path = os.path.join(fake_pidfile_dir,
+                                         "testing.redis.pid")
         c = Caller()
         with self.assertRaisesRegexp(
                 CommandError,
-                r"cannot read pid from "):
-            c.call_command("btwredis", "stop")
+                r"cannot read pid from "), with_test_redis(True):
+            with open(fake_pidfile_path, 'r') as f:
+                old_pid = int(f.read().strip())
+
+            os.unlink(fake_pidfile_path)
+            try:
+                c.call_command("btwredis", "stop")
+            finally:
+                os.kill(old_pid, signal.SIGKILL)
         self.assertNoOutput(c)
 
     def test_stop_corrupt_pid(self):
@@ -183,15 +195,23 @@ class BTWRedisTestCase(unittest.TestCase):
         if not os.path.exists(fake_pidfile_dir):
             os.makedirs(fake_pidfile_dir)
 
-        with open(fake_pidfile_path, "w") as f:
-            f.write("foo")
-
         c = Caller()
-        with with_fake_settings(), self.assertRaisesRegexp(
-                CommandError,
-                r"the pid file contains something that "
-                r"cannot be converted to an integer: foo"):
-            c.call_command("btwredis", "stop")
+        with self.assertRaisesRegexp(
+            CommandError,
+            r"the pid file contains something that "
+            r"cannot be converted to an integer: foo"), \
+                with_test_redis(True):
+
+            with open(fake_pidfile_path, 'r') as f:
+                old_pid = int(f.read().strip())
+
+            with open(fake_pidfile_path, "w") as f:
+                f.write("foo")
+            try:
+                c.call_command("btwredis", "stop")
+            finally:
+                os.kill(old_pid, signal.SIGKILL)
+
         self.assertNoOutput(c)
 
     def test_stop_workers_running(self):
@@ -207,7 +227,7 @@ class BTWRedisTestCase(unittest.TestCase):
                 "btw_management.management.commands.btwredis"
                 ".get_running_workers") \
             as grw, \
-            with_fake_settings(), \
+            with_test_redis(True), \
             self.assertRaisesRegexp(
                 CommandError,
                 r"cannot stop redis while BTW workers are running."):
@@ -215,6 +235,7 @@ class BTWRedisTestCase(unittest.TestCase):
             # are not important.
             grw.return_value = [1, 2]
             c.call_command("btwredis", "stop")
+        call_command("btwredis", "stop")
         self.assertNoOutput(c)
 
     def test_check(self):

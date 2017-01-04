@@ -84,7 +84,19 @@ Manage the redis server used by BTW.
                 raise CommandError("cannot talk to redis.")
 
         elif cmd == "stop":
-            if len(get_running_workers(error_equals_no_worker=True)):
+            # We need to perform this test first because
+            # get_running_workers will cause Celery to access
+            # Redis. So if it is not running the code there will fail!
+            if not running():
+                self.stdout.write("Redis is not running.")
+                return
+
+            # We call get_running_workers without accessing Celery
+            # because that causes significant complications in
+            # testing, and the gain of accessing Celery for the test
+            # is not great, given that stopping redis is done **very**
+            # infrequently.
+            if len(get_running_workers(no_celery_access=True)):
                 raise CommandError(
                     "cannot stop redis while BTW workers are running.")
 
