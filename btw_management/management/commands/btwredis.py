@@ -39,6 +39,10 @@ class Start(SubCommand):
                         dest='delete_dump',
                         default=False,
                         help='Delete the dump file before starting redis.')
+        sp.add_argument('--monitor',
+                        action='store_true',
+                        default=False,
+                        help='Start a monitor after starting redis.')
         return sp
 
     def __call__(self, command, options):
@@ -78,6 +82,22 @@ class Start(SubCommand):
 
         if is_up:
             command.stdout.write("Started redis.")
+
+            # We use this for some debugging scenarios. The redis-cli
+            # instance will shutdown as soon as the redis it is
+            # attached to shuts down too.
+            if options["monitor"] or \
+               os.environ.get("BTW_MONITOR_REDIS", False):
+                pid = open(config.pidfile_path).read().strip()
+                logfile_path = os.path.join("/tmp",
+                                            "redis.monitor." + pid + ".log")
+                with open(logfile_path, 'w') as logfile, \
+                        open("/dev/null", 'r') as devnull:
+                    subprocess.Popen(["redis-cli", "-s", config.sockfile_path,
+                                      "-a", config.password, "monitor"],
+                                     stdout=logfile,
+                                     stderr=logfile,
+                                     stdin=devnull)
         else:
             raise CommandError("cannot talk to redis.")
 
