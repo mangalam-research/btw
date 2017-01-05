@@ -44,7 +44,14 @@ cssselect>=0.9.1,<1
 grako==3.8.1
 django-pipeline>=1.6.9,<1.7
 django-mptt>=0.8.6,<0.9
-redis>=2.10.5,<3
+#
+# We have to use this until this is taken care of:
+# https://github.com/andymccurdy/redis-py/pull/813
+#
+git+https://github.com/lddubeau/redis-py@fix/no-interruptederror-on-python-2.7#egg=redis
+# Uncomment this and update with version number when the above has been merged:
+# redis>=2.10.5,<3
+#
 django-debug-toolbar==1.4
 eulexistdb>=0.21.1,<1
 eulxml>=1.1.3,<2
