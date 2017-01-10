@@ -789,13 +789,22 @@ Notes from Actual Upgrades
 Nginx
 -----
 
-If needed, create some new server keys::
+The server key generation has been superseded by using Let's Encrypt
+Certificate. Read certbot's documentation for how to get and install
+certificates.
+
+If needed for some reason, the manual menthod to create some new
+server keys::
 
     $ cd /srv/www/<site>
     $ openssl genrsa -out ssl.key 2048
     $ openssl req -new -key ssl.key -out ssl.csr
     [Answer the questions to identify the machine. Leave the password blank.]
     $ openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt
+
+If there isn't a secure dhparam yet, you should create it with::
+
+    $ openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
 Install a proper configuration in
 ``/etc/nginx/sites-available/<site>``, and link it to the
