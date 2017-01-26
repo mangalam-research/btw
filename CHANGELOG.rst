@@ -1,4 +1,4 @@
-* 1.5.0 (upcoming):
+* 2.0.0:
 
   + Upgrade from Django 1.8 to Django 1.10. Django 1.10 has features
     that were needed by BTW.
@@ -33,7 +33,7 @@
       dialog rather than by typing field numbers directly in the
       article.
 
-    - BTW now perform automatic cleaning of old records.
+    - BTW now performs automatic cleaning of old records.
 
 * 1.4.1:
 
