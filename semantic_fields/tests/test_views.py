@@ -1024,11 +1024,7 @@ class ListTestCase(ViewsTestCase):
                                         parent=cat1)
         cat3.save()
 
-        # We build this factory this way for consistency between the
-        # URLs produced through ``app`` and those produced using
-        # requests from the factory.
-        request_factory = RequestFactory(SERVER_NAME="localhost",
-                                         HTTP_HOST="localhost:80")
+        request_factory = RequestFactory()
         request = request_factory.get("/foo")
         cls.context = {"request": request}
 
@@ -1060,7 +1056,7 @@ class ListTestCase(ViewsTestCase):
         # set the header value to "foo" too, which is a match.
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         self.app.get(self.url,
-                     {"paths": "01n"},
+                     params={"paths": "01n"},
                      headers={
                          "Accept": "application/json",
                          "X-CSRFToken": FAKE_CSRF
@@ -1076,7 +1072,7 @@ class ListTestCase(ViewsTestCase):
         # set the header value to "foo" too, which is a match.
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         self.app.get(self.url,
-                     {"paths": "01n"},
+                     params={"paths": "01n"},
                      headers={
                          "Accept": "application/json",
                          "X-CSRFToken": FAKE_CSRF
@@ -1110,11 +1106,10 @@ class ListTestCase(ViewsTestCase):
         """
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url,
-                                {"paths": "01.01n;02n;99n"},
+                                params={"paths": "01.01n;02n;99n"},
                                 headers={
                                     "Accept": "application/json",
                                     "X-CSRFToken": FAKE_CSRF,
-                                    "Referer": "localhost:80"
                                 })
 
         serializer = SemanticFieldSerializer(
@@ -1138,8 +1133,8 @@ class ListTestCase(ViewsTestCase):
                                  datetime="2000-01-01", published=True)
             ])
             response = self.app.get(self.url,
-                                    {"paths": "01.01n;02n;99n",
-                                     "fields": "changerecords"},
+                                    params={"paths": "01.01n;02n;99n",
+                                            "fields": "changerecords"},
                                     headers={
                                         "Accept": "application/json",
                                         "X-CSRFToken": FAKE_CSRF,
@@ -1161,7 +1156,7 @@ class ListTestCase(ViewsTestCase):
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
 
         response = self.app.get(self.url,
-                                {"paths": "01.01n@02n;01n@02n;02n"},
+                                params={"paths": "01.01n@02n;01n@02n;02n"},
                                 headers={
                                     "Accept": "application/json",
                                     "X-CSRFToken": FAKE_CSRF,
@@ -1200,7 +1195,7 @@ class ListTestCase(ViewsTestCase):
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
 
         response = self.app.get(self.url,
-                                {
+                                params={
                                     "search": "aaaa",
                                     "aspect": "sf",
                                     "scope": "all",
@@ -1222,7 +1217,7 @@ class ListTestCase(ViewsTestCase):
         """
         self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
         response = self.app.get(self.url,
-                                {
+                                params={
                                     "ids": self.cat3.id,
                                     "fields": "parent",
                                     "depths.parent": "-1",
