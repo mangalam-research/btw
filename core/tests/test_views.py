@@ -108,25 +108,7 @@ class GeneralTestCase(ViewTestCase):
         """
         # The value can be anything as BTW itself does not care what
         # it is.
-        cookie = http_cookiejar.Cookie(
-            version=0,
-            name='btw_dev',
-            value="foo",
-            port=None,
-            port_specified=False,
-            domain='.localhost',
-            domain_specified=True,
-            domain_initial_dot=False,
-            path='/',
-            path_specified=True,
-            secure=False,
-            expires=None,
-            discard=False,
-            comment=None,
-            comment_url=None,
-            rest=None
-        )
-        self.app.cookiejar.set_cookie(cookie)
+        self.app.set_cookie("btw_dev", "foo")
         response = self.app.get(reverse('pages-root'))
         alerts = response.lxml.xpath(self.alert_xpath)
         self.assertEqual(len(alerts), 1, "there should be one alert")

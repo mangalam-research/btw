@@ -1651,27 +1651,9 @@ class EditingTestCase(ViewsTransactionTestCase):
         # that the next request is not with a logged in 'foo'
         # user. The csrftoken manipulation is so that we pass the
         # csrftoken check.
-        csrftoken = self.app.cookies['csrftoken']
+        csrftoken = self.app.cookies[settings.CSRF_COOKIE_NAME]
         self.renew_app()
-        cookie = http_cookiejar.Cookie(
-            version=0,
-            name='csrftoken',
-            value=csrftoken,
-            port=None,
-            port_specified=False,
-            domain='.localhost',
-            domain_specified=True,
-            domain_initial_dot=False,
-            path='/',
-            path_specified=True,
-            secure=False,
-            expires=None,
-            discard=False,
-            comment=None,
-            comment_url=None,
-            rest=None
-        )
-        self.app.cookiejar.set_cookie(cookie)
+        self.app.set_cookie(settings.CSRF_COOKIE_NAME, csrftoken)
         messages, _ = self.save(response, None)
 
         self.assertEqual(len(messages), 1)
