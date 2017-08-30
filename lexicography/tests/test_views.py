@@ -7,6 +7,7 @@ import difflib
 
 import lxml.etree
 from django_webtest import WebTest, TransactionWebTest
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
@@ -1262,12 +1263,16 @@ class EditingTestCase(ViewsTransactionTestCase):
             "data": data
         }
 
+        etag = response.form['initial_etag'].value.encode('utf-8')
         headers = {
             'X-REQUESTED-WITH': 'XMLHttpRequest',
             'X-CSRFToken':
             response.form['csrfmiddlewaretoken'].value.encode('utf-8'),
-            'If-Match': response.form['initial_etag'].value.encode('utf-8'),
         }
+
+        if etag != "":
+            # The etag must be put in quotes.
+            headers['If-Match'] = '"{}"'.format(etag)
 
         response = self.app.post(
             saveurl,
@@ -1552,6 +1557,7 @@ class EditingTestCase(ViewsTransactionTestCase):
         lock.datetime = lock.datetime - models.LEXICOGRAPHY_LOCK_EXPIRY - \
             datetime.timedelta(seconds=1)
         lock.save()
+        initial_etag = entry1.latest.etag
 
         # The 2nd user opens the article.
         response2, entry2 = self.open_abcd('foo2')
@@ -1564,6 +1570,9 @@ class EditingTestCase(ViewsTransactionTestCase):
             response2, "foo2", test_util.stringify_etree(data_tree))
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
+        # The etags should have changed with the new save.
+        self.assertNotEqual(initial_etag,
+                            Entry.objects.get(id=entry2.id).latest.etag)
 
         # The 2nd user closes the article.
         self.close(response2, entry2, "foo2")
