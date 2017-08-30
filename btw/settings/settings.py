@@ -361,7 +361,7 @@ class DisableMigrations(object):
         return True
 
     def __getitem__(self, item):
-        return "notmigrations"
+        return None
 
 # pylint: disable=redefined-outer-name
 def _migration_modules(s):
