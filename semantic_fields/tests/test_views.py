@@ -24,7 +24,7 @@ from lib.testutil import wipd
 user_model = get_user_model()
 
 def _make_test_url(sf):
-    return "http://localhost:80" + sf.detail_url
+    return "http://testserver" + sf.detail_url
 
 FAKE_CSRF = "x" * CSRF_TOKEN_LENGTH
 
@@ -1167,7 +1167,7 @@ class ListTestCase(ViewsTestCase):
                                     "X-CSRFToken": FAKE_CSRF,
                                 })
 
-        url = "http://localhost:80" + self.url
+        url = "http://testserver" + self.url
 
         self.assertItemsEqual(response.json,
                               [{

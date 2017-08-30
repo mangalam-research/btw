@@ -106,7 +106,7 @@ You have been invited to join BTW.
 
 Click the link below to register. This link will expire in 5 days.
 
-http://localhost:80/en-us/invitation/use/{0}/
+http://testserver/en-us/invitation/use/{0}/
 
 All the best,
 The BTW Team

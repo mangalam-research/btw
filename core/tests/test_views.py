@@ -340,7 +340,7 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         xml_params = {
             'version': util.version(),
             'year': '2012-' + str(datetime.date.today().year),
-            'url': "http://localhost:80/"
+            'url': "http://testserver/"
         }
 
         self.assertEqual(

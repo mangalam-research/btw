@@ -31,7 +31,7 @@ dirname = os.path.dirname(__file__)
 local_fixtures = list(os.path.join(dirname, "fixtures", x)
                       for x in ("users.json", "views.json"))
 
-server_name = "http://localhost:80"
+server_name = "http://testserver"
 user_model = get_user_model()
 
 

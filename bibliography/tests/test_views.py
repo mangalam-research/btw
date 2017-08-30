@@ -587,7 +587,7 @@ class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin, LoginMixin):
 
     def test_correct_data(self):
         response = self.app.get(
-            self.url, {'Accept': 'application/json'}, user='test')
+            self.url, headers={'Accept': 'application/json'}, user='test')
         data = json.loads(response.body)
         assert_equal(data["reference_title"], "Blah")
         assert_equal(data["genre"], "SU")
