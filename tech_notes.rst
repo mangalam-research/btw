@@ -524,6 +524,13 @@ Generally:
 
 See below for specific upgrade cases.
 
+2.0.0 to 2.1.0
+~~~~~~~~~~~~~~
+
+After ``pip install -r requirements.txt``:
+
+ - Force easy_thumbnails to 2.4.1.
+
 1.4.1 to 2.0.0
 ~~~~~~~~~~~~~~
 
