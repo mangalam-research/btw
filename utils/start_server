@@ -131,13 +131,6 @@ conf_path = os.path.join("config", "nginx.conf")
 read_from = local_conf_path if os.path.exists(local_conf_path) \
     else conf_path
 
-server_port = str(outil.get_unused_port())
-with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
-    tmpcfg.write(cfg.read().replace('@PWD@', os.getcwd())
-                 .replace('@TMPDIR@', tmpdir)
-                 .replace('@PORT@', nginx_port)
-                 .replace('@SERVER_PORT@', server_port))
-
 # Clean whatever redis instance may have been left out from a previous
 # run. The automated build systems (Buildbot, Jenkins) can sometimes
 # kill a build summarily. Somehow redis sometimes survives the
@@ -175,10 +168,17 @@ subprocess.check_call(['./manage.py', 'btwexistdb', 'loadindex'])
 subprocess.check_call(['./manage.py', 'btwcheck'])
 
 pid_to_name = {}
+server_port = str(outil.get_unused_port())
 server = subprocess.Popen(["./manage.py", "liveserver",
                            "localhost:" + server_port, fifo_to_server,
                            fifo_from_server])
 pid_to_name[server.pid] = "liveserver"
+
+with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
+    tmpcfg.write(cfg.read().replace('@PWD@', os.getcwd())
+                 .replace('@TMPDIR@', tmpdir)
+                 .replace('@PORT@', nginx_port)
+                 .replace('@SERVER_PORT@', server_port))
 
 # nginx spawns a master and immediately returns
 subprocess.check_call(["nginx", "-c", tmpconf])
