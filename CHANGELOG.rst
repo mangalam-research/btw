@@ -1,3 +1,8 @@
+* 2.1.0:
+
+  + Upgrade from Django 1.10 to Django 1.11. This entailed upgrading
+    also a series of packages we use with Django.
+
 * 2.0.0:
 
   + Upgrade from Django 1.8 to Django 1.10. Django 1.10 has features
