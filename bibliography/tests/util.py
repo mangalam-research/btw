@@ -15,6 +15,8 @@ dirname = os.path.dirname(__file__)
 key_re = re.compile(r"([&?]key=)[^&]+")
 id_re = re.compile(r"^(/(?:groups|users)/)\d+/")
 
+MITMPROXY_CERT_DIR = os.path.join(os.environ['HOME'], ".mitmproxy")
+
 def hash_mitmproxy():
     # Make sure we hash only once.
     if hash_mitmproxy.hashed:
@@ -27,6 +29,25 @@ def hash_mitmproxy():
     hash_mitmproxy.hashed = True
 
 hash_mitmproxy.hashed = False
+
+def check_certs():
+    # Make sure we check only once.
+    if check_certs.done:
+        return
+
+    try:
+        subprocess.check_call(["openssl", "x509", "-checkend", "0",
+                               "-noout", "-in",
+                               os.path.join(MITMPROXY_CERT_DIR,
+                                            "mitmproxy-ca-cert.pem")],
+                              stdout=open("/dev/null"))
+    except subprocess.CalledProcessError:
+        raise Exception("""\
+The certificate that mitmproxy creates for itself is expired. You \
+should remove it and run mitmproxy to create a new certificate.""")
+
+    check_certs.done = True
+check_certs.done = False
 
 def get_port():
     import socket
@@ -41,13 +62,13 @@ def record(entity):
     """
     Use this decorator to mark a test as being in recording mode. This
     decorator optionally takes an argument. So it can be used this
-    way::
+    way: :
 
          @record
          def foo(...):
             ...
 
-    Or like this::
+    Or like this: :
 
          @record(proxy)
          def foo(...):
@@ -75,13 +96,13 @@ def record(entity):
 def replay(entity):
     """
     Use this decorator to mark a test as being in replay mode. This
-    decorator optionally takes an argument. So it can be used this way::
+    decorator optionally takes an argument. So it can be used this way: :
 
          @replay
          def foo(...):
             ...
 
-    Or like this::
+    Or like this: :
 
          @replay(proxy)
          def foo(...):
@@ -176,9 +197,13 @@ def _proxify(file_name, f):
 
             # This is needed so that the CA for mitmproxy is found.
             hash_mitmproxy()
+            # This is needed so that we don't run mitmproxy with
+            # an expired certificate
+            check_certs()
+
+            # Make mitmproxy's certificate checkable.
             os.environ['SSL_CERT_DIR'] = \
-                os.path.join(os.environ['HOME'], ".mitmproxy") + ":" + \
-                "/etc/ssl/certs"
+                MITMPROXY_CERT_DIR + ":" + "/etc/ssl/certs"
 
             # This flushes the previous opener that may have been
             # installed.  We must do this so that urllib2 picks up the new
@@ -280,7 +305,7 @@ class TestMeta(type):
         methods are those whose name begins with ``test_``:
 
         * Methods decorated with ``@replay`` and ``@record`` are
-          wrapped by :func:`_proxify`.
+          wrapped by: func: `_proxify`.
 
         * Methods decorated with ``@raw`` are left alone.
 
