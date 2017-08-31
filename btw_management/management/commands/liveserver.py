@@ -470,7 +470,9 @@ class Command(BaseCommand):
         control_write = options["control_write"]
 
         print "Starting server at:", server_address
-        os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = server_address
+        (host, port) = server_address.split(":")
+        LiveServerTestCase.host = host
+        LiveServerTestCase.port = int(port)
 
         zotero_patch.start()
 
