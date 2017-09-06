@@ -46,6 +46,7 @@ require.config({
     dragula: "external/dragula.min",
     ResizeObserver: "external/ResizeObserver",
     salve: "external/salve.min",
+    rangy: "external/rangy/rangy-core",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {
