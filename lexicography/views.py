@@ -47,6 +47,7 @@ from .forms import SaveForm
 from lib.existdb import query_iterator, is_lucene_query_clean, \
     get_collection_path
 from lib import xquery
+from lib.decorators import wed_hack
 
 article_display_cache = caches['article_display']
 
@@ -660,6 +661,8 @@ def save_login_required(view):
     return wrapper
 
 
+# We should drop wed_hack once we move to wed 0.30 or higher.
+@wed_hack
 @save_login_required
 @require_POST
 @uses_handle_or_entry_id

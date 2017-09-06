@@ -174,6 +174,9 @@ s.PIPELINE = {
 # s.SECRET_KEY = ''
 
 s.MIDDLEWARE_CLASSES = (
+    # We should drop this hack once we upgrade to wed 0.30 or
+    # higher.
+    'middleware.wed.WedHack',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
