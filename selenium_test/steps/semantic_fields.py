@@ -394,7 +394,7 @@ def step_impl(context):
         return driver.execute_script("""
         var $ = jQuery;
         var $msg = $("form *[name='heading']")
-            .next(".help-block").children(".help-block");
+            .next(".help-block");
         return $msg.text() !== "";
         """)
 

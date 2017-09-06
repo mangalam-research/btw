@@ -199,7 +199,7 @@ def step_impl(context, error):
         var error = arguments[0];
         var $ = jQuery;
         var $msg = $(".primary-source-form *[name='reference_title']")
-            .next(".help-block").children(".help-block");
+            .next(".help-block");
         return $msg.text() === error;
         """, error)
 
