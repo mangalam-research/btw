@@ -63,7 +63,7 @@ funcsigs==1.0.2
 functools32==3.2.3.post2
 future==0.15.2
 futures==3.0.5
--e git+https://github.com/lddubeau/glerbl.git@06da89eff59a0f3a87a3b2547a4e9bfc572be8fd#egg=glerbl
+glerbl==0.1.0
 grako==3.8.1
 html5lib==0.999
 idna==2.1
@@ -131,5 +131,5 @@ vine==1.1.3
 waitress==0.9.0
 WebOb==1.6.0
 WebTest==2.0.27
--e git+https://github.com/mangalam-research/btw.git@fc092dd86e3370ee8bef9b82558863f459d0814a#egg=wedutil
+-e git+https://github.com/mangalam-research/btw.git@a8a6a5f2f2e4e963babc1dff7247bd743a37aa62#egg=wedutil
 wrapt==1.10.8
