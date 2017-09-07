@@ -35,7 +35,7 @@ django-cms==3.4.1
 # uses it 1 won't work with Django 1.11
 django-formtools>=2,<3
 # These are required by django-cms
-django-treebeard>=4.1.0,<5
+django-treebeard>=4.1.2,<5
 django-sekizai==0.10.0
 django-classy-tags>=0.8.0,<0.9
 djangocms-admin-style==1.1.0
