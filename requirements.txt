@@ -14,7 +14,9 @@ pyvirtualdisplay>=0.1.5,<2
 selenium==2.49.0
 behave>=1.2.5,<2
 selenic>=0.11.0,<1
-wedutil>=0.19.0,<1
+# This has to be at 0.19.0 for wed 0.28.0. We'll need to upgrade it
+# when we upgrade wed.
+wedutil==0.19.0
 pebble>=3.1.8,<4
 # We cannot use versions greater than 4.3.0 until this is fixed:
 # https://github.com/niwinz/django-redis/issues/223
