@@ -97,4 +97,9 @@ if s.BTW_BUILD_ENV:
     # of the root name.
     s.EXISTDB_ROOT_COLLECTION = "/test_" + builder
 
+    # We do not want to use --with-progressive if we are in a builder.
+    # The progressive reporter is useful only when manually using the
+    # CLI.
+    s.NOSE_ARGS.remove("--with-progressive")
+
 globals().update(s.as_dict())
