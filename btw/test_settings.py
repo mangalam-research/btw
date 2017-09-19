@@ -102,4 +102,8 @@ if s.BTW_BUILD_ENV:
     # CLI.
     s.NOSE_ARGS.remove("--with-progressive")
 
+    # We also want extra verbosity so that we can see the sequence of
+    # tests.
+    s.NOSE_ARGS.append("--verbosity=3")
+
 globals().update(s.as_dict())
