@@ -74,7 +74,7 @@ isodate==0.5.4
 itypes==1.1.0
 Jinja2==2.8
 keepalive==0.5
-kombu==4.0.2
+-e git+https://github.com/lddubeau/kombu@1a5729d4378c5706e849f755ab02f0388c89362d#egg=kombu
 lazy-object-proxy==1.2.2
 lxml==3.6.3
 MarkupSafe==0.23

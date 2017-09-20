@@ -28,7 +28,7 @@ celery[redis]==4.0.2
 # We need this to prevent brpop failures. See:
 # https://github.com/celery/kombu/issues/681
 #
-git+https://github.com/lddubeau/kombu@fix/failing-brpop#egg=kombu
+-e git+https://github.com/lddubeau/kombu@fix/failing-brpop#egg=kombu
 djangorestframework>=3.4.0,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
