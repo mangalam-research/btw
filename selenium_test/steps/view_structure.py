@@ -768,7 +768,15 @@ def step_impl(context):
     # We click outside the popover
     coords = util.element_page_coordinates(popover)
     x = -5 if coords["left"] > 5 else coords["width"] + 5
-    y = -5 if coords["top"] > 5 else coords["height"] + 5
+    # We used to also vary the y coordinate. The tests we currently
+    # have don't actually **require** it. And it eventually caused
+    # problems. It so happens that our popup has space outside of it
+    # to the left/right but up/down so y ends up outside the
+    # window. Earlier versions of Chrome/Chromedriver/Selenium would
+    # be fine with it, but later versions have a problem if the
+    # coordinate is outside the window. So for now we leave y to
+    # 0. We'll change as needed if necessary in the future.
+    y = 0
     ActionChains(context.driver) \
         .move_to_element_with_offset(popover, x, y) \
         .click() \
