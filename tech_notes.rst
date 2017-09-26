@@ -190,7 +190,7 @@ Installing
 
 1. Go into the top directory of the Django project you cloned (see above). Issue::
 
-    $ ../btw_env/bin/pip install -r requirements.txt
+    $ ../btw_env/bin/pip install -r frozen_requirements.txt
 
 2. Install some Node dependencies::
 
@@ -479,7 +479,7 @@ Generally:
     $ git pull origin
     $ git describe
     [Make sure the description shows what you expect.]
-    $ pip install -r requirements.txt
+    $ pip install -r frozen_requirements.txt
     $ npm install
     $ make
     $ ./manate.py btwredis start
@@ -527,9 +527,9 @@ See below for specific upgrade cases.
 2.0.0 to 2.1.0
 ~~~~~~~~~~~~~~
 
-After ``pip install -r requirements.txt``:
-
- - Force easy_thumbnails to 2.4.1.
+- Before restarting any parts of BTW, make sure all celery settings in
+  the settings files used by the deployment have been updated to have
+  the ``CELERY`` prefix.
 
 1.4.1 to 2.0.0
 ~~~~~~~~~~~~~~
@@ -731,6 +731,14 @@ Afterwards:
 
 Notes from Actual Upgrades
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- 2.0.0 to 2.1.0: Upgrade scheduled for 2017/09/26 at 7:30-9:30
+  EDT. The upgrade also included a Linode migration and updating the
+  OS, both of which took about 12 minutes. The migration queue was
+  empty and the migration itself took about 5 minutes. The BTW upgrade
+  ran into an unexpected issue. We were getting an EINTR during a
+  Kombu communication with a socket. Added some custom code to retry
+  the communication. Seems to have fixed the issue.
 
 - 1.4.0 to 1.4.1: Upgrade scheduled for 2016/04/30 at 8:00-9:00 EDT. I
   started a little before to prepare. The upgrade was done at about
