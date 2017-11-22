@@ -163,7 +163,7 @@ define(function factory(require, exports, _module) {
       // that we can grab the author information and editor
       // information for the citations.
 
-      var root = viewer._root;
+      var root = viewer.root;
 
       if (!root.querySelector(".btw\\:credits")) {
         // Leave the button disabled but add an explanatory title.

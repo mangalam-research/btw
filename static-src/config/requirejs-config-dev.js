@@ -164,7 +164,7 @@ require.config({
     "wed/wed": {
       schema: "btw/btw-storage.js",
       mode: {
-        path: "btw/btw_mode",
+        path: "btw/btw-mode",
         options: {
           bibl_url: "/rest/bibliography/all",
         },

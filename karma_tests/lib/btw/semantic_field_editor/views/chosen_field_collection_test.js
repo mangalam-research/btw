@@ -5,7 +5,7 @@ import Promise from "bluebird";
 import ChosenFieldCollectionView
 from "btw/semantic_field_editor/views/chosen_field_collection";
 import Field from "btw/semantic_field_editor/models/field";
-import SFFetcher from "btw/semantic_field_fetcher";
+import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, isInViewText } from "testutils/backbone";
 import { waitFor } from "testutils/util";
 import Server from "testutils/server";

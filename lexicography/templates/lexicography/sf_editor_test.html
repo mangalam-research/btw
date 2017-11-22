@@ -18,11 +18,11 @@
 var testBody = document.getElementById("test-body");
 // This is an arbitrary size.
 testBody.style.height = "500px";
-require(["btw/semantic_field_editor/app", "btw/semantic_field_fetcher",
+require(["btw/semantic_field_editor/app", "btw/semantic-field-fetcher",
          "semantic-fields/util", "lodash"],
-  function (SFEditor, SFFetcher, sfUtil, _) {
-    var fetcher = new SFFetcher("{{ semantic_field_fetch_url }}",
-                                undefined);
+  function (SFEditor, sff, sfUtil, _) {
+    var fetcher = new sff.SFFetcher("{{ semantic_field_fetch_url }}",
+                                    undefined);
 
 
     fetcher.fetch(["02.02.18n", "02.02.19n", "01.04.04n"]).then(

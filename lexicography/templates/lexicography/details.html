@@ -31,12 +31,12 @@
 {% include "lexicography/viewer.html" %}
 <script>
 {% get_current_language as LANGUAGE_CODE %}
-require(['btw/btw_view', '../js/lexicography/view-support'],
-function(Viewer, sup) {
+require(['btw/btw-view', '../js/lexicography/view-support'],
+function(btw_view, sup) {
   var wed_document = document.getElementsByClassName("wed-document")[0];
   var data = document.getElementById("wed-data").textContent;
 
-  var viewer = new Viewer(wed_document, "{{edit_url}}",
+  var viewer = new btw_view.Viewer(wed_document, "{{edit_url}}",
                           "{{ fetch_url }}", "{{ semantic_field_fetch_url }}",
                           data,
       {% autoescape off %}{{ bibl_data }}{% endautoescape %},

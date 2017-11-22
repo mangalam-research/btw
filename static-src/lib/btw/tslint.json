@@ -1,0 +1,22 @@
+{
+  "extends": "tslint-config-lddubeau",
+  "rules": {
+    "no-unused-variable": [false, "We use the compiler options ",
+                           "noUnusedParameters/noUnusedLocals"],
+    "missing-jsdoc": [false, "Insular project."],
+    "completed-docs": [false, "Insular project."],
+    "no-backbone-get-set-outside-model": [false,
+                                          "It is true that we should have a ",
+                                          "nice TypeScript class defined ",
+                                          "instead of calling get/set.",
+                                          "But that won't happen for a while."],
+    "no-reference": false,
+    "no-string-literal": [false,
+                          "off because of ",
+                          "https://github.com/palantir/tslint/issues/1257"],
+    "no-non-null-assertion": [false, "We use them too often."],
+    "newline-before-return": [false, "Not for this project."],
+    "no-import-side-effect": [true,
+                              { "ignore-pattern": "^(jquery|bootstrap)$" }]
+  }
+}

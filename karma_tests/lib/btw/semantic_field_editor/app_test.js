@@ -11,7 +11,7 @@ import TestServer from "testutils/fetcher_server";
 import { waitFor } from "testutils/util";
 import Bb from "backbone";
 import SFEditor from "btw/semantic_field_editor/app";
-import SFFetcher from "btw/semantic_field_fetcher";
+import { SFFetcher } from "btw/semantic-field-fetcher";
 import SearchEngine from "testutils/search";
 import _ from "lodash";
 import URI from "urijs/URI";

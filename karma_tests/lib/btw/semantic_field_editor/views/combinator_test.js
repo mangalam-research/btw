@@ -3,7 +3,7 @@
 import velocity from "velocity";
 import Promise from "bluebird";
 import CombinatorView from "btw/semantic_field_editor/views/combinator";
-import SFFetcher from "btw/semantic_field_fetcher";
+import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, waitForEventOn, doAndWaitForRadio }
 from "testutils/backbone";
 import TestServer from "testutils/fetcher_server";

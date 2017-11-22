@@ -112,13 +112,17 @@ ifneq ($(and $(BUILD_ENV),$(if $(WED_OPTIMIZED),,1)),)
 $(error You must set WED_OPTIMIZED to build with an optimized wed.)
 endif
 
-SOURCES:=$(shell find static-src -type f)
+# "direct" sources are those source that are directly built
+# one-by-one. For instance, .js files that are copied, or .less files
+# that are converted to .css. An example of source that is not
+# "direct" is .ts files.
+DIRECT_SOURCES:=$(shell find static-src -type f ! -name "*.ts")
 BUILD_DEST:=$(BUILD_DIR)/static-build
 EXPANDED_DEST:=$(BUILD_DIR)/expanded
 EXPANDED_VERSIONED_BOOTSTRAP:=$(EXPANDED_DEST)/$(BOOTSTRAP_BASE:.zip=)
 EXPANDED_BOOTSTRAP:=$(EXPANDED_DEST)/bootstrap
 BUILD_CONFIG:=$(BUILD_DIR)/config
-LOCAL_SOURCES:=$(foreach f,$(SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
+LOCAL_SOURCES:=$(foreach f,$(DIRECT_SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 # Local sources that need to be process by specialized recipes.
 GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/requirejs-config-dev.js
 # Local sources that are merely copied.
@@ -148,7 +152,7 @@ TEST_DATA_FILES:=$(foreach f,prepared_published_prasada.xml,build/test-data/$f)
 
 .DELETE_ON_ERROR:
 
-TARGETS:= javascript python-generation btw-schema-targets
+TARGETS:= javascript typescript python-generation btw-schema-targets
 .PHONY: all
 all: _all
 # Check we are using the same version of bootstrap in both places, we
@@ -183,6 +187,10 @@ build/python/semantic_fields/field.py: semantic_fields/field.ebnf
 
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
+
+.PHONY: typescript
+typescript:
+	./node_modules/.bin/tsc -p static-src/lib/btw/tsconfig.json --outDir $(BUILD_DEST)/lib/btw/
 
 $(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)

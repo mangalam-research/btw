@@ -4,7 +4,7 @@ import velocity from "velocity";
 import Promise from "bluebird";
 import InlineView from "btw/semantic_field_editor/views/field/inline";
 import Field from "btw/semantic_field_editor/models/field";
-import SFFetcher from "btw/semantic_field_fetcher";
+import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, isInViewText } from "testutils/backbone";
 import { waitFor } from "testutils/util";
 import Server from "testutils/server";

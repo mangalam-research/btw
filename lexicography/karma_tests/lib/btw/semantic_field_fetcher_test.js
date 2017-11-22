@@ -3,11 +3,11 @@ define(function factory(require, _exports, _module) {
   "use strict";
   var _ = require("lodash");
   var sinon = require("sinon");
-  var Fetcher = require("btw/semantic_field_fetcher");
+  var Fetcher = require("btw/semantic-field-fetcher").SFFetcher;
   var URI = require("urijs/URI");
   var assert = chai.assert;
 
-  describe("semantic_field_fetcher", function btwViewerBlock() {
+  describe("semantic-field-fetcher", function btwViewerBlock() {
     var fetcher;
     var server;
     var fetchUrl = "/semantic-fields/semanticfield";

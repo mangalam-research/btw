@@ -100,7 +100,7 @@ def step_impl(context):
         else {
             // We force the timeout to happen immediately.
             if (timeout_test)
-                btw_viewer._load_timeout = 0;
+                btw_viewer.loadTimeout = 0;
 
             btw_viewer.whenCondition('done', function () {
                 done();
@@ -256,10 +256,10 @@ def step_impl(context, state):
 
     driver.execute_script("""
     var collapsed_desired = arguments[0];
-    var collapsing = btw_viewer._root.getElementsByClassName("collapsing");
+    var collapsing = btw_viewer.root.getElementsByClassName("collapsing");
     if (collapsing.length)
       return [false, "no element should be collapsing"];
-    var collapse = btw_viewer._root.getElementsByClassName("collapse");
+    var collapse = btw_viewer.root.getElementsByClassName("collapse");
     var not_collapsed = Array.prototype.filter.call(collapse, function (x) {
         return x.classList.contains("in");
     });
@@ -520,7 +520,7 @@ def step_impl(context, label):
 
     links = driver.execute_script("""
     var url = arguments[0];
-    var links = btw_viewer._root.querySelectorAll("a[href='" + url + "']");
+    var links = btw_viewer.root.querySelectorAll("a[href='" + url + "']");
     var ret = [];
     for (var i = 0, link; (link = links[i]); ++i) {
         ret.push(link.textContent);
