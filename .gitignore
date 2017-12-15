@@ -15,7 +15,6 @@ local_config
 local.mk
 /transformations
 /TODO.private
-/*.sql.gz
-/*.sql.bz2
+/dev-backups
 /.btw-venv
 env
