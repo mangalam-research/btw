@@ -10,7 +10,6 @@ define(function searchTableModule(require, exports, _module) {
   var _ = require("lodash");
   var lqp = require("lucene-query-parser");
   require("datatables.bootstrap");
-  require("jquery.bootstrap-growl");
 
   // This number should be bumped whenever we must flush the old saved
   // state but do not have any other means to do so.
