@@ -136,12 +136,12 @@ Collapsible {
       toggle_classes: additionalToggleClasses,
       heading_id: headingId,
       collapse_id: collapseId,
-    }), document)[0];
+    }), document)[0] as HTMLElement;
 
   return {
     group: el,
     heading: el.getElementsByTagName("a")[0],
-    content: el.getElementsByClassName("panel-body")[0],
+    content: el.getElementsByClassName("panel-body")[0] as HTMLElement,
   };
 }
 

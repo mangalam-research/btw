@@ -7,48 +7,44 @@ import * as $ from "jquery";
 
 import { Action } from "wed/action";
 
+import { Mode } from "./btw-mode";
 import * as btwTr from "./btw-tr";
 
 // TEMPORARY TYPE DEFINITIONS
 /* tslint:disable: no-any */
 type Editor = any;
-type Action = any;
-type Mode = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
-class UndoAction extends Action {
-  _editor: Editor;
+class UndoAction extends Action<{}> {
   constructor(editor: Editor) {
     super(editor, "Undo", "Undo", "<i class='fa fa-undo'></i>");
   }
 
   execute(): void {
-    this._editor.undo();
+    this.editor.undo();
   }
 }
 
-class RedoAction extends Action {
-  _editor: Editor;
+class RedoAction extends Action<{}> {
   constructor(editor: Editor) {
     super(editor, "Redo", "Redo", "<i class='fa fa-repeat'></i>");
   }
 
   execute(): void {
-    this._editor.redo();
+    this.editor.redo();
   }
 }
 
-class QuitAction extends Action {
-  _editor: Editor;
+class QuitAction extends Action<{}> {
   constructor(editor: Editor) {
     super(editor, "Save and quit", "Save and quit",
           "<i class='fa fa-sign-out' style='color: green'></i>");
   }
 
   execute(): void {
-    const $form = this._editor.$gui_root.parents("form").first();
-    this._editor.save((err) => {
+    const $form = this.editor.$gui_root.parents("form").first();
+    this.editor.save((err) => {
       if (!err) {
         $form.submit();
       }
@@ -56,34 +52,32 @@ class QuitAction extends Action {
   }
 }
 
-class QuitWithoutSavingAction extends Action {
-  _editor: Editor;
+class QuitWithoutSavingAction extends Action<{}> {
   constructor(editor: Editor) {
     super(editor, "Quit without saving", "Quit without saving",
           "<i class='fa fa-ban' style='color: red'></i>");
   }
 
   execute(): void {
-    const $form = this._editor.$gui_root.parents("form").first();
+    const $form = this.editor.$gui_root.parents("form").first();
     $form.submit();
   }
 }
 
-class SaveAction extends Action {
-  _editor: Editor;
+class SaveAction extends Action<{}> {
   constructor(editor: Editor) {
     super(editor, "Save", "Save", "<i class='fa fa-cloud-upload'></i>");
   }
 
   execute(): void {
-    this._editor.save();
+    this.editor.save();
   }
 }
 
 export class Toolbar {
-  private readonly buttons: ReadonlyArray<{ name: string, action: Action,
+  private readonly buttons: ReadonlyArray<{ name: string, action: Action<{}>,
                                             extraClass?: string }>;
-  private readonly nameToAction: Record<string, Action>;
+  private readonly nameToAction: Record<string, Action<{}>>;
 
   /** The top DOM element of the toolbar. */
   readonly top: Element;
@@ -122,7 +116,7 @@ export class Toolbar {
       button.className = `btn btn-default${extraClass}`;
       button.name = name;
       // tslint:disable-next-line:no-inner-html
-      button.innerHTML = icon || specAction.getAbbreviatedDescription();
+      button.innerHTML = icon || specAction.getAbbreviatedDescription()!;
       const $button = $(button);
       if (icon || specAction.getAbbreviatedDescription() !==
           specAction.getDescription()) {
@@ -142,19 +136,19 @@ export class Toolbar {
   private click(ev: JQueryMouseEventObject): boolean {
     ev.stopImmediatePropagation();
     ev.preventDefault();
-    const range = this.editor.getSelectionRange();
+    const selection = this.editor.caretManager.sel;
     // tslint:disable-next-line:no-any
     const name = (ev.delegateTarget as any).name as string;
     const act = this.nameToAction[name];
     if (act instanceof btwTr.SetTextLanguageTr) {
-      // Don't execute if there is no range. Otherwise, wed will raise an error
-      // that there is no caret when fireTransformation is run.
-      if (range && !range.collapsed) {
+      // Don't execute if there is no selection. Otherwise, wed will raise an
+      // error that there is no caret when fireTransformation is run.
+      if (selection && !selection.collapsed) {
         act.execute();
       }
     }
     else if (act instanceof Action) {
-      act.execute();
+      act.execute({});
     }
     else {
       throw new Error("broken toolbar");

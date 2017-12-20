@@ -69,7 +69,7 @@ def step_impl(context, which=None):
         if (data_node.childNodes.length) {
             data_node = data_node.firstChild;
         }
-        wed_editor.setDataCaret(data_node, 0);
+        wed_editor.caretManager.setCaret(data_node, 0);
         """, order)
 
         util.ctrl_equivalent_x("/")

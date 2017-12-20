@@ -7,11 +7,17 @@ import * as $ from "jquery";
 
 import { Decorator } from "wed/decorator";
 import * as domutil from "wed/domutil";
+import { GUIUpdater } from "wed/gui-updater";
 import { tooltip } from "wed/gui/tooltip";
+import { LabelManager } from "wed/labelman";
+import { Metadata } from "wed/modes/generic/metadata";
 import * as util from "wed/util";
 
 import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
          Item } from "./bibliography";
+import { HeadingDecorator } from "./btw-heading-decorator";
+import { Mode } from "./btw-mode";
+import { ExampleReferenceManager, WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
 import { SFFetcher } from "./semantic-field-fetcher";
@@ -23,12 +29,6 @@ const WHEEL = "☸";
 // TEMPORARY TYPE DEFINITIONS
 /* tslint:disable: no-any */
 type Editor = any;
-type Meta = any;
-type Mode = any;
-type HeadingDecorator = any;
-type WholeDocumentManager = any;
-type GUIUpdater = any;
-type Refman = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
@@ -57,14 +57,14 @@ export abstract class DispatchMixin {
   private readonly _inMode: boolean;
 
   /* Provided by the class onto which this is mixed: */
-  readonly abstract _editor: Editor;
-  readonly abstract meta: Meta;
+  readonly abstract editor: Editor;
   readonly abstract mode: Mode;
+  readonly abstract metadata: Metadata;
   readonly abstract headingDecorator: HeadingDecorator;
   readonly abstract exampleIdManager: IDManager;
   readonly abstract senseSubsenseIdManager: IDManager;
   readonly abstract refmans: WholeDocumentManager;
-  readonly abstract _gui_updater: GUIUpdater;
+  readonly abstract guiUpdater: GUIUpdater;
   readonly abstract senseTooltipSelector: string;
   readonly abstract sfFetcher: SFFetcher;
   abstract languageDecorator(el: Element): void;
@@ -77,8 +77,8 @@ export abstract class DispatchMixin {
   }
 
   protected dispatch(root: Element, el: Element): void {
-    const klass = this.meta.getAdditionalClasses(el);
-    if (klass.length) {
+    const klass = this.getAdditionalClasses(el);
+    if (klass.length !== 0) {
       el.className += ` ${klass}`;
     }
 
@@ -144,7 +144,8 @@ export abstract class DispatchMixin {
     }
   }
 
-  _getIDManagerForRefman(refman: Refman): IDManager {
+  _getIDManagerForRefman(refman: LabelManager | ExampleReferenceManager):
+  IDManager {
     switch (refman.name) {
     case "sense":
     case "subsense":
@@ -158,7 +159,7 @@ export abstract class DispatchMixin {
 
   idDecorator(_root: Element, el: Element): void {
     const refman = this.refmans.getRefmanForElement(el);
-    if (refman) {
+    if (refman !== null) {
       let wedId = el.id;
       if (wedId === "") {
         const id = el.getAttribute(util.encodeAttrName("xml:id"));
@@ -169,7 +170,7 @@ export abstract class DispatchMixin {
 
       // We have some reference managers that don't derive from ReferenceManager
       // and thus do not have this method.
-      if (refman.allocateLabel) {
+      if (refman instanceof LabelManager) {
         refman.allocateLabel(wedId);
       }
     }
@@ -186,7 +187,7 @@ export abstract class DispatchMixin {
       while (child) {
         next = child.nextElementSibling;
         if (child.classList.contains("_explanation_bullet")) {
-          this._gui_updater.removeNode(child);
+          this.guiUpdater.removeNode(child);
           break; // There's only one.
         }
         child = next;
@@ -194,15 +195,15 @@ export abstract class DispatchMixin {
 
       const cit = domutil.siblingByClass(el, "btw:cit");
       // If the next btw:cit element contains Pāli text.
-      if (cit &&
+      if (cit !== null &&
           cit.querySelector(
-            `*[${util.encodeAttrName("xml:lang")}='pi-Latn']`)) {
+            `*[${util.encodeAttrName("xml:lang")}='pi-Latn']`) !== null) {
         div = el.ownerDocument.createElement("div");
         div.className = "_phantom _decoration_text _explanation_bullet";
         div.style.position = "absolute";
         div.style.left = "-1em";
         div.textContent = WHEEL;
-        this._gui_updater.insertNodeAt(el, 0, div);
+        this.guiUpdater.insertNodeAt(el, 0, div);
         (el as HTMLElement).style.position = "relative";
       }
       this.elementDecorator(root, el);
@@ -214,14 +215,14 @@ export abstract class DispatchMixin {
     const parent = el.parentNode as Element;
     // Is it in a subsense?
     if (parent.classList.contains("btw:subsense")) {
-      const refman = this.refmans.getSubsenseRefman(el);
+      const refman = this.refmans.getSubsenseRefman(el)!;
       label = refman.idToSublabel(parent.id);
       child = el.firstElementChild;
       let start;
       while (child) {
         next = child.nextElementSibling;
         if (child.classList.contains("_explanation_number")) {
-          this._gui_updater.removeNode(child);
+          this.guiUpdater.removeNode(child);
         }
         else if (child.classList.contains("__start_label")) {
           start = child;
@@ -234,7 +235,7 @@ export abstract class DispatchMixin {
       div.className = "_phantom _decoration_text _explanation_number " +
         "_start_wrapper'";
       div.textContent = `${label}. `;
-      this._gui_updater.insertBefore(el, div,
+      this.guiUpdater.insertBefore(el, div,
                                      start ? start.nextSibling : el.firstChild);
     }
 
@@ -250,7 +251,7 @@ export abstract class DispatchMixin {
       const next = child.nextElementSibling;
       if (child.classList.contains("_ref_space") ||
           child.classList.contains("_cit_bullet")) {
-        this._gui_updater.removeNode(child);
+        this.guiUpdater.removeNode(child);
       }
       else if (child.classList.contains("ref")) {
         ref = child;
@@ -272,7 +273,7 @@ export abstract class DispatchMixin {
       div.style.position = "absolute";
       div.style.left = "-1em";
       div.textContent = WHEEL;
-      this._gui_updater.insertNodeAt(el, 0, div);
+      this.guiUpdater.insertNodeAt(el, 0, div);
       (el as HTMLElement).style.position = "relative";
     }
   }
@@ -315,7 +316,7 @@ export abstract class DispatchMixin {
           while (child !== null) {
             const next = child.nextElementSibling;
             if (child.classList.contains("_linking_deco")) {
-              this._gui_updater.removeNode(child);
+              this.guiUpdater.removeNode(child);
               break; // There is only one.
             }
             child = next;
@@ -330,17 +331,18 @@ export abstract class DispatchMixin {
         // An undefined or null refman can happen when first decorating the
         // document.
         let label;
-        if (refman != null) {
-          if (refman.name === "sense" || refman.name === "subsense") {
-            label = refman.idToLabel(targetId.slice(1));
-            label = label !== undefined ? `[${label}]` : undefined;
+        if (refman !== null) {
+          if (refman instanceof LabelManager) {
+            if (refman.name === "sense" || refman.name === "subsense") {
+              label = refman.idToLabel(targetId.slice(1));
+              label = label !== undefined ? `[${label}]` : undefined;
+            }
           }
           else {
             // An empty target can happen when first decorating the document.
             if (target !== null) {
-              label = refman.getPositionalLabel(this._editor.toDataNode(el),
-                                                this._editor.toDataNode(target),
-                                                targetId.slice(1));
+              label = refman.getPositionalLabel(this.editor.toDataNode(el),
+                                                this.editor.toDataNode(target));
             }
           }
         }
@@ -353,7 +355,7 @@ export abstract class DispatchMixin {
 
         // A ptr contains only attributes, no text, so we can just append.
         const pair = this.mode.nodesAroundEditableContents(el);
-        this._gui_updater.insertBefore(el, text, pair[1]);
+        this.guiUpdater.insertBefore(el, text, pair[1]);
 
         if (target !== null) {
           const targetName = util.getOriginalName(target);
@@ -425,49 +427,51 @@ export abstract class DispatchMixin {
           const next = child.nextElementSibling;
           if (child.classList.contains("_ref_abbr") ||
               child.classList.contains("_ref_paren")) {
-            this._gui_updater.removeNode(child);
+            this.guiUpdater.removeNode(child);
           }
           child = next;
         }
 
         const abbr = doc.createElement("div");
         abbr.className = "_text _phantom _ref_abbr";
-        this._gui_updater.insertBefore(el, abbr, el.firstChild);
+        this.guiUpdater.insertBefore(el, abbr, el.firstChild);
         const open = doc.createElement("div");
         open.className = "_phantom _decoration_text _ref_paren " +
           "_open_ref_paren _start_wrapper";
         open.textContent = "(";
-        this._gui_updater.insertBefore(el, open, abbr);
+        this.guiUpdater.insertBefore(el, open, abbr);
 
         const close = doc.createElement("div");
         close.className = "_phantom _decoration_text " +
           "_ref_paren _close_ref_paren _end_wrapper";
         close.textContent = ")";
-        this._gui_updater.insertBefore(el, close);
+        this.guiUpdater.insertBefore(el, close, null);
 
+        // tslint:disable-next-line:no-floating-promises
         this.fetchAndFillBiblData(targetId, el, abbr);
       }
     }
   }
 
-  fetchAndFillBiblData(targetId: string, el: Element, abbr: Element): void {
-    this.mode.getBibliographicalInfo().then((info) => {
-      const data = info[targetId];
-      if (data) {
-        this.fillBiblData(el, abbr, data);
-      }
-      else {
-        this._gui_updater.insertText(abbr, 0, "NON-EXISTENT");
-      }
+  async fetchAndFillBiblData(targetId: string,
+                             el: Element, abbr: Element): Promise<void> {
+    const info = await this.mode.getBibliographicalInfo();
 
-      $(el).trigger("wed-refresh");
-    });
+    const data = info[targetId];
+    if (data !== undefined) {
+      this.fillBiblData(el, abbr, data);
+    }
+    else {
+      this.guiUpdater.insertText(abbr, 0, "NON-EXISTENT");
+    }
+
+    $(el).trigger("wed-refresh");
   }
 
   fillBiblData(el: Element, abbr: Element, data: BibliographicalItem): void {
     const $el = $(el);
     setTitle($el, isPrimarySource(data) ? data.item : data);
-    this._gui_updater.insertText(abbr, 0, biblDataToReferenceText(data));
+    this.guiUpdater.insertText(abbr, 0, biblDataToReferenceText(data));
   }
 
   sfDecorator(root: Element, el: Element): void {
@@ -480,7 +484,7 @@ export abstract class DispatchMixin {
     //
 
     // We're already wrapped.
-    if (domutil.closestByClass(el, "field-view", root)) {
+    if (domutil.closestByClass(el, "field-view", root) !== null) {
       return;
     }
 
@@ -501,7 +505,7 @@ export abstract class DispatchMixin {
       }
     }
     else {
-      const dataNode = this._editor.toDataNode(el);
+      const dataNode = this.editor.toDataNode(el);
       ref = dataNode.textContent;
     }
 
@@ -518,8 +522,8 @@ export abstract class DispatchMixin {
     // tslint:disable-next-line:no-inner-html
     view.ui.field[0].innerHTML = "";
     view.ui.field[0].appendChild(el);
-    this._gui_updater.insertBefore(
-      parent, view.el,
+    this.guiUpdater.insertBefore(
+      parent as Element, view.el,
       before !== null ? before.nextSibling : parent.firstChild);
 
     if (inMode) {
@@ -532,5 +536,18 @@ export abstract class DispatchMixin {
           `Unknown field (${ref})`;
       });
     }
+  }
+
+  /**
+   * Returns additional classes that should apply to a node.
+   *
+   * @param node The node to check.
+   *
+   * @returns A string that contains all the class names separated by spaces. In
+   * other words, a string that could be put as the value of the ``class``
+   * attribute in an HTML tree.
+   */
+  getAdditionalClasses(node: Element): string {
+    return this.metadata.isInline(node) ? "_inline" : "";
   }
 }

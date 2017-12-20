@@ -91,24 +91,32 @@ def step_impl(context):
 def step_impl(context):
     driver = context.driver
     timeout_test = getattr(context, 'ajax_timeout_test', None)
+
+    # This step does not care whether the rendering was successful or
+    # not.
     driver.execute_async_script("""
     var timeout_test = arguments[0];
     var done = arguments[1];
     function check() {
-        if (!window.btw_viewer)
+        if (!window.btw_viewer) {
             setTimeout(check, 100);
+        }
         else {
             // We force the timeout to happen immediately.
-            if (timeout_test)
+            if (timeout_test) {
                 btw_viewer.loadTimeout = 0;
+            }
 
-            btw_viewer.whenCondition('done', function () {
-                done();
+            btw_viewer.done.then(function success() {
+              done();
+            }, function failure(err) {
+              done();
             });
         }
     }
     check();
     """, timeout_test)
+
 
 @given(ur"that the next document will be loaded by a "
        ur"(?P<condition>failing|timing-out) AJAX call")

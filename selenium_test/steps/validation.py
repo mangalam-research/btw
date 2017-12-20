@@ -21,7 +21,7 @@ def step_impl(context):
     driver = context.driver
 
     count = driver.execute_script("""
-    return wed_editor._validation_errors.length;
+    return wed_editor.validationController.copyErrorList().length;
     """)
 
     assert_equal(count, 0)
@@ -36,10 +36,11 @@ def step_impl(context, label):
 
     assert_true(driver.execute_script("""
     var label = arguments[0];
-    var errors = wed_editor._validation_errors;
+    var errors = wed_editor.validationController.copyErrorList();
     for (var i = 0, error; (error = errors[i]); ++i) {
-        if (error.error.toString() === "sense without semantic fields") {
-            var node = error.node.childNodes[error.index];
+        var ev = error.ev;
+        if (ev.error.toString() === "sense without semantic fields") {
+            var node = ev.node.childNodes[ev.index];
             var gui_node = jQuery.data(node, "wed_mirror_node");
             var head = gui_node.getElementsByClassName("head")[0]
                 .textContent.trim();
@@ -74,14 +75,15 @@ def check_error(context, expected_error_text, expected_tag=None, child=True,
     var expected_error_text = arguments[0];
     var expected_tag = arguments[1];
     var child = arguments[2];
-    var errors = wed_editor._validation_errors;
+    var errors = wed_editor.validationController.copyErrorList();
     for (var i = 0, error; (error = errors[i]); ++i) {
-        if (error.error.toString() === expected_error_text) {
+        var ev = error.ev;
+        if (ev.error.toString() === expected_error_text) {
             if (!expected_tag) {
                 return true;
             }
 
-            var node = child ? error.node.childNodes[error.index]: error.node;
+            var node = child ? ev.node.childNodes[ev.index]: ev.node;
             var gui_node = jQuery.data(node, "wed_mirror_node");
             if (gui_node.classList.contains(expected_tag)) {
                 return true;

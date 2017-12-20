@@ -409,13 +409,14 @@ def step_impl(context, how=None):
     # We have to wait for the save to happen before moving on.
     driver.execute_script("""
     window.__selenium_saved = false;
-    wed_editor._saver.addOneTimeEventListener("saved", function () {
+    wed_editor._saver.events
+      // Yes, we handle both the same.
+      .filter(function (ev) { return ev.name === "Failed" ||
+                                     ev.name === "Saved" })
+      .first()
+      .subscribe(function (ev) {
         window.__selenium_saved = true;
-    });
-    wed_editor._saver.addOneTimeEventListener("failed", function () {
-        // Yes, we do the same thing.
-        window.__selenium_saved = true;
-    });
+      });
     """)
     if how is None or how == " using the keyboard":
         util.ctrl_equivalent_x("S")

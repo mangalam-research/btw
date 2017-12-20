@@ -15,9 +15,9 @@
 
   function init() {
     require(
-      ["wed/wed", "jquery", "last-resort", "wed/onerror", "jquery.cookie"],
-      function loaded(wed, $, lr, onerror) {
-
+      ["wed/wed", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
+       "jquery.cookie"],
+      function loaded(wed, $, lr, onerror, btwWedConfig) {
         var onError = lr.install(window, { force: true });
         onError.register(onerror.handler);
 
@@ -31,19 +31,13 @@
           }
           var $widget = $(widget);
 
-          /* eslint-disable camelcase, no-undef*/
-          var options = (typeof wed_config === "object") ? wed_config : {};
-          /* eslint-enable camelcase, no-undef */
+          var options = btwWedConfig.config || {};
 
           var csrftoken = $.cookie("csrftoken");
           var $parentform = $widget.parents("form").first();
 
-          options.mode = {
-            options: {
-              semanticFieldFetchUrl:
-              $parentform.find("#id_sf_fetch_url").val(),
-            },
-          };
+          options.mode.options.semanticFieldFetchUrl =
+            $parentform.find("#id_sf_fetch_url").val();
           options.ajaxlog = {
             url: $parentform.find("#id_logurl").val(),
             headers: {

@@ -38,7 +38,7 @@
     "moment": ">=2.10.3 <3",
     "requirejs": ">=2.1.17 <3",
     "resize-observer-polyfill": "^1.2.1",
-    "salve": "^4.2.0",
+    "salve": "^4.1.2",
     "salve-dom": "^1.2.1",
     "sinon": ">=1.17.3 <2",
     "squirejs": "^0.2.1",
@@ -50,6 +50,6 @@
     "typescript": ">2.6.1 <2.7",
     "underscore": "^1.8.3",
     "velocity-animate": ">=1.2.3 <2",
-    "wed": ">=0.28.2"
+    "wed": ">=0.29.0 <0.30"
   }
 }

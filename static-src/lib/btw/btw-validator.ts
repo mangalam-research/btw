@@ -7,21 +7,12 @@ import { ValidationError } from "salve";
 import { ErrorData } from "salve-dom";
 
 import * as domutil from "wed/domutil";
-import { ModeValidator } from "wed/mode_validator";
+import { ModeValidator } from "wed/validator";
 
 const _indexOf = Array.prototype.indexOf;
 
-export class Validator extends ModeValidator {
-  /* from parent */
-  /* tslint:disable: no-any */
-  // tslint:disable-next-line:variable-name
-  private _gui_root: any;
-  /* tslint:disable: no-any */
-  /* END from parent */
-
-  constructor(guiRoot: any, dataRoot: any) {
-    super(guiRoot, dataRoot);
-  }
+export class Validator implements ModeValidator {
+  constructor(private readonly guiRoot: Element) {}
 
   // tslint:disable-next-line:max-func-body-length
   validateDocument(): ErrorData[] {
@@ -36,7 +27,7 @@ export class Validator extends ModeValidator {
 
     const ret: ErrorData[] = [];
     // Verify that all senses have some semantic fields associated with them.
-    const senses = this._gui_root.getElementsByClassName("btw:sense");
+    const senses = this.guiRoot.getElementsByClassName("btw:sense");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < senses.length; ++i) {
       const sense = senses[i];
@@ -66,7 +57,7 @@ export class Validator extends ModeValidator {
     }
 
     // Verify that all cognates have some semantic fields associated with them.
-    const cognates = this._gui_root.getElementsByClassName("btw:cognate");
+    const cognates = this.guiRoot.getElementsByClassName("btw:cognate");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < cognates.length; ++i) {
       const cognate = cognates[i];
@@ -83,7 +74,7 @@ export class Validator extends ModeValidator {
     }
 
     // Verify that all semantic fields are of the proper format.
-    const allSfs = this._gui_root.getElementsByClassName("btw:sf");
+    const allSfs = this.guiRoot.getElementsByClassName("btw:sf");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < allSfs.length; ++i) {
       const sf = allSfs[i];
@@ -105,7 +96,7 @@ export class Validator extends ModeValidator {
     }
 
     // Verify that surnames are not empty
-    const surnames = this._gui_root.getElementsByClassName("surname");
+    const surnames = this.guiRoot.getElementsByClassName("surname");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < surnames.length; ++i) {
       const surname = surnames[i];
@@ -119,7 +110,7 @@ export class Validator extends ModeValidator {
       }
     }
 
-    const btwCredits = this._gui_root.getElementsByClassName("btw:credits")[0];
+    const btwCredits = this.guiRoot.getElementsByClassName("btw:credits")[0];
     // btw:credits can be missing on files that should be upgraded to the latest
     // version of the schema.
     if (btwCredits !== undefined) {

@@ -158,7 +158,7 @@ define(function factory(require, exports, _module) {
     }
 
 
-    viewer.whenCondition("done", function done() {
+    viewer.done.then(function whenDone() {
       // We need to wait until the document is "done" rendering so
       // that we can grab the author information and editor
       // information for the citations.

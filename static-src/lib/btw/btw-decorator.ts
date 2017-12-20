@@ -5,17 +5,23 @@
 import * as $ from "jquery";
 import * as salve from "salve";
 
+import { Action } from "wed/action";
 import { Decorator } from "wed/decorator";
-import { makeDLoc } from "wed/dloc";
+import { DLoc } from "wed/dloc";
+import { Listener as DOMListener } from "wed/domlistener";
 import * as domutil from "wed/domutil";
 import { closest, closestByClass } from "wed/domutil";
-import * as contextMenu from "wed/gui/context_menu";
+import * as contextMenu from "wed/gui/context-menu";
 import { tooltip } from "wed/gui/tooltip";
-import * as inputTriggerFactory from "wed/input_trigger_factory";
+import { GUIUpdater } from "wed/gui-updater";
+import * as inputTriggerFactory from "wed/input-trigger-factory";
 import "wed/jquery.findandself";
-import * as keyConstants from "wed/key_constants";
-import * as transformation from "wed/transformation";
-import * as updaterDOMListener from "wed/updater_domlistener";
+import * as keyConstants from "wed/key-constants";
+import { LabelManager } from "wed/labelman";
+import { GenericModeOptions } from "wed/modes/generic/generic";
+import { Metadata } from "wed/modes/generic/metadata";
+import { makeElement, Transformation, TransformationData } from "wed/transformation";
+import * as updaterDOMListener from "wed/domlistener";
 import * as util from "wed/util";
 
 import { DispatchMixin } from "./btw-dispatch";
@@ -27,17 +33,11 @@ import { IDManager } from "./id-manager";
 import { SFFetcher } from "./semantic-field-fetcher";
 
 const _indexOf = Array.prototype.indexOf;
+const makeDLoc = DLoc.makeDLoc;
 
 // TEMPORARY TYPE DEFINITIONS
 /* tslint:disable: no-any */
 type Editor = any;
-type Meta = any;
-type DOMListener = any;
-type DLoc = any;
-type Transformation = any;
-type TransformationData = any;
-type WholeDocumentManager = any;
-type Action = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
@@ -54,8 +54,8 @@ interface VisibleAbsenceSpec {
 // tslint:disable-next-line:no-any
 function menuClickHandler(editor: Editor, guiLoc: DLoc, items: any,
                           ev: JQueryMouseEventObject): boolean {
-  if (editor.getGUICaret() === undefined) {
-    editor.setGUICaret(guiLoc);
+  if (editor.caretManager.caret === undefined) {
+    editor.caretManager.setCaret(guiLoc);
   }
   // tslint:disable-next-line:no-unused-expression
   new contextMenu.ContextMenu(editor.my_window.document,
@@ -64,22 +64,12 @@ function menuClickHandler(editor: Editor, guiLoc: DLoc, items: any,
 }
 
 export class BTWDecorator extends Decorator {
-  /* from parent */
-  /* tslint:disable: no-any */
-  private readonly _editor: Editor;
-  private readonly _gui_updater: any;
-  private readonly _domlistener: DOMListener;
-  private readonly _contextMenuHandler: any;
-  /* tslint:enable: no-any */
-  /* END from parent */
-
-  private readonly guiRoot: HTMLElement;
-  private readonly guiDOMListener: DOMListener;
   private readonly mode: Mode;
-  private readonly meta: Meta;
+  private readonly guiRoot: Element;
+  private readonly guiDOMListener: DOMListener;
   private readonly senseSubsenseIdManager: IDManager;
   private readonly exampleIdManager: IDManager;
-  private readonly refmans: WholeDocumentManager;
+  private readonly refmans: refmans.WholeDocumentManager;
   private readonly headingDecorator: HeadingDecorator;
   private readonly senseTooltipSelector: string;
   private readonly sfFetcher: SFFetcher;
@@ -93,20 +83,24 @@ export class BTWDecorator extends Decorator {
   explanationDecorator: (root: Element, el: Element) => void;
   // End of methods provided by the mixin.
 
-  constructor(semanticFieldFetchUrl: string, mode: Mode, meta: Meta) {
-    super(...Array.prototype.slice.call(arguments, 3));
+  constructor(semanticFieldFetchUrl: string, mode: Mode,
+              protected readonly metadata: Metadata,
+              protected readonly options: GenericModeOptions,
+              domlistener: DOMListener,
+              editor: Editor, guiUpdater: GUIUpdater) {
+    super(domlistener, editor, guiUpdater);
     DispatchMixin.call(this);
 
-    this.meta = meta;
-    this.guiRoot = this._editor.gui_root;
+    this.metadata = metadata;
+    this.guiRoot = this.editor.gui_root;
     this.guiDOMListener =
-      new updaterDOMListener.Listener(this.guiRoot, this._gui_updater);
+      new updaterDOMListener.Listener(this.guiRoot, this.guiUpdater);
     this.mode = mode;
     this.senseSubsenseIdManager = new IDManager("S.");
     this.exampleIdManager = new IDManager("E.");
     this.refmans = new refmans.WholeDocumentManager();
     this.headingDecorator = new HeadingDecorator(this.refmans,
-                                                   this._gui_updater);
+                                                   this.guiUpdater);
     this.senseTooltipSelector = "btw:english-rendition>btw:english-term";
     this.sfFetcher = new SFFetcher(semanticFieldFetchUrl, undefined,
                                    ["changerecords"]);
@@ -177,7 +171,7 @@ export class BTWDecorator extends Decorator {
 
   // tslint:disable-next-line:max-func-body-length
   addHandlers(): void {
-    const dl = this._domlistener;
+    const dl = this.domlistener;
     const gdl = this.guiDOMListener;
 
     dl.addHandler("added-element",
@@ -221,14 +215,14 @@ export class BTWDecorator extends Decorator {
                    domutil.toGUISelector("ref, ref *"),
                    (root, _added, _removed, _prev, _next, el) => {
                      this._refChangedInGUI(root,
-                                           closestByClass(el, "ref", root));
+                                           closestByClass(el, "ref", root)!);
                    });
 
     gdl.addHandler("text-changed",
                    domutil.toGUISelector("ref, ref *"),
                    (root, el) => {
                      this._refChangedInGUI(root,
-                                           closestByClass(el, "ref", root));
+                                           closestByClass(el, "ref", root)!);
                    });
 
     dl.addHandler("included-element",
@@ -242,22 +236,22 @@ export class BTWDecorator extends Decorator {
     dl.addHandler("excluding-element",
                   domutil.toGUISelector("btw:cit foreign"),
                   (root, _tree, _parent, _prev, _next, el) => {
-                    const cit = closestByClass(el, "btw:cit", root);
+                    const cit = closestByClass(el, "btw:cit", root)!;
                     // Refresh after the element is removed.
                     setTimeout(() => {
                       this.refreshElement(root, cit);
                       this.refreshElement(root, domutil.siblingByClass(
-                        cit, "btw:explanation"));
+                        cit, "btw:explanation")!);
                     }, 0);
                   });
 
     dl.addHandler("included-element",
                   domutil.toGUISelector("btw:cit foreign"),
                   (root, _tree, _parent, _prev, _next, el) => {
-                    const cit = closestByClass(el, "btw:cit", root);
+                    const cit = closestByClass(el, "btw:cit", root)!;
                     this.refreshElement(root, cit);
                     this.refreshElement(root, domutil.siblingByClass(
-                      cit, "btw:explanation"));
+                      cit, "btw:explanation")!);
                   });
 
     dl.addHandler("children-changed",
@@ -325,7 +319,7 @@ export class BTWDecorator extends Decorator {
     gdl.startListening();
 
     super.addHandlers();
-    inputTriggerFactory.makeSplitMergeInputTrigger(this._editor,
+    inputTriggerFactory.makeSplitMergeInputTrigger(this.editor,
                                                    "p",
                                                    keyConstants.ENTER,
                                                    keyConstants.BACKSPACE,
@@ -341,7 +335,7 @@ export class BTWDecorator extends Decorator {
                                                 "btw:sense, btw:subsense");
     for (const s of sensesSubsenses) {
       const id = s.getAttribute("xml:id");
-      if (id) {
+      if (id !== null) {
         this.senseSubsenseIdManager.seen(id, true);
       }
     }
@@ -350,7 +344,7 @@ export class BTWDecorator extends Decorator {
                                        "btw:example, btw:example-explained");
     for (const ex of examples) {
       const id = ex.getAttribute("xml:id");
-      if (id) {
+      if (id !== null) {
         this.exampleIdManager.seen(id, true);
       }
     }
@@ -387,7 +381,7 @@ export class BTWDecorator extends Decorator {
     }
 
     if (error) {
-      this._editor.validator.restartAt($.data(el, "wed-mirror-node"));
+      this.editor.validator.restartAt($.data(el, "wed-mirror-node"));
     }
   }
 
@@ -395,24 +389,26 @@ export class BTWDecorator extends Decorator {
     const origName = util.getOriginalName(el);
     const level = this.labelLevels[origName];
     super.elementDecorator(root, el, level !== undefined ? level : 1,
-                           this._contextMenuHandler.bind(this, true),
-                           this._contextMenuHandler.bind(this, false));
+                           this.contextMenuHandler.bind(this, true),
+                           this.contextMenuHandler.bind(this, false));
   }
 
   noneDecorator(el: Element):  void {
-    this._gui_updater.removeNodes(el.childNodes);
+    this.guiUpdater.removeNodes(Array.from(el.childNodes));
     const text = el.ownerDocument.createElement("div");
     text.className = "_text _phantom";
     text.textContent = "ø";
-    this._gui_updater.insertBefore(el, text, null);
+    this.guiUpdater.insertBefore(el, text, null);
   }
 
-  private singleClickHandler(dataLoc: DLoc, tr: Transformation, root: Element,
+  private singleClickHandler(dataLoc: DLoc,
+                             tr: Transformation<TransformationData>,
+                             root: Element,
                              el: Element, ev: JQueryMouseEventObject): void {
-    if (this._editor.getDataCaret() === undefined) {
-      this._editor.setDataCaret(dataLoc);
+    if (this.editor.caretManager.getDataCaret() === undefined) {
+      this.editor.caretManager.setCaret(dataLoc);
     }
-    tr.bound_terminal_handler(ev);
+    tr.boundTerminalHandler(ev);
     this.refreshElement(root, el);
   }
 
@@ -430,7 +426,7 @@ export class BTWDecorator extends Decorator {
     while (topChild !== null) {
       const next = topChild.nextElementSibling;
       if (topChild.classList.contains("_va_instantiator")) {
-        this._gui_updater.removeNode(topChild);
+        this.guiUpdater.removeNode(topChild);
       }
       topChild = next;
     }
@@ -439,8 +435,8 @@ export class BTWDecorator extends Decorator {
       return;
     }
 
-    const node = this._editor.toDataNode(el);
-    const origErrors = this._editor.validator.getErrorsFor(node);
+    const node = this.editor.toDataNode(el);
+    const origErrors = this.editor.validator.getErrorsFor(node);
 
     // Create a hash table that we can use for later tests.
     const origStrings = Object.create(null);
@@ -449,8 +445,8 @@ export class BTWDecorator extends Decorator {
     }
 
     for (const spec of found.children) {
-      const ename = this.mode.getAbsoluteResolver().resolveName(spec);
-      let locations = this._editor.validator.possibleWhere(
+      const ename = this.mode.getAbsoluteResolver().resolveName(spec)!;
+      let locations = this.editor.validator.possibleWhere(
         node, new salve.Event("enterStartTag", ename.ns, ename.name));
 
       // Narrow it down to locations where adding the element won't cause a
@@ -465,32 +461,33 @@ export class BTWDecorator extends Decorator {
         div.appendChild(clone);
 
         let child = node.firstChild;
-        while (child) {
+        while (child !== null) {
           clone.appendChild(child.cloneNode(false));
           child = child.nextSibling;
         }
 
         const insertAt = clone.childNodes[l];
-        clone.insertBefore(transformation.makeElement(clone.ownerDocument,
-                                                      ename.ns, spec),
-                           insertAt ? insertAt : null);
+        clone.insertBefore(makeElement(clone.ownerDocument, ename.ns, spec),
+                           insertAt !== undefined ? insertAt : null);
 
         const errors =
-          this._editor.validator.speculativelyValidateFragment(
-            node.parentNode,
-            _indexOf.call(node.parentNode.childNodes, node), div);
+          this.editor.validator.speculativelyValidateFragment(
+            node.parentNode!,
+            _indexOf.call(node.parentNode!.childNodes, node), div);
 
         // What we are doing here is reducing the errors only to those that
         // indicate that the added element would be problematic.
-        for (const err of errors) {
-          const errMsg = err.error.toString();
-          if (err.node === clone &&
-              // We want only errors that were not originally present.
-              !origStrings[errMsg] &&
-              // And that are about a tag not being allowed.
-              errMsg.lastIndexOf("tag not allowed here: ", 0) === 0) {
-            // There's nothing to be done with this location.
-            continue locationLoop;
+        if (errors !== false) {
+          for (const err of errors) {
+            const errMsg = err.error.toString();
+            if (err.node === clone &&
+                // We want only errors that were not originally present.
+                !origStrings[errMsg] &&
+                // And that are about a tag not being allowed.
+                errMsg.lastIndexOf("tag not allowed here: ", 0) === 0) {
+              // There's nothing to be done with this location.
+              continue locationLoop;
+            }
           }
         }
 
@@ -499,18 +496,21 @@ export class BTWDecorator extends Decorator {
       locations = filteredLocations;
 
       // No suitable location.
-      if (!locations.length) {
+      if (locations.length === 0) {
         continue;
       }
 
       for (const l of locations) {
-        const dataLoc = makeDLoc(this._editor.data_root, node, l);
-        const data = { name: spec, move_caret_to: dataLoc };
-        const guiLoc = this._gui_updater.fromDataLocation(dataLoc);
+        const dataLoc = DLoc.mustMakeDLoc(this.editor.data_root, node, l);
+        const data = { name: spec, moveCaretTo: dataLoc };
+        const guiLoc = this.guiUpdater.fromDataLocation(dataLoc);
+        if (guiLoc === null) {
+          throw new Error("cannot get GUI location from data location");
+        }
 
         const actions =
           this.mode.getContextualActions("insert", spec, node, l);
-        const tuples: [Action, TransformationData, string][] = [];
+        const tuples: [Action<{}>, TransformationData, string][] = [];
         for (const act of actions) {
           tuples.push([act, data, act.getLabelFor(data)]);
         }
@@ -520,11 +520,13 @@ export class BTWDecorator extends Decorator {
           "_gui _phantom _va_instantiator btn btn-instantiator btn-xs";
         control.setAttribute("href", "#");
         const $control = $(control);
-        if (this._editor.preferences.get("tooltips")) {
+        if (this.editor.preferences.get("tooltips")) {
           // Get tooltips from the current mode
           tooltip($control, {
-            title: this._editor.mode.shortDescriptionFor(spec),
-            container: $control,
+            title: this.editor.mode.shortDescriptionFor(spec),
+            // We are cheating. The documented interface states that container
+            // should be a string. However, passing a JQuery object works.
+            container: $control as any,
             delay: { show: 1000 },
             placement: "auto top",
             trigger: "hover",
@@ -542,12 +544,12 @@ export class BTWDecorator extends Decorator {
             // tslint:disable-next-line:no-inner-html
             li.innerHTML = `<a tabindex='0' href='#'>${tup[2]}</a>`;
             const $a = $(li.firstChild!);
-            $a.click(tup[1], tup[0].bound_handler);
+            $a.click(tup[1], tup[0].boundHandler);
             $a.mousedown(false);
             items.push(li);
           }
 
-          $control.click(menuClickHandler.bind(undefined, this._editor,
+          $control.click(menuClickHandler.bind(undefined, this.editor,
                                                guiLoc, items));
         }
         else if (tuples.length === 1) {
@@ -559,14 +561,14 @@ export class BTWDecorator extends Decorator {
                                                       dataLoc, tuples[0][0],
                                                       root, el));
         }
-        this._gui_updater.insertNodeAt(guiLoc, control);
+        this.guiUpdater.insertNodeAt(guiLoc, control);
       }
     }
   }
 
   idDecorator(root: Element, el: Element): void {
     DispatchMixin.prototype.idDecorator.call(this, root, el);
-    this._domlistener.trigger("refresh-sense-ptrs");
+    this.domlistener.trigger("refresh-sense-ptrs");
   }
 
   refreshSensePtrsHandler(root: Element): void {
@@ -623,7 +625,7 @@ export class BTWDecorator extends Decorator {
       // Get the ref element that olds the reference to the
       // bibliographical item, and set an event handler to make sure
       // we update *this* ptr, when the ref changes.
-      const ref = target.querySelector(domutil.toGUISelector("btw:cit>ref"));
+      const ref = target.querySelector(domutil.toGUISelector("btw:cit>ref"))!;
 
       $(ref).on("wed-refresh", () => {
         this.linkingDecorator(root, el, isPtr);
@@ -633,13 +635,13 @@ export class BTWDecorator extends Decorator {
 
   includedSenseHandler(root: Element, el: Element): void {
     this.idDecorator(root, el);
-    this._domlistener.trigger("included-sense");
+    this.domlistener.trigger("included-sense");
   }
 
   excludingSenseHandler(el: Element): void {
     this._deleteLinksPointingTo(el);
     // Yep, we trigger the included-sense trigger.
-    this._domlistener.trigger("included-sense");
+    this.domlistener.trigger("included-sense");
   }
 
   includedSubsenseHandler(root: Element, el: Element): void {
@@ -660,10 +662,10 @@ export class BTWDecorator extends Decorator {
     // works.
     const selector = `*[target='#${id}']`;
 
-    const links = this._editor.data_root.querySelectorAll(selector);
+    const links = this.editor.data_root.querySelectorAll(selector);
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < links.length; ++i) {
-      this._editor.data_updater.removeNode(links[i]);
+      this.editor.data_updater.removeNode(links[i]);
     }
   }
 
@@ -674,7 +676,11 @@ export class BTWDecorator extends Decorator {
   includedSenseTriggerHandler(root: Element): void {
     const senses = root.getElementsByClassName("btw:sense");
     if (senses.length !== 0) {
-      this.refmans.getRefmanForElement(senses[0]).deallocateAll();
+      const refman = this.refmans.getRefmanForElement(senses[0]);
+      if (!(refman instanceof LabelManager)) {
+        throw new Error("expected a label manager");
+      }
+      refman.deallocateAll();
     }
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < senses.length; ++i) {
@@ -690,7 +696,7 @@ export class BTWDecorator extends Decorator {
     // The indexOf search ensures we don't put duplicates in the list.
     if (this.sensesForRefreshSubsenses.indexOf(sense) === -1) {
       this.sensesForRefreshSubsenses.push(sense);
-      this._domlistener.trigger("refresh-subsenses");
+      this.domlistener.trigger("refresh-subsenses");
     }
   }
 
@@ -704,11 +710,11 @@ export class BTWDecorator extends Decorator {
   }
 
   _refreshSubsensesForSense(root: Element, sense: Element): void {
-    const refman = this.refmans.getSubsenseRefman(sense);
+    const refman = this.refmans.getSubsenseRefman(sense)!;
     refman.deallocateAll();
 
     // This happens if the sense was removed from the document.
-    if (!this._editor.gui_root.contains(sense)) {
+    if (!this.editor.gui_root.contains(sense)) {
       return;
     }
 
@@ -717,8 +723,8 @@ export class BTWDecorator extends Decorator {
     for (let i = 0; i < subsenses.length; ++i) {
       const subsense = subsenses[i];
       this.idDecorator(root, subsense);
-      const explanation = domutil.childByClass("btw:explanantion");
-      if (explanation) {
+      const explanation = domutil.childByClass(subsense, "btw:explanantion");
+      if (explanation !== null) {
         this.explanationDecorator(root, explanation);
       }
 
@@ -730,12 +736,12 @@ export class BTWDecorator extends Decorator {
     const example =
       closest(el, domutil.toGUISelector("btw:example, btw:example-explained"));
 
-    if (!example) {
+    if (example === null) {
       return;
     }
 
     const id = example.getAttribute(util.encodeAttrName("xml:id"));
-    if (!id) {
+    if (id === null) {
       return;
     }
 
@@ -795,7 +801,7 @@ export class BTWDecorator extends Decorator {
       const parents: Node[] = [];
       let parent = el.parentNode;
       while (parent !== null) {
-        if (domutil.childByClass(parent, "head")) {
+        if (domutil.childByClass(parent, "head") !== null) {
           parents.push(parent);
         }
 
@@ -811,7 +817,7 @@ export class BTWDecorator extends Decorator {
       const myDepth = parents.length;
 
       parent = el.parentNode;
-      let origName = util.getOriginalName(parent);
+      let origName = util.getOriginalName(parent as Element);
 
       const li = doc.createElement("li");
       li.className = "btw-navbar-item";
@@ -845,8 +851,8 @@ export class BTWDecorator extends Decorator {
                 this._navigationContextMenuHandler.bind(this));
         a.innerHTML += " <i class='fa fa-cog'></i>";
         const oldIcon = domutil.childByClass(el, "fa");
-        if (oldIcon) {
-          oldIcon.parentNode.removeChild(oldIcon);
+        if (oldIcon !== null) {
+          oldIcon.parentNode!.removeChild(oldIcon);
         }
         el.innerHTML += " <i class='fa fa-cog'></i>";
         // We must remove all previous handlers.
@@ -865,7 +871,7 @@ export class BTWDecorator extends Decorator {
       prevAtDepth[myDepth] = li;
     }
 
-    this._editor.setNavigationList(
+    this.editor.setNavigationList(
       Array.prototype.slice.call(prevAtDepth[0].children));
   }
 
@@ -873,7 +879,7 @@ export class BTWDecorator extends Decorator {
   _navigationContextMenuHandler(wedEv: JQueryEventObject,
                                 ev?: JQueryEventObject): boolean {
     const mode = this.mode;
-    const editor = this._editor;
+    const editor = this.editor;
     // ev is undefined if called from the context menu. In this case, wedEv
     // contains all that we want.
     if (ev === undefined) {
@@ -889,7 +895,7 @@ export class BTWDecorator extends Decorator {
     const offset = _indexOf.call(container.childNodes, node) as number;
 
     // List of items to put in the contextual menu.
-    const tuples: [Action, TransformationData, string][] = [];
+    const tuples: [Action<{}>, TransformationData, string][] = [];
 
     //
     // Create "insert" transformations for siblings that could be
@@ -900,7 +906,7 @@ export class BTWDecorator extends Decorator {
     // data to pass to transformations
     let data: TransformationData = {
       name: origName,
-      move_caret_to: makeDLoc(editor.data_root, container, offset),
+      moveCaretTo: makeDLoc(editor.data_root, container, offset),
     };
 
     for (const act of actions) {
@@ -915,7 +921,7 @@ export class BTWDecorator extends Decorator {
                                         offset + 1);
 
     data = { name: origName,
-             move_caret_to: makeDLoc(editor.data_root, container, offset + 1) };
+             moveCaretTo: makeDLoc(editor.data_root, container, offset + 1) };
     for (const act of actions) {
       tuples.push([act, data, `${act.getLabelFor(data)} after this one`]);
     }
@@ -923,14 +929,14 @@ export class BTWDecorator extends Decorator {
     const target = ev.target;
     const doc = ev.target.ownerDocument;
     const navList = closestByClass(target, "nav-list", document.body);
-    if (navList) {
+    if (navList !== null) {
       // This context menu was invoked in the navigation list.
 
-      const thisLi = closest(target, "li", navList);
+      const thisLi = closest(target, "li", navList)!;
       const siblingLinks: Element[] = [];
-      const parent = thisLi.parentNode;
+      const parent = thisLi.parentNode as Element;
       let child = parent.firstElementChild;
-      while (child) {
+      while (child !== null) {
         if (child.getAttribute("data-wed-for") === origName) {
           siblingLinks.push(child);
         }
@@ -941,7 +947,7 @@ export class BTWDecorator extends Decorator {
       // with next.
       if (siblingLinks.length > 1) {
         data = { name: origName, node: node,
-                 move_caret_to: makeDLoc(editor.data_root, container, offset) };
+                 moveCaretTo: makeDLoc(editor.data_root, container, offset) };
         // However, don't add swap with prev if we are first.
         if (!siblingLinks[0].contains(ev.currentTarget)) {
           tuples.push([mode.swapWithPrevTr, data,
@@ -957,12 +963,12 @@ export class BTWDecorator extends Decorator {
     }
     else {
       // Set the caret to be inside the head
-      editor.setGUICaret(target, 0);
+      editor.caretManager.setCaret(target, 0);
     }
 
     // Delete the node
     data = { node: node, name: origName,
-             move_caret_to: makeDLoc(editor.data_root, node, 0) };
+             moveCaretTo: makeDLoc(editor.data_root, node, 0) };
     actions = mode.getContextualActions("delete-element", origName, node, 0);
     for (const act of actions) {
       tuples.push([act, data, act.getLabelFor(data)]);
@@ -975,7 +981,7 @@ export class BTWDecorator extends Decorator {
 
     // Put the documentation link first.
     const docUrl = mode.documentationLinkFor(origName);
-    if (docUrl) {
+    if (docUrl != null) {
       li = doc.createElement("li");
       const a = editor.makeDocumentationLink(docUrl);
       li.appendChild(a);
@@ -988,7 +994,7 @@ export class BTWDecorator extends Decorator {
       li.innerHTML = `<a tabindex='0' href='#'>${tup[2]}</a>`;
       const $a = $(li.firstChild);
       $a.mousedown(false);
-      $a.click(tup[1], tup[0].bound_handler);
+      $a.click(tup[1], tup[0].boundHandler);
       items.push(li);
     }
 

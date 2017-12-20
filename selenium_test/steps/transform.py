@@ -372,7 +372,7 @@ def step_impl(context, lang):
     });
     var text_node = $text[0];
     var offset = text_node.nodeValue.indexOf("prasāda");
-    wed_editor.setGUICaret(text_node, offset);
+    wed_editor.caretManager.setCaret(text_node, offset);
     return $p[0];
     """)
 
@@ -404,7 +404,7 @@ def step_impl(context, text, wrapper, where):
     });
     var text_node = $text[0];
     var offset = text_node.data.indexOf(text);
-    wed_editor.setGUICaret(text_node, offset);
+    wed_editor.caretManager.setCaret(text_node, offset);
     return text_node.parentNode;
     """, text, selector)
 
@@ -631,7 +631,7 @@ def step_impl(context):
     var sec =
         document.getElementsByClassName("btw:contrastive-section")[0];
     var sec_data = jQuery.data(sec, "wed_mirror_node");
-    wed_editor.setDataCaret(sec_data, 0);
+    wed_editor.caretManager.setCaret(sec_data, 0);
     """)
 
     context.execute_steps(u"""

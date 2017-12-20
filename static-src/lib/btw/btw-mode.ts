@@ -2,20 +2,27 @@
  * Mode for BTW editing.
  * @author Louis-Dominique Dubeau
  */
-import * as Promise from "bluebird";
+import * as Bluebird from "bluebird";
 import * as $ from "jquery";
 import "jquery.cookie";
 import "rangy";
 
+import { Action } from "wed/action";
+import { Decorator } from "wed/decorator";
 import * as dloc from "wed/dloc";
+import { isElement } from "wed/domtypeguards";
 import * as domutil from "wed/domutil";
-import { Mode } from "wed/modes/generic/generic";
-import * as transformation from "wed/transformation";
+import { Mode, GenericModeOptions } from "wed/modes/generic/generic";
+import { GenericDecorator } from "wed/modes/generic/generic-decorator";
+import { makeElement, swapWithNextHomogeneousSibling,
+         swapWithPreviousHomogeneousSibling, Transformation,
+         TransformationData } from "wed/transformation";
+import { TreeUpdater } from "wed/tree-updater";
 import * as util from "wed/util";
 
+import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";
 import { BTWDecorator } from "./btw-decorator";
-import * as btwMeta from "./btw-meta";
 import { Toolbar } from "./btw-toolbar";
 import * as btwTr from "./btw-tr";
 import { Validator } from "./btw-validator";
@@ -24,13 +31,8 @@ import { Validator } from "./btw-validator";
 /* tslint:disable: no-any */
 declare var require: any;
 
-type Action = any;
-type Transformation = any;
 type Modal = any;
-type Options = any;
-type WedOptions = any;
 type Editor = any;
-type Decorator = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
@@ -42,7 +44,7 @@ interface Substitution {
   type: string;
 
   /** The actions to substitute for this tag. */
-  actions: Action[];
+  actions: Action<{}>[];
 }
 
 /**
@@ -94,22 +96,18 @@ interface TransformationFilter {
   substitute?: Substitution[];
 
   /** An array of transformations to add. */
-  add?: Transformation[];
+  add?: Transformation<TransformationData>[];
 }
 
-export type BibliographicalInfo = Record<string, string>;
+export type BibliographicalInfo = Record<string, BibliographicalItem>;
 
-class BTWMode extends Mode {
-  /* from parent */
-  /* tslint:disable: no-any */
-  private _meta: any;
-  private _resolver: any;
-  private _editor: Editor;
-  public documentationLinkFor: any;
-  public getAbsoluteResolver: any;
-  /* tslint:enable: no-any */
-  /* END from parent */
+interface BTWModeOptions extends GenericModeOptions {
+  bibl_url: string;
 
+  semanticFieldFetchUrl: string;
+}
+
+class BTWMode extends Mode<BTWModeOptions> {
   /**
    * These are meant to be used only by helper classes and not outside the
    * mode.
@@ -123,44 +121,39 @@ class BTWMode extends Mode {
     undefined;
   private toolbar: Toolbar;
   private biblUrl: string;
-  // tslint:disable-next-line:variable-name
-  private _wed_options: WedOptions;
   private transformationFilters: TransformationFilter[];
 
-  replaceSemanticFields: Transformation;
-  editSemanticFieldAction: Action;
-  replaceBiblPtr: Action;
-  insertBiblPtr: Action;
-  insertRefText: Transformation;
-  replaceNoneWithConceptualProximate: Transformation;
-  replaceNoneWithCognate: Transformation;
-  replaceNoneWithAntonym: Transformation;
-  swapWithNextTr: Transformation;
-  swapWithPrevTr: Transformation;
-  replaceSelectionWithRefTr: Transformation;
-  insertRefTr: Transformation;
-  insertPtrTr: Transformation;
-  insertExamplePtrAction: Action;
-  insertSensePtrAction: Action;
+  replaceSemanticFields: Transformation<TransformationData>;
+  editSemanticFieldAction: btwActions.EditSemanticFieldsAction;
+  replaceBiblPtr: btwActions.InsertBiblPtrAction;
+  insertBiblPtr: btwActions.InsertBiblPtrAction;
+  insertRefText: Transformation<TransformationData>;
+  replaceNoneWithConceptualProximate: Transformation<TransformationData>;
+  replaceNoneWithCognate: Transformation<TransformationData>;
+  replaceNoneWithAntonym: Transformation<TransformationData>;
+  swapWithNextTr: Transformation<TransformationData>;
+  swapWithPrevTr: Transformation<TransformationData>;
+  replaceSelectionWithRefTr: Transformation<TransformationData>;
+  insertRefTr: Transformation<TransformationData>;
+  insertPtrTr: Transformation<TransformationData>;
+  insertExamplePtrAction: btwActions.ExamplePtrDialogAction;
+  insertSensePtrAction: btwActions.SensePtrDialogAction;
 
-  constructor(options: Options) {
-    options.meta = {
-      path: btwMeta,
-      options: {
-        metadata: require.toUrl("./btw-storage-metadata.json"),
-      },
-    };
+  constructor(editor: Editor, options: BTWModeOptions) {
+    options.metadata = require.toUrl("./btw-storage-metadata.json");
     const biblUrl = options.bibl_url;
     delete options.bibl_url;
     const semanticFieldFetchUrl = options.semanticFieldFetchUrl;
     delete options.semanticFieldFetchUrl;
-    super(options);
+    super(editor, options);
     this.semanticFieldFetchUrl = semanticFieldFetchUrl;
     this.biblUrl = biblUrl;
-    // We can initiate this right away.
+    // We can initiate this right away. It is fine to ignore the promise. We're
+    // just starting the operation.
+    // tslint:disable-next-line:no-floating-promises
     this.getBibliographicalInfo();
 
-    this._wed_options.metadata = {
+    this.wedOptions.metadata = {
       name: "BTW Mode",
       authors: ["Louis-Dominique Dubeau"],
       description: "This is a mode for use with BTW.",
@@ -168,19 +161,18 @@ class BTWMode extends Mode {
       copyright: "2013-2016 Mangalam Research Center for Buddhist Languages",
     };
 
-    this._wed_options.label_levels.max = 2;
-    this._wed_options.attributes = "hide";
+    this.wedOptions.label_levels.max = 2;
+    this.wedOptions.attributes = "hide";
   }
 
-  init(editor: Editor): void {
-    super.init(editor);
+  async init(): Bluebird<void> {
+    await super.init();
 
+    const editor = this.editor;
     this.hyperlinkModal = editor.makeModal();
     this.hyperlinkModal.setTitle("Insert hyperlink to sense");
     this.hyperlinkModal.addButton("Insert", true);
     this.hyperlinkModal.addButton("Cancel");
-
-    editor.setNavigationList("");
 
     this.insertSensePtrAction = new btwActions.SensePtrDialogAction(
       editor, "Insert a new hyperlink to a sense",
@@ -190,27 +182,29 @@ class BTWMode extends Mode {
       editor, "Insert a new hyperlink to an example",
       undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
-    this.insertPtrTr = new transformation.Transformation(
-      editor, "add", "Insert a pointer", btwTr.insertPtr);
+    this.insertPtrTr = new Transformation(
+      editor, "add", "Insert a pointer", btwTr.insertPtr as any /* XXX */);
 
-    this.insertRefTr = new transformation.Transformation(
-      editor, "add", "Insert a reference", btwTr.insertRef);
+    this.insertRefTr = new Transformation(
+      editor, "add", "Insert a reference", btwTr.insertRef as any /* XXX */);
 
-    this.replaceSelectionWithRefTr = new transformation.Transformation(
+    this.replaceSelectionWithRefTr = new Transformation(
       editor, "wrap", "Replace the selection with a reference",
-      btwTr.replaceSelectionWithRef);
+      btwTr.replaceSelectionWithRef as any /* XXX */);
 
-    this.swapWithPrevTr = new transformation.Transformation(
+    this.swapWithPrevTr = new Transformation(
       editor, "swap-with-previous", "Swap with previous sibling", undefined,
       "<i class='fa fa-long-arrow-up fa-fw'></i>",
-      (trEditor, data) => transformation.swapWithPreviousHomogeneousSibling(
-        trEditor, data.node));
+      (trEditor, data) => {
+        swapWithPreviousHomogeneousSibling(trEditor, data.node as Element);
+      });
 
-    this.swapWithNextTr = new transformation.Transformation(
+    this.swapWithNextTr = new Transformation(
       editor, "swap-with-next", "Swap with next sibling", undefined,
       "<i class='fa fa-long-arrow-down fa-fw'></i>",
-      (trEditor, data) => transformation.swapWithNextHomogeneousSibling(
-        trEditor, data.node));
+      (trEditor, data) => {
+        swapWithNextHomogeneousSibling(trEditor, data.node as Element);
+      });
 
     this.replaceNoneWithAntonym = btwTr.makeReplaceNone(editor, "btw:antonym");
 
@@ -219,15 +213,15 @@ class BTWMode extends Mode {
     this.replaceNoneWithConceptualProximate =
       btwTr.makeReplaceNone(editor, "btw:conceptual-proximate");
 
-    this.insertRefText = new transformation.Transformation(
+    this.insertRefText = new Transformation(
       editor, "add", "Add custom text to reference",
       (trEditor) => {
-        const caret = trEditor.getGUICaret();
+        const caret = trEditor.caretManager.caret;
         const ref = $(caret.node).closest(util.classFromOriginalName("ref"))[0];
         const ph = trEditor.insertTransientPlaceholderAt(caret.make(
           ref, ref.childNodes.length));
-        trEditor.decorator.refreshElement(dloc.findRoot(ref).node, ref);
-        trEditor.setGUICaret(ph, 0);
+        trEditor.decorator.refreshElement(dloc.getRoot(ref).node, ref);
+        trEditor.caretManager.setCaret(ph, 0);
       });
 
     this.insertBiblPtr = new btwActions.InsertBiblPtrAction(
@@ -250,9 +244,9 @@ class BTWMode extends Mode {
       editor, "Edit semantic fields",
       undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
-    this.replaceSemanticFields = new transformation.Transformation(
-      editor, undefined, "Replace semantic fields",
-      btwTr.replaceSemanticFields);
+    this.replaceSemanticFields = new Transformation(
+      editor, "transform", "Replace semantic fields",
+      btwTr.replaceSemanticFields as any /* XXX */);
 
     this.toolbar = new Toolbar(this, editor);
     const toolbarTop = this.toolbar.top;
@@ -402,7 +396,7 @@ class BTWMode extends Mode {
               headers: {
                 Accept: "application/json",
               },
-            })).bind(this)
+            }))// .bind(this) XXX was supported by Bluebird
             .catch((_jqXHR) => {
               throw new Error("cannot load bibliographical information");
             }).then((data) => {
@@ -414,50 +408,63 @@ class BTWMode extends Mode {
             }));
   }
 
-  makeDecorator(): Decorator {
+  makeDecorator(): GenericDecorator {
     // Wed calls this with (domlistener, editor, gui_updater).
-    const obj = Object.create(BTWDecorator.prototype);
-    // Make arg an array and add our extra argument(s).
-    let args = Array.prototype.slice.call(arguments);
-    args = [this.semanticFieldFetchUrl, this, this._meta].concat(args);
-    BTWDecorator.apply(obj, args);
+    const ret = new BTWDecorator(this.semanticFieldFetchUrl, this,
+                                 this.metadata, this.options, arguments[0],
+                                 arguments[1], arguments[2]);
 
-    // This is as good a place as any where to attach listeners to the
-    // data updater directly. Note that we attach to the updater
-    // rather than the domlistener because otherwise we would trigger
-    // a data update from a GUI update, which is likely to result in
-    // issues. (Crash, infinite loop, etc.)
+    // This is as good a place as any where to attach listeners to the data
+    // updater directly. Note that we attach to the updater rather than the
+    // domlistener because otherwise we would trigger a data update from a GUI
+    // update, which is likely to result in issues. (Crash, infinite loop, etc.)
 
-    const noneEName = this._resolver.resolveName("btw:none");
+    const noneEName = this.resolver.resolveName("btw:none");
+    if (noneEName === undefined) {
+      throw new Error("cannot resolve btw:none!");
+    }
 
-    const updater = this._editor.data_updater;
-    updater.addEventListener("deleteNode", (ev) => {
+    const updater = this.editor.data_updater as TreeUpdater;
+    updater.events.subscribe((ev) => {
+      if (ev.name !== "DeleteNode") {
+        return;
+      }
+
       const el = ev.node;
-      if (!(el.tagName === "btw:antonym" ||
+
+      if (!isElement(el) ||
+          !(el.tagName === "btw:antonym" ||
             el.tagName === "btw:cognate" ||
             el.tagName === "btw:conceptual-proximate")) {
         return;
       }
 
-      if (ev.former_parent.childElementCount === 0) {
-        this._editor.data_updater.insertBefore(
-          ev.former_parent,
-          transformation.makeElement(el.ownerDocument,
-                                     noneEName.ns, "btw:none"),
+      if ((ev.formerParent as Element).childElementCount === 0) {
+        this.editor.data_updater.insertBefore(
+          ev.formerParent,
+          makeElement(el.ownerDocument, noneEName.ns, "btw:none"),
           null);
       }
     });
 
-    updater.addEventListener("insertNodeAt", (ev) => {
-      const ed = this._editor;
+    updater.events.subscribe((ev) => {
+      if (ev.name !== "InsertNodeAt") {
+        return;
+      }
+
+      const node = ev.node;
+
+      if (!isElement(node)) {
+        return;
+      }
+
+      const ed = this.editor;
 
       function processNode(node: Node): void {
         if (node.childNodes.length === 0) {
           ed.data_updater.insertBefore(
             node,
-            transformation.makeElement(node.ownerDocument,
-                                       noneEName.ns,
-                                       "btw:none"), null);
+            makeElement(node.ownerDocument, noneEName!.ns, "btw:none"), null);
         }
       }
       function processList(nodes: NodeListOf<Element>): void {
@@ -466,12 +473,6 @@ class BTWMode extends Mode {
           const node = nodes[i];
           processNode(node);
         }
-      }
-
-      const node = ev.node;
-
-      if (node.nodeType !== Node.ELEMENT_NODE) {
-        return;
       }
 
       const antonyms = node.getElementsByTagName("btw:antonyms");
@@ -488,18 +489,20 @@ class BTWMode extends Mode {
       }
     });
 
-    return obj;
+    return ret as any;
   }
 
-  getContextualActions(type: string[] | string,
-                       tag: string, container: Node, offset: number): Action[] {
+  getContextualActions(transformationType: string[] | string,
+                       tag: string,
+                       container: Node,
+                       offset: number): Action<{}>[] {
     const el = ((container.nodeType === Node.TEXT_NODE) ?
       // tslint:disable-next-line:no-non-null-assertion
       container.parentNode! : container) as Element;
     const guiEl = $.data(el, "wed_mirror_node") as Element;
 
-    if (!(type instanceof Array)) {
-      type = [type];
+    if (!(transformationType instanceof Array)) {
+      transformationType = [transformationType];
     }
 
     //
@@ -507,18 +510,18 @@ class BTWMode extends Mode {
     //
     // None of the non-inline elements should be able to be unwrapped.
     //
-    if (!(this._meta.isInline(guiEl) as boolean)) {
-      const unwrap = type.indexOf("unwrap");
+    if (!(this.metadata.isInline(guiEl) as boolean)) {
+      const unwrap = transformationType.indexOf("unwrap");
       if (unwrap !== -1) {
-        type.splice(unwrap, 1);
+        transformationType.splice(unwrap, 1);
       }
     }
 
-    let ret: Action[] = [];
+    let ret: Action<{}>[] = [];
     for (const filter of this.transformationFilters) {
       if (guiEl.matches(filter.selector)) {
         typeLoop:
-        for (const t of type) {
+        for (const t of transformationType) {
           if (filter.pass !== undefined) {
             const trTypes = filter.pass[tag];
             if (trTypes === undefined || // not among those to pass
@@ -569,7 +572,7 @@ class BTWMode extends Mode {
   }
 
   getValidator(): Validator {
-    return new Validator(this._editor.gui_root, this._editor.data_root);
+    return new Validator(this.editor.gui_root);
   }
 }
 

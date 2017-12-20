@@ -4,17 +4,17 @@
  */
 import * as $ from "jquery";
 
-import { makeDLoc } from "wed/dloc";
+import { DLoc } from "wed/dloc";
 import * as domutil from "wed/domutil";
 import { AbortTransformationException } from "wed/exceptions";
-import * as transformation from "wed/transformation";
+import { makeElement, Transformation,
+         TransformationData } from "wed/transformation";
 import * as util from "wed/util";
 
 import * as btwUtil from "./btw-util";
 
-const makeElement = transformation.makeElement;
-const Transformation = transformation.Transformation;
 const closest = domutil.closest;
+const makeDLoc = DLoc.makeDLoc;
 
 const _indexOf = Array.prototype.indexOf;
 
@@ -22,13 +22,16 @@ const _indexOf = Array.prototype.indexOf;
 /* tslint:disable: no-any */
 type Modal = any;
 type Editor = any;
-type Transformation = any;
-type TransformationData = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
-export function insertPtr(editor: Editor, data: TransformationData): void {
-  const caret = editor.getDataCaret();
+export interface TargetedTransformationData extends TransformationData {
+  target: string;
+}
+
+export function insertPtr(editor: Editor,
+                          data: TargetedTransformationData): void {
+  const caret = editor.caretManager.getDataCaret();
   let parent = caret.node;
   const index = caret.offset;
 
@@ -50,11 +53,12 @@ export function insertPtr(editor: Editor, data: TransformationData): void {
   // The original parent and index information are no necessarily representative
   // because insertAt can do quite a lot of things to insert the node.
   parent = ptr.parentNode;
-  editor.setDataCaret(parent, _indexOf.call(parent.childNodes, ptr));
+  editor.caretManager.setCaret(parent, _indexOf.call(parent.childNodes, ptr));
 }
 
-export function insertRef(editor: Editor, data: TransformationData): void {
-  const caret = editor.getDataCaret();
+export function insertRef(editor: Editor,
+                          data: TargetedTransformationData): void {
+  const caret = editor.caretManager.getDataCaret();
   const parent = caret.node;
   const index = caret.offset;
 
@@ -62,16 +66,16 @@ export function insertRef(editor: Editor, data: TransformationData): void {
   const ptr = makeElement(parent.ownerDocument, ename.ns, "ref",
                           { target: data.target });
   editor.data_updater.insertAt(parent, index, ptr);
-  const guiNode = editor.fromDataLocation(ptr, 0).node;
+  const guiNode = editor.caretManager.fromDataLocation(ptr, 0).node;
 
   // We must immediately set the caret because it is likely the old caret is no
   // longer valid.
-  editor.setGUICaret(guiNode, 0);
+  editor.caretManager.setCaret(guiNode, 0);
 
   // We do this because if we set the caret immediately, it gets clobbered by
   // the later refreshing of the ref element.
   $(guiNode).one("wed-refresh", () => {
-    editor.setGUICaret(
+    editor.caretManager.setCaret(
       guiNode,
       _indexOf.call(guiNode.childNodes,
                     domutil.childByClass(guiNode, "_ref_abbr")) as number + 1);
@@ -79,19 +83,16 @@ export function insertRef(editor: Editor, data: TransformationData): void {
 }
 
 export function replaceSelectionWithRef(editor: Editor,
-                                        data: TransformationData): void {
-  const range = editor.getDataSelectionRange();
-  if (!domutil.isWellFormedRange(range)) {
-    throw new Error("malformed range");
+                                        data: TargetedTransformationData):
+void {
+  const selection = editor.caretManager.sel;
+  if (!selection.wellFormed) {
+    throw new Error("malformed selection");
   }
 
-  const startCaret = makeDLoc(editor.data_root,
-                            range.startContainer, range.startOffset);
-  const endCaret = makeDLoc(editor.data_root,
-                          range.endContainer, range.endOffset);
-
+  const [startCaret, endCaret] = selection.asDataCarets()!;
   const cutRet = editor.data_updater.cut(startCaret, endCaret);
-  editor.setDataCaret(cutRet[0]);
+  editor.caretManager.setCaret(cutRet[0]);
   insertRef(editor, data);
 }
 
@@ -112,60 +113,59 @@ function getNestingModal(editor: Editor): Modal {
   return nestingModal;
 }
 
-function setLanguageHandler(this: SetTextLanguageTr, editor: Editor,
-                            data: TransformationData): void {
-  const range = editor.getDataSelectionRange();
+export interface LanguageTransformationData extends TransformationData {
+  language: string;
+}
 
-  // We don't do anything if the range is collapsed.
-  if (!range || range.collapsed) {
+function setLanguageHandler(this: SetTextLanguageTr, editor: Editor,
+                            data: LanguageTransformationData): void {
+  const selection = editor.caretManager.sel;
+
+  // We don't do anything if the selection is collapsed.
+  if (!selection || selection.collapsed) {
     return;
   }
 
-  if (!domutil.isWellFormedRange(range)) {
+  if (!selection.wellFormed) {
     editor.straddling_modal.modal();
-    throw new AbortTransformationException(
-      "range is not well-formed");
+    throw new AbortTransformationException("selection is not well-formed");
   }
 
   const langCode = btwUtil.languageToLanguageCode(data.language);
-  const selector = "foreign";
-  const dataSelector = domutil.toGUISelector(selector);
-
-  const container = range.startContainer;
-  const cl = closest(container, dataSelector, editor.data_root);
-  if (cl) {
+  const [start, end] = selection.asDataCarets()!;
+  const container = start.node;
+  const cl = closest(container, "foreign", editor.data_root);
+  if (cl !== null) {
     this.nestingModal.modal();
     throw new AbortTransformationException(
-      "the range does not wholly contain the contents of a parent " +
+      "the selection does not wholly contain the contents of a parent " +
         "foreign language element");
   }
 
   const ename = editor.mode.getAbsoluteResolver().resolveName("foreign");
   const foreign = makeElement(container.ownerDocument,
                             ename.ns, "foreign", { "xml:lang": langCode });
-  const cutRet = editor.data_updater.cut(
-    makeDLoc(editor.data_root, range.startContainer, range.startOffset),
-    makeDLoc(editor.data_root, range.endContainer, range.endOffset));
+  const cutRet = editor.data_updater.cut(start, end);
   const cutNodes = cutRet[1];
   for (const el of cutNodes) {
     foreign.appendChild(el);
   }
   editor.data_updater.insertAt(cutRet[0], foreign);
-  range.selectNodeContents(foreign);
-  editor.setDataSelectionRange(range);
+  editor.caretManager.setRange(foreign, 0, foreign, foreign.childNodes.length);
 }
 
-export class SetTextLanguageTr extends Transformation {
+export class SetTextLanguageTr
+extends Transformation<LanguageTransformationData> {
   nestingModal: Modal;
 
   constructor(editor: Editor, private readonly language: string) {
-    super(editor, undefined, `Set language to ${language}`, language, undefined,
-          true, setLanguageHandler);
+    super(editor, "transformation", `Set language to ${language}`, language,
+          undefined, true, setLanguageHandler as any /* XXX */);
     this.nestingModal = getNestingModal(editor);
   }
 
-  execute(data: TransformationData = {}): void {
-    data.language = this.language;
+  execute(data: LanguageTransformationData =
+          { language: this.language } as LanguageTransformationData): void {
     super.execute(data);
   }
 }
@@ -189,47 +189,48 @@ function getRemoveMixedModal(editor: Editor): Modal {
 }
 
 function removeMixedHandler(editor: Editor, _data: TransformationData): void {
-  const range = editor.getDataSelectionRange();
+  const selection = editor.caretManager.sel;
 
-  // Do nothing if we don't have a range.
-  if (!range || range.collapsed) {
+  // Do nothing if we don't have a selection.
+  if (!selection || selection.collapsed) {
     return;
   }
 
-  if (!domutil.isWellFormedRange(range)) {
+  if (!selection.wellFormed) {
     editor.straddling_modal.modal();
-    throw new AbortTransformationException("range is not well-formed");
+    throw new AbortTransformationException("selection is not well-formed");
   }
 
-  const cutRet = editor.data_updater.cut(
-    makeDLoc(editor.data_root, range.startContainer, range.startOffset),
-    makeDLoc(editor.data_root, range.endContainer, range.endOffset));
+  const [start, end] = selection.asDataCarets()!;
+  const cutRet = editor.data_updater.cut(start, end);
   let newText = "";
   const cutNodes = cutRet[1];
   for (const el of cutNodes) {
     newText += el.textContent;
   }
-  const textNode = range.startContainer.ownerDocument.createTextNode(newText);
+  const textNode = start.node.ownerDocument.createTextNode(newText);
 
   if (editor.validator.speculativelyValidate(cutRet[0], textNode)) {
     getRemoveMixedModal(editor).modal();
     throw new AbortTransformationException("result would be invalid");
   }
 
+  let finalStart: DLoc;
+  let finalEnd: DLoc;
   const insertRet = editor.data_updater.insertText(cutRet[0], newText);
   if (insertRet[0]) {
-    range.setStart(insertRet[0], cutRet[0].offset);
-    range.setEnd(insertRet[0], range.startOffset as number + newText.length);
+    finalStart = start.make(insertRet[0], cutRet[0].offset);
+    finalEnd = finalStart.makeWithOffset(cutRet[0].index + newText.length);
   }
   else {
-    range.setStart(insertRet[1], 0);
-    range.setEnd(insertRet[1], newText.length);
+    finalStart = start.make(insertRet[1], 0);
+    finalEnd = finalStart.makeWithOffset(newText.length);
   }
 
-  editor.setDataSelectionRange(range);
+  editor.caretManager.setRange(finalStart, finalEnd);
 }
 
-export class RemoveMixedTr extends Transformation {
+export class RemoveMixedTr extends Transformation<TransformationData> {
   constructor(editor: Editor) {
     super(editor, "delete", "Remove mixed-content markup",
           "Remove mixed-content markup", "<i class='fa fa-eraser'></i>", true,
@@ -237,12 +238,12 @@ export class RemoveMixedTr extends Transformation {
   }
 }
 
-export function makeReplaceNone(editor: Editor,
-                                replacedWith: string): Transformation {
+export function makeReplaceNone(editor: Editor,  replacedWith: string):
+Transformation<TransformationData> {
   return new Transformation(
     editor, "add", `Create new ${replacedWith}`,
     (trEditor, _data) => {
-      const caret = trEditor.getDataCaret();
+      const caret = trEditor.caretManager.getDataCaret();
       const parent = caret.node;
 
       // This is the node that contains btw:none.
@@ -251,22 +252,27 @@ export function makeReplaceNone(editor: Editor,
       const actions = trEditor.mode.getContextualActions("insert", replacedWith,
                                                          grandparent, 0);
       actions[0].execute({
-        move_caret_to: makeDLoc(trEditor.data_root, grandparent, 0),
+        moveCaretTo: makeDLoc(trEditor.data_root, grandparent, 0),
         name: replacedWith,
       });
       trEditor.data_updater.removeNode(parent);
     });
 }
 
+export interface SemanticFieldTransformationData extends TransformationData {
+  newPaths: string[];
+}
+
 export function replaceSemanticFields(editor: Editor,
-                                      data: TransformationData): void {
+                                      data: SemanticFieldTransformationData):
+void {
   // XXX const editor = this._editor;
-  const dataCaret = editor.getDataCaret(true);
-  const guiCaret = editor.fromDataLocation(dataCaret);
+  const dataCaret = editor.caretManager.getDataCaret(true);
+  const guiCaret = editor.caretManager.fromDataLocation(dataCaret);
   const guiSfsContainer = domutil.closestByClass(guiCaret.node,
                                                  "btw:semantic-fields",
                                                  editor.gui_root);
-  if (!guiSfsContainer) {
+  if (guiSfsContainer === null) {
     throw new Error("unable to acquire btw:semantic-fields");
   }
 
@@ -293,5 +299,5 @@ export function replaceSemanticFields(editor: Editor,
 
   // Finally, reintroduce it to the data tree.
   editor.data_updater.insertNodeAt(sfsParent, sfsIndex, sfsContainer);
-  editor.setDataCaret(sfsContainer, 0);
+  editor.caretManager.setCaret(sfsContainer, 0);
 }

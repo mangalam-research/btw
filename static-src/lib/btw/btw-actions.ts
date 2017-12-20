@@ -8,10 +8,12 @@ import * as _ from "lodash";
 import * as Bloodhound from "typeahead";
 
 import { Action } from "wed/action";
+import { isText } from "wed/domtypeguards";
 import * as domutil from "wed/domutil";
+import { TransformationData } from "wed/transformation";
 import * as util from "wed/util";
 
-import { biblDataToReferenceText, biblSuggestionSorter, BibliographicalItem,
+import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";
 import { BibliographicalInfo } from "./btw-mode";
 import * as btwUtil from "./btw-util";
@@ -24,19 +26,9 @@ type Modal = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
-export class SensePtrDialogAction extends Action {
-  /* from parent */
-  private _editor: Editor;
-  /* END from parent */
-
-  // tslint:disable-next-line:no-any
-  constructor(...args: any[]) {
-    super(...args);
-  }
-
-  // tslint:disable-next-line:no-any
-  execute(data: any): void {
-    const editor = this._editor;
+export class SensePtrDialogAction extends Action<TransformationData> {
+  execute(data: TransformationData): void {
+    const editor = this.editor;
 
     const doc = editor.gui_root.ownerDocument;
     const senses = editor.gui_root.querySelectorAll(
@@ -120,26 +112,15 @@ export class SensePtrDialogAction extends Action {
       if (clicked === "Insert") {
         const id = body.querySelector("input[type='radio']:checked")
               .nextElementSibling.getAttribute("data-wed-id");
-        data.target = id;
-        editor.mode.insertPtrTr.execute(data);
+        editor.mode.insertPtrTr.execute({ ...data, target: id });
       }
     });
   }
 }
 
-export class ExamplePtrDialogAction extends Action {
-  /* from parent */
-  private _editor: Editor;
-  /* END from parent */
-
-  // tslint:disable-next-line:no-any
-  constructor(...args: any[]) {
-    super(...args);
-  }
-
-  // tslint:disable-next-line:no-any
-  execute(data: any): void {
-    const editor = this._editor;
+export class ExamplePtrDialogAction extends Action<TransformationData> {
+  execute(data: TransformationData): void {
+    const editor = this.editor;
 
     const doc = editor.gui_root.ownerDocument;
     const examples = editor.gui_root.querySelectorAll(domutil.toGUISelector(
@@ -213,8 +194,7 @@ export class ExamplePtrDialogAction extends Action {
       if (clicked === "Insert") {
         const id = body.querySelector("input[type='radio']:checked")
               .nextElementSibling.getAttribute("data-wed-id");
-        data.target = id;
-        editor.mode.insertPtrTr.execute(data);
+        editor.mode.insertPtrTr.execute({ ...data, target: id });
       }
     });
   }
@@ -251,83 +231,66 @@ function datumTokenizer(datum: BibliographicalItem): string {
   return isPrimarySource(datum) ? tokenizePS(datum) : tokenizeItem(datum);
 }
 
-export class InsertBiblPtrAction extends Action {
-  /* from parent */
-  private _editor: Editor;
-  /* END from parent */
-
-  // tslint:disable-next-line:no-any
-  constructor(...args: any[]) {
-    super(...args);
+function renderSuggestion(obj: BibliographicalItem): string {
+  let rendered = "";
+  let item: Item;
+  if (isPrimarySource(obj)) {
+    rendered = `${obj.reference_title} --- `;
+    item = obj.item;
+  }
+  else {
+    item = obj;
   }
 
-  // tslint:disable-next-line:no-any max-func-body-length
-  execute(data: any): void {
-    const editor = this._editor;
-    let range = editor.getSelectionRange();
+  const creators = item.creators;
+  let firstCreator = "***ITEM HAS NO CREATORS***";
+  if (creators != null && creators !== "") {
+    firstCreator = creators.split(",")[0];
+  }
+
+  rendered += `${firstCreator}, ${item.title}`;
+  const date = item.date;
+  if (date != null && date !== "") {
+    rendered += `, ${date}`;
+  }
+
+  return `<p><span style='white-space: nowrap'>${rendered}</span></p>`;
+}
+
+function makeEngine(options: {}): Bloodhound {
+  const engine = new Bloodhound(options);
+  engine.sorter = biblSuggestionSorter;
+  engine.initialize();
+  return engine;
+}
+
+export class InsertBiblPtrAction extends Action<{}> {
+  execute(data: {}): void {
+    const editor = this.editor;
+    let range = editor.caretManager.range;
 
     if (range && range.collapsed) {
       range = undefined;
     }
 
     if (range) {
-      const nodes = range.getNodes();
-      let nonText = false;
-      for (let i = 0; !nonText && i < nodes.length; ++i) {
-        if (nodes[i].nodeType !== Node.TEXT_NODE) {
-          nonText = true;
-        }
-      }
-
       // The selection must contain only text.
-      if (nonText) {
-        getBiblSelectionModal(this._editor).modal();
-        return;
+      for (const node of range.getNodes()) {
+        if (!isText(node)) {
+          getBiblSelectionModal(this.editor).modal();
+          return;
+        }
       }
     }
 
-    const text = range && range.toString();
-
     const options = {
-      datumTokenizer: datumTokenizer,
+      datumTokenizer,
       queryTokenizer: nw,
       local: [],
     };
 
-    const citedEngine = new Bloodhound(options);
-    const zoteroEngine = new Bloodhound(options);
-
-    citedEngine.sorter = biblSuggestionSorter;
-    zoteroEngine.sorter = biblSuggestionSorter;
-
-    citedEngine.initialize();
-    zoteroEngine.initialize();
-
-    function renderSuggestion(obj: BibliographicalItem): string {
-      let rendered = "";
-      let item: Item;
-      if (isPrimarySource(obj)) {
-        rendered = `${obj.reference_title} --- `;
-        item = obj.item;
-      }
-      else {
-        item = obj;
-      }
-
-      const creators = item.creators;
-      let firstCreator = "***ITEM HAS NO CREATORS***";
-      if (creators != null && creators !== "") {
-        firstCreator = creators.split(",")[0];
-      }
-
-      rendered += `${firstCreator}, ${item.title}`;
-      const date = item.date;
-      if (date != null && date !== "") {
-        rendered += `, ${date}`;
-      }
-
-      return `<p><span style='white-space: nowrap'>${rendered}</span></p>`;
-    }
+    const citedEngine = makeEngine(options);
+    const zoteroEngine = makeEngine(options);
 
     const taOptions = {
       options: {
@@ -366,23 +329,22 @@ export class InsertBiblPtrAction extends Action {
           return;
         }
 
-        data.target = obj.abstract_url;
+        const newData = { target: obj.abstract_url };
         if (range) {
-          editor.mode.replaceSelectionWithRefTr.execute(data);
+          editor.mode.replaceSelectionWithRefTr.execute(newData);
         }
         else {
-          editor.mode.insertRefTr.execute(data);
+          editor.mode.insertRefTr.execute(newData);
         }
       });
 
     editor.mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
-      const allValues: string[] = [];
-      const keys = Object.keys(info);
-      for (const key of keys) {
+      const allValues: BibliographicalItem[] = [];
+      for (const key of Object.keys(info)) {
         allValues.push(info[key]);
       }
 
-      const citedValues: string[] = [];
+      const citedValues: BibliographicalItem[] = [];
       const refs = editor.gui_root.querySelectorAll("._real.ref");
       // tslint:disable-next-line:prefer-for-of
       for (let refIx = 0; refIx < refs.length; ++refIx) {
@@ -398,7 +360,7 @@ export class InsertBiblPtrAction extends Action {
       zoteroEngine.add(allValues);
       citedEngine.add(citedValues);
       if (range) {
-        ta.setValue(text);
+        ta.setValue(range.toString());
       }
       ta.hideSpinner();
     });
@@ -427,25 +389,15 @@ function getEditSemanticFieldModal(editor: Editor): Modal {
   return modal;
 }
 
-export class EditSemanticFieldsAction extends Action {
-  /* from parent */
-  private _editor: Editor;
-  /* END from parent */
-
-  // tslint:disable-next-line:no-any
-  constructor(...args: any[]) {
-    super(...args);
-  }
-
-  // tslint:disable-next-line:no-any
-  execute(data: any): void {
-    const editor = this._editor;
-    const dataCaret = editor.getDataCaret(true);
-    const guiCaret = editor.fromDataLocation(dataCaret);
+export class EditSemanticFieldsAction extends Action<{}> {
+  execute(data: {}): void {
+    const editor = this.editor;
+    const dataCaret = editor.caretManager.getDataCaret(true);
+    const guiCaret = editor.caretManager.fromDataLocation(dataCaret);
     const guiSfsContainer =
       domutil.closestByClass(guiCaret.node, "btw:semantic-fields",
                              editor.gui_root);
-    if (!guiSfsContainer) {
+    if (guiSfsContainer === null) {
       throw new Error("unable to acquire btw:semantic-fields");
     }
 
@@ -489,8 +441,8 @@ footer.getBoundingClientRect().height}px`;
                           "while sfEditor is non-existent");
         }
 
-        data.newPaths = sfEditor.getChosenFields().map(fieldToPath);
-        editor.mode.replaceSemanticFields.execute(data);
+        editor.mode.replaceSemanticFields.execute(
+          { newPaths: sfEditor.getChosenFields().map(fieldToPath) });
       }
     });
 

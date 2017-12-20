@@ -3,8 +3,10 @@
  * @author Louis-Dominique Dubeau
  */
 import * as domutil from "wed/domutil";
+import { TreeUpdater } from "wed/tree-updater";
 import * as util from "wed/util";
 
+import { WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
 
@@ -44,13 +46,6 @@ interface Spec extends InitialSpec {
   dataSelector: string;
 }
 
-// TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
-type WholeDocumentManager = any;
-type GUIUpdater = any;
-/* tslint:enable: no-any */
-// END TEMPORARY TYPE DEFINITIONS
-
 export class HeadingDecorator {
   private readonly collapseHeadingIdManager: IDManager;
   private readonly collapseIdManager: IDManager;
@@ -61,7 +56,7 @@ export class HeadingDecorator {
   private specs: Spec[];
 
   constructor(private readonly refmans: WholeDocumentManager,
-              private readonly guiUpdater: GUIUpdater,
+              private readonly guiUpdater: TreeUpdater,
               private readonly headingMap: Record<string, string> =
               defaultHeadingMap,
               private readonly impliedBrackets: boolean = true) {
@@ -248,7 +243,7 @@ export class HeadingDecorator {
         collapsible.heading.textContent = headStr;
 
         const next = el.nextSibling;
-        const parent = el.parentNode;
+        const parent = el.parentNode as Element;
         this.guiUpdater.removeNode(el);
         panelBody.appendChild(el);
         this.guiUpdater.insertBefore(parent, group, next);

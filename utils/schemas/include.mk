@@ -67,13 +67,8 @@ $(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(t:$($(ME)
 $($(ME)_LATEST_RNG_TARGET:.rng=.json): $($(ME)_outdir)/%/btw-storage.json: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	$($(ME)_SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$< -o:$@ callback=''
 
-$($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $($(ME)_outdir)/%/btw-storage.json $($(ME)_outdir)/%/btw-storage-doc
-	$(WED_PATH)/bin/tei-to-generic-meta-json \
-		--dochtml "../../../btw/btw-storage-doc/" \
-		--ns tei=http://www.tei-c.org/ns/1.0 \
-	        --ns btw=http://mangalamresearch.org/ns/btw-storage \
-		$< $@
-
+$($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $($(ME)_outdir)/%/btw-storage.json $($(ME)_include_mk_DIR)/btw-storage-metadata-fragment.yml $($(ME)_outdir)/%/btw-storage-doc
+	$(WED_PATH)/bin/wed-metadata --tei --merge $(word 2,$^) $< $@
 
 $($(ME)_outdir)/%/btw-storage.js: $($(ME)_outdir)/%/btw-storage.rng
 	$($(ME)_CONVERT) $($(ME)_RNG_TO_JS) $< $@

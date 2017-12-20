@@ -1,29 +1,24 @@
 import * as $ from "jquery";
 
 import * as domutil from "wed/domutil";
-import { ReferenceManager } from "wed/refman";
+import { LabelManager } from "wed/labelman";
 import * as util from "wed/util";
 
 const senseLabels = "abcdefghijklmnopqrstuvwxyz";
 
-export class SubsenseReferenceManager extends ReferenceManager {
+export class SubsenseReferenceManager extends LabelManager {
   private nextLabel: number = 0;
 
-  // From parent
-  // tslint:disable-next-line:variable-name
-  readonly _id_to_label: Record<string, string>;
-  // End from parent
-
-  constructor(private readonly parentRefman: ReferenceManager,
+  constructor(private readonly parentRefman: LabelManager,
               private readonly parentId: string) {
     super("subsense");
     this.nextLabel = 1;
   }
 
   allocateLabel(id: string): string {
-    let label = this._id_to_label[id];
+    let label = this._idToLabel[id];
     if (label === undefined) {
-      label = this._id_to_label[id] = String(this.nextLabel++);
+      label = this._idToLabel[id] = String(this.nextLabel++);
     }
     return label;
   }
@@ -36,12 +31,23 @@ export class SubsenseReferenceManager extends ReferenceManager {
    * `"a"` and the subsense has label `"1"`, the return value is `"a1"`. Compare
    * with the return value of [[idToSublabel]].
    */
-  idToLabel(id: string): string {
-    // tslint:disable-next-line:restrict-plus-operands
-    return this.parentRefman.idToLabel(this.parentId) + super.idToLabel(id);
+  idToLabel(id: string): string | undefined {
+    const parentLabel = this.parentRefman.idToLabel(this.parentId);
+
+    if (parentLabel === undefined) {
+      return undefined;
+    }
+
+    const thisLabel = super.idToLabel(id);
+
+    if (thisLabel === undefined) {
+      return undefined;
+    }
+
+    return parentLabel + thisLabel;
   }
 
-  idToLabelForHead(id: string): string {
+  idToLabelForHead(id: string): string | undefined {
     return this.idToLabel(id);
   }
 
@@ -51,7 +57,7 @@ export class SubsenseReferenceManager extends ReferenceManager {
    * @returns Only the label that pertains to the subsense, independent of the
    * parent sense's label. Compare with the value returned from [[idToLabel]].
    */
-  idToSublabel(id: string): string {
+  idToSublabel(id: string): string | undefined {
     return super.idToLabel(id);
   }
 
@@ -60,16 +66,11 @@ export class SubsenseReferenceManager extends ReferenceManager {
   }
 }
 
-export class SenseReferenceManager extends ReferenceManager {
-  private readonly subsenseReferenceManagers: Record<string, ReferenceManager> =
-    Object.create(null);
-  private nextSenseLabelIx: number = 0;
+export class SenseReferenceManager extends LabelManager {
+  private readonly subsenseReferenceManagers:
+  Record<string, SubsenseReferenceManager> = Object.create(null);
 
-  // From parent
-  // tslint:disable-next-line:variable-name
-  readonly _id_to_label: Record<string, string>;
-  readonly idToLabel: (id: string) => string;
-  // End from parent
+  private nextSenseLabelIx: number = 0;
 
   constructor() {
     super("sense");
@@ -81,7 +82,7 @@ export class SenseReferenceManager extends ReferenceManager {
         new SubsenseReferenceManager(this, id);
     }
 
-    let label = this._id_to_label[id];
+    let label = this._idToLabel[id];
     if (label === undefined) {
       // More than 26 senses in a single article seems much.
       if (this.nextSenseLabelIx >= senseLabels.length) {
@@ -89,17 +90,18 @@ export class SenseReferenceManager extends ReferenceManager {
                         "single article");
       }
 
-      label = this._id_to_label[id] = senseLabels[this.nextSenseLabelIx++];
+      label = this._idToLabel[id] = senseLabels[this.nextSenseLabelIx++];
     }
 
     return label;
   }
 
-  idToLabelForHead(id: string): string {
-    return this.idToLabel(id).toUpperCase();
+  idToLabelForHead(id: string): string | undefined {
+    const label = this.idToLabel(id);
+    return (label === undefined) ? undefined : label.toUpperCase();
   }
 
-  idToSubsenseRefman(id: string): ReferenceManager {
+  idToSubsenseRefman(id: string): SubsenseReferenceManager {
     return this.subsenseReferenceManagers[id];
   }
 
@@ -114,7 +116,7 @@ export class SenseReferenceManager extends ReferenceManager {
 
 // This one does not inherit from the ReferenceManager class.
 export class ExampleReferenceManager {
-  private readonly name: string = "example";
+  readonly name: string = "example";
 
   idToLabel(): undefined {
     return undefined;
@@ -224,15 +226,16 @@ export class WholeDocumentManager {
   private readonly exampleRefman: ExampleReferenceManager =
     new ExampleReferenceManager();
 
-  getSenseLabelForHead(el: Element): string {
+  getSenseLabelForHead(el: Element): string | undefined {
     const id = el.id;
     if (id === "") {
       throw new Error(`element does not have an id: ${el}`);
     }
+
     return this.senseRefman.idToLabelForHead(id);
   }
 
-  getSenseLabel(el: Element): string {
+  getSenseLabel(el: Element): string | undefined {
     let what: Element | null = el;
     let sense;
     while (what !== null) {
@@ -296,7 +299,8 @@ export class WholeDocumentManager {
     return this.senseRefman.idToSubsenseRefman(sense.id);
   }
 
-  getRefmanForElement(el: Element): ReferenceManager | null {
+  getRefmanForElement(el: Element):
+  LabelManager | ExampleReferenceManager | null {
     const name = util.getOriginalName(el);
     switch (name) {
     case "ptr":

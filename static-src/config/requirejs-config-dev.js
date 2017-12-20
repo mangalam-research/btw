@@ -46,7 +46,12 @@ require.config({
     dragula: "external/dragula.min",
     ResizeObserver: "external/ResizeObserver",
     salve: "external/salve.min",
+    "salve-dom": "external/salve-dom",
     rangy: "external/rangy/rangy-core",
+    "bootstrap-notify": "external/bootstrap-notify",
+    ajv: "external/ajv.min",
+    rxjs: "external/Rx",
+    dexie: "external/dexie.min",
   },
   // We use this map to force velocity to use Bluebird for promises.
   map: {
@@ -61,6 +66,10 @@ require.config({
       // We use the last resort glue provided with wed so that bluebird
       // is always loaded with last-resort.
       "last-resort": "wed/glue/last-resort",
+      "btw/btw-storage-metadata.json": "text!btw/btw-storage-metadata.json",
+      "wed/modes/generic/metadata-schema.json": "text!wed/modes/generic/metadata-schema.json",
+      "wed/wed-options-schema.json": "text!wed/wed-options-schema.json",
+      "wed/options-schema.json": "text!wed/options-schema.json",
     },
     "wed/glue/last-resort": {
       "last-resort": "last-resort",
@@ -87,6 +96,12 @@ require.config({
     "wed/patches/bootstrap": {
       bootstrap: "bootstrap",
     },
+    // bootbox is buggy. It only requires jquery but it needs bootstrap too.
+    // Loading bootstrap works due to the init we have below which makes
+    // bootstrap return $.
+    bootbox: {
+      jquery: "bootstrap",
+    },
   },
   packages: [
     {
@@ -112,6 +127,10 @@ require.config({
     bootstrap: {
       deps: ["jquery"],
       exports: "jQuery.fn.popover",
+      init: function init($) {
+        "use strict";
+        return $;
+      },
     },
     "bootstrap-treeview": {
       deps: ["bootstrap"],
@@ -136,9 +155,6 @@ require.config({
       deps: ["jquery"],
       exports: "jQuery.cookie",
     },
-    log4javascript: {
-      exports: "log4javascript",
-    },
     "bootstrap-editable": {
       deps: ["bootstrap"],
       exports: "jQuery.fn.editable",
@@ -158,17 +174,6 @@ require.config({
     "twbs-pagination": {
       deps: ["bootstrap"],
       exports: "jQuery.fn.twbsPagination",
-    },
-  },
-  config: {
-    "wed/wed": {
-      schema: "btw/btw-storage.js",
-      mode: {
-        path: "btw/btw-mode",
-        options: {
-          bibl_url: "/rest/bibliography/all",
-        },
-      },
     },
   },
   waitSeconds: 12,
