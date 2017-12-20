@@ -2,8 +2,6 @@ define(function jqueryGlue(require) {
   "use strict";
   var $ = require("jquery");
 
-  $.noConflict();
-
   var originalAjax = $.ajax;
   var ajax;
 
