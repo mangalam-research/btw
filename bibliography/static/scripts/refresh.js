@@ -1,4 +1,4 @@
-define(["jquery", "jquery.cookie", "jquery.bootstrap-growl"], function r($) {
+define(["jquery", "jquery.cookie", "bootstrap-notify"], function r($) {
   "use strict";
 
   return function refresh(initiateUrl, checkUrl) {
@@ -19,15 +19,16 @@ define(["jquery", "jquery.cookie", "jquery.bootstrap-growl"], function r($) {
     }
 
     function growl(message, type) {
-      $.bootstrapGrowl(message, {
-        ele: "body",
+      $.notify({
+        message: message,
+      }, {
+        element: "body",
         type: type,
-        offset: { from: "top", amount: 20 },
-        align: "center",
-        width: "auto",
+        placement: {
+          align: "center",
+        },
         delay: 4000,
         allow_dismiss: true,
-        stackup_spacing: 10,
       });
     }
 
