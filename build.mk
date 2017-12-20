@@ -88,8 +88,6 @@ JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
 
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/standalone$(and $(WED_OPTIMIZED),-optimized)
-WED_XML_TO_HTML_PATH:=$(WED_BUILD)/lib/wed/xml-to-html.xsl
-WED_HTML_TO_XML_PATH:=$(WED_BUILD)/lib/wed/html-to-xml.xsl
 WED_LESS_INC_PATH:=$(WED_BUILD)/lib/wed/less-inc/
 
 ifeq ($(wildcard $(WED_BUILD)),)
