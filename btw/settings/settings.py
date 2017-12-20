@@ -236,7 +236,10 @@ s.CMS_PERMISSION = True
 # ``cms.middleware.toolbar`` middleware from acting on pages served
 # statically. If we do not prevent it, it hits the database for each
 # static file served and causes issues with running out of
-# connections.
+# connections. For instance, we get the error:
+#
+# remaining connection slots are reserved for non-replication
+# superuser connections
 #
 # In some versions of the 3.1.x series, setting it to ``True`` would
 # cause errors.
