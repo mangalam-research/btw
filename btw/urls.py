@@ -54,13 +54,7 @@ if settings.DEBUG:
             url(r'^__debug__/', include(debug_toolbar.urls)),
         ]
 
-    # In debug mode we do not want any static files to be cached
-    from django.contrib.staticfiles.views import serve
-    from django.views.decorators.cache import never_cache
-
-    static_view = never_cache(serve)
     urlpatterns += [
-        url(r'^static/(?P<path>.*)$', static_view),
         # We want the test app to be routed too
         url(r'^test/', include('btw_test.urls')),
     ]

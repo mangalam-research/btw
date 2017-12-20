@@ -6,11 +6,6 @@ import subprocess
 from django.core.management import execute_from_command_line
 
 if __name__ == "__main__":
-    # We always disable static serving.
-    if (len(sys.argv) > 1 and sys.argv[1] == "runserver" and
-            (len(sys.argv) < 3 or "--nostatic" not in sys.argv[2:])):
-        sys.argv.append("--nostatic")
-
     # lexicography prepare-article is considered a "testing" command.
     testing = (len(sys.argv) > 1 and sys.argv[1] == "test") or \
               (len(sys.argv) > 2 and
