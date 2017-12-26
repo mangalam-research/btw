@@ -7,9 +7,11 @@ import * as $ from "jquery";
 import { DLoc } from "wed/dloc";
 import * as domutil from "wed/domutil";
 import { AbortTransformationException } from "wed/exceptions";
+import { Modal } from "wed/gui/modal";
 import { makeElement, Transformation,
          TransformationData } from "wed/transformation";
 import * as util from "wed/util";
+import { Editor } from "wed/wed";
 
 import * as btwUtil from "./btw-util";
 
@@ -18,55 +20,50 @@ const makeDLoc = DLoc.makeDLoc;
 
 const _indexOf = Array.prototype.indexOf;
 
-// TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
-type Modal = any;
-type Editor = any;
-/* tslint:enable: no-any */
-// END TEMPORARY TYPE DEFINITIONS
-
 export interface TargetedTransformationData extends TransformationData {
   target: string;
 }
 
 export function insertPtr(editor: Editor,
                           data: TargetedTransformationData): void {
-  const caret = editor.caretManager.getDataCaret();
+  const caret = editor.caretManager.getDataCaret()!;
   let parent = caret.node;
   const index = caret.offset;
 
   // The data.target value is the wed ID target of the ptr. We must find this
   // element and add a data ID.
-  const target = editor.gui_root.ownerDocument.getElementById(data.target);
+  const target = editor.guiRoot.ownerDocument.getElementById(data.target)!;
   const dataId = data.target.slice(4);
   target.setAttribute(util.encodeAttrName("xml:id"), dataId);
   $.data(target, "wed_mirror_node").setAttributeNS(
     // tslint:disable-next-line:no-http-string
     "http://www.w3.org/XML/1998/namespace", "xml:id", dataId);
 
-  const ename = editor.mode.getAbsoluteResolver().resolveName("ptr");
+  const mode = editor.modeTree.getMode(parent);
+  const ename = mode.getAbsoluteResolver().resolveName("ptr")!;
 
   const ptr = makeElement(parent.ownerDocument,
                           ename.ns, "ptr", { target: `#${dataId}` });
-  editor.data_updater.insertAt(parent, index, ptr);
+  editor.dataUpdater.insertAt(parent, index, ptr);
 
   // The original parent and index information are no necessarily representative
   // because insertAt can do quite a lot of things to insert the node.
-  parent = ptr.parentNode;
+  parent = ptr.parentNode!;
   editor.caretManager.setCaret(parent, _indexOf.call(parent.childNodes, ptr));
 }
 
 export function insertRef(editor: Editor,
                           data: TargetedTransformationData): void {
-  const caret = editor.caretManager.getDataCaret();
+  const caret = editor.caretManager.getDataCaret()!;
   const parent = caret.node;
   const index = caret.offset;
 
-  const ename = editor.mode.getAbsoluteResolver().resolveName("ref");
+  const mode = editor.modeTree.getMode(parent);
+  const ename = mode.getAbsoluteResolver().resolveName("ref")!;
   const ptr = makeElement(parent.ownerDocument, ename.ns, "ref",
                           { target: data.target });
-  editor.data_updater.insertAt(parent, index, ptr);
-  const guiNode = editor.caretManager.fromDataLocation(ptr, 0).node;
+  editor.dataUpdater.insertAt(parent, index, ptr);
+  const guiNode = editor.caretManager.fromDataLocation(ptr, 0)!.node;
 
   // We must immediately set the caret because it is likely the old caret is no
   // longer valid.
@@ -85,13 +82,14 @@ export function insertRef(editor: Editor,
 export function replaceSelectionWithRef(editor: Editor,
                                         data: TargetedTransformationData):
 void {
-  const selection = editor.caretManager.sel;
+  const selection = editor.caretManager.sel!;
+
   if (!selection.wellFormed) {
     throw new Error("malformed selection");
   }
 
   const [startCaret, endCaret] = selection.asDataCarets()!;
-  const cutRet = editor.data_updater.cut(startCaret, endCaret);
+  const cutRet = editor.dataUpdater.cut(startCaret, endCaret);
   editor.caretManager.setCaret(cutRet[0]);
   insertRef(editor, data);
 }
@@ -122,19 +120,19 @@ function setLanguageHandler(this: SetTextLanguageTr, editor: Editor,
   const selection = editor.caretManager.sel;
 
   // We don't do anything if the selection is collapsed.
-  if (!selection || selection.collapsed) {
+  if (selection === undefined || selection.collapsed) {
     return;
   }
 
   if (!selection.wellFormed) {
-    editor.straddling_modal.modal();
+    editor.modals.getModal("straddling").modal();
     throw new AbortTransformationException("selection is not well-formed");
   }
 
   const langCode = btwUtil.languageToLanguageCode(data.language);
   const [start, end] = selection.asDataCarets()!;
   const container = start.node;
-  const cl = closest(container, "foreign", editor.data_root);
+  const cl = closest(container, "foreign", editor.dataRoot);
   if (cl !== null) {
     this.nestingModal.modal();
     throw new AbortTransformationException(
@@ -142,15 +140,16 @@ function setLanguageHandler(this: SetTextLanguageTr, editor: Editor,
         "foreign language element");
   }
 
-  const ename = editor.mode.getAbsoluteResolver().resolveName("foreign");
+  const mode = editor.modeTree.getMode(start.node);
+  const ename = mode.getAbsoluteResolver().resolveName("foreign")!;
   const foreign = makeElement(container.ownerDocument,
-                            ename.ns, "foreign", { "xml:lang": langCode });
-  const cutRet = editor.data_updater.cut(start, end);
+                              ename.ns, "foreign", { "xml:lang": langCode });
+  const cutRet = editor.dataUpdater.cut(start, end);
   const cutNodes = cutRet[1];
   for (const el of cutNodes) {
     foreign.appendChild(el);
   }
-  editor.data_updater.insertAt(cutRet[0], foreign);
+  editor.dataUpdater.insertAt(cutRet[0], foreign);
   editor.caretManager.setRange(foreign, 0, foreign, foreign.childNodes.length);
 }
 
@@ -192,17 +191,17 @@ function removeMixedHandler(editor: Editor, _data: TransformationData): void {
   const selection = editor.caretManager.sel;
 
   // Do nothing if we don't have a selection.
-  if (!selection || selection.collapsed) {
+  if (selection === undefined || selection.collapsed) {
     return;
   }
 
   if (!selection.wellFormed) {
-    editor.straddling_modal.modal();
+    editor.modals.getModal("straddling").modal();
     throw new AbortTransformationException("selection is not well-formed");
   }
 
   const [start, end] = selection.asDataCarets()!;
-  const cutRet = editor.data_updater.cut(start, end);
+  const cutRet = editor.dataUpdater.cut(start, end);
   let newText = "";
   const cutNodes = cutRet[1];
   for (const el of cutNodes) {
@@ -215,19 +214,10 @@ function removeMixedHandler(editor: Editor, _data: TransformationData): void {
     throw new AbortTransformationException("result would be invalid");
   }
 
-  let finalStart: DLoc;
-  let finalEnd: DLoc;
-  const insertRet = editor.data_updater.insertText(cutRet[0], newText);
-  if (insertRet[0]) {
-    finalStart = start.make(insertRet[0], cutRet[0].offset);
-    finalEnd = finalStart.makeWithOffset(cutRet[0].index + newText.length);
-  }
-  else {
-    finalStart = start.make(insertRet[1], 0);
-    finalEnd = finalStart.makeWithOffset(newText.length);
-  }
-
-  editor.caretManager.setRange(finalStart, finalEnd);
+  const insertRet = editor.dataUpdater.insertText(cutRet[0], newText);
+  editor.caretManager.setRange(
+    start.make(insertRet.node!, insertRet.isNew ? cutRet[0].offset : 0),
+    insertRet.caret);
 }
 
 export class RemoveMixedTr extends Transformation<TransformationData> {
@@ -243,19 +233,20 @@ Transformation<TransformationData> {
   return new Transformation(
     editor, "add", `Create new ${replacedWith}`,
     (trEditor, _data) => {
-      const caret = trEditor.caretManager.getDataCaret();
+      const caret = trEditor.caretManager.getDataCaret()!;
       const parent = caret.node;
 
       // This is the node that contains btw:none.
-      const grandparent = parent.parentNode;
+      const grandparent = parent.parentNode!;
 
-      const actions = trEditor.mode.getContextualActions("insert", replacedWith,
-                                                         grandparent, 0);
+      const mode = trEditor.modeTree.getMode(caret.node);
+      const actions = mode.getContextualActions("insert", replacedWith,
+                                                grandparent, 0);
       actions[0].execute({
-        moveCaretTo: makeDLoc(trEditor.data_root, grandparent, 0),
+        moveCaretTo: makeDLoc(trEditor.dataRoot, grandparent, 0),
         name: replacedWith,
       });
-      trEditor.data_updater.removeNode(parent);
+      trEditor.dataUpdater.removeNode(parent);
     });
 }
 
@@ -266,30 +257,30 @@ export interface SemanticFieldTransformationData extends TransformationData {
 export function replaceSemanticFields(editor: Editor,
                                       data: SemanticFieldTransformationData):
 void {
-  // XXX const editor = this._editor;
-  const dataCaret = editor.caretManager.getDataCaret(true);
-  const guiCaret = editor.caretManager.fromDataLocation(dataCaret);
+  const dataCaret = editor.caretManager.getDataCaret(true)!;
+  const guiCaret = editor.caretManager.fromDataLocation(dataCaret)!;
   const guiSfsContainer = domutil.closestByClass(guiCaret.node,
                                                  "btw:semantic-fields",
-                                                 editor.gui_root);
+                                                 editor.guiRoot);
   if (guiSfsContainer === null) {
     throw new Error("unable to acquire btw:semantic-fields");
   }
 
-  const sfsContainer = editor.toDataNode(guiSfsContainer);
-  const sfsParent = sfsContainer.parentNode;
+  const sfsContainer = editor.toDataNode(guiSfsContainer)!;
+  const sfsParent = sfsContainer.parentNode!;
   const sfsIndex = _indexOf.call(sfsParent.childNodes, sfsContainer);
   // Remove the container from the tree.
-  editor.data_updater.removeNode(sfsContainer);
+  editor.dataUpdater.removeNode(sfsContainer);
 
   // and manipulate it off-line.
-  while (sfsContainer.firstChild) {
+  while (sfsContainer.firstChild !== null) {
     sfsContainer.removeChild(sfsContainer.firstChild);
   }
 
   const doc = sfsContainer.ownerDocument;
   const newPaths = data.newPaths;
-  const ename = editor.mode.getAbsoluteResolver().resolveName("btw:sf");
+  const mode = editor.modeTree.getMode(sfsContainer);
+  const ename = mode.getAbsoluteResolver().resolveName("btw:sf")!;
 
   for (const path of newPaths) {
     const sf = makeElement(doc, ename.ns, "btw:sf");
@@ -298,6 +289,6 @@ void {
   }
 
   // Finally, reintroduce it to the data tree.
-  editor.data_updater.insertNodeAt(sfsParent, sfsIndex, sfsContainer);
+  editor.dataUpdater.insertNodeAt(sfsParent, sfsIndex, sfsContainer);
   editor.caretManager.setCaret(sfsContainer, 0);
 }

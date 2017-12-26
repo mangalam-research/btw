@@ -50,6 +50,6 @@
     "typescript": ">2.6.1 <2.7",
     "underscore": "^1.8.3",
     "velocity-animate": ">=1.2.3 <2",
-    "wed": ">=0.29.0 <0.30"
+    "wed": "^0.30.0"
   }
 }

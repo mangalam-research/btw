@@ -15,10 +15,11 @@ function hasTrsAt(data_node, offset) {
 
         var names = name_pattern.toArray();
         for (var ix = 0, name; (name = names[ix]); ++ix) {
-            var unresolved = wed_editor.resolver.unresolveName(
+            var mode = wed_editor.modeTree.getMode(data_node);
+            var unresolved = mode.resolver.unresolveName(
                 name.ns, name.name);
 
-            var trs = wed_editor.mode.getContextualActions(
+            var trs = mode.getContextualActions(
                 "insert", unresolved, data_node, offset);
             if (trs.length)
                 ret[unresolved] = 1;
@@ -28,7 +29,7 @@ function hasTrsAt(data_node, offset) {
     function getPath(node) {
         var parent_path = "";
         if (node.parentNode &&
-            node.parentNode !== wed_editor.data_root) {
+            node.parentNode !== wed_editor.dataRoot) {
             parent_path = getPath(node.parentNode);
         }
         return parent_path + "/" + node.tagName;

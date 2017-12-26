@@ -6,15 +6,10 @@ import "bootstrap";
 import * as $ from "jquery";
 
 import { Action } from "wed/action";
+import { Editor } from "wed/wed";
 
 import { Mode } from "./btw-mode";
 import * as btwTr from "./btw-tr";
-
-// TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
-type Editor = any;
-/* tslint:enable: no-any */
-// END TEMPORARY TYPE DEFINITIONS
 
 class UndoAction extends Action<{}> {
   constructor(editor: Editor) {
@@ -43,11 +38,9 @@ class QuitAction extends Action<{}> {
   }
 
   execute(): void {
-    const $form = this.editor.$gui_root.parents("form").first();
-    this.editor.save((err) => {
-      if (!err) {
-        $form.submit();
-      }
+    const $form = this.editor.$guiRoot.parents("form").first();
+    this.editor.save().then(() => {
+      $form.submit();
     });
   }
 }
@@ -59,7 +52,7 @@ class QuitWithoutSavingAction extends Action<{}> {
   }
 
   execute(): void {
-    const $form = this.editor.$gui_root.parents("form").first();
+    const $form = this.editor.$guiRoot.parents("form").first();
     $form.submit();
   }
 }
@@ -127,7 +120,7 @@ export class Toolbar {
       }
       $button.click(boundClick);
       // Prevents acquiring the focus.
-      $button.mousedown(false);
+      $button.mousedown(false as any);
       this.top.appendChild(button);
       this.nameToAction[name] = specAction;
     }

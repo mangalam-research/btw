@@ -6,9 +6,11 @@ import * as _ from "lodash";
 
 import * as domutil from "wed/domutil";
 
-export function termsForSense(sense: Element): NodeListOf<Element> {
-  return sense.querySelectorAll(domutil.toGUISelector(
-    "btw:english-rendition>btw:english-term"));
+export function termsForSense(sense: Element,
+                              mappings: Record<string, string>):
+NodeListOf<Element> {
+  return sense.querySelectorAll(
+    domutil.toGUISelector("btw:english-rendition>btw:english-term", mappings));
 }
 
 const langToLabel: Record<string, string> = {

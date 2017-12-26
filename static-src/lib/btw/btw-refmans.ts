@@ -4,6 +4,8 @@ import * as domutil from "wed/domutil";
 import { LabelManager } from "wed/labelman";
 import * as util from "wed/util";
 
+import { MappedUtil } from "./mapped-util";
+
 const senseLabels = "abcdefghijklmnopqrstuvwxyz";
 
 export class SubsenseReferenceManager extends LabelManager {
@@ -118,14 +120,16 @@ export class SenseReferenceManager extends LabelManager {
 export class ExampleReferenceManager {
   readonly name: string = "example";
 
+  constructor(private readonly mapped: MappedUtil) {}
+
   idToLabel(): undefined {
     return undefined;
   }
 
   getPositionalLabel(ptr: Element, target: Element): string {
     const guiTarget = $.data(target, "wed_mirror_node");
-    const ref = guiTarget.querySelector(domutil.toGUISelector("btw:cit ref"))
-            .cloneNode(true);
+    const ref = guiTarget
+      .querySelector(this.mapped.toGUISelector("btw:cit ref")).cloneNode(true);
     const toRemove = ref.querySelectorAll("._gui, ._decoration_text");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < toRemove.length; ++i) {
@@ -224,7 +228,9 @@ export class WholeDocumentManager {
   private readonly senseRefman: SenseReferenceManager =
     new SenseReferenceManager();
   private readonly exampleRefman: ExampleReferenceManager =
-    new ExampleReferenceManager();
+    new ExampleReferenceManager(this.mapped);
+
+  constructor(private readonly mapped: MappedUtil) {}
 
   getSenseLabelForHead(el: Element): string | undefined {
     const id = el.id;

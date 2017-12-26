@@ -18,6 +18,7 @@ export interface PrimarySource {
   reference_title: string;
   genre: string;
   item: Item;
+  abstract_url: string;
 }
 
 export type BibliographicalItem = Item | PrimarySource;

@@ -146,7 +146,7 @@ define(function factory(require, _exports, _module) {
       $.fn.tooltip.Constructor.TRANSITION_DURATION = savedDuration;
     });
 
-    beforeEach(function beforeEach(done) {
+    beforeEach(function beforeEach() {
       fixture.el.innerHTML = pristineFixtureHtml;
       var wedDocument = fixture.el.getElementsByClassName("wed-document")[0];
       viewer = new Viewer(wedDocument, undefined,
@@ -154,9 +154,7 @@ define(function factory(require, _exports, _module) {
                           data,
                           biblData,
                           "/en-us");
-      viewer.whenCondition("done", function finished() {
-        done();
-      });
+      return viewer.done;
     });
 
     it("makes all semantic fields into popover triggers", function it() {

@@ -47,15 +47,20 @@ require.config({
     ResizeObserver: "external/ResizeObserver",
     salve: "external/salve.min",
     "salve-dom": "external/salve-dom",
-    rangy: "external/rangy/rangy-core",
+    "rangy-core": "external/rangy/rangy-core",
+    "rangy-textrange": "external/rangy/rangy-textrange",
     "bootstrap-notify": "external/bootstrap-notify",
     ajv: "external/ajv.min",
     rxjs: "external/Rx",
     dexie: "external/dexie.min",
+    bootbox: "external/bootbox",
   },
-  // We use this map to force velocity to use Bluebird for promises.
   map: {
     "*": {
+      // This is needed due to the disconnect between the hardcoded name
+      // in the file that is shipped by interactjs and the name of the npm
+      // package.
+      interactjs: "interact",
       velocity: "velocity-glue",
       bluebird: "bluebird-glue",
       jquery: "jquery-glue",
@@ -63,16 +68,11 @@ require.config({
       marionette: "marionette-glue",
       bootstrap: "wed/patches/bootstrap",
       datatables: "datatables.net",
-      // We use the last resort glue provided with wed so that bluebird
-      // is always loaded with last-resort.
-      "last-resort": "wed/glue/last-resort",
       "btw/btw-storage-metadata.json": "text!btw/btw-storage-metadata.json",
-      "wed/modes/generic/metadata-schema.json": "text!wed/modes/generic/metadata-schema.json",
-      "wed/wed-options-schema.json": "text!wed/wed-options-schema.json",
-      "wed/options-schema.json": "text!wed/options-schema.json",
-    },
-    "wed/glue/last-resort": {
-      "last-resort": "last-resort",
+      "wed/modes/generic/metadata-schema.json": "json!wed/modes/generic/metadata-schema.json",
+      "wed/wed-options-schema.json": "json!wed/wed-options-schema.json",
+      "wed/options-schema.json": "json!wed/options-schema.json",
+      rangy: "wed/glue/rangy-glue",
     },
     "jquery-glue": {
       jquery: "jquery",
@@ -88,6 +88,9 @@ require.config({
     },
     "marionette-glue": {
       marionette: "marionette",
+    },
+    "wed/glue/rangy-glue": {
+      rangy: "rangy-core",
     },
     marionette: {
       backbone: "backbone",

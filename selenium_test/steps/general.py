@@ -140,7 +140,7 @@ def step_impl(context, choice):
     if choice == "completely ":
         # We must not call it before the body is fully loaded.
         scroll_by = driver.execute_script("""
-        return wed_editor.gui_root.scrollHeight;
+        return wed_editor.guiRoot.scrollHeight;
         """)
     else:
         scroll_by = 10
@@ -150,8 +150,8 @@ def step_impl(context, choice):
     var by = arguments[0];
     delete window.__selenic_scrolled;
     jQuery(function () {
-      var top = window.wed_editor.$gui_root.scrollTop();
-      window.wed_editor.$gui_root.scrollTop(top + by);
+      var top = window.wed_editor.$guiRoot.scrollTop();
+      window.wed_editor.$guiRoot.scrollTop(top + by);
       window.__selenic_scrolled = true;
     });
     """, scroll_by)
@@ -308,7 +308,7 @@ def step_impl(context, what):
 
             result = driver.execute_script("""
             var senses =  \
-                wed_editor.gui_root.getElementsByClassName("btw:sense");
+                wed_editor.guiRoot.getElementsByClassName("btw:sense");
             if (senses.length !== 1)
                 return [false, "the document should have exactly one sense"];
             var sub = senses[0].getElementsByClassName("btw:subsense");
@@ -409,7 +409,7 @@ def step_impl(context, how=None):
     # We have to wait for the save to happen before moving on.
     driver.execute_script("""
     window.__selenium_saved = false;
-    wed_editor._saver.events
+    wed_editor.saver.events
       // Yes, we handle both the same.
       .filter(function (ev) { return ev.name === "Failed" ||
                                      ev.name === "Saved" })
@@ -419,7 +419,7 @@ def step_impl(context, how=None):
       });
     """)
     if how is None or how == " using the keyboard":
-        util.ctrl_equivalent_x("S")
+        util.ctrl_equivalent_x("s")
     else:
         context.execute_steps(u"""
         When the user clicks the save button in the toolbar

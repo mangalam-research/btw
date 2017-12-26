@@ -10,8 +10,8 @@ import { NameResolver } from "salve";
 
 import * as convert from "wed/convert";
 import * as dloc from "wed/dloc";
-import * as domutil from "wed/domutil";
 import { isElement } from "wed/domtypeguards";
+import * as domutil from "wed/domutil";
 import { Metadata } from "wed/modes/generic/metadata";
 import { MetadataMultiversionReader,
        } from "wed/modes/generic/metadata-multiversion-reader";
@@ -27,6 +27,7 @@ import { WholeDocumentManager } from "./btw-refmans";
 import * as metadataJSON from "./btw-storage-metadata.json";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
+import { MappedUtil } from "./mapped-util";
 import { SFFetcher } from "./semantic-field-fetcher";
 
 const _slice = Array.prototype.slice;
@@ -46,9 +47,9 @@ interface FakeMode {
 }
 
 function makeExpandHandler(affix: HTMLElement, affixConstrainer: HTMLElement,
-                           frame: Element): (ev: JQuery.Event) => void {
+                           frame: Element): (ev: JQueryEventObject) => void {
   const $affix = $(affix);
-  return (ev: JQuery.Event) => {
+  return (ev: JQueryEventObject) => {
     if (affix.classList.contains("expanding")) {
       return;
     }
@@ -90,7 +91,7 @@ function makeResizeHandler(affix: HTMLElement,
                            expandableToggle: Element,
                            container: Element,
                            frame: Element,
-                           expandHandler: (ev: JQuery.Event) => void):
+                           expandHandler: (ev: JQueryEventObject) => void):
 () => void {
   const $affix = $(affix);
   const $expandableToggle = $(expandableToggle);
@@ -167,16 +168,18 @@ export class Viewer {
   private readonly doc: Document;
   private readonly win: Window;
   private readonly metadata: Metadata;
-  private readonly refmans: WholeDocumentManager = new WholeDocumentManager();
+  private readonly refmans: WholeDocumentManager;
   private readonly loadTimeout: number = 30000;
   private readonly resolver: NameResolver = new NameResolver();
   private readonly sfFetcher: SFFetcher;
   private readonly editor: FakeEditor;
   private readonly mode: FakeMode;
+  private readonly mapped: MappedUtil;
   private guiUpdater: TreeUpdater;
   private dataDoc: Document;
   private headingDecorator: HeadingDecorator;
   private doneResolve: (value: Viewer) => void;
+  // tslint:disable-next-line:no-any
   private doneReject: (err: any) => void;
 
   private readonly senseSubsenseIdManager: IDManager = new IDManager("S.");
@@ -203,6 +206,8 @@ export class Viewer {
               private readonly languagePrefix: string) {
     this.metadata =
       new MetadataMultiversionReader().read(JSON.parse(metadataJSON));
+    this.mapped = new MappedUtil(this.metadata.getNamespaceMappings());
+    this.refmans = new WholeDocumentManager(this.mapped);
 
     DispatchMixin.call(this);
     const doc = this.doc = root.ownerDocument;
@@ -234,8 +239,7 @@ export class Viewer {
     };
 
     const { heading, group, content } =
-      btwUtil.makeCollapsible(doc, "default",
-                              "toolbar-heading",
+      btwUtil.makeCollapsible(doc, "default", "toolbar-heading",
                               "toolbar-collapse", {
                                 group: "horizontal",
                               });
@@ -271,8 +275,8 @@ export class Viewer {
 
     const expandAll = content.getElementsByClassName("btw-expand-all-btn")[0];
     $(expandAll).on("click", (ev) => {
-      const toOpen = doc.querySelectorAll(".wed-document .collapse:not(.in)");
-      $(toOpen).collapse("show");
+      $(doc.querySelectorAll(".wed-document .collapse:not(.in)"))
+        .collapse("show");
       $(content.parentNode!).collapse("hide");
       ev.preventDefault();
     });
@@ -280,8 +284,7 @@ export class Viewer {
     const collapseAll =
       content.getElementsByClassName("btw-collapse-all-btn")[0];
     $(collapseAll).on("click", (ev) => {
-      const toClose = doc.querySelectorAll(".wed-document .collapse.in");
-      $(toClose).collapse("hide");
+      $(doc.querySelectorAll(".wed-document .collapse.in")).collapse("hide");
       $(content.parentNode!).collapse("hide");
       ev.preventDefault();
     });
@@ -359,7 +362,8 @@ export class Viewer {
     };
 
     const ret = new HeadingDecorator(this.refmans, this.guiUpdater,
-                                     headingMap, false /* impliedBrackets */);
+                                     this.mapped, headingMap,
+                                     false /* impliedBrackets */);
 
     ret.addSpec({ selector: "btw:definition", heading: null });
     ret.addSpec({ selector: "btw:english-rendition", heading: null });
@@ -620,7 +624,7 @@ export class Viewer {
 
   private seeIds(): void {
     const root = this.root;
-    const sensesSubsenses = root.querySelectorAll(domutil.toGUISelector(
+    const sensesSubsenses = root.querySelectorAll(this.mapped.toGUISelector(
       "btw:sense, btw:subsense"));
     // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, limit = sensesSubsenses.length; i < limit; ++i) {
@@ -631,7 +635,7 @@ export class Viewer {
       }
     }
 
-    const examples = root.querySelectorAll(domutil.toGUISelector(
+    const examples = root.querySelectorAll(this.mapped.toGUISelector(
       "btw:example, btw:example-explained"));
     // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, limit = examples.length; i < limit; ++i) {
@@ -697,7 +701,7 @@ export class Viewer {
 
     const topUl = affix.getElementsByTagName("ul")[0];
     const anchors =
-      root.querySelectorAll(domutil.toGUISelector("btw:subsense, .head"));
+      root.querySelectorAll(this.mapped.toGUISelector("btw:subsense, .head"));
     let ulStack: Element[] = [topUl];
     const containerStack: Element[] = [];
     let prevContainer;
@@ -732,7 +736,7 @@ export class Viewer {
         switch (util.getOriginalName(parent)) {
         case "btw:sense":
           const terms = parent.querySelector(
-            domutil.toGUISelector("btw:english-term-list"));
+            this.mapped.toGUISelector("btw:english-term-list"));
           heading = `${prefix} ${(terms !== null ? terms.textContent : "")}`;
           break;
         case "btw:antonym-term-list":
@@ -939,9 +943,7 @@ export class Viewer {
       // Slicing it prevents this list from growing as we add the clones.
       const terms: HTMLElement[] = _slice.call(
         englishRenditionsEl.getElementsByClassName("btw:english-term"));
-      const div = doc.createElement("div");
-      div.classList.add("btw:english-term-list");
-      div.classList.add("_real");
+      const div = this.makeElement("btw:english-term-list");
       for (let tIx = 0; tIx < terms.length; ++tIx) {
         const term = terms[tIx];
         const clone = term.cloneNode(true) as HTMLElement;
@@ -965,9 +967,7 @@ export class Viewer {
         html += er.innerHTML;
         er.parentNode.removeChild(er);
       }
-      const sfs = doc.createElement("div");
-      sfs.classList.add("btw:semantic-fields-collection");
-      sfs.classList.add("_real");
+      const sfs = this.makeElement("btw:semantic-fields-collection");
       // tslint:disable-next-line:no-inner-html
       sfs.innerHTML = html;
       englishRenditionsEl.appendChild(sfs);
@@ -995,8 +995,7 @@ export class Viewer {
       }
 
       // This div will contain the list of all terms in the group.
-      const div = doc.createElement("div");
-      div.className = `btw:${name}-term-list _real`;
+      const div = this.makeElement(`btw:${name}-term-list`);
 
       const head = doc.createElement("div");
       head.className = "head _phantom";
@@ -1014,9 +1013,7 @@ export class Viewer {
         const term = terms[tIx];
         const clone = term.cloneNode(true);
         clone.classList.add("_inline");
-        const termWrapper = doc.createElement("div");
-        termWrapper.classList.add(`btw:${name}-term-item`);
-        termWrapper.classList.add("_real");
+        const termWrapper = this.makeElement(`btw:${name}-term-item`);
         termWrapper.textContent = `${name.replace("-", " ")} ${tIx + 1}: `;
         termWrapper.appendChild(clone);
         div.appendChild(termWrapper);

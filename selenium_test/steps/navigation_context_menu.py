@@ -34,7 +34,7 @@ def step_impl(context, item, under):
         var $ = jQuery;
 
         var $search_point = under ?
-            $("a:contains(" + under + ")").parent() : $("#sidebar");
+            $("a:contains(" + under + ")").parent() : $(".wed-sidebar");
 
         var $ret = $search_point.find("a:contains(" + item + ")");
         var ret = $ret[0];

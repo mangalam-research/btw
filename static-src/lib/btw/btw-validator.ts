@@ -9,10 +9,13 @@ import { ErrorData } from "salve-dom";
 import * as domutil from "wed/domutil";
 import { ModeValidator } from "wed/validator";
 
+import { MappedUtil } from "./mapped-util";
+
 const _indexOf = Array.prototype.indexOf;
 
 export class Validator implements ModeValidator {
-  constructor(private readonly guiRoot: Element) {}
+  constructor(private readonly guiRoot: Element,
+              private readonly mapped: MappedUtil) {}
 
   // tslint:disable-next-line:max-func-body-length
   validateDocument(): ErrorData[] {
@@ -34,7 +37,7 @@ export class Validator implements ModeValidator {
       const contrastive =
         sense.getElementsByClassName("btw:contrastive-section")[0];
       const sfs = sense.querySelectorAll(
-        domutil.toGUISelector("btw:example btw:sf"));
+        this.mapped.toGUISelector("btw:example btw:sf"));
       let found = false;
       // tslint:disable-next-line:prefer-for-of
       for (let sfsIx = 0; sfsIx < sfs.length; ++sfsIx) {
@@ -62,7 +65,7 @@ export class Validator implements ModeValidator {
     for (let i = 0; i < cognates.length; ++i) {
       const cognate = cognates[i];
       const sfs = cognate.querySelectorAll(
-        domutil.toGUISelector("btw:example btw:sf"));
+        this.mapped.toGUISelector("btw:example btw:sf"));
       if (sfs.length === 0) {
         const dataCognate = $.data(cognate, "wed_mirror_node");
         ret.push({

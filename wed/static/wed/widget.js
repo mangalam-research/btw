@@ -56,21 +56,17 @@
           };
 
           // eslint-disable-next-line camelcase
-          var wed_editor = new wed.Editor();
-          wed_editor.init(widget, options, script.textContent);
+          var wed_editor = new wed.Editor(widget, options);
           // Yep, this means only one wed editor per window.
           // eslint-disable-next-line camelcase
           window.wed_editor = wed_editor;
-          wed_editor.whenCondition("initialized",
-                                   // eslint-disable-next-line no-loop-func
-                                   function initialized() {
-                                     $widget.prev().remove();
+          // eslint-disable-next-line no-loop-func
+          wed_editor.init(script.textContent).then(function initialized() {
+            $widget.prev().remove();
 
-                                     // Allow CSS to reflow
-                                     window.setTimeout(
-                                       wed_editor.resize.bind(wed_editor),
-                                       0);
-                                   });
+            // Allow CSS to reflow
+            window.setTimeout(wed_editor.resize.bind(wed_editor), 0);
+          });
         }
       });
   }

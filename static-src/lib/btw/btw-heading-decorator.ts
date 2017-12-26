@@ -9,6 +9,7 @@ import * as util from "wed/util";
 import { WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
+import { MappedUtil } from "./mapped-util";
 
 let nextHead = 0;
 function allocateHeadID(): string {
@@ -57,6 +58,7 @@ export class HeadingDecorator {
 
   constructor(private readonly refmans: WholeDocumentManager,
               private readonly guiUpdater: TreeUpdater,
+              private readonly mapped: MappedUtil,
               private readonly headingMap: Record<string, string> =
               defaultHeadingMap,
               private readonly impliedBrackets: boolean = true) {
@@ -134,7 +136,7 @@ export class HeadingDecorator {
       heading: "other citations",
     }].map((x) => ({
       ...x,
-      dataSelector: domutil.toGUISelector(x.selector),
+      dataSelector: this.mapped.toGUISelector(x.selector),
     }));
   }
 
@@ -142,7 +144,7 @@ export class HeadingDecorator {
     this.specs = this.specs.filter((x) => x.selector !== spec.selector);
     const fullSpec = {
       ...spec,
-      dataSelector: domutil.toGUISelector(spec.selector),
+      dataSelector: this.mapped.toGUISelector(spec.selector),
     };
     this.specs.push(fullSpec);
   }

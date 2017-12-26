@@ -10,42 +10,50 @@ import * as Bloodhound from "typeahead";
 import { Action } from "wed/action";
 import { isText } from "wed/domtypeguards";
 import * as domutil from "wed/domutil";
+import { Modal } from "wed/gui/modal";
 import { TransformationData } from "wed/transformation";
 import * as util from "wed/util";
+import { Editor } from "wed/wed";
 
 import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";
-import { BibliographicalInfo } from "./btw-mode";
+import { BTWDecorator } from "./btw-decorator";
+import { BibliographicalInfo, Mode } from "./btw-mode";
 import * as btwUtil from "./btw-util";
 import * as SFEditor from "./semantic_field_editor/app";
-
-// TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
-type Editor = any;
-type Modal = any;
-/* tslint:enable: no-any */
-// END TEMPORARY TYPE DEFINITIONS
 
 export class SensePtrDialogAction extends Action<TransformationData> {
   execute(data: TransformationData): void {
     const editor = this.editor;
 
-    const doc = editor.gui_root.ownerDocument;
-    const senses = editor.gui_root.querySelectorAll(
-      util.classFromOriginalName("btw:sense"));
+    const dataCaret = editor.caretManager.getDataCaret(true)!;
+    const mode = editor.modeTree.getMode(dataCaret.node);
+    if (!(mode instanceof Mode)) {
+      throw new Error("expected BTW mode");
+    }
+
+    const decorator = editor.modeTree.getDecorator(dataCaret.node);
+    if (!(decorator instanceof BTWDecorator)) {
+      throw new Error("our decorator must be a BTWDecorator");
+    }
+
+    const doc = editor.guiRoot.ownerDocument;
+    const mappings = mode.getAbsoluteNamespaceMappings();
+    const senses = editor.guiRoot.querySelectorAll(
+      util.classFromOriginalName("btw:sense", mappings));
     const labels: Element[] = [];
     const radios: Element[] = [];
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < senses.length; ++i) {
       const sense = senses[i];
       let dataNode = $.data(sense, "wed_mirror_node");
-      const termNodes = btwUtil.termsForSense(sense);
+      const termNodes = btwUtil.termsForSense(sense, mappings);
       const terms: string[] = [];
       // tslint:disable-next-line:prefer-for-of
       for (let tix = 0; tix < termNodes.length; ++tix) {
         terms.push($.data(termNodes[tix], "wed_mirror_node").textContent);
       }
-      const senseLabel = editor.decorator.refmans.getSenseLabel(sense);
+      const senseLabel = decorator.refmans.getSenseLabel(sense);
 
       let span = doc.createElement("span");
       span.textContent = ` [${senseLabel}] ${terms.join(", ")}`;
@@ -65,8 +73,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
       const subsenses = domutil.childrenByClass(sense, "btw:subsense");
       for (const subsense of subsenses) {
         dataNode = $.data(subsense, "wed_mirror_node");
-        const subsenseLabel =
-          editor.decorator.refmans.getSubsenseLabel(subsense);
+        const subsenseLabel = decorator.refmans.getSubsenseLabel(subsense);
         let child = dataNode.firstElementChild;
         let explanation;
         while (child) {
@@ -94,8 +101,8 @@ export class SensePtrDialogAction extends Action<TransformationData> {
       }
     }
 
-    const hyperlinkModal = editor.mode.hyperlinkModal;
-    const primary = hyperlinkModal.getPrimary()[0];
+    const hyperlinkModal = mode.hyperlinkModal;
+    const primary = hyperlinkModal.getPrimary()[0] as HTMLButtonElement;
     const body = doc.createElement("div");
     for (const label of labels) {
       body.appendChild(label);
@@ -110,9 +117,9 @@ export class SensePtrDialogAction extends Action<TransformationData> {
     hyperlinkModal.modal(() => {
       const clicked = hyperlinkModal.getClickedAsText();
       if (clicked === "Insert") {
-        const id = body.querySelector("input[type='radio']:checked")
-              .nextElementSibling.getAttribute("data-wed-id");
-        editor.mode.insertPtrTr.execute({ ...data, target: id });
+        const id = body.querySelector("input[type='radio']:checked")!
+              .nextElementSibling!.getAttribute("data-wed-id")!;
+        mode.insertPtrTr.execute({ ...data, target: id });
       }
     });
   }
@@ -122,9 +129,17 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
   execute(data: TransformationData): void {
     const editor = this.editor;
 
-    const doc = editor.gui_root.ownerDocument;
-    const examples = editor.gui_root.querySelectorAll(domutil.toGUISelector(
-      "btw:example, btw:example-explained"));
+    const dataCaret = editor.caretManager.getDataCaret(true)!;
+    const mode = editor.modeTree.getMode(dataCaret.node);
+    if (!(mode instanceof Mode)) {
+      throw new Error("expected BTW mode");
+    }
+
+    const doc = editor.guiRoot.ownerDocument;
+    const mappings = mode.getAbsoluteNamespaceMappings();
+    const examples =
+      editor.guiRoot.querySelectorAll(domutil.toGUISelector(
+        "btw:example, btw:example-explained", mappings));
     const labels: Element[] = [];
     const radios: Element[] = [];
     // tslint:disable-next-line:prefer-for-of
@@ -141,14 +156,15 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
         child = child.nextElementSibling;
       }
 
-      let abbr = example.querySelector(util.classFromOriginalName("ref"));
+      let abbr = example.querySelector(util.classFromOriginalName("ref",
+                                                                  mappings));
       // We skip those examples that do not have a ref in them yet,
       // as links to them are meaningless.
-      if (!abbr) {
+      if (abbr === null) {
         continue;
       }
 
-      abbr = abbr.cloneNode(true);
+      abbr = abbr.cloneNode(true) as Element;
       child = abbr.firstElementChild;
       while (child) {
         const next = child.nextElementSibling;
@@ -175,8 +191,8 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
       radios.push(radio);
     }
 
-    const hyperlinkModal = editor.mode.hyperlinkModal;
-    const primary = hyperlinkModal.getPrimary()[0];
+    const hyperlinkModal = mode.hyperlinkModal;
+    const primary = hyperlinkModal.getPrimary()[0] as HTMLButtonElement;
     const body = doc.createElement("div");
     for (const label of labels) {
       body.appendChild(label);
@@ -192,9 +208,9 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
     hyperlinkModal.modal(() => {
       const clicked = hyperlinkModal.getClickedAsText();
       if (clicked === "Insert") {
-        const id = body.querySelector("input[type='radio']:checked")
-              .nextElementSibling.getAttribute("data-wed-id");
-        editor.mode.insertPtrTr.execute({ ...data, target: id });
+        const id = body.querySelector("input[type='radio']:checked")!
+              .nextElementSibling!.getAttribute("data-wed-id")!;
+        mode.insertPtrTr.execute({ ...data, target: id });
       }
     });
   }
@@ -269,6 +285,12 @@ export class InsertBiblPtrAction extends Action<{}> {
     const editor = this.editor;
     let range = editor.caretManager.range;
 
+    const dataCaret = editor.caretManager.getDataCaret(true)!;
+    const mode = editor.modeTree.getMode(dataCaret.node);
+    if (!(mode instanceof Mode)) {
+      throw new Error("expected BTW mode");
+    }
+
     if (range && range.collapsed) {
       range = undefined;
     }
@@ -320,36 +342,37 @@ export class InsertBiblPtrAction extends Action<{}> {
       }],
     };
 
-    const pos = editor.computeContextMenuPosition(undefined, true);
+    const pos = editor.editingMenuManager.computeMenuPosition(undefined, true);
     const ta = editor.displayTypeaheadPopup(
       pos.left, pos.top, 600, "Reference",
       taOptions,
-      (obj) => {
+      (x) => {
+        const obj = x as any as BibliographicalItem;
         if (!obj) {
           return;
         }
 
         const newData = { target: obj.abstract_url };
         if (range) {
-          editor.mode.replaceSelectionWithRefTr.execute(newData);
+          mode.replaceSelectionWithRefTr.execute(newData);
         }
         else {
-          editor.mode.insertRefTr.execute(newData);
+          mode.insertRefTr.execute(newData);
         }
       });
 
-    editor.mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
+    mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
       const allValues: BibliographicalItem[] = [];
       for (const key of Object.keys(info)) {
         allValues.push(info[key]);
       }
 
       const citedValues: BibliographicalItem[] = [];
-      const refs = editor.gui_root.querySelectorAll("._real.ref");
+      const refs = editor.guiRoot.querySelectorAll("._real.ref");
       // tslint:disable-next-line:prefer-for-of
       for (let refIx = 0; refIx < refs.length; ++refIx) {
         const ref = refs[refIx];
-        const origTarget = ref.getAttribute(util.encodeAttrName("target"));
+        const origTarget = ref.getAttribute(util.encodeAttrName("target"))!;
         if (origTarget.lastIndexOf("/bibliography/", 0) !== 0) {
           continue;
         }
@@ -392,23 +415,34 @@ function getEditSemanticFieldModal(editor: Editor): Modal {
 export class EditSemanticFieldsAction extends Action<{}> {
   execute(data: {}): void {
     const editor = this.editor;
-    const dataCaret = editor.caretManager.getDataCaret(true);
-    const guiCaret = editor.caretManager.fromDataLocation(dataCaret);
+    const dataCaret = editor.caretManager.getDataCaret(true)!;
+    const guiCaret = editor.caretManager.fromDataLocation(dataCaret)!;
     const guiSfsContainer =
       domutil.closestByClass(guiCaret.node, "btw:semantic-fields",
-                             editor.gui_root);
+                             editor.guiRoot);
     if (guiSfsContainer === null) {
       throw new Error("unable to acquire btw:semantic-fields");
     }
 
-    const sfsContainer = editor.toDataNode(guiSfsContainer);
-    const sfs = domutil.dataFindAll(sfsContainer, "btw:sf");
+    const mode = editor.modeTree.getMode(dataCaret.node);
+    if (!(mode instanceof Mode)) {
+      throw new Error("expected BTW mode");
+    }
 
-    const paths = sfs.map((sf) => sf.textContent);
+    const decorator = editor.modeTree.getDecorator(dataCaret.node);
+    if (!(decorator instanceof BTWDecorator)) {
+      throw new Error("our decorator must be a BTWDecorator");
+    }
+
+    const fetcher = decorator.sfFetcher;
+
+    const sfsContainer = editor.toDataNode(guiSfsContainer) as Element;
+    const sfs = domutil.dataFindAll(sfsContainer, "btw:sf",
+                                    mode.getAbsoluteNamespaceMappings());
+
+    const paths = sfs.map((sf) => sf.textContent!);
 
     const modal = getEditSemanticFieldModal(editor);
-    const mode = editor.mode;
-    const fetcher = editor.decorator.sfFetcher;
 
     const fieldToPath = (f) => f.get("path");
 
@@ -418,8 +452,10 @@ export class EditSemanticFieldsAction extends Action<{}> {
     modal.setBody("<i class='fa fa-spinner fa-2x fa-spin'></i>");
 
     const $modalTop = modal.getTopLevel();
-    const body = $modalTop[0].getElementsByClassName("modal-body")[0];
-    const content = $modalTop[0].getElementsByClassName("modal-content")[0];
+    const body =
+      $modalTop[0].getElementsByClassName("modal-body")[0] as HTMLElement;
+    const content =
+      $modalTop[0].getElementsByClassName("modal-content")[0] as HTMLElement;
     const header = $modalTop[0].getElementsByClassName("modal-header")[0];
     const footer = $modalTop[0].getElementsByClassName("modal-footer")[0];
 
@@ -441,7 +477,7 @@ footer.getBoundingClientRect().height}px`;
                           "while sfEditor is non-existent");
         }
 
-        editor.mode.replaceSemanticFields.execute(
+        mode.replaceSemanticFields.execute(
           { newPaths: sfEditor.getChosenFields().map(fieldToPath) });
       }
     });

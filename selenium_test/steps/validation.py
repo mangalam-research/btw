@@ -11,8 +11,8 @@ def step_impl(context):
     driver = context.driver
     driver.execute_async_script("""
     var done = arguments[0];
-    wed_editor.whenCondition("first-validation-complete", function () {
-        done()
+    wed_editor.firstValidationComplete.then(function () {
+        done();
     });
     """)
 

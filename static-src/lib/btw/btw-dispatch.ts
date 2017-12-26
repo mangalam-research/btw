@@ -12,6 +12,7 @@ import { tooltip } from "wed/gui/tooltip";
 import { LabelManager } from "wed/labelman";
 import { Metadata } from "wed/modes/generic/metadata";
 import * as util from "wed/util";
+import { Editor } from "wed/wed";
 
 import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
          Item } from "./bibliography";
@@ -20,17 +21,12 @@ import { Mode } from "./btw-mode";
 import { ExampleReferenceManager, WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
+import { MappedUtil } from "./mapped-util";
 import { SFFetcher } from "./semantic-field-fetcher";
 import * as Field from "./semantic_field_editor/models/field";
 import * as FieldView from "./semantic_field_editor/views/field/inline";
 
 const WHEEL = "☸";
-
-// TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
-type Editor = any;
-/* tslint:enable: no-any */
-// END TEMPORARY TYPE DEFINITIONS
 
 function setTitle($el: JQuery, data: Item): void {
   const creators = data.creators;
@@ -67,6 +63,7 @@ export abstract class DispatchMixin {
   readonly abstract guiUpdater: GUIUpdater;
   readonly abstract senseTooltipSelector: string;
   readonly abstract sfFetcher: SFFetcher;
+  readonly abstract mapped: MappedUtil;
   abstract languageDecorator(el: Element): void;
   abstract noneDecorator(el: Element): void;
   abstract elementDecorator(root: Element, el: Element): void;
@@ -341,8 +338,9 @@ export abstract class DispatchMixin {
           else {
             // An empty target can happen when first decorating the document.
             if (target !== null) {
-              label = refman.getPositionalLabel(this.editor.toDataNode(el),
-                                                this.editor.toDataNode(target));
+              label = refman.getPositionalLabel(
+                this.editor.toDataNode(el) as Element,
+                this.editor.toDataNode(target) as Element);
             }
           }
         }
@@ -362,7 +360,7 @@ export abstract class DispatchMixin {
 
           // Reduce the target to something sensible for tooltip text.
           if (targetName === "btw:sense") {
-            const terms = target.querySelectorAll(domutil.toGUISelector(
+            const terms = target.querySelectorAll(this.mapped.toGUISelector(
               this.senseTooltipSelector));
             let html = "";
             for (let i = 0; i < terms.length; ++i) {
@@ -505,7 +503,7 @@ export abstract class DispatchMixin {
       }
     }
     else {
-      const dataNode = this.editor.toDataNode(el);
+      const dataNode = this.editor.toDataNode(el)!;
       ref = dataNode.textContent;
     }
 

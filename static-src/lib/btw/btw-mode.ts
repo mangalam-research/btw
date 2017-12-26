@@ -2,7 +2,6 @@
  * Mode for BTW editing.
  * @author Louis-Dominique Dubeau
  */
-import * as Bluebird from "bluebird";
 import * as $ from "jquery";
 import "jquery.cookie";
 import "rangy";
@@ -12,13 +11,14 @@ import { Decorator } from "wed/decorator";
 import * as dloc from "wed/dloc";
 import { isElement } from "wed/domtypeguards";
 import * as domutil from "wed/domutil";
-import { Mode, GenericModeOptions } from "wed/modes/generic/generic";
+import { Modal } from "wed/gui/modal";
+import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 import { GenericDecorator } from "wed/modes/generic/generic-decorator";
 import { makeElement, swapWithNextHomogeneousSibling,
          swapWithPreviousHomogeneousSibling, Transformation,
          TransformationData } from "wed/transformation";
-import { TreeUpdater } from "wed/tree-updater";
 import * as util from "wed/util";
+import { Editor } from "wed/wed";
 
 import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";
@@ -26,13 +26,11 @@ import { BTWDecorator } from "./btw-decorator";
 import { Toolbar } from "./btw-toolbar";
 import * as btwTr from "./btw-tr";
 import { Validator } from "./btw-validator";
+import { MappedUtil } from "./mapped-util";
 
 // TEMPORARY TYPE DEFINITIONS
 /* tslint:disable: no-any */
 declare var require: any;
-
-type Modal = any;
-type Editor = any;
 /* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
@@ -122,8 +120,9 @@ class BTWMode extends Mode<BTWModeOptions> {
   private toolbar: Toolbar;
   private biblUrl: string;
   private transformationFilters: TransformationFilter[];
+  private mapped: MappedUtil;
 
-  replaceSemanticFields: Transformation<TransformationData>;
+  replaceSemanticFields: Transformation<btwTr.SemanticFieldTransformationData>;
   editSemanticFieldAction: btwActions.EditSemanticFieldsAction;
   replaceBiblPtr: btwActions.InsertBiblPtrAction;
   insertBiblPtr: btwActions.InsertBiblPtrAction;
@@ -133,9 +132,9 @@ class BTWMode extends Mode<BTWModeOptions> {
   replaceNoneWithAntonym: Transformation<TransformationData>;
   swapWithNextTr: Transformation<TransformationData>;
   swapWithPrevTr: Transformation<TransformationData>;
-  replaceSelectionWithRefTr: Transformation<TransformationData>;
-  insertRefTr: Transformation<TransformationData>;
-  insertPtrTr: Transformation<TransformationData>;
+  replaceSelectionWithRefTr: Transformation<btwTr.TargetedTransformationData>;
+  insertRefTr: Transformation<btwTr.TargetedTransformationData>;
+  insertPtrTr: Transformation<btwTr.TargetedTransformationData>;
   insertExamplePtrAction: btwActions.ExamplePtrDialogAction;
   insertSensePtrAction: btwActions.SensePtrDialogAction;
 
@@ -165,8 +164,11 @@ class BTWMode extends Mode<BTWModeOptions> {
     this.wedOptions.attributes = "hide";
   }
 
-  async init(): Bluebird<void> {
+  async init(): Promise<void> {
     await super.init();
+
+    const mapped = this.mapped =
+      new MappedUtil(this.getAbsoluteNamespaceMappings());
 
     const editor = this.editor;
     this.hyperlinkModal = editor.makeModal();
@@ -217,10 +219,20 @@ class BTWMode extends Mode<BTWModeOptions> {
       editor, "add", "Add custom text to reference",
       (trEditor) => {
         const caret = trEditor.caretManager.caret;
-        const ref = $(caret.node).closest(util.classFromOriginalName("ref"))[0];
+        if (caret === undefined) {
+          throw new Error("no caret");
+        }
+        const ref = $(caret.node).closest(
+          mapped.classFromOriginalName("ref"))[0];
         const ph = trEditor.insertTransientPlaceholderAt(caret.make(
           ref, ref.childNodes.length));
-        trEditor.decorator.refreshElement(dloc.getRoot(ref).node, ref);
+
+        const decorator = trEditor.modeTree.getDecorator(caret.node);
+        if (!(decorator instanceof BTWDecorator)) {
+          throw new Error("the decorator must be a BTWDecorator");
+        }
+
+        decorator.refreshElement(dloc.getRoot(ref).node as Element, ref);
         trEditor.caretManager.setCaret(ph, 0);
       });
 
@@ -272,7 +284,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     passInForeign.foreign = ["delete-parent", "unwrap"];
 
     this.transformationFilters = [{
-      selector: domutil.toGUISelector("btw:sf, btw:semantic-fields"),
+      selector: mapped.toGUISelector("btw:sf, btw:semantic-fields"),
       pass: {
         "btw:sf": true,
       },
@@ -281,17 +293,15 @@ class BTWMode extends Mode<BTWModeOptions> {
           actions: [this.editSemanticFieldAction] },
       ],
     }, {
-      selector: domutil.toGUISelector(
-        ["btw:overview",
-         "btw:definition"].join(",")),
+      selector: mapped.toGUISelector("btw:overview, btw:definition"),
       pass: {},
     }, {
-      selector: domutil.toGUISelector("btw:sense-discrimination"),
+      selector: mapped.toGUISelector("btw:sense-discrimination"),
       pass: {
         "btw:sense": true,
       },
     }, { // paragraph in a definition
-      selector: domutil.toGUISelector("btw:definition>p"),
+      selector: mapped.toGUISelector("btw:definition>p"),
       pass: {
         "btw:sense-emphasis": true,
         ptr: true,
@@ -301,10 +311,10 @@ class BTWMode extends Mode<BTWModeOptions> {
                      actions: [this.insertSensePtrAction],
                    }],
     }, {
-      selector: util.classFromOriginalName("ptr"),
+      selector: mapped.classFromOriginalName("ptr"),
       pass: { ptr: ["delete-parent"] },
     }, {
-      selector: util.classFromOriginalName("ref"),
+      selector: mapped.classFromOriginalName("ref"),
       pass: {
         ref: ["delete-parent", "insert"],
       },
@@ -312,16 +322,16 @@ class BTWMode extends Mode<BTWModeOptions> {
         { tag: "ref", type: "insert", actions: [this.insertRefText] },
       ],
     }, {
-      selector: util.classFromOriginalName("btw:citations"),
+      selector: mapped.classFromOriginalName("btw:citations"),
       substitute: [
         { tag: "ptr", type: "insert",
           actions: [this.insertExamplePtrAction] },
       ],
     }, {
-      selector: domutil.toGUISelector("btw:tr"),
+      selector: mapped.toGUISelector("btw:tr"),
       pass: passInTr,
     }, {
-      selector: domutil.toGUISelector("btw:cit"),
+      selector: mapped.toGUISelector("btw:cit"),
       pass: passInCit,
       substitute: [
         { tag: "ref",
@@ -334,47 +344,47 @@ class BTWMode extends Mode<BTWModeOptions> {
         },
       ],
     }, {
-      selector: domutil.toGUISelector(
+      selector: mapped.toGUISelector(
         "btw:citations foreign, btw:other-citations foreign"),
       pass: passInForeign,
     }, {
-      selector: util.classFromOriginalName("foreign"),
+      selector: mapped.classFromOriginalName("foreign"),
       pass: {
         foreign: ["delete-parent", "unwrap"],
       },
     }, {
-      selector: domutil.toGUISelector("btw:antonyms>btw:none"),
+      selector: mapped.toGUISelector("btw:antonyms>btw:none"),
       substitute: [
         { tag: "btw:none",
           type: "delete-parent",
           actions: [this.replaceNoneWithAntonym] },
       ],
     }, {
-      selector: domutil.toGUISelector("btw:cognates>btw:none"),
+      selector: mapped.toGUISelector("btw:cognates>btw:none"),
       substitute: [
         { tag: "btw:none",
           type: "delete-parent",
           actions: [this.replaceNoneWithCognate] },
       ],
     }, {
-      selector: domutil.toGUISelector("btw:conceptual-proximates>btw:none"),
+      selector: mapped.toGUISelector("btw:conceptual-proximates>btw:none"),
       substitute: [
         { tag: "btw:none",
           type: "delete-parent",
           actions: [this.replaceNoneWithConceptualProximate] },
       ],
     }, {
-      selector: util.classFromOriginalName("btw:term"),
+      selector: mapped.classFromOriginalName("btw:term"),
       // We don't want to let anything go through because this
       // can contain only text or a foreign element.
       pass: {},
     }, {
-      selector: util.classFromOriginalName("lg"),
+      selector: mapped.classFromOriginalName("lg"),
       pass: {
         l: true,
       },
     }, {
-      selector: domutil.toGUISelector("*"),
+      selector: mapped.toGUISelector("*"),
       substitute: [
         { tag: "ref", type: "insert", actions: [this.insertBiblPtr] },
         { tag: "ref", type: "wrap", actions: [this.replaceBiblPtr] },
@@ -396,7 +406,7 @@ class BTWMode extends Mode<BTWModeOptions> {
               headers: {
                 Accept: "application/json",
               },
-            }))// .bind(this) XXX was supported by Bluebird
+            }))
             .catch((_jqXHR) => {
               throw new Error("cannot load bibliographical information");
             }).then((data) => {
@@ -409,10 +419,9 @@ class BTWMode extends Mode<BTWModeOptions> {
   }
 
   makeDecorator(): GenericDecorator {
-    // Wed calls this with (domlistener, editor, gui_updater).
     const ret = new BTWDecorator(this.semanticFieldFetchUrl, this,
-                                 this.metadata, this.options, arguments[0],
-                                 arguments[1], arguments[2]);
+                                 this.metadata, this.options, this.mapped,
+                                 this.editor);
 
     // This is as good a place as any where to attach listeners to the data
     // updater directly. Note that we attach to the updater rather than the
@@ -424,7 +433,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       throw new Error("cannot resolve btw:none!");
     }
 
-    const updater = this.editor.data_updater as TreeUpdater;
+    const updater = this.editor.dataUpdater;
     updater.events.subscribe((ev) => {
       if (ev.name !== "DeleteNode") {
         return;
@@ -440,7 +449,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       }
 
       if ((ev.formerParent as Element).childElementCount === 0) {
-        this.editor.data_updater.insertBefore(
+        this.editor.dataUpdater.insertBefore(
           ev.formerParent,
           makeElement(el.ownerDocument, noneEName.ns, "btw:none"),
           null);
@@ -460,18 +469,21 @@ class BTWMode extends Mode<BTWModeOptions> {
 
       const ed = this.editor;
 
-      function processNode(node: Node): void {
-        if (node.childNodes.length === 0) {
-          ed.data_updater.insertBefore(
-            node,
-            makeElement(node.ownerDocument, noneEName!.ns, "btw:none"), null);
+      function processNode(toProcess: Element): void {
+        if (toProcess.childNodes.length !== 0) {
+          return;
         }
+
+        ed.dataUpdater.insertBefore(
+          toProcess,
+          makeElement(toProcess.ownerDocument, noneEName!.ns, "btw:none"),
+          null);
       }
+
       function processList(nodes: NodeListOf<Element>): void {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < nodes.length; ++i) {
-          const node = nodes[i];
-          processNode(node);
+          processNode(nodes[i]);
         }
       }
 
@@ -572,7 +584,7 @@ class BTWMode extends Mode<BTWModeOptions> {
   }
 
   getValidator(): Validator {
-    return new Validator(this.editor.gui_root);
+    return new Validator(this.editor.guiRoot, this.mapped);
   }
 }
 
