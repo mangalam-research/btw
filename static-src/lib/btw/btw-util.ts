@@ -4,7 +4,7 @@
  */
 import * as _ from "lodash";
 
-import * as domutil from "wed/domutil";
+import { domutil } from "wed";
 
 export function termsForSense(sense: Element,
                               mappings: Record<string, string>):

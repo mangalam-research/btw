@@ -409,14 +409,17 @@ def step_impl(context, how=None):
     # We have to wait for the save to happen before moving on.
     driver.execute_script("""
     window.__selenium_saved = false;
-    wed_editor.saver.events
-      // Yes, we handle both the same.
-      .filter(function (ev) { return ev.name === "Failed" ||
-                                     ev.name === "Saved" })
-      .first()
+    // Loading operators here is a bit onerous so we do the logic
+    // manually instead of using first(), etc.
+    var subscription = wed_editor.saver.events
       .subscribe(function (ev) {
-        window.__selenium_saved = true;
-      });
+      // Yes, we handle both the same.
+      if (!(ev.name === "Failed" || ev.name === "Saved")) {
+        return;
+      }
+      window.__selenium_saved = true;
+      subscription.unsubscribe();
+    });
     """)
     if how is None or how == " using the keyboard":
         util.ctrl_equivalent_x("s")
@@ -457,12 +460,12 @@ def step_impl(context):
       ur"in the toolbar")
 def step_impl(context, what):
     what = {
-        "save": "save",
-        "quit without saving": "quitnosave"
+        "save": "Save",
+        "quit without saving": "Quit without saving"
     }[what]
-    button = context.driver.execute_script(u"""
-    return jQuery("#toolbar .btn[name='{0}']")[0];
-    """.format(what))
+    button = context.driver.find_element_by_css_selector(
+        ".wed-toolbar "
+        ".btn[data-original-title='{0}']".format(what))
     button.click()
 
 

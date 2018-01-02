@@ -20,7 +20,8 @@
     "lib": ["dom", "es2015"],
     "baseUrl": ".",
     "paths": {
-      "wed/*": ["../../../node_modules/wed/standalone/lib/wed/*"]
+      "wed": ["../../../node_modules/wed/standalone/lib/wed"],
+      "wed/modes/*": ["../../../node_modules/wed/standalone/lib/wed/modes/*"]
     }
   }
 }

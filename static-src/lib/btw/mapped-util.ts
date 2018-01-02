@@ -1,6 +1,4 @@
-import * as domutil from "wed/domutil";
-import { GUISelector } from "wed/gui-selector";
-import * as util from "wed/util";
+import { domutil, GUISelector, util } from "wed";
 
 export class MappedUtil {
   constructor(private readonly mapping: Record<string, string>) {}

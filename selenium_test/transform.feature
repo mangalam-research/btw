@@ -185,18 +185,18 @@ Scenario: marking text as Latin
 
 Scenario: using the Pāli button when there is no selection
   Given a document with a definition that has been filled
-  When the user clicks the Pāli button
-  And the user clicks in the first paragraph of the definition
+  When the user clicks in the first paragraph of the definition
+  And the user clicks the Pāli button
 
 Scenario: using the Sanskrit button when there is no selection
   Given a document with a definition that has been filled
-  When the user clicks the Sanskrit button
-  And the user clicks in the first paragraph of the definition
+  When the user clicks in the first paragraph of the definition
+  And the user clicks the Sanskrit button
 
 Scenario: using the Latin button when there is no selection
   Given a document with a definition that has been filled
-  When the user clicks the Latin button
-  And the user clicks in the first paragraph of the definition
+  When the user clicks in the first paragraph of the definition
+  And the user clicks the Latin button
 
 Scenario: clearing formatting from text
   Given a document with a definition with formatted text

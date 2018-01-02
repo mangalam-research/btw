@@ -6,8 +6,7 @@ import * as $ from "jquery";
 import { ValidationError } from "salve";
 import { ErrorData } from "salve-dom";
 
-import * as domutil from "wed/domutil";
-import { ModeValidator } from "wed/validator";
+import { domutil, ModeValidator } from "wed";
 
 import { MappedUtil } from "./mapped-util";
 

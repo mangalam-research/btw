@@ -5,14 +5,12 @@
 import "bootstrap-treeview";
 import * as $ from "jquery";
 
-import { Decorator } from "wed/decorator";
-import * as domutil from "wed/domutil";
-import { GUIUpdater } from "wed/gui-updater";
-import { tooltip } from "wed/gui/tooltip";
-import { LabelManager } from "wed/labelman";
+import { Decorator, domutil, EditorAPI, labelman, tooltip, treeUpdater,
+         util } from "wed";
+import LabelManager = labelman.LabelManager;
+import TreeUpdater = treeUpdater.TreeUpdater;
+
 import { Metadata } from "wed/modes/generic/metadata";
-import * as util from "wed/util";
-import { Editor } from "wed/wed";
 
 import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
          Item } from "./bibliography";
@@ -44,6 +42,8 @@ function setTitle($el: JQuery, data: Item): void {
   tooltip($el, { title: title, container: "body", trigger: "hover" });
 }
 
+const ENCODED_REF_ATTR_NAME = util.encodeAttrName("ref");
+
 /**
  * This mixin is made to be used by the [[Decorator]] created for BTW's mode and
  * by [["btw_viewer".Viewer]]. It combines decoration methods that are common to
@@ -53,14 +53,14 @@ export abstract class DispatchMixin {
   private readonly _inMode: boolean;
 
   /* Provided by the class onto which this is mixed: */
-  readonly abstract editor: Editor;
+  readonly abstract editor: EditorAPI;
   readonly abstract mode: Mode;
   readonly abstract metadata: Metadata;
   readonly abstract headingDecorator: HeadingDecorator;
   readonly abstract exampleIdManager: IDManager;
   readonly abstract senseSubsenseIdManager: IDManager;
   readonly abstract refmans: WholeDocumentManager;
-  readonly abstract guiUpdater: GUIUpdater;
+  readonly abstract guiUpdater: TreeUpdater;
   readonly abstract senseTooltipSelector: string;
   readonly abstract sfFetcher: SFFetcher;
   readonly abstract mapped: MappedUtil;
@@ -474,11 +474,11 @@ export abstract class DispatchMixin {
 
   sfDecorator(root: Element, el: Element): void {
     //
-    // When editing them, btw:sf contains the semantic field paths, and there
-    // are no names.
+    // When editing them, ``btw:sf`` contains the semantic field paths, and
+    // there are no names.
     //
-    // When displaying articles, the paths are in @data-wed-ref, and the btw:sf
-    // elements contain the names + path of the semantic fields.
+    // When displaying articles, the paths are in encoded ``ref`` attribute, and
+    // the ``btw:sf`` elements contain the names + path of the semantic fields.
     //
 
     // We're already wrapped.
@@ -492,9 +492,9 @@ export abstract class DispatchMixin {
 
     let ref;
     if (!inMode) {
-      const dataWedRef = el.attributes["data-wed-ref"];
+      const dataWedRef = el.attributes[ENCODED_REF_ATTR_NAME];
       if (dataWedRef) {
-        ref = el.attributes["data-wed-ref"].value;
+        ref = el.attributes[ENCODED_REF_ATTR_NAME].value;
       }
 
       // We do not decorate if we have no references.

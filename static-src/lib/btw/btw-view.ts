@@ -8,16 +8,15 @@ import * as $ from "jquery";
 import * as _ from "lodash";
 import { NameResolver } from "salve";
 
-import * as convert from "wed/convert";
-import * as dloc from "wed/dloc";
-import { isElement } from "wed/domtypeguards";
-import * as domutil from "wed/domutil";
+import { convert, DLocRoot, domtypeguards, domutil, transformation,
+         treeUpdater, util } from "wed";
+import isElement = domtypeguards.isElement;
+import InsertNodeAtEvent = treeUpdater.InsertNodeAtEvent;
+import TreeUpdater = treeUpdater.TreeUpdater;
+
 import { Metadata } from "wed/modes/generic/metadata";
 import { MetadataMultiversionReader,
        } from "wed/modes/generic/metadata-multiversion-reader";
-import * as transformation from "wed/transformation";
-import { InsertNodeAtEvent, TreeUpdater } from "wed/tree-updater";
-import * as util from "wed/util";
 
 import { ajax } from "../ajax";
 import { BibliographicalItem, isPrimarySource } from "./bibliography";
@@ -478,7 +477,7 @@ export class Viewer {
     root.appendChild(convert.toHTMLTree(doc, dataDoc.firstChild!));
 
     // tslint:disable-next-line:no-unused-expression
-    new dloc.DLocRoot(root);
+    new DLocRoot(root);
     const guiUpdater = this.guiUpdater = new TreeUpdater(root);
 
     // Override the head specs with those required for viewing.

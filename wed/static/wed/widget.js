@@ -15,9 +15,9 @@
 
   function init() {
     require(
-      ["wed/wed", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
+      ["btw/btw-editor", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
        "jquery.cookie"],
-      function loaded(wed, $, lr, onerror, btwWedConfig) {
+      function loaded(btwEditor, $, lr, onerror, btwWedConfig) {
         var onError = lr.install(window, { force: true });
         onError.register(onerror.handler);
 
@@ -56,7 +56,7 @@
           };
 
           // eslint-disable-next-line camelcase
-          var wed_editor = new wed.Editor(widget, options);
+          var wed_editor = btwEditor.makeEditor(widget, options);
           // Yep, this means only one wed editor per window.
           // eslint-disable-next-line camelcase
           window.wed_editor = wed_editor;

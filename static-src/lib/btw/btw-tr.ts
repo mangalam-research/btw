@@ -4,14 +4,13 @@
  */
 import * as $ from "jquery";
 
-import { DLoc } from "wed/dloc";
-import * as domutil from "wed/domutil";
-import { AbortTransformationException } from "wed/exceptions";
-import { Modal } from "wed/gui/modal";
-import { makeElement, Transformation,
-         TransformationData } from "wed/transformation";
-import * as util from "wed/util";
-import { Editor } from "wed/wed";
+import { DLoc, domutil, EditorAPI, exceptions, Modal, transformation,
+         util } from "wed";
+
+import AbortTransformationException = exceptions.AbortTransformationException;
+import makeElement = transformation.makeElement;
+import Transformation = transformation.Transformation;
+import TransformationData = transformation.TransformationData;
 
 import * as btwUtil from "./btw-util";
 
@@ -24,7 +23,7 @@ export interface TargetedTransformationData extends TransformationData {
   target: string;
 }
 
-export function insertPtr(editor: Editor,
+export function insertPtr(editor: EditorAPI,
                           data: TargetedTransformationData): void {
   const caret = editor.caretManager.getDataCaret()!;
   let parent = caret.node;
@@ -52,7 +51,7 @@ export function insertPtr(editor: Editor,
   editor.caretManager.setCaret(parent, _indexOf.call(parent.childNodes, ptr));
 }
 
-export function insertRef(editor: Editor,
+export function insertRef(editor: EditorAPI,
                           data: TargetedTransformationData): void {
   const caret = editor.caretManager.getDataCaret()!;
   const parent = caret.node;
@@ -79,7 +78,7 @@ export function insertRef(editor: Editor,
   });
 }
 
-export function replaceSelectionWithRef(editor: Editor,
+export function replaceSelectionWithRef(editor: EditorAPI,
                                         data: TargetedTransformationData):
 void {
   const selection = editor.caretManager.sel!;
@@ -95,7 +94,7 @@ void {
 }
 
 const NESTING_MODAL_KEY = "btw_mode.btw-tr.nesting_modal";
-function getNestingModal(editor: Editor): Modal {
+function getNestingModal(editor: EditorAPI): Modal {
   let nestingModal = editor.getModeData(NESTING_MODAL_KEY);
   if (nestingModal) {
     return nestingModal;
@@ -115,7 +114,7 @@ export interface LanguageTransformationData extends TransformationData {
   language: string;
 }
 
-function setLanguageHandler(this: SetTextLanguageTr, editor: Editor,
+function setLanguageHandler(this: SetTextLanguageTr, editor: EditorAPI,
                             data: LanguageTransformationData): void {
   const selection = editor.caretManager.sel;
 
@@ -157,78 +156,23 @@ export class SetTextLanguageTr
 extends Transformation<LanguageTransformationData> {
   nestingModal: Modal;
 
-  constructor(editor: Editor, private readonly language: string) {
+  constructor(editor: EditorAPI, private readonly language: string) {
     super(editor, "transformation", `Set language to ${language}`, language,
           undefined, true, setLanguageHandler as any /* XXX */);
     this.nestingModal = getNestingModal(editor);
   }
 
-  execute(data: LanguageTransformationData =
-          { language: this.language } as LanguageTransformationData): void {
-    super.execute(data);
+  execute(data: LanguageTransformationData): void {
+    // Don't execute if there's no selection.
+    const selection = this.editor.caretManager.sel;
+    if (selection && !selection.collapsed) {
+      data.language = this.language;
+      super.execute(data);
+    }
   }
 }
 
-const REMOVE_MIXED_MODAL_KEY = "btw_mode.btw-tr.remove_mixed_modal";
-function getRemoveMixedModal(editor: Editor): Modal {
-  let removeMixedModal = editor.getModeData(REMOVE_MIXED_MODAL_KEY);
-  if (removeMixedModal) {
-    return removeMixedModal;
-  }
-
-  removeMixedModal = editor.makeModal();
-  removeMixedModal.setTitle("Invalid");
-  removeMixedModal.setBody(
-    "<p>You cannot removed mixed-content markup from this selection " +
-      "because the resulting document would be invalid.</p>");
-  removeMixedModal.addButton("Ok", true);
-  editor.setModeData(REMOVE_MIXED_MODAL_KEY, removeMixedModal);
-
-  return removeMixedModal;
-}
-
-function removeMixedHandler(editor: Editor, _data: TransformationData): void {
-  const selection = editor.caretManager.sel;
-
-  // Do nothing if we don't have a selection.
-  if (selection === undefined || selection.collapsed) {
-    return;
-  }
-
-  if (!selection.wellFormed) {
-    editor.modals.getModal("straddling").modal();
-    throw new AbortTransformationException("selection is not well-formed");
-  }
-
-  const [start, end] = selection.asDataCarets()!;
-  const cutRet = editor.dataUpdater.cut(start, end);
-  let newText = "";
-  const cutNodes = cutRet[1];
-  for (const el of cutNodes) {
-    newText += el.textContent;
-  }
-  const textNode = start.node.ownerDocument.createTextNode(newText);
-
-  if (editor.validator.speculativelyValidate(cutRet[0], textNode)) {
-    getRemoveMixedModal(editor).modal();
-    throw new AbortTransformationException("result would be invalid");
-  }
-
-  const insertRet = editor.dataUpdater.insertText(cutRet[0], newText);
-  editor.caretManager.setRange(
-    start.make(insertRet.node!, insertRet.isNew ? cutRet[0].offset : 0),
-    insertRet.caret);
-}
-
-export class RemoveMixedTr extends Transformation<TransformationData> {
-  constructor(editor: Editor) {
-    super(editor, "delete", "Remove mixed-content markup",
-          "Remove mixed-content markup", "<i class='fa fa-eraser'></i>", true,
-          removeMixedHandler);
-  }
-}
-
-export function makeReplaceNone(editor: Editor,  replacedWith: string):
+export function makeReplaceNone(editor: EditorAPI,  replacedWith: string):
 Transformation<TransformationData> {
   return new Transformation(
     editor, "add", `Create new ${replacedWith}`,
@@ -254,7 +198,7 @@ export interface SemanticFieldTransformationData extends TransformationData {
   newPaths: string[];
 }
 
-export function replaceSemanticFields(editor: Editor,
+export function replaceSemanticFields(editor: EditorAPI,
                                       data: SemanticFieldTransformationData):
 void {
   const dataCaret = editor.caretManager.getDataCaret(true)!;

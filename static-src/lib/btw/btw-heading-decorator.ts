@@ -2,9 +2,8 @@
  * Module for decorating headings
  * @author Louis-Dominique Dubeau
  */
-import * as domutil from "wed/domutil";
-import { TreeUpdater } from "wed/tree-updater";
-import * as util from "wed/util";
+import { domutil, treeUpdater, util } from "wed";
+import TreeUpdater = treeUpdater.TreeUpdater;
 
 import { WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";

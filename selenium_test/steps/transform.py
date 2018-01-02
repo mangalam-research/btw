@@ -440,7 +440,7 @@ def step_impl(context, text, wrapper):
 @when(ur"the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button")
 def step_impl(context, lang):
     button = context.driver.execute_script(u"""
-    return jQuery("#toolbar .btn:contains('{0}')")[0];
+    return jQuery(".wed-toolbar .btn:contains('{0}')")[0];
     """.format(lang))
     button.click()
 
@@ -466,7 +466,7 @@ def step_impl(context, lang):
         var $el = jQuery(".btw\\:definition .foreign:contains('prasāda')");
         if (!$el[0])
             return [false, undefined];
-        return [true, $el.attr('data-wed-xml---lang')];
+        return [true, $el.attr('data-wed-xml---lang-')];
         """)
 
         return Result(test[0], test[1])
@@ -492,10 +492,9 @@ def step_impl(context, what):
         """)
         wedutil.select_directly(util, paras[0], 0, paras[1], paras[2])
 
-    button = context.driver.execute_script(u"""
-    var $buttons = jQuery("#toolbar .btn");
-    return $buttons.has("i.fa-eraser")[0];
-    """)
+    button = driver.find_element_by_css_selector(
+        ".wed-toolbar "
+        ".btn[data-original-title='Remove mixed-content markup']")
     button.click()
 
 

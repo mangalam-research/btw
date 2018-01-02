@@ -1,8 +1,7 @@
 import * as $ from "jquery";
 
-import * as domutil from "wed/domutil";
-import { LabelManager } from "wed/labelman";
-import * as util from "wed/util";
+import { domutil, labelman, util } from "wed";
+import LabelManager = labelman.LabelManager;
 
 import { MappedUtil } from "./mapped-util";
 

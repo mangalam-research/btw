@@ -7,13 +7,10 @@ import * as _ from "lodash";
 // Yep, Bloodhound is provided by typeahead.
 import * as Bloodhound from "typeahead";
 
-import { Action } from "wed/action";
-import { isText } from "wed/domtypeguards";
-import * as domutil from "wed/domutil";
-import { Modal } from "wed/gui/modal";
-import { TransformationData } from "wed/transformation";
-import * as util from "wed/util";
-import { Editor } from "wed/wed";
+import { Action, domtypeguards, domutil, EditorAPI, Modal, transformation,
+         util } from "wed";
+import isText = domtypeguards.isText;
+import TransformationData = transformation.TransformationData;
 
 import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";
@@ -156,28 +153,27 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
         child = child.nextElementSibling;
       }
 
-      let abbr = example.querySelector(util.classFromOriginalName("ref",
-                                                                  mappings));
-      // We skip those examples that do not have a ref in them yet,
-      // as links to them are meaningless.
+      const abbr = example.querySelector(util.classFromOriginalName("ref",
+                                                                    mappings));
+      // We skip those examples that do not have a ref in them yet, as links to
+      // them are meaningless.
       if (abbr === null) {
         continue;
       }
 
-      abbr = abbr.cloneNode(true) as Element;
-      child = abbr.firstElementChild;
+      const abbrCopy = abbr.cloneNode(true) as Element;
+      child = abbrCopy.firstElementChild;
       while (child) {
         const next = child.nextElementSibling;
         if (child.classList.contains("_gui")) {
-          abbr.removeChild(child);
+          abbrCopy.removeChild(child);
         }
         child = next;
       }
 
       const span = doc.createElement("span");
       span.setAttribute("data-wed-id", example.id);
-      span.textContent =
-        ` ${abbr ? `${abbr.textContent} ` : ""}${cit.textContent}`;
+      span.textContent = ` ${abbrCopy.textContent} ${cit.textContent}`;
 
       const radio = doc.createElement("input");
       radio.type = "radio";
@@ -217,7 +213,7 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
 }
 
 const BIBL_SELECTION_MODAL_KEY = "btw-mode.btw-actions.bibl_selection_modal";
-function getBiblSelectionModal(editor: Editor): Modal {
+function getBiblSelectionModal(editor: EditorAPI): Modal {
   let modal = editor.getModeData(BIBL_SELECTION_MODAL_KEY);
   if (modal) {
     return modal;
@@ -283,33 +279,61 @@ function makeEngine(options: {}): Bloodhound {
 export class InsertBiblPtrAction extends Action<{}> {
   execute(data: {}): void {
     const editor = this.editor;
-    let range = editor.caretManager.range;
-
     const dataCaret = editor.caretManager.getDataCaret(true)!;
     const mode = editor.modeTree.getMode(dataCaret.node);
     if (!(mode instanceof Mode)) {
       throw new Error("expected BTW mode");
     }
 
-    if (range && range.collapsed) {
-      range = undefined;
+    let sel = editor.caretManager.sel;
+    if (sel !== undefined && sel.collapsed) {
+      sel = undefined;
     }
 
-    if (range) {
+    let range: Range | undefined;
+    if (sel !== undefined) {
       // The selection must contain only text.
-      for (const node of range.getNodes()) {
-        if (!isText(node)) {
-          getBiblSelectionModal(this.editor).modal();
-          return;
+      let textOnly = false;
+
+      // To contain only text, it must necessarily be well-formed.
+      if (sel.wellFormed) {
+        const pointedAnchor = sel.anchor.pointedNode;
+        const pointedFocus = sel.focus.pointedNode;
+        // If it is well-formed, then pointedAnchor and pointedFocus are
+        // necessarily siblings.
+        // tslint:disable-next-line:prefer-const
+        let { start, end } : { start: Node | null | undefined,
+                               end: Node | undefined } =
+          sel.anchor.compare(sel.focus) < 0 ?
+          { start: pointedAnchor, end: pointedFocus } :
+          { start: pointedFocus, end: pointedAnchor };
+
+        // It is not possible for start to be undefined. In general, yes. But we
+        // are dealing with a well-formed selection. For start to be undefined,
+        // it would have to point past the last child of an element, and this
+        // would entail that the selection is not well-formed.
+        if (start === undefined) {
+          throw new Error("unexpected undefined start");
+        }
+
+        textOnly = true;
+        // Note that if end is undefined, we'll just iterate until we run out of
+        // siblings, which is what we want.
+        while (textOnly && start !== null && start !== end) {
+          textOnly = isText(start);
+          start = start.nextSibling;
         }
       }
+
+      if (!textOnly) {
+        getBiblSelectionModal(this.editor).modal();
+        return;
+      }
+
+      range = sel.range;
     }
 
-    const options = {
-      datumTokenizer,
-      queryTokenizer: nw,
-      local: [],
-    };
+    const options = { datumTokenizer, queryTokenizer: nw, local: [] };
 
     const citedEngine = makeEngine(options);
     const zoteroEngine = makeEngine(options);
@@ -342,13 +366,10 @@ export class InsertBiblPtrAction extends Action<{}> {
       }],
     };
 
-    const pos = editor.editingMenuManager.computeMenuPosition(undefined, true);
-    const ta = editor.displayTypeaheadPopup(
-      pos.left, pos.top, 600, "Reference",
-      taOptions,
-      (x) => {
-        const obj = x as any as BibliographicalItem;
-        if (!obj) {
+    const ta = editor.editingMenuManager.setupTypeaheadPopup(
+      600, "Reference", taOptions,
+      (obj: BibliographicalItem) => {
+        if (obj == null) {
           return;
         }
 
@@ -359,8 +380,9 @@ export class InsertBiblPtrAction extends Action<{}> {
         else {
           mode.insertRefTr.execute(newData);
         }
-      });
+      }, undefined, true);
 
+    // tslint:disable-next-line:no-floating-promises
     mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
       const allValues: BibliographicalItem[] = [];
       for (const key of Object.keys(info)) {
@@ -391,7 +413,7 @@ export class InsertBiblPtrAction extends Action<{}> {
 }
 
 const EDIT_SF_MODAL_KEY = "btw-mode.btw-actions.edit_sf_modal";
-function getEditSemanticFieldModal(editor: Editor): Modal {
+function getEditSemanticFieldModal(editor: EditorAPI): Modal {
   let modal = editor.getModeData(EDIT_SF_MODAL_KEY);
   if (modal) {
     return modal;

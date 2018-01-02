@@ -4,26 +4,23 @@
  */
 import * as $ from "jquery";
 import "jquery.cookie";
-import "rangy";
 
-import { Action } from "wed/action";
-import { Decorator } from "wed/decorator";
-import * as dloc from "wed/dloc";
-import { isElement } from "wed/domtypeguards";
-import * as domutil from "wed/domutil";
-import { Modal } from "wed/gui/modal";
+import { Action, domtypeguards, EditorAPI, Modal, transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 import { GenericDecorator } from "wed/modes/generic/generic-decorator";
-import { makeElement, swapWithNextHomogeneousSibling,
-         swapWithPreviousHomogeneousSibling, Transformation,
-         TransformationData } from "wed/transformation";
-import * as util from "wed/util";
-import { Editor } from "wed/wed";
+
+import isElement = domtypeguards.isElement;
+import makeElement = transformation.makeElement;
+import swapWithNextHomogeneousSibling =
+  transformation.swapWithNextHomogeneousSibling;
+import swapWithPreviousHomogeneousSibling =
+  transformation.swapWithPreviousHomogeneousSibling;
+import Transformation = transformation.Transformation;
+import TransformationData = transformation.TransformationData;
 
 import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";
 import { BTWDecorator } from "./btw-decorator";
-import { Toolbar } from "./btw-toolbar";
 import * as btwTr from "./btw-tr";
 import { Validator } from "./btw-validator";
 import { MappedUtil } from "./mapped-util";
@@ -117,7 +114,6 @@ class BTWMode extends Mode<BTWModeOptions> {
 
   private getBibliographicalInfoPromise: Promise<BibliographicalInfo> |
     undefined;
-  private toolbar: Toolbar;
   private biblUrl: string;
   private transformationFilters: TransformationFilter[];
   private mapped: MappedUtil;
@@ -137,8 +133,11 @@ class BTWMode extends Mode<BTWModeOptions> {
   insertPtrTr: Transformation<btwTr.TargetedTransformationData>;
   insertExamplePtrAction: btwActions.ExamplePtrDialogAction;
   insertSensePtrAction: btwActions.SensePtrDialogAction;
+  setLanguageToSanskritTr: btwTr.SetTextLanguageTr;
+  setLanguageToPaliTr: btwTr.SetTextLanguageTr;
+  setLanguageToLatinTr: btwTr.SetTextLanguageTr;
 
-  constructor(editor: Editor, options: BTWModeOptions) {
+  constructor(editor: EditorAPI, options: BTWModeOptions) {
     options.metadata = require.toUrl("./btw-storage-metadata.json");
     const biblUrl = options.bibl_url;
     delete options.bibl_url;
@@ -185,14 +184,14 @@ class BTWMode extends Mode<BTWModeOptions> {
       undefined, "<i class='fa fa-plus fa-fw'></i>", true);
 
     this.insertPtrTr = new Transformation(
-      editor, "add", "Insert a pointer", btwTr.insertPtr as any /* XXX */);
+      editor, "add", "Insert a pointer", btwTr.insertPtr);
 
     this.insertRefTr = new Transformation(
-      editor, "add", "Insert a reference", btwTr.insertRef as any /* XXX */);
+      editor, "add", "Insert a reference", btwTr.insertRef);
 
     this.replaceSelectionWithRefTr = new Transformation(
       editor, "wrap", "Replace the selection with a reference",
-      btwTr.replaceSelectionWithRef as any /* XXX */);
+      btwTr.replaceSelectionWithRef);
 
     this.swapWithPrevTr = new Transformation(
       editor, "swap-with-previous", "Swap with previous sibling", undefined,
@@ -207,6 +206,11 @@ class BTWMode extends Mode<BTWModeOptions> {
       (trEditor, data) => {
         swapWithNextHomogeneousSibling(trEditor, data.node as Element);
       });
+
+    this.setLanguageToSanskritTr =
+      new btwTr.SetTextLanguageTr(editor, "Sanskrit");
+    this.setLanguageToPaliTr = new btwTr.SetTextLanguageTr(editor, "Pāli");
+    this.setLanguageToLatinTr = new btwTr.SetTextLanguageTr(editor, "Latin");
 
     this.replaceNoneWithAntonym = btwTr.makeReplaceNone(editor, "btw:antonym");
 
@@ -232,7 +236,7 @@ class BTWMode extends Mode<BTWModeOptions> {
           throw new Error("the decorator must be a BTWDecorator");
         }
 
-        decorator.refreshElement(dloc.getRoot(ref).node as Element, ref);
+        decorator.refreshElement(caret.root as Element, ref);
         trEditor.caretManager.setCaret(ph, 0);
       });
 
@@ -258,12 +262,7 @@ class BTWMode extends Mode<BTWModeOptions> {
 
     this.replaceSemanticFields = new Transformation(
       editor, "transform", "Replace semantic fields",
-      btwTr.replaceSemanticFields as any /* XXX */);
-
-    this.toolbar = new Toolbar(this, editor);
-    const toolbarTop = this.toolbar.top;
-    editor.widget.insertBefore(toolbarTop, editor.widget.firstChild);
-    editor.excludeFromBlur(toolbarTop);
+      btwTr.replaceSemanticFields);
 
     const passInCit: Pass = {
       "btw:lemma-instance": true,
@@ -502,6 +501,15 @@ class BTWMode extends Mode<BTWModeOptions> {
     });
 
     return ret as any;
+  }
+
+  getToolbarActions(): Action<{}>[] {
+    return [
+      this.setLanguageToSanskritTr,
+      this.setLanguageToPaliTr,
+      this.setLanguageToLatinTr,
+      this.insertBiblPtr,
+    ];
   }
 
   getContextualActions(transformationType: string[] | string,

@@ -5,24 +5,18 @@
 import * as $ from "jquery";
 import * as salve from "salve";
 
-import { Action } from "wed/action";
-import { Decorator } from "wed/decorator";
-import { DLoc } from "wed/dloc";
-import { Listener as DOMListener } from "wed/domlistener";
-import * as domutil from "wed/domutil";
-import { closest, closestByClass } from "wed/domutil";
-import { GUIUpdater } from "wed/gui-updater";
-import * as contextMenu from "wed/gui/context-menu";
-import { tooltip } from "wed/gui/tooltip";
-import * as inputTriggerFactory from "wed/input-trigger-factory";
-import * as keyConstants from "wed/key-constants";
-import { LabelManager } from "wed/labelman";
+import { Action, ContextMenu, Decorator, DLoc, DOMListener, domutil, EditorAPI,
+         inputTriggerFactory, keyConstants, labelman, tooltip,
+         transformation, util } from "wed";
+import closest = domutil.closest;
+import closestByClass = domutil.closestByClass;
+import LabelManager = labelman.LabelManager;
+import makeElement = transformation.makeElement;
+import Transformation = transformation.Transformation;
+import TransformationData = transformation.TransformationData;
+
 import { GenericModeOptions } from "wed/modes/generic/generic";
 import { Metadata } from "wed/modes/generic/metadata";
-import { makeElement, Transformation,
-         TransformationData } from "wed/transformation";
-import * as util from "wed/util";
-import { Editor } from "wed/wed";
 
 import { DispatchMixin } from "./btw-dispatch";
 import { HeadingDecorator } from "./btw-heading-decorator";
@@ -47,14 +41,13 @@ interface VisibleAbsenceSpec {
 }
 
 // tslint:disable-next-line:no-any
-function menuClickHandler(editor: Editor, guiLoc: DLoc, items: any,
+function menuClickHandler(editor: EditorAPI, guiLoc: DLoc, items: any,
                           ev: JQueryMouseEventObject): boolean {
   if (editor.caretManager.caret === undefined) {
     editor.caretManager.setCaret(guiLoc);
   }
   // tslint:disable-next-line:no-unused-expression
-  new contextMenu.ContextMenu(editor.window.document,
-                              ev.clientX, ev.clientY, items);
+  new ContextMenu(editor.window.document, ev.clientX, ev.clientY, items);
   return false;
 }
 
@@ -85,7 +78,7 @@ export class BTWDecorator extends Decorator {
               protected readonly metadata: Metadata,
               protected readonly options: GenericModeOptions,
               protected readonly mapped: MappedUtil,
-              editor: Editor) {
+              editor: EditorAPI) {
     super(mode, editor);
     DispatchMixin.call(this);
 
@@ -522,24 +515,20 @@ export class BTWDecorator extends Decorator {
           "_gui _phantom _va_instantiator btn btn-instantiator btn-xs";
         control.setAttribute("href", "#");
         const $control = $(control);
-        // We're cheating to work around a typing bug in wed 0.30...
-        // tslint:disable-next-line:no-any
-        if ((this.editor as any).preferences.get("tooltips")) {
-          const title = this.editor.modeTree.getMode(dataLoc.node)
-            .shortDescriptionFor(spec);
-          if (title != null) {
-            // Get tooltips from the current mode
-            tooltip($control, {
-              title,
-              // We are cheating. The documented interface states that container
-              // should be a string. However, passing a JQuery object works.
-              // tslint:disable-next-line:no-any
-              container: $control as any,
-              delay: { show: 1000 },
-              placement: "auto top",
-              trigger: "hover",
-            });
-          }
+        // Get tooltips from the current mode
+        const title = this.editor.modeTree.getMode(dataLoc.node)
+          .shortDescriptionFor(spec);
+        if (title != null) {
+          this.editor.makeGUITreeTooltip($control, {
+            title,
+            // We are cheating. The documented interface states that container
+            // should be a string. However, passing a JQuery object works.
+            // tslint:disable-next-line:no-any
+            container: $control as any,
+            delay: { show: 1000 },
+            placement: "auto top",
+            trigger: "hover",
+          });
         }
 
         if (tuples.length > 1) {
@@ -1013,8 +1002,7 @@ export class BTWDecorator extends Decorator {
     }
 
     // tslint:disable-next-line:no-unused-expression
-    new contextMenu.ContextMenu(editor.window.document,
-                                ev.clientX, ev.clientY, items);
+    new ContextMenu(editor.window.document, ev.clientX, ev.clientY, items);
 
     return false;
   }
