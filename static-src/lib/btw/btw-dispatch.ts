@@ -15,7 +15,7 @@ import { Metadata } from "wed/modes/generic/metadata";
 import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
          Item } from "./bibliography";
 import { HeadingDecorator } from "./btw-heading-decorator";
-import { Mode } from "./btw-mode";
+import { BibliographicalInfo, Mode } from "./btw-mode";
 import { ExampleReferenceManager, WholeDocumentManager } from "./btw-refmans";
 import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
@@ -44,29 +44,39 @@ function setTitle($el: JQuery, data: Item): void {
 
 const ENCODED_REF_ATTR_NAME = util.encodeAttrName("ref");
 
+export interface DispatchEditor {
+  toDataNode(node: Node): Node;
+}
+
+export interface DispatchMode {
+  nodesAroundEditableContents(element: Element): [Node | null, Node | null];
+  getBibliographicalInfo(): Promise<BibliographicalInfo>;
+}
+
 /**
  * This mixin is made to be used by the [[Decorator]] created for BTW's mode and
  * by [["btw_viewer".Viewer]]. It combines decoration methods that are common to
- * editing and viewing articles.
+ * editing and viewing articles. If suitable, classes may use this class as a
+ * base class instead of as a mixin.
  */
 export abstract class DispatchMixin {
   private readonly _inMode: boolean;
 
   /* Provided by the class onto which this is mixed: */
-  readonly abstract editor: EditorAPI;
-  readonly abstract mode: Mode;
-  readonly abstract metadata: Metadata;
-  readonly abstract headingDecorator: HeadingDecorator;
-  readonly abstract exampleIdManager: IDManager;
-  readonly abstract senseSubsenseIdManager: IDManager;
-  readonly abstract refmans: WholeDocumentManager;
-  readonly abstract guiUpdater: TreeUpdater;
-  readonly abstract senseTooltipSelector: string;
-  readonly abstract sfFetcher: SFFetcher;
-  readonly abstract mapped: MappedUtil;
-  abstract languageDecorator(el: Element): void;
-  abstract noneDecorator(el: Element): void;
-  abstract elementDecorator(root: Element, el: Element): void;
+  protected readonly abstract editor: DispatchEditor;
+  protected readonly abstract mode: DispatchMode;
+  protected readonly abstract metadata: Metadata;
+  protected readonly abstract headingDecorator: HeadingDecorator;
+  protected readonly abstract exampleIdManager: IDManager;
+  protected readonly abstract senseSubsenseIdManager: IDManager;
+  protected readonly abstract refmans: WholeDocumentManager;
+  protected readonly abstract guiUpdater: TreeUpdater;
+  protected readonly abstract senseTooltipSelector: string;
+  protected readonly abstract sfFetcher: SFFetcher;
+  protected readonly abstract mapped: MappedUtil;
+  protected abstract languageDecorator(el: Element): void;
+  protected abstract noneDecorator(el: Element): void;
+  protected abstract elementDecorator(root: Element, el: Element): void;
   /* End... */
 
   constructor() {

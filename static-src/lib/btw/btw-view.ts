@@ -20,8 +20,9 @@ import { MetadataMultiversionReader,
 
 import { ajax } from "../ajax";
 import { BibliographicalItem, isPrimarySource } from "./bibliography";
-import { DispatchMixin } from "./btw-dispatch";
+import { DispatchEditor, DispatchMixin, DispatchMode } from "./btw-dispatch";
 import { HeadingDecorator } from "./btw-heading-decorator";
+import { BibliographicalInfo } from "./btw-mode";
 import { WholeDocumentManager } from "./btw-refmans";
 import * as metadataJSON from "./btw-storage-metadata.json";
 import * as btwUtil from "./btw-util";
@@ -36,14 +37,6 @@ const closest = domutil.closest;
 // tslint:disable-next-line: no-any
 declare var require: any;
 // END TEMPORARY TYPE DEFINITIONS
-
-interface FakeEditor {
-  toDataNode(node: Node): Node;
-}
-
-interface FakeMode {
-  nodesAroundEditableContents(): [null, null];
-}
 
 function makeExpandHandler(affix: HTMLElement, affixConstrainer: HTMLElement,
                            frame: Element): (ev: JQueryEventObject) => void {
@@ -163,39 +156,32 @@ parseInt(style.marginBottom!, 10) - 5}px`;
  * passed in other parameter or from the URL of the currrent page but it is
  * preferable to get an actual value than try to guess it.
  */
-export class Viewer {
+export class Viewer extends DispatchMixin {
   private readonly doc: Document;
   private readonly win: Window;
-  private readonly metadata: Metadata;
-  private readonly refmans: WholeDocumentManager;
+  protected readonly metadata: Metadata;
+  protected readonly refmans: WholeDocumentManager;
   private readonly loadTimeout: number = 30000;
   private readonly resolver: NameResolver = new NameResolver();
-  private readonly sfFetcher: SFFetcher;
-  private readonly editor: FakeEditor;
-  private readonly mode: FakeMode;
-  private readonly mapped: MappedUtil;
-  private guiUpdater: TreeUpdater;
+  protected readonly sfFetcher: SFFetcher;
+  protected readonly editor: DispatchEditor;
+  protected readonly mode: DispatchMode;
+  protected readonly mapped: MappedUtil;
+  protected readonly guiUpdater: TreeUpdater;
   private dataDoc: Document;
-  private headingDecorator: HeadingDecorator;
+  protected readonly headingDecorator: HeadingDecorator;
   private doneResolve: (value: Viewer) => void;
   // tslint:disable-next-line:no-any
   private doneReject: (err: any) => void;
 
-  private readonly senseSubsenseIdManager: IDManager = new IDManager("S.");
-  private readonly exampleIdManager: IDManager = new IDManager("E.");
-  private readonly senseTooltipSelector: string =
+  protected readonly senseSubsenseIdManager: IDManager = new IDManager("S.");
+  protected readonly exampleIdManager: IDManager = new IDManager("E.");
+  protected readonly senseTooltipSelector: string =
     "btw:english-term-list>btw:english-term";
 
   private biblData: Record<string, BibliographicalItem>;
 
   readonly done: Promise<Viewer>;
-
-  // From DispatchMixin
-  dispatch: (root: Element, el: Element) => void;
-  idDecorator: (root: Element, el: Element) => void;
-  explanationDecorator: (root: Element, el: Element) => void;
-  sfDecorator: (root: Element, el: Element) => void;
-  fillBiblData: (el: Element, abbr: Element, data: BibliographicalItem) => void;
 
   constructor(private readonly root: Element,
               editUrl: string,
@@ -203,12 +189,12 @@ export class Viewer {
               private readonly semanticFieldFetchUrl: string,
               data: string, biblData: Record<string, BibliographicalItem>,
               private readonly languagePrefix: string) {
+    super();
     this.metadata =
       new MetadataMultiversionReader().read(JSON.parse(metadataJSON));
     this.mapped = new MappedUtil(this.metadata.getNamespaceMappings());
     this.refmans = new WholeDocumentManager(this.mapped);
 
-    DispatchMixin.call(this);
     const doc = this.doc = root.ownerDocument;
     const win = this.win = doc.defaultView;
 
@@ -234,6 +220,11 @@ export class Viewer {
     this.mode = {
       nodesAroundEditableContents(): [null, null] {
         return [null, null];
+      },
+      async getBibliographicalInfo(): Promise<BibliographicalInfo> {
+        // This should never be called when we use a view object. We override
+        // the method that *would* call it, with a method that does not.
+        throw new Error("called getBibliographicalInfo");
       },
     };
 
@@ -293,6 +284,13 @@ export class Viewer {
       this.doneResolve = resolve;
       this.doneReject = reject;
     });
+
+    // tslint:disable-next-line:no-unused-expression
+    new DLocRoot(root);
+    this.guiUpdater = new TreeUpdater(root);
+
+    // Override the head specs with those required for viewing.
+    this.headingDecorator = this.makeHeadingDecorator();
 
     // If we are passed a fetchUrl, then we have to fetch the data from the
     // site.
@@ -476,13 +474,6 @@ export class Viewer {
 
     root.appendChild(convert.toHTMLTree(doc, dataDoc.firstChild!));
 
-    // tslint:disable-next-line:no-unused-expression
-    new DLocRoot(root);
-    const guiUpdater = this.guiUpdater = new TreeUpdater(root);
-
-    // Override the head specs with those required for viewing.
-    this.headingDecorator = this.makeHeadingDecorator();
-
     this.seeIds();
 
     //
@@ -526,7 +517,7 @@ export class Viewer {
     // depends on it. We just link our single tree with itself.
     //
     domutil.linkTrees(root, root);
-    guiUpdater.events.subscribe((ev) => {
+    this.guiUpdater.events.subscribe((ev) => {
       if (ev.name !== "InsertNodeAt" || !isElement(ev.node)) {
         return;
       }
@@ -1070,7 +1061,8 @@ export class Viewer {
     }
   }
 
-  fetchAndFillBiblData(targetId: string, el: Element, abbr: Element): void {
+  async fetchAndFillBiblData(targetId: string, el: Element,
+                             abbr: Element): Promise<void> {
     const data = this.biblData[targetId];
     if (data === undefined) {
       throw new Error("missing bibliographical data");
@@ -1161,18 +1153,3 @@ export class Viewer {
     return convert.toHTMLTree(this.doc, e) as Element;
   }
 }
-
-// tslint:disable-next-line:no-any
-function implement(mixes: any, mixin: any): void {
-  const source = (mixin.prototype !== undefined) ? mixin.prototype : mixin;
-  // tslint:disable-next-line:forin
-  for (const f in source) {
-    // We have to skip those properties already set in the class we mix into
-    // because we create the class properties first and then add the mixin.
-    if (!(f in mixes.prototype)) {
-      mixes.prototype[f] = source[f];
-    }
-  }
-}
-
-implement(Viewer, DispatchMixin);
