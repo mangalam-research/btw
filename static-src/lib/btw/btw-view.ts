@@ -33,10 +33,22 @@ import { SFFetcher } from "./semantic-field-fetcher";
 const _slice = Array.prototype.slice;
 const closest = domutil.closest;
 
-// TEMPORARY TYPE DEFINITIONS
-// tslint:disable-next-line: no-any
-declare var require: any;
-// END TEMPORARY TYPE DEFINITIONS
+const FAKE_EDITOR = {
+  toDataNode(node: Node): Node {
+    return node;
+  },
+};
+
+const FAKE_MODE = {
+  nodesAroundEditableContents(): [null, null] {
+    return [null, null];
+  },
+  async getBibliographicalInfo(): Promise<BibliographicalInfo> {
+    // This should never be called when we use a view object. We override
+    // the method that *would* call it, with a method that does not.
+    throw new Error("called getBibliographicalInfo");
+  },
+};
 
 function makeExpandHandler(affix: HTMLElement, affixConstrainer: HTMLElement,
                            frame: Element): (ev: JQueryEventObject) => void {
@@ -211,22 +223,8 @@ export class Viewer extends DispatchMixin {
     // We provide minimal objects that are used by some of the logic which is
     // shared with btw_decorator.
     //
-    this.editor = {
-      toDataNode(node: Node): Node {
-        return node;
-      },
-    };
-
-    this.mode = {
-      nodesAroundEditableContents(): [null, null] {
-        return [null, null];
-      },
-      async getBibliographicalInfo(): Promise<BibliographicalInfo> {
-        // This should never be called when we use a view object. We override
-        // the method that *would* call it, with a method that does not.
-        throw new Error("called getBibliographicalInfo");
-      },
-    };
+    this.editor = FAKE_EDITOR;
+    this.mode = FAKE_MODE;
 
     const { heading, group, content } =
       btwUtil.makeCollapsible(doc, "default", "toolbar-heading",

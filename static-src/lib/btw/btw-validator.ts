@@ -42,7 +42,7 @@ export class Validator implements ModeValidator {
       for (let sfsIx = 0; sfsIx < sfs.length; ++sfsIx) {
         const sf = sfs[sfsIx];
         // The contrastive section may not exist yet.
-        if (!contrastive || !contrastive.contains(sf)) {
+        if (contrastive === undefined || !contrastive.contains(sf)) {
           found = true;
           break;
         }

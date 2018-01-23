@@ -1,4 +1,4 @@
-/* tslint:disable: no-any */
+/* tslint:disable: no-any no-reserved-keywords */
 declare var require: any;
 export const config: any = {
   schema: require.toUrl("btw/btw-storage.js"),

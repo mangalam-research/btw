@@ -158,14 +158,14 @@ extends Transformation<LanguageTransformationData> {
 
   constructor(editor: EditorAPI, private readonly language: string) {
     super(editor, "transformation", `Set language to ${language}`, language,
-          undefined, true, setLanguageHandler as any /* XXX */);
+          undefined, true, setLanguageHandler);
     this.nestingModal = getNestingModal(editor);
   }
 
   execute(data: LanguageTransformationData): void {
     // Don't execute if there's no selection.
     const selection = this.editor.caretManager.sel;
-    if (selection && !selection.collapsed) {
+    if (selection !== undefined && !selection.collapsed) {
       data.language = this.language;
       super.execute(data);
     }

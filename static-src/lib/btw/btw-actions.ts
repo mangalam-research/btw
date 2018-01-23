@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import * as Bloodhound from "typeahead";
 
 import { Action, domtypeguards, domutil, EditorAPI, Modal, transformation,
-         util } from "wed";
+         TypeaheadPopup, util } from "wed";
 import isText = domtypeguards.isText;
 import TransformationData = transformation.TransformationData;
 
@@ -338,6 +338,41 @@ export class InsertBiblPtrAction extends Action<{}> {
     const citedEngine = makeEngine(options);
     const zoteroEngine = makeEngine(options);
 
+    const ta = this.makeTypeaheadPopup(citedEngine, zoteroEngine, editor,
+                                       range, mode);
+
+    // tslint:disable-next-line:no-floating-promises
+    mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
+      const allValues: BibliographicalItem[] = [];
+      for (const key of Object.keys(info)) {
+        allValues.push(info[key]);
+      }
+
+      const citedValues: BibliographicalItem[] = [];
+      const refs = editor.guiRoot.querySelectorAll("._real.ref");
+      // tslint:disable-next-line:prefer-for-of
+      for (let refIx = 0; refIx < refs.length; ++refIx) {
+        const ref = refs[refIx];
+        const origTarget = ref.getAttribute(util.encodeAttrName("target"))!;
+        if (origTarget.lastIndexOf("/bibliography/", 0) !== 0) {
+          continue;
+        }
+
+        citedValues.push(info[origTarget]);
+      }
+
+      zoteroEngine.add(allValues);
+      citedEngine.add(citedValues);
+      if (range !== undefined) {
+        ta.setValue(range.toString());
+      }
+      ta.hideSpinner();
+    });
+  }
+
+  private makeTypeaheadPopup(citedEngine: Bloodhound, zoteroEngine: Bloodhound,
+                             editor: EditorAPI, range: Range | undefined,
+                             mode: Mode): TypeaheadPopup {
     const taOptions = {
       options: {
         autoselect: true,
@@ -366,49 +401,22 @@ export class InsertBiblPtrAction extends Action<{}> {
       }],
     };
 
-    const ta = editor.editingMenuManager.setupTypeaheadPopup(
-      600, "Reference", taOptions,
+    return editor.editingMenuManager.setupTypeaheadPopup(
+      600,
+      "Reference",
+      taOptions,
       (obj: BibliographicalItem) => {
         if (obj == null) {
           return;
         }
-
         const newData = { target: obj.abstract_url };
-        if (range) {
+        if (range !== undefined) {
           mode.replaceSelectionWithRefTr.execute(newData);
         }
         else {
           mode.insertRefTr.execute(newData);
         }
       }, undefined, true);
-
-    // tslint:disable-next-line:no-floating-promises
-    mode.getBibliographicalInfo().then((info: BibliographicalInfo) => {
-      const allValues: BibliographicalItem[] = [];
-      for (const key of Object.keys(info)) {
-        allValues.push(info[key]);
-      }
-
-      const citedValues: BibliographicalItem[] = [];
-      const refs = editor.guiRoot.querySelectorAll("._real.ref");
-      // tslint:disable-next-line:prefer-for-of
-      for (let refIx = 0; refIx < refs.length; ++refIx) {
-        const ref = refs[refIx];
-        const origTarget = ref.getAttribute(util.encodeAttrName("target"))!;
-        if (origTarget.lastIndexOf("/bibliography/", 0) !== 0) {
-          continue;
-        }
-
-        citedValues.push(info[origTarget]);
-      }
-
-      zoteroEngine.add(allValues);
-      citedEngine.add(citedValues);
-      if (range) {
-        ta.setValue(range.toString());
-      }
-      ta.hideSpinner();
-    });
   }
 }
 

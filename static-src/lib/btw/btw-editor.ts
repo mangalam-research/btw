@@ -13,6 +13,7 @@ export class QuitAction extends Action<{}> {
 
   execute(): void {
     const $form = this.editor.$guiRoot.parents("form").first();
+    // tslint:disable-next-line:no-floating-promises
     this.editor.save().then(() => {
       $form.submit();
     });

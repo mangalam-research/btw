@@ -26,9 +26,8 @@ import { Validator } from "./btw-validator";
 import { MappedUtil } from "./mapped-util";
 
 // TEMPORARY TYPE DEFINITIONS
-/* tslint:disable: no-any */
+// tslint:disable-next-line:no-reserved-keywords no-any
 declare var require: any;
-/* tslint:enable: no-any */
 // END TEMPORARY TYPE DEFINITIONS
 
 interface Substitution {
@@ -36,7 +35,7 @@ interface Substitution {
   tag: string;
 
   /** The type of transformations for which to perform the substitution. */
-  type: string;
+  trType: string;
 
   /** The actions to substitute for this tag. */
   actions: Action<{}>[];
@@ -163,6 +162,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     this.wedOptions.attributes = "hide";
   }
 
+  // tslint:disable-next-line:max-func-body-length
   async init(): Promise<void> {
     await super.init();
 
@@ -288,7 +288,7 @@ class BTWMode extends Mode<BTWModeOptions> {
         "btw:sf": true,
       },
       substitute: [
-        { tag: "btw:sf", type: "insert",
+        { tag: "btw:sf", trType: "insert",
           actions: [this.editSemanticFieldAction] },
       ],
     }, {
@@ -306,7 +306,7 @@ class BTWMode extends Mode<BTWModeOptions> {
         ptr: true,
       },
       substitute: [{ tag: "ptr",
-                     type: "insert",
+                     trType: "insert",
                      actions: [this.insertSensePtrAction],
                    }],
     }, {
@@ -318,12 +318,12 @@ class BTWMode extends Mode<BTWModeOptions> {
         ref: ["delete-parent", "insert"],
       },
       substitute: [
-        { tag: "ref", type: "insert", actions: [this.insertRefText] },
+        { tag: "ref", trType: "insert", actions: [this.insertRefText] },
       ],
     }, {
       selector: mapped.classFromOriginalName("btw:citations"),
       substitute: [
-        { tag: "ptr", type: "insert",
+        { tag: "ptr", trType: "insert",
           actions: [this.insertExamplePtrAction] },
       ],
     }, {
@@ -334,11 +334,11 @@ class BTWMode extends Mode<BTWModeOptions> {
       pass: passInCit,
       substitute: [
         { tag: "ref",
-          type: "insert",
+          trType: "insert",
           actions: [this.insertBiblPtr],
         },
         { tag: "ref",
-          type: "wrap",
+          trType: "wrap",
           actions: [this.replaceBiblPtr],
         },
       ],
@@ -355,21 +355,21 @@ class BTWMode extends Mode<BTWModeOptions> {
       selector: mapped.toGUISelector("btw:antonyms>btw:none"),
       substitute: [
         { tag: "btw:none",
-          type: "delete-parent",
+          trType: "delete-parent",
           actions: [this.replaceNoneWithAntonym] },
       ],
     }, {
       selector: mapped.toGUISelector("btw:cognates>btw:none"),
       substitute: [
         { tag: "btw:none",
-          type: "delete-parent",
+          trType: "delete-parent",
           actions: [this.replaceNoneWithCognate] },
       ],
     }, {
       selector: mapped.toGUISelector("btw:conceptual-proximates>btw:none"),
       substitute: [
         { tag: "btw:none",
-          type: "delete-parent",
+          trType: "delete-parent",
           actions: [this.replaceNoneWithConceptualProximate] },
       ],
     }, {
@@ -385,8 +385,8 @@ class BTWMode extends Mode<BTWModeOptions> {
     }, {
       selector: mapped.toGUISelector("*"),
       substitute: [
-        { tag: "ref", type: "insert", actions: [this.insertBiblPtr] },
-        { tag: "ref", type: "wrap", actions: [this.replaceBiblPtr] },
+        { tag: "ref", trType: "insert", actions: [this.insertBiblPtr] },
+        { tag: "ref", trType: "wrap", actions: [this.replaceBiblPtr] },
       ],
     }];
   }
@@ -394,27 +394,35 @@ class BTWMode extends Mode<BTWModeOptions> {
   /**
    * This is meant to be called by helper classes.
    */
-  getBibliographicalInfo(): Promise<BibliographicalInfo> {
-    if (this.getBibliographicalInfoPromise !== undefined) {
-      return this.getBibliographicalInfoPromise;
+  async getBibliographicalInfo(): Promise<BibliographicalInfo> {
+    if (this.getBibliographicalInfoPromise === undefined) {
+      this.getBibliographicalInfoPromise =
+        this.makeGetBibliographicalInfoPromise();
     }
 
-    return (this.getBibliographicalInfoPromise =
-            Promise.resolve($.ajax({
-              url: this.biblUrl,
-              headers: {
-                Accept: "application/json",
-              },
-            }))
-            .catch((_jqXHR) => {
-              throw new Error("cannot load bibliographical information");
-            }).then((data) => {
-              const urlToItem = Object.create(null);
-              for (const item of data) {
-                urlToItem[item.abstract_url] = item;
-              }
-              return urlToItem;
-            }));
+    return this.getBibliographicalInfoPromise;
+  }
+
+  private async makeGetBibliographicalInfoPromise():
+  Promise<BibliographicalInfo> {
+    let data;
+    try {
+      data = await Promise.resolve($.ajax({
+        url: this.biblUrl,
+        headers: {
+          Accept: "application/json",
+        },
+      }));
+    }
+    catch {
+      throw new Error("cannot load bibliographical information");
+    }
+
+    const urlToItem = Object.create(null);
+    for (const item of data) {
+      urlToItem[item.abstract_url] = item;
+    }
+    return urlToItem;
   }
 
   makeDecorator(): GenericDecorator {
@@ -554,7 +562,7 @@ class BTWMode extends Mode<BTWModeOptions> {
 
           if (filter.substitute !== undefined) {
             for (const substitute of filter.substitute) {
-              if (substitute.tag === tag && substitute.type === t) {
+              if (substitute.tag === tag && substitute.trType === t) {
                 ret = ret.concat(substitute.actions);
                 break typeLoop;
               }
