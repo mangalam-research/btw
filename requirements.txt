@@ -30,7 +30,7 @@ celery[redis]==4.0.2
 djangorestframework>=3.4.0,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
-django-cms==3.4.1
+django-cms==3.4.5
 # We do not strictly speaking this package directly but django-cms
 # uses it 1 won't work with Django 1.11
 django-formtools>=2,<3
