@@ -6,7 +6,11 @@ from .cms_menus import BibliographyMenu
 
 class BibliographyApp(CMSApp):
     name = _("Bibliography")
-    urls = ["bibliography.urls"]
-    menus = [BibliographyMenu]
+
+    def get_urls(self, page=None, language=None, **kwargs):
+        return ["bibliography.urls"]
+
+    def get_menus(self, page=None, language=None, **kwargs):
+        return [BibliographyMenu]
 
 apphook_pool.register(BibliographyApp)

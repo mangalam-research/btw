@@ -6,7 +6,11 @@ from .cms_menus import SemanticFieldsMenu
 
 class SemanticFieldsApp(CMSApp):
     name = _("Semantic Fields")
-    urls = ["semantic_fields.urls"]
-    menus = [SemanticFieldsMenu]
+
+    def get_urls(self, page=None, language=None, **kwargs):
+        return ["semantic_fields.urls"]
+
+    def get_menus(self, page=None, language=None, **kwargs):
+        return [SemanticFieldsMenu]
 
 apphook_pool.register(SemanticFieldsApp)
