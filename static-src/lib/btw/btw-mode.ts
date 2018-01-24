@@ -5,7 +5,8 @@
 import * as $ from "jquery";
 import "jquery.cookie";
 
-import { Action, domtypeguards, EditorAPI, Modal, transformation } from "wed";
+import { Action, Button, domtypeguards, EditorAPI, Modal,
+         transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 import { GenericDecorator } from "wed/modes/generic/generic-decorator";
 
@@ -511,12 +512,12 @@ class BTWMode extends Mode<BTWModeOptions> {
     return ret as any;
   }
 
-  getToolbarActions(): Action<{}>[] {
+  getToolbarButtons(): Button[] {
     return [
-      this.setLanguageToSanskritTr,
-      this.setLanguageToPaliTr,
-      this.setLanguageToLatinTr,
-      this.insertBiblPtr,
+      this.setLanguageToSanskritTr.makeButton(),
+      this.setLanguageToPaliTr.makeButton(),
+      this.setLanguageToLatinTr.makeButton(),
+      this.insertBiblPtr.makeButton(),
     ];
   }
 
