@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
 from django.conf import settings
 from django_webtest import WebTest, TransactionWebTest
-from django.middleware.csrf import CSRF_TOKEN_LENGTH
+from django.middleware.csrf import _get_new_csrf_token
 from cms.test_utils.testcases import BaseCMSTestCase
 from nose.tools import nottest
 
@@ -26,7 +26,7 @@ user_model = get_user_model()
 def _make_test_url(sf):
     return "http://testserver" + sf.detail_url
 
-FAKE_CSRF = "x" * CSRF_TOKEN_LENGTH
+FAKE_CSRF = _get_new_csrf_token().encode("utf-8")
 
 class _Mixin(object):
 
@@ -1070,12 +1070,16 @@ class ListTestCase(ViewsTestCase):
         # We simulate what happens if a CSRF token has been set by
         # Django in a previous request. We set the value to "foo" and
         # set the header value to "foo" too, which is a match.
-        self.app.set_cookie(settings.CSRF_COOKIE_NAME, FAKE_CSRF)
+
+        # We have to get the front page first, so that the user is
+        # logged before we play with the CSRF token.
+        self.app.get("/", user=self.noperm)
+        csrf = self.app.cookies[settings.CSRF_COOKIE_NAME]
         self.app.get(self.url,
                      params={"paths": "01n"},
                      headers={
                          "Accept": "application/json",
-                         "X-CSRFToken": FAKE_CSRF
+                         "X-CSRFToken": csrf,
                      }, user=self.noperm)
 
     def test_bad_accept(self):

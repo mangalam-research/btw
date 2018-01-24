@@ -1241,7 +1241,7 @@ class EditingTestCase(ViewsTransactionTestCase):
         return response
 
     def save(self, response, user, data=None, command="save",
-             expect_errors=False):
+             expect_errors=False, csrf_token=None):
         #
         # Saves the document.
         #
@@ -1252,7 +1252,8 @@ class EditingTestCase(ViewsTransactionTestCase):
         #
         # Returns (parsed messages, data that was passed for saving)
         #
-        saveurl = response.form['saveurl'].value
+        form = response.form
+        saveurl = form['saveurl'].value
 
         if data is None:
             data = response.lxml.xpath("//*[@id='id_data']")[0].text
@@ -1263,11 +1264,13 @@ class EditingTestCase(ViewsTransactionTestCase):
             "data": data
         }
 
-        etag = response.form['initial_etag'].value.encode('utf-8')
+        if csrf_token is None:
+            csrf_token = form['csrfmiddlewaretoken'].value.encode('utf-8')
+
+        etag = form['initial_etag'].value.encode('utf-8')
         headers = {
             'X-REQUESTED-WITH': 'XMLHttpRequest',
-            'X-CSRFToken':
-            response.form['csrfmiddlewaretoken'].value.encode('utf-8'),
+            'X-CSRFToken': csrf_token,
         }
 
         if etag != "":
@@ -1580,7 +1583,10 @@ class EditingTestCase(ViewsTransactionTestCase):
         # The first user tries to save. Which should fail because
         # their version of the file misses the changes made by the 2nd
         # user.
-        response3 = self.save(response1, "foo", expect_errors=True)
+        self.app.get("/", user="foo")
+        csrf_token = self.app.cookies[settings.CSRF_COOKIE_NAME]
+        response3 = self.save(response1, "foo", expect_errors=True,
+                              csrf_token=csrf_token)
         self.assertEqual(response3.status_code, 412,
                          "the save should have failed")
 
@@ -1608,7 +1614,10 @@ class EditingTestCase(ViewsTransactionTestCase):
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
-        messages, _ = self.save(response, "foo2")
+        # Log the user in
+        self.app.get("/", user="foo2")
+        csrf_token = self.app.cookies[settings.CSRF_COOKIE_NAME]
+        messages, _ = self.save(response, "foo2", csrf_token=csrf_token)
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_transient_error", messages)
@@ -1635,7 +1644,10 @@ class EditingTestCase(ViewsTransactionTestCase):
 
         response.form["saveurl"].value = reverse("lexicography_handle_save",
                                                  args=("h:9999", ))
-        messages, _ = self.save(response, "foo2")
+        # Log the user in
+        self.app.get("/", user="foo2")
+        csrf_token = self.app.cookies[settings.CSRF_COOKIE_NAME]
+        messages, _ = self.save(response, "foo2", csrf_token=csrf_token)
 
         self.assertEqual(len(messages), 1)
         self.assertIn("save_fatal_error", messages)
