@@ -1,6 +1,6 @@
 Django>=1.11.9,<2
 semver>=0.0.2
-django-nose>=1.4.4,<2
+django-nose>=1.4.5,<2
 django-webtest>=1.9.2
 webtest>=2.0.27
 mock>=1.0.1,<2
@@ -14,7 +14,7 @@ pyvirtualdisplay>=0.1.5,<2
 selenium==2.49.0
 behave>=1.2.5,<2
 selenic>=0.11.0,<1
-wedutil==0.20.2
+wedutil==0.21.2
 pebble>=3.1.8,<4
 # We cannot use versions greater than 4.3.0 until this is fixed:
 # https://github.com/niwinz/django-redis/issues/223
