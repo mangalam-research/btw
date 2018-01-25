@@ -18,7 +18,8 @@ require.config({
     "pubsub-js": "external/pubsub",
     xregexp: "external/xregexp",
     "jquery.growl": "external/jquery-growl/js/jquery.growl",
-    typeahead: "external/typeahead.bundle.min",
+    typeahead: "external/typeahead.jquery.min",
+    bloodhound: "external/bloodhound.min",
     modules: "/static/scripts/modules",
     localforage: "external/localforage",
     bluebird: "external/bluebird.min",
@@ -170,10 +171,6 @@ require.config({
     "jquery.growl": {
       deps: ["jquery"],
       exports: "jQuery.growl",
-    },
-    typeahead: {
-      deps: ["jquery"],
-      exports: "Bloodhound",
     },
     "twbs-pagination": {
       deps: ["bootstrap"],

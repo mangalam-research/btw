@@ -44,16 +44,6 @@ require.config({
     "js/displayers": {
       test: true,
     },
-    "wed/log": {
-      focus_popup: true, // For testing only.
-    },
-    "wed/onerror": {
-      suppress_old_onerror: true, // For testing only.
-      test: true, // For testing only.
-    },
-    "wed/onbeforeunload": {
-      test: true, // For testing only
-    },
   },
 });
 
@@ -66,12 +56,11 @@ chaiAsPromised.transferPromiseness = function transferPromiseness(assertion,
   assertion.catch = promise.catch.bind(promise);
 };
 
-// This makes things a bit more expensive than we'd like because we
-// are loading all of wed. However, this method will work whether we
-// are building BTW with optimized or non-optimized code, whereas
-// using RequireJS' packages option would have to be used only when
-// using optimized code, etc.
-require(["bluebird", "wed/wed"], function init(bluebird) {
+// This makes things a bit more expensive than we'd like because we are loading
+// all of wed. However, this method will work whether we are building BTW with
+// optimized or non-optimized code, whereas using RequireJS' packages option
+// would have to be used only when using optimized code, etc.
+require(["bluebird", "wed"], function init(bluebird) {
   "use strict";
   bluebird.Promise.config({
     warnings: true,
@@ -80,5 +69,5 @@ require(["bluebird", "wed/wed"], function init(bluebird) {
 
   // eslint-disable-next-line global-require
   require(allTestModules, window.__karma__.start.bind(window.__karma__,
-                                                    window.__karma__.config));
+                                                      window.__karma__.config));
 });

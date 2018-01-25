@@ -21,7 +21,8 @@
     "baseUrl": ".",
     "paths": {
       "wed": ["../../../node_modules/wed/standalone/lib/wed"],
-      "wed/modes/*": ["../../../node_modules/wed/standalone/lib/wed/modes/*"]
+      "wed/modes/*": ["../../../node_modules/wed/standalone/lib/wed/modes/*"],
+      "bloodhound": ["../../../node_modules/wed/standalone/lib/external/bloodhound.min.js"]
     }
   }
 }

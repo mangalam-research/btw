@@ -2,10 +2,9 @@
  * Actions for BTWMode.
  * @author Louis-Dominique Dubeau
  */
+import * as Bloodhound from "bloodhound";
 import * as $ from "jquery";
 import * as _ from "lodash";
-// Yep, Bloodhound is provided by typeahead.
-import * as Bloodhound from "typeahead";
 
 import { Action, domtypeguards, domutil, EditorAPI, Modal, transformation,
          TypeaheadPopup, util } from "wed";
@@ -383,20 +382,20 @@ export class InsertBiblPtrAction extends Action<{}> {
       datasets: [{
         name: "cited",
         displayKey: biblDataToReferenceText,
-        source: citedEngine.ttAdapter(),
+        source: citedEngine,
         templates: {
           header: "Cited",
           suggestion: renderSuggestion,
-          empty: " does not contain a match.",
+          empty: "Cited does not contain a match.",
         },
       }, {
         name: "zotero",
         displayKey: biblDataToReferenceText,
-        source: zoteroEngine.ttAdapter(),
+        source: zoteroEngine,
         templates: {
           header: "Zotero",
           suggestion: renderSuggestion,
-          empty: " does not contain a match.",
+          empty: "Zotero does not contain a match.",
         },
       }],
     };

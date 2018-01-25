@@ -280,7 +280,7 @@ def step_impl(context):
 
     text = driver.execute_script("""
     var dropdown = document.querySelector(
-        ".wed-typeahead-popup .tt-dropdown-menu");
+      ".wed-typeahead-popup .tt-menu");
     return dropdown.textContent.trim();
     """)
     assert_equal(text, "Cited does not contain a match."

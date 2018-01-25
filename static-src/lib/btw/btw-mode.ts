@@ -426,7 +426,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     return urlToItem;
   }
 
-  makeDecorator(): GenericDecorator {
+  makeDecorator(): BTWDecorator {
     const ret = new BTWDecorator(this.semanticFieldFetchUrl, this,
                                  this.metadata, this.options, this.mapped,
                                  this.editor);
@@ -509,7 +509,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       }
     });
 
-    return ret as any;
+    return ret;
   }
 
   getToolbarButtons(): Button[] {
