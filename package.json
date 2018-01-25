@@ -42,7 +42,6 @@
     "salve": "^4.1.2",
     "salve-dom": "^1.2.1",
     "sinon": ">=1.17.3 <2",
-    "squirejs": "^0.2.1",
     "tslint": "^5.8.0",
     "tslint-config-lddubeau": "^2.0.1",
     "tslint-microsoft-contrib": "^5.0.1",

@@ -17,7 +17,6 @@ function pathToModule(path) {
 var paths = {
   js: "../js",
   sinon: "../../node_modules/sinon/lib/sinon",
-  Squire: "../../node_modules/squirejs/src/Squire",
 };
 var allTestModules = [];
 var TEST_REGEXP = /_test$/i;
