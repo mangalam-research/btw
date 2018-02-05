@@ -158,9 +158,48 @@ s.STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
 s.PIPELINE = {
     "STYLESHEETS": {},
-    "JAVASCRIPT": {},
+    # We are using PIPELINE to coarsely patch a hole in versions of
+    # jQuery prior to 3.x. These files were identified manually.
+    "JAVASCRIPT": {
+        "django_jquery": {
+            'source_filenames': (
+                'admin/js/vendor/jquery/jquery.js',
+            ),
+            'output_filename': 'admin/js/vendor/jquery/jquery.js',
+        },
+        "django_jquery_min": {
+            'source_filenames': (
+                'admin/js/vendor/jquery/jquery.min.js',
+            ),
+            'output_filename': 'admin/js/vendor/jquery/jquery.min.js',
+        },
+        "django_cms_jquery": {
+            'source_filenames': (
+                'cms/js/libs/jquery.min.js',
+            ),
+            'output_filename': 'cms/js/libs/jquery.min.js',
+        },
+        "filer_jquery": {
+            'source_filenames': (
+                'filer/js/libs/jquery.min.js',
+            ),
+            'output_filename': 'filer/js/libs/jquery.min.js',
+        },
+    },
     "CSS_COMPRESSOR": None,
     "JS_COMPRESSOR": None,
+    "JS_WRAPPER": """
+%s
+
+//
+// Added to fix jQuery XSS hole present in jQuery shipped with Django
+// and Django CMS.
+// https://github.com/jquery/jquery/issues/2432
+$.ajaxPrefilter(function (s) {
+  if (s.crossDomain) {
+    s.contents.javascript = false;
+  }
+});""",
     "COMPILERS": (
         'pipeline.compilers.less.LessCompiler',
     ),
