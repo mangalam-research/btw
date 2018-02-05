@@ -5,8 +5,7 @@
 import * as $ from "jquery";
 import "jquery.cookie";
 
-import { Action, Button, domtypeguards, EditorAPI, Modal,
-         transformation } from "wed";
+import { Action, domtypeguards, EditorAPI, gui, transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 import { GenericDecorator } from "wed/modes/generic/generic-decorator";
 
@@ -18,6 +17,8 @@ import swapWithPreviousHomogeneousSibling =
   transformation.swapWithPreviousHomogeneousSibling;
 import Transformation = transformation.Transformation;
 import TransformationData = transformation.TransformationData;
+import Button = gui.button.Button;
+import Modal = gui.modal.Modal;
 
 import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";

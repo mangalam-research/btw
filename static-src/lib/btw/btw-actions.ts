@@ -6,10 +6,12 @@ import * as Bloodhound from "bloodhound";
 import * as $ from "jquery";
 import * as _ from "lodash";
 
-import { Action, domtypeguards, domutil, EditorAPI, Modal, transformation,
-         TypeaheadPopup, util } from "wed";
+import { Action, domtypeguards, domutil, EditorAPI, gui, transformation,
+         util } from "wed";
 import isText = domtypeguards.isText;
 import TransformationData = transformation.TransformationData;
+import Modal = gui.modal.Modal;
+import TypeaheadPopup = gui.typeaheadPopup.TypeaheadPopup;
 
 import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";

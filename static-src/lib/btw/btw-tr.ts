@@ -4,13 +4,14 @@
  */
 import * as $ from "jquery";
 
-import { DLoc, domutil, EditorAPI, exceptions, Modal, transformation,
+import { DLoc, domutil, EditorAPI, exceptions, gui, transformation,
          util } from "wed";
 
 import AbortTransformationException = exceptions.AbortTransformationException;
 import makeElement = transformation.makeElement;
 import Transformation = transformation.Transformation;
 import TransformationData = transformation.TransformationData;
+import Modal = gui.modal.Modal;
 
 import * as btwUtil from "./btw-util";
 

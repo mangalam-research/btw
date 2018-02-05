@@ -5,10 +5,11 @@
 import "bootstrap-treeview";
 import * as $ from "jquery";
 
-import { Decorator, domutil, EditorAPI, labelman, tooltip, treeUpdater,
+import { Decorator, domutil, EditorAPI, gui, labelman, treeUpdater,
          util } from "wed";
 import LabelManager = labelman.LabelManager;
 import TreeUpdater = treeUpdater.TreeUpdater;
+import tooltip = gui.tooltip.tooltip;
 
 import { Metadata } from "wed/modes/generic/metadata";
 

@@ -5,15 +5,17 @@
 import * as $ from "jquery";
 import * as salve from "salve";
 
-import { Action, ContextMenu, Decorator, DLoc, DOMListener, domutil, EditorAPI,
-         inputTriggerFactory, keyConstants, labelman, tooltip,
-         transformation, util } from "wed";
+import { Action, Decorator, DLoc, DOMListener, domutil, EditorAPI, gui,
+         inputTriggerFactory, keyConstants, labelman, transformation,
+         util } from "wed";
 import closest = domutil.closest;
 import closestByClass = domutil.closestByClass;
 import LabelManager = labelman.LabelManager;
 import makeElement = transformation.makeElement;
 import Transformation = transformation.Transformation;
 import TransformationData = transformation.TransformationData;
+import ContextMenu = gui.contextMenu.ContextMenu;
+import tooltip = gui.tooltip.tooltip;
 
 import { GenericModeOptions } from "wed/modes/generic/generic";
 import { Metadata } from "wed/modes/generic/metadata";

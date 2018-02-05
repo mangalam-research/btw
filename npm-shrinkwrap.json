@@ -2631,9 +2631,9 @@
       "resolved": "https://registry.npmjs.org/void-elements/-/void-elements-2.0.1.tgz"
     },
     "wed": {
-      "version": "0.30.0",
-      "from": "../../../../../src/git-repos/wed/build/LATEST-DIST.tgz",
-      "resolved": "file:../../../../../src/git-repos/wed/build/LATEST-DIST.tgz",
+      "version": "1.0.0",
+      "from": "wed@1.0.0",
+      "resolved": "file:build/LATEST-DIST.tgz",
       "dependencies": {
         "ajv": {
           "version": "5.5.2",
