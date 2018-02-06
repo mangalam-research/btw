@@ -420,6 +420,18 @@ You may then load articles:
 Upgrades
 --------
 
+Preparing the Source
+~~~~~~~~~~~~~~~~~~~~
+
+Before preforming an upgrade, make sure that the source is in shape:
+
+1. You have run the tests from a clean build ``make clean``.
+
+2. ``forzen_requirements.txt`` is up-to-date.
+
+3. You have tagged the current release with ``git tag v... -a`` The
+   ``-a`` is important to create an annotated tag.
+
 Dealing with Logged-in Users
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -452,21 +464,26 @@ Generally:
 
 1. **Squeeze in upgrades to the server's infrastructure here...**
 
-2. Make sure you have tagged the current release with ``git tag
-   v... -a`` The ``-a`` is important to create an annotated tag.
+2. Make sure all your changes are pushed to the repository.
 
-3. Make sure all your changes are pushed to the repository.
-
-4. Make sure you have a current backup of the database.
+3. Make sure you have a current backup of the database.
 
 .. warning:: Do not run the following steps before you have read the
              version-specific information about upgrading. Some
              upgrades require that the following steps be partially
              performed or done in a different way, etc.
 
-5. Run::
+.. note:: It may be advantageous to send ``SIGUSR1`` to ``monit`` when
+          waiting for a status change that affects a whole
+          group. Because otherwise it may take ``n * polling
+          interval`` (where ``n`` is the number of processes that have
+          to change) before monit is done making the state change. If
+          the polling interval is the default 2 minutes, then waiting
+          for 4 processes to start may take 8 minutes!
 
-    $ sudo monit unmonitor [appropriate group name]
+4. Run::
+
+    $ sudo monit unmonitor -g [appropriate group name]
     $ . ../btw_env/bin/activate
     $ ./manage.py btwworker stop --all
 
@@ -510,17 +527,17 @@ Generally:
     $ make test-django
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
-    $ sudo monit monitor [appropriate group name]
+    $ sudo monit monitor -g [appropriate group name]
 
-6. Reload btw::
+5. Reload btw::
 
      $ sudo monit restart -g btw
 
-7. Run btw-smoketest::
+6. Run btw-smoketest::
 
      scrapy crawl btw -a btw_dev='<secret>'
 
-8. Take the site out of maintenance mode.
+7. Take the site out of maintenance mode.
 
 See below for specific upgrade cases.
 
