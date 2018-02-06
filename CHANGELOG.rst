@@ -1,3 +1,12 @@
+* 2.2.0:
+
+  + Upgrade to latest Django 1.11. Upgraded also some related
+    packages.
+
+  + Upgrade to Wed 1.0.0.
+
+  + Patch old jQuery versions.
+
 * 2.1.0:
 
   + Upgrade from Django 1.10 to Django 1.11. This entailed upgrading
