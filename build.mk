@@ -125,7 +125,8 @@ LOCAL_SOURCES:=$(foreach f,$(DIRECT_SOURCES),$(patsubst %.less,%.css,$(patsubst 
 GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/requirejs-config-dev.js
 # Local sources that are merely copied.
 COPIED_LOCAL_SOURCES:=$(filter-out $(GENERATED_LOCAL_SOURCES),$(LOCAL_SOURCES))
-BUILD_SCRIPTS:=build/scripts/
+BUILD_SCRIPTS:=$(BUILD_DIR)/scripts/
+BUILD_SERVICES:=$(BUILD_DIR)/services/
 
 EXTERNAL:=$(BUILD_DEST)/lib/external
 externalize=$(foreach f,$1,$(EXTERNAL)/$f)
@@ -289,8 +290,9 @@ keep-latest:
 	find test_logs -type f -not -name $$(realpath --relative-to=test_logs test_logs/LATEST) -delete
 
 build-scripts:
-	mkdir -p $(BUILD_SCRIPTS)
+	mkdir -p $(BUILD_SCRIPTS) $(BUILD_SERVICES)
 	$(DJANGO_MANAGE) btw generate-scripts $(BUILD_SCRIPTS)
+	$(DJANGO_MANAGE) btw generate-systemd-services $(BUILD_SCRIPTS) $(BUILD_SERVICES)
 
 build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
 

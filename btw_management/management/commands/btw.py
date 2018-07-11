@@ -6,96 +6,226 @@ from .btwworker import get_defined_workers
 from lib.redis import Config
 from lib.command import SubCommand, SubParser
 
-def generate_worker_config(script_dir):
-
-    workers = get_defined_workers()
-
-    template = """
-check process {worker_name} pidfile "{proj_path}/var/run/btw/{worker_name}.pid"
-      group {group}
-      depends on btw-redis
-      start program = "{script_dir}/manage btwworker start {worker_name}"
-            as uid btw and gid btw
-      stop program = "{script_dir}/manage btwworker stop {worker_name}"
-            as uid btw and gid btw
-      if does not exist then start
-"""
-
-    buf = ""
-    worker_names = []
-    for worker in workers:
-        buf += template.format(script_dir=script_dir,
-                               proj_path=settings.TOPDIR,
-                               worker_name=worker.name,
-                               group=settings.BTW_SLUGIFIED_SITE_NAME)
-        worker_names.append(worker.name)
-    return {
-        "script": buf,
-        "names": worker_names
-    }
-
 def subdir(a, b):
     """Returns whether a is a subdir of b."""
     rel = os.path.relpath(os.path.realpath(a), os.path.realpath(b))
     return not (rel == os.curdir or rel == os.pardir or
                 rel.startswith(os.pardir + os.sep))
 
-class GenerateMonitConfig(SubCommand):
+def generate_worker_systemd_config(common):
+
+    workers = get_defined_workers()
+
+    template = """\
+[Unit]
+Description=BTW Worker {worker_name} for site {site}
+BindsTo={redis_service}
+BindsTo={existdb_service}
+After={redis_service}
+After={existdb_service}
+PartOf={main_service}
+OnFailure={notification_service_invocation}
+
+[Service]
+Type=forking
+PIDFile={proj_path}/var/run/btw/{worker_name}.pid
+ExecStart={script_dir}/manage btwworker start {worker_name}
+ExecStop={script_dir}/manage btwworker stop {worker_name}
+Restart=on-failure
+User=btw
+Group=btw
+
+[Install]
+RequiredBy={main_service}
+"""
+
+    service_names = []
+    for worker in workers:
+        buf = template.format(worker_name=worker.name, **common)
+        # Worker names already contain the site name so we don't
+        # prefix it.
+        service_name = "{}.service".format(worker.name)
+        with open(os.path.join(common["service_dir"], service_name), "w") \
+                as service_file:
+            service_file.write(buf)
+
+        service_names.append(service_name)
+    return service_names
+
+class GenerateSystemdServices(SubCommand):
     """
-    Generate a configuration for Monit to monitor and control this BTW
-installation.
+    Generate service files for systemd.
     """
 
-    name = "generate-monit-config"
+    name = "generate-systemd-services"
 
     def add_to_parser(self, subparsers):
-        sp = super(GenerateMonitConfig, self).add_to_parser(subparsers)
+        sp = super(GenerateSystemdServices, self) .add_to_parser(subparsers)
         sp.add_argument(
-            "dir",
+            "scripts",
             help="The directory that contains BTW's generated scripts.")
+
+        sp.add_argument(
+            "services",
+            help="The directory that will contain the service filesx.")
+
         return sp
 
     def __call__(self, command, options):
-        btw_pidfile = "/run/uwsgi/app/btw/pid"
-        directory = options["dir"]
+        script_dir = options["scripts"]
+        service_dir = options["services"]
 
         # Check that the scripts exist
         non_existent = []
-        for script in ["manage", "start-uwsgi"]:
-            script_path = os.path.join(directory, script)
+        for script in ["manage", "start-uwsgi", "notify"]:
+            script_path = os.path.join(script_dir, script)
             if not os.path.exists(script_path):
                 non_existent.append(script_path)
 
         if len(non_existent):
-            raise CommandError("generate-monit-config needs these scripts "
-                               "to exist: " + ", ".join(non_existent))
+            raise CommandError("we need these scripts to exist: " +
+                               ", ".join(non_existent))
 
-        directory = os.path.abspath(directory)
+        site = settings.BTW_SLUGIFIED_SITE_NAME.replace("_", "-")
+        main_service = site + ".service"
+        redis_service = site + "-redis.service"
+        uwsgi_service = site + "-uwsgi.service"
+        existdb_service = site + "-existdb.service"
+        notification_service = site + "-notification@.service"
+        notification_service_invocation = \
+            notification_service.replace("@", "@%n")
 
-        worker_config = generate_worker_config(directory)
+        topdir = settings.TOPDIR
+        common = {
+            "proj_path": topdir,
+            "site": site,
+            "main_service": main_service,
+            "redis_service": redis_service,
+            "uwsgi_service": uwsgi_service,
+            "existdb_service": existdb_service,
+            "notification_service": notification_service,
+            "notification_service_invocation": notification_service_invocation,
+            "redis_pidfile": Config().pidfile_path,
+            "existdb_pidfile": os.path.join(topdir, "var/run/eXist.pid"),
+            "script_dir": os.path.abspath(script_dir),
+            "service_dir": service_dir,
+            "btw_pidfile": "/run/uwsgi/app/btw/pid",
+        }
 
-        template = """
-check process btw-redis pidfile "{redis_pidfile}"
-      group {group}
-      start program = "{script_dir}/manage btwredis start"
-          as uid btw and gid btw
-      stop program = "{script_dir}/manage btwredis stop"
-          as uid btw and gid btw
-      if does not exist then start
+        worker_services = generate_worker_systemd_config(common)
 
-check process btw pidfile "{btw_pidfile}"
-      group {group}
-      depends on {workers}, btw-redis
-      start program = "{script_dir}/start-uwsgi"
-      stop program = "/usr/bin/uwsgi --stop {btw_pidfile}"
-      if does not exist then start
+        components = [redis_service, uwsgi_service, existdb_service] + \
+            worker_services
+
+        with open(os.path.join(service_dir, main_service), "w") as btw:
+            btw.write("""\
+[Unit]
+Description=BTW Application for site {site}
+OnFailure={notification_service_invocation}
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+{also}
 """
-        command.stdout.write(template.format(
-            script_dir=directory,
-            redis_pidfile=Config().pidfile_path,
-            btw_pidfile=btw_pidfile,
-            workers=", ".join(worker_config["names"]),
-            group=settings.BTW_SLUGIFIED_SITE_NAME) + worker_config["script"])
+                      .format(also="\n".join(("Also=" + c) for c
+                                             in components),
+                              **common))
+
+        with open(os.path.join(service_dir, redis_service), "w") \
+                as out:
+            out.write("""\
+[Unit]
+Description=BTW Redis Instance for site {site}
+PartOf={main_service}
+OnFailure={notification_service_invocation}
+
+[Service]
+Type=forking
+PIDFile={redis_pidfile}
+ExecStart={script_dir}/manage btwredis start
+ExecStop={script_dir}/manage btwredis stop
+Restart=on-failure
+User=btw
+Group=btw
+
+[Install]
+RequiredBy={main_service}
+""".format(**common))
+
+        with open(os.path.join(service_dir, existdb_service), "w") \
+                as out:
+            out.write("""\
+[Unit]
+Description=BTW eXist-db instance for site {site}
+PartOf={main_service}
+OnFailure={notification_service_invocation}
+
+[Service]
+Type=forking
+PIDFile={existdb_pidfile}
+ExecStart={script_dir}/manage btwexistdb start
+ExecStop={script_dir}/manage btwexistdb stop
+Restart=on-failure
+User=btw
+Group=btw
+
+[Install]
+RequiredBy={main_service}
+""".format(**common))
+
+        with open(os.path.join(service_dir, uwsgi_service), "w") \
+                as out:
+            out.write("""\
+[Unit]
+Description=BTW UWSGI Instance for site {site}
+BindsTo={redis_service}
+BindsTo={existdb_service}
+{binds_to_workers}
+After={redis_service}
+After={existdb_service}
+{after_workers}
+PartOf={main_service}
+OnFailure={notification_service_invocation}
+
+[Service]
+Type=forking
+PIDFile={btw_pidfile}
+ExecStart={script_dir}/start-uwsgi
+ExecStop=/usr/bin/uwsgi --stop {btw_pidfile}
+Restart=on-failure
+
+[Install]
+RequiredBy={main_service}
+"""
+                      .format(binds_to_workers="\n"
+                              .join(("BindsTo=" + name)
+                                    for name in worker_services),
+                              after_workers="\n"
+                              .join(("After=" + name)
+                                    for name in worker_services),
+                              **common))
+
+        with open(os.path.join(service_dir, notification_service), "w") \
+                as out:
+            out.write("""\
+[Unit]
+Description=BTW Notification Email
+
+[Service]
+Type=oneshot
+ExecStart={script_dir}/notify root %i
+User=nobody
+Group=systemd-journal
+
+[Install]
+RequiredBy={main_service}
+""".format(**common))
+
 
 class GenerateScripts(SubCommand):
     """
@@ -116,6 +246,7 @@ class GenerateScripts(SubCommand):
         directory = options["dir"]
         manage_path = os.path.join(directory, "manage")
         start_uwsgi_path = os.path.join(directory, "start-uwsgi")
+        notify_path = os.path.join(directory, "notify")
         env_path = settings.ENVPATH
         python_path = os.path.join(env_path, "bin", "python") \
             if env_path is not None else "python"
@@ -144,7 +275,17 @@ export UWSGI_DEB_CONFNAME={site}
 /etc/uwsgi/apps-enabled/{site}.ini --daemonize /var/log/uwsgi/app/{site}.log
 """.format(site=settings.BTW_SLUGIFIED_SITE_NAME))
 
-        for path in [manage_path, start_uwsgi_path]:
+        with open(notify_path, 'w') as script:
+            script.write("""\
+#!/bin/sh
+
+/usr/sbin/sendmail -bm $1<<TXT
+Subject: [BTW SERVICE FAILURE] $2 failed
+
+$(systemctl status --full "$2")
+TXT
+""")
+        for path in [manage_path, start_uwsgi_path, notify_path]:
             st = os.stat(path)
             os.chmod(path, st.st_mode | 0111)
 
@@ -185,7 +326,7 @@ BTW-specific commands.
 
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
-        self.subcommands = [GenerateMonitConfig, GenerateScripts,
+        self.subcommands = [GenerateScripts, GenerateSystemdServices,
                             ListLocalAppPaths, DumpUrls]
 
     def add_arguments(self, parser):

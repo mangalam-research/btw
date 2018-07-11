@@ -320,13 +320,17 @@ Run::
   $ ./manage.py btwexistdb loadindex
   $ ./manage.py btwexistdb load
   $ ./manage.py btwworker start --all
-  $  ./manage.py btwworker generate-monit-config build/scripts
-  # Install the config generated.
   $ ./manage.py btwcheck
   $ make test-django
   [The Zotero tests will necessarily fail because the server is set
    to connect to the production Zotero database.]
-  $ sudo monit monitor btw
+  # We need to stop everything started manually so that systemd
+  # takes over.
+  $ ./manage.py btwredis stop
+  $ ./manage.py btwexistdb stop
+  $ sudo cp build/services/* /etc/systemd/system
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl start btw
 
 If you have not yet done so, create the log directory for the nginx
 process responsible for serving BTW::
@@ -473,24 +477,14 @@ Generally:
              upgrades require that the following steps be partially
              performed or done in a different way, etc.
 
-.. note:: It may be advantageous to send ``SIGUSR1`` to ``monit`` when
-          waiting for a status change that affects a whole
-          group. Because otherwise it may take ``n * polling
-          interval`` (where ``n`` is the number of processes that have
-          to change) before monit is done making the state change. If
-          the polling interval is the default 2 minutes, then waiting
-          for 4 processes to start may take 8 minutes!
-
 4. Run::
 
-    $ sudo monit unmonitor -g [appropriate group name]
     $ . ../btw_env/bin/activate
-    $ ./manage.py btwworker stop --all
 
     # The next command **must** be omitted if BTW is meant to continue
     # running. May be omitted if there is no change to how redis is
     # configured.
-    $ ./manage.py btwredis stop
+    $ systemctl stop btw
 
     $ git fetch origin --tags
     $ git pull origin
@@ -499,6 +493,11 @@ Generally:
     $ pip install -r frozen_requirements.txt
     $ npm install
     $ make
+    $ sudo cp build/services/* /etc/systemd/system
+    $ sudo systemctl daemon-reload
+    # Also check for services in /etc/systemd/system that may
+    # be obsolete.
+
     $ ./manate.py btwredis start
     $ ./manage.py migrate
 
@@ -514,30 +513,20 @@ Generally:
     # take hours to run a vacuumdb full operation.
     $ time vacuumdb -fzv
 
-    # Execute the next command if redis is not already running.
-    $ ./manage.py btwredis start
+    $ ./manage.py btwredis stop
+    $ systemctl start btw
 
-    $ ./manage.py btwworker start --all
     $ ./manage.py btwcheck
-    $ ./manage.py btw generate-monit-config build/scripts
-    # Check the generated config against what is already installed, update
-    # if needed. Copy into /etc/monit/conf.d if update needed.
-    # Issue ``service monit reload`` to have it read its configuration.
 
     $ make test-django
     [The Zotero tests will necessarily fail because the server is set
      to connect to the production database.]
-    $ sudo monit monitor -g [appropriate group name]
 
-5. Reload btw::
-
-     $ sudo monit restart -g btw
-
-6. Run btw-smoketest::
+5. Run btw-smoketest::
 
      scrapy crawl btw -a btw_dev='<secret>'
 
-7. Take the site out of maintenance mode.
+6. Take the site out of maintenance mode.
 
 See below for specific upgrade cases.
 
