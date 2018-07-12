@@ -168,7 +168,7 @@ OnFailure={notification_service_invocation}
 [Service]
 Type=forking
 PIDFile={existdb_pidfile}
-ExecStart={script_dir}/manage btwexistdb start
+ExecStart={script_dir}/manage btwexistdb start --timeout=40
 ExecStop={script_dir}/manage btwexistdb stop
 Restart=on-failure
 User=btw

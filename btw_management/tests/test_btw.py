@@ -180,7 +180,7 @@ OnFailure=testing-notification@%n.service
 [Service]
 Type=forking
 PIDFile=foo/var/run/eXist.pid
-ExecStart={script_dir}/manage btwexistdb start
+ExecStart={script_dir}/manage btwexistdb start --timeout=40
 ExecStop={script_dir}/manage btwexistdb stop
 Restart=on-failure
 User=btw
