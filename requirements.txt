@@ -55,7 +55,12 @@ cssselect>=0.9.1,<1
 grako==3.8.1
 django-pipeline>=1.6.9,<1.7
 django-mptt>=0.8.6,<0.9
-redis>=2.10.6,<3
+#
+# We need this to prevent redis-py from missing the EINTR error.
+#
+# See https://github.com/andymccurdy/redis-py/pull/813
+# See https://github.com/andymccurdy/redis-py/pull/944
+-e git+https://github.com/lddubeau/redis-py@fix/no-interruptederror-on-python-2.7#egg=redis
 django-debug-toolbar==1.4
 eulexistdb>=0.21.1,<1
 eulxml>=1.1.3,<2
