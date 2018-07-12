@@ -161,6 +161,8 @@ PIDFile=foo/var/run/redis/testing.redis.pid
 ExecStart={script_dir}/manage btwredis start
 ExecStop={script_dir}/manage btwredis stop
 Restart=on-failure
+# Restarting too fast causes issues.
+RestartSec=1
 User=btw
 Group=btw
 
