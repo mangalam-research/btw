@@ -24,6 +24,15 @@ class Start(SubCommand):
 
     name = "start"
 
+    def add_to_parser(self, subparsers):
+        sp = super(Start, self) .add_to_parser(subparsers)
+        sp.add_argument('--timeout',
+                        default=30,
+                        type=int,
+                        help='Time to wait before giving up.')
+
+        return sp
+
     def __call__(self, command, options):
         if running():
             raise CommandError("eXist appears to be running already.")
@@ -51,7 +60,7 @@ class Start(SubCommand):
             pidfile.write(str(child.pid))
 
         # We now check the output
-        maxwait = 10  # Wait a maximum of 10 seconds for it to start.
+        maxwait = options["timeout"]
         start = time.time()
         started = False
         while not started and time.time() - start < maxwait:
