@@ -3,21 +3,245 @@ import time
 import os
 import signal
 import xmlrpclib
-import argparse
 
-from django.core.management.base import BaseCommand, CommandError, \
-    CommandParser
+from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from lib import existdb
+
 from lib.existdb import ExistDB
 from lib.existdb import get_admin_db, get_collection_path, running
-
-from lexicography.models import Chunk, ChangeRecord
+from lib.command import SubCommand, SubParser
+from lexicography.models import Chunk
 
 def assert_running():
     if not running():
         raise CommandError("eXist is not running.")
+
+class Start(SubCommand):
+    """
+    Start the existdb server.
+    """
+
+    name = "start"
+
+    def __call__(self, command, options):
+        if running():
+            raise CommandError("eXist appears to be running already.")
+
+        server_type = settings.BTW_EXISTDB_SERVER_TYPE
+
+        if server_type not in ("full", "standalone"):
+            raise ImproperlyConfigured("BTW_EXISTDB_SERVER_TYPE should have "
+                                       "the values 'full' or 'standalone'")
+
+        full = server_type == "full"
+        bin_path = os.path.join(command.home_path, "bin")
+        executable = os.path.join(bin_path,
+                                  "startup.sh" if full else "server.sh")
+
+        log_path = command.log_path
+        if os.path.exists(log_path):
+            os.rename(log_path, log_path + ".old")
+
+        with open(log_path, 'w') as log:
+            child = subprocess.Popen([executable], stdout=log,
+                                     stderr=log, preexec_fn=os.setsid)
+
+        with open(command.pidfile_path, 'w') as pidfile:
+            pidfile.write(str(child.pid))
+
+        # We now check the output
+        maxwait = 10  # Wait a maximum of 10 seconds for it to start.
+        start = time.time()
+        started = False
+        while not started and time.time() - start < maxwait:
+            with open(log_path, 'r') as readlog:
+                if "Server has started on ports" in readlog.read():
+                    started = True
+                    break
+            time.sleep(0.2)
+
+        if started:
+            command.stdout.write("Started eXist.")
+        else:
+            raise CommandError("cannot talk to eXist.")
+
+class Stop(SubCommand):
+    """
+    Stop the existdb server.
+    """
+
+    name = "stop"
+
+    def __call__(self, command, _options):
+        with open(command.pidfile_path, 'r') as pidfile:
+            pid = int(pidfile.read().strip())
+
+        try:
+            # SIGTERM does not do it...
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except OSError as ex:
+            if ex.errno != 3:
+                raise
+
+        command.stdout.write("Stopped eXist.")
+
+class Createuser(SubCommand):
+    """
+    Create the user and groups necessary for using the server.
+    """
+
+    name = "createuser"
+
+    def __call__(self, command, _options):
+        assert_running()
+        db = get_admin_db()
+
+        for (group, desc) in command.new_user_groups.iteritems():
+            db.server.addGroup(
+                group,
+                {'http://exist-db.org/security/description': desc})
+
+        db.server.addAccount(
+            command.server_user,
+            settings.EXISTDB_SERVER_PASSWORD,
+            "", command.new_user_groups.keys(),
+            True, 0022,
+            {
+                'http://exist-db.org/security/description':
+                'BTW user'
+            })
+
+        db.server.setUserPrimaryGroup(command.server_user, command.btw_group)
+        db = ExistDB()
+
+class Dropuser(SubCommand):
+    """
+    Remove the user and groups necessary for using the server.
+    """
+
+    name = "dropuser"
+
+    def __call__(self, command, _options):
+        assert_running()
+        db = get_admin_db()
+
+        server_user = command.server_user
+        db.server.removeAccount(server_user)
+        try:
+            db.server.getAccount(server_user)
+            # If there is no exception, the account exists.
+            raise CommandError("could not remove account '{}'"
+                               .format(server_user))
+        except xmlrpclib.Fault:
+            # If there was an exception, the account does not
+            # exist, which is what we wanted.
+            pass
+
+        for group in command.new_user_groups:
+            # The return value is not reliable.
+            db.server.removeGroup(group)
+            if db.server.getGroup(group) is not None:
+                raise CommandError("could not remove group '{}'"
+                                   .format(group))
+
+class Createdb(SubCommand):
+    """
+    Create the database needed by BTW.
+    """
+
+    name = "createdb"
+
+    def __call__(self, command, _options):
+        assert_running()
+
+        db = get_admin_db()
+        for collection in [settings.EXISTDB_ROOT_COLLECTION,
+                           get_collection_path("chunks"),
+                           get_collection_path("display")]:
+            db.createCollection(collection)
+            db.server.setPermissions(collection, command.server_user,
+                                     command.btw_group, 0770)
+
+class Dropdb(SubCommand):
+    """
+    Remove the database needed by BTW.
+    """
+
+    name = "dropdb"
+
+    def __call__(self, command, _options):
+        assert_running()
+        db = get_admin_db()
+        db.removeCollection(settings.EXISTDB_ROOT_COLLECTION, True)
+
+class Load(SubCommand):
+    """
+    Load initial data into a new database. This is necessary for BTW to run.
+    """
+
+    name = "load"
+
+    def __call__(self, command, _options):
+        """
+        Load initial data into a new database. This is necessary for BTW
+        to run.
+        """
+        assert_running()
+
+        from django.utils import translation
+        translation.activate('en-us')
+
+        db = ExistDB()
+        chunk_collection_path = get_collection_path("chunks")
+
+        if db.hasCollection(chunk_collection_path):
+            db.removeCollection(chunk_collection_path)
+
+        Chunk.objects.sync_with_exist()
+
+        display_path = get_collection_path("display")
+        if db.hasCollection(display_path):
+            db.removeCollection(display_path)
+        Chunk.objects.prepare("xml", True)
+
+class Loadindex(SubCommand):
+    """
+    Load the indexes used by BTW.
+    """
+
+    name = "loadindex"
+
+    def __call__(self, command, _options):
+        assert_running()
+        db = get_admin_db()
+        collection = get_collection_path(None)
+        db.loadCollectionIndex(collection, open(command.chunk_index, 'r'))
+        db.reindexCollection(collection)
+
+class Dropindex(SubCommand):
+    """
+    Drop the indexes used by BTW.
+    """
+
+    name = "dropindex"
+
+    def __call__(self, command, _options):
+        assert_running()
+        db = get_admin_db()
+        collection = get_collection_path(None)
+        db.removeCollectionIndex(collection)
+
+class Checkdb(SubCommand):
+    """
+    Check that the server is running.
+    """
+
+    name = "checkdb"
+
+    def __call__(self, command, _options):
+        assert_running()
+        command.stdout.write("eXist-db instance is alive.")
 
 
 class Command(BaseCommand):
@@ -59,215 +283,15 @@ Manage the eXist server used by BTW.
                 .format(settings.EXISTDB_ROOT_COLLECTION))
 
         self.root_collection = root_collection
-        self.subcommands = {}
-
-        for cmd in ["start", "stop", "createuser", "dropuser", "createdb",
-                    "dropdb", "load", "loadindex", "dropindex", "checkdb"]:
-            self.register_subcommand(cmd, getattr(self, cmd))
-
-    def register_subcommand(self, name, method):
-        self.subcommands[name] = method
+        self.subcommands = [Start, Stop, Createuser, Dropuser, Createdb,
+                            Dropdb, Load, Loadindex, Dropindex, Checkdb]
 
     def add_arguments(self, parser):
-        top = self
-
-        class SubParser(CommandParser):
-
-            def __init__(self, **kwargs):
-                super(SubParser, self).__init__(top, **kwargs)
-
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser)
+                                           parser_class=SubParser(self))
 
-        commands = set(self.subcommands.keys())
-        for cmd in commands:
-            method = self.subcommands[cmd]
-            sp = subparsers.add_parser(
-                cmd,
-                description=method.__doc__,
-                help=method.__doc__,
-                formatter_class=argparse.RawTextHelpFormatter)
-            sp.set_defaults(method=method)
+        for cmd in self.subcommands:
+            cmd().add_to_parser(subparsers)
 
     def handle(self, *args, **options):
-        options['method'](options)
-
-    def start(self, options):
-        """
-        Start the existdb server.
-        """
-        if running():
-            raise CommandError("eXist appears to be running already.")
-
-        server_type = settings.BTW_EXISTDB_SERVER_TYPE
-
-        if server_type not in ("full", "standalone"):
-            raise ImproperlyConfigured("BTW_EXISTDB_SERVER_TYPE should have "
-                                       "the values 'full' or 'standalone'")
-
-        full = server_type == "full"
-        bin_path = os.path.join(self.home_path, "bin")
-        executable = os.path.join(bin_path,
-                                  "startup.sh" if full else "server.sh")
-
-        log_path = self.log_path
-        if os.path.exists(log_path):
-            os.rename(log_path, log_path + ".old")
-
-        with open(log_path, 'w') as log:
-            child = subprocess.Popen([executable], stdout=log,
-                                     stderr=log, preexec_fn=os.setsid)
-
-        with open(self.pidfile_path, 'w') as pidfile:
-            pidfile.write(str(child.pid))
-
-        # We now check the output
-        maxwait = 10  # Wait a maximum of 10 seconds for it to start.
-        start = time.time()
-        started = False
-        while not started and time.time() - start < maxwait:
-            with open(log_path, 'r') as readlog:
-                if "Server has started on ports" in readlog.read():
-                    started = True
-                    break
-            time.sleep(0.2)
-
-        if started:
-            self.stdout.write("Started eXist.")
-        else:
-            raise CommandError("cannot talk to eXist.")
-
-    def stop(self, _options):
-        """
-        Stop the existdb server.
-        """
-        with open(self.pidfile_path, 'r') as pidfile:
-            pid = int(pidfile.read().strip())
-
-        try:
-            # SIGTERM does not do it...
-            os.killpg(os.getpgid(pid), signal.SIGKILL)
-        except OSError as ex:
-            if ex.errno != 3:
-                raise
-
-        self.stdout.write("Stopped eXist.")
-
-    def createuser(self, _options):
-        """
-        Create the user and groups necessary for using the server.
-        """
-        assert_running()
-        db = get_admin_db()
-
-        for (group, desc) in self.new_user_groups.iteritems():
-            db.server.addGroup(
-                group,
-                {'http://exist-db.org/security/description': desc})
-
-        db.server.addAccount(
-            self.server_user,
-            settings.EXISTDB_SERVER_PASSWORD,
-            "", self.new_user_groups.keys(),
-            True, 0022,
-            {
-                'http://exist-db.org/security/description':
-                'BTW user'
-            })
-
-        db.server.setUserPrimaryGroup(self.server_user, self.btw_group)
-        db = ExistDB()
-
-    def dropuser(self, _options):
-        """
-        Remove the user and groups necessary for using the server.
-        """
-        assert_running()
-        db = get_admin_db()
-
-        server_user = self.server_user
-        db.server.removeAccount(server_user)
-        try:
-            db.server.getAccount(server_user)
-            # If there is no exception, the account exists.
-            raise CommandError("could not remove account '{}'"
-                               .format(server_user))
-        except xmlrpclib.Fault:
-            # If there was an exception, the account does not
-            # exist, which is what we wanted.
-            pass
-
-        for group in self.new_user_groups:
-            # The return value is not reliable.
-            db.server.removeGroup(group)
-            if db.server.getGroup(group) is not None:
-                raise CommandError("could not remove group '{}'"
-                                   .format(group))
-
-    def createdb(self, _options):
-        """
-        Create the database needed by BTW.
-        """
-        assert_running()
-
-        db = get_admin_db()
-        for collection in [settings.EXISTDB_ROOT_COLLECTION,
-                           get_collection_path("chunks"),
-                           get_collection_path("display")]:
-            db.createCollection(collection)
-            db.server.setPermissions(collection,
-                                     self.server_user, self.btw_group, 0770)
-
-    def dropdb(self, _options):  # pylint: disable=no-self-use
-        """
-        Remove the database needed by BTW.
-        """
-        assert_running()
-        db = get_admin_db()
-        db.removeCollection(settings.EXISTDB_ROOT_COLLECTION, True)
-
-    def load(self, _options):  # pylint: disable=no-self-use
-        """
-        Load initial data into a new database. This is necessary for BTW
-        to run.
-        """
-        assert_running()
-
-        from django.utils import translation
-        translation.activate('en-us')
-
-        db = ExistDB()
-        chunk_collection_path = get_collection_path("chunks")
-
-        if db.hasCollection(chunk_collection_path):
-            db.removeCollection(chunk_collection_path)
-
-        Chunk.objects.sync_with_exist()
-
-        display_path = get_collection_path("display")
-        if db.hasCollection(display_path):
-            db.removeCollection(display_path)
-        Chunk.objects.prepare("xml", True)
-
-    def loadindex(self, _options):
-        """
-        Load the indexes used by BTW.
-        """
-        assert_running()
-        db = get_admin_db()
-        collection = get_collection_path(None)
-        db.loadCollectionIndex(collection, open(self.chunk_index, 'r'))
-        db.reindexCollection(collection)
-
-    def dropindex(self, _options):
-        assert_running()
-        db = get_admin_db()
-        collection = get_collection_path(None)
-        db.removeCollectionIndex(collection)
-
-    def checkdb(self, _options):
-        """
-        Checks that the server is running.
-        """
-        assert_running()
-        self.stdout.write("eXist-db instance is alive.")
+        options["subcommand"](self, options)
