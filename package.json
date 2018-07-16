@@ -17,7 +17,7 @@
     "bootstrap-datepicker": ">=1.4.0 <2",
     "chai": ">=3 <4",
     "chai-as-promised": ">=5.2.0 <6",
-    "dragula": "^3.7.1",
+    "dragula": "git+https://github.com/lddubeau/dragula.git",
     "eslint": "^2.10.2",
     "eslint-config-lddubeau-base": "^0.1.0",
     "handlebars": "^4.0.5",
