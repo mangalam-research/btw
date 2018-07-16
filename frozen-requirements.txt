@@ -23,7 +23,7 @@ coreapi==2.1.1
 cryptography==2.0.3
 cssselect==0.9.1
 distlib==0.2.3
-Django==1.11.9
+Django==1.11.14
 django-allauth==0.25.2
 django-appconf==1.0.2
 django-bootstrap3==8.2.3
@@ -91,7 +91,7 @@ parse-type==0.3.4
 passlib==1.6.5
 pbr==1.9.1
 Pebble==3.1.14
-Pillow==2.9.0
+Pillow==5.2.0
 pipdeptree==0.6.0
 ply==3.8
 psycopg2==2.6.1
@@ -109,7 +109,7 @@ pytz==2016.4
 PyVirtualDisplay==0.2
 PyYAML==3.11
 rdflib==4.2.1
-redis==2.10.6
+-e git+https://github.com/lddubeau/redis-py@1e62bef251d834e9a2830d608377449b6540f804#egg=redis
 requests==2.11.1
 requests-oauthlib==0.6.1
 requests-unixsocket==0.1.5
