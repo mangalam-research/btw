@@ -41,7 +41,7 @@ django-classy-tags>=0.8.0,<0.9
 djangocms-admin-style==1.1.0
 html5lib==0.999
 # Optional, recommended packages for django-cms
-Pillow>=2,<3
+Pillow>=3
 django-filer==1.2.8
 # Django filer needs this but to work with Django 1.11 it needs
 # to be at 2.4.1.
