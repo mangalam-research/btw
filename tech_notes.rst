@@ -330,6 +330,7 @@ Run::
   $ ./manage.py btwexistdb stop
   $ sudo cp build/services/* /etc/systemd/system
   $ sudo systemctl daemon-reload
+  $ sudo systemctl enable btw
   $ sudo systemctl start btw
 
 If you have not yet done so, create the log directory for the nginx
