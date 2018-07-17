@@ -208,6 +208,18 @@ Installing
 Database
 --------
 
+.. warning:: The following setup completely ignores schemas and the
+             schema search path. The fact is that the btw database is
+             designed for one, and one user only. With a single user,
+             there's no issue of one user messing up an other user's
+             query by adding something to the public schema.
+
+             If more users are added with access to the btw database,
+             then a security review of security practices needs to be
+             done, with special consideration given to using one of
+             the usage patterns at
+             `<https://www.postgresql.org/docs/9.6/static/ddl-schemas.html#DDL-SCHEMAS-PATTERNS>`_.
+
 BTW needs to have its own database.
 
 1. Create a user for it::
