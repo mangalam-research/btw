@@ -114,8 +114,8 @@ def get_senses(util):
             throw new Error("too many terms!");
         var $clone = $term.clone();
         $clone.find("._phantom").remove();
-        ret.push({term: $clone[0] ? $clone.text().trim() : undefined,
-                  id: $sense.attr("data-wed-xml---id")});
+        ret.push({term: $clone[0] ? $clone.text().trim() : null,
+                  id: $sense.attr("data-wed-xml---id-") || null});
     }
     return ret;
     """)]
