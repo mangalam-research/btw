@@ -25,7 +25,7 @@
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chai": ">=0.1.0 <1",
     "karma-chai-as-promised": ">=0.1.2 <1",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-fixture": "^0.2.6",
     "karma-html2js-preprocessor": "^1.0.0",
     "karma-json-fixtures-preprocessor": "^0.0.6",
