@@ -87,8 +87,9 @@ JQUERY_GROWL_URL:=https://github.com/ksylvest/jquery-growl/archive/v1.2.3.zip
 JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
 
 WED_PATH:=$(PWD)/node_modules/wed
-WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),standalone,packed)
-WED_LESS_INC_PATH:=$(WED_BUILD)/lib/wed/less-inc/
+WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
+# wed 1.0.0 does not include the inc files in the packed hierarchy.
+WED_LESS_INC_PATH:=$(WED_PATH)/standalone/lib/wed/less-inc/
 
 ifeq ($(wildcard $(WED_BUILD)),)
 $(error Cannot find the wed build at $(WED_BUILD))
