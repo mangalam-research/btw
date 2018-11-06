@@ -4,6 +4,8 @@ django-nose>=1.4.5,<2
 django-webtest>=1.9.2
 webtest>=2.0.27
 mock>=1.0.1,<2
+# This version of mitmproxy is ancient. However, the latest mitmproxy requires
+# Python 3. It is not viable to upgrade until we also move to python 3.
 mitmproxy>=0.11.0,<0.12.0
 django-allauth>=0.25.2,<0.26
 django-datatables-view==1.13
