@@ -12,7 +12,7 @@ Linux,CH,69
 # Perform these next because IE compatibility is a major
 # issue. Finding problems early pays.
 #
-Windows 8.1,IE,11,Remote
+Windows 10,Edge,15,Remote
 
 #
 # Perform these next because OS X compatibility is an issue. Again, we
