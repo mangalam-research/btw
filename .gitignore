@@ -16,5 +16,5 @@ local.mk
 /transformations
 /TODO.private
 /dev-backups
-/.btw-venv
+/.btw-venv*
 env

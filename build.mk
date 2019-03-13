@@ -470,14 +470,27 @@ downloads/$(BOOTSTRAP_TREEVIEW_BASE): | downloads
 venv:
 	[ -e .btw-venv ] || virtualenv .btw-venv
 
+.PHONY: venv3
+venv3:
+	[ -e .btw-venv3 ] || python3 -m venv .btw-venv3
+
 .PHONY: dev-venv
 dev-venv: venv
 	.btw-venv/bin/pip install -r frozen-requirements.txt
+
+.PHONY: dev-venv3
+dev-venv3: venv3
+	.btw-venv3/bin/pip install wheel
+	.btw-venv3/bin/pip install -r dev-requirements3.txt
 
 .PHONY: shrinkwrap
 shrinkwrap:
 	npm prune
 	npm shrinkwrap
+
+.PHONY: freeze
+freeze:
+	tasks/freeze
 
 
 .PHONY: clean
