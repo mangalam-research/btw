@@ -927,25 +927,6 @@ the ``bibliography`` app. All other tests should be mocking the
 no talking to the server). The module
 ``bibliography.tests.mock_zotero`` is used for this task.
 
-Versions 0.10 and 0.11 of ``mitmdump`` suffer from a bug that makes
-replaying fail unless we use the ``--no-pop`` option. However, when we
-use ``--no-pop``, mitmproxy does not remove used match
-request/response pairs. So if we issue two requests that are
-considered *same* by ``mitmdump`` but we expect a *different*
-response, replaying will fail because the first response will be
-replayed twice. We work around this issue this way:
-
-* At recording time, rewrite the saved requests to add a
-  ``X-BTW-Sequence`` header field which is incremented with each
-  request.
-
-* At replaying time, filter the requests made by the code being tested
-  so that they gain a ``X-BTW-Sequence`` field which is incremented
-  with each request.
-
-* At replaying time, add ``--rheader X-BTW-Sequence`` so that request
-matching is performed on this field.
-
 Mitmproxy uses a self-signed certificate to serve data. Forwarding the
 upstream certificate currently does not work. (See
 `<https://github.com/mitmproxy/netlib/issues/32>`__ .) Moreover, we'd

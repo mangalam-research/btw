@@ -2,18 +2,14 @@ from functools import wraps
 import time
 import urllib2
 import os
-import re
 import tempfile
 import subprocess
 
 import mock
 
 from django.conf import settings
-from libmproxy import flow
 
 dirname = os.path.dirname(__file__)
-key_re = re.compile(r"([&?]key=)[^&]+")
-id_re = re.compile(r"^(/(?:groups|users)/)\d+/")
 
 MITMPROXY_CERT_DIR = os.path.join(os.environ['HOME'], ".mitmproxy")
 
@@ -162,24 +158,17 @@ def _proxify(file_name, f):
             if not hasattr(f, "proxy"):
                 port = get_port()
 
-                cmd = ["mitmdump",
-                       "--noapp",  # Disable web app
+                mitmdump = os.path.join(settings.TOPDIR, ".btw-venv3", "bin",
+                                        "mitmdump")
+                cmd = [mitmdump,
                        "-q",  # Quiet
                        "-p", str(port)]  # Port to use
                 if hasattr(f, "record"):
                     cmd += ["-w", temp[1]]  # Write to file
                 else:
-                    #
-                    # The X-BTW-Sequence thing and --no-pop are to
-                    # work around an sequencing issue. See the
-                    # tech_notes.rst file section on testing the
-                    # Zotero code.
-                    #
                     cmd += [
                         # Don't check upstream certs.
-                        "--no-upstream-cert",
-                        "--no-pop",
-                        "--rheader", "X-BTW-Sequence",
+                        "--set", "upstream_cert=false",
                         # Get rid of some sensitive information.
                         "-s",
                         os.path.join(dirname, "proxy_rewrite.py"),
@@ -240,28 +229,12 @@ def _proxify(file_name, f):
                     del os.environ['SSL_CERT_DIR']
 
             if not hasattr(f, "proxy") and hasattr(f, "record"):
-                inf = os.fdopen(temp[0], 'rb')
-                freader = flow.FlowReader(inf)
-                outf = open(fname, 'w')
-                fwriter = flow.FlowWriter(outf)
-                sequence = 0
-                for i in freader.stream():
-                    i.request.path = \
-                        id_re.sub(r"\1none/",
-                                  key_re.sub(r"\1none", i.request.path))
-
-                    #
-                    # The X-BTW-Sequence thing is to work around an
-                    # sequencing issue. See the tech_notes.rst file
-                    # section on testing the Zotero code. We probably
-                    # will be able to get rid of this when mitmproxy
-                    # 0.11 is released.
-                    #
-                    i.request.headers["X-BTW-Sequence"] = [sequence]
-                    sequence += 1
-                    fwriter.add(i)
-                outf.close()
-                inf.close()
+                py3 = os.path.join(settings.TOPDIR, ".btw-venv3", "bin",
+                                   "python3")
+                subprocess.check_call([py3,
+                                       os.path.join(
+                                           dirname, "flow_rewrite.py"),
+                                       temp[1], fname])
         finally:
             try:
                 os.unlink(temp[1])
