@@ -903,11 +903,40 @@ Django Tests
 Running the Tests
 -----------------
 
-You should be using ``make`` to run the tests rather than
-``./manage.py test`` because some of the tests are dependent on files
-that are generated with ``make``::
+You should be using ``make`` to run the tests rather than ``./manage.py test``
+because some of the tests are dependent on files that are generated with
+``make``, and some of the tests need to be run in isolation::
 
     $ make test
+
+Test Isolation
+--------------
+
+As of the time of writing, the Django tests need to be run in 3 isolated groups:
+
+* The menu tests in ``./core/tests/test_menus.py``. Django CMS caches a fair
+  amount of information. This includes menu information. Unfortunately, this
+  causes (some of) the tests in ``test_menus.py`` to fail if they are run with
+  the rest of the BTW test suite. Therefore, these tests must be run in a
+  *separate* test run.
+
+* The btwredis tests in ``./btw_management/tests/test_btwredis.py``. In order to
+  test ``btwredis``, the test suite needs to stop the default redis instance
+  started by the test runner, and restart it afterwards. The problem though is
+  that this stop/start resets the connections that were open prior to running
+  the ``btwredis`` tests and causes a failure in the rest of the suite. So these
+  tests must be isolated.
+
+* The other tests not covered in the two groups above.
+
+An earlier version of BTW used the attrib plugin of nosetests to segregate the
+tests (``@attr(isolation="menu")`` in a test file, and ``--attr='!isolation'``
+in the build file, etc.). However, the attrib plugin does not skip a *whole
+module* when all the tests in it are to be skipped, and this is a problem for
+the ``btwredis`` tests because we need to skip the *module* setup and tear down
+code *too*. So instead we use ``--ignore-files`` to skip the necessary files and
+specify them by name where needed. See the targets ``test-django*`` in
+``build.mk`` for the gory details.
 
 Zotero Tests
 ------------

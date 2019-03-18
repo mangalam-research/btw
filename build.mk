@@ -266,14 +266,18 @@ test: test-django test-karma
 .PHONY: test-django
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
-test-django: test-django-menu $(TARGETS)
-	$(DJANGO_MANAGE) test --attr='!isolation'
+test-django: test-django-menu test-django-btwredis $(TARGETS)
+	$(DJANGO_MANAGE) test --ignore-files=test_btwredis.py --ignore-files=test_menus.py
 
 .PHONY: test-django-menu
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
 test-django-menu: $(TARGETS)
-	$(DJANGO_MANAGE) test --attr=isolation=menu
+	$(DJANGO_MANAGE) test ./core/tests/test_menus.py
+
+.PHONY: test-django-btwredis
+test-django-btwredis:
+	$(DJANGO_MANAGE) test ./btw_management/tests/test_btwredis.py
 
 .PHONY: test-data
 test-data: $(TEST_DATA_FILES)

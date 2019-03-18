@@ -1,8 +1,6 @@
 import re
 import os
 
-from nose.plugins.attrib import attr
-
 from django.core.urlresolvers import reverse
 from django_webtest import WebTest
 from django.contrib.auth import get_user_model
@@ -28,9 +26,6 @@ def reverse_to_re(name):
 # these tests must be run in a *separate* test run.
 #
 
-# This is used by nose to isolate these tests from the rest of
-# the suite.
-@attr(isolation="menu")
 @override_settings(ACCOUNT_EMAIL_VERIFICATION="none")
 class MenuTestCase(DisableMigrationsMixin, WebTest):
 
