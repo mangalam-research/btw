@@ -86,7 +86,7 @@ class BTWWorkerTestCase(SimpleTestCase):
 
     def test_no_command(self):
         """
-        Tests that btwredis requires a command.
+        Tests that btwworker requires a command.
         """
         c = Caller()
         with self.assertRaisesRegexp(CommandError, r"too few arguments"):
@@ -95,7 +95,7 @@ class BTWWorkerTestCase(SimpleTestCase):
 
     def test_bad_command(self):
         """
-        Tests that btwredis requires a command.
+        Tests that btwworker requires a command.
         """
         c = Caller()
         with self.assertRaisesRegexp(CommandError,
@@ -105,7 +105,7 @@ class BTWWorkerTestCase(SimpleTestCase):
 
     def test_names(self):
         """
-        Test that ``btwredis names`` prints the names of the known
+        Test that ``btwworker names`` prints the names of the known
         workers.
         """
         stdout, stderr = call_command("btwworker", "names")
@@ -115,19 +115,19 @@ class BTWWorkerTestCase(SimpleTestCase):
 
     def test_names_does_not_take_arguments(self):
         """
-        Test that ``btwredis names`` does not take arguments.
+        Test that ``btwworker names`` does not take arguments.
         """
         self.check_no_arguments("names")
 
     def test_names_does_not_take_all(self):
         """
-        Test that ``btwredis names`` does not take ``--all``.
+        Test that ``btwworker names`` does not take ``--all``.
         """
         self.check_no_all("names")
 
     def test_start_all(self):
         """
-        Test that ``btwredis start --all`` starts all workers.
+        Test that ``btwworker start --all`` starts all workers.
         """
         try:
             stdout, stderr = call_command("btwworker", "start", all=True)
@@ -147,7 +147,7 @@ Pinging worker testing.bibliography.worker... passed
 
     def test_start_one(self):
         """
-        Test that ``btwredis start [name]`` starts the named worker.
+        Test that ``btwworker start [name]`` starts the named worker.
         """
         try:
             stdout, stderr = call_command("btwworker", "start",
@@ -165,7 +165,7 @@ Pinging worker testing.bibliography.worker... failed: no pidfile
 
     def test_start_bad_env(self):
         """
-        Test that ``btwredis start [name]`` fails if the environment is wrong.
+        Test that ``btwworker start [name]`` fails if the environment is wrong.
         """
         try:
             from core.tasks import get_btw_env
@@ -200,7 +200,7 @@ environment foo)
 
     def test_stop_all(self):
         """
-        Test that ``btwredis stop --all`` stops all workers.
+        Test that ``btwworker stop --all`` stops all workers.
         """
         try:
             call_command("btwworker", "start", all=True)
@@ -221,7 +221,7 @@ Pinging worker testing.bibliography.worker... passed
 
     def test_stop_one(self):
         """
-        Test that ``btwredis stop [name]`` stops one worker.
+        Test that ``btwworker stop [name]`` stops one worker.
         """
         try:
             call_command("btwworker", "start", all=True)
@@ -249,7 +249,7 @@ Pinging worker testing.bibliography.worker... passed
 
     def test_stop_not_running(self):
         """
-        Test that ``btwredis stop --all`` knows when workers are not
+        Test that ``btwworker stop --all`` knows when workers are not
         running.
         """
         stdout, stderr = call_command("btwworker", "stop", all=True)
@@ -262,13 +262,13 @@ testing.bibliography.worker was not running.
 
     def test_check_does_not_take_arguments(self):
         """
-        Test that ``btwredis check`` does not take arguments.
+        Test that ``btwworker check`` does not take arguments.
         """
         self.check_no_arguments("check")
 
     def test_check_does_not_take_all(self):
         """
-        Test that ``btwredis check`` does not take ``--all``.
+        Test that ``btwworker check`` does not take ``--all``.
         """
         self.check_no_all("check")
 
@@ -289,7 +289,7 @@ Checking worker testing.bibliography.worker... passed
 
     def test_check_not_started(self):
         """
-        Test that ``btwredis check`` reports workers that are not started.
+        Test that ``btwworker check`` reports workers that are not started.
         """
         try:
             call_command("btwworker", "start", "testing.worker")
@@ -304,7 +304,7 @@ Checking worker testing.bibliography.worker... failed: no pidfile
 
     def test_check_bad_env(self):
         """
-        Test that ``btwredis check`` reports workers that have a bad
+        Test that ``btwworker check`` reports workers that have a bad
         environment.
         """
         try:
@@ -340,19 +340,19 @@ environment {0} (uses environment foo)
 
     def test_ping_does_not_take_arguments(self):
         """
-        Test that ``btwredis ping`` does not take arguments.
+        Test that ``btwworker ping`` does not take arguments.
         """
         self.check_no_arguments("ping")
 
     def test_ping_does_not_take_all(self):
         """
-        Test that ``btwredis ping`` does not take ``--all``.
+        Test that ``btwworker ping`` does not take ``--all``.
         """
         self.check_no_all("ping")
 
     def test_ping_not_started(self):
         """
-        Test that ``btwredis ping`` reports workers that are not started.
+        Test that ``btwworker ping`` reports workers that are not started.
         """
         try:
             call_command("btwworker", "start", "testing.worker")
