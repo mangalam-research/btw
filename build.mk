@@ -14,6 +14,8 @@ JSDOC3?=jsdoc
 # wget command.
 WGET?=wget
 
+BEHAVE?=./selenium_test/btw-behave.py
+
 # Parameters to pass to behave
 BEHAVE_PARAMS?=
 
@@ -250,14 +252,14 @@ selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
 selenium_test/*.feature selenium_test: build-config $(TARGETS)
-	behave $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
+	$(BEHAVE) $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
 	$(MAKE) -f build.mk all
 ifneq ($(strip $(BEHAVE_SAVE)),)
 	(STAMP=$$(date -Iseconds); \
-	behave $(BEHAVE_PARAMS) -f plain -o test_logs/$$STAMP.log -f pretty $@ ;\
+	$(BEHAVE) $(BEHAVE_PARAMS) -f plain -o test_logs/$$STAMP.log -f pretty $@ ;\
 	ln -s -f $$STAMP.log test_logs/LATEST)
 else
-	behave $(BEHAVE_PARAMS) $@
+	$(BEHAVE) $(BEHAVE_PARAMS) $@
 endif # BEHAVE_SAVE
 
 .PHONY: test

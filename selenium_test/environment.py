@@ -15,7 +15,6 @@ import re
 from slugify import slugify
 import selenic.util
 from selenic import Builder
-from behave import step_registry
 from behave.tag_matcher import ActiveTagMatcher
 from pyvirtualdisplay import Display
 
@@ -293,6 +292,10 @@ def before_all(context):
 
     atexit.register(cleanup, context, True)
 
+    if not hasattr(context, "step_registry"):
+        raise Exception("you must use a test runner that exposes "
+                        "step_registry on the context object")
+
     # We need to set these to None so that cleanup does not fail. It
     # expects to be able to check these fields without having to check
     # first for their existence.
@@ -459,7 +462,7 @@ def before_scenario(context, scenario):
     context.initial_window_handle = driver.current_window_handle
 
     matching_funcs = set(m.func for m in
-                         [step_registry.registry.find_match(s) for s
+                         [context.step_registry.find_match(s) for s
                           in scenario.steps] if m is not None)
     # Record whether we need sense recording.  What we are doing here
     # is scanning the list of steps for this scenario, seeking the

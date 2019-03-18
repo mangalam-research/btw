@@ -1127,6 +1127,9 @@ where ``OS,BROWSER,VERSION`` is a combination of
 Behind the scenes, this will launch behave. See `<Makefile>`_ to see
 how behave is run.
 
+Note that the Selenium-based tests currently need a special test runner to run
+properly. They need to be run through `<selenium_test/btw-behave.py>`_
+
 How to Modify Fixtures
 ----------------------
 
