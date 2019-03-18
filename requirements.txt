@@ -14,10 +14,7 @@ selenium==2.49.0
 behave>=1.2.6,<2
 selenic>=0.11.0,<1
 pebble>=3.1.8,<4
-# We cannot use versions greater than 4.3.0 until this is fixed:
-# https://github.com/niwinz/django-redis/issues/223
-# Will probably be fixed in 4.6.0, which is still unreleased.
-django-redis==4.3.0
+django-redis>=4.10.0,<5
 django-cache-management>=2,<3
 celery[redis]==4.0.2
 wedutil==0.21.3
