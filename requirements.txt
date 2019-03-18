@@ -6,7 +6,7 @@ webtest>=2.0.27
 mock>=1.0.1,<2
 django-allauth>=0.25.2,<0.26
 django-datatables-view==1.13
-psycopg2>=2.5.2,<3
+psycopg2>=2.7,<2.8 --no-binary psycopg2
 django-bootstrap3>=8.2.1,<9
 requests>=2.4.0,<3
 pyvirtualdisplay>=0.1.5,<2
