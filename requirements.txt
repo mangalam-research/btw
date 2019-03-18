@@ -13,7 +13,6 @@ pyvirtualdisplay>=0.1.5,<2
 selenium==2.49.0
 behave>=1.2.6,<2
 selenic>=0.11.0,<1
-wedutil==0.21.2
 pebble>=3.1.8,<4
 # We cannot use versions greater than 4.3.0 until this is fixed:
 # https://github.com/niwinz/django-redis/issues/223
@@ -21,6 +20,7 @@ pebble>=3.1.8,<4
 django-redis==4.3.0
 django-cache-management>=2,<3
 celery[redis]==4.0.2
+wedutil==0.21.3
 #
 # We need this to prevent brpop failures. See:
 # https://github.com/celery/kombu/issues/681
