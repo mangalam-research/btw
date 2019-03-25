@@ -138,6 +138,7 @@ class ItemTable(BaseDatatableView):
     columns = ['url', 'primary_sources_url', 'primary_sources',
                'new_primary_source_url', 'creators', 'title', 'date']
     order_columns = ['', '', '', '', 'creators', 'title', 'date']
+    escape_values = False
 
     max_display_length = 500
 

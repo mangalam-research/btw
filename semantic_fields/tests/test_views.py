@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
+from django.utils.datastructures import MultiValueDictKeyError
 from django.conf import settings
 from django_webtest import WebTest, TransactionWebTest
 from django.middleware.csrf import _get_new_csrf_token
@@ -229,10 +230,8 @@ class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
         """
         params = dict(self.complete_params)
         del params[param]
-        response = self.app.get(self.url, params=params, user=self.noperm)
-        self.assertEqual(
-            response.json["error"],
-            "\nAn error occured while processing an AJAX request.")
+        with self.assertRaisesRegexp(MultiValueDictKeyError, param):
+            self.app.get(self.url, params=params, user=self.noperm)
 
     def bad_value(self, param):
         """
@@ -241,10 +240,10 @@ class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
         """
         params = dict(self.complete_params)
         params[param] = "INCORRECT!!!"
-        response = self.app.get(self.url, params=params, user=self.noperm)
-        self.assertEqual(
-            response.json["error"],
-            "\nAn error occured while processing an AJAX request.")
+        with self.assertRaisesRegexp(ValueError,
+                                     "unknown value for {}: INCORRECT!!!"
+                                     .format(param)):
+            self.app.get(self.url, params=params, user=self.noperm)
 
     def make_request_and_check(self, params, total, headings):
         response = self.app.get(self.url,
