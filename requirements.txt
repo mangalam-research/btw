@@ -19,7 +19,7 @@ django-redis>=4.10.0,<5
 django-cache-management>=3,<4
 celery[redis]>=4.2.0,<4.3
 wedutil==0.21.3
-djangorestframework>=3.4.0,<4
+djangorestframework>=3.9.2,<4
 python-slugify>=0.1.0,<0.2
 functools32>=3.2.3,<4
 django-cms==3.4.5

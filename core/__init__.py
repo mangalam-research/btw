@@ -1,5 +1,4 @@
 from lib import env
-import rest_framework
 from rest_framework.response import Response
 
 #
@@ -20,23 +19,17 @@ from rest_framework.response import Response
 # response objects. See
 # https://github.com/encode/django-rest-framework/issues/5396
 #
-drf_version = tuple(int(x) for x in rest_framework.VERSION.split("."))
 
-if drf_version > (3, 6, 4):
-    raise Exception("check whether the DRF patch is still needed with "
-                    "this version of DRF.")
+oldGetState = Response.__getstate__
 
-if drf_version <= (3, 6, 4):
-    oldGetState = Response.__getstate__
+def newGetState(self):
+    state = oldGetState(self)
+    for key in ('data', ):
+        if key in state:
+            del state[key]
+    return state
 
-    def newGetState(self):
-        state = oldGetState(self)
-        for key in ('data', ):
-            if key in state:
-                del state[key]
-        return state
-
-    Response.__getstate__ = newGetState
+Response.__getstate__ = newGetState
 
 if env.testing:
     #
