@@ -1,9 +1,9 @@
 Django>=1.11.16,<2
-semver>=0.0.2
-django-nose>=1.4.5,<2
-django-webtest>=1.9.2
-webtest>=2.0.27
-mock>=1.0.1,<2
+semver>=2.8.1,<3
+django-nose>=1.4.6,<2
+django-webtest>=1.9.4
+webtest>=2.0.33
+mock>=1.3.0,<2
 django-allauth>=0.25.2,<0.26
 django-datatables-view==1.13
 psycopg2>=2.7,<2.8 --no-binary psycopg2
