@@ -185,7 +185,7 @@ python-generation: build/python/semantic_fields/field.py
 
 build/python/semantic_fields/field.py: semantic_fields/field.ebnf
 	-mkdir -p $(dir $@)
-	grako $< -o $@
+	tatsu $< -o $@
 
 .PHONY: javascript
 javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)

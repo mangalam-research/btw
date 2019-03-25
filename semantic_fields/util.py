@@ -1,6 +1,6 @@
 import copy
 
-from grako.ast import AST
+from tatsu.ast import AST
 from .field import fieldParser
 
 class _FieldParser(fieldParser):
@@ -43,7 +43,7 @@ class ParsedExpression():
 
     :param exp: The expression that this object should represent.
     :type exp: A string or a :class:`AST`.
-    :raises: :class:`grako.exceptions.FailedParse` if ``exp`` was a
+    :raises: :class:`tatsu.exceptions.FailedParse` if ``exp`` was a
              string that could not be parsed.
     """
 

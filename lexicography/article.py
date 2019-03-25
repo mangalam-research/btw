@@ -1,7 +1,7 @@
 import re
 from copy import deepcopy
 
-from grako.exceptions import FailedParse
+from tatsu.exceptions import FailedParse
 import lxml.etree
 
 from .models import Entry

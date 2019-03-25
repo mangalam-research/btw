@@ -1,5 +1,5 @@
 from django.test import TestCase
-from grako.exceptions import FailedParse
+from tatsu.exceptions import FailedParse
 
 from ..util import parse_local_reference, ParsedExpression, POS_CHOICES, \
     POS_CHOICES_EXPANDED

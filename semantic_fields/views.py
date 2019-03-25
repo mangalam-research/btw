@@ -11,7 +11,7 @@ from rest_framework import viewsets, mixins, renderers, parsers, permissions, \
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.exceptions import NotAcceptable
-from grako.exceptions import FailedParse
+from tatsu.exceptions import FailedParse
 
 from .models import SemanticField, SpecifiedSemanticField, make_specified_sf
 from .serializers import SemanticFieldSerializer

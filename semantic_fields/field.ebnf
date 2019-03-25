@@ -1,3 +1,5 @@
+@@grammar::field
+
 (* If a field starts with an hte code it can be optionally followed by
 branches. If it does not start with an hte code, then it **must** have
 branches. *)
@@ -24,11 +26,11 @@ specification = specify @:field;
 level = /[0-9]+/;
 subcat = /[0-9]+/;
 
-(* Grako is a PEG parser, which means that the choice operator is
+(* Tatsu is a PEG parser, which means that the choice operator is
    ordered. If a valid value V for pos is prefix of another valid
-   value X, V must appear after X. Otherwise, grako will select V as
+   value X, V must appear after X. Otherwise, tatsu will select V as
    the choice and the trailing character will cause a parsing
-   failure. (e.g. If 'v' appears before 'vi' and grako tries to parse
+   failure. (e.g. If 'v' appears before 'vi' and tatsu tries to parse
    'vi', then it will select 'v' as the choice and the trailing 'i'
    will then generate a parsing error. *)
 
