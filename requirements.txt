@@ -23,12 +23,6 @@ djangorestframework>=3.9.2,<4
 python-slugify>=3,<4
 functools32>=3.2.3,<4
 django-cms==3.4.5
-# These are required by django-cms
-django-treebeard>=4.1.2,<5
-django-sekizai==0.10.0
-django-classy-tags>=0.8.0,<0.9
-djangocms-admin-style==1.1.0
-html5lib==0.999
 # Optional, recommended packages for django-cms
 Pillow>=3
 django-filer==1.4.4
