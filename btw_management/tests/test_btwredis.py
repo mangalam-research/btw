@@ -5,7 +5,7 @@ import tempfile
 import shutil
 import subprocess
 from contextlib import contextmanager
-import mock
+from unittest import mock
 
 from nose.tools import nottest
 

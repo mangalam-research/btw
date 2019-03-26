@@ -1,5 +1,4 @@
-from unittest import TestCase
-import mock
+from unittest import TestCase, mock
 import json
 import datetime
 

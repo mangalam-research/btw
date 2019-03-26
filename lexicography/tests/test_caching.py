@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import os
+from unittest import mock
 
-import mock
 import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings

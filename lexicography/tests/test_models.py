@@ -1,6 +1,6 @@
 import os
 import datetime
-import mock
+from unittest import mock
 
 from django.test import TransactionTestCase, TestCase
 from django.test.utils import override_settings

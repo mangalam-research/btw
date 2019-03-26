@@ -621,8 +621,7 @@ class Zotero(object):
     def __parse_json_response(self, data):
         """ parser for the api response """
         response_dict = json.loads(data)
-        keys = list(response_dict.keys())
-        for k in keys:
+        for k in response_dict.keys():
             if not len(response_dict[k]):
                 response_dict.pop(k)
 

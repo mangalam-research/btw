@@ -1,7 +1,7 @@
 import tempfile
 import os
 import shutil
-import mock
+from unittest import mock
 
 from django.core.management.base import CommandError
 from django.test.utils import override_settings

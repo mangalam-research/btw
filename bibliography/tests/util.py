@@ -7,7 +7,7 @@ import os
 import tempfile
 import subprocess
 
-import mock
+from unittest import mock
 
 from django.conf import settings
 import collections
@@ -290,7 +290,7 @@ class TestMeta(type):
         ``urllib.urlopen`` will raise an error.
 
         """
-        for (key, value) in list(dct.items()):
+        for (key, value) in dct.items():
             if key.startswith("test_"):
                 if hasattr(value, "record") or hasattr(value, "replay"):
                     dct[key] = _proxify(name, value)

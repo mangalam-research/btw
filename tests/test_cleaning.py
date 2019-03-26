@@ -1,6 +1,6 @@
 import time
 import datetime
-import mock
+from unittest import mock
 
 from django.test import SimpleTestCase
 from django.db import models

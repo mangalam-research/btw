@@ -1,7 +1,6 @@
 import logging.handlers
 import logging
-import mock
-from unittest import skip
+from unittest import mock, skip
 import urllib.request
 import urllib.error
 import urllib.parse

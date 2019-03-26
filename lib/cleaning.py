@@ -1,5 +1,5 @@
 import pyee
-import mock
+from unittest import mock
 
 from django.db import transaction
 

@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings

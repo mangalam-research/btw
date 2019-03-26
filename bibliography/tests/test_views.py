@@ -16,7 +16,7 @@ from cms.test_utils.testcases import BaseCMSTestCase
 
 # pylint: disable=no-name-in-module
 from nose.tools import assert_equal, assert_true
-import mock
+from unittest import mock
 
 from .util import TestMeta, replay
 from . import mock_zotero

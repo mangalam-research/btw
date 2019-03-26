@@ -6,7 +6,7 @@ have a separate module for testing them.
 """
 
 from django.test import TestCase
-import mock
+from unittest import mock
 
 from .. import signals, tasks
 from ..models import Item, PrimarySource

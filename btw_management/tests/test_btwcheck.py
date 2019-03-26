@@ -1,5 +1,5 @@
 import os
-import mock
+from unittest import mock
 from contextlib import contextmanager
 from io import RawIOBase
 

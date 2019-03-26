@@ -1,5 +1,5 @@
 import datetime
-import mock
+from unittest import mock
 
 
 from django.test import TestCase
@@ -16,6 +16,7 @@ cache = caches['bibliography']
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True,
                    CELERY_BROKER_TRANSPORT='memory')
 class TasksTestCase(TestCase, metaclass=TestMeta):
+
     def setUp(self):
         cache.clear()
         super(TasksTestCase, self).setUp()

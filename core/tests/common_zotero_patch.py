@@ -1,5 +1,5 @@
 from bibliography.tests import mock_zotero
-import mock
+from unittest import mock
 
 #
 # What we have here is the patch to the Zotero code required so that

@@ -2,7 +2,7 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import json
-import mock
+from unittest import mock
 
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
