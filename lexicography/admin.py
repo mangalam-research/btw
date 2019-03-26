@@ -22,7 +22,7 @@ from .xml import XMLTree, can_revert_to
 from . import usermod
 
 def make_link(url, text):
-    return mark_safe(u'<a href="{0}">{1}</a>'.format(url, escape(text)))
+    return mark_safe('<a href="{0}">{1}</a>'.format(url, escape(text)))
 
 def make_link_method(field_name, display_name=None):
     if display_name is None:

@@ -40,4 +40,4 @@ if __name__ == "__main__":
                 subprocess.check_call([sys.argv[0], "btwredis", "stop",
                                        "--delete-dump"])
             except Exception as ex:  # pylint: disable=broad-except
-                print ex
+                print(ex)

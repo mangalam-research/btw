@@ -3,12 +3,12 @@
 .. moduleauthor:: Louis-Dominique Dubeau <ldd@lddubeau.com>
 
 """
-import lxml.etree
-
 import os
 import re
 from collections import OrderedDict, namedtuple
+from functools import cmp_to_key
 
+import lxml.etree
 import semver
 
 import lib.util as util
@@ -69,8 +69,9 @@ def get_supported_schema_versions():
     def norm(x):
         return (x + ".0") if x.count(".") == 1 else x
 
-    versions = sorted(versions, lambda a, b: semver.compare(norm(a),
-                                                            norm(b)))
+    versions = sorted(versions,
+                      key=cmp_to_key(lambda a, b: semver.compare(norm(a),
+                                                                 norm(b))))
 
     # We support validating all versions that we find but we can
     # revert only to the last one.
@@ -264,7 +265,7 @@ def set_version(data, new_version):
 
 
 def xhtml_to_xml(data):
-    return data.replace(u"&nbsp;", u'\u00a0')
+    return data.replace("&nbsp;", '\u00a0')
 
 def element_as_text(el):
     text = ''.join(el.itertext())

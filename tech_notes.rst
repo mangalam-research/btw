@@ -550,6 +550,9 @@ See below for specific upgrade cases.
 
 - psycopg2 may need to be uninstalled and reinstalled.
 
+- The encoding of cache keys for the bibliography app has changed. So that cache
+  needs to be zapped and rebuilt.
+
 2.0.0 to 2.1.0
 ~~~~~~~~~~~~~~
 

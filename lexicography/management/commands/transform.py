@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import os
 
@@ -76,8 +76,8 @@ WARNING: in general, this operation cannot be reliably undone without
             raise CommandError("Some entries are locked; aborting.")
 
         expected = 'Yes, I want to do this.'
-        confirm = raw_input("Type '" + expected +
-                            "' if you want to perform this operation.\n")
+        confirm = input("Type '" + expected +
+                        "' if you want to perform this operation.\n")
 
         if confirm != expected:
             self.stdout.write("Aborted operation.")

@@ -4,11 +4,8 @@ TIMEOUT = 60
 
 class Falsy(object):
 
-    def __nonzero__(self):
+    def __bool__(self):
         return False
-
-    __bool__ = __nonzero__  # Python 3 compat.
-
 
 HELD = Falsy()
 SET = Falsy()

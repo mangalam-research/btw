@@ -94,8 +94,11 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
         # Allow returning an empty response when the transaction is
         # successful.
         if data is None:
-            return ''
+            return b''
 
+        # We override the work that the default DRF Response object does.
+        renderer_context["response"]["Content-Type"] = \
+            f"text/html; charset={self.charset}"
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
@@ -165,7 +168,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
             kwargs["fields"] = fields
 
         depths = {key[7:]: int(value) for (key, value) in
-                  self.request.GET.iteritems() if key.startswith("depths.")}
+                  self.request.GET.items() if key.startswith("depths.")}
         if len(depths):
             kwargs["depths"] = depths
 
@@ -328,7 +331,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                 except FailedParse:
                     continue
 
-                cleaned |= set(unicode(ref) for ref in refs)
+                cleaned |= set(str(ref) for ref in refs)
                 if len(refs) > 1:
                     complex_paths.add(path)
 
@@ -355,12 +358,12 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                 except FailedParse:
                     continue
                 combined = self.get_serializer(
-                    make_specified_sf([sf_by_path[unicode(ref)] for ref in
+                    make_specified_sf([sf_by_path[str(ref)] for ref in
                                        refs]))
                 sf_by_path[path] = combined.data
 
             # This filters out what we need to remove.
-            ret.data = [sf for path, sf in sf_by_path.iteritems()
+            ret.data = [sf for path, sf in sf_by_path.items()
                         if path in paths]
 
         return ret
@@ -382,7 +385,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                                      },
                                      class_prefix="edit-field",
                                      possible_poses=())
-            return Response({'form': form}, content_type="text/html")
+            return Response({'form': form})
 
         raise NotAcceptable
 
@@ -411,7 +414,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
                                      submit_text="Create",
                                      class_prefix="add-child",
                                      possible_poses=possible_poses)
-            return Response({'form': form}, content_type="text/html")
+            return Response({'form': form})
 
         raise NotAcceptable
 
@@ -437,8 +440,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         # The data was invalid... return the errors in a format
         # appropriate to the request.
         if request.accepted_renderer.media_type == "application/x-form":
-            return Response({'form': form}, content_type="text/html",
-                            status=400)
+            return Response({'form': form}, status=400)
 
         raise serializers.ValidationError(form.errors)
 
@@ -465,8 +467,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         # The data was invalid... return the errors in a format
         # appropriate to the request.
         if request.accepted_renderer.media_type == "application/x-form":
-            return Response({'form': form}, content_type="text/html",
-                            status=400)
+            return Response({'form': form}, status=400)
 
         raise serializers.ValidationError(form.errors)
 
@@ -486,8 +487,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         # The data was invalid... return the errors in a format
         # appropriate to the request.
         if request.accepted_renderer.media_type == "application/x-form":
-            return Response({'form': form}, content_type="text/html",
-                            status=400)
+            return Response({'form': form}, status=400)
 
         raise serializers.ValidationError(form.errors)
 
@@ -523,7 +523,6 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
         # The data was invalid... return the errors in a format
         # appropriate to the request.
         if request.accepted_renderer.media_type == "application/x-form":
-            return Response({'form': form}, content_type="text/html",
-                            status=400)
+            return Response({'form': form}, status=400)
 
         raise serializers.ValidationError(form.errors)

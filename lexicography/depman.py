@@ -37,7 +37,7 @@ class DependencyManager(object):
         :returns: The key to be used to find the dependencies in the cache.
         :rtype: :class:`str`
         """
-        return self.prefix + u":" + key
+        return self.prefix + ":" + key
 
     def record(self, dependee, dependent):
         """
@@ -97,4 +97,4 @@ class DependencyManager(object):
             return None
         return ret
 
-bibl = DependencyManager(u"bibl")
+bibl = DependencyManager("bibl")

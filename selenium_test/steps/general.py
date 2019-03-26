@@ -42,7 +42,7 @@ def step_impl(context):
 
 @given("that the user has loaded the top page of the lexicography app")
 def step_impl(context):
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user loads the top page of the lexicography app
     Then the user gets the top page of the lexicography app
     """)
@@ -69,7 +69,7 @@ def step_impl(context):
     util = context.util
     driver = context.driver
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     Given the user has logged in
     """)
     driver.get(context.builder.SERVER + "/lexicography/entry/new")
@@ -115,8 +115,8 @@ def step_impl(context):
     context.window_scroll_left = util.window_scroll_left()
 
 
-@given(u"wait {x} seconds")
-@when(u"wait {x} seconds")
+@given("wait {x} seconds")
+@when("wait {x} seconds")
 def step_impl(context, x):
     import time
     time.sleep(float(x))
@@ -129,7 +129,7 @@ step_matcher('re')
 def step_impl(context):
     driver = context.driver
     driver.set_window_size(683, 741)
-    context.execute_steps(u"Then the table of contents is expandable")
+    context.execute_steps("Then the table of contents is expandable")
 
 
 @when("(?:the user )?scrolls the editor pane (?P<choice>completely )?down")
@@ -177,9 +177,9 @@ users = {
 }
 
 
-@given(ur"(?:the|a) user(?P<user_desc>| (?:without|with) permission to .*?) "
-       ur"has logged in")
-@when(ur"the user (?P<user_desc>) logs in")
+@given(r"(?:the|a) user(?P<user_desc>| (?:without|with) permission to .*?) "
+       r"has logged in")
+@when(r"the user (?P<user_desc>) logs in")
 def step_impl(context, user_desc):
     driver = context.driver
     util = context.util
@@ -242,50 +242,50 @@ def step_impl(context):
 
 
 WHAT_TO_TITLE = {
-    u"unpublished": "pali example",
-    u"a single sense that has a subsense": "one sense, one subsense",
-    u"a Pāli example": "pali example",
-    u"a non-Pāli example": "non-pali example",
-    (u"a non-Pāli example with a bibliographical reference and a link to "
-     u"the example"): "non-pali example, with ref and ptr",
-    u"a Pāli example, explained": "pali explained example",
-    u"a non-Pāli example, explained": "non-pali explained example",
-    u"a definition that has been filled": "definition filled",
-    u"a definition with formatted text": "definition with formatted text",
-    u"senses and subsenses": "senses and subsenses",
-    u"some semantic fields": "some semantic fields",
-    u"an antonym with citations": "antonym with citations",
-    u"a cognate with citations": "cognate with citations",
-    u"a conceptual proximate with citations":
+    "unpublished": "pali example",
+    "a single sense that has a subsense": "one sense, one subsense",
+    "a Pāli example": "pali example",
+    "a non-Pāli example": "non-pali example",
+    ("a non-Pāli example with a bibliographical reference and a link to "
+     "the example"): "non-pali example, with ref and ptr",
+    "a Pāli example, explained": "pali explained example",
+    "a non-Pāli example, explained": "non-pali explained example",
+    "a definition that has been filled": "definition filled",
+    "a definition with formatted text": "definition with formatted text",
+    "senses and subsenses": "senses and subsenses",
+    "some semantic fields": "some semantic fields",
+    "an antonym with citations": "antonym with citations",
+    "a cognate with citations": "cognate with citations",
+    "a conceptual proximate with citations":
     "conceptual proximate with citations",
-    u"senses, subsenses and hyperlinks": "senses, subsenses and hyperlinks",
-    u"a sense with explanation": "sense with explanation",
-    u"a sense with citations": "sense with citations",
-    u"contrastive elements with one child":
+    "senses, subsenses and hyperlinks": "senses, subsenses and hyperlinks",
+    "a sense with explanation": "sense with explanation",
+    "a sense with citations": "sense with citations",
+    "contrastive elements with one child":
     "contrastive elements with one child",
-    u"one btw:antonyms with one btw:antonym and no btw:none":
+    "one btw:antonyms with one btw:antonym and no btw:none":
     "contrastive elements with one child",
-    u"one btw:cognates with one btw:cognate and no btw:none":
+    "one btw:cognates with one btw:cognate and no btw:none":
     "contrastive elements with one child",
-    u"one btw:conceptual-proximate with one btw:conceptual-proximate "
-    u"and no btw:none":
+    "one btw:conceptual-proximate with one btw:conceptual-proximate "
+    "and no btw:none":
     "contrastive elements with one child",
-    u"an antonym with citations, followed by another antonym":
-    u"antonym with citations, followed by another antonym",
-    u"citations everywhere possible (subsense)":
-    u"citations everywhere possible (subsense)",
-    u"an empty surname": u"empty surname",
-    u"a missing editor": u"empty surname",
-    u"a missing author": u"no author",
-    u"a specified semantic field": u"article with combined fields",
+    "an antonym with citations, followed by another antonym":
+    "antonym with citations, followed by another antonym",
+    "citations everywhere possible (subsense)":
+    "citations everywhere possible (subsense)",
+    "an empty surname": "empty surname",
+    "a missing editor": "empty surname",
+    "a missing author": "no author",
+    "a specified semantic field": "article with combined fields",
 }
 
 
 href_url_re = re.compile(r'href\s*=\s*"(.*?)"')
 
-@Given(ur"(?:a|an) (?P<what>valid|(?:un)?published) document")
-@Given(ur"a (?P<what>valid article, .*)")
-@Given(ur"a document with (?P<what>.*?)")
+@Given(r"(?:a|an) (?P<what>valid|(?:un)?published) document")
+@Given(r"a (?P<what>valid article, .*)")
+@Given(r"a document with (?P<what>.*?)")
 def step_impl(context, what):
     feature = context.feature
     util = context.util
@@ -302,7 +302,7 @@ def step_impl(context, what):
     if edit:
         if what in ("a single sense",
                     "a single sense that does not have a subsense"):
-            context.execute_steps(u"""
+            context.execute_steps("""
             Given a new document
             """)
 
@@ -322,7 +322,7 @@ def step_impl(context, what):
         # For editing we must be logged in. If we are just viewing,
         # then it is better to view as a random user that does not
         # have an account on the system.
-        context.execute_steps(u"""
+        context.execute_steps("""
         Given the user has logged in
         """)
 
@@ -379,7 +379,7 @@ def step_impl(context, what):
 @Given("a document that has no (?P<what>.*)")
 def step_impl(context, what):
     driver = context.driver
-    context.execute_steps(u"""
+    context.execute_steps("""
     Given a document with a single sense
     """)
 
@@ -424,7 +424,7 @@ def step_impl(context, how=None):
     if how is None or how == " using the keyboard":
         util.ctrl_equivalent_x("s")
     else:
-        context.execute_steps(u"""
+        context.execute_steps("""
         When the user clicks the save button in the toolbar
         """)
 
@@ -456,8 +456,8 @@ def step_impl(context):
     """)
     driver.get(driver.current_url)
 
-@when(ur"the user clicks the (?P<what>save|quit without saving) button "
-      ur"in the toolbar")
+@when(r"the user clicks the (?P<what>save|quit without saving) button "
+      r"in the toolbar")
 def step_impl(context, what):
     what = {
         "save": "Save",
@@ -514,7 +514,7 @@ def step_impl(context):
         "return window.wed_editor !== undefined"))
 
 
-@when(ur'the user clicks the button named "(?P<name>.*?)"')
+@when(r'the user clicks the button named "(?P<name>.*?)"')
 def step_impl(context, name):
     path = ("//*[(self::a or self::button) and "
             "(normalize-space(text()) = '{0}')]").format(name)
@@ -522,13 +522,13 @@ def step_impl(context, name):
     button.click()
 
 
-@when(ur'the button named "(?P<name>.*?)" is enabled')
+@when(r'the button named "(?P<name>.*?)" is enabled')
 def step_impl(context, name):
     button = context.driver.find_element_by_link_text(name)
     assert_true(button.is_enabled())
 
 
-@then(ur'there is a modal dialog titled "(?P<name>.*?)" visible')
+@then(r'there is a modal dialog titled "(?P<name>.*?)" visible')
 def step_impl(context, name):
     util = context.util
 
@@ -539,21 +539,21 @@ def step_impl(context, name):
     assert_equal(modal.find_element_by_class_name("modal-title").text,
                  name)
 
-@given(ur'there is a network slowdown')
+@given(r'there is a network slowdown')
 def step_impl(context):
     with open("sitestatic/LIMIT", 'w'):
         pass
 
-@given(ur'the network slowdown is over')
+@given(r'the network slowdown is over')
 def step_impl(context):
     os.unlink("sitestatic/LIMIT")
 
-@when(ur'fail')
-@then(ur'fail')
+@when(r'fail')
+@then(r'fail')
 def step_impl(context):
     raise Exception("failing, as requested!")
 
-@when(ur'the user clicks on the "(?P<what>.*?)" button in the modal dialog')
+@when(r'the user clicks on the "(?P<what>.*?)" button in the modal dialog')
 def step_impl(context, what):
     util = context.util
 
@@ -566,8 +566,8 @@ def step_impl(context, what):
                         len(driver.find_elements(
                             (By.CSS_SELECTOR, ".modal-body"))) != 0)
 
-@when(ur'the user dismisses the modal by using the close button in the '
-      ur'modal header')
+@when(r'the user dismisses the modal by using the close button in the '
+      r'modal header')
 def step_impl(context):
     util = context.util
 

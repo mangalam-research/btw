@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 from django import forms
 from django.forms.utils import flatatt
 from django.utils.safestring import mark_safe
@@ -46,5 +46,5 @@ class WedWidget(forms.Widget):
             (flatatt(parent_attrs), flatatt(wed_attrs), flatatt(script_attrs),
              value))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.render()

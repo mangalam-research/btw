@@ -1,4 +1,4 @@
-from mixins import LoginRequiredMixin
+from .mixins import LoginRequiredMixin
 
 from django.views.generic.edit import CreateView, UpdateView
 

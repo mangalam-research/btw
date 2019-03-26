@@ -1,1 +1,1 @@
-from widgets import WedWidget
+from .widgets import WedWidget

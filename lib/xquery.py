@@ -28,7 +28,7 @@ class XQueryBuilder(object):
     def format(self, query, **kwargs):
         return self.make(query.format(
             **{key: self.format_value(value) for (key, value)
-               in kwargs.iteritems()}))
+               in kwargs.items()}))
 
 class FormattingObject(object):
 

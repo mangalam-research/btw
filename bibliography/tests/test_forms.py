@@ -123,7 +123,7 @@ class PrimarySourceFormTestCase(TestCase):
         }
         form = PrimarySourceForm(data)
         assert_equal(form.errors,
-                     {'genre': [u'Select a valid choice. XX is not one of '
+                     {'genre': ['Select a valid choice. XX is not one of '
                                 'the available choices.']})
 
     def test_item_must_be_filled(self):
@@ -160,5 +160,5 @@ class PrimarySourceFormTestCase(TestCase):
         }
         form = PrimarySourceForm(data)
         assert_equal(form.errors,
-                     {'reference_title': [u'Primary source with this '
+                     {'reference_title': ['Primary source with this '
                                           'Reference title already exists.']})

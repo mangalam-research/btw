@@ -10,10 +10,10 @@ from ..btw_util import velocity_mock
 
 step_matcher('re')
 
-@given(ur"(?P<user>.+?) has loaded the main page of the semantic "
-       ur"field application")
+@given(r"(?P<user>.+?) has loaded the main page of the semantic "
+       r"field application")
 def step_impl(context, user):
-    context.execute_steps(u"""
+    context.execute_steps("""
     Given {0} has logged in
     """.format(user))
 
@@ -49,8 +49,8 @@ def step_impl(context):
     toggle.click()
 
 
-@when(ur"the user clicks on the help for the (?P<what>search field|"
-      ur"aspect combo box|scope combo box|root combo box)")
+@when(r"the user clicks on the help for the (?P<what>search field|"
+      r"aspect combo box|scope combo box|root combo box)")
 def step_impl(context, what):
     util = context.util
 
@@ -93,7 +93,7 @@ def step_impl(context):
     util.wait(check)
 
 
-@when(ur'the user searches (?P<mode>literally |)for "(?P<search>.*?)"')
+@when(r'the user searches (?P<mode>literally |)for "(?P<search>.*?)"')
 def step_impl(context, mode, search):
     dt = context.default_table
 
@@ -103,32 +103,32 @@ def step_impl(context, mode, search):
     dt.fill_field("Search", search)
 
 
-@then(ur"there is one result")
+@then(r"there is one result")
 def step_impl(context):
     actual = context.default_table.wait_for_results(1)
     assert_equal(actual, 1)
 
 
-@then(ur"there are (?P<count>\d+|no) results")
+@then(r"there are (?P<count>\d+|no) results")
 def step_impl(context, count):
     count = 0 if count == "no" else int(count)
     actual = context.default_table.wait_for_results(count)
     assert_equal(actual, count)
 
 
-@then(ur"the first result shows: (?P<result>.*)")
+@then(r"the first result shows: (?P<result>.*)")
 def step_impl(context, result):
     row = context.default_table.get_result(0)
     text = row.find_element_by_class_name("sf-breadcrumbs").text
     assert_equal(text, result)
 
 
-@when(ur"the user changes the search to search for lexemes")
+@when(r"the user changes the search to search for lexemes")
 def step_impl(context):
     context.default_table.set_select_option("in", "lexemes")
 
-@when(ur"the user changes the search to search for (?P<what>BTW|HTE|all) "
-      ur"fields")
+@when(r"the user changes the search to search for (?P<what>BTW|HTE|all) "
+      r"fields")
 def step_impl(context, what):
     if what == "BTW":
         value = "custom BTW fields"
@@ -142,8 +142,8 @@ def step_impl(context, what):
     context.default_table.set_select_option("among", value)
 
 
-@when(ur"the user changes the search to search for fields under "
-      ur"(?P<what>all roots|Society \(03\))")
+@when(r"the user changes the search to search for fields under "
+      r"(?P<what>all roots|Society \(03\))")
 def step_impl(context, what):
     if what == "all roots":
         value = "all fields"
@@ -155,8 +155,8 @@ def step_impl(context, what):
     context.default_table.set_select_option("under", value)
 
 
-@when(ur'the user clicks on "(?P<what>.*)" in the (?P<which>first|second) '
-      ur'result')
+@when(r'the user clicks on "(?P<what>.*)" in the (?P<which>first|second) '
+      r'result')
 def step_impl(context, what, which):
     util = context.util
     result_ix = {
@@ -187,7 +187,7 @@ def get_panes(driver):
     return panes
 
 
-@when(ur'the user clicks on "(?P<what>.*)" in the first detail pane')
+@when(r'the user clicks on "(?P<what>.*)" in the first detail pane')
 def step_impl(context, what):
     panes = get_panes(context.driver)
     pane = panes[0]
@@ -195,7 +195,7 @@ def step_impl(context, what):
     link.click()
 
 
-@then(ur'there (?:is|are) (?P<count>one|no|\d+) detail panes?')
+@then(r'there (?:is|are) (?P<count>one|no|\d+) detail panes?')
 def step_impl(context, count):
     # We need to remove the template, which remains undisplayed...
     if count == "one":
@@ -214,7 +214,7 @@ def step_impl(context, count):
     assert_equal(result.payload, count)
 
 
-@then(ur'the first detail pane shows: (?P<what>.*)')
+@then(r'the first detail pane shows: (?P<what>.*)')
 def step_impl(context, what):
     util = context.util
     panel = util.find_element((By.CSS_SELECTOR,
@@ -239,8 +239,8 @@ def step_impl(context, what):
 
     assert_equal(result.payload, what)
 
-@when(ur'the user clicks on the first pane\'s navigation button '
-      ur'to go to the (?P<what>first|last|previous|next) page')
+@when(r'the user clicks on the first pane\'s navigation button '
+      r'to go to the (?P<what>first|last|previous|next) page')
 def step_impl(context, what):
     util = context.util
 
@@ -250,8 +250,8 @@ def step_impl(context, what):
     button.click()
 
 
-@when(ur'the user clicks on the first pane\'s button '
-      ur'to (?P<what>close the pane|close all panes)')
+@when(r'the user clicks on the first pane\'s button '
+      r'to (?P<what>close the pane|close all panes)')
 def step_impl(context, what):
     util = context.util
 
@@ -273,8 +273,8 @@ def step_impl(context, what):
     button.click()
 
 
-@when(ur'the user clicks on the (?P<which>edit|"Create Child"|'
-      ur'"Create New POS") button in the first detail pane')
+@when(r'the user clicks on the (?P<which>edit|"Create Child"|'
+      r'"Create New POS") button in the first detail pane')
 def step_impl(context, which):
     util = context.util
     selector = {
@@ -289,8 +289,8 @@ def step_impl(context, which):
     button.click()
 
 
-@then(ur'there is no (?P<which>edit|"Create Child"|'
-      ur'"Create New POS") button in the first detail pane')
+@then(r'there is no (?P<which>edit|"Create Child"|'
+      r'"Create New POS") button in the first detail pane')
 def step_impl(context, which):
     util = context.util
     selector = {
@@ -304,23 +304,23 @@ def step_impl(context, which):
          "div.semantic-field-details-panel .btn." + selector)))
 
 
-@when(ur'the user clicks on the "Create Field" button under the table')
+@when(r'the user clicks on the "Create Field" button under the table')
 def step_impl(context):
     util = context.util
     button = util.find_element((By.CSS_SELECTOR, ".btn.create-field"))
     button.click()
 
 
-@then(ur'there is no "Create Field" button under the table')
+@then(r'there is no "Create Field" button under the table')
 def step_impl(context):
     util = context.util
     util.wait_until_not(EC.visibility_of_element_located(
         (By.CSS_SELECTOR, ".btn.create-field")))
 
 
-@then(ur'there is (?P<present>a|no) form for '
-      ur'(?P<which>creating|editing) a custom field in '
-      ur'the first detail pane')
+@then(r'there is (?P<present>a|no) form for '
+      r'(?P<which>creating|editing) a custom field in '
+      r'the first detail pane')
 def step_impl(context, present, which):
     util = context.util
     css_class = {
@@ -339,14 +339,14 @@ def step_impl(context, present, which):
     else:
         raise ValueError("present has an unexpected value: " + present)
 
-@then(ur'there is a form for creating a custom field under the table')
+@then(r'there is a form for creating a custom field under the table')
 def step_impl(context):
     context.util.find_element(
         (By.CSS_SELECTOR, "form.add-child-form"))
 
 
-@when(ur'the user cancels the form for (?:editing|creating) a custom '
-      ur'field in the first detail pane')
+@when(r'the user cancels the form for (?:editing|creating) a custom '
+      r'field in the first detail pane')
 def step_impl(context):
     util = context.util
     button = util.find_element(
@@ -354,21 +354,21 @@ def step_impl(context):
     button.click()
 
 
-@then(ur'the "Heading" field in the first form contains the text "CUSTOM"')
+@then(r'the "Heading" field in the first form contains the text "CUSTOM"')
 def step_impl(context):
     util = context.util
     field = util.find_element(
         (By.CSS_SELECTOR, "form textarea[name='heading']"))
     assert_equal(field.get_attribute("value"), "CUSTOM")
 
-@when(ur'the user types "FOO" in the "Heading" field in the first form')
+@when(r'the user types "FOO" in the "Heading" field in the first form')
 def step_impl(context):
     util = context.util
     field = util.find_element(
         (By.CSS_SELECTOR, "form textarea[name='heading']"))
     field.send_keys("FOO")
 
-@when(ur'the user clears the "Heading" field in the first form')
+@when(r'the user clears the "Heading" field in the first form')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -378,7 +378,7 @@ def step_impl(context):
     field.clear()
 
 
-@when(ur'the user clicks the "(?:Create|Submit)" button in the first form')
+@when(r'the user clicks the "(?:Create|Submit)" button in the first form')
 def step_impl(context):
     util = context.util
     button = util.find_element(
@@ -386,7 +386,7 @@ def step_impl(context):
     button.click()
 
 
-@then(ur'the first form\'s heading field has an error')
+@then(r'the first form\'s heading field has an error')
 def step_impl(context):
     util = context.util
 
@@ -401,7 +401,7 @@ def step_impl(context):
     util.wait(cond)
 
 
-@then(ur'the first detail pane shows the child "FOO"')
+@then(r'the first detail pane shows the child "FOO"')
 def step_impl(context):
     def check(driver):
         texts = driver.execute_script("""
@@ -418,7 +418,7 @@ def step_impl(context):
 
     assert_true(result)
 
-@then(ur'the first detail pane shows the other part of speech "FOO \(None\)"')
+@then(r'the first detail pane shows the other part of speech "FOO \(None\)"')
 def step_impl(context):
     def check(driver):
         texts = driver.execute_script("""
@@ -435,8 +435,8 @@ def step_impl(context):
 
     assert_true(result)
 
-@then(ur'the (?P<button>edit|"Create Field"|"Create"|"Submit") button '
-      ur'(?P<visible>does not show|shows) a spinner')
+@then(r'the (?P<button>edit|"Create Field"|"Create"|"Submit") button '
+      r'(?P<visible>does not show|shows) a spinner')
 def step_impl(context, button, visible):
     selector = {
         '"Create Field"': ".btn.create-field",
@@ -449,8 +449,8 @@ def step_impl(context, button, visible):
         else EC.visibility_of_element_located
     context.util.wait(cond((By.CSS_SELECTOR, selector + " .fa-spinner")))
 
-@then(ur'the (?P<button>edit|"Create Field"|"Create Child") button '
-      ur'(?P<visible>is|is not) visible')
+@then(r'the (?P<button>edit|"Create Field"|"Create Child") button '
+      r'(?P<visible>is|is not) visible')
 def step_impl(context, button, visible):
     selector = {
         '"Create Field"': ".btn.create-field",

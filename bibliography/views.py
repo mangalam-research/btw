@@ -247,8 +247,11 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
         # Allow returning an empty response when the transaction is
         # successful.
         if data is None:
-            return ''
+            return b''
 
+        # We override the work that the default DRF Response object does.
+        renderer_context["response"]["Content-Type"] = \
+            f"text/html; charset={self.charset}"
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
@@ -269,14 +272,14 @@ class PrimarySourceViewSet(UpdateListRetrieveViewSet):
             form.save()
             return Response()
 
-        return Response({'form': form}, status=400, content_type="text/html")
+        return Response({'form': form}, status=400)
 
     def retrieve(self, request, *args, **kwargs):
         if request.accepted_renderer.media_type == "application/x-form":
             pk = kwargs["pk"]
             instance = PrimarySource.objects.get(pk=pk)
             form = PrimarySourceForm(instance=instance)
-            return Response({'form': form}, content_type="text/html")
+            return Response({'form': form})
 
         return super(PrimarySourceViewSet, self).retrieve(request,
                                                           *args, **kwargs)

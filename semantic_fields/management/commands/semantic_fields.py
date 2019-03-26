@@ -1,8 +1,8 @@
-from __future__ import absolute_import
+
 
 import json
 import difflib
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -54,9 +54,9 @@ class SerializeField(SubCommand):
 
         response = serialize_from_query(url)
         if isinstance(response, HttpResponseBadRequest):
-            print response
+            print(response)
         else:
-            print json.dumps(response.data)
+            print(json.dumps(response.data))
 
 
 class UpdateFixture(SubCommand):
@@ -81,10 +81,10 @@ class UpdateFixture(SubCommand):
             fixture = json.loads(original)
 
         updated = {}
-        for key in fixture.iterkeys():
+        for key in fixture.keys():
             response = serialize_from_query(key)
             if isinstance(response, HttpResponseBadRequest):
-                print response
+                print(response)
                 break
             else:
                 updated[key] = response.data
@@ -94,15 +94,15 @@ class UpdateFixture(SubCommand):
             command.stdout.write("No change!")
             return
 
-        print "".join(difflib.unified_diff(original.splitlines(True),
-                                           new_data.splitlines(True)))
+        print("".join(difflib.unified_diff(original.splitlines(True),
+                                           new_data.splitlines(True))))
 
         msg = ("\nThere are differences between the old an new data. "
                "Update? (yes/no): ")
-        confirm = input(msg)
+        confirm = eval(input(msg))
         while True:
             if confirm not in ('yes', 'no'):
-                confirm = input('Please enter either "yes" or "no": ')
+                confirm = eval(input('Please enter either "yes" or "no": '))
                 continue
             if confirm == 'yes':
                 with open(options["path"], 'w') as data:
@@ -128,7 +128,9 @@ Management commands for the semantic_fields app.
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand"
+                                           parser_class=SubParser(self),
+                                           required=True)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

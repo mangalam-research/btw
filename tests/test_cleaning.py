@@ -71,7 +71,7 @@ class CleanerTestCase(SimpleTestCase):
         """
         cleaner = Cleaner()
         with self.assertRaises(StopIteration):
-            cleaner.checks.next()
+            next(cleaner.checks)
 
     def test_checks_returns_iterator(self):
         """
@@ -81,15 +81,15 @@ class CleanerTestCase(SimpleTestCase):
         cleaner.check_foo = lambda *_: 1
         cleaner.check_bar = lambda *_: 1
         checks = list(cleaner.checks)
-        self.assertItemsEqual(checks, [cleaner.check_bar, cleaner.check_foo])
+        self.assertCountEqual(checks, [cleaner.check_bar, cleaner.check_foo])
 
     def test_assert_object_before_cleaning_raises_when_no_checks(self):
         """
         ``assert_object_before_cleaning`` raises when there are no checks.
         """
         cleaner = Cleaner()
-        with self.assertRaisesRegexp(ValueError,
-                                     "no checks have been implemented"):
+        with self.assertRaisesRegex(ValueError,
+                                    "no checks have been implemented"):
             cleaner.assert_object_before_cleaning({})
 
     def test_assert_object_before_cleaning_raises_on_failure(self):
@@ -123,8 +123,8 @@ class CleanerTestCase(SimpleTestCase):
                         new_callable=mock.PropertyMock) as clean_mock:
             clean_mock.return_value = self.fakes
             cleaner = Cleaner()
-            with self.assertRaisesRegexp(ValueError,
-                                         "no checks have been implemented"):
+            with self.assertRaisesRegex(ValueError,
+                                        "no checks have been implemented"):
                 cleaner.run()
 
     def test_run_calls_clean_on_objects(self):
@@ -152,8 +152,8 @@ class CleanerTestCase(SimpleTestCase):
         ``clean`` raises when there are no checks.
         """
         cleaner = Cleaner()
-        with self.assertRaisesRegexp(ValueError,
-                                     "no checks have been implemented"):
+        with self.assertRaisesRegex(ValueError,
+                                    "no checks have been implemented"):
             cleaner.clean({})
 
     def test_clean_calls_checks(self):
@@ -338,4 +338,4 @@ class CleanerTestCase(SimpleTestCase):
         """
         cleaner = Minimal(verbose=True)
         cleaner._to_clean = self.fakes
-        self.assertItemsEqual(cleaner.run(), self.fakes)
+        self.assertCountEqual(cleaner.run(), self.fakes)

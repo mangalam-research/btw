@@ -9,7 +9,7 @@ from django.core.cache import caches
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.db import transaction
-from eulexistdb.exceptions import ExistDBException
+from pyexistdb.exceptions import ExistDBException
 
 from lib import util
 from lib.util import on_change
@@ -87,7 +87,7 @@ class Entry(models.Model):
         if was_nonexistent:
             self._send(signals.entry_available)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.lemma
 
     def get_absolute_url(self):
@@ -236,7 +236,7 @@ class Entry(models.Model):
         entry could not be locked.
         :rtype: :class:`ChangeRecord`
         """
-        latest_version = xml.get_supported_schema_versions().keys()[-1]
+        latest_version = list(xml.get_supported_schema_versions().keys())[-1]
 
         if self.schema_version == latest_version:
             # No need to upgrade.
@@ -441,7 +441,7 @@ class ChangeRecord(models.Model):
         """
         return self.c_hash.schema_version
 
-    def __unicode__(self):
+    def __str__(self):
         return self.entry.lemma + " " + self.user.username + " " + \
             str(self.datetime)
 
@@ -603,7 +603,7 @@ class Chunk(models.Model):
 
         return self._valid
 
-    def __unicode__(self):
+    def __str__(self):
         return self.c_hash + " Schema version: " + self.schema_version
 
     def clean(self):

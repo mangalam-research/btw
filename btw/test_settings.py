@@ -71,7 +71,7 @@ s.EXISTDB_ROOT_COLLECTION = "/test_btw"
 
 if s.BTW_BUILD_ENV:
     builder = os.environ['BUILDER']
-    for db in s.DATABASES.itervalues():
+    for db in s.DATABASES.values():
         name = db['NAME']
         test_name = name + '_' + builder
         if not test_name.startswith("test_"):

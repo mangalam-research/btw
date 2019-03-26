@@ -21,9 +21,9 @@ def running(config):
         ["redis-cli", "-s", config.sockfile_path],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
-    out, _ = cli.communicate("auth " + config.password)
+    out, _ = cli.communicate(b"auth " + config.password.encode("utf-8"))
 
-    return out == "OK\n"
+    return out == b"OK\n"
 
 
 class Start(SubCommand):
@@ -197,7 +197,9 @@ Manage the redis server used by BTW.
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand",
+                                           parser_class=SubParser(self),
+                                           required=True)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

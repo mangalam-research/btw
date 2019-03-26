@@ -172,11 +172,11 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
 
     def log(self, msg):
         if False:
-            print repr(self), hex(id(self)) + ":", msg
+            print(repr(self), hex(id(self)) + ":", msg)
 
     def run(self, result=None):
         super(SeleniumTest, self).run(result)
-        if self.next == "restart":
+        if self.__next__ == "restart":
             self._patcher.reset()
             self.log("restarting...")
         else:
@@ -247,7 +247,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                     out.write(reverse("lexicography_entry_details",
                                       args=(cr.entry.id, )) + "\n")
             else:
-                print "Unknown command: ", command
+                print("Unknown command: ", command)
 
     def new_test(self):
         # We want to reset the state of the database in a way more
@@ -322,7 +322,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                 pass
             else:
                 btw_credits = authors[0].getparent()
-                for number in xrange(len(authors) + 1, total_authors + 1):
+                for number in range(len(authors) + 1, total_authors + 1):
                     btw_credits.append(lxml.etree.XML("""
 <btw:credit xmlns="{0}" xmlns:btw="{1}">
   <resp>Resp</resp>
@@ -353,7 +353,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
                 pass
             else:
                 btw_credits = editors[0].getparent()
-                for number in xrange(len(editors) + 1, total_editors + 1):
+                for number in range(len(editors) + 1, total_editors + 1):
                     btw_credits.append(lxml.etree.XML("""
 <editor xmlns="{0}">
   <persName><forename>Forename {1}</forename><surname>Surname {1}</surname>\
@@ -378,7 +378,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             xmltree.alter_lemma(what)
             data = xmltree.serialize()
         else:
-            print "Unknown document: ", what
+            print("Unknown document: ", what)
 
         from lexicography.models import Entry
         try:
@@ -406,7 +406,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
     def clearcache(self, args):
         execute_from_command_line(['liveserver', 'clearcache'] + args)
 
-    def __unicode__(self):
+    def __str__(self):
         return hex(id(self))
 
 class Suite(TestSuite):
@@ -454,7 +454,7 @@ class Command(BaseCommand):
         control_read = options["control_read"]
         control_write = options["control_write"]
 
-        print "Starting server at:", server_address
+        print("Starting server at:", server_address)
         (host, port) = server_address.split(":")
         LiveServerTestCase.host = host
         LiveServerTestCase.port = int(port)

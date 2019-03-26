@@ -8,7 +8,9 @@ from functools import wraps
 import os
 import datetime
 import json
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 import logging
 
 import semver
@@ -33,7 +35,7 @@ from django.views.decorators.cache import never_cache
 from django.core.cache import caches
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django_datatables_view.mixins import LazyEncoder
-from eulexistdb.db import ExistDB
+from pyexistdb.db import ExistDB
 import lxml.etree
 
 import lib.util as util
@@ -77,9 +79,6 @@ class SearchTable(BaseDatatableView):
     def get(self, *args, **kwargs):
         self.chunk_to_hits = {}
         search_value = self.request.GET.get('search[value]', None)
-
-        if search_value is not None:
-            search_value = search_value.encode("utf-8")
 
         if search_value is not None and len(search_value):
             # Provide an early failure if the Lucene query is not
@@ -136,7 +135,7 @@ class SearchTable(BaseDatatableView):
             # is the latest version of an entry.
             if row.entry.latest == row \
                and row.schema_version != \
-                    get_supported_schema_versions().keys()[-1]:
+                    list(get_supported_schema_versions().keys())[-1]:
                 warn = (
                     ' <span class="label label-warning" title='
                     '"Editing this entry will automatically upgrade the '
@@ -196,9 +195,6 @@ class SearchTable(BaseDatatableView):
 
     def filter_queryset(self, qs):  # pylint: disable=too-many-branches
         search_value = self.request.GET.get('search[value]', None)
-
-        if search_value is not None:
-            search_value = search_value.encode("utf-8")
 
         lemmata_only = self.request.GET.get('lemmata_only', "false") == \
             "true"
@@ -704,7 +700,7 @@ _COMMAND_TO_ENTRY_TYPE = {
 @transaction.atomic
 def _save_command(request, entry_id, handle, command, messages):
     data = xhtml_to_xml(
-        urllib.unquote(request.POST.get("data")))
+        urllib.parse.unquote(request.POST.get("data")))
     xmltree = XMLTree(data.encode("utf-8"))
 
     unclean = xmltree.is_data_unclean()
@@ -772,7 +768,7 @@ def _save_command(request, entry_id, handle, command, messages):
             # Duplicate lemma
             messages.append(
                 {'type': 'save_transient_error',
-                 'msg': u'There is another entry with the lemma "{0}".'
+                 'msg': 'There is another entry with the lemma "{0}".'
                         .format(entry.lemma)})
             return None
 

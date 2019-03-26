@@ -32,12 +32,14 @@ class LockingTestCase(DisableMigrationsMixin, TestCase):
 
     def assertLogRegexp(self, regexp):
         self.handler.flush()
-        self.assertRegexpMatches(self.stream.getvalue(), regexp)
+        self.assertRegex(self.stream.getvalue(), regexp)
         self.stream.truncate(0)
+        self.stream.seek(0)
 
     def flush_log(self):
         self.handler.flush()
         self.stream.truncate(0)
+        self.stream.seek(0)
 
     def test_try_acquiring_lock_success(self):
         lock = locking.try_acquiring_lock(self.entry_abcd, self.foo)
@@ -147,14 +149,14 @@ class LockingTestCase(DisableMigrationsMixin, TestCase):
         self.assertLogRegexp(
             r"^foo acquired lock \d+ on entry \d+ \(lemma: abcd\)$")
 
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             ValueError,
             "the user releasing the lock is not the one who owns it",
             locking.release_entry_lock,
             self.entry_abcd, self.foo2)
 
     def test_release_entry_lock_fails_if_not_locked(self):
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             models.EntryLock.DoesNotExist,
             "EntryLock matching query does not exist.",
             locking.release_entry_lock,

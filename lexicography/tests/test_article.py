@@ -122,7 +122,7 @@ class CombineSemanticFieldsIntoTestCase(unittest.TestCase):
         article.combine_semantic_fields_into(
             tree.xpath("//btw:sf", namespaces=xml.default_namespace_mapping),
             into)
-        self.assertEqual(lxml.etree.tostring(into), """\
+        self.assertEqual(lxml.etree.tostring(into), b"""\
 <btw:foo xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 xmlns:tei="http://www.tei-c.org/ns/1.0">\
 <btw:sf>01.01n</btw:sf>\
@@ -153,7 +153,7 @@ xmlns:tei="http://www.tei-c.org/ns/1.0">\
         article.combine_semantic_fields_into(
             tree.xpath("//btw:sf", namespaces=xml.default_namespace_mapping),
             into, 3)
-        self.assertEqual(lxml.etree.tostring(into), """\
+        self.assertEqual(lxml.etree.tostring(into), b"""\
 <btw:foo xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 xmlns:tei="http://www.tei-c.org/ns/1.0">\
 <btw:sf>01.01n</btw:sf>\
@@ -163,10 +163,10 @@ xmlns:tei="http://www.tei-c.org/ns/1.0">\
 """)
 
 class BaseSemanticFieldTestCase(TestCase):
-    sf_re = re.compile(ur"(<btw:sf>)0(\d)\.")
-    id_re = re.compile(ur'(xml:id=")')
+    sf_re = re.compile(r"(<btw:sf>)0(\d)\.")
+    id_re = re.compile(r'(xml:id=")')
 
-    sense_with_contrastive_section = u"""\
+    sense_with_contrastive_section = """\
 <btw:sense>
   <btw:english-renditions>
     <btw:english-rendition>
@@ -432,7 +432,7 @@ class BaseSemanticFieldTestCase(TestCase):
 </btw:sense>
 """
 
-    no_fields_to_combine = u"""\
+    no_fields_to_combine = """\
 <btw:sense>
   <btw:english-renditions>
     <btw:english-rendition>
@@ -483,7 +483,7 @@ class BaseSemanticFieldTestCase(TestCase):
         # What we are doing here is creating two senses. For the
         # second sense, all the semantic fields are modified to start
         # with "1" instead of "0".
-        return u"""\
+        return """\
 <?xml version="1.0" encoding="UTF-8"?>\
 <btw:entry xmlns:btw="{0}">
 <btw:overview>
@@ -495,10 +495,10 @@ class BaseSemanticFieldTestCase(TestCase):
 </btw:entry>""".format(xml.default_namespace_mapping["btw"],
                        data,
                        # Modify the ids so that they do not clash.
-                       self.id_re.sub(ur"\1x",
+                       self.id_re.sub(r"\1x",
                                       # Modify the semantic fields so that
                                       # they start with "1" rather than "0".
-                                      self.sf_re.sub(ur"\g<1>1\2.", data)))
+                                      self.sf_re.sub(r"\g<1>1\2.", data)))
 
 
 class CombineSenseSemanticFieldsTestCase(BaseSemanticFieldTestCase):
@@ -565,7 +565,7 @@ class CombineSenseSemanticFieldsTestCase(BaseSemanticFieldTestCase):
         the semantic fields properly and puts the combined fields at the end
         of the sense.
         """
-        data = u"""\
+        data = """\
 <btw:sense>
   <btw:english-renditions>
     <btw:english-rendition>
@@ -982,7 +982,7 @@ class AddSemanticFieldsToEnglishRenditionsTestCase(DisableMigrationsMixin,
         Tests that the result is the same as the original data when there
         are no English renditions.
         """
-        original = """\
+        original = b"""\
 <btw:entry xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 xmlns:tei="http://www.tei-c.org/ns/1.0"/>"""
         tree = xml.XMLTree(original)
@@ -1012,7 +1012,7 @@ version="0.10">
         tree = xml.XMLTree(original)
         modified = article.add_semantic_fields_to_english_renditions(tree)
         self.assertTrue(modified)
-        self.assertEqual(lxml.etree.tostring(tree.tree), """\
+        self.assertEqual(lxml.etree.tostring(tree.tree), b"""\
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
 xmlns:btw="http://mangalamresearch.org/ns/btw-storage" authority="/1" \
 version="0.10">

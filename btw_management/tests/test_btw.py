@@ -31,7 +31,7 @@ def tearDownModule():
         if os.path.exists(tmpdir):
             shutil.rmtree(tmpdir)
     else:
-        print "Keeping", tmpdir
+        print("Keeping", tmpdir)
 
 @override_settings(ENVPATH=None,
                    TOPDIR="foo",
@@ -69,9 +69,11 @@ class BTWTestCase(SimpleTestCase):
             with open(script, 'w') as f:
                 f.write(' ')
 
-    def check_no_dir(self, cmd):
+    def check_missing_arg(self, cmd, expected):
         c = Caller()
-        with self.assertRaisesRegexp(CommandError, r"too few arguments"):
+        with self.assertRaisesRegex(CommandError,
+                                    r"Error: the following arguments are "
+                                    rf"required: {expected}"):
             c.call_command("btw", cmd)
 
         self.assertNoOutput(c)
@@ -79,8 +81,8 @@ class BTWTestCase(SimpleTestCase):
     def check_too_many_args(self, cmd, expected=1):
         c = Caller()
         args = ["btw", cmd] + ["foo"] * expected + ["bar"]
-        with self.assertRaisesRegexp(CommandError,
-                                     r"unrecognized arguments: bar"):
+        with self.assertRaisesRegex(CommandError,
+                                    r"unrecognized arguments: bar"):
             c.call_command(*args)
 
         self.assertNoOutput(c)
@@ -90,7 +92,8 @@ class BTWTestCase(SimpleTestCase):
         Test that ``btw generate-systemd-services`` fails if no directory is
         specified.
         """
-        self.check_no_dir("generate-systemd-services")
+        self.check_missing_arg("generate-systemd-services",
+                               "scripts, services")
 
     def test_generate_systemd_services_with_too_many_args(self):
         """
@@ -105,9 +108,9 @@ class BTWTestCase(SimpleTestCase):
         missing.
         """
         c = Caller()
-        with self.assertRaisesRegexp(CommandError,
-                                     "we need these scripts to exist: " +
-                                     ", ".join(self.expected_scripts)):
+        with self.assertRaisesRegex(CommandError,
+                                    "we need these scripts to exist: " +
+                                    ", ".join(self.expected_scripts)):
             c.call_command("btw", "generate-systemd-services",
                            script_tmpdir, services_tmpdir)
 
@@ -260,7 +263,7 @@ RequiredBy=testing.service
         Test that ``btw generate-scripts`` fails if not directory is
         specified.
         """
-        self.check_no_dir("generate-scripts")
+        self.check_missing_arg("generate-scripts", "dir")
 
     def test_generate_scripts_with_too_many_args(self):
         """

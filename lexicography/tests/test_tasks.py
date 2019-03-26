@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.core.cache import caches
 from django.core.urlresolvers import reverse
-from eulexistdb.exceptions import ExistDBException
+from pyexistdb.exceptions import ExistDBException
 
 from ..models import Chunk, ChangeRecord, Entry
 from .. import tasks, depman, xml
@@ -100,7 +100,7 @@ class TaskTestCase(DisableMigrationsMixin, TestCase):
 
     def assertLogRegexp(self, handler, stream, regexp):
         handler.flush()
-        self.assertRegexpMatches(stream.getvalue(), regexp)
+        self.assertRegex(stream.getvalue(), regexp)
 
     def check_already_set(self):
         cr = ChangeRecord.objects.get(pk=1)
@@ -269,10 +269,9 @@ class PrepareBiblTestCase(TaskTestCase):
     def assertDependsOn(self, chunk, man, name):
         result = man.get(name)
         key = chunk.display_key("bibl")
-        self.assertItemsEqual(
-            result,
-            [key],
-            "the change record should depend on " + name)
+        self.assertCountEqual(result,
+                              [key],
+                              "the change record should depend on " + name)
 
     def assertDependsOnBibl(self, cr, name):
         self.assertDependsOn(cr, depman.bibl, name)
@@ -326,7 +325,7 @@ class PrepareBiblTestCase(TaskTestCase):
 
         # Check that the dependency of this article on
         # "/bibliography/2" has been recorded in the cache.
-        for item in result.iterkeys():
+        for item in result.keys():
             self.assertDependsOnBibl(chunk, item)
 
     def test_complex_document(self):
@@ -360,7 +359,7 @@ class PrepareBiblTestCase(TaskTestCase):
 
         # Check that the dependency of this article on
         # "/bibliography/1" has been recorded in the cache.
-        for item in result.iterkeys():
+        for item in result.keys():
             self.assertDependsOnBibl(chunk, item)
 
     def test_already_set(self):

@@ -12,7 +12,7 @@ sep_re = re.compile(r"(\s+(?:>|::)\s+)")
 pos_re = re.compile(r" \((.*)\)$")
 
 def to_str(path):
-    return "@".join(unicode(x) for x in path)
+    return "@".join(str(x) for x in path)
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
 class SemanticFieldTestCase(TestCase):
@@ -32,9 +32,9 @@ class SemanticFieldTestCase(TestCase):
         Test that ``pos`` returns a proper value when ``path`` changes.
         """
         c = SemanticField(path="01.01n")
-        self.assertEqual(unicode(c.pos), "n")
+        self.assertEqual(str(c.pos), "n")
         c.path = "01.01v"
-        self.assertEqual(unicode(c.pos), "v")
+        self.assertEqual(str(c.pos), "v")
 
     def test_verbose_pos(self):
         """
@@ -42,9 +42,9 @@ class SemanticFieldTestCase(TestCase):
         changes.
         """
         c = SemanticField(path="01.01n")
-        self.assertEqual(unicode(c.verbose_pos), "Noun")
+        self.assertEqual(str(c.verbose_pos), "Noun")
         c.path = "01.01v"
-        self.assertEqual(unicode(c.verbose_pos), "Verb")
+        self.assertEqual(str(c.verbose_pos), "Verb")
 
     def test_is_subcat(self):
         """
@@ -71,7 +71,7 @@ class SemanticFieldTestCase(TestCase):
         """
         parent = SemanticField(path="01.01n", heading="parent")
         c = SemanticField(path="01.01|01n", heading="subcat", parent=parent)
-        self.assertEqual(unicode(c.heading_for_display), "parent :: subcat")
+        self.assertEqual(str(c.heading_for_display), "parent :: subcat")
 
     def test_heading_and_pos(self):
         """
@@ -79,9 +79,9 @@ class SemanticFieldTestCase(TestCase):
         changes.
         """
         c = SemanticField(path="01.01n", heading="foo")
-        self.assertEqual(unicode(c.heading_and_pos), "foo (Noun)")
+        self.assertEqual(str(c.heading_and_pos), "foo (Noun)")
         c.path = "01.01v"
-        self.assertEqual(unicode(c.heading_and_pos), "foo (Verb)")
+        self.assertEqual(str(c.heading_and_pos), "foo (Verb)")
 
     def test_heading_for_display_and_pos_subcat(self):
         """
@@ -90,7 +90,7 @@ class SemanticFieldTestCase(TestCase):
         """
         parent = SemanticField(path="01.01n", heading="parent")
         c = SemanticField(path="01.01|01n", heading="subcat", parent=parent)
-        self.assertEqual(unicode(c.heading_for_display_and_pos),
+        self.assertEqual(str(c.heading_for_display_and_pos),
                          "parent :: subcat (Noun)")
 
     def test_related_by_pos(self):
@@ -117,7 +117,7 @@ class SemanticFieldTestCase(TestCase):
                     for pos in create_related if pos != "n"]
         self.assertTrue(len(related) > 0)
         self.assertTrue(len(expected) > 0)
-        self.assertItemsEqual(related, expected)
+        self.assertCountEqual(related, expected)
 
         # We now change the path to a value that has no related records.
         c.path = "02.02n"
@@ -140,7 +140,7 @@ class SemanticFieldTestCase(TestCase):
 
         c = SemanticField.objects.get(path=base_path + "n")
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             c.possible_new_poses,
             ('', 'cj', 'in', 'p', 'ph', 'vi', 'vm', 'vp', 'vr', 'vt'))
 
@@ -164,7 +164,7 @@ class SemanticFieldTestCase(TestCase):
 
         c = SemanticField.objects.get(path=base_path + "n")
 
-        self.assertItemsEqual(c.possible_new_poses, set())
+        self.assertCountEqual(c.possible_new_poses, set())
 
     def test_link(self):
         """
@@ -228,7 +228,7 @@ class SemanticFieldTestCase(TestCase):
             if parent_path is not None:
                 try:
                     parent = SemanticField.objects.get(
-                        path=unicode(parent_path))
+                        path=str(parent_path))
                 except SemanticField.DoesNotExist:
                     pass
 
@@ -254,7 +254,7 @@ class SemanticFieldTestCase(TestCase):
             if parent_path is not None:
                 try:
                     parent = SemanticField.objects.get(
-                        path=unicode(parent_path))
+                        path=str(parent_path))
                 except SemanticField.DoesNotExist:
                     pass
 
@@ -344,8 +344,8 @@ class SemanticFieldTestCase(TestCase):
         """
         c = SemanticField(path="01.01n")
         c.save()
-        with self.assertRaisesRegexp(ValueError,
-                                     "^pos is not among valid choices$"):
+        with self.assertRaisesRegex(ValueError,
+                                    "^pos is not among valid choices$"):
             c.make_child("foo", "x")
 
     def test_make_related_by_pos_non_custom(self):
@@ -354,7 +354,7 @@ class SemanticFieldTestCase(TestCase):
         """
         c = SemanticField(path="01.01n")
         c.save()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot make a field related by pos for a non-custom field$"):
             c.make_related_by_pos("foo", "a")
@@ -365,7 +365,7 @@ class SemanticFieldTestCase(TestCase):
         """
         c = SemanticField(path="01.01n/1n")
         c.save()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^pos is not among valid choices$"):
             c.make_related_by_pos("foo", "invalid")
@@ -377,7 +377,7 @@ class SemanticFieldTestCase(TestCase):
         """
         c = SemanticField(path="01.01n/1n")
         c.save()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^trying to make a field related by pos with the same "
                 "pos as the original$"):
@@ -404,9 +404,9 @@ class SpecifiedSemanticFieldTestCase(TestCase):
         Test that ``pos`` returns a proper value when ``path`` changes.
         """
         c = SpecifiedSemanticField(path="01.01n@01.02v")
-        self.assertEqual(unicode(c.pos), "n")
+        self.assertEqual(str(c.pos), "n")
         c.path = "01.01v@01.02n"
-        self.assertEqual(unicode(c.pos), "v")
+        self.assertEqual(str(c.pos), "v")
 
     def test_verbose_pos(self):
         """
@@ -432,9 +432,9 @@ class SpecifiedSemanticFieldTestCase(TestCase):
         changes.
         """
         c = SpecifiedSemanticField(path="01.01n@01.02v", heading="foo")
-        self.assertEqual(unicode(c.heading_and_pos), "foo (Noun)")
+        self.assertEqual(str(c.heading_and_pos), "foo (Noun)")
         c.path = "01.01v@01.02n"
-        self.assertEqual(unicode(c.heading_and_pos), "foo (Verb)")
+        self.assertEqual(str(c.heading_and_pos), "foo (Verb)")
 
     def test_related_by_pos(self):
         """
@@ -462,8 +462,8 @@ class SpecifiedSemanticFieldTestCase(TestCase):
         ``save`` raises an exception.
         """
         c = SpecifiedSemanticField(path="01.01n@01.02v")
-        with self.assertRaisesRegexp(Exception,
-                                     "cannot save a specified semantic field"):
+        with self.assertRaisesRegex(Exception,
+                                    "cannot save a specified semantic field"):
             c.save()
 
     def test_make_child_raises(self):
@@ -471,9 +471,9 @@ class SpecifiedSemanticFieldTestCase(TestCase):
         ``make_child`` raises an exception.
         """
         c = SpecifiedSemanticField(path="01.01n@01.02v")
-        with self.assertRaisesRegexp(Exception,
-                                     "cannot make a child of a "
-                                     "SpecifiedSemanticField"):
+        with self.assertRaisesRegex(Exception,
+                                    "cannot make a child of a "
+                                    "SpecifiedSemanticField"):
             c.make_child("foo", "n")
 
     def test_make_related_by_pos_raises(self):
@@ -481,9 +481,9 @@ class SpecifiedSemanticFieldTestCase(TestCase):
         ``make_child`` raises an exception.
         """
         c = SpecifiedSemanticField(path="01.01n@01.02v")
-        with self.assertRaisesRegexp(Exception,
-                                     "cannot make a related field for a "
-                                     "SpecifiedSemanticField"):
+        with self.assertRaisesRegex(Exception,
+                                    "cannot make a related field for a "
+                                    "SpecifiedSemanticField"):
             c.make_related_by_pos("foo", "n")
 
 @override_settings(ROOT_URLCONF='semantic_fields.tests.urls')
@@ -496,7 +496,7 @@ class SemanticFieldTransactionTestCase(TransactionTestCase):
         c = SemanticField(path="01.01n/1n")
         c.save()
         c.make_related_by_pos("foo", "v")
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^There is already a semantic field in the BTW namespace "
                 "with pos 'v'.$"):
@@ -510,7 +510,7 @@ class SemanticFieldTransactionTestCase(TransactionTestCase):
         c.save()
         c.make_child("foo", "n")
 
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^There is already a semantic field in the BTW namespace "
                 "with pos 'n' and heading 'foo'.$"):
@@ -523,8 +523,8 @@ class SemanticFieldManagerTestCase(TestCase):
         """
         ``make_field`` with a bad pos fails.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     "^pos is not among valid choices$"):
+        with self.assertRaisesRegex(ValueError,
+                                    "^pos is not among valid choices$"):
             SemanticField.objects.make_field("foo", "invalid")
 
     def test_make_field(self):
@@ -546,7 +546,7 @@ class SemanticFieldManagerTransactionTestCase(TestCase):
         ``make_child`` does not allow creating duplicate root fields.
         """
         SemanticField.objects.make_field("foo", "n")
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^There is already a semantic field in the BTW namespace "
                 "with pos 'n' and heading 'foo'.$"):

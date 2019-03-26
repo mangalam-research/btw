@@ -1,8 +1,11 @@
-from base64 import urlsafe_b64encode
 import json
 import re
-import urllib
-import urllib2
+import urllib.request
+import urllib.parse
+import urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 import logging
 from json.encoder import JSONEncoder
 from xml.dom import minidom
@@ -109,7 +112,7 @@ def _make_cache_key(url):
     :returns: The cache key.
     :rtype: :class:`str`
     """
-    return urlsafe_b64encode(_sanitize_url(url))
+    return _sanitize_url(url).encode("utf8")
 
 
 class Zotero(object):
@@ -182,7 +185,7 @@ class Zotero(object):
         """
         Builds the URL to search for a keyword.
         """
-        search_field = urllib.quote(keyword.lower().strip())
+        search_field = urllib.parse.quote(keyword.lower().strip())
         return self.basic_top_url + "&q=" + search_field
 
     def search(self, keyword):
@@ -296,7 +299,7 @@ class Zotero(object):
         res = None
         try:
             res = self.__request(url=url, headers=headers)
-        except urllib2.URLError as e:
+        except urllib.error.URLError as e:
             logger.debug('search url not working: ' + str(e))
             fetch_from_cache = True
 
@@ -388,7 +391,7 @@ class Zotero(object):
 
         try:
             res = self.__request(template_url)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return "cannot create item:error in fetching item template."
 
         item_template = res.read()
@@ -418,12 +421,11 @@ class Zotero(object):
         # prepare url to copy item metadata to BTW account.
         post_url = self.prefix + "%s/items?key=%s" % (self.userid, self.apikey)
 
-        # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
         try:
             res = self.__request(post_url, 'POST', header, json_string)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return "cannot create item:error in post url: %s" % res
 
         err, msg = self.__parse_json_response(res.read())
@@ -472,7 +474,7 @@ class Zotero(object):
         res = None
         try:
             res = self.__request(olditem_download_url)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             pass  # res remains None
 
         if res is None or res.code != 200:
@@ -501,7 +503,7 @@ class Zotero(object):
 
         try:
             res = self.__request(get_url)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return "cannot create attachment:error in fetching item template."
 
         item_template = res.read()
@@ -521,12 +523,11 @@ class Zotero(object):
         # prepare url to copy item metadata to BTW account.
         post_url = self.prefix + "%s/items?key=%s" % (self.userid, self.apikey)
 
-        # create the POST using urllib2
         header = {'Content-Type': 'application/json'}
 
         try:
             res = self.__request(post_url, 'POST', header, json_string)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return "cannot create item:error in url: %s" % post_url
 
         err, msg = self.__parse_json_response(res.read())
@@ -550,14 +551,13 @@ class Zotero(object):
         post_data = auth_form_data_template % (file_md5, filename, filesize,
                                                mtime, contentType, charset)
 
-        # create the auth POST using urllib2
         auth_headers = {'Content-Type': 'application/x-www-form-urlencoded',
                         'If-None-Match': '*'}
 
         try:
             res = self.__request(auth_post_url, 'POST', auth_headers,
                                  post_data)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return "cannot sync attachment: error in authorization: %s" % \
                 auth_post_url
 
@@ -567,23 +567,25 @@ class Zotero(object):
         # if the entry doesnot exist, upload the file.
         if 'exists' in auth_data and auth_data['exists'] == 1:
             return("OK")
-        else:
-            return ("cannot sync attachment: API error.")
+
+        return ("cannot sync attachment: API error.")
 
     def __request(self, url, rtype="GET", headers=None, data=None):
         """
         Issues a HTTP request to zotero website and gets the response.
         """
-        if headers is None:
-            headers = {}
+        # We must pass an object, and it cannot contain keys that point
+        # to None values.
+        headers = {} if headers is None else \
+                  {k: v for (k, v) in headers.items() if v is not None}
 
         headers['Zotero-API-Version'] = '3'
 
-        req = urllib2.Request(url, data if rtype == 'POST' else None,
-                              headers)
+        req = urllib.request.Request(url, data if rtype == 'POST' else None,
+                                     headers)
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError as e:
+            response = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             return e
 
         return response
@@ -619,7 +621,7 @@ class Zotero(object):
     def __parse_json_response(self, data):
         """ parser for the api response """
         response_dict = json.loads(data)
-        keys = response_dict.keys()
+        keys = list(response_dict.keys())
         for k in keys:
             if not len(response_dict[k]):
                 response_dict.pop(k)

@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from unittest import TestCase
 
@@ -115,8 +115,7 @@ class DynamicFieldsSerializerTestCase(TestCase):
         """
         Fails if an unknown field is passed.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     "unknown fields: q"):
+        with self.assertRaisesRegex(ValueError, "unknown fields: q"):
             s = SerializerWithFieldSets(self.instance, fields=["q"])
             s.get_fields()
 
@@ -124,8 +123,7 @@ class DynamicFieldsSerializerTestCase(TestCase):
         """
         Fails if an unknown query set is passed.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     "unknown field set: q"):
+        with self.assertRaisesRegex(ValueError, "unknown field set: q"):
             s = SerializerWithFieldSets(self.instance, fields=["@q"])
             s.get_fields()
 
@@ -133,7 +131,6 @@ class DynamicFieldsSerializerTestCase(TestCase):
         """
         Fails if a used field set refers to an unknown field.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     "unknown fields: bleh"):
+        with self.assertRaisesRegex(ValueError, "unknown fields: bleh"):
             s = SerializerWithBadFieldSets(self.instance)
             s.get_fields()

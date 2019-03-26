@@ -1,10 +1,10 @@
-from __future__ import print_function
+
 import os
 import time
 import tempfile
 import subprocess
 import shutil
-import httplib
+import http.client
 import atexit
 import signal
 import datetime
@@ -30,7 +30,7 @@ conf_path = os.path.join(os.path.dirname(_dirname),
                          "build", "config", "selenium_config.py")
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
-assert_equal.im_self.longMessage = True
+assert_equal.__self__.longMessage = True
 
 def sig(num, _frame):
     # Doing this ensures that cleanup will be called once before_all
@@ -62,7 +62,7 @@ def cleanup(context, failed):
     if driver:
         try:
             builder.set_test_status(not (failed or context.failed))
-        except httplib.HTTPException:
+        except http.client.HTTPException:
             # Ignore cases where we can't set the status.
             pass
         if actually_quit:
@@ -73,7 +73,7 @@ def cleanup(context, failed):
             except:   # pylint: disable=bare-except
                 pass
         elif selenium_quit == "on-enter":
-            raw_input("Hit enter to quit")
+            input("Hit enter to quit")
             try:
                 driver.quit()
             except:  # pylint: disable=bare-except
@@ -396,7 +396,7 @@ def before_all(context):
         # Make sure to mark the test as failed.
         try:
             builder.set_test_status(False)
-        except httplib.HTTPException:
+        except http.client.HTTPException:
             # Ignore cases where we can't set the status.
             pass
 

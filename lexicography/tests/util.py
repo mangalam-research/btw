@@ -4,7 +4,7 @@
 
 """
 import logging
-from StringIO import StringIO
+from io import StringIO
 
 from django.test.client import Client
 from django.core.urlresolvers import reverse
@@ -70,7 +70,7 @@ def stringify_etree(data):
         if len(el) == 0 and el.text is None:
             el.text = ''
 
-    return lxml.etree.tostring(data)
+    return lxml.etree.tostring(data).decode("utf-8")
 
 
 def set_lemma(data, new_lemma):
@@ -103,7 +103,7 @@ def set_lemma(data, new_lemma):
 @process
 def fetch():
     with open("utils/schemas/prasada.xml") as f:
-        data = f.read().decode("utf-8")
+        data = f.read()
 
     # Clean it for raw edit.
     data = util.run_xsltproc("utils/xsl/strip.xsl", data)
@@ -255,7 +255,7 @@ def inner_html(x):
     Extracts the equivalent of DOM's ``innerHTML`` from an lxml
     Element.
     """
-    return (x.text or '') + ''.join(html.tostring(d) for d in x)
+    return (x.text or '') + ''.join(html.tostring(d).decode("utf8") for d in x)
 
 def inner_normalized_html(x):
     """

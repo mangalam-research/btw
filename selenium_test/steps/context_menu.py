@@ -59,13 +59,13 @@ def step_impl(context):
 
     locations += [[foreign, 0] for foreign in foreigns]
 
-    base = [u'btw:antonym-instance', u'btw:cognate-instance',
-            u'btw:conceptual-proximate-instance',
-            u'btw:lemma-instance']
+    base = ['btw:antonym-instance', 'btw:cognate-instance',
+            'btw:conceptual-proximate-instance',
+            'btw:lemma-instance']
     expected_by_type = {
-        "btw:cit": base + [u'lg', u'p', u'ref'],
+        "btw:cit": base + ['lg', 'p', 'ref'],
         "foreign": base,
-        "btw:tr": base + [u'lg', u'p']
+        "btw:tr": base + ['lg', 'p']
     }
 
     for line in driver.execute_script(RETURN_INSERTABLE_ELEMENTS,

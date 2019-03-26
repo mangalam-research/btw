@@ -38,7 +38,7 @@ TestCase.setUpTestData = setUpTestData
 # From Django CMS 3.4 or so BaseCMSTestCase acquired this method,
 # which looks to nose like a test. Mark it as a non-test.
 #
-BaseCMSTestCase.get_permissions_test_page.__func__.__test__ = False
+BaseCMSTestCase.get_permissions_test_page.__test__ = False
 
 class Runner(NoseTestSuiteRunner):
 
@@ -64,12 +64,12 @@ class Runner(NoseTestSuiteRunner):
             try:
                 call_command("btwexistdb", "dropdb")
             except Exception as ex:  # pylint: disable=broad-except
-                print ex
+                print(ex)
 
         if self.loaded_index:
             try:
                 call_command("btwexistdb", "dropindex")
             except Exception as ex:  # pylint: disable=broad-except
-                print ex
+                print(ex)
 
         return ret

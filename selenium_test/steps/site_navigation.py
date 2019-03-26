@@ -10,7 +10,7 @@ OPTION_TO_ID = {
     "Bibliography/Manage": "btw-bibliography-manage-sub"
 }
 
-@when(ur'the user navigates to page "(?P<page>.*?)"')
+@when(r'the user navigates to page "(?P<page>.*?)"')
 def step_impl(context, page):
     driver = context.driver
     if page == "Home":
@@ -20,7 +20,7 @@ def step_impl(context, page):
         for part in page.split("/"):
             driver.find_element_by_link_text(part).click()
 
-@then(ur'the menu for "(?P<page>.*>?)" is marked active')
+@then(r'the menu for "(?P<page>.*>?)" is marked active')
 def step_impl(context, page):
     driver = context.driver
     parts = page.split("/")
@@ -50,13 +50,13 @@ def step_impl(context, page):
     if page == "Lexicography/New Article":
         wedutil.wait_for_editor(context.util)
 
-@then(ur'the user does not have the "(?P<option>.*?)" navigation option')
+@then(r'the user does not have the "(?P<option>.*?)" navigation option')
 def step_impl(context, option):
     driver = context.driver
     assert_equal(len(driver.find_elements_by_id(OPTION_TO_ID[option])), 0)
 
 
-@then(ur'the user has the "(?P<option>.*?)" navigation option')
+@then(r'the user has the "(?P<option>.*?)" navigation option')
 def step_impl(context, option):
     driver = context.driver
     assert_equal(len(driver.find_elements_by_id(OPTION_TO_ID[option])), 1)

@@ -15,7 +15,7 @@ class RawSaveFormTest(SimpleTestCase):
     def test_unclean(self):
         form = RawSaveForm(data={'data': 'foo'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['data'], [u'The XML passed is unclean!'])
+        self.assertEqual(form.errors['data'], ['The XML passed is unclean!'])
 
     def test_no_version(self):
         data = """
@@ -26,7 +26,7 @@ class RawSaveFormTest(SimpleTestCase):
         """
         form = RawSaveForm(data={'data': data})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['data'], [u'The XML has no version!'])
+        self.assertEqual(form.errors['data'], ['The XML has no version!'])
 
     def test_no_schema(self):
         data = """
@@ -38,7 +38,7 @@ class RawSaveFormTest(SimpleTestCase):
         form = RawSaveForm(data={'data': data})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['data'],
-                         [u'No schema able to handle schema version: 0.0'])
+                         ['No schema able to handle schema version: 0.0'])
 
     # This mock makes the schema check pass so we can get an error for
     # the schematron check.
@@ -53,7 +53,7 @@ class RawSaveFormTest(SimpleTestCase):
         form = RawSaveForm(data={'data': data})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['data'],
-                         [u'No schematron able to handle schema version: 0.0'])
+                         ['No schematron able to handle schema version: 0.0'])
 
     def test_clean(self):
         form = RawSaveForm(data={'data': valid_editable.decode('utf-8')})

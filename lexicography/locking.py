@@ -35,7 +35,7 @@ def _report(lock, action, user=None, lock_id=None):
         user = lock.owner
     if lock_id is None:
         lock_id = lock.id
-    logger.debug((u"{2} {1} lock {3} on entry {0.entry.id} "
+    logger.debug(("{2} {1} lock {3} on entry {0.entry.id} "
                   "(lemma: {0.entry.lemma})").format(lock, action, user,
                                                      lock_id))
 

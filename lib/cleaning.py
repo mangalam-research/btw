@@ -4,6 +4,7 @@ import mock
 from django.db import transaction
 
 from . import util
+import collections
 
 class Cleaner(object):
     """
@@ -113,7 +114,8 @@ class Cleaner(object):
         """
         matching = (getattr(self, name) for name in dir(self)
                     if name.startswith("check_"))
-        return (method for method in matching if callable(method))
+        return (method for method in matching if
+                isinstance(method, collections.Callable))
 
     @transaction.atomic
     def run(self):
@@ -218,8 +220,8 @@ class Cleaner(object):
         if self.no_listeners:
             return
 
-        message = (u"Would clean" if self.noop else u"Cleaned") + \
-            u" {0}.".format(obj)
+        message = ("Would clean" if self.noop else "Cleaned") + \
+            " {0}.".format(obj)
         self.emit_message(message)
 
     def emit_keep(self, obj, reason):
@@ -238,8 +240,8 @@ class Cleaner(object):
         if self.no_listeners:
             return
 
-        message = (u"Would keep" if self.noop else u"Kept") + \
-            u" {0}, because {1}.".format(obj, reason)
+        message = ("Would keep" if self.noop else "Kept") + \
+            " {0}, because {1}.".format(obj, reason)
         self.emit_message(message)
 
 class CheckerTestCaseMixin(object):

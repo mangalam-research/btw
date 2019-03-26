@@ -7,7 +7,7 @@ from ..btw_util import register_sf_modal_on_context
 
 step_matcher('re')
 
-__sf_re = ur"the document contains the fields (?P<fields>.*)"
+__sf_re = r"the document contains the fields (?P<fields>.*)"
 @then(__sf_re)
 @given(__sf_re)
 def step_impl(context, fields):
@@ -35,7 +35,7 @@ def step_impl(context):
 
 @when("the user brings up the semantic field editing dialog")
 def step_impl(context):
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks in the first semantic field list
     And the user brings up the context menu
     And the user clicks the context menu option "Edit semantic fields"

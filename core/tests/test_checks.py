@@ -19,7 +19,7 @@ class CheckTestCase(TestCase):
         Tests that CSRF_COOKIE_HTTPONLY cannot be True.
         """
         with self.settings(CSRF_COOKIE_HTTPONLY=True):
-            with self.assertRaisesRegexp(SystemCheckError, re.escape("""\
+            with self.assertRaisesRegex(SystemCheckError, re.escape("""\
 SystemCheckError: System check identified some issues:
 
 ERRORS:

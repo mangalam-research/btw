@@ -83,13 +83,13 @@ class ParsedExpression():
         return ParsedExpression(None).make_child(uri, number, pos)
 
     def __hash__(self):
-        return unicode(self)
+        return str(self)
 
     def __eq__(self, other):
-        return unicode(self) == unicode(other)
+        return str(self) == str(other)
 
-    def __unicode__(self):
-        ret = u""
+    def __str__(self):
+        ret = ""
         if self.hte_levels:
             ret += ".".join(self.hte_levels)
             if self.hte_subcats:
@@ -98,15 +98,12 @@ class ParsedExpression():
 
         if self.branches:
             for branch in self.branches:
-                ret += unicode(branch)
+                ret += str(branch)
 
         if self.specification:
-            ret += "@" + unicode(self.specification)
+            ret += "@" + str(self.specification)
 
         return ret
-
-    def __str__(self):
-        return unicode(self).encode("utf-8")
 
     def parent(self):
         """
@@ -306,17 +303,14 @@ class _ParsedBranch(object):
             self.levels = ()
             self.pos = ''
 
-    def __unicode__(self):
-        ret = u"/"
+    def __str__(self):
+        ret = "/"
         if self.uri:
             ret += "{" + self.uri + "}"
         ret += ".".join(self.levels)
         if self.pos:
             ret += self.pos
         return ret
-
-    def __str__(self):
-        return unicode(self).encode("utf-8")
 
     def parent(self):
         """

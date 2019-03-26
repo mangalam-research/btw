@@ -291,7 +291,7 @@ class PrimarySource(models.Model):
     class Meta(object):
         verbose_name_plural = "Primary sources"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.reference_title
 
     def save(self, *args, **kwargs):

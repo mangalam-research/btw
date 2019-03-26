@@ -33,7 +33,7 @@ class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
         form['data'] = 'foo'
         response = form.submit()
         self.assertFormError(response, 'form', 'data',
-                             [u'The XML passed is unclean!'])
+                             ['The XML passed is unclean!'])
 
     def generic_no_version(self, url):
         data = """
@@ -47,7 +47,7 @@ class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
         form['data'] = data
         response = form.submit()
         self.assertFormError(response, 'form', 'data',
-                             [u'The XML has no version!'])
+                             ['The XML has no version!'])
 
     def generic_successful(self, url):
         data = Entry.objects.get(lemma='foo').latest.c_hash.data
@@ -72,7 +72,7 @@ class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
         form['data'] = data
         response = form.submit()
         self.assertFormError(response, 'form', 'data',
-                             [u'Lemma already present in database: foo'])
+                             ['Lemma already present in database: foo'])
 
     def test_add_raw_no_version(self):
         self.generic_no_version(self.add_raw)
@@ -98,7 +98,7 @@ class EntryViewTestCase(BaseCMSTestCase, DisableMigrationsMixin, WebTest):
         entry = Entry.objects.get(lemma='foo')
         latest = entry.latest
         latest.c_hash.schema_version = \
-            get_supported_schema_versions().keys()[-1]
+            list(get_supported_schema_versions().keys())[-1]
         latest.c_hash.save()
         url = reverse("lexicography_change_revert", args=(latest.pk,))
         response = self.app.get(
@@ -146,7 +146,7 @@ class ChangeRecordViewTestCase(BaseCMSTestCase, DisableMigrationsMixin,
 
         latest = Entry.objects.get(lemma='foo').latest
         latest.c_hash.schema_version = \
-            get_supported_schema_versions().keys()[-1]
+            list(get_supported_schema_versions().keys())[-1]
         latest.c_hash.save()
         url = reverse("lexicography_change_revert", args=(latest.pk,))
         response = self.app.get(

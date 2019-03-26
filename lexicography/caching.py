@@ -49,7 +49,7 @@ def invalidate_bibl_dependents(sender, **kwargs):
 def make_display_key(kind, pk):
     if kind not in ("bibl", "xml"):
         raise ValueError("unknown display key kind {}".format(kind))
-    return "{}_{}".format(pk, kind)
+    return "{}_{}".format(pk, kind).encode("ascii")
 
 @receiver(signals.changerecord_hidden)
 @receiver(signals.changerecord_shown)

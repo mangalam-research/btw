@@ -1,7 +1,7 @@
-from __future__ import absolute_import
+
 
 from django.core.management.base import BaseCommand, CommandError
-from eulexistdb.db import ExistDB
+from pyexistdb.db import ExistDB
 
 from lexicography.models import Entry
 from lexicography.xml import XMLTree, default_namespace_mapping
@@ -96,11 +96,11 @@ sfs: extracts all the semantic field numbers found in the database
             for sf in extracted:
                 if output_lemmas:
                     lemmas = extracted[sf]
-                    print "{0}: {1}" \
-                        .format(sf.encode('utf8'),
-                                [l.encode('utf8') for l in lemmas])
+                    print("{0}: {1}"
+                          .format(sf.encode('utf8'),
+                                  [l.encode('utf8') for l in lemmas]))
                 else:
-                    print sf.encode('utf8')
+                    print(sf.encode('utf8'))
         else:
             db = ExistDB()
 
@@ -110,4 +110,4 @@ sfs: extracts all the semantic field numbers found in the database
                     .format(",".join(["doc('/btw/{0}')".format(hash)
                                       for hash in hashes])))):
                 for result in query.values:
-                    print result
+                    print(result)

@@ -11,7 +11,7 @@ import wedutil
 
 @given('that a navigation context menu is open')
 def step_impl(context):
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user brings up a context menu on navigation item "[SENSE A]"
     Then a context menu is visible close to where the user clicked
     """)
@@ -20,8 +20,8 @@ def step_impl(context):
 step_matcher("re")
 
 
-@when(ur'the user brings up a context menu on navigation item '
-      ur'"(?P<item>.*?)"(?: under "(?P<under>.*?)")?')
+@when(r'the user brings up a context menu on navigation item '
+      r'"(?P<item>.*?)"(?: under "(?P<under>.*?)")?')
 def step_impl(context, item, under):
     driver = context.driver
     util = context.util
@@ -71,7 +71,7 @@ def step_impl(context):
     assert_equal(selenic.util.locations_within(menu.location, target, 10), '')
 
 
-@when(u'the user clicks the first context menu option')
+@when('the user clicks the first context menu option')
 def step_impl(context):
     util = context.util
 
@@ -80,7 +80,7 @@ def step_impl(context):
     link.click()
 
 
-@when(u'the user clicks the context menu option "{item}"')
+@when('the user clicks the context menu option "{item}"')
 def step_impl(context, item):
     util = context.util
 
@@ -121,7 +121,7 @@ def step_impl(context, item):
     link.click()
 
 
-@then(u'there is no context menu option "{item}"')
+@then('there is no context menu option "{item}"')
 def step_impl(context, item):
     driver = context.driver
     util = context.util
@@ -144,13 +144,13 @@ def step_impl(context, item):
     util.wait(cond)
 
 
-@then(u'the heading for the first btw:explanation element is not '
+@then('the heading for the first btw:explanation element is not '
       'actionable')
 def step_impl(context):
     util = context.util
 
     heading = util.find_element((By.CSS_SELECTOR,
-                                 ur".btw\:explanation>.head"))
+                                 r".btw\:explanation>.head"))
 
     # This is necessary to prevent the next test form happening too early.
     wedutil.wait_for_first_validation_complete(util)

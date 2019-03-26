@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 step_matcher('re')
 
 
-@when(ur'the user clicks the button to (?P<action>publish|unpublish) '
-      ur'"(?P<name>.*?)"')
+@when(r'the user clicks the button to (?P<action>publish|unpublish) '
+      r'"(?P<name>.*?)"')
 def step_impl(context, action, name):
     util = context.util
 
@@ -62,8 +62,8 @@ def step_impl(context):
         (By.CSS_SELECTOR, ".alert"))) != 0)
 
 
-@then(ur'there is a message indicating that the article was '
-      ur'(?P<action>published|unpublished)')
+@then(r'there is a message indicating that the article was '
+      r'(?P<action>published|unpublished)')
 def step_impl(context, action):
     util = context.util
 
@@ -93,7 +93,7 @@ def step_impl(context):
                 "the modal should be about unpublishing")
 
 
-@when(ur'the user cancels the dialog')
+@when(r'the user cancels the dialog')
 def step_impl(context):
     util = context.util
 
@@ -104,7 +104,7 @@ def step_impl(context):
                             (By.CSS_SELECTOR, ".modal-body"))) != 0)
 
 
-@when(ur'the user clicks the dialog button that performs the unpublishing')
+@when(r'the user clicks the dialog button that performs the unpublishing')
 def step_impl(context):
     util = context.util
 

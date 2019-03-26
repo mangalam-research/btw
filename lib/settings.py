@@ -1,3 +1,4 @@
+import collections
 class Settings(object):
 
     attrs = {}
@@ -5,7 +6,7 @@ class Settings(object):
     def __getattr__(self, name):
         try:
             val = self.attrs[name]
-            if callable(val):
+            if isinstance(val, collections.Callable):
                 val = val(self)
             return val
         except KeyError:

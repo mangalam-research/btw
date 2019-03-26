@@ -15,9 +15,7 @@ cache = caches['bibliography']
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True,
                    CELERY_BROKER_TRANSPORT='memory')
-class TasksTestCase(TestCase):
-    __metaclass__ = TestMeta
-
+class TasksTestCase(TestCase, metaclass=TestMeta):
     def setUp(self):
         cache.clear()
         super(TasksTestCase, self).setUp()
@@ -134,7 +132,7 @@ class TasksTestCase(TestCase):
 
     def assertLogRegexp(self, handler, stream, regexp):
         handler.flush()
-        self.assertRegexpMatches(stream.getvalue(), regexp)
+        self.assertRegex(stream.getvalue(), regexp)
 
     @replay
     def test_periodic_fetch_items_is_periodic(self):

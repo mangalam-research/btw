@@ -34,7 +34,7 @@ class InvitationManagerTestCase(TestCase):
         assert_false(invitation.used)
         assert_false(invitation.expired)
         assert_equal(invitation.recipient, "foo@foo.foo")
-        assert_equal(unicode(invitation), "Invitation " + invitation.key)
+        assert_equal(str(invitation), "Invitation " + invitation.key)
 
     def test_get_active_invitation_with_invalid_key(self):
         """

@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 import json
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 
 from django_webtest import WebTest
 from django.test import Client
@@ -24,12 +26,10 @@ User = get_user_model()
 
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
-assert_equal.im_self.longMessage = True
+assert_equal.__self__.longMessage = True
 
 @override_settings(ROOT_URLCONF='bibliography.tests.urls')
-class _BaseTest(BaseCMSTestCase, WebTest):
-    __metaclass__ = TestMeta
-
+class _BaseTest(BaseCMSTestCase, WebTest, metaclass=TestMeta):
     url = None
 
     def __init__(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class LoginMixin(object):
         """
         Test that we get a response.
         """
-        response = self.client.login(username=u'test', password=u'test')
+        response = self.client.login(username='test', password='test')
         assert_true(response)
 
         response = self.client.get(self.url)
@@ -102,7 +102,7 @@ class TestSearchView(_BaseTest, LoginMixin):
         the search URL or loading the page yields a 200 response.
         """
         # login the test user
-        response = self.client.login(username=u'test', password=u'test')
+        response = self.client.login(username='test', password='test')
 
         assert_true(response)
 
@@ -256,7 +256,7 @@ class TestItemsView(_PatchZoteroTest):
             args=(Item.objects.get(item_key="1").pk,))
 
     def test_correct_data(self):
-        response = self.app.get(self.url, user=u'test')
+        response = self.app.get(self.url, user='test')
         data = json.loads(response.body)
         assert_equal(data["title"], "Title 1")
         assert_equal(data["date"], "Date 1")
@@ -283,7 +283,7 @@ class TestManageView(_PatchZoteroTest, LoginMixin):
         """
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, self.login_url + "?" +
-                             urllib.urlencode({"next": self.url}))
+                             urllib.parse.urlencode({"next": self.url}))
 
 class TestItemTableView(_PatchZoteroTest, LoginMixin):
 
@@ -342,7 +342,7 @@ class TestItemPrimarySourcesView(_PatchZoteroTest, LoginMixin):
         assert_equal(response.status_code, 200)
 
     def test_post(self):
-        response = self.client.login(username=u'test', password=u'test')
+        response = self.client.login(username='test', password='test')
         assert_true(response)
 
         response = self.client.post(self.url)
@@ -360,7 +360,7 @@ class PrimarySourceMixin(object):
     def make_submit_headers(self, form):
         ret = dict(self.get_headers)
         ret["Content-Type"] = \
-            "application/x-www-form-urlencoded; charset=UTF-8"
+            "application/x-www-form-urlencoded; charset=utf-8"
         ret["X-CSRFToken"] = str(form['csrfmiddlewaretoken'].value)
         return ret
 
@@ -377,7 +377,7 @@ class PrimarySourceMixin(object):
         primary source.
         """
 
-        response = self.client.login(username=u'noperm', password=u'test')
+        response = self.client.login(username='noperm', password='test')
         assert_true(response)
 
         response = self.client.get(self.url)
@@ -451,6 +451,7 @@ class PrimarySourceMixin(object):
             response,
             'This field is required.',
             status_code=400)
+        self.assertEqual(response.content_type, "text/html")
 
     def test_post_form_duplicate_title(self):
         """
@@ -468,6 +469,7 @@ class PrimarySourceMixin(object):
             response,
             'Primary source with this Reference title already exists.',
             status_code=400)
+        self.assertEqual(response.content_type, "text/html")
 
     def test_post_latin1_charset(self):
         """
@@ -479,7 +481,7 @@ class PrimarySourceMixin(object):
             self.url, headers=self.get_headers, user="test")
         assert_equal(response.status_code, 200)
         form = response.form
-        form['reference_title'] = u'Flébble'.encode('latin-1')
+        form['reference_title'] = 'Flébble'.encode('latin-1')
         form['genre'] = 'SH'
         response = self.submit(
             form, self.url, params=form.submit_fields(),
@@ -491,7 +493,7 @@ class PrimarySourceMixin(object):
         assert_equal(response.status_code, 200)
 
         source = self.element_of_interest()
-        assert_equal(source.reference_title, u"Flébble")
+        assert_equal(source.reference_title, "Flébble")
         assert_equal(source.genre, "SH")
         assert_equal(source.item.pk, Item.objects.get(item_key="1").pk)
         self.assert_count_after_valid_post(count_before)
@@ -577,7 +579,7 @@ class TestPrimarySourcesView(_PatchZoteroTest, PrimarySourceMixin, LoginMixin):
         """
         Test that we get a response.
         """
-        response = self.client.login(username=u'test', password=u'test')
+        response = self.client.login(username='test', password='test')
         assert_true(response)
 
         response = self.app.get(

@@ -8,6 +8,6 @@ def mods_names(names, marcrelator):
     if not isinstance(names, list):
         raise ValueError("names must be a list")
 
-    if not isinstance(marcrelator, unicode):
+    if not isinstance(marcrelator, str):
         raise ValueError("marcrelator must be a string")
     return {'names': names, 'marcrelator': marcrelator}

@@ -22,10 +22,10 @@ invalid_sf_cases = [
     "01.02|01.2n",  # 1 digit after suffix, secondary
     "01.02|01.002n",  # 3 digits after suffix, secondary
     "01.02|.01n",  # Initial period after suffix
-    u"0१.002n",  # Indian numeral,
+    "0१.002n",  # Indian numeral,
 ]
 
 valid_sf_cases = [
-    u"\u00a0 01.02n",  # Leading non-breakable space
-    u"01.02n@01.03n",  # Specified semantic field
+    "\u00a0 01.02n",  # Leading non-breakable space
+    "01.02n@01.03n",  # Specified semantic field
 ]

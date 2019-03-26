@@ -27,7 +27,7 @@ class UtilTestCase(TestCase):
         ``parse_local_reference`` fails if there is a specification on the
         reference.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^references cannot have specifications$"):
             parse_local_reference("03.07n@01n")
@@ -36,7 +36,7 @@ class UtilTestCase(TestCase):
         """
         ``parse_local_reference`` fails if there is more than one branch.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^BTW currently supports only one branch$"):
             parse_local_reference("03.07n/1.1n/1.2n")
@@ -46,7 +46,7 @@ class UtilTestCase(TestCase):
         ``parse_local_reference`` fails if there is more than two levels
         in a single branch.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^BTW does not allow branches with "
                 "more than two levels$"):
@@ -56,7 +56,7 @@ class UtilTestCase(TestCase):
         """
         ``parse_local_reference`` fails if there is a branch with a URI.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^BTW does not allow branches with URIs$"):
             parse_local_reference("03.07n/{foo}1.1n")
@@ -211,7 +211,7 @@ class ParsedExpressionTest(TestCase):
         """
         ``pos`` raises an exception on specified expressions.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot determine the pos of a "
                 "specified reference$"):
@@ -224,8 +224,8 @@ class ParsedExpressionTest(TestCase):
         when called for a HTE field.
         """
         parsed = ParsedExpression("01.01|02.03n")
-        related = [unicode(x) for x in parsed.related_by_pos()]
-        self.assertItemsEqual(related, ("01.01|02.03" + x for (x, _) in
+        related = [str(x) for x in parsed.related_by_pos()]
+        self.assertCountEqual(related, ("01.01|02.03" + x for (x, _) in
                                         POS_CHOICES if x != "n"))
         # Specifically check that a path without pos is not there.
         self.assertNotIn("01.01|02.03", related)
@@ -236,8 +236,8 @@ class ParsedExpressionTest(TestCase):
         when called on an expression with branches.
         """
         parsed = ParsedExpression("01.01|02.03n/04.05n")
-        related = [unicode(x) for x in parsed.related_by_pos()]
-        self.assertItemsEqual(related, ("01.01|02.03n/04.05" + x for (x, _) in
+        related = [str(x) for x in parsed.related_by_pos()]
+        self.assertCountEqual(related, ("01.01|02.03n/04.05" + x for (x, _) in
                                         POS_CHOICES_EXPANDED if x != "n"))
         # Specifically check that a path without pos *is* there.
         self.assertIn("01.01|02.03n/04.05", related)
@@ -246,7 +246,7 @@ class ParsedExpressionTest(TestCase):
         """
         ``related_by_pos()`` raises an exception on specified expressions.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot determine the related expressions of a "
                 "specified reference$"):
@@ -281,7 +281,7 @@ class ParsedExpressionTest(TestCase):
         ``last_level_number`` raise an exception when used on a specified
         expression.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot determine the last level of a "
                 "specified reference$"):
@@ -292,7 +292,7 @@ class ParsedExpressionTest(TestCase):
         """
         ``make_child`` with a bad number should raise an exception.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^the number must be greater than 0$"):
             ParsedExpression("01.01n/01.02n").make_child('', -1, "n")
@@ -301,7 +301,7 @@ class ParsedExpressionTest(TestCase):
         """
         ``make_child`` with a bad pos should raise an exception.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^pos is not among valid choices$"):
             ParsedExpression("01.01n/01.02n").make_child('', 10, "invalid")
@@ -311,7 +311,7 @@ class ParsedExpressionTest(TestCase):
         ``make_child`` raises an exception when invoked on a specified
         expression.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot make a child for a specified reference$"):
             ParsedExpression("01.01n@02.03n").make_child('', 2, "n")
@@ -322,7 +322,7 @@ class ParsedExpressionTest(TestCase):
         already exists.
         """
         child = ParsedExpression("01.01n/1.2n").make_child('', 2, "aj")
-        self.assertEqual(unicode(child), "01.01n/1.2.2aj")
+        self.assertEqual(str(child), "01.01n/1.2.2aj")
 
     def test_make_child_no_branch(self):
         """
@@ -330,13 +330,13 @@ class ParsedExpressionTest(TestCase):
         does not already exist.
         """
         child = ParsedExpression("01.01n").make_child('', 2, "aj")
-        self.assertEqual(unicode(child), "01.01n/2aj")
+        self.assertEqual(str(child), "01.01n/2aj")
 
     def test_make_related_by_pos_fails_on_bad_pos(self):
         """
         ``make_related_by_pos`` with a bad pos should raise an exception.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^pos is not among valid choices$"):
             ParsedExpression("01.01n/01.02n").make_related_by_pos("invalid")
@@ -346,7 +346,7 @@ class ParsedExpressionTest(TestCase):
         ``make_related_by_pos`` with a specified reference should raise an
         exception.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot make a field related by pos for a "
                 "specified reference$"):
@@ -357,7 +357,7 @@ class ParsedExpressionTest(TestCase):
         ``make_related_by_pos`` with an HTE reference should raise an
         exception.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^cannot make a field related by pos for a non-custom field$"):
             ParsedExpression("01.01n").make_related_by_pos("a")
@@ -367,7 +367,7 @@ class ParsedExpressionTest(TestCase):
         ``make_related_by_pos`` should raise an exception when the new pos
         is not different from the original one.
         """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "^trying to make a field related by pos with "
                 "the same pos as the original$"):
@@ -378,5 +378,5 @@ class ParsedExpressionTest(TestCase):
         ``make_related_by_pos`` should produce a correct value.
         """
         self.assertEqual(
-            unicode(ParsedExpression("01.01n/1aj").make_related_by_pos("n")),
+            str(ParsedExpression("01.01n/1aj").make_related_by_pos("n")),
             "01.01n/1n")

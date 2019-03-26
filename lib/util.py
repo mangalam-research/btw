@@ -6,12 +6,11 @@ import tempfile
 import os
 import subprocess
 from contextlib import contextmanager
-from StringIO import StringIO
+from io import StringIO
 import logging
 from functools import wraps
 
 import lxml.etree
-import functools32
 import semver
 from django.db.models import Q
 from django.utils.timezone import utc
@@ -23,6 +22,7 @@ import django_redis
 
 # We effectively reexport this function here.
 from .settings import join_prefix  # pylint: disable=unused-import
+from functools import reduce, lru_cache
 
 class WithTmpFiles(object):
 
@@ -35,7 +35,7 @@ class WithTmpFiles(object):
         (tmpinput_file, tmpinput_path) = tempfile.mkstemp(prefix='btwtmp')
         if self._input_data is not None:
             with os.fdopen(tmpinput_file, 'w') as f:
-                f.write(self._input_data.encode("utf-8"))
+                f.write(self._input_data)
 
         (tmpoutput_file, tmpoutput_path) = tempfile.mkstemp(prefix='btwtmp')
 
@@ -55,7 +55,7 @@ def run_saxon(xsl_path, input_data):
         subprocess.check_call(["saxon", "-s:" + tmpinput_path, "-xsl:" +
                                xsl_path, "-o:" + tmpoutput_path])
         out = os.fdopen(tmpoutput_file, 'r')
-        ret = out.read().decode('utf-8')
+        ret = out.read()
         out.close()
         return ret
 
@@ -67,14 +67,14 @@ def run_xsltproc(xsl_path, input_data):
                                tmpinput_path])
 
         out = os.fdopen(tmpoutput_file, 'r')
-        ret = out.read().decode('utf-8')
+        ret = out.read()
         out.close()
         return ret
 
 
 # We use a LRU cache so that we don't keep loading the same data over
 # and over. BTW uses a limited number of schemas.
-@functools32.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def rng_path_to_schema(path):
     with open(path) as f:
         schema_doc = lxml.etree.parse(f)
@@ -95,7 +95,7 @@ def validate_with_rng(rng_path, input_data, silent=True):
 
 # We use a LRU cache so that we don't keep loading the same data over
 # and over. BTW uses a limited number of schemas.
-@functools32.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def xmlschema_path_to_schema(path):
     with open(path) as f:
         schema_doc = lxml.etree.parse(f)
@@ -113,7 +113,7 @@ def validate_with_xmlschema(schema_path, input_data, silent=True):
 
     return schema(doc)
 
-@functools32.lru_cache(maxsize=10)
+@lru_cache(maxsize=10)
 def transform_path_to_transform(path):
     with open(path) as f:
         doc = lxml.etree.parse(f)
@@ -122,12 +122,12 @@ def transform_path_to_transform(path):
 def transform_with_xslt(xslt_path, input_data):
     transform = transform_path_to_transform(xslt_path)
     doc = lxml.etree.fromstring(input_data.encode("utf8"))
-    ret = unicode(transform(doc))
+    ret = str(transform(doc))
     # We first check that what we are going to alter is what we expect.
-    assert ret.startswith(u'<?xml version="1.0"?>\n')
+    assert ret.startswith('<?xml version="1.0"?>\n')
     # Add the encoding for consistency with the rest of BTW. Yes, we
     # put utf8 here even though the string is unicode.
-    ret = ret.replace(u'?>', u' encoding="UTF-8"?>', 1)
+    ret = ret.replace('?>', ' encoding="UTF-8"?>', 1)
     return ret
 
 def schematron(xsl, input_data):
@@ -243,7 +243,7 @@ def version():
         raise Exception("running with unclean tree while DEBUG is false")
 
     describe = subprocess.check_output(["git", "describe", "--match",
-                                        "v*"]).strip()
+                                        "v*"]).decode("utf-8").strip()
 
     if unclean:
         describe += "-unclean"
@@ -546,9 +546,9 @@ def _dump_urls(patterns, depth=0):
         callback = pat.callback
         if callback:
             callback = "{0}.{1}".format(
-                callback.__module__, callback.func_name)
+                callback.__module__, callback.__name__)
             items.append(callback)
 
-        print " ".join(items)
+        print(" ".join(items))
         if hasattr(pat, 'url_patterns'):
             _dump_urls(pat.url_patterns, depth + 1)

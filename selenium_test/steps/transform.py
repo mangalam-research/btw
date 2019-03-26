@@ -19,7 +19,7 @@ import wedutil
 
 
 @record_senses
-@then(u'sense {first} becomes sense {second}')
+@then('sense {first} becomes sense {second}')
 def step_impl(context, first, second):
     util = context.util
 
@@ -36,15 +36,15 @@ def step_impl(context, first, second):
 
 
 @record_senses
-@then(u'sense {label} remains the same')
+@then('sense {label} remains the same')
 def step_impl(context, label):
-    context.execute_steps(u"""
+    context.execute_steps("""
     Then sense {0} becomes sense {0}
     """.format(label))
 
 
 @record_senses
-@then(u'a new sense {label} is created')
+@then('a new sense {label} is created')
 def step_impl(context, label):
     util = context.util
 
@@ -57,7 +57,7 @@ def step_impl(context, label):
     assert_equal(senses[ix].term, '', "the new sense has no term yet")
 
 
-@when(u'the user undoes')
+@when('the user undoes')
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -69,7 +69,7 @@ def step_impl(context):
 
 
 @record_senses
-@then(u'the senses are the same as originally')
+@then('the senses are the same as originally')
 def step_impl(context):
     util = context.util
 
@@ -80,7 +80,7 @@ def step_impl(context):
 
 
 @record_renditions_for("A")
-@then(u'the first english rendition becomes second')
+@then('the first english rendition becomes second')
 def step_impl(context):
     util = context.util
     initial_renditions = context.initial_renditions_by_sense["A"]
@@ -96,7 +96,7 @@ def step_impl(context):
 
 
 @record_renditions_for("A")
-@then(u'a new first english rendition is created')
+@then('a new first english rendition is created')
 def step_impl(context):
     util = context.util
 
@@ -107,7 +107,7 @@ def step_impl(context):
 
 
 @record_renditions_for("A")
-@then(u'the first english rendition remains the same')
+@then('the first english rendition remains the same')
 def step_impl(context):
     util = context.util
     initial_renditions = context.initial_renditions_by_sense["A"]
@@ -147,8 +147,8 @@ step_matcher('re')
 
 
 @record_subsenses_for("A")
-@then(ur"the single sense contains an additional subsense "
-      ur"(?P<where>after|before) the one that was already there\.?")
+@then(r"the single sense contains an additional subsense "
+      r"(?P<where>after|before) the one that was already there\.?")
 def step_impl(context, where):
     util = context.util
 
@@ -161,30 +161,30 @@ def step_impl(context, where):
                           "no new subsense was created")
 
         if where == "after":
-            expected = {"explanation": u"sense a1",
-                        "head": u"[brief explanation of sense a1]"}
+            expected = {"explanation": "sense a1",
+                        "head": "[brief explanation of sense a1]"}
             if subsenses[0] != expected:
                 return Result(False,
                               "unexpected value for first subsense: {0} != {1}"
                               .format(subsenses[0], expected))
 
-            expected = {"explanation": u'',
-                        "head": u"[brief explanation of sense a2]"}
+            expected = {"explanation": '',
+                        "head": "[brief explanation of sense a2]"}
             if subsenses[1] != expected:
                 return Result(
                     False,
                     "unexpected value for second subsense: {0} != {1}"
                     .format(subsenses[1], expected))
         elif where == "before":
-            expected = {"explanation": u'',
-                        "head": u"[brief explanation of sense a1]"}
+            expected = {"explanation": '',
+                        "head": "[brief explanation of sense a1]"}
             if subsenses[0] != expected:
                 return Result(False,
                               "unexpected value for first subsense: {0} != {1}"
                               .format(subsenses[0], expected))
 
-            expected = {"explanation": u"sense a1",
-                        "head": u"[brief explanation of sense a2]"}
+            expected = {"explanation": "sense a1",
+                        "head": "[brief explanation of sense a2]"}
             if subsenses[1] != expected:
                 return Result(
                     False,
@@ -212,14 +212,14 @@ def step_impl(context, what, inside=None):
     util.find_element((By.CSS_SELECTOR, selector))
 
 
-@when(ur"the user clicks on the visible absence for (?P<what>.*?)"
-      ur"(?: in (?P<inside>.*))?")
+@when(r"the user clicks on the visible absence for (?P<what>.*?)"
+      r"(?: in (?P<inside>.*))?")
 def step_impl(context, what, inside=None):
     driver = context.driver
 
     done = False
     while not done:
-        button = driver.execute_script(ur"""
+        button = driver.execute_script(r"""
         var what = arguments[0];
         var inside = arguments[1];
 
@@ -259,7 +259,7 @@ def step_impl(context, assertion, what):
     context.util.wait(cond)
 
 
-hyperlink_re = re.compile(ur'"(.*?)"')
+hyperlink_re = re.compile(r'"(.*?)"')
 
 
 @then("there is no (?P<what>.*)")
@@ -287,8 +287,8 @@ def step_impl(context, what):
                       (By.CSS_SELECTOR, what))
 
 
-@then(ur"the (?P<what>btw:example|btw:example-explained|"
-      ur"btw:explanation in btw:example-explained) has a Wheel of Dharma")
+@then(r"the (?P<what>btw:example|btw:example-explained|"
+      r"btw:explanation in btw:example-explained) has a Wheel of Dharma")
 def step_impl(context, what):
     util = context.util
 
@@ -301,9 +301,9 @@ def step_impl(context, what):
     util.find_element((By.CSS_SELECTOR, what))
 
 
-@then(ur"the (?P<what>btw:example|btw:example-explained|"
-      ur"btw:explanation in btw:example-explained) does not have a Wheel "
-      ur"of Dharma")
+@then(r"the (?P<what>btw:example|btw:example-explained|"
+      r"btw:explanation in btw:example-explained) does not have a Wheel "
+      r"of Dharma")
 def step_impl(context, what):
     util = context.util
 
@@ -317,12 +317,12 @@ def step_impl(context, what):
         what))
 
 
-@when(ur"the user removes the language from the "
-      ur"(?:btw:example|btw:example-explained)")
+@when(r"the user removes the language from the "
+      r"(?:btw:example|btw:example-explained)")
 def step_impl(context):
     util = context.util
     util.ctrl_equivalent_x("]")
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks on the end label of the last foreign element
     And the user brings up the context menu
     And the user clicks the context menu option "Unwrap the content of \
@@ -331,13 +331,13 @@ this element"
 
 
 __EXAMPLE_SELECTORS = {
-    u"btw:example": ur".btw\:example .btw\:cit:first",
-    u"btw:example-explained": ur".btw\:example-explained .btw\:cit:first"
+    "btw:example": r".btw\:example .btw\:cit:first",
+    "btw:example-explained": r".btw\:example-explained .btw\:cit:first"
 }
 
 
-@when(ur"the user adds the Pāli language to the "
-      ur"(?P<what>btw:example|btw:example-explained)")
+@when(r"the user adds the Pāli language to the "
+      r"(?P<what>btw:example|btw:example-explained)")
 def step_impl(context, what):
     util = context.util
 
@@ -346,12 +346,12 @@ def step_impl(context, what):
     btw_util.select_text_of_element_directly(context, selector)
 
     assert_equal(context.expected_selection, "foo")
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the Pāli button
     """)
 
 
-@given(ur"the btw:definition does not contain foreign text")
+@given(r"the btw:definition does not contain foreign text")
 def step_impl(context):
     driver = context.driver
 
@@ -359,13 +359,13 @@ def step_impl(context):
     assert_equal(len(el), 0, "there should be no elements")
 
 
-@when(ur'the user marks the text "prasāda" as (?P<lang>Pāli|Sanskrit|Latin) '
-      ur'in btw:definition')
+@when(r'the user marks the text "prasāda" as (?P<lang>Pāli|Sanskrit|Latin) '
+      r'in btw:definition')
 def step_impl(context, lang):
     driver = context.driver
     util = context.util
 
-    p = driver.execute_script(u"""
+    p = driver.execute_script("""
     var $p = jQuery(".p");
     var $text = $p.contents().filter(function () {
         return this.nodeType === Node.TEXT_NODE;
@@ -377,26 +377,26 @@ def step_impl(context, lang):
     """)
 
     util.send_keys(p,
-                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(u"prasāda") +
+                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len("prasāda") +
                    [Keys.SHIFT])
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the {0} button
     """.format(lang))
 
 
-@when(ur'the user wraps the text "(?P<text>.*?)" in a (?P<wrapper>.*?) '
-      ur'in (?P<where>.*)')
+@when(r'the user wraps the text "(?P<text>.*?)" in a (?P<wrapper>.*?) '
+      r'in (?P<where>.*)')
 def step_impl(context, text, wrapper, where):
     driver = context.driver
     util = context.util
 
-    selector = "." + where.replace(":", ur"\:")
+    selector = "." + where.replace(":", r"\:")
 
     if where == "btw:definition":
         selector += " .p"
 
-    p = driver.execute_script(ur"""
+    p = driver.execute_script(r"""
     var text = arguments[0];
     var selector = arguments[1];
     var $text = jQuery(selector).contents().filter(function () {
@@ -412,23 +412,23 @@ def step_impl(context, text, wrapper, where):
                    [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(text) +
                    [Keys.SHIFT])
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user brings up the context menu
     And the user clicks the context menu option "Wrap in {0}"
     """.format(wrapper))
 
 
-@then(ur'the text "(?P<text>.*?)" is wrapped in a (?P<wrapper>.*)')
+@then(r'the text "(?P<text>.*?)" is wrapped in a (?P<wrapper>.*)')
 def step_impl(context, text, wrapper):
     util = context.util
 
-    selector = "." + wrapper.replace(":", ur"\:")
+    selector = "." + wrapper.replace(":", r"\:")
 
     if wrapper == "btw:sense-emphasis":
         selector = r".btw\:definition .p " + selector
 
     util.wait(lambda driver:
-              driver.execute_script(ur"""
+              driver.execute_script(r"""
               var text = arguments[0];
               var selector = arguments[1];
               return jQuery(selector).first().contents().filter(function () {
@@ -437,22 +437,22 @@ def step_impl(context, text, wrapper):
               """, text, selector))
 
 
-@when(ur"the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button")
+@when(r"the user clicks the (?P<lang>Pāli|Sanskrit|Latin) button")
 def step_impl(context, lang):
-    button = context.driver.execute_script(u"""
+    button = context.driver.execute_script("""
     return jQuery(".wed-toolbar .btn:contains('{0}')")[0];
     """.format(lang))
     button.click()
 
 LANG_TO_CODE = {
-    u"Pāli": u"pi-Latn",
-    u"Sanskrit": u"sa-Latn",
-    u"Latin": u"la"
+    "Pāli": "pi-Latn",
+    "Sanskrit": "sa-Latn",
+    "Latin": "la"
 }
 
 
-@then(ur'the text "prasāda" is marked as (?P<lang>Pāli|Sanskrit|Latin) '
-      ur'in btw:definition')
+@then(r'the text "prasāda" is marked as (?P<lang>Pāli|Sanskrit|Latin) '
+      r'in btw:definition')
 def step_impl(context, lang):
     util = context.util
 
@@ -462,7 +462,7 @@ def step_impl(context, lang):
     # hmm... delays seem to happen sometimes, so...
 
     def check(driver):
-        test = driver.execute_script(ur"""
+        test = driver.execute_script(r"""
         var $el = jQuery(".btw\\:definition .foreign:contains('prasāda')");
         if (!$el[0])
             return [false, undefined];
@@ -476,8 +476,8 @@ def step_impl(context, lang):
     assert_equal(result.payload, LANG_TO_CODE[lang])
 
 
-@when(ur"the user clears formatting from the (?P<what>first paragraph"
-      ur"(?: and second paragraph)?) in btw:definition")
+@when(r"the user clears formatting from the (?P<what>first paragraph"
+      r"(?: and second paragraph)?) in btw:definition")
 def step_impl(context, what):
     driver = context.driver
     util = context.util
@@ -485,7 +485,7 @@ def step_impl(context, what):
     if what == "first paragraph":
         wedutil.select_contents_directly(util, r".btw\:definition .p")
     else:
-        paras = driver.execute_script(ur"""
+        paras = driver.execute_script(r"""
         var $p = jQuery(".btw\\:definition .p");
         var last = $p.last()[0];
         return [ $p[0], last, last.childNodes.length ];
@@ -498,8 +498,8 @@ def step_impl(context, what):
     button.click()
 
 
-@then(ur"the first paragraph in btw:definition (?P<test>does not contain"
-      ur"|contains) formatted text")
+@then(r"the first paragraph in btw:definition (?P<test>does not contain"
+      r"|contains) formatted text")
 def step_impl(context, test):
     util = context.util
 
@@ -514,13 +514,13 @@ def step_impl(context, test):
         raise ValueError("unknown test: " + test)
 
 
-@then(ur"the user gets a dialog saying that the selection is straddling")
+@then(r"the user gets a dialog saying that the selection is straddling")
 def step_impl(context):
     util = context.util
     modal = util.find_element((By.CSS_SELECTOR, ".modal.in"))
     assert_true(modal.text.find("The text selected straddles") > -1)
 
-__PARAGRAPH_COUNT_RE = ur"the definition contains (?P<number>\d+) paragraphs?"
+__PARAGRAPH_COUNT_RE = r"the definition contains (?P<number>\d+) paragraphs?"
 
 
 @then(__PARAGRAPH_COUNT_RE)
@@ -531,14 +531,14 @@ def step_impl(context, number):
                  "there should be " + number + " paragraphs")
 
 
-@when(ur"the user clicks in the first paragraph of the definition")
+@when(r"the user clicks in the first paragraph of the definition")
 def step_impl(context):
     ps = context.util.find_element((By.CSS_SELECTOR, r".btw\:definition .p"))
     ps.click()
 
 
-@when(ur"the user clicks at the start of the second paragraph of the "
-      ur"definition")
+@when(r"the user clicks at the start of the second paragraph of the "
+      r"definition")
 def step_impl(context):
     ps = context.util.find_elements((By.CSS_SELECTOR, r".btw\:definition .p"))
     ActionChains(context.driver) \
@@ -546,7 +546,7 @@ def step_impl(context):
         .click() \
         .perform()
 
-__SF_COUNT_RE = ur"the document contains (?P<number>\d+) semantic fields?"
+__SF_COUNT_RE = r"the document contains (?P<number>\d+) semantic fields?"
 
 
 @then(__SF_COUNT_RE)
@@ -557,20 +557,20 @@ def step_impl(context, number):
                  "there should be " + number + " semantic fields")
 
 
-@when(ur"the user clicks in the first semantic field")
+@when(r"the user clicks in the first semantic field")
 def step_impl(context):
     sfs = context.util.find_element((By.CSS_SELECTOR, r".btw\:sf"))
     sfs.click()
 
 
-@when(ur"the user clicks in the first semantic field list")
+@when(r"the user clicks in the first semantic field list")
 def step_impl(context):
     sfs = context.util.find_element(
         (By.CSS_SELECTOR, r".btw\:semantic-fields"))
     sfs.click()
 
 
-@when(ur"the user clicks at the start of the second semantic field")
+@when(r"the user clicks at the start of the second semantic field")
 def step_impl(context):
     util = context.util
     sfs = util.find_elements((By.CSS_SELECTOR, r".btw\:sf"))
@@ -582,26 +582,26 @@ def step_impl(context):
     wedutil.wait_for_caret_to_be_in(util, sfs[1])
 
 
-@when(ur'the user adds the text "blip" in btw:tr')
+@when(r'the user adds the text "blip" in btw:tr')
 def step_impl(context):
     driver = context.driver
 
     tr = driver.find_element_by_css_selector(r".__start_label._btw\:tr_label")
 
     tr.click()
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user hits the right arrow
     And the user types "blip"
     """)
 
 
-@when(ur'the user deletes all (?P<what>btw:antonym|btw:cognate|'
-      ur'btw:conceptual-proximate|btw:contrastive-section) elements')
+@when(r'the user deletes all (?P<what>btw:antonym|btw:cognate|'
+      r'btw:conceptual-proximate|btw:contrastive-section) elements')
 def step_impl(context, what):
     driver = context.driver
     util = context.util
 
-    label_class = "._" + what.replace(":", ur"\:") + "_label"
+    label_class = "._" + what.replace(":", r"\:") + "_label"
 
     # Use util to wait until the elements are decorated...
     antonym_lbls = util.find_elements(
@@ -609,7 +609,7 @@ def step_impl(context, what):
 
     while len(antonym_lbls):
         wedutil.click_until_caret_in(util, antonym_lbls[0])
-        context.execute_steps(u"""
+        context.execute_steps("""
         When the user brings up the context menu
         And the user clicks the context menu option "Delete this element"
         """)
@@ -618,7 +618,7 @@ def step_impl(context, what):
         antonym_lbls = driver.find_elements_by_css_selector(
             r".__start_label" + label_class)
 
-@when(ur'the user deletes the contrastive section')
+@when(r'the user deletes the contrastive section')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -633,7 +633,7 @@ def step_impl(context):
     wed_editor.caretManager.setCaret(sec_data, 0);
     """)
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user brings up the context menu
     And the user clicks the context menu option \
 "Delete btw:contrastive-section"
@@ -642,7 +642,7 @@ def step_impl(context):
     selector = (By.CSS_SELECTOR, r".btw\:contrastive-section .head")
     util.wait_until_not(lambda driver: driver.find_element(selector))
 
-@then(ur'the contrastive section has btw:none in all its subsections')
+@then(r'the contrastive section has btw:none in all its subsections')
 def step_impl(context):
     util = context.util
 
@@ -667,7 +667,7 @@ def step_impl(context):
     result = Condition(util, check).wait()
     assert_true(result, result.payload)
 
-@then(ur'a btw:none element is created')
+@then(r'a btw:none element is created')
 def step_impl(context):
     util = context.util
 

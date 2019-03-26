@@ -1,6 +1,7 @@
 import os
 import mock
 from contextlib import contextmanager
+from io import RawIOBase
 
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -47,7 +48,7 @@ def fake_pidfiles():
             super(FakeWorker, self).__init__(*args, **kwargs)
             self.pidfile = fake
 
-    FakeFile = mock.MagicMock(spec=file, **{'read.return_value': ["1"]})
+    FakeFile = mock.MagicMock(spec=RawIOBase, **{'read.return_value': ["1"]})
 
     orig_open = open
     try:
@@ -57,7 +58,7 @@ def fake_pidfiles():
             mock.patch("btw_management.management.commands.btwworker"
                        ".os.path.exists", side_effect=lambda *args, **kwargs:
                        args[0] is fake or real_exists(*args, **kwargs)), \
-            mock.patch("__builtin__.open",
+            mock.patch("btw_management.management.commands.btwworker.open",
                        side_effect=lambda *args, **kwargs: FakeFile() if
                        args[0] is fake else orig_open(*args, **kwargs)):
             yield
@@ -120,7 +121,7 @@ eXist-db instance is alive.
         with override_settings(BTW_EDITORS=None), fake_pidfiles(), \
                 make_btwworker_pass():
             try:
-                with self.assertRaisesRegexp(CommandError, r"^1 error\(s\)$"):
+                with self.assertRaisesRegex(CommandError, r"^1 error\(s\)$"):
                     c.call_command("btwcheck")
             finally:
                 self.assertEqual(c.stdout, """\
@@ -140,7 +141,7 @@ eXist-db instance is alive.
         with override_settings(BTW_EDITORS="foo"), fake_pidfiles(), \
                 make_btwworker_pass():
             try:
-                with self.assertRaisesRegexp(CommandError, r"^1 error\(s\)$"):
+                with self.assertRaisesRegex(CommandError, r"^1 error\(s\)$"):
                     c.call_command("btwcheck")
             finally:
                 self.assertEqual(c.stdout, """\
@@ -163,15 +164,15 @@ eXist-db instance is alive.
                 "foo",
                 {},
                 {
-                    "forename": u"foo",
+                    "forename": "foo",
                     "surname": 1,
-                    "genName": u"baz",
+                    "genName": "baz",
                     "foo": "foo"
                 }
         ]), fake_pidfiles(), \
                 make_btwworker_pass():
             try:
-                with self.assertRaisesRegexp(CommandError, r"^7 error\(s\)$"):
+                with self.assertRaisesRegex(CommandError, r"^7 error\(s\)$"):
                     c.call_command("btwcheck")
             finally:
                 self.assertEqual(c.stdout, """\
@@ -187,10 +188,10 @@ editor is not a dictionary: foo
 missing forename in {}
 missing surname in {}
 missing genName in {}
-field surname is not a unicode value in {'genName': u'baz', 'foo': 'foo', \
-'surname': 1, 'forename': u'foo'}
-spurious field foo in {'genName': u'baz', 'foo': 'foo', 'surname': 1, \
-'forename': u'foo'}
+field surname is not a unicode value in {'forename': 'foo', 'surname': 1, \
+'genName': 'baz', 'foo': 'foo'}
+spurious field foo in {'forename': 'foo', 'surname': 1, \
+'genName': 'baz', 'foo': 'foo'}
 settings.BTW_EDITORS is not of the right format
 """)
 
@@ -204,7 +205,7 @@ settings.BTW_EDITORS is not of the right format
                                BTW_RUN_PATH_FOR_BTW="@@foo@@"), \
                 fake_pidfiles(), \
                 make_btwworker_pass():
-            with self.assertRaisesRegexp(CommandError, r"^3 error\(s\)$"):
+            with self.assertRaisesRegex(CommandError, r"^3 error\(s\)$"):
                 c.call_command("btwcheck")
             self.assertEqual(c.stdout,
                              """\
@@ -229,7 +230,7 @@ settings.BTW_RUN_PATH_FOR_BTW ("@@foo@@") does not exist
         with override_settings(BTW_SITE_NAME="foo"), \
                 fake_pidfiles(), \
                 make_btwworker_pass():
-            with self.assertRaisesRegexp(CommandError, r"^1 error\(s\)$"):
+            with self.assertRaisesRegex(CommandError, r"^1 error\(s\)$"):
                 c.call_command("btwcheck")
             self.assertEqual(c.stdout,
                              """\

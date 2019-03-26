@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from cStringIO import StringIO
+from io import StringIO
 
 import lxml.etree
 
@@ -29,7 +29,7 @@ class CiteTestCase(CMSTestCase):
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {})
         parser = lxml.etree.HTMLParser(encoding="utf8")
-        tree = lxml.etree.parse(StringIO(html.encode("utf8")), parser)
+        tree = lxml.etree.parse(StringIO(html), parser)
         self.chicago_authors = \
             tree.xpath("//span[@id='chicago_authors']")[0].text
         self.mla_authors = \
@@ -40,66 +40,66 @@ class CiteTestCase(CMSTestCase):
         self.assertEqual(self.mla_authors, expected)
 
     @override_settings(BTW_EDITORS=[{
-        "forename": u"Luis",
-        "surname": u"Gómez",
-        "genName": u""
+        "forename": "Luis",
+        "surname": "Gómez",
+        "genName": ""
     }, {
-        "forename": u"Ligeia",
-        "surname": u"Lugli",
-        "genName": u""
+        "forename": "Ligeia",
+        "surname": "Lugli",
+        "genName": ""
     }])
     def test_renders_two_names(self):
         self.make_placeholder()
-        self.assertNames(u"Gómez, Luis and Ligeia Lugli")
+        self.assertNames("Gómez, Luis and Ligeia Lugli")
 
     @override_settings(BTW_EDITORS=[{
-        "forename": u"Ligeia",
-        "surname": u"Lugli",
-        "genName": u""
+        "forename": "Ligeia",
+        "surname": "Lugli",
+        "genName": ""
     }])
     def test_renders_one_name(self):
         self.make_placeholder()
-        self.assertNames(u"Lugli, Ligeia")
+        self.assertNames("Lugli, Ligeia")
 
     @override_settings(BTW_EDITORS=[{
-        "forename": u"Luis",
-        "surname": u"Gómez",
-        "genName": u""
+        "forename": "Luis",
+        "surname": "Gómez",
+        "genName": ""
     }, {
-        "forename": u"Ligeia",
-        "surname": u"Lugli",
-        "genName": u""
+        "forename": "Ligeia",
+        "surname": "Lugli",
+        "genName": ""
     }, {
-        "forename": u"Forename 3",
-        "surname": u"Surname 3",
-        "genName": u"GenName 3"
+        "forename": "Forename 3",
+        "surname": "Surname 3",
+        "genName": "GenName 3"
     }])
     def test_renders_three_names(self):
         self.make_placeholder()
         self.assertNames(
-            u"Gómez, Luis, Ligeia Lugli and Forename 3 Surname 3, GenName 3")
+            "Gómez, Luis, Ligeia Lugli and Forename 3 Surname 3, GenName 3")
 
     @override_settings(BTW_EDITORS=[{
-        "forename": u"Luis",
-        "surname": u"Gómez",
-        "genName": u""
+        "forename": "Luis",
+        "surname": "Gómez",
+        "genName": ""
     }, {
-        "forename": u"Ligeia",
-        "surname": u"Lugli",
-        "genName": u""
+        "forename": "Ligeia",
+        "surname": "Lugli",
+        "genName": ""
     }, {
-        "forename": u"Forename 3",
-        "surname": u"Surname 3",
-        "genName": u"GenName 3"
+        "forename": "Forename 3",
+        "surname": "Surname 3",
+        "genName": "GenName 3"
     }, {
-        "forename": u"Forename 4",
-        "surname": u"Surname 4",
-        "genName": u"GenName 4"
+        "forename": "Forename 4",
+        "surname": "Surname 4",
+        "genName": "GenName 4"
     }])
     def test_renders_four_names(self):
         self.make_placeholder()
         self.assertEqual(
             self.chicago_authors,
-            u"Gómez, Luis, Ligeia Lugli, Forename 3 Surname 3, GenName 3 "
-            u"and Forename 4 Surname 4, GenName 4")
-        self.assertEqual(self.mla_authors, u"Gómez, Luis, et al.")
+            "Gómez, Luis, Ligeia Lugli, Forename 3 Surname 3, GenName 3 "
+            "and Forename 4 Surname 4, GenName 4")
+        self.assertEqual(self.mla_authors, "Gómez, Luis, et al.")

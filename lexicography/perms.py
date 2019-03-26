@@ -25,10 +25,10 @@ def create_perms(apps=None):
         author_group.save()
 
     if Group.objects.filter(name__in=("scribe", "editor")).exists():
-        print "You already have an scribe or editor groups in your database."
+        print("You already have an scribe or editor groups in your database.")
         print("Assuming that we are upgrading from a pre-Django 1.7 "
               "installation, and stopping.")
-        print
+        print()
         print("If the assumption is incorrect, please edit your database "
               "manually.")
         return

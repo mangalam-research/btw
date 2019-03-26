@@ -14,7 +14,7 @@ from selenic.tables import Table
 from selenic.util import Condition, Result
 
 
-GET_CITATION_TEXT = ur"""
+GET_CITATION_TEXT = r"""
 function getCitationText(cit) {
   var data_cit = jQuery.data(cit, "wed_mirror_node");
   var clone = data_cit.cloneNode(true);
@@ -53,7 +53,7 @@ class SenseRecorder(dict):
         :rtype: :class:`set`
         """
         return set(itertools.chain.from_iterable(
-            [senses for f, senses in self.iteritems() if f in funcs]))
+            [senses for f, senses in self.items() if f in funcs]))
 
 require_sense_recording = PlainRecorder()
 require_rendition_recording = SenseRecorder()
@@ -264,12 +264,12 @@ def select_text_of_element_directly(context, selector):
     context.expected_selection = text
 
 
-SENSE_LINK_RE = re.compile(ur"\[.*?\]")
+SENSE_LINK_RE = re.compile(r"\[.*?\]")
 
 
 def get_sense_hyperlinks(util):
     def cond(driver):
-        ret = driver.execute_script(ur"""
+        ret = driver.execute_script(r"""
         return jQuery(".wed-document a[href^='#BTW-S.']").toArray().map(
             function (x) {
             return { el: x, text: jQuery(x).text() };
@@ -378,7 +378,7 @@ def velocity_mock(driver, value):
     });
     """, value)
 
-info_re = re.compile(ur"^Showing (\d+) to (\d+) of (\d+) entries")
+info_re = re.compile(r"^Showing (\d+) to (\d+) of (\d+) entries")
 
 class SFModalTable(Table):
 

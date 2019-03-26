@@ -41,7 +41,7 @@ def tearDownModule():
         if os.path.exists(tmpdir):
             shutil.rmtree(tmpdir)
     else:
-        print "Keeping", tmpdir
+        print("Keeping", tmpdir)
 
 @override_settings(BTW_LOGGING_PATH_FOR_BTW="",
                    BTW_RUN_PATH_FOR_BTW="",
@@ -70,15 +70,15 @@ class BTWWorkerTestCase(SimpleTestCase):
 
     def check_no_arguments(self, cmd):
         c = Caller()
-        with self.assertRaisesRegexp(CommandError,
-                                     cmd + r" does not take arguments\."):
+        with self.assertRaisesRegex(CommandError,
+                                    cmd + r" does not take arguments\."):
             c.call_command("btwworker", cmd, "foo")
 
         self.assertNoOutput(c)
 
     def check_no_all(self, cmd):
         c = Caller()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 CommandError, cmd + r" does not take the --all option\."):
             c.call_command("btwworker", cmd, all=True)
 
@@ -89,7 +89,9 @@ class BTWWorkerTestCase(SimpleTestCase):
         Tests that btwworker requires a command.
         """
         c = Caller()
-        with self.assertRaisesRegexp(CommandError, r"too few arguments"):
+        with self.assertRaisesRegex(CommandError,
+                                    r"Error: the following arguments are "
+                                    r"required: command, worker_names"):
             c.call_command("btwworker")
         self.assertNoOutput(c)
 
@@ -98,8 +100,8 @@ class BTWWorkerTestCase(SimpleTestCase):
         Tests that btwworker requires a command.
         """
         c = Caller()
-        with self.assertRaisesRegexp(CommandError,
-                                     r"bad command: foo"):
+        with self.assertRaisesRegex(CommandError,
+                                    r"bad command: foo"):
             c.call_command("btwworker", "foo")
         self.assertNoOutput(c)
 

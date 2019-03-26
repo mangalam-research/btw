@@ -386,7 +386,7 @@ s.INSTALLED_APPS = (
     'cmsplugin_filer_image',
     'cmsplugin_filer_teaser',
     'cmsplugin_filer_video',
-    'eulexistdb',
+    'pyexistdb',
     'semantic_fields',
     # End of apps required by Django CMS.
     'pipeline',
@@ -644,7 +644,7 @@ s.BTW_EXISTDB_SERVER_TYPE = "full"
 s.BTW_EXISTDB_SERVER_ADMIN_USER = None
 s.BTW_EXISTDB_SERVER_ADMIN_PASSWORD = None
 
-# These are eulexistdb settings
+# These are pyexistdb settings
 s.EXISTDB_SERVER_USER = None
 s.EXISTDB_SERVER_PASSWORD = None
 # This is the default location, port and URL when using eXist as
@@ -687,15 +687,15 @@ s.DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
-exec _env.find_config("btw")  # pylint: disable=exec-used
+exec(_env.find_config("btw"))  # pylint: disable=exec-used
 
 # Execute per-app overrides.
 for app in s.INSTALLED_APPS:
     if app.find(".") < 0:
         if os.path.exists(os.path.join(s.CURDIR, app + ".py")):
             # pylint: disable=exec-used
-            exec open(os.path.join(s.CURDIR, app + ".py"))
-        exec _env.find_config(app)  # pylint: disable=exec-used
+            exec(open(os.path.join(s.CURDIR, app + ".py")).read())
+        exec(_env.find_config(app))  # pylint: disable=exec-used
 
 #
 # Export everything to the global space. This is where we convert

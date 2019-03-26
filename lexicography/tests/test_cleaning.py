@@ -34,7 +34,7 @@ class _BaseCleanerTestCase(TestCase):
         to_clean, _to_keep = self.make_records()
 
         cleaner = self.cleaner_class()
-        self.assertItemsEqual(cleaner.to_clean, to_clean)
+        self.assertCountEqual(cleaner.to_clean, to_clean)
 
     def test_run(self):
         """

@@ -50,8 +50,8 @@ class Invitation(models.Model):
     recipient = models.TextField()
     used = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return u"Invitation " + self.key
+    def __str__(self):
+        return "Invitation " + self.key
 
     @property
     def expired(self):

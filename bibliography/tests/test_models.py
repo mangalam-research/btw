@@ -110,7 +110,7 @@ class PrimarySourceTestCase(TestCase):
         with assert_raises(ValidationError) as cm:
             source.save()
         assert_equal(str(cm.exception),
-                     "{'reference_title': [u'This field cannot be null.']}")
+                     "{'reference_title': ['This field cannot be null.']}")
 
     def test_reference_title_cannot_be_empty(self):
         """
@@ -124,7 +124,7 @@ class PrimarySourceTestCase(TestCase):
             source.save()
         assert_equal(str(cm.exception),
                      "{'reference_title': "
-                     "[u'This field cannot contain only spaces.']}")
+                     "['This field cannot contain only spaces.']}")
 
     def test_genre_mandatory(self):
         """Test that we cannot create a source without a genre."""
@@ -132,7 +132,7 @@ class PrimarySourceTestCase(TestCase):
         with assert_raises(ValidationError) as cm:
             source.save()
         assert_equal(str(cm.exception),
-                     "{'genre': [u'This field cannot be null.']}")
+                     "{'genre': ['This field cannot be null.']}")
 
     def test_genre_cannot_be_empty(self):
         """
@@ -144,7 +144,7 @@ class PrimarySourceTestCase(TestCase):
         with assert_raises(ValidationError) as cm:
             source.save()
         assert_equal(str(cm.exception),
-                     "{'genre': [u'This field cannot be blank.']}")
+                     "{'genre': ['This field cannot be blank.']}")
 
     def test_genre_needs_correct_value(self):
         """
@@ -156,7 +156,7 @@ class PrimarySourceTestCase(TestCase):
         with assert_raises(ValidationError) as cm:
             source.save()
         assert_equal(str(cm.exception),
-                     '{\'genre\': [u"Value \'XX\' is not a valid choice."]}')
+                     '{\'genre\': ["Value \'XX\' is not a valid choice."]}')
 
     def test_no_duplicate_titles(self):
         """
@@ -171,5 +171,5 @@ class PrimarySourceTestCase(TestCase):
             source.save()
         assert_equal(str(cm.exception),
                      "{'reference_title': "
-                     "[u'Primary source with this Reference title already "
+                     "['Primary source with this Reference title already "
                      "exists.']}")

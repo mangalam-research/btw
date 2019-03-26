@@ -1,6 +1,8 @@
 from functools import wraps
 import time
-import urllib2
+import urllib.request
+import urllib.error
+import urllib.parse
 import os
 import tempfile
 import subprocess
@@ -8,6 +10,7 @@ import subprocess
 import mock
 
 from django.conf import settings
+import collections
 
 dirname = os.path.dirname(__file__)
 
@@ -79,11 +82,11 @@ def record(entity):
     # as @record(proxy...) and @record.
     def _record(f):
         f.record = True
-        if entity is not None and not callable(entity):
+        if entity is not None and not isinstance(entity, collections.Callable):
             f.proxy = entity
         return f
 
-    if callable(entity):
+    if isinstance(entity, collections.Callable):
         return _record(entity)
 
     return _record
@@ -113,11 +116,11 @@ def replay(entity):
     # as @replay(proxy...) and @replay.
     def _replay(f):
         f.replay = True
-        if entity is not None and not callable(entity):
+        if entity is not None and not isinstance(entity, collections.Callable):
             f.proxy = entity
         return f
 
-    if callable(entity):
+    if isinstance(entity, collections.Callable):
         return _replay(entity)
 
     return _replay
@@ -127,7 +130,7 @@ def raw(f):
     """
     Use this decorator to mark a test as being in raw mode. In raw
     mode no proxiying is done, and no error will be raised if the
-    tested code uses ``urllib2.urlopen``.
+    tested code uses ``urllib.request.urlopen``.
 
     """
     f.raw = True
@@ -194,17 +197,17 @@ def _proxify(file_name, f):
             os.environ['SSL_CERT_DIR'] = \
                 MITMPROXY_CERT_DIR + ":" + "/etc/ssl/certs"
 
-            # This flushes the previous opener that may have been
-            # installed.  We must do this so that urllib2 picks up the new
-            # https_proxy configuration.
-            urllib2.install_opener(urllib2.build_opener())
+            # This flushes the previous opener that may have been installed. We
+            # must do this so that urllib picks up the new https_proxy
+            # configuration.
+            urllib.request.install_opener(urllib.request.build_opener())
 
             ready = False
             while not ready:
                 try:
-                    urllib2.urlopen(server)
+                    urllib.request.urlopen(server)
                     ready = True
-                except urllib2.URLError as ex:
+                except urllib.error.URLError as ex:
                     if proxy.poll():
                         raise Exception("can't start mitmdump")
                     time.sleep(0.1)
@@ -245,13 +248,13 @@ def _proxify(file_name, f):
 
     return wrapper
 
-urlopen_patcher = mock.patch('bibliography.zotero.urllib2.urlopen')
+urlopen_patcher = mock.patch('bibliography.zotero.urllib.request.urlopen')
 
 
 def no_net_decorator(f):
     """
     This decorator will raise an exception if the test decorated by it
-    accesses ``urllib2.urlopen``.
+    accesses ``urllib.request.urlopen``.
 
     """
     @wraps(f)
@@ -263,7 +266,7 @@ def no_net_decorator(f):
         finally:
             urlopen_patcher.stop()
             if urlopen_mock.called:
-                raise Exception("unexpected call to urllib2.urlopen")
+                raise Exception("unexpected call to urllib.request.urlopen")
         return ret
 
     return wrapper
@@ -284,10 +287,10 @@ class TestMeta(type):
 
         * Other methods are wrapped by ``no_net_decorator``. In other
         words, any undecorated method that tries to access
-        ``urllib2.urlopen`` will raise an error.
+        ``urllib.urlopen`` will raise an error.
 
         """
-        for (key, value) in dct.items():
+        for (key, value) in list(dct.items()):
             if key.startswith("test_"):
                 if hasattr(value, "record") or hasattr(value, "replay"):
                     dct[key] = _proxify(name, value)

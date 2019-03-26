@@ -1,4 +1,6 @@
-import urllib
+import urllib.request
+import urllib.parse
+import urllib.error
 import json
 import mock
 
@@ -27,7 +29,7 @@ user_model = get_user_model()
 def _make_test_url(sf):
     return "http://testserver" + sf.detail_url
 
-FAKE_CSRF = _get_new_csrf_token().encode("utf-8")
+FAKE_CSRF = _get_new_csrf_token()
 
 class _Mixin(object):
 
@@ -88,7 +90,7 @@ class MainTestCase(ViewsTestCase):
         """
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, self.login_url + "?" +
-                             urllib.urlencode({"next": self.url}))
+                             urllib.parse.urlencode({"next": self.url}))
 
     def test_logged_in(self):
         """
@@ -230,7 +232,7 @@ class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
         """
         params = dict(self.complete_params)
         del params[param]
-        with self.assertRaisesRegexp(MultiValueDictKeyError, param):
+        with self.assertRaisesRegex(MultiValueDictKeyError, param):
             self.app.get(self.url, params=params, user=self.noperm)
 
     def bad_value(self, param):
@@ -240,9 +242,9 @@ class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
         """
         params = dict(self.complete_params)
         params[param] = "INCORRECT!!!"
-        with self.assertRaisesRegexp(ValueError,
-                                     "unknown value for {}: INCORRECT!!!"
-                                     .format(param)):
+        with self.assertRaisesRegex(ValueError,
+                                    "unknown value for {}: INCORRECT!!!"
+                                    .format(param)):
             self.app.get(self.url, params=params, user=self.noperm)
 
     def make_request_and_check(self, params, total, headings):
@@ -273,7 +275,7 @@ class SearchTableTestCase(ParameterChecksMixin, ViewsTestCase):
              "</p>"
              for name in names]
 
-        self.assertItemsEqual([row[1] for row in json["data"]], headings)
+        self.assertCountEqual([row[1] for row in json["data"]], headings)
 
     def test_exact_search(self):
         """
@@ -460,10 +462,10 @@ class DetailsTestCaseHTML(ViewsTestCase):
         # Get only the text.
         lexemes = [x.text for x in
                    response.lxml.cssselect("{0} .label".format(selector))]
-        self.assertItemsEqual(
-            lexemes,
-            ["foo q", "bar q"],
-            "there should be two lexemes with the right values")
+        self.assertCountEqual(lexemes,
+                              ["foo q", "bar q"],
+                              "there should be two lexemes with the right "
+                              "values")
 
     def test_children(self):
         """
@@ -516,12 +518,12 @@ class DetailsTestCaseJSON(ViewsTestCase):
         self.assertEqual(
             response.json,
             {
-                u"url": _make_test_url(self.hte),
-                u"path": u"01n",
-                u"heading": u"hte",
-                u"heading_for_display": u"hte",
-                u"verbose_pos": u"Noun",
-                u"is_subcat": False,
+                "url": _make_test_url(self.hte),
+                "path": "01n",
+                "heading": "hte",
+                "heading_for_display": "hte",
+                "verbose_pos": "Noun",
+                "is_subcat": False,
             },
             "the returned value should be correct")
 
@@ -665,7 +667,7 @@ class _CreateMixin(_AjaxMixin):
             el = response.lxml.cssselect(".help-block")[0]
             self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"heading": [error]})
+            self.assertEqual(response.json, {"heading": [error]})
         else:
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
@@ -698,13 +700,13 @@ class _CreateMixin(_AjaxMixin):
         }[accept]
         self.assertEqual(response.content_type, expected_content_type)
         error = \
-            u"Select a valid choice. xxxxxx is not one of the " \
-            u"available choices."
+            "Select a valid choice. xxxxxx is not one of the " \
+            "available choices."
         if expected_content_type == "text/html":
             el = response.lxml.cssselect(".help-block")[0]
             self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"pos": [error]})
+            self.assertEqual(response.json, {"pos": [error]})
         else:
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
@@ -731,7 +733,7 @@ class _CreateMixin(_AjaxMixin):
             params=form.submit_fields(),
             user=self.perm)
         self.assertIsNone(response.content_type)
-        self.assertEqual(response.body, "")
+        self.assertEqual(response.body, b"")
 
         self.assertCreatedCount(1)
         self.checkCreated()
@@ -778,9 +780,9 @@ class _DuplicateMixin(object):
             import lxml
             el = response.lxml.cssselect(".alert")[0]
             self.assertEqual("".join(el.itertext()).replace(
-                u"\xd7", "").strip(), error)
+                "\xd7", "").strip(), error)
         elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"__all__": [error]})
+            self.assertEqual(response.json, {"__all__": [error]})
         else:
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
@@ -795,7 +797,7 @@ class _CreateFromParentMixin(_CreateMixin, _DuplicateMixin):
     # parrents here.
 
     expected_duplicate_error = \
-        u"There is already a semantic field in the BTW namespace "\
+        "There is already a semantic field in the BTW namespace "\
         "without pos and heading 'DUPLICATE'."
 
     def assertCreatedCount(self, count):
@@ -890,7 +892,7 @@ class CreateRelatedByPosTransactionTestCase(_CreateRelatedByPosMixin,
                                             _DuplicateMixin,
                                             ViewsTransactionTestCase):
     expected_duplicate_error = \
-        u"There is already a semantic field in the BTW namespace "\
+        "There is already a semantic field in the BTW namespace "\
         "without pos."
 
 
@@ -953,7 +955,7 @@ class EditTestCase(_AjaxMixin, ViewsTestCase):
             params=form.submit_fields(),
             user=self.perm)
         self.assertIsNone(response.content_type)
-        self.assertEqual(response.body, "")
+        self.assertEqual(response.body, b"")
 
         field = SemanticField.objects.get(id=self.field_id)
         self.assertEqual(field.heading, "changed")
@@ -971,7 +973,7 @@ class EditTestCase(_AjaxMixin, ViewsTestCase):
                 "Accept": accept,
                 "X-CSRFToken": self.app.cookies["csrftoken"]
             },
-            params=((u'heading', 'changed'), (u'pos', 'v')),
+            params=(('heading', 'changed'), ('pos', 'v')),
             user=self.perm, expect_errors=True)
         expected_content_type = {
             "application/x-form": "text/html",
@@ -985,7 +987,7 @@ class EditTestCase(_AjaxMixin, ViewsTestCase):
             el = response.lxml.cssselect(".alert")[0]
             self.assertEqual(el.text.strip(), error)
         elif expected_content_type == "application/json":
-            self.assertEqual(response.json, {u"__all__": [error]})
+            self.assertEqual(response.json, {"__all__": [error]})
         else:
             raise ValueError("unexpected expected_content_type value: " +
                              expected_content_type)
@@ -1121,7 +1123,7 @@ class ListTestCase(ViewsTestCase):
             unpublished=False,
             many=True)
         transformed = json.loads(json.dumps(serializer.data))
-        self.assertItemsEqual(response.json, transformed)
+        self.assertCountEqual(response.json, transformed)
 
     def test_expanded_scope(self):
         """
@@ -1150,7 +1152,7 @@ class ListTestCase(ViewsTestCase):
                 unpublished=False,
                 many=True)
             transformed = json.loads(json.dumps(serializer.data))
-            self.assertItemsEqual(response.json, transformed)
+            self.assertCountEqual(response.json, transformed)
 
     def test_complex_paths(self):
         """
@@ -1167,7 +1169,7 @@ class ListTestCase(ViewsTestCase):
 
         url = "http://testserver" + self.url
 
-        self.assertItemsEqual(response.json,
+        self.assertCountEqual(response.json,
                               [{
                                   "url": url + "?paths=01.01n@02n",
                                   "path": "01.01n@02n",
@@ -1259,7 +1261,7 @@ class ListParameterTestCases(ParameterChecksMixin, ViewsTestCase):
         self.assertEqual(result["count"], len(headings))
         self.assertEqual(len(result["results"]), len(headings))
         response_headings = [x["heading"] for x in result["results"]]
-        self.assertItemsEqual(response_headings, headings)
+        self.assertCountEqual(response_headings, headings)
 
 def init():
     ParameterChecksMixin.make_tests(ListParameterTestCases)

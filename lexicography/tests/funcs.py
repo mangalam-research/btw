@@ -7,7 +7,7 @@ outside a Django environment (e.g. on the client side of a Selenium
 test). This is why this module exists.
 """
 import json
-from StringIO import StringIO
+from io import StringIO
 
 import lxml.etree
 
@@ -109,4 +109,4 @@ def parse_search_results(data):  # pylint: disable=too-many-locals
 
 
 def count_hits(hits):
-    return sum(len(hit["hits"]) for hit in hits.itervalues())
+    return sum(len(hit["hits"]) for hit in hits.values())

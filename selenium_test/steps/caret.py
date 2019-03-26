@@ -19,7 +19,7 @@ def step_impl(context, parent):
     wedutil.click_until_caret_in(util, element)
 
 
-@when(u"the user clicks on the end label of the last foreign element")
+@when("the user clicks on the end label of the last foreign element")
 def step_impl(context):
     driver = context.driver
 
@@ -38,7 +38,7 @@ def step_impl(context):
     button.click()
 
 
-@when(u"(?:the user )?hits the (?P<choice>right|left) arrow")
+@when("(?:the user )?hits the (?P<choice>right|left) arrow")
 def step_impl(context, choice):
     driver = context.driver
 

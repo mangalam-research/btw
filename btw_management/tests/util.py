@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 
 # We need to use this class rather than call_command if we want to be
 # able to capture some diagnostic information when an exception is

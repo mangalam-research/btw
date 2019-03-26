@@ -50,7 +50,7 @@ class HandleManagerTestCase(DisableMigrationsTransactionMixin,
         self.assertIsNone(self.a.id(handle1))
 
     def test_id_fails_on_unknown_handle(self):
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             ValueError,
             "handle 0 does not exist",
             self.a.id, 0)
@@ -105,9 +105,9 @@ class HandleManagerTestCase(DisableMigrationsTransactionMixin,
             self.assertEqual(Handle.objects.filter(handle=handle_0).count(),
                              0,
                              "no entry should be associated in the database")
-            self.assertRaisesRegexp(ValueError,
-                                    "handle 0 does not exist",
-                                    self.a.associate, handle_0, 1)
+            self.assertRaisesRegex(ValueError,
+                                   "handle 0 does not exist",
+                                   self.a.associate, handle_0, 1)
 
         finally:
             transaction.rollback()

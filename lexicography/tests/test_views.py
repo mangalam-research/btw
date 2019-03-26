@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-import cookielib as http_cookiejar
+import http.cookiejar as http_cookiejar
 import os
 import datetime
 import string
@@ -83,7 +83,7 @@ class ViewsMixin(BaseCMSTestCase):
         lemma = 'abcd'
         response = self.search_table_search(
             lemma, user, lemmata_only=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         response = self.app.get(hits[lemma]["edit_url"]).follow()
         # Check that a lock as been acquired.
@@ -252,7 +252,7 @@ version="0.10" authority="/1">
         response = self.app.get(entry.get_absolute_url(), expect_errors=True)
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.body,
+        self.assertEqual(response.text,
                          "You are trying to view the latest published "
                          "version of an article that has never been "
                          "published.")
@@ -268,7 +268,7 @@ version="0.10" authority="/1">
                                 expect_errors=True)
 
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(response.body,
+        self.assertEqual(response.text,
                          "You are trying to view a version "
                          "that does not exist.")
 
@@ -684,8 +684,7 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
 
     def assertValid(self, mods):
         self.assertTrue(
-            util.validate_with_xmlschema(mods_schema_path,
-                                         mods.decode("utf-8")),
+            util.validate_with_xmlschema(mods_schema_path, mods),
             "the resulting data should be valid")
 
     def test_missing_access_date(self):
@@ -700,7 +699,7 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
                                 expect_errors=True)
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.body, "access-date is a required parameter")
+        self.assertEqual(response.text, "access-date is a required parameter")
 
     def test_unpublished_entry(self):
         """
@@ -719,7 +718,7 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
             expect_errors=True)
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.body, "this entry has never been "
+        self.assertEqual(response.text, "this entry has never been "
                          "published: you must request a "
                          "specific change record")
 
@@ -743,8 +742,8 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body, self.mods_template.format(**xml_params))
-        self.assertValid(response.body)
+            response.text, self.mods_template.format(**xml_params))
+        self.assertValid(response.text)
 
     def test_non_version_specific_changerecord(self):
         """
@@ -777,8 +776,8 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body, self.mods_template.format(**xml_params))
-        self.assertValid(response.body)
+            response.text, self.mods_template.format(**xml_params))
+        self.assertValid(response.text)
 
     def test_version_specific_no_changerecord_id(self):
         """
@@ -801,8 +800,8 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body, self.mods_template.format(**xml_params))
-        self.assertValid(response.body)
+            response.text, self.mods_template.format(**xml_params))
+        self.assertValid(response.text)
 
     def test_version_specific_changerecord_id(self):
         """
@@ -837,8 +836,8 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body, self.mods_template.format(**xml_params))
-        self.assertValid(response.body)
+            response.text, self.mods_template.format(**xml_params))
+        self.assertValid(response.text)
 
     def test_name_without_first_name(self):
         """
@@ -892,9 +891,9 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body,
+            response.text,
             self.mods_template_without_names.format(**xml_params))
-        self.assertValid(response.body)
+        self.assertValid(response.text)
 
     def test_name_with_genName(self):
         """
@@ -954,9 +953,9 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body,
+            response.text,
             self.mods_template_without_names.format(**xml_params))
-        self.assertValid(response.body)
+        self.assertValid(response.text)
 
 
 class MainTestCase(ViewsTestCase):
@@ -983,7 +982,7 @@ class MainTestCase(ViewsTestCase):
 
         entry = Entry.objects.get(lemma="abcd")
         response = self.search_table_search("abcd", self.noperm)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["abcd"]["hits"]), 1)
 
@@ -1002,14 +1001,14 @@ class MainTestCase(ViewsTestCase):
         self.assertIsNone(entry.latest_published,
                           "Our entry must not have been published already")
         response = self.search_table_search("foo", self.noperm)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 0)
 
         # Simulate a case where the user manually adds the search
         # parameters to a URL.
         response = self.search_table_search("foo", self.noperm,
                                             publication_status="both")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 0)
 
     def test_search_by_non_scribe_does_not_return_deleted_articles(self):
@@ -1018,20 +1017,20 @@ class MainTestCase(ViewsTestCase):
         """
         entry = Entry.objects.get(lemma="abcd")
         response = self.search_table_search("abcd", self.noperm)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         # But delete it.
         entry.deleted = True
         entry.save()
         response = self.search_table_search("abcd", self.noperm)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 0)
 
         # Simulate a case where the user manually adds the search
         # parameters to a URL.
         response = self.search_table_search("abcd", self.noperm,
                                             search_all=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 0)
 
     def test_search_lemma_by_scribe_can_return_unpublished_articles(self):
@@ -1045,14 +1044,14 @@ class MainTestCase(ViewsTestCase):
         # Try with "both"
         response = self.search_table_search("foo", self.foo,
                                             publication_status="both")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["foo"]["hits"]), 1)
 
         # And "unpublished"
         response = self.search_table_search("foo", self.foo,
                                             publication_status="unpublished")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["foo"]["hits"]), 1)
 
@@ -1070,7 +1069,7 @@ class MainTestCase(ViewsTestCase):
         response = self.search_table_search("foo", self.foo,
                                             publication_status="both",
                                             search_all=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         self.assertEqual(len(hits["foo"]["hits"]), 1)
         self.assertEqual(hits["foo"]["hits"][0]["deleted"], "Yes")
@@ -1087,13 +1086,13 @@ class MainTestCase(ViewsTestCase):
         # Try with "both"
         response = self.search_table_search("", self.foo,
                                             publication_status="both")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits), count)
 
         # And "unpublished"
         response = self.search_table_search("", self.foo,
                                             publication_status="unpublished")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits),
                          Entry.objects.active_entries()
                          .filter(latest_published__isnull=True).count())
@@ -1111,14 +1110,14 @@ class MainTestCase(ViewsTestCase):
 
         response = self.search_table_search("", self.foo,
                                             publication_status="both")
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits), count - 1)
 
         # And "unpublished"
         response = self.search_table_search("", self.foo,
                                             publication_status="unpublished",
                                             search_all=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits),
                          ChangeRecord.objects.filter(published=False)
                          .values_list("entry").count())
@@ -1143,7 +1142,7 @@ class MainTestCase(ViewsTestCase):
             ChangeRecord.MANUAL)
 
         response = self.search_table_search("abcd", self.foo)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits), 1)
         hits = hits["abcd"]["hits"]
         self.assertEqual(hits[0]["schema_version"], "0.0")
@@ -1157,7 +1156,7 @@ class MainTestCase(ViewsTestCase):
 
         entry = Entry.objects.get(lemma="abcd")
 
-        latest_version = get_supported_schema_versions().keys()[-1]
+        latest_version = list(get_supported_schema_versions().keys())[-1]
         c = Chunk(data=entry.latest.c_hash.data,
                   schema_version=latest_version)
         c.save()
@@ -1170,7 +1169,7 @@ class MainTestCase(ViewsTestCase):
             ChangeRecord.MANUAL)
 
         response = self.search_table_search("abcd", self.foo)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(funcs.count_hits(hits), 1)
         hits = hits["abcd"]["hits"]
         self.assertEqual(hits[0]["schema_version"], latest_version)
@@ -1184,11 +1183,11 @@ class MainTestCase(ViewsTestCase):
         response = self.search_table_search("old and new records", self.foo,
                                             publication_status="both",
                                             search_all=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         hits = hits["old and new records"]["hits"]
         self.assertEqual(len(hits), 3)
-        hits.sort(lambda a, b: -cmp(a["datetime"], b["datetime"]))
+        hits.sort(key=lambda a: a["datetime"], reverse=True)
         # We load the newest version and inspect it. It should contain
         # a paragraph with "Newer" in it.
         response = self.app.get(hits[0]["view_url"])
@@ -1210,11 +1209,11 @@ class MainTestCase(ViewsTestCase):
         response = self.search_table_search("old and new records", self.foo,
                                             publication_status="both",
                                             search_all=True)
-        hits = funcs.parse_search_results(response.body)
+        hits = funcs.parse_search_results(response.text)
         self.assertEqual(len(hits), 1)
         hits = hits["old and new records"]["hits"]
         self.assertEqual(len(hits), 3)
-        hits.sort(lambda a, b: -cmp(a["datetime"], b["datetime"]))
+        hits.sort(key=lambda a: a["datetime"], reverse=True)
         self.assertTrue(hits[0]["edit_url"],
                         "The most recent entry should have an edit link")
         self.assertIsNone(hits[1]["edit_url"],
@@ -1265,9 +1264,9 @@ class EditingTestCase(ViewsTransactionTestCase):
         }
 
         if csrf_token is None:
-            csrf_token = form['csrfmiddlewaretoken'].value.encode('utf-8')
+            csrf_token = form['csrfmiddlewaretoken'].value
 
-        etag = form['initial_etag'].value.encode('utf-8')
+        etag = form['initial_etag'].value
         headers = {
             'X-REQUESTED-WITH': 'XMLHttpRequest',
             'X-CSRFToken': csrf_token,
@@ -1294,8 +1293,7 @@ class EditingTestCase(ViewsTransactionTestCase):
     def close(self, response, entry, user):
         url = reverse('lexicography_handle_update', args=(entry.id, ))
         headers = {
-            'X-CSRFToken':
-            response.form['csrfmiddlewaretoken'].value.encode('utf-8')
+            'X-CSRFToken': response.form['csrfmiddlewaretoken'].value
         }
         response = self.app.post(url,
                                  user=user, headers=headers).follow()
@@ -1402,7 +1400,7 @@ class EditingTestCase(ViewsTransactionTestCase):
         """
         response = self.open_new("foo")
 
-        data_tree = set_lemma(response.lxml, u"prasāda")
+        data_tree = set_lemma(response.lxml, "prasāda")
 
         messages, _ = self.save(
             response, "foo", test_util.stringify_etree(data_tree))
@@ -1410,13 +1408,13 @@ class EditingTestCase(ViewsTransactionTestCase):
         self.assertEqual(len(messages), 1)
         self.assertIn("save_successful", messages)
 
-        entry = Entry.objects.get(lemma=u"prasāda")
+        entry = Entry.objects.get(lemma="prasāda")
         nr_changes = ChangeRecord.objects.filter(entry=entry).count()
         nr_chunks = Chunk.objects.all().count()
 
         response = self.open_new("foo")
 
-        data_tree = set_lemma(response.lxml, u"prasāda")
+        data_tree = set_lemma(response.lxml, "prasāda")
         messages, _ = self.save(
             response, "foo", test_util.stringify_etree(data_tree))
 
@@ -1425,7 +1423,7 @@ class EditingTestCase(ViewsTransactionTestCase):
         self.assertEqual(len(messages["save_transient_error"]), 1)
         self.assertEqual(
             messages["save_transient_error"][0]["msg"],
-            u'There is another entry with the lemma "prasāda".')
+            'There is another entry with the lemma "prasāda".')
 
         # Check that no new data was recorded
         self.assertEqual(ChangeRecord.objects.filter(entry=entry).count(),
@@ -1769,8 +1767,7 @@ class EditingTestCase(ViewsTransactionTestCase):
 
         headers = {
             'X-REQUESTED-WITH': 'XMLHttpRequest',
-            'X-CSRFToken':
-            response.form['csrfmiddlewaretoken'].value.encode('utf-8')
+            'X-CSRFToken': response.form['csrfmiddlewaretoken'].value
         }
 
         response = self.app.post(

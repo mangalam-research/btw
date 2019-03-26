@@ -85,7 +85,7 @@ class TestMeta(type):
 
     def __new__(meta, name, bases, dct):
         expand = dct.get("expand")
-        for method, fields in expand.iteritems():
+        for method, fields in expand.items():
             callee = dct[method]
 
             for field in fields:
@@ -102,9 +102,7 @@ class TestMeta(type):
         return super(TestMeta, meta).__new__(meta, name, bases, dct)
 
 
-class SignalTestCase(TestCase):
-    __metaclass__ = TestMeta
-
+class SignalTestCase(TestCase, metaclass=TestMeta):
     expand = {
         "check_item_change": ("title", "creators", "date")
     }

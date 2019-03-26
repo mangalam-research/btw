@@ -16,12 +16,12 @@ def as_editable(filepath):
     if editable is not None:
         return editable
 
-    data = open(filepath).read().decode('utf-8')
+    data = open(filepath).read()
 
     # We ask xsltproc not to put out a declaration and add our own.
-    tidy = '<?xml version="1.0" encoding="UTF-8"?>' + \
+    tidy = b'<?xml version="1.0" encoding="UTF-8"?>' + \
         util.run_xsltproc(os.path.join(xml.xsl_dirname, "strip.xsl"),
-                          data).encode("utf-8")
+                          data).encode("utf8")
 
     as_editable_table[filepath] = tidy
     return tidy
@@ -42,7 +42,7 @@ class XMLTreeTestCase(unittest.TestCase):
         editable = as_editable(os.path.join(xml.schemas_dirname,
                                             "prasada.xml"))
         self.assertEqual(xml.XMLTree(editable).extract_lemma(),
-                         u"prasāda")
+                         "prasāda")
 
     def test_extract_lemma_returns_none_when_no_lemma(self):
         data = '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
@@ -108,15 +108,15 @@ class XMLTestCase(unittest.TestCase):
         self.assertFalse(xml.can_revert_to("0.9"))
         # New version
         versions = xml.get_supported_schema_versions()
-        self.assertTrue(xml.can_revert_to(versions.keys()[-1]))
+        self.assertTrue(xml.can_revert_to(list(versions.keys())[-1]))
 
     def test_convert_to_version_bad_versions(self):
         """
         The function convert_to_version fails if there is no schema for
         conversion.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     "cannot convert from 0.0 to 0.0"):
+        with self.assertRaisesRegex(ValueError,
+                                    "cannot convert from 0.0 to 0.0"):
             xml.convert_to_version("", "0.0", "0.0")
 
     def test_convert_to_version_0_10_to_1_0(self):
@@ -136,7 +136,7 @@ version="0.10" authority="/1">
 </btw:entry>
         """,
                                         "0.10", "1.0")
-        self.assertEqual(result, u"""\
+        self.assertEqual(result, """\
 <?xml version="1.0" encoding="UTF-8"?>
 <btw:entry xmlns="http://www.tei-c.org/ns/1.0" \
 xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
@@ -324,7 +324,7 @@ xmlns:btw="http://mangalamresearch.org/ns/btw-storage" version="1.1">
 xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 version="0.9">
 </btw:entry>"""
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 XSLTApplyError,
                 "The input XML has version 0.9 rather than version 1.0."):
             xml.convert_to_version(original, "1.0", "1.1")
@@ -339,7 +339,7 @@ version="0.9">
 xmlns:btw="http://mangalamresearch.org/ns/btw-storage" \
 version="0.9">
 </btw:entry>"""
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 XSLTApplyError,
                 "The input XML has version 0.9 rather than version 0.10."):
             xml.convert_to_version(original, "0.10", "1.1")
@@ -486,14 +486,14 @@ version="0.10" authority="/1">
         """
         Fails if the start of the wrapper is missing.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     r"^value does not start with wrapper$"):
+        with self.assertRaisesRegex(ValueError,
+                                    r"^value does not start with wrapper$"):
             xml.unwrap_btw_document("")
 
     def test_unwrap_btw_document_fails_on_lacking_end_wrapper(self):
         """
         Fails if the end of the wrapper is missing.
         """
-        with self.assertRaisesRegexp(ValueError,
-                                     r"^value does not end with wrapper$"):
+        with self.assertRaisesRegex(ValueError,
+                                    r"^value does not end with wrapper$"):
             xml.unwrap_btw_document("<btw:wrapper >")

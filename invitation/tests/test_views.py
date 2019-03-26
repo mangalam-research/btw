@@ -99,7 +99,7 @@ class InviteTestCase(ViewTestCase):
         assert_equal(len(mail.outbox), 1)
         assert_equal(mail.outbox[0].subject, "Invitation to register on BTW.")
         assert_equal(mail.outbox[0].from_email, "test@localhost")
-        assert_equal(mail.outbox[0].body, u"""
+        assert_equal(mail.outbox[0].body, """
 Blah.
 
 You have been invited to join BTW.

@@ -9,7 +9,7 @@ from ..btw_util import velocity_mock, NavigatorCollection, get_add_button_in, \
 
 step_matcher('re')
 
-@given(ur"the sf_editor_test page is loaded")
+@given(r"the sf_editor_test page is loaded")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -23,14 +23,14 @@ def step_impl(context):
 
     register_sf_modal_on_context(context)
 
-@when(ur"the user deletes a field in the "
+@when(r"the user deletes a field in the "
       "(?P<collection>chosen semantic fields|combinator elements)")
 def step_impl(context, collection):
     collection = context.semantic_field_collections[collection]
     collection.delete(0)
 
-@when(ur"the user clicks on the (?P<what>add|combine) button in the "
-      ur"(?P<where>first result|first detail pane|combinator)")
+@when(r"the user clicks on the (?P<what>add|combine) button in the "
+      r"(?P<where>first result|first detail pane|combinator)")
 def step_impl(context, what, where):
     util = context.util
     if where == "first result":
@@ -54,8 +54,8 @@ def step_impl(context, what, where):
     button.click()
 
 field_count_re = (
-    ur"there (?:are|is) (?P<count>\d+|no|one) fields? in the "
-    ur"(?P<collection>combinator elements|chosen semantic fields)")
+    r"there (?:are|is) (?P<count>\d+|no|one) fields? in the "
+    r"(?P<collection>combinator elements|chosen semantic fields)")
 @given(field_count_re)
 @then(field_count_re)
 def step_impl(context, count, collection):
@@ -71,7 +71,7 @@ def step_impl(context, count, collection):
 
     assert_equal(collection.count(), count)
 
-chosen_field_label_re = ur"the chosen semantic fields are (?P<fields>.*)"
+chosen_field_label_re = r"the chosen semantic fields are (?P<fields>.*)"
 @given(chosen_field_label_re)
 @then(chosen_field_label_re)
 def step_impl(context, fields):
@@ -81,8 +81,8 @@ def step_impl(context, fields):
     assert_equal(", ".join('"{}"'.format(label) for label in labels), fields)
 
 # This does not actually work.
-@when(ur"the user swaps the first and second chosen semantic fields by "
-      ur"drag and drop")
+@when(r"the user swaps the first and second chosen semantic fields by "
+      r"drag and drop")
 def step_impl(context):
     raise Exception("this step is not working")
 
@@ -99,8 +99,8 @@ def step_impl(context):
         .release() \
         .perform()
 
-@then(ur"the (?P<column>left|right) column scroll buttons are "
-      ur"(?P<visibility>visible|not visible)")
+@then(r"the (?P<column>left|right) column scroll buttons are "
+      r"(?P<visibility>visible|not visible)")
 def step_impl(context, column, visibility):
     driver = context.driver
 
@@ -118,8 +118,8 @@ def step_impl(context, column, visibility):
 
     context.util.wait(check)
 
-@then(ur"the (?P<column>left|right) column scrollbar is "
-      ur"(?P<visibility>visible|not visible)")
+@then(r"the (?P<column>left|right) column scrollbar is "
+      r"(?P<visibility>visible|not visible)")
 def step_impl(context, column, visibility):
     driver = context.driver
 
@@ -135,15 +135,15 @@ def step_impl(context, column, visibility):
                      "a visible" if visibility == "visible"
                      else "an invisible"))
 
-@then(ur"the (?P<column>left|right) column scroll buttons and scrollbar are "
-      ur"(?P<visibility>visible|not visible)")
+@then(r"the (?P<column>left|right) column scroll buttons and scrollbar are "
+      r"(?P<visibility>visible|not visible)")
 def step_impl(context, column, visibility):
-    context.execute_steps(ur"""
+    context.execute_steps(r"""
     Then the {column} column scroll buttons are {visibility}
     Then the {column} column scrollbar is {visibility}
     """.format(**{"column": column, "visibility": visibility}))
 
-@when(ur"the modal dialog's height is resized to (?P<size>\d+)px")
+@when(r"the modal dialog's height is resized to (?P<size>\d+)px")
 def step_impl(context, size):
     context.driver.execute_script("""
     var size = arguments[0];

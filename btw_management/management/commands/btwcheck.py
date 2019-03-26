@@ -49,11 +49,11 @@ okay.
                 value = editor.get(field, None)
                 if value is None:
                     self.error('missing {0} in {1}'.format(field, editor))
-                elif not isinstance(value, unicode):
+                elif not isinstance(value, str):
                     self.error('field {0} is not a unicode value in {1}'
                                .format(field, editor))
 
-            for key in editor.iterkeys():
+            for key in editor.keys():
                 if key not in expected_fields:
                     self.error('spurious field {0} in {1}'.format(key, editor))
 

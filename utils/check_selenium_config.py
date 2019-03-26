@@ -7,6 +7,6 @@ local_conf_path = os.path.join(os.path.dirname(_dirname),
 
 builder = Builder(local_conf_path)
 
-print "***"
-print builder.config
-print "***"
+print("***")
+print(builder.config)
+print("***")

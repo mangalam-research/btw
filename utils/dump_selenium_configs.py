@@ -11,11 +11,11 @@ options = parser.parse_args()
 local_conf_path = os.path.join(os.path.dirname(_dirname),
                                "build", "config", "selenium_config.py")
 
-execfile(local_conf_path)
+exec(compile(open(local_conf_path).read(), local_conf_path, 'exec'))
 
 if not options.jenkins:
     for c in configs:
-        print c.as_parameter()
+        print(c.as_parameter())
 else:
     vals = [c.as_parameter("-").replace(" ", "_") for c in configs]
-    print "TEST_BROWSER=" + ' '.join(vals)
+    print("TEST_BROWSER=" + ' '.join(vals))

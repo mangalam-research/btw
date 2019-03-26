@@ -14,7 +14,7 @@ from selenic.util import Condition, Result
 step_matcher('re')
 
 
-@when(ur"the user brings up a context menu in the text in the definition")
+@when(r"the user brings up a context menu in the text in the definition")
 def step_impl(context):
     driver = context.driver
 
@@ -24,14 +24,14 @@ def step_impl(context):
         .perform()
 
 
-@then(ur"the hyperlinkig modal dialog comes up\.?")
+@then(r"the hyperlinkig modal dialog comes up\.?")
 def step_impl(context):
     header = context.util.find_element((By.CSS_SELECTOR,
                                         ".modal.in .modal-header h3"))
     assert_equal(header.text, "Insert hyperlink to sense")
 
 
-@then(ur"the hyperlinking choices are")
+@then(r"the hyperlinking choices are")
 def step_impl(context):
     driver = context.driver
 
@@ -46,13 +46,13 @@ def step_impl(context):
         assert_equal(row['choice'], choice.text)
 
 
-@when(ur'the user clicks the hyperlinking choice for "(?P<what>.*?)"')
+@when(r'the user clicks the hyperlinking choice for "(?P<what>.*?)"')
 def step_impl(context, what):
     driver = context.driver
     context.hyperlinks_before_insertion = \
         btw_util.get_sense_hyperlinks(context.util)
 
-    choice = driver.execute_script(ur"""
+    choice = driver.execute_script(r"""
     var choice = arguments[0];
 
     var re = new RegExp('\\b' + choice + '\\b');
@@ -65,7 +65,7 @@ def step_impl(context, what):
     driver.find_element_by_css_selector(".modal.in .btn-primary").click()
 
 
-@then(ur'a new hyperlink with the label "(?P<what>.*?)" is inserted\.?')
+@then(r'a new hyperlink with the label "(?P<what>.*?)" is inserted\.?')
 def step_impl(context, what):
     links = btw_util.get_sense_hyperlinks(context.util)
 
@@ -77,7 +77,7 @@ def step_impl(context, what):
     assert_equal(links[0]["text"], what)
 
 
-@then(ur'there are hyperlinks with labels "\[a\]" and "\[a2\]"\.?')
+@then(r'there are hyperlinks with labels "\[a\]" and "\[a2\]"\.?')
 def step_impl(context):
     links = btw_util.get_sense_hyperlinks(context.util)
 
@@ -102,12 +102,12 @@ def sanitize_id_selector(context, selector):
 
 
 __LINK_RE1 = \
-    (ur'the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
-     ur'points to the(?: (?P<term>first|second|third))? example'
-     ur'(?: with the citation that starts with "(?P<citation>.*?)")?\.?')
+    (r'the (?P<example>example) hyperlink with label "(?P<label>.*?)" '
+     r'points to the(?: (?P<term>first|second|third))? example'
+     r'(?: with the citation that starts with "(?P<citation>.*?)")?\.?')
 __LINK_RE2 = \
-    (ur'the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
-     ur'to "(?P<term>.*?)"\.?')
+    (r'the (?P<example>)hyperlink with label "(?P<label>.*?)" points '
+     r'to "(?P<term>.*?)"\.?')
 
 
 @given(__LINK_RE1)
@@ -122,7 +122,7 @@ def step_impl(context, example, label, term=None, citation=None):
 
     def cond(driver):
         ret = driver.execute_script(btw_util.GET_CITATION_TEXT +
-                                    ur"""
+                                    r"""
         var label = arguments[0];
         var term = arguments[1];
         var id_selector = arguments[2];
@@ -208,14 +208,14 @@ def step_impl(context, example, label, term=None, citation=None):
     assert_true(result.payload[0], result.payload[1])
 
 
-@then(ur'the sense hyperlink with label "(?P<label>.*?)" has a tooltip '
-      ur'that says "(?P<tooltip>.*)"')
+@then(r'the sense hyperlink with label "(?P<label>.*?)" has a tooltip '
+      r'that says "(?P<tooltip>.*)"')
 def step_impl(context, label, tooltip):
 
     id_selector = sanitize_id_selector(context, "#BTW-S.")
 
     def cond(driver):
-        ret = driver.execute_script(ur"""
+        ret = driver.execute_script(r"""
         var label = arguments[0];
         var tooltip = arguments[1];
         var id_selector = arguments[2];
@@ -238,16 +238,16 @@ def step_impl(context, label, tooltip):
     context.util.wait(cond)
 
 __CHOICE_TO_SELECTOR = {
-    u"in the last btw:citations": r".btw\:citations>._placeholder",
-    u"on the start label of the first example":
+    "in the last btw:citations": r".btw\:citations>._placeholder",
+    "on the start label of the first example":
     r".__start_label._btw\:example_label, "
     r".__start_label._btw\:example-explained_label"
 }
 
 
-@when(ur"the user brings up a context menu "
-      ur"(?P<choice>in the last btw:citations|on the start label of the "
-      ur"first example)")
+@when(r"the user brings up a context menu "
+      r"(?P<choice>in the last btw:citations|on the start label of the "
+      r"first example)")
 def step_impl(context, choice):
     driver = context.driver
     util = context.util
@@ -274,7 +274,7 @@ def step_impl(context, choice):
             break
 
 
-@when(ur"the user deletes the first example")
+@when(r"the user deletes the first example")
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -284,19 +284,19 @@ def step_impl(context):
         r".__start_label._btw\:example-explained_label")
 
     wedutil.click_until_caret_in(util, el)
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user brings up the context menu
     And the user clicks the context menu option "Delete this element"
     """)
 
 
-@then(ur"there are no example hyperlinks")
+@then(r"there are no example hyperlinks")
 def step_impl(context):
 
     id_selector = sanitize_id_selector(context, "#BTW-E.")
 
     def cond(driver):
-        ret = driver.execute_script(ur"""
+        ret = driver.execute_script(r"""
         var $ = jQuery;
         var id_selector = arguments[0];
         var $links = $(".wed-document a[href^='" + id_selector + "']");
@@ -307,7 +307,7 @@ def step_impl(context):
 
     context.util.wait(cond)
 
-GET_HYPERLINKS_WITH_LABEL = ur"""
+GET_HYPERLINKS_WITH_LABEL = r"""
 function getHyperlinksWithLabel(label) {
   return Array.prototype.slice.call(document.querySelectorAll(
     ".wed-document a")).filter(
@@ -316,10 +316,10 @@ function getHyperlinksWithLabel(label) {
 }
 """
 
-@when(ur'the user makes the hyperlink with label "(?P<label>.*?)" visible')
+@when(r'the user makes the hyperlink with label "(?P<label>.*?)" visible')
 def step_impl(context, label):
     driver = context.driver
-    ret = driver.execute_async_script(GET_HYPERLINKS_WITH_LABEL + ur"""
+    ret = driver.execute_async_script(GET_HYPERLINKS_WITH_LABEL + r"""
     var $ = jQuery;
     var label = arguments[0];
     var done = arguments[1];
@@ -355,7 +355,7 @@ def step_impl(context, label):
 
     context.shown_link = ret[0]
 
-@when(ur'the user clicks the hyperlink')
+@when(r'the user clicks the hyperlink')
 def step_impl(context):
     context.shown_link.click()
     del context.shown_link

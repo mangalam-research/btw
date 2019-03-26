@@ -103,8 +103,8 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         not a scribe.
         """
         response = self.app.get(reverse('pages-root'))
-        with self.assertRaisesRegexp(IndexError,
-                                     "^No matching elements found"):
+        with self.assertRaisesRegex(IndexError,
+                                    "^No matching elements found"):
             response.click(href=reverse_to_re('lexicography_entry_new'))
 
     def test_bibliography_search(self):
@@ -120,8 +120,8 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         a user who lacks the permissions.
         """
         response = self.app.get(reverse('pages-root'), user=self.scribe)
-        with self.assertRaisesRegexp(IndexError,
-                                     "^No matching elements found"):
+        with self.assertRaisesRegex(IndexError,
+                                    "^No matching elements found"):
             response.click(href=reverse_to_re('bibliography_manage'))
 
     def test_bibliography_manage_for_user_with_permissions(self):
@@ -170,8 +170,8 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         who are not super users.
         """
         response = self.app.get(reverse('pages-root'), user=self.scribe)
-        with self.assertRaisesRegexp(IndexError,
-                                     "^No matching elements found"):
+        with self.assertRaisesRegex(IndexError,
+                                    "^No matching elements found"):
             response.click(href=reverse_to_re('full-admin:index'))
 
     def test_user_menu_shows_admin_menu_to_superusers(self):

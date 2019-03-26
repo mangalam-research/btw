@@ -289,7 +289,7 @@ TXT
 """)
         for path in [manage_path, start_uwsgi_path, notify_path]:
             st = os.stat(path)
-            os.chmod(path, st.st_mode | 0111)
+            os.chmod(path, st.st_mode | 0o111)
 
 class ListLocalAppPaths(SubCommand):
     """
@@ -333,7 +333,9 @@ BTW-specific commands.
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand",
+                                           parser_class=SubParser(self),
+                                           required=True)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

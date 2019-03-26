@@ -48,7 +48,7 @@ def make_field(parent, uri, heading, pos):
         desired_path = parent.parsed_path[0].make_child(uri, max_child, pos) \
             if parent else ParsedExpression.make(uri, max_child, pos)
         # We need a string
-        desired_path = unicode(desired_path)
+        desired_path = str(desired_path)
 
         sf = SemanticField(path=desired_path, heading=heading, parent=parent)
         try:
@@ -112,7 +112,7 @@ class SemanticField(models.Model):
         uri = ""
 
         desired_path = ref.make_related_by_pos(pos)
-        sf = SemanticField(path=unicode(desired_path),
+        sf = SemanticField(path=str(desired_path),
                            heading=heading,
                            parent=self.parent)
 
@@ -129,7 +129,7 @@ class SemanticField(models.Model):
         except IntegrityError as ex:
             # Verify whether the path is already existing.
             try:
-                SemanticField.objects.get(path=unicode(desired_path))
+                SemanticField.objects.get(path=str(desired_path))
                 # Already exists, report!
                 raise ValueError(format_duplicate_error(uri, pos, None))
             except SemanticField.DoesNotExist:
@@ -246,7 +246,7 @@ class SemanticField(models.Model):
         related = ref.related_by_pos()
         related = \
             SemanticField.objects.filter(
-                path__in=(unicode(x) for x in related))
+                path__in=(str(x) for x in related))
         self._related_by_pos = related
         return related
 
@@ -353,7 +353,7 @@ class SemanticField(models.Model):
             "http://historicalthesaurus.arts.gla.ac.uk/category/?id={0}" \
             .format(self.catid)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.heading + " " + self.path
 
 def make_specified_sf(fields):

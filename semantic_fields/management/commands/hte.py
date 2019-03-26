@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import os
 import csv
@@ -227,7 +227,7 @@ class FixParentsMixin(object):
                 if parent_path is None:
                     break  # No parent.
 
-                parent_path_str = unicode(parent_path)
+                parent_path_str = str(parent_path)
                 parent = path_to_id_cache.get(parent_path_str, None)
                 if parent is not None:
                     ret = parent
@@ -239,12 +239,12 @@ class FixParentsMixin(object):
             return ret
 
         id_to_parent = {id: find_parent(path)
-                        for (path, id) in path_to_id_cache.iteritems()}
+                        for (path, id) in path_to_id_cache.items()}
 
         count = 0
         # We now need to link up the records to their parent nodes.
         with connection.cursor() as cursor:
-            for (id, parent) in id_to_parent.iteritems():
+            for (id, parent) in id_to_parent.items():
                 count += 1
                 if parent is not None:
                     cursor.execute("UPDATE semantic_fields_semanticfield "
@@ -614,7 +614,7 @@ class Load(FixParentsMixin, SubCommand):
             def convert(row, field):
                 value = row[field_name_to_csv_index[field]]
                 if field not in foreign_key_fields:
-                    return unicode(value, 'utf8')
+                    return str(value, 'utf8')
                 else:
                     return int(value)
 
@@ -702,7 +702,7 @@ class DumpSubset(SubCommand):
                 total_count += 1
                 cat = None
                 try:
-                    cat = SemanticField.objects.get(path=unicode(parsed))
+                    cat = SemanticField.objects.get(path=str(parsed))
                 except SemanticField.DoesNotExist:
                     command.stderr.write("{0} did not exist".format(parsed))
 
@@ -714,7 +714,7 @@ class DumpSubset(SubCommand):
                 "found {0}% of the semantic fields"
                 .format(len(to_serialize) * 100 / total_count))
         parents = {}
-        for cat in to_serialize.itervalues():
+        for cat in to_serialize.values():
             parent = cat.parent
             while parent is not None:
                 parents[parent.id] = parent
@@ -723,13 +723,13 @@ class DumpSubset(SubCommand):
         to_serialize.update(parents)
 
         lexemes = Lexeme.objects.filter(
-            semantic_field__in=to_serialize.keys())
+            semantic_field__in=list(to_serialize.keys()))
         searchword = SearchWord.objects.filter(htid__in=lexemes)
 
         command.stdout.write(serializers.serialize(
             "json",
             itertools.chain(
-                to_serialize.itervalues(),
+                iter(to_serialize.values()),
                 lexemes,
                 searchword),
             use_natural_foreign_keys=True,
@@ -859,7 +859,9 @@ Performs HTE commands on the database.
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand",
+                                           parser_class=SubParser(self),
+                                           required=True)
         for cmd in self.subcommands:
             cmd_instance = cmd()
             cmd_instance.add_to_parser(subparsers)

@@ -33,10 +33,10 @@ def __get_first_ph_in_etymology(driver):
     """)
 
 
-@when(ur'the user adds a reference to an item'
-      ur'(?P<which> to the (?:first|second) example)?')
-@when(ur'the user adds a reference to an item (?P<which>with|without) a '
-      ur'reference title')
+@when(r'the user adds a reference to an item'
+      r'(?P<which> to the (?:first|second) example)?')
+@when(r'the user adds a reference to an item (?P<which>with|without) a '
+      r'reference title')
 def step_impl(context, which=None):
     driver = context.driver
     util = context.util
@@ -60,7 +60,7 @@ def step_impl(context, which=None):
     else:
         # By doing it this way, we avoid being thrown off by possible
         # error markers that could show in front of it.
-        driver.execute_script(ur"""
+        driver.execute_script(r"""
         var order = arguments[0];
         var cits = document.getElementsByClassName("btw:cit");
         var node = cits[order];
@@ -74,7 +74,7 @@ def step_impl(context, which=None):
 
         util.ctrl_equivalent_x("/")
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the context menu option "Insert a new \
 bibliographical reference"
     """)
@@ -100,8 +100,8 @@ bibliographical reference"
         .perform()
 
 
-@when(ur"the user replaces a selection with reference to an item with "
-      ur"a reference title")
+@when(r"the user replaces a selection with reference to an item with "
+      r"a reference title")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -117,7 +117,7 @@ def step_impl(context):
 
     util.ctrl_equivalent_x("/")
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the context menu option "Replace the selection \
 with a bibliographical reference"
     """)
@@ -132,8 +132,8 @@ with a bibliographical reference"
         .send_keys(Keys.ENTER) \
         .perform()
 
-@then(ur'a new reference is inserted')
-@then(ur'the new reference contains the reference title\.?')
+@then(r'a new reference is inserted')
+@then(r'the new reference contains the reference title\.?')
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -148,8 +148,8 @@ def step_impl(context):
     util.wait(cond)
 
 
-@then(ur"the new reference contains the first author's last name and "
-      ur"the date\.?")
+@then(r"the new reference contains the first author's last name and "
+      r"the date\.?")
 def step_impl(context):
     util = context.util
     driver = context.driver
@@ -164,7 +164,7 @@ def step_impl(context):
     util.wait(cond)
 
 
-@when(ur"the user adds custom text to the (?P<what>new|first) reference")
+@when(r"the user adds custom text to the (?P<what>new|first) reference")
 def step_impl(context, what):
     util = context.util
     driver = context.driver
@@ -179,40 +179,40 @@ def step_impl(context, what):
 
     util.ctrl_equivalent_x("/")
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the context menu option "Add custom text \
 to reference"
     """)
 
 
-@then(ur"the new reference contains a placeholder\.?")
+@then(r"the new reference contains a placeholder\.?")
 def step_impl(context):
     util = context.util
 
     util.find_element((By.CSS_SELECTOR, ".ref ._placeholder"))
 
 
-@when(ur"the user brings up the context menu")
+@when(r"the user brings up the context menu")
 def step_impl(context):
     util = context.util
 
     util.ctrl_equivalent_x("/")
 
 
-@given(ur"that the user is on the page for performing a general "
-       ur"bibliographical search")
+@given(r"that the user is on the page for performing a general "
+       r"bibliographical search")
 def step_impl(context):
     driver = context.driver
     driver.get(context.builder.SERVER + "/bibliography/search/")
 
 
-@when(ur"the user deletes a reference")
+@when(r"the user deletes a reference")
 def step_impl(context):
     util = context.util
     driver = context.driver
 
     el, context.deleted_reference_parent = \
-        driver.execute_script(u"""
+        driver.execute_script("""
         var el = document.querySelector(".ref");
         return [el, el.parentNode];
         """)
@@ -220,13 +220,13 @@ def step_impl(context):
 
     util.ctrl_equivalent_x("/")
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the context menu option "Delete ref"
     """)
 
 
-@then(ur"the element that contained the reference no longer contains the "
-      ur"space that was added for the reference")
+@then(r"the element that contained the reference no longer contains the "
+      r"space that was added for the reference")
 def step_impl(context):
     util = context.util
     parent = context.deleted_reference_parent
@@ -245,7 +245,7 @@ def step_impl(context):
 
     util.wait(cond)
 
-@when(ur"the user searches for a bibliographical item that does not exist")
+@when(r"the user searches for a bibliographical item that does not exist")
 def step_impl(context):
     driver = context.driver
     util = context.util
@@ -256,7 +256,7 @@ def step_impl(context):
     wedutil.click_until_caret_in(util, ph)
     util.ctrl_equivalent_x("/")
 
-    context.execute_steps(u"""
+    context.execute_steps("""
     When the user clicks the context menu option "Insert a new \
 bibliographical reference"
     """)
@@ -272,8 +272,8 @@ bibliographical reference"
         .perform()
 
 
-@then(ur"the bibliographical reference typeahead shows that there is no "
-      ur"match")
+@then(r"the bibliographical reference typeahead shows that there is no "
+      r"match")
 def step_impl(context):
     driver = context.driver
     util = context.util

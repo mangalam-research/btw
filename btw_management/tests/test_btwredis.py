@@ -93,7 +93,9 @@ class BTWRedisTestCase(unittest.TestCase):
         Tests that btwredis requires a command.
         """
         c = Caller()
-        with self.assertRaisesRegexp(CommandError, r"too few arguments"):
+        with self.assertRaisesRegex(CommandError,
+                                    r"Error: the following arguments are "
+                                    r"required: subcommand"):
             c.call_command("btwredis")
         self.assertNoOutput(c)
 
@@ -118,7 +120,7 @@ class BTWRedisTestCase(unittest.TestCase):
         Test that ``btwredis start`` fails if redis is already started.
         """
         c = Caller()
-        with with_test_redis(), self.assertRaisesRegexp(
+        with with_test_redis(), self.assertRaisesRegex(
                 CommandError,
                 r"redis appears to be running already\."):
             c.call_command("btwredis", "start")
@@ -130,7 +132,7 @@ class BTWRedisTestCase(unittest.TestCase):
         """
 
         c = Caller()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 CommandError,
                 r"cannot talk to redis\."):
 
@@ -139,7 +141,7 @@ class BTWRedisTestCase(unittest.TestCase):
 
                 def communicate(self, *args, **kwargs):
                     fake = False
-                    if args[0].startswith("auth "):
+                    if args[0].startswith(b"auth "):
                         MockPopen.__times += 1
                         if MockPopen.__times >= 2:
                             fake = True
@@ -169,7 +171,7 @@ class BTWRedisTestCase(unittest.TestCase):
         fake_pidfile_path = os.path.join(fake_pidfile_dir,
                                          "testing.redis.pid")
         c = Caller()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 CommandError,
                 r"cannot read pid from "), with_test_redis(True):
             with open(fake_pidfile_path, 'r') as f:
@@ -196,7 +198,7 @@ class BTWRedisTestCase(unittest.TestCase):
             os.makedirs(fake_pidfile_dir)
 
         c = Caller()
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             CommandError,
             r"the pid file contains something that "
             r"cannot be converted to an integer: foo"), \
@@ -228,7 +230,7 @@ class BTWRedisTestCase(unittest.TestCase):
                 ".get_running_workers") \
             as grw, \
             with_test_redis(True), \
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 CommandError,
                 r"cannot stop redis while BTW workers are running."):
             # We want to return an array of length > 0. The contents
@@ -252,7 +254,7 @@ class BTWRedisTestCase(unittest.TestCase):
         """
 
         c = Caller()
-        with with_fake_settings(), self.assertRaisesRegexp(
+        with with_fake_settings(), self.assertRaisesRegex(
                 CommandError, r"cannot contact redis."):
             c.call_command("btwredis", "check")
 

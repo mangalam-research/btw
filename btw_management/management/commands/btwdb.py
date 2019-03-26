@@ -152,7 +152,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand",
+                                           parser_class=SubParser(self),
+                                           required=True)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

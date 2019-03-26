@@ -2,7 +2,9 @@ import logging.handlers
 import logging
 import mock
 from unittest import skip
-import urllib2
+import urllib.request
+import urllib.error
+import urllib.parse
 
 from django.core.cache import caches
 from django.test import TestCase
@@ -15,7 +17,7 @@ from ..zotero import Zotero, zotero_settings, logger
 
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
-assert_equal.im_self.longMessage = True
+assert_equal.__self__.longMessage = True
 
 
 class ListHandler(logging.Handler):
@@ -59,8 +61,7 @@ orig_cache = zotero.cache
 
 @mock.patch("bibliography.zotero.cache", wraps=orig_cache,
             new_callable=ReturnMock)
-class ZoteroTest(TestCase):
-    __metaclass__ = TestMeta
+class ZoteroTest(TestCase, metaclass=TestMeta):
 
     def __init__(self, *args, **kwargs):
         super(ZoteroTest, self).__init__(*args, **kwargs)
@@ -227,7 +228,7 @@ class ZoteroTest(TestCase):
         # something ridiculous to simulate a case where the data would
         # have changed on the server side.
         #
-        orig_urlopen = urllib2.urlopen
+        orig_urlopen = urllib.request.urlopen
 
         def se(*args, **kwargs):
             args[0].add_header("If-Modified-Since-Version", "-1")
@@ -235,7 +236,7 @@ class ZoteroTest(TestCase):
             assert_equal(ret.code, 200, "status should be 200")
             return ret
 
-        with mock.patch("bibliography.zotero.urllib2.urlopen",
+        with mock.patch("bibliography.zotero.urllib.request.urlopen",
                         new=mock.Mock(side_effect=se)):
             results = self.zotero.search("dharma")
 

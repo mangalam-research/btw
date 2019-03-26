@@ -23,6 +23,7 @@ from lib.testutil import wipd
 from bibliography.tests import mock_zotero
 from bibliography.models import Item, PrimarySource
 from semantic_fields.models import SemanticField
+import collections
 
 cache = caches['article_display']
 
@@ -840,7 +841,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
 
     def assertLogRegexp(self, handler, stream, regexp):
         handler.flush()
-        self.assertRegexpMatches(stream.getvalue(), regexp)
+        self.assertRegex(stream.getvalue(), regexp)
 
     def test_abnormal_is_invalid(self):
         """
@@ -1041,7 +1042,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         """
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
-        with self.assertRaisesRegexp(ValueError, "unknown value"):
+        with self.assertRaisesRegex(ValueError, "unknown value"):
             c.exist_path("invalid")
 
     def test_display_key(self):
@@ -1052,7 +1053,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         c.save()
         for kind in self.prepare_kinds:
             self.assertEqual(c.display_key(kind),
-                             "{}_{}".format(c.c_hash, kind))
+                             "{}_{}".format(c.c_hash, kind).encode("utf8"))
 
     def test_display_key_raises(self):
         """
@@ -1060,7 +1061,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         """
         c = Chunk(data="<div/>", is_normal=True)
         c.save()
-        with self.assertRaisesRegexp(ValueError, "unknown display key kind"):
+        with self.assertRaisesRegex(ValueError, "unknown display key kind"):
             c.display_key("invalid")
 
     def test_get_cached_value_starts_task(self):
@@ -1222,7 +1223,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         db = ExistDB()
         c = Chunk(data="<div/>", is_normal=True)
         c.clean()
-        method = op if callable(op) else getattr(c, op)
+        method = op if isinstance(op, collections.Callable) else getattr(c, op)
         cache.delete(c.c_hash)
         db.removeCollection(self.chunk_collection_path, True)
         db.removeCollection(self.display_collection_path, True)

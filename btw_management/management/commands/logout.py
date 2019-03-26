@@ -59,10 +59,10 @@ Logs all users out of the server.
             name = user.username if user is not None else None
 
             if name is not None:
-                print "Logging out user {0} from session {1}." \
-                    .format(name, session.session_key)
+                print("Logging out user {0} from session {1}."
+                      .format(name, session.session_key))
             else:
-                print "Deleting session.", session.session_key
+                print("Deleting session.", session.session_key)
 
             if not options['noop']:
                 store.delete(session.session_key)

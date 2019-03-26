@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-import cookielib as http_cookiejar
+import http.cookiejar as http_cookiejar
 import datetime
 
 from django_webtest import WebTest
@@ -307,7 +307,7 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         response = self.app.get(self.mods_url, expect_errors=True)
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.body, "access-date is a required parameter")
+        self.assertEqual(response.text, "access-date is a required parameter")
 
     def test_basic(self):
         """
@@ -323,6 +323,6 @@ http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"><mods>\
         }
 
         self.assertEqual(
-            response.body,
+            response.text,
             self.mods_template.format(**xml_params))
         self.assertValid(response.body)

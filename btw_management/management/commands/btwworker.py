@@ -1,10 +1,10 @@
-from __future__ import absolute_import
+
 import os
 import errno
 import time
 from itertools import chain
+from functools import lru_cache
 
-from functools32 import lru_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -269,7 +269,7 @@ Manage workers.
 
                 full_name = full_names[worker.name]
                 result = app.control.ping([full_name], timeout=0.5)
-                if result[0][full_name] == {u'ok': u'pong'}:
+                if result[0][full_name] == {'ok': 'pong'}:
                     self.stdout.write("passed")
                 else:
                     self.stdout.write("failed with response: " +
@@ -326,7 +326,7 @@ Manage workers.
             # loop until the worker returns something sensible.
             scheduled = app.control.inspect().scheduled()
             if scheduled is not None:
-                schedule_info = chain.from_iterable(scheduled.itervalues()) \
+                schedule_info = chain.from_iterable(iter(scheduled.values())) \
                     if name is None else scheduled.get(name, None)
                 if schedule_info is not None:
                     break
@@ -340,7 +340,7 @@ Manage workers.
         while True:
             if to_revoke_set.issubset(
                     set(chain.from_iterable(
-                        app.control.inspect().revoked().itervalues()))):
+                        iter(app.control.inspect().revoked().values())))):
                 break
             time.sleep(0.2)
 

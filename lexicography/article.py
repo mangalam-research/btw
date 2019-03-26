@@ -79,7 +79,7 @@ def get_lemmas_and_terms(xml):
     # Use a set to eliminate duplicate lemmas.
     lemmas = set()
     for term in terms:
-        lemma = u''.join(term.itertext()).strip()
+        lemma = ''.join(term.itertext()).strip()
         # Empty lemmas can happen while editing, just skip. We also do
         # not link the article to itself.
         if not lemma or lemma == this_lemma:
@@ -118,7 +118,7 @@ def hyperlink_article(lemmas, terms, published):
         candidates.filter(lemma__in=lemmas)}
 
     for term in terms:
-        lemma = u''.join(term.itertext()).strip()
+        lemma = ''.join(term.itertext()).strip()
         candidate = found_lemmas.get(lemma)
 
         # We just leave intact those terms we cannot link.
@@ -349,7 +349,7 @@ def name_semantic_fields(xml):
 
         for ref in refs:
             while True:
-                ref_str = unicode(ref)
+                ref_str = str(ref)
 
                 # Already processed, we don't need to seek this field
                 # or its parents.
@@ -389,14 +389,14 @@ def name_semantic_fields(xml):
             # articles.
             continue
 
-        records = [path_to_record.get(unicode(ref), None) for ref in refs]
+        records = [path_to_record.get(str(ref), None) for ref in refs]
         success = all(records)  # Whether we have a record for all references.
 
         records_len = len(records)
         if success and records_len > 0:
             del sf[:]
-            sf.text = u''
-            ref = unicode(text.strip())
+            sf.text = ''
+            ref = str(text.strip())
             sf.attrib["ref"] = ref
 
             record = records[0] if records_len == 1 else \
@@ -404,6 +404,6 @@ def name_semantic_fields(xml):
 
             heading = record.heading_for_display
 
-            sf.text += ref if heading is None else heading + u" (" + ref + u")"
+            sf.text += ref if heading is None else heading + " (" + ref + ")"
 
     return True, sf_records

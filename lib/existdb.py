@@ -2,19 +2,19 @@ import os
 
 import requests
 from django.conf import settings
-import eulexistdb.db
-from eulexistdb import patch
-from eulexistdb.exceptions import ExistDBException
+import pyexistdb.db
+from pyexistdb import patch
+from pyexistdb.exceptions import ExistDBException
 from . import xquery
 
 patch.request_patching(patch.XMLRpcLibPatch)
 
-class ExistDB(eulexistdb.db.ExistDB):
+class ExistDB(pyexistdb.db.ExistDB):
 
     def getDocument(self, name):
         # This does pretty much what the default getDocument does
         # but it adds the _indent=no parameter.
-        eulexistdb.db.logger.debug('getDocument %s' % self.restapi_path(name))
+        pyexistdb.db.logger.debug('getDocument %s' % self.restapi_path(name))
         response = self.session.get(self.restapi_path(name), stream=False,
                                     params={"_indent": "no"},
                                     **self.session_opts)

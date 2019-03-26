@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 import signal
-import xmlrpclib
+import xmlrpc.client
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -106,7 +106,7 @@ class Createuser(SubCommand):
         assert_running()
         db = get_admin_db()
 
-        for (group, desc) in command.new_user_groups.iteritems():
+        for (group, desc) in command.new_user_groups.items():
             db.server.addGroup(
                 group,
                 {'http://exist-db.org/security/description': desc})
@@ -114,8 +114,8 @@ class Createuser(SubCommand):
         db.server.addAccount(
             command.server_user,
             settings.EXISTDB_SERVER_PASSWORD,
-            "", command.new_user_groups.keys(),
-            True, 0022,
+            "", list(command.new_user_groups.keys()),
+            True, 0o022,
             {
                 'http://exist-db.org/security/description':
                 'BTW user'
@@ -142,7 +142,7 @@ class Dropuser(SubCommand):
             # If there is no exception, the account exists.
             raise CommandError("could not remove account '{}'"
                                .format(server_user))
-        except xmlrpclib.Fault:
+        except xmlrpc.client.Fault:
             # If there was an exception, the account does not
             # exist, which is what we wanted.
             pass
@@ -170,7 +170,7 @@ class Createdb(SubCommand):
                            get_collection_path("display")]:
             db.createCollection(collection)
             db.server.setPermissions(collection, command.server_user,
-                                     command.btw_group, 0770)
+                                     command.btw_group, 0o770)
 
 class Dropdb(SubCommand):
     """
@@ -297,7 +297,9 @@ Manage the eXist server used by BTW.
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
-                                           parser_class=SubParser(self))
+                                           dest="subcommand",
+                                           parser_class=SubParser(self),
+                                           required=True)
 
         for cmd in self.subcommands:
             cmd().add_to_parser(subparsers)

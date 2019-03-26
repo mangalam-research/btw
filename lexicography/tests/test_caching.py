@@ -143,9 +143,9 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
             tasks.prepare_bibl.delay(cr.c_hash.c_hash).get()
             dep_keys.append(key)
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             depman.bibl.get(self.item.abstract_url), dep_keys)
-        self.assertItemsEqual(depman.bibl.get(self.ps.abstract_url), dep_keys)
+        self.assertCountEqual(depman.bibl.get(self.ps.abstract_url), dep_keys)
 
         op()
 
@@ -155,14 +155,14 @@ class CachingTestCase(DisableMigrationsMixin, TestCase):
             if not expect_data:
                 self.assertIsNone(
                     result,
-                    (u"there should no longer be information about "
-                     u"article {0} in the article_display cache")
+                    ("there should no longer be information about "
+                     "article {0} in the article_display cache")
                     .format(entry.lemma))
             else:
                 self.assertIsNotNone(
                     result,
-                    (u"there should be information about "
-                     u"article {0} in the article_display cache")
+                    ("there should be information about "
+                     "article {0} in the article_display cache")
                     .format(entry.lemma))
 
     def test_item_changed(self):

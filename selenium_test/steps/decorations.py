@@ -8,11 +8,11 @@ import wedutil
 step_matcher('re')
 
 
-@then(ur'the btw:explanation for the (?P<parent>btw:sense|btw:subsense) '
-      ur'(?P<has>has(?: no)?) numbering')
+@then(r'the btw:explanation for the (?P<parent>btw:sense|btw:subsense) '
+      r'(?P<has>has(?: no)?) numbering')
 def step_impl(context, parent, has):
     util = context.util
-    prefix = u"." + parent.replace(":", ur"\:") + ur">.btw\:explanation"
+    prefix = "." + parent.replace(":", r"\:") + r">.btw\:explanation"
 
     if has == "has":
         util.find_element((By.CSS_SELECTOR, prefix + ">._explanation_number"))
