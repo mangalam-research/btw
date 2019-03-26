@@ -47,7 +47,7 @@ adapt the instructions so as to not use virtualenv.
 
 1. Install necessary packages::
 
-    $ apt-get install uwsgi postgresql git python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc redis-server
+    $ apt-get install uwsgi postgresql git python-pip python-dev libffi-dev libxml2-dev libxslt1-dev make unzip libxml2-utils trang jing xsltproc redis-server libpq-dev
 
    Install the version of ``postgresql-server-dev-...`` that is
    appropriate for the version of postgresql installed on the
@@ -542,6 +542,13 @@ Generally:
 6. Take the site out of maintenance mode.
 
 See below for specific upgrade cases.
+
+2.2.0 to next
+~~~~~~~~~~~~~
+
+- ``apt-get install libpq-dev``
+
+- psycopg2 may need to be uninstalled and reinstalled.
 
 2.0.0 to 2.1.0
 ~~~~~~~~~~~~~~
