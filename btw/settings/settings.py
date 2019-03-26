@@ -373,7 +373,6 @@ s.INSTALLED_APPS = (
     'treebeard',
     'menus',
     'sekizai',
-    'reversion',
     # For django-filer which is required by Django CMS
     "filer",
     "mptt",

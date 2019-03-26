@@ -14,7 +14,7 @@ from cms.test_utils.testcases import BaseCMSTestCase
 from invitation.tests.util import BAD_KEY
 from invitation.models import Invitation
 import lib.util as util
-from lib import cmsutil
+from lib import cmstestutil
 from lexicography.xml import mods_schema_path
 
 user_model = get_user_model()
@@ -27,13 +27,10 @@ class ViewTestCase(BaseCMSTestCase, util.DisableMigrationsMixin, WebTest):
         super(ViewTestCase, self).setUp()
         translation.activate('en-us')
         # We need a home page for some of the tests to pass.
-        from cms.api import create_page
-        self.home_page = \
-            create_page("Home", "generic_page.html",
-                        "en-us")
-        self.home_page.toggle_in_navigation()
-        self.home_page.publish('en-us')
-        cmsutil.refresh_cms_apps()
+        home_page = \
+            cmstestutil.create_test_page("Home", "generic_page.html", "en-us")
+        home_page.set_as_homepage(True)
+        cmstestutil.refresh_cms_apps()
 
         self.lexicography_url = reverse("lexicography_main")
 

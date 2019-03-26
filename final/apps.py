@@ -18,9 +18,15 @@ class DefaultAppConfig(AppConfig):
         if env.from_command_line and not env.testing:
             return
 
+        #
+        # This list needs to replicate what Django CMS does by default.
+        # Search the instances of site.register with:
+        #
+        # ``grep site.register cms/admin/*``
+        #
+
         from cms.admin.permissionadmin import GlobalPagePermissionAdmin
-        site.register(django_apps.get_model("cms",
-                                            "GlobalPagePermission"),
+        site.register(django_apps.get_model("cms", "GlobalPagePermission"),
                       GlobalPagePermissionAdmin)
 
         from cms.admin.useradmin import PageUserAdmin, PageUserGroupAdmin
@@ -32,6 +38,10 @@ class DefaultAppConfig(AppConfig):
         from cms.admin.pageadmin import PageAdmin
         site.register(django_apps.get_model("cms", "Page"),
                       PageAdmin)
+
+        from cms.admin.pageadmin import PageTypeAdmin
+        site.register(django_apps.get_model("cms", "PageType"),
+                      PageTypeAdmin)
 
         from cms.admin.settingsadmin import SettingsAdmin
         site.register(django_apps.get_model("cms", "UserSettings"),

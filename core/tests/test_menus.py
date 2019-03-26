@@ -45,25 +45,9 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         g.user_set.add(self.scribe)
         g.save()
 
-        from lib import cmsutil
-        cmsutil.refresh_cms_apps()
-
-        from cms.api import create_page
-        self.home_page = \
-            create_page("Home", "generic_page.html",
-                        "en-us")
-        self.home_page.toggle_in_navigation()
-        self.home_page.publish('en-us')
-        self.lexicography_page = \
-            create_page("Lexicography", "generic_page.html",
-                        "en-us", apphook='LexicographyApp')
-        self.lexicography_page.toggle_in_navigation()
-        self.lexicography_page.publish('en-us')
-        self.bibliography_page = \
-            create_page("Bibliography", "generic_page.html",
-                        "en-us", apphook='BibliographyApp')
-        self.bibliography_page.toggle_in_navigation()
-        self.bibliography_page.publish('en-us')
+        from lib import cmstestutil
+        cmstestutil.refresh_cms_apps()
+        cmstestutil.create_stock_test_pages()
 
         # What we are doing here is saving the menu setup on the first
         # run of this test. We will use it in tearDown to restore the

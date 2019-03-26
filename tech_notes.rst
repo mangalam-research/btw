@@ -1489,6 +1489,10 @@ come to mind:
   neatly. (Note that it is *possible* ``django-reversion`` could do
   it, but it would take a significant time investment to find out.)
 
+* Django-CMS initially used django-reversion to maintain histories of page
+  changes but in 3.4.0 they dropped support for it. It is not clear what the
+  issues where but it does not look good.
+
 Version Control in Caches
 =========================
 

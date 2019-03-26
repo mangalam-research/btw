@@ -146,33 +146,18 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             ps.save()
             fetch_items()
 
-            from lib import cmsutil
-            cmsutil.refresh_cms_apps()
+            from lib.cmstestutil import refresh_cms_apps, \
+                create_stock_test_pages, create_test_page
+            refresh_cms_apps()
             from cms.api import create_page, add_plugin
-            self.home_page = create_page("Home", "generic_page.html",
-                                         "en-us")
-            self.home_page.toggle_in_navigation()
-            self.home_page.publish('en-us')
-            self.lexicography_page = \
-                create_page("Lexicography", "generic_page.html",
-                            "en-us", apphook='LexicographyApp')
-            self.lexicography_page.toggle_in_navigation()
-            self.lexicography_page.publish('en-us')
-            self.bibliography_page = \
-                create_page("Bibliography", "generic_page.html",
-                            "en-us", apphook='BibliographyApp')
-            self.bibliography_page.toggle_in_navigation()
-            self.bibliography_page.publish('en-us')
-            self.cite_page = create_page("Cite", "generic_page.html", "en-us")
-            self.cite_page.toggle_in_navigation()
-            content = self.cite_page.placeholders.get(slot='content')
+            create_stock_test_pages()
+            cite_page = create_page("Cite", "generic_page.html", "en-us")
+            cite_page.toggle_in_navigation()
+            content = cite_page.placeholders.get(slot='content')
             add_plugin(content, "CitePlugin", "en-us")
-            self.cite_page.publish('en-us')
-            self.semantic_fields_page = \
-                create_page("Semantic Fields", "generic_page.html",
-                            "en-us", apphook='SemanticFieldsApp')
-            self.semantic_fields_page.toggle_in_navigation()
-            self.semantic_fields_page.publish('en-us')
+            cite_page.publish('en-us')
+            create_test_page("Semantic Fields", "generic_page.html",
+                             "en-us", apphook='SemanticFieldsApp')
 
             self.snapshot_entries()
             self.initial_primary_sources = \
