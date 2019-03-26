@@ -10,7 +10,7 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 import lxml.etree
 from lxml import html
-from pebble import process
+from pebble.concurrent import process
 
 from .. import xml
 from lib import util
@@ -100,7 +100,7 @@ def set_lemma(data, new_lemma):
 # because it will already have been done.
 #
 
-@process.concurrent
+@process
 def fetch():
     with open("utils/schemas/prasada.xml") as f:
         data = f.read().decode("utf-8")
@@ -138,7 +138,7 @@ def get_valid_document_data():
     if fetch_task is None:
         raise Exception("forgot to call launch_fetch_task")
 
-    data = fetch_task.get()
+    data = fetch_task.result()
 
     get_valid_document_data.data = data
     return data

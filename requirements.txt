@@ -13,8 +13,7 @@ pyvirtualdisplay>=0.2.1,<2
 selenium==2.49.0
 behave>=1.2.6,<2
 selenic>=0.11.0,<1
-# We've been having issues on 3.1.17, which is the latest in the 3.x series.
-pebble==3.1.14
+pebble>=4.3.10,<5
 django-redis>=4.10.0,<5
 django-cache-management>=3,<4
 celery[redis]>=4.2.0,<4.3
