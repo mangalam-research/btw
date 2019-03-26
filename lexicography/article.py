@@ -51,9 +51,7 @@ def prepare_article_data(data):
     modified, sf_records = name_semantic_fields(tree) or modified
 
     if modified:
-        xml = lxml.etree.tostring(tree.tree,
-                                  xml_declaration=False,
-                                  encoding='utf-8').decode('utf-8')
+        xml = lxml.etree.tostring(tree.tree, encoding="unicode")
     else:
         # We do not reserialize an unmodified tree.
         xml = data
@@ -95,9 +93,7 @@ def hyperlink_prepared_data(prepared, published):
     (lemmas, terms) = get_lemmas_and_terms(xml)
     modified = hyperlink_article(lemmas, terms, published)
     if modified:
-        data = lxml.etree.tostring(xml.tree,
-                                   xml_declaration=False,
-                                   encoding='utf-8').decode('utf-8')
+        data = lxml.etree.tostring(xml.tree, encoding="unicode")
     # else we do not reserialize
     return data
 

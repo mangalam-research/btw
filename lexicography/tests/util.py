@@ -70,7 +70,7 @@ def stringify_etree(data):
         if len(el) == 0 and el.text is None:
             el.text = ''
 
-    return lxml.etree.tostring(data).decode("utf-8")
+    return lxml.etree.tostring(data, encoding="unicode")
 
 
 def set_lemma(data, new_lemma):
@@ -255,7 +255,8 @@ def inner_html(x):
     Extracts the equivalent of DOM's ``innerHTML`` from an lxml
     Element.
     """
-    return (x.text or '') + ''.join(html.tostring(d).decode("utf8") for d in x)
+    return (x.text or '') + \
+        ''.join(html.tostring(d, encoding="unicode") for d in x)
 
 def inner_normalized_html(x):
     """
