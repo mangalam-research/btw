@@ -5,8 +5,7 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,69
-
+Linux,CH,73
 
 #
 # Perform these next because IE compatibility is a major
@@ -18,23 +17,12 @@ Windows 10,Edge,15,Remote
 # Perform these next because OS X compatibility is an issue. Again, we
 # want to find problems early.
 #
-OS X 10.12,CH,69,Remote
-#
-# On CH 37, Selenium fails to perform:
-# Scenario: removing a paragraph with backspace
-# Scenario: removing a paragraph with delete
-# The issue seems to be that it cannot click at the start of the
-# paragraph.
-# OS X 10.9,CH,37,Remote
-# wed definitely breaks on Chrome 34.
-# OS X 10.6,CH,34,Remote
+OS X 10.12,CH,73,Remote
 
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,69,Remote
-# wed definitely breaks on Chrome 34.
-# Windows 8.1,CH,34,Remote
+Windows 8.1,CH,73,Remote
 
 #
 # FAILING COMBINATIONS
