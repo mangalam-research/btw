@@ -161,9 +161,7 @@ def _proxify(file_name, f):
             if not hasattr(f, "proxy"):
                 port = get_port()
 
-                mitmdump = os.path.join(settings.TOPDIR, ".btw-venv3", "bin",
-                                        "mitmdump")
-                cmd = [mitmdump,
+                cmd = ["mitmdump",
                        "-q",  # Quiet
                        "-p", str(port)]  # Port to use
                 if hasattr(f, "record"):
@@ -232,9 +230,7 @@ def _proxify(file_name, f):
                     del os.environ['SSL_CERT_DIR']
 
             if not hasattr(f, "proxy") and hasattr(f, "record"):
-                py3 = os.path.join(settings.TOPDIR, ".btw-venv3", "bin",
-                                   "python3")
-                subprocess.check_call([py3,
+                subprocess.check_call(["python",
                                        os.path.join(
                                            dirname, "flow_rewrite.py"),
                                        temp[1], fname])
