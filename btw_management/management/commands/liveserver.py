@@ -424,6 +424,10 @@ class Suite(TestSuite):
             yield SeleniumTest(self.__control_read, self.__control_write,
                                self._patcher)
 
+    def _removeTestAtIndex(self, index):
+        # Yep we do nothing. We don't maintain references to tests.
+        pass
+
 class Runner(DiscoverRunner):
 
     def __init__(self, control_read, control_write, *args, **kwargs):
