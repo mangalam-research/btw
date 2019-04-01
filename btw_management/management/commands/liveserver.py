@@ -168,7 +168,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
         self.__control_write = control_write
         self._patcher = patcher
         super(SeleniumTest, self).__init__(*args, **kwargs)
-        self.next = None
+        self.after_test = None
 
     def log(self, msg):
         if False:
@@ -176,7 +176,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
 
     def run(self, result=None):
         super(SeleniumTest, self).run(result)
-        if self.__next__ == "restart":
+        if self.after_test == "restart":
             self._patcher.reset()
             self.log("restarting...")
         else:
@@ -195,7 +195,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             if command == "quit":
                 finished = True
             elif command == "restart":
-                self.next = "restart"
+                self.after_test = "restart"
                 # Stop reading the control pipe.
                 finished = True
             elif args[0] == "login":
