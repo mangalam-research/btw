@@ -336,7 +336,7 @@ def step_impl(context, what):
     if what == "valid article" or what.startswith("valid article, "):
         if context.created_documents.get(what) is None:
             context.server.write("create " + what + "\n")
-            title = context.server.read().decode('utf-8')
+            title = context.server.read()
             context.created_documents[what] = title
         else:
             title = context.created_documents[what]
@@ -357,9 +357,10 @@ def step_impl(context, what):
                          cookies={
                              "sessionid": context.session_id
                          } if context.session_id else None)
-        hits = funcs.parse_search_results(r.text)
-        if title in hits:
-            break
+        if r.status_code == 200:
+            hits = funcs.parse_search_results(r.text)
+            if title in hits:
+                break
 
     if edit:
         driver.get(context.builder.SERVER + hits[title]["edit_url"])
@@ -562,9 +563,8 @@ def step_impl(context, what):
     modal = util.find_element((By.CSS_SELECTOR, ".modal.in .modal-footer"))
     button = modal.find_element_by_link_text(what)
     button.click()
-    util.wait_until_not(lambda driver:
-                        len(driver.find_elements(
-                            (By.CSS_SELECTOR, ".modal-body"))) != 0)
+    util.wait(lambda driver:
+              len(driver.find_elements(By.CSS_SELECTOR, ".modal.in")) == 0)
 
 @when(r'the user dismisses the modal by using the close button in the '
       r'modal header')

@@ -6,7 +6,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenic.datatables import Datatable
 from selenic.util import Condition, Result
 
-from ..btw_util import velocity_mock
+from selenium_test.btw_util import velocity_mock
 
 step_matcher('re')
 
@@ -220,6 +220,8 @@ def step_impl(context, what):
     panel = util.find_element((By.CSS_SELECTOR,
                                "div.semantic-field-details-panel .panel-body"))
 
+    stale = object()
+
     def check(*_):
         crumbs = panel.find_elements_by_class_name("sf-breadcrumbs")
         # The check can be done so fast that we can a
@@ -227,13 +229,13 @@ def step_impl(context, what):
         try:
             text = crumbs[0].text if len(crumbs) > 0 else None
         except StaleElementReferenceException:
-            return Result(False, None)
+            return Result(False, stale)
 
         return Result(text == what, text)
 
     result = Condition(util, check).wait()
 
-    if result.payload is None:
+    if result.payload is stale:
         raise ValueError(
             "kept getting StaleElementReferenceException, somehow")
 

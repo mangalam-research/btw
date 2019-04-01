@@ -3,7 +3,7 @@ from nose.tools import assert_equal
 from behave import then, when, given, step_matcher
 from selenic.util import Result, Condition
 
-from ..btw_util import register_sf_modal_on_context
+from selenium_test.btw_util import register_sf_modal_on_context
 
 step_matcher('re')
 

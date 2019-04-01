@@ -26,11 +26,11 @@ options = parser.parse_args()
 
 from django.conf import settings
 name_users = [(db.get('TEST_NAME') or db.get('NAME'), db['USER'])
-              for db in settings.DATABASES.itervalues()]
+              for db in settings.DATABASES.values()]
 
 if options.dump_database_names:
     for name, user in name_users:
-        print name, db['USER']
+        print(name, db['USER'])
     exit(0)
 
 fifo_to_server = options.fifo_to_server
@@ -50,9 +50,9 @@ def cleanup_databases():
             # through some other means.
             subprocess.check_call(
                 ['psql', '-c', 'SELECT * FROM created_by_start_server;',
-                 name], stdout=file("/dev/null", "r"))
+                 name], stdout=open("/dev/null", "r"))
             drop = True
-        except:
+        except subprocess.CalledProcessError:
             # If we get any exception here, the command was
             # unsuccessful.  It may be that the table does not exist,
             # in which case we don't want to drop the database. Or the
@@ -64,6 +64,7 @@ def cleanup_databases():
             drop = False
 
         if drop:
+            print("Dropping", name)
             subprocess.check_call(['dropdb', name])
 
 def cleanup(*_whatever):
@@ -119,7 +120,7 @@ signal.signal(signal.SIGTERM, cleanup)
 
 tmpdir = tempfile.mkdtemp(prefix='btw-nginx-tmp')
 if keep_tmpdir:
-    print "Temp dir:", tmpdir
+    print("Temp dir:", tmpdir)
 tmpconf = os.path.join(tmpdir, "nginx.conf")
 
 for d in ["var/run", "var/log", "var/lib/nginx", "var/log/btw"]:
@@ -193,4 +194,4 @@ while True:
         raise Exception(pid_to_name[pid] + " failed with status " +
                         str(status))
 
-print "Terminating..."
+print("Terminating...")

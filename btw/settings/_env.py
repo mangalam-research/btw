@@ -42,7 +42,7 @@ def find_literal_file(name):
     for path in (HOME_CONFIG, ETC_CONFIG):
         conf_path = os.path.join(path, name)
         if os.path.exists(conf_path):
-            return open(conf_path)
+            return open(conf_path).read()
     # We return either an open file (see above) or an empty
     # string because exec accepts both.
     return ""

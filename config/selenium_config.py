@@ -9,7 +9,6 @@ import selenic
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 dirname = os.path.dirname(os.path.abspath(filename))
 
-
 # Support for older versions of our build setup which do not use builder_args
 if 'builder_args' not in globals():
     builder_args = {
@@ -67,7 +66,7 @@ if suffix:
     name += ": " + suffix
 
 # Grab the current build number.
-describe = subprocess.check_output(["git", "describe"])
+describe = subprocess.check_output(["git", "describe"]).decode("utf8").strip()
 
 caps = {
     "name": name,

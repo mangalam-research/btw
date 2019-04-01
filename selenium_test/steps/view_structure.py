@@ -524,7 +524,7 @@ def step_impl(context, label):
 
     context.server.write(
         "changerecord link to entry link {0}\n".format(url))
-    entry_url = context.server.read().decode('utf-8')
+    entry_url = context.server.read()
 
     links = driver.execute_script("""
     var url = arguments[0];

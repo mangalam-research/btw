@@ -363,9 +363,8 @@ def step_impl(context):
       r'in btw:definition')
 def step_impl(context, lang):
     driver = context.driver
-    util = context.util
 
-    p = driver.execute_script("""
+    driver.execute_script("""
     var $p = jQuery(".p");
     var $text = $p.contents().filter(function () {
         return this.nodeType === Node.TEXT_NODE;
@@ -373,12 +372,12 @@ def step_impl(context, lang):
     var text_node = $text[0];
     var offset = text_node.nodeValue.indexOf("prasāda");
     wed_editor.caretManager.setCaret(text_node, offset);
-    return $p[0];
     """)
 
-    util.send_keys(p,
-                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len("prasāda") +
-                   [Keys.SHIFT])
+    ActionChains(driver) \
+        .send_keys([Keys.SHIFT] + [Keys.ARROW_RIGHT] * len("prasāda") +
+                   [Keys.SHIFT]) \
+        .perform()
 
     context.execute_steps("""
     When the user clicks the {0} button
@@ -389,14 +388,13 @@ def step_impl(context, lang):
       r'in (?P<where>.*)')
 def step_impl(context, text, wrapper, where):
     driver = context.driver
-    util = context.util
 
     selector = "." + where.replace(":", r"\:")
 
     if where == "btw:definition":
         selector += " .p"
 
-    p = driver.execute_script(r"""
+    driver.execute_script(r"""
     var text = arguments[0];
     var selector = arguments[1];
     var $text = jQuery(selector).contents().filter(function () {
@@ -405,12 +403,12 @@ def step_impl(context, text, wrapper, where):
     var text_node = $text[0];
     var offset = text_node.data.indexOf(text);
     wed_editor.caretManager.setCaret(text_node, offset);
-    return text_node.parentNode;
     """, text, selector)
 
-    util.send_keys(p,
-                   [Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(text) +
-                   [Keys.SHIFT])
+    ActionChains(driver) \
+        .send_keys([Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(text) +
+                   [Keys.SHIFT]) \
+        .perform()
 
     context.execute_steps("""
     When the user brings up the context menu
@@ -639,8 +637,10 @@ def step_impl(context):
 "Delete btw:contrastive-section"
     """)
 
-    selector = (By.CSS_SELECTOR, r".btw\:contrastive-section .head")
-    util.wait_until_not(lambda driver: driver.find_element(selector))
+    util.wait_until_not(lambda driver:
+                        driver.find_element(
+                            By.CSS_SELECTOR,
+                            r".btw\:contrastive-section .head"))
 
 @then(r'the contrastive section has btw:none in all its subsections')
 def step_impl(context):

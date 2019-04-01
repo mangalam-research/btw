@@ -4,8 +4,8 @@ from nose.tools import assert_equal
 # pylint: disable=no-name-in-module
 from behave import then, given, when, step_matcher
 
-from ..btw_util import velocity_mock, NavigatorCollection, get_add_button_in, \
-    get_combine_button_in, register_sf_modal_on_context
+from selenium_test.btw_util import velocity_mock, NavigatorCollection, \
+    get_add_button_in, get_combine_button_in, register_sf_modal_on_context
 
 step_matcher('re')
 

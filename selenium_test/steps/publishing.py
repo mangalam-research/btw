@@ -58,8 +58,8 @@ def step_impl(context):
 
     alert_button = util.find_element((By.CSS_SELECTOR, ".alert button"))
     alert_button.click()
-    util.wait_until_not(lambda driver: len(driver.find_elements(
-        (By.CSS_SELECTOR, ".alert"))) != 0)
+    util.wait(lambda driver:
+              len(driver.find_elements(By.CSS_SELECTOR, ".alert")) == 0)
 
 
 @then(r'there is a message indicating that the article was '
@@ -99,9 +99,8 @@ def step_impl(context):
 
     button = util.find_element((By.XPATH, "//a[text()='Cancel']"))
     button.click()
-    util.wait_until_not(lambda driver:
-                        len(driver.find_elements(
-                            (By.CSS_SELECTOR, ".modal-body"))) != 0)
+    util.wait(lambda driver:
+              len(driver.find_elements(By.CSS_SELECTOR, ".modal.in")) == 0)
 
 
 @when(r'the user clicks the dialog button that performs the unpublishing')
@@ -111,6 +110,5 @@ def step_impl(context):
     button = util.find_element(
         (By.XPATH, "//a[normalize-space(text())='Yes, I want to unpublish']"))
     button.click()
-    util.wait_until_not(lambda driver:
-                        len(driver.find_elements(
-                            (By.CSS_SELECTOR, ".modal-body"))) != 0)
+    util.wait(lambda driver:
+              len(driver.find_elements(By.CSS_SELECTOR, ".modal.in")) == 0)

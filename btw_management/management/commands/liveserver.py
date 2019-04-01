@@ -401,7 +401,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
         if publish:
             assert entry.latest.publish(foo)
         with open(self.__control_write, 'w') as out:
-            out.write(entry.lemma.encode('utf-8') + "\n")
+            out.write(entry.lemma + "\n")
 
     def clearcache(self, args):
         execute_from_command_line(['liveserver', 'clearcache'] + args)
