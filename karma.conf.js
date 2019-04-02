@@ -16,7 +16,7 @@ module.exports = function configure(config) {
     files: [
       "sitestatic/config/requirejs-config-dev.js",
       "test-main.js",
-      "node_modules/babel-polyfill/dist/polyfill.js",
+      "node_modules/@babel/polyfill/dist/polyfill.js",
       {
         pattern: "sitestatic/lib/**/@(*.html|*.hbs|*.js|*.json)",
         included: false,
@@ -45,13 +45,13 @@ module.exports = function configure(config) {
       babelModule: {
         base: "babel",
         options: {
-          plugins: ["transform-es2015-modules-amd"],
+          plugins: ["@babel/plugin-transform-modules-amd"],
         },
       },
     },
     babelPreprocessor: {
       options: {
-        presets: ["es2015"],
+        presets: ["@babel/preset-env"],
         ignore: [
           "node_modules",
         ],
