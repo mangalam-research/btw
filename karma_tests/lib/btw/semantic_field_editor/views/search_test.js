@@ -80,8 +80,9 @@ describe("SearchView", () => {
     // page.
     searchEngine.respond(request);
     yield waitFor(
-      () => view.el.querySelectorAll(".table-pagination .page")
-        .length === 3);
+      () => view.el
+      // First, Previous, 1, 2, 3, Next, Last
+        .querySelectorAll(".table-pagination .page-link").length === 7);
   }
 
   describe("issues a search on", () => {
@@ -130,9 +131,10 @@ describe("SearchView", () => {
       yield Promise.coroutine(threePageQuery)();
 
       // Click the 2nd page button.
-      const pageButtons = view.el.querySelectorAll(".table-pagination .page");
+      const pageButtons =
+            view.el.querySelectorAll(".table-pagination .page-link");
       grabber.clear();
-      pageButtons[1].click();
+      pageButtons[3].click(); // There are 3 links before the one we want.
       yield waitFor(() => grabber.hasRequests());
 
       const request = grabber.getSingleRequest();

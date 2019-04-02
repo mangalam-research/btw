@@ -142,7 +142,7 @@ and_map=$1 $1.map
 map=$1 $(patsubst %.js,%.map,$1)
 
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and-map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js)
 
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
@@ -354,24 +354,31 @@ $(EXTERNAL)/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
 	touch $@
 
 $(EXTERNAL)/bluebird%: node_modules/bluebird/js/browser/bluebird%
+	-mkdir -p $(dir $@)
 	cp $< $@
 
 $(EXTERNAL)/bluejax.js: node_modules/bluejax/index.js
+	-mkdir -p $(dir $@)
 	cp $< $@
 
 $(EXTERNAL)/bluejax.try.js: node_modules/bluejax.try/index.js
+	-mkdir -p $(dir $@)
 	cp $< $@
 
 $(EXTERNAL)/last-resort.js%: node_modules/last-resort/dist/last-resort.min.js%
+	-mkdir -p $(dir $@)
 	cp $< $@
 
 $(EXTERNAL)/bootstrap-datepicker: node_modules/bootstrap-datepicker/dist
+	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
 $(EXTERNAL)/moment.js: node_modules/moment/moment.js
+	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
 $(EXTERNAL)/lucene-query-parser.js: node_modules/lucene-query-parser/lib/lucene-query-parser.js
+	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
 $(EXTERNAL)/velocity/%: node_modules/velocity-animate/%
