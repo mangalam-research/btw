@@ -55,7 +55,7 @@ function menuClickHandler(editor: EditorAPI, guiLoc: DLoc, items: any,
 
 export class BTWDecorator extends Decorator {
   // We redefine the parent class' mode field to use our own mode class.
-  protected readonly mode: Mode;
+  protected readonly mode!: Mode;
 
   private readonly guiRoot: Element;
   private readonly guiDOMListener: DOMListener;
@@ -72,8 +72,8 @@ export class BTWDecorator extends Decorator {
   readonly refmans: refmans.WholeDocumentManager;
 
   // Methods provided by the mixin.
-  dispatch: (root: Element, el: Element) => void;
-  explanationDecorator: (root: Element, el: Element) => void;
+  dispatch!: (root: Element, el: Element) => void;
+  explanationDecorator!: (root: Element, el: Element) => void;
   // End of methods provided by the mixin.
 
   constructor(semanticFieldFetchUrl: string, mode: Mode,
@@ -82,11 +82,13 @@ export class BTWDecorator extends Decorator {
               protected readonly mapped: MappedUtil,
               editor: EditorAPI) {
     super(mode, editor);
-    DispatchMixin.call(this);
+    // tslint:disable-next-line:no-any
+    (DispatchMixin as any).call(this);
 
     this.metadata = metadata;
     this.guiRoot = this.editor.guiRoot;
     this.guiDOMListener = new DOMListener(this.guiRoot, this.guiUpdater);
+
     this.senseSubsenseIdManager = new IDManager("S.");
     this.exampleIdManager = new IDManager("E.");
     this.refmans = new refmans.WholeDocumentManager(this.mapped);
@@ -284,15 +286,18 @@ export class BTWDecorator extends Decorator {
 
     dl.addHandler("trigger",
                   "included-sense",
-                  this.includedSenseTriggerHandler.bind(this));
+                  this.includedSenseTriggerHandler.bind(this) as
+                  (root: Node) => void);
 
     dl.addHandler("trigger",
                   "refresh-subsenses",
-                  this.refreshSubsensesTriggerHandler.bind(this));
+                  this.refreshSubsensesTriggerHandler.bind(this) as
+                  (root: Node) => void);
 
     dl.addHandler("trigger",
                   "refresh-sense-ptrs",
-                  this.refreshSensePtrsHandler.bind(this));
+                  this.refreshSensePtrsHandler.bind(this) as
+                  (root: Node) => void);
 
     gdl.addHandler("included-element",
                    ".head",
@@ -382,13 +387,17 @@ export class BTWDecorator extends Decorator {
     const origName = util.getOriginalName(el);
     const level = this.labelLevels[origName];
     super.elementDecorator(root, el, level !== undefined ? level : 1,
-                           this.contextMenuHandler.bind(this, true),
-                           this.contextMenuHandler.bind(this, false));
+                           // These type assertion are necessary due to a bug
+                           // in wed's 1.0.0 typings.
+                           // tslint:disable-next-line:no-any
+                           this.contextMenuHandler.bind(this, true) as any,
+                           // tslint:disable-next-line:no-any
+                           this.contextMenuHandler.bind(this, false) as any);
   }
 
   noneDecorator(el: Element):  void {
     this.guiUpdater.removeNodes(Array.from(el.childNodes));
-    const text = el.ownerDocument.createElement("div");
+    const text = el.ownerDocument!.createElement("div");
     text.className = "_text _phantom";
     text.textContent = "ø";
     this.guiUpdater.insertBefore(el, text, null);
@@ -453,7 +462,7 @@ export class BTWDecorator extends Decorator {
       for (const l of locations) {
         // We clone only the node itself and its first level children.
         const clone = node.cloneNode(false);
-        const div = clone.ownerDocument.createElement("div");
+        const div = clone.ownerDocument!.createElement("div");
         div.appendChild(clone);
 
         let child = node.firstChild;
@@ -463,7 +472,7 @@ export class BTWDecorator extends Decorator {
         }
 
         const insertAt = clone.childNodes[l];
-        clone.insertBefore(makeElement(clone.ownerDocument, ename.ns, spec),
+        clone.insertBefore(makeElement(clone.ownerDocument!, ename.ns, spec),
                            insertAt !== undefined ? insertAt : null);
 
         const errors =
@@ -512,7 +521,7 @@ export class BTWDecorator extends Decorator {
           tuples.push([act, data, act.getLabelFor(data)]);
         }
 
-        const control = el.ownerDocument.createElement("button");
+        const control = el.ownerDocument!.createElement("button");
         control.className =
           "_gui _phantom _va_instantiator btn btn-instantiator btn-xs";
         control.setAttribute("href", "#");
@@ -540,7 +549,7 @@ export class BTWDecorator extends Decorator {
           // Convert the tuples to actual menu items.
           const items: Element[] = [];
           for (const tup of tuples) {
-            const li = el.ownerDocument.createElement("li");
+            const li = el.ownerDocument!.createElement("li");
             // tslint:disable-next-line:no-inner-html
             li.innerHTML = `<a tabindex='0' href='#'>${tup[2]}</a>`;
             const $a = $(li.firstChild!);
@@ -558,10 +567,15 @@ export class BTWDecorator extends Decorator {
           control.innerHTML = tuples[0][2];
           // tslint:disable-next-line:no-any
           $control.mousedown(false as any);
-          $control.click(tuples[0][1],
-                         this.singleClickHandler.bind(this,
-                                                      dataLoc, tuples[0][0],
-                                                      root, el));
+          $control.click(
+            tuples[0][1],
+            this.singleClickHandler.bind(this,
+                                         dataLoc,
+                                         // Type assertion necesssary due
+                                         // to bug in wed 1.0.0.
+                                         tuples[0][0] as
+                                         Transformation<TransformationData>,
+                                         root, el));
         }
         this.guiUpdater.insertNodeAt(guiLoc, control);
       }
@@ -596,7 +610,7 @@ export class BTWDecorator extends Decorator {
     // the reference to the bibliographical source they contain is
     // updated. These updates happen asynchronously.
     if (isPtr && !final_) {
-      const doc = el.ownerDocument;
+      const doc = el.ownerDocument!;
       let origTarget = el.getAttribute(util.encodeAttrName("target"));
       if (origTarget === null) {
         origTarget = "";
@@ -652,7 +666,7 @@ export class BTWDecorator extends Decorator {
     this.refreshSubsensesForSense(el.parentNode as Element);
   }
 
-  excludingSubsenseHandler(root: Element, el: Element): void {
+  excludingSubsenseHandler(_root: Element, el: Element): void {
     this._deleteLinksPointingTo(el);
     this.refreshSubsensesForSense(el.parentNode as Element);
   }
@@ -782,7 +796,7 @@ export class BTWDecorator extends Decorator {
   }
 
   _refreshNavigationHandler(): void {
-    const doc = this.guiRoot.ownerDocument;
+    const doc = this.guiRoot.ownerDocument!;
     const prevAtDepth: Element[] = [doc.createElement("li")];
 
     function getParent(depth: number): Element {
@@ -899,7 +913,7 @@ export class BTWDecorator extends Decorator {
 
     // container, offset: location of the node in its parent.
     const container = node.parentNode;
-    const offset = _indexOf.call(container.childNodes, node) as number;
+    const offset = _indexOf.call(container.childNodes, node);
 
     // List of items to put in the contextual menu.
     const tuples: [Action<{}>, TransformationData, string][] = [];
@@ -934,7 +948,7 @@ export class BTWDecorator extends Decorator {
     }
 
     const target = ev.target;
-    const doc = ev.target.ownerDocument;
+    const doc = ev.target.ownerDocument!;
     const navList = closestByClass(target, "nav-list", document.body);
     if (navList !== null) {
       // This context menu was invoked in the navigation list.
@@ -981,23 +995,20 @@ export class BTWDecorator extends Decorator {
       tuples.push([act, data, act.getLabelFor(data)]);
     }
 
-    let li;
-
     // Convert the tuples to actual menu items.
     const items: Element[] = [];
 
     // Put the documentation link first.
     const docUrl = mode.documentationLinkFor(origName);
     if (docUrl != null) {
-      li = editor.editingMenuManager.makeDocumentationMenuItem(docUrl);
-      items.push(li);
+      items.push(editor.editingMenuManager.makeDocumentationMenuItem(docUrl));
     }
 
     for (const tup of tuples) {
-      li = doc.createElement("li");
+      const li = doc.createElement("li");
       // tslint:disable-next-line:no-inner-html
       li.innerHTML = `<a tabindex='0' href='#'>${tup[2]}</a>`;
-      const $a = $(li.firstChild);
+      const $a = $(li.firstChild!);
       // tslint:disable-next-line:no-any
       $a.mousedown(false as any);
       $a.click(tup[1], tup[0].boundHandler);

@@ -35,7 +35,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
       throw new Error("our decorator must be a BTWDecorator");
     }
 
-    const doc = editor.guiRoot.ownerDocument;
+    const doc = editor.guiRoot.ownerDocument!;
     const mappings = mode.getAbsoluteNamespaceMappings();
     const senses = editor.guiRoot.querySelectorAll(
       util.classFromOriginalName("btw:sense", mappings));
@@ -73,7 +73,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
         dataNode = $.data(subsense, "wed_mirror_node");
         const subsenseLabel = decorator.refmans.getSubsenseLabel(subsense);
         let child = dataNode.firstElementChild;
-        let explanation;
+        let explanation: Element | undefined;
         while (child) {
           if (child.tagName === "btw:explanation") {
             explanation = child;
@@ -83,7 +83,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
         }
 
         span = doc.createElement("span");
-        span.textContent = ` [${subsenseLabel}] ${explanation.textContent}`;
+        span.textContent = ` [${subsenseLabel}] ${explanation!.textContent}`;
         span.setAttribute("data-wed-id", subsense.id);
 
         radio = doc.createElement("input");
@@ -133,7 +133,7 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
       throw new Error("expected BTW mode");
     }
 
-    const doc = editor.guiRoot.ownerDocument;
+    const doc = editor.guiRoot.ownerDocument!;
     const mappings = mode.getAbsoluteNamespaceMappings();
     const examples =
       editor.guiRoot.querySelectorAll(domutil.toGUISelector(
@@ -145,7 +145,7 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
       const example = examples[i];
       const dataNode = $.data(example, "wed_mirror_node");
       let child = dataNode.firstElementChild;
-      let cit;
+      let cit: Element | undefined;
       while (child) {
         if (child.tagName === "btw:cit") {
           cit = child;
@@ -174,7 +174,7 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
 
       const span = doc.createElement("span");
       span.setAttribute("data-wed-id", example.id);
-      span.textContent = ` ${abbrCopy.textContent} ${cit.textContent}`;
+      span.textContent = ` ${abbrCopy.textContent} ${cit!.textContent}`;
 
       const radio = doc.createElement("input");
       radio.type = "radio";
@@ -278,7 +278,7 @@ function makeEngine(options: {}): Bloodhound {
 }
 
 export class InsertBiblPtrAction extends Action<{}> {
-  execute(data: {}): void {
+  execute(_data: {}): void {
     const editor = this.editor;
     const dataCaret = editor.caretManager.getDataCaret(true)!;
     const mode = editor.modeTree.getMode(dataCaret.node);
@@ -444,7 +444,7 @@ function getEditSemanticFieldModal(editor: EditorAPI): Modal {
 }
 
 export class EditSemanticFieldsAction extends Action<{}> {
-  execute(data: {}): void {
+  execute(_data: {}): void {
     const editor = this.editor;
     const dataCaret = editor.caretManager.getDataCaret(true)!;
     const guiCaret = editor.caretManager.fromDataLocation(dataCaret)!;
@@ -475,9 +475,9 @@ export class EditSemanticFieldsAction extends Action<{}> {
 
     const modal = getEditSemanticFieldModal(editor);
 
-    const fieldToPath = (f) => f.get("path");
+    // tslint:disable-next-line:no-any
+    const fieldToPath = (f: any) => f.get("path");
 
-    let sfEditor;
     const primary = modal.getPrimary()[0];
     primary.classList.add("disabled");
     modal.setBody("<i class='fa fa-spinner fa-2x fa-spin'></i>");
@@ -500,6 +500,8 @@ export class EditSemanticFieldsAction extends Action<{}> {
 footer.getBoundingClientRect().height}px`;
     });
 
+    // tslint:disable-next-line:no-any
+    let sfEditor: any;
     modal.modal(() => {
       const clicked = modal.getClickedAsText();
       if (clicked === "Commit") {

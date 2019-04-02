@@ -11,7 +11,6 @@ import { NameResolver } from "salve";
 import { convert, DLocRoot, domtypeguards, domutil, transformation,
          treeUpdater, util } from "wed";
 import isElement = domtypeguards.isElement;
-import InsertNodeAtEvent = treeUpdater.InsertNodeAtEvent;
 import TreeUpdater = treeUpdater.TreeUpdater;
 
 import { Metadata } from "wed/modes/generic/metadata";
@@ -180,18 +179,18 @@ export class Viewer extends DispatchMixin {
   protected readonly mode: DispatchMode;
   protected readonly mapped: MappedUtil;
   protected readonly guiUpdater: TreeUpdater;
-  private dataDoc: Document;
+  private dataDoc!: Document;
   protected readonly headingDecorator: HeadingDecorator;
-  private doneResolve: (value: Viewer) => void;
+  private doneResolve!: (value: Viewer) => void;
   // tslint:disable-next-line:no-any
-  private doneReject: (err: any) => void;
+  private doneReject!: (err: any) => void;
 
   protected readonly senseSubsenseIdManager: IDManager = new IDManager("S.");
   protected readonly exampleIdManager: IDManager = new IDManager("E.");
   protected readonly senseTooltipSelector: string =
     "btw:english-term-list>btw:english-term";
 
-  private biblData: Record<string, BibliographicalItem>;
+  private biblData!: Record<string, BibliographicalItem>;
 
   readonly done: Promise<Viewer>;
 
@@ -207,8 +206,8 @@ export class Viewer extends DispatchMixin {
     this.mapped = new MappedUtil(this.metadata.getNamespaceMappings());
     this.refmans = new WholeDocumentManager(this.mapped);
 
-    const doc = this.doc = root.ownerDocument;
-    const win = this.win = doc.defaultView;
+    const doc = this.doc = root.ownerDocument!;
+    this.win = doc.defaultView!;
 
     const mappings = this.metadata.getNamespaceMappings();
     for (const key of Object.keys(mappings)) {
@@ -637,7 +636,7 @@ export class Viewer extends DispatchMixin {
 
   private createAffix(): void {
     // Create the affix
-    const { doc, win, root } = this;
+    const { doc, win } = this;
 
     const affix = doc.getElementById("btw-article-affix")!;
     this.populateAffix(affix);
@@ -692,11 +691,11 @@ export class Viewer extends DispatchMixin {
       root.querySelectorAll(this.mapped.toGUISelector("btw:subsense, .head"));
     let ulStack: Element[] = [topUl];
     const containerStack: Element[] = [];
-    let prevContainer;
+    let prevContainer: Element | null = null;
     // tslint:disable-next-line:prefer-for-of
     for (let anchorIx = 0; anchorIx < anchors.length; ++anchorIx) {
       const anchor = anchors[anchorIx];
-      if (prevContainer && prevContainer.contains(anchor)) {
+      if (prevContainer !== null && prevContainer.contains(anchor)) {
         containerStack.unshift(prevContainer);
         const ul = doc.createElement("ul");
         ul.className = "nav";
@@ -810,7 +809,7 @@ export class Viewer extends DispatchMixin {
   listDecorator(el: Element, sep: string | Node): void {
     // If sep is a string, create an appropriate div.
     const sepNode = (typeof sep === "string") ?
-      el.ownerDocument.createTextNode(sep) :
+      el.ownerDocument!.createTextNode(sep) :
       sep;
 
     let first = true;
@@ -852,21 +851,21 @@ export class Viewer extends DispatchMixin {
     }
   }
 
-  editorDecorator(root: Element, el: Element): void {
+  editorDecorator(_root: Element, el: Element): void {
     const class_ = "_editor_label";
     let label = domutil.childByClass(el, class_);
     if (label === null) {
-      label = el.ownerDocument.createElement("div");
+      label = el.ownerDocument!.createElement("div");
       label.className = `_text _phantom ${class_}`;
       label.textContent = "Editor: ";
       this.guiUpdater.insertBefore(el, label, el.firstChild);
     }
   }
 
-  persNameDecorator(root: Element, el: Element): void {
+  persNameDecorator(_root: Element, el: Element): void {
     el.classList.add("_inline");
 
-    const handleSeparator = (class_, where, text) => {
+    const handleSeparator = (class_: string, where: string, text: string) => {
       const separatorClass = `_${class_}_separator`;
       const child = domutil.childByClass(el, class_);
       const exists = child !== null ? (child.childNodes.length !== 0) : false;
@@ -874,10 +873,10 @@ export class Viewer extends DispatchMixin {
 
       if (exists) {
         if (oldSeparator === null) {
-          const separator = el.ownerDocument.createElement("div");
+          const separator = el.ownerDocument!.createElement("div");
           separator.className = `_text _phantom ${separatorClass}`;
           separator.textContent = text;
-          let before;
+          let before: Node | null;
           switch (where) {
           case "after":
             before = child!.nextSibling;
@@ -903,7 +902,7 @@ export class Viewer extends DispatchMixin {
     const oldNameSeparator = domutil.childByClass(el, nameSeparatorClass);
 
     if (oldNameSeparator === null) {
-      const separator = el.ownerDocument.createElement("div");
+      const separator = el.ownerDocument!.createElement("div");
       separator.className = `_text _phantom ${nameSeparatorClass}`;
       separator.textContent = " ";
       this.guiUpdater.insertBefore(el, separator, el.firstChild);
@@ -970,7 +969,7 @@ export class Viewer extends DispatchMixin {
     // "items" later in this code.
 
     const groupClass = `btw:${name}s`;
-    const doc = root.ownerDocument;
+    const doc = root.ownerDocument!;
     // groups are those elements that act as containers (btw:cognates,
     // btw:antonyms, etc.)
     const groups = _slice.call(root.getElementsByClassName(groupClass));
@@ -1101,7 +1100,7 @@ export class Viewer extends DispatchMixin {
       }
 
       // We also want a hyperlink into the Zotero library.
-      a = el.ownerDocument.createElement("a");
+      a = el.ownerDocument!.createElement("a");
       a.className = "a _phantom_wrap";
       // When the item is a secondary source, ``zotero_url`` is at the top
       // level. If it is a secondary source, ``zotero_url`` is inside the
@@ -1127,7 +1126,7 @@ export class Viewer extends DispatchMixin {
         el.removeChild(a);
       }
 
-      a = el.ownerDocument.createElement("a");
+      a = el.ownerDocument!.createElement("a");
       a.className = "a _phantom_wrap";
       a.href = origTarget;
       a.setAttribute("target", "_blank");

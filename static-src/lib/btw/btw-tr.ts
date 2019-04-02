@@ -32,7 +32,7 @@ export function insertPtr(editor: EditorAPI,
 
   // The data.target value is the wed ID target of the ptr. We must find this
   // element and add a data ID.
-  const target = editor.guiRoot.ownerDocument.getElementById(data.target)!;
+  const target = editor.guiRoot.ownerDocument!.getElementById(data.target)!;
   const dataId = data.target.slice(4);
   target.setAttribute(util.encodeAttrName("xml:id"), dataId);
   $.data(target, "wed_mirror_node").setAttributeNS(
@@ -42,7 +42,7 @@ export function insertPtr(editor: EditorAPI,
   const mode = editor.modeTree.getMode(parent);
   const ename = mode.getAbsoluteResolver().resolveName("ptr")!;
 
-  const ptr = makeElement(parent.ownerDocument,
+  const ptr = makeElement(parent.ownerDocument!,
                           ename.ns, "ptr", { target: `#${dataId}` });
   editor.dataUpdater.insertAt(parent, index, ptr);
 
@@ -60,7 +60,7 @@ export function insertRef(editor: EditorAPI,
 
   const mode = editor.modeTree.getMode(parent);
   const ename = mode.getAbsoluteResolver().resolveName("ref")!;
-  const ptr = makeElement(parent.ownerDocument, ename.ns, "ref",
+  const ptr = makeElement(parent.ownerDocument!, ename.ns, "ref",
                           { target: data.target });
   editor.dataUpdater.insertAt(parent, index, ptr);
   const guiNode = editor.caretManager.fromDataLocation(ptr, 0)!.node;
@@ -75,7 +75,7 @@ export function insertRef(editor: EditorAPI,
     editor.caretManager.setCaret(
       guiNode,
       _indexOf.call(guiNode.childNodes,
-                    domutil.childByClass(guiNode, "_ref_abbr")) as number + 1);
+                    domutil.childByClass(guiNode, "_ref_abbr")) + 1);
   });
 }
 
@@ -142,7 +142,7 @@ function setLanguageHandler(this: SetTextLanguageTr, editor: EditorAPI,
 
   const mode = editor.modeTree.getMode(start.node);
   const ename = mode.getAbsoluteResolver().resolveName("foreign")!;
-  const foreign = makeElement(container.ownerDocument,
+  const foreign = makeElement(container.ownerDocument!,
                               ename.ns, "foreign", { "xml:lang": langCode });
   const cutRet = editor.dataUpdater.cut(start, end);
   const cutNodes = cutRet[1];
@@ -222,7 +222,7 @@ void {
     sfsContainer.removeChild(sfsContainer.firstChild);
   }
 
-  const doc = sfsContainer.ownerDocument;
+  const doc = sfsContainer.ownerDocument!;
   const newPaths = data.newPaths;
   const mode = editor.modeTree.getMode(sfsContainer);
   const ename = mode.getAbsoluteResolver().resolveName("btw:sf")!;

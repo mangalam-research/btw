@@ -5,8 +5,7 @@
 import "bootstrap-treeview";
 import * as $ from "jquery";
 
-import { Decorator, domutil, EditorAPI, gui, labelman, treeUpdater,
-         util } from "wed";
+import { Decorator, domutil, gui, labelman, treeUpdater, util } from "wed";
 import LabelManager = labelman.LabelManager;
 import TreeUpdater = treeUpdater.TreeUpdater;
 import tooltip = gui.tooltip.tooltip;
@@ -16,9 +15,8 @@ import { Metadata } from "wed/modes/generic/metadata";
 import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
          Item } from "./bibliography";
 import { HeadingDecorator } from "./btw-heading-decorator";
-import { BibliographicalInfo, Mode } from "./btw-mode";
+import { BibliographicalInfo } from "./btw-mode";
 import { ExampleReferenceManager, WholeDocumentManager } from "./btw-refmans";
-import * as btwUtil from "./btw-util";
 import { IDManager } from "./id-manager";
 import { MappedUtil } from "./mapped-util";
 import { SFFetcher } from "./semantic-field-fetcher";
@@ -184,15 +182,12 @@ export abstract class DispatchMixin {
   }
 
   explanationDecorator(root: Element, el: Element): void {
-    let child;
-    let next;
-    let div; // Damn hoisting...
     // Handle explanations that are in btw:example-explained.
     if ((el.parentNode as Element).classList
         .contains("btw:example-explained")) {
-      child = el.firstElementChild;
-      while (child) {
-        next = child.nextElementSibling;
+      let child = el.firstElementChild;
+      while (child !== null) {
+        const next = child.nextElementSibling;
         if (child.classList.contains("_explanation_bullet")) {
           this.guiUpdater.removeNode(child);
           break; // There's only one.
@@ -205,7 +200,7 @@ export abstract class DispatchMixin {
       if (cit !== null &&
           cit.querySelector(
             `*[${util.encodeAttrName("xml:lang")}='pi-Latn']`) !== null) {
-        div = el.ownerDocument.createElement("div");
+        const div = el.ownerDocument!.createElement("div");
         div.className = "_phantom _decoration_text _explanation_bullet";
         div.style.position = "absolute";
         div.style.left = "-1em";
@@ -218,16 +213,15 @@ export abstract class DispatchMixin {
     }
 
     this.elementDecorator(root, el);
-    let label;
     const parent = el.parentNode as Element;
     // Is it in a subsense?
     if (parent.classList.contains("btw:subsense")) {
       const refman = this.refmans.getSubsenseRefman(el)!;
-      label = refman.idToSublabel(parent.id);
-      child = el.firstElementChild;
-      let start;
-      while (child) {
-        next = child.nextElementSibling;
+      const label = refman.idToSublabel(parent.id);
+      let child = el.firstElementChild;
+      let start: Element | undefined;
+      while (child !== null) {
+        const next = child.nextElementSibling;
         if (child.classList.contains("_explanation_number")) {
           this.guiUpdater.removeNode(child);
         }
@@ -238,12 +232,13 @@ export abstract class DispatchMixin {
       }
 
       // We want to insert it after the start label.
-      div = el.ownerDocument.createElement("div");
+      const div = el.ownerDocument!.createElement("div");
       div.className = "_phantom _decoration_text _explanation_number " +
         "_start_wrapper'";
       div.textContent = `${label}. `;
       this.guiUpdater.insertBefore(el, div,
-                                     start ? start.nextSibling : el.firstChild);
+                                   start !== undefined ? start.nextSibling :
+                                   el.firstChild);
     }
 
     this.headingDecorator.sectionHeadingDecorator(el);
@@ -252,7 +247,7 @@ export abstract class DispatchMixin {
   citDecorator(root: Element, el: Element): void {
     this.elementDecorator(root, el);
 
-    let ref;
+    let ref: Element | undefined;
     let child = el.firstElementChild;
     while (child !== null) {
       const next = child.nextElementSibling;
@@ -266,8 +261,8 @@ export abstract class DispatchMixin {
       child = next;
     }
 
-    if (ref) {
-      const space = el.ownerDocument.createElement("div");
+    if (ref !== undefined) {
+      const space = el.ownerDocument!.createElement("div");
       space.className = "_text _phantom _ref_space";
       space.textContent = " ";
       el.insertBefore(space, ref.nextSibling);
@@ -275,7 +270,7 @@ export abstract class DispatchMixin {
 
     if (el.querySelector(`*[${util.encodeAttrName("xml:lang")}='pi-Latn']`) !==
        null) {
-      const div = el.ownerDocument.createElement("div");
+      const div = el.ownerDocument!.createElement("div");
       div.className = "_phantom _text _cit_bullet";
       div.style.position = "absolute";
       div.style.left = "-1em";
@@ -304,7 +299,7 @@ export abstract class DispatchMixin {
 
     origTarget = origTarget.trim();
 
-    const doc = root.ownerDocument;
+    const doc = root.ownerDocument!;
     if (origTarget.lastIndexOf("#", 0) === 0) {
       // Internal target
       // Add BTW in front because we want the target used by wed.
@@ -337,7 +332,7 @@ export abstract class DispatchMixin {
 
         // An undefined or null refman can happen when first decorating the
         // document.
-        let label;
+        let label: string | undefined;
         if (refman !== null) {
           if (refman instanceof LabelManager) {
             if (refman.name === "sense" || refman.name === "subsense") {
@@ -380,7 +375,7 @@ export abstract class DispatchMixin {
                 html += ", ";
               }
             }
-            target = target.ownerDocument.createElement("div");
+            target = target.ownerDocument!.createElement("div");
             // tslint:disable-next-line:no-inner-html
             target.innerHTML = html;
           }
@@ -500,7 +495,7 @@ export abstract class DispatchMixin {
     const parent = el.parentNode!;
     const before = el.previousSibling;
 
-    let ref;
+    let ref: string | undefined;
     if (!inMode) {
       const dataWedRef = el.attributes[ENCODED_REF_ATTR_NAME];
       if (dataWedRef) {
@@ -514,7 +509,7 @@ export abstract class DispatchMixin {
     }
     else {
       const dataNode = this.editor.toDataNode(el);
-      ref = dataNode.textContent;
+      ref = dataNode.textContent!;
     }
 
     const view = new FieldView({
@@ -538,7 +533,7 @@ export abstract class DispatchMixin {
       // When we are editing we want to fill the semantic field with its name
       // and path.
       this.sfFetcher.fetch([ref]).then((resolved) => {
-        const resolvedRef = resolved[ref];
+        const resolvedRef = resolved[ref!];
         el.textContent = (resolvedRef !== undefined) ?
           `${resolvedRef.heading_for_display} (${ref})` :
           `Unknown field (${ref})`;

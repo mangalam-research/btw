@@ -7,7 +7,6 @@ import "jquery.cookie";
 
 import { Action, domtypeguards, EditorAPI, gui, transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
-import { GenericDecorator } from "wed/modes/generic/generic-decorator";
 
 import isElement = domtypeguards.isElement;
 import makeElement = transformation.makeElement;
@@ -108,7 +107,7 @@ class BTWMode extends Mode<BTWModeOptions> {
    * These are meant to be used only by helper classes and not outside the
    * mode.
    */
-  hyperlinkModal: Modal;
+  hyperlinkModal!: Modal;
 
   semanticFieldFetchUrl: string;
   /** End of fields for helper classes. */
@@ -116,27 +115,27 @@ class BTWMode extends Mode<BTWModeOptions> {
   private getBibliographicalInfoPromise: Promise<BibliographicalInfo> |
     undefined;
   private biblUrl: string;
-  private transformationFilters: TransformationFilter[];
-  private mapped: MappedUtil;
+  private transformationFilters!: TransformationFilter[];
+  private mapped!: MappedUtil;
 
-  replaceSemanticFields: Transformation<btwTr.SemanticFieldTransformationData>;
-  editSemanticFieldAction: btwActions.EditSemanticFieldsAction;
-  replaceBiblPtr: btwActions.InsertBiblPtrAction;
-  insertBiblPtr: btwActions.InsertBiblPtrAction;
-  insertRefText: Transformation<TransformationData>;
-  replaceNoneWithConceptualProximate: Transformation<TransformationData>;
-  replaceNoneWithCognate: Transformation<TransformationData>;
-  replaceNoneWithAntonym: Transformation<TransformationData>;
-  swapWithNextTr: Transformation<TransformationData>;
-  swapWithPrevTr: Transformation<TransformationData>;
-  replaceSelectionWithRefTr: Transformation<btwTr.TargetedTransformationData>;
-  insertRefTr: Transformation<btwTr.TargetedTransformationData>;
-  insertPtrTr: Transformation<btwTr.TargetedTransformationData>;
-  insertExamplePtrAction: btwActions.ExamplePtrDialogAction;
-  insertSensePtrAction: btwActions.SensePtrDialogAction;
-  setLanguageToSanskritTr: btwTr.SetTextLanguageTr;
-  setLanguageToPaliTr: btwTr.SetTextLanguageTr;
-  setLanguageToLatinTr: btwTr.SetTextLanguageTr;
+  replaceSemanticFields!: Transformation<btwTr.SemanticFieldTransformationData>;
+  editSemanticFieldAction!: btwActions.EditSemanticFieldsAction;
+  replaceBiblPtr!: btwActions.InsertBiblPtrAction;
+  insertBiblPtr!: btwActions.InsertBiblPtrAction;
+  insertRefText!: Transformation<TransformationData>;
+  replaceNoneWithConceptualProximate!: Transformation<TransformationData>;
+  replaceNoneWithCognate!: Transformation<TransformationData>;
+  replaceNoneWithAntonym!: Transformation<TransformationData>;
+  swapWithNextTr!: Transformation<TransformationData>;
+  swapWithPrevTr!: Transformation<TransformationData>;
+  replaceSelectionWithRefTr!: Transformation<btwTr.TargetedTransformationData>;
+  insertRefTr!: Transformation<btwTr.TargetedTransformationData>;
+  insertPtrTr!: Transformation<btwTr.TargetedTransformationData>;
+  insertExamplePtrAction!: btwActions.ExamplePtrDialogAction;
+  insertSensePtrAction!: btwActions.SensePtrDialogAction;
+  setLanguageToSanskritTr!: btwTr.SetTextLanguageTr;
+  setLanguageToPaliTr!: btwTr.SetTextLanguageTr;
+  setLanguageToLatinTr!: btwTr.SetTextLanguageTr;
 
   constructor(editor: EditorAPI, options: BTWModeOptions) {
     options.metadata = require.toUrl("./btw-storage-metadata.json");
@@ -407,7 +406,8 @@ class BTWMode extends Mode<BTWModeOptions> {
 
   private async makeGetBibliographicalInfoPromise():
   Promise<BibliographicalInfo> {
-    let data;
+    // tslint:disable-next-line:no-any
+    let data: any;
     try {
       data = await Promise.resolve($.ajax({
         url: this.biblUrl,
@@ -459,8 +459,8 @@ class BTWMode extends Mode<BTWModeOptions> {
 
       if ((ev.formerParent as Element).childElementCount === 0) {
         this.editor.dataUpdater.insertBefore(
-          ev.formerParent,
-          makeElement(el.ownerDocument, noneEName.ns, "btw:none"),
+          ev.formerParent as Element,
+          makeElement(el.ownerDocument!, noneEName.ns, "btw:none"),
           null);
       }
     });
@@ -485,11 +485,11 @@ class BTWMode extends Mode<BTWModeOptions> {
 
         ed.dataUpdater.insertBefore(
           toProcess,
-          makeElement(toProcess.ownerDocument, noneEName!.ns, "btw:none"),
+          makeElement(toProcess.ownerDocument!, noneEName!.ns, "btw:none"),
           null);
       }
 
-      function processList(nodes: NodeListOf<Element>): void {
+      function processList(nodes: HTMLCollectionOf<Element>): void {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < nodes.length; ++i) {
           processNode(nodes[i]);

@@ -126,14 +126,15 @@ export class ExampleReferenceManager {
   }
 
   getPositionalLabel(ptr: Element, target: Element): string {
-    const guiTarget = $.data(target, "wed_mirror_node");
+    const guiTarget = $.data(target, "wed_mirror_node") as HTMLElement;
     const ref = guiTarget
-      .querySelector(this.mapped.toGUISelector("btw:cit ref")).cloneNode(true);
+      .querySelector(this.mapped.toGUISelector("btw:cit ref"))!
+      .cloneNode(true) as HTMLElement;
     const toRemove = ref.querySelectorAll("._gui, ._decoration_text");
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < toRemove.length; ++i) {
       const it = toRemove[i];
-      it.parentNode.removeChild(it);
+      it.parentNode!.removeChild(it);
     }
     let ret = `See ${ref.textContent} quoted `;
     const order = ptr.compareDocumentPosition(target);
@@ -154,19 +155,19 @@ export class ExampleReferenceManager {
     ret += ((order & Node.DOCUMENT_POSITION_PRECEDING) !== 0) ?
       "above" : "below";
 
-    if (guiTarget) {
+    if (guiTarget != null) {
       let parent = guiTarget.parentNode;
-      let head;
-      while (parent) {
+      let head: Element | null;
+      while (parent !== null) {
         head = domutil.childByClass(parent, "head");
-        if (head) {
+        if (head !== null) {
           break;
         }
 
         parent = parent.parentNode;
       }
 
-      ret += ` in ${head.textContent}`;
+      ret += ` in ${head!.textContent}`;
 
       //
       // This seems a bit backwards at first but what we want here is not the
@@ -179,18 +180,18 @@ export class ExampleReferenceManager {
       // located, not the term under which the example (the target of the
       // pointer) is located.
       //
-      let guiTerm;
+      let guiTerm: Element | null = null;
       parent = $.data(ptr, "wed_mirror_node").parentNode;
-      while (parent) {
+      while (parent !== null) {
         guiTerm = parent.querySelector(".btw\\:term");
-        if (guiTerm) {
+        if (guiTerm !== null) {
           break;
         }
 
         parent = parent.parentNode;
       }
 
-      if (guiTerm) {
+      if (guiTerm !== null) {
         const term = $.data(guiTerm, "wed_mirror_node");
 
         // Drop the period, since we're adding a comma.
@@ -242,7 +243,7 @@ export class WholeDocumentManager {
 
   getSenseLabel(el: Element): string | undefined {
     let what: Element | null = el;
-    let sense;
+    let sense: Element | undefined;
     while (what !== null) {
       if (what.classList.contains("btw:sense")) {
         sense = what;
@@ -252,9 +253,9 @@ export class WholeDocumentManager {
       what = what.parentNode as (Element | null);
     }
 
-    const id = sense && sense.id;
+    const id = sense !== undefined ? sense.id : undefined;
 
-    if (!id) {
+    if (id === undefined) {
       throw new Error(`element does not have sense parent with an id: ${el}`);
     }
 
@@ -268,7 +269,7 @@ export class WholeDocumentManager {
     }
 
     let what: Element | null = el;
-    let subsense;
+    let subsense: Element | undefined;
     while (what !== null) {
       if (what.classList.contains("btw:subsense")) {
         subsense = what;
@@ -278,8 +279,8 @@ export class WholeDocumentManager {
       what = what.parentNode as (Element | null);
     }
 
-    const id = subsense && subsense.id;
-    if (!id) {
+    const id = subsense !== undefined ? subsense.id : undefined;
+    if (id === undefined) {
       // This can happen during the decoration of the tree because there is in
       // general no guarantee about the order in which elements are decorated. A
       // second pass will ensure that the label is not undefined.
@@ -318,7 +319,7 @@ export class WholeDocumentManager {
 
       // Slice to drop the #.
       const target =
-        el.ownerDocument.getElementById(`BTW-${targetAttr.slice(1)}`);
+        el.ownerDocument!.getElementById(`BTW-${targetAttr.slice(1)}`);
       return target !== null ? this.getRefmanForElement(target) : null;
     case "btw:sense":
       return this.senseRefman;

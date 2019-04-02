@@ -2,7 +2,7 @@
  * Module for decorating headings
  * @author Louis-Dominique Dubeau
  */
-import { domutil, treeUpdater, util } from "wed";
+import { treeUpdater, util } from "wed";
 import TreeUpdater = treeUpdater.TreeUpdater;
 
 import { WholeDocumentManager } from "./btw-refmans";
@@ -22,7 +22,7 @@ const defaultHeadingMap: Record<string, string> = {
   "btw:credits": "UNIT 4: CREDITS",
 };
 
-type ElementToLabel = (el: Element) => string;
+type ElementToLabel = (el: Element) => string | undefined;
 
 type Collapse = string | {
   kind: string;
@@ -166,7 +166,7 @@ export class HeadingDecorator {
         `found an element with name ${name}, which is not handled`);
     }
 
-    const head = el.ownerDocument.createElement("div");
+    const head = el.ownerDocument!.createElement("div");
     head.className = "head _phantom _start_wrapper";
     // tslint:disable-next-line:no-inner-html
     head.innerHTML = headStr;
@@ -203,9 +203,10 @@ export class HeadingDecorator {
 
       if (found.heading !== null) {
         const labelF = found.labelF;
+        const labelFResult = labelF !== undefined ? labelF(el) : undefined;
         // tslint:disable-next-line:no-parameter-reassignment
-        headStr = labelF !== undefined ?
-          `${found.heading} ${labelF(el)}` : found.heading;
+        headStr = labelFResult !== undefined ?
+          `${found.heading} ${labelFResult}` : found.heading;
       }
 
       if (found.suffix !== undefined) {
@@ -218,7 +219,7 @@ export class HeadingDecorator {
 
     if (headStr !== undefined) {
       if (collapse === undefined) {
-        const head = el.ownerDocument.createElement("div");
+        const head = el.ownerDocument!.createElement("div");
         head.className = "head _phantom _start_wrapper";
         head.textContent = this.impliedBrackets ? `[${headStr}]` : headStr;
         head.id = allocateHeadID();
@@ -233,7 +234,7 @@ export class HeadingDecorator {
           };
         }
         const collapsible = btwUtil.makeCollapsible(
-          el.ownerDocument,
+          el.ownerDocument!,
           collapse.kind,
           this.collapseHeadingIdManager.generate(),
           this.collapseIdManager.generate(),
