@@ -20,14 +20,14 @@ makeODD()
 	    $DOCLANG \
 	    currentDirectory=$H \
 	    useVersionFromTEI=$useVersionFromTEI \
-	    autoGlobal=$AUTOGLOBAL $SOURCE $REMOTEVERSION $DEBUG
+	    autoGlobal=$AUTOGLOBAL $SOURCE $REMOTESERVER $REMOTEVERSION $DEBUG
     else
 	echo  [names translated to language $lang]
 	saxon -xi:on -s:$ODD -xsl:$TEIXSLDIR/odds/odd2odd.xsl \
 	    autoGlobal=$AUTOGLOBAL \
 	    currentDirectory=$H \
 	    useVersionFromTEI=$useVersionFromTEI \
-	    $SOURCE $REMOTEVERSION $DEBUG  \
+	    $SOURCE $REMOTESERVER $REMOTEVERSION $DEBUG  \
 	    | saxon -xi:on -o:$RESULTS/$schema.compiled -s:- -xsl:$TEIXSLDIR/odds/translate-odd.xsl \
 	    $DEBUG $LANGUAGE $DOCLANG
    fi
@@ -140,7 +140,7 @@ makeXMLDOC()
     echo "6. make expanded documented ODD $schema.doc.xml "
     saxon -xi:on -o:$RESULTS/$schema.doc.xml  \
     -s:$RESULTS/$schema.compiled -xsl:$TEIXSLDIR/odds/odd2lite.xsl \
-    $DEBUG $DOCFLAGS  $LANGUAGE $DOCLANG $SOURCE $REMOTEVERSION autoGlobal=$AUTOGLOBAL
+    $DEBUG $DOCFLAGS  $LANGUAGE $DOCLANG $SOURCE $REMOTESERVER $REMOTEVERSION autoGlobal=$AUTOGLOBAL
 }
 
 
@@ -330,6 +330,10 @@ then
   fi
   REMOTEVERSION="defaultTEIVersion=$REMOTEVERSION"
 fi
+
+# We always have to set the server now because somewhere along the line it has
+# been configured to redirect http to https but saxon does not handle it.
+REMOTESERVER="defaultTEIServer=https://www.tei-c.org/Vault/P5/"
 
 makeODD || die "odd2odd process failed"
 ( $relax || $xsd ) && makeRelax
