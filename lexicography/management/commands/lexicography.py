@@ -33,12 +33,12 @@ class PrepareArticle(SubCommand):
         testutil.unmonkeypatch_databases()
 
         with open(options["src"], 'r') as src:
-            source = src.read().decode("utf-8")
+            source = src.read()
             prepared, _ = prepare_article_data(source)
             with open(options["dst"], 'w') as dst:
                 data = util.run_xsltproc(
                     "utils/xsl/strip.xsl", prepared)
-                dst.write(data.encode("utf-8"))
+                dst.write(data)
             with open(options["bibl"], 'w') as bibl:
                 bibl.write(json.dumps(get_bibliographical_data(source)[1]))
 
