@@ -6,5 +6,6 @@ module.exports = {
     "import/no-unresolved": "off",
     // eslint is unable to resolve the RequireJS dependencies...
     "import/no-extraneous-dependencies": "off",
+    "import/no-webpack-loader-syntax": "off",
   }
 };

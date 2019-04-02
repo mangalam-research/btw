@@ -14,6 +14,7 @@
   }
 
   function init() {
+    // eslint-disable-next-line import/no-dynamic-require
     require(
       ["btw/btw-editor", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
        "jquery.cookie"],

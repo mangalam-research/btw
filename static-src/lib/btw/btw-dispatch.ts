@@ -144,7 +144,6 @@ export abstract class DispatchMixin {
       skipDefault = true;
       break;
     default:
-      break;
     }
 
     if (!skipDefault) {
@@ -514,7 +513,7 @@ export abstract class DispatchMixin {
       }
     }
     else {
-      const dataNode = this.editor.toDataNode(el)!;
+      const dataNode = this.editor.toDataNode(el);
       ref = dataNode.textContent;
     }
 

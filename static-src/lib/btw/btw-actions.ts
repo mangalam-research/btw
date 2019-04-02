@@ -303,8 +303,8 @@ export class InsertBiblPtrAction extends Action<{}> {
         // If it is well-formed, then pointedAnchor and pointedFocus are
         // necessarily siblings.
         // tslint:disable-next-line:prefer-const
-        let { start, end } : { start: Node | null | undefined,
-                               end: Node | undefined } =
+        let { start, end } : { start: Node | null | undefined;
+                               end: Node | undefined; } =
           sel.anchor.compare(sel.focus) < 0 ?
           { start: pointedAnchor, end: pointedFocus } :
           { start: pointedFocus, end: pointedAnchor };

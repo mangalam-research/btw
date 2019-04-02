@@ -1,7 +1,6 @@
-// Karma configuration
-// Generated on Thu Apr 02 2015 07:49:34 GMT-0400 (EDT)
 /* eslint-env node, commonjs */
 /* global module */
+
 "use strict";
 
 module.exports = function configure(config) {
@@ -18,7 +17,10 @@ module.exports = function configure(config) {
       "sitestatic/config/requirejs-config-dev.js",
       "test-main.js",
       "node_modules/babel-polyfill/dist/polyfill.js",
-      { pattern: "sitestatic/lib/**/@(*.html|*.hbs|*.js|*.json)", included: false },
+      {
+        pattern: "sitestatic/lib/**/@(*.html|*.hbs|*.js|*.json)",
+        included: false,
+      },
       { pattern: "sitestatic/js/**/*.js", included: false },
       { pattern: "build/test-data/**/*", included: false },
       { pattern: "karma_tests/**/*.js", included: false },

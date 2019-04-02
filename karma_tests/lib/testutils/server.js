@@ -1,7 +1,8 @@
 import sinon from "sinon";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
-export default class Server {
+export class Server {
   constructor(options) {
     const fixture = this.fixture = options.fixture;
     this.verboseServer = !!options.verboseServer;
@@ -14,7 +15,7 @@ export default class Server {
   }
 
   verboseWrap(request) {
-    const verboseServer = this.verboseServer;
+    const { verboseServer } = this;
     if (verboseServer) {
       // eslint-disable-next-line no-console
       console.log("REQUEST:", request.method, request.url);

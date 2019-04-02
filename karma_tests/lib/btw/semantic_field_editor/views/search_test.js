@@ -1,19 +1,22 @@
 /* global chai describe afterEach beforeEach before after it */
 /* eslint-env module */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import $ from "jquery";
 import Promise from "bluebird";
 import { BoneBreaker, waitForEventOn, isInViewText } from "testutils/backbone";
-import XHRGrabber from "testutils/xhr_grabber";
+import { XHRGrabber } from "testutils/xhr_grabber";
 import { waitFor } from "testutils/util";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import SearchView from "btw/semantic_field_editor/views/search";
-import SearchEngine from "testutils/search";
+import { SearchEngine } from "testutils/search";
 import URI from "urijs/URI";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 import Handlebars from "handlebars";
 import sinon from "sinon";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 const fetcherUrl = "/en-us/semantic-fields/semanticfield/";
 
@@ -62,7 +65,7 @@ describe("SearchView", () => {
     }
   });
 
-  function* threePageQuery() {
+  function *threePageQuery() {
     const input = view.queryForm.ui.search[0];
     const $input = $(input);
     input.value = "Foo";
@@ -87,7 +90,7 @@ describe("SearchView", () => {
       canAddResults: false,
     }));
 
-    function* test(uiElement, event) {
+    function *test(uiElement, event) {
       // The search field must always be populated.
       const searchField = view.queryForm.ui.search[0];
       searchField.value = "Foo";
@@ -123,7 +126,7 @@ describe("SearchView", () => {
          Promise.coroutine(test.bind(undefined, uiElement, event)));
     }
 
-    it("clicks on page numbers", Promise.coroutine(function* click() {
+    it("clicks on page numbers", Promise.coroutine(function *click() {
       yield Promise.coroutine(threePageQuery)();
 
       // Click the 2nd page button.
@@ -138,7 +141,7 @@ describe("SearchView", () => {
       grabber.clear();
     }));
 
-    it("clicks on the next page button", Promise.coroutine(function* click() {
+    it("clicks on the next page button", Promise.coroutine(function *click() {
       yield Promise.coroutine(threePageQuery)();
 
       const nextButton = view.el.querySelector(".table-pagination .next");
@@ -153,7 +156,7 @@ describe("SearchView", () => {
     }));
 
     it("clicks on the previous page button",
-       Promise.coroutine(function* click() {
+       Promise.coroutine(function *click() {
          yield Promise.coroutine(threePageQuery)();
          view.collection.getLastPage();
          yield waitFor(() => grabber.hasRequests());
@@ -179,33 +182,31 @@ describe("SearchView", () => {
          grabber.clear();
        }));
 
-    it("clicks on the first page button",
-       Promise.coroutine(function* click() {
-         yield Promise.coroutine(threePageQuery)();
-         view.collection.getLastPage();
-         yield waitFor(() => grabber.hasRequests());
-         let request = grabber.getSingleRequest();
-         let uri = new URI(request.url);
-         assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+    it("clicks on the first page button", Promise.coroutine(function *click() {
+      yield Promise.coroutine(threePageQuery)();
+      view.collection.getLastPage();
+      yield waitFor(() => grabber.hasRequests());
+      let request = grabber.getSingleRequest();
+      let uri = new URI(request.url);
+      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
 
-         searchEngine.respond(request, {
-           offset: 20,
-           limit: 10,
-         });
-         const firstButton =
-                 view.el.querySelector(".table-pagination .first");
+      searchEngine.respond(request, {
+        offset: 20,
+        limit: 10,
+      });
+      const firstButton = view.el.querySelector(".table-pagination .first");
 
-         yield waitFor(() => !firstButton.classList.contains("disabled"));
+      yield waitFor(() => !firstButton.classList.contains("disabled"));
 
-         grabber.clear();
-         firstButton.click();
-         yield waitFor(() => grabber.hasRequests());
+      grabber.clear();
+      firstButton.click();
+      yield waitFor(() => grabber.hasRequests());
 
-         request = grabber.getSingleRequest();
-         uri = new URI(request.url);
-         assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
-         grabber.clear();
-       }));
+      request = grabber.getSingleRequest();
+      uri = new URI(request.url);
+      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      grabber.clear();
+    }));
   });
 
   describe("does not issue a search", () => {
@@ -238,51 +239,50 @@ describe("SearchView", () => {
       canAddResults: false,
     }));
 
-    it("on search changes", Promise.coroutine(
-      function* serializes() {
-        const searchInput = view.queryForm.ui.search[0];
-        const aspect = view.queryForm.ui.aspect[0];
-        const scope = view.queryForm.ui.scope[0];
-        const root = view.queryForm.ui.root[0];
-        const baseQuery = _.extend({
-          limit: "10",
-          offset: "0",
-          scope: "all",
-          aspect: "sf",
-          root: "all",
-        }, constantFields);
+    it("on search changes", Promise.coroutine(function *serializes() {
+      const searchInput = view.queryForm.ui.search[0];
+      const aspect = view.queryForm.ui.aspect[0];
+      const scope = view.queryForm.ui.scope[0];
+      const root = view.queryForm.ui.root[0];
+      const baseQuery = _.extend({
+        limit: "10",
+        offset: "0",
+        scope: "all",
+        aspect: "sf",
+        root: "all",
+      }, constantFields);
 
-        searchInput.value = "Foo";
-        $(searchInput).trigger("input");
-        yield waitFor(() => grabber.hasRequests());
+      searchInput.value = "Foo";
+      $(searchInput).trigger("input");
+      yield waitFor(() => grabber.hasRequests());
 
-        let request = grabber.getSingleRequest();
-        let uri = new URI(request.url);
-        let query = uri.query(true);
-        assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
-        assert.deepEqual(query, _.extend({}, baseQuery, { search: "Foo" }));
+      let request = grabber.getSingleRequest();
+      let uri = new URI(request.url);
+      let query = uri.query(true);
+      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      assert.deepEqual(query, _.extend({}, baseQuery, { search: "Foo" }));
 
-        searchInput.value = "Bar";
-        aspect.value = "lexemes";
-        scope.value = "btw";
-        root.value = "all";
-        grabber.clear();
-        $(searchInput).trigger("input");
-        yield waitFor(() => grabber.hasRequests());
+      searchInput.value = "Bar";
+      aspect.value = "lexemes";
+      scope.value = "btw";
+      root.value = "all";
+      grabber.clear();
+      $(searchInput).trigger("input");
+      yield waitFor(() => grabber.hasRequests());
 
-        request = grabber.getSingleRequest();
-        uri = new URI(request.url);
-        query = uri.query(true);
-        assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
-        assert.deepEqual(query, _.extend({}, baseQuery, {
-          search: "Bar",
-          aspect: "lexemes",
-          scope: "btw",
-          root: "all",
-        }));
+      request = grabber.getSingleRequest();
+      uri = new URI(request.url);
+      query = uri.query(true);
+      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      assert.deepEqual(query, _.extend({}, baseQuery, {
+        search: "Bar",
+        aspect: "lexemes",
+        scope: "btw",
+        root: "all",
       }));
+    }));
 
-    it("on arbitrary page movements", Promise.coroutine(function* page() {
+    it("on arbitrary page movements", Promise.coroutine(function *page() {
       const baseQuery = _.extend({}, constantFields, {
         limit: "10",
         scope: "all",
@@ -342,7 +342,7 @@ describe("SearchView", () => {
       canAddResults: false,
     }));
 
-    it("when there are no results", Promise.coroutine(function* page() {
+    it("when there are no results", Promise.coroutine(function *page() {
       yield Promise.coroutine(threePageQuery)();
       grabber.clear();
       const searchInput = view.queryForm.ui.search[0];
@@ -370,7 +370,7 @@ describe("SearchView", () => {
       assert.equal(view.el.querySelector("tfoot").childNodes.length, 0);
     }));
 
-    it("on arbitrary page movements", Promise.coroutine(function* page() {
+    it("on arbitrary page movements", Promise.coroutine(function *page() {
       const baseQuery = _.extend({}, constantFields, {
         limit: "10",
         scope: "all",
@@ -449,7 +449,7 @@ describe("SearchView", () => {
   });
 
 
-  function* checkButtons(present) {
+  function *checkButtons(present) {
     yield Promise.coroutine(threePageQuery.bind(undefined, grabber))();
     const viewRoot = view.el;
     const breadrumbViews =
@@ -474,8 +474,8 @@ describe("SearchView", () => {
       canAddResults: false,
     }));
 
-    it("shows 'No results' at startup", () =>
-       waitFor(() => isInViewText(view, "No results")));
+    it("shows 'No results' at startup",
+       () => waitFor(() => isInViewText(view, "No results")));
 
     function labelTest(label) {
       assert.isNull(view.el.querySelector(".popover"));
@@ -513,11 +513,10 @@ describe("SearchView", () => {
   });
 
   describe("with canAddResults ``true``", () => {
-    beforeEach(() =>
-      makeAndRender({
-        searchUrl: fetcherUrl,
-        canAddResults: true,
-      }));
+    beforeEach(() => makeAndRender({
+      searchUrl: fetcherUrl,
+      canAddResults: true,
+    }));
 
     it("results contain add and combine buttons",
        Promise.coroutine(checkButtons.bind(undefined, true)));

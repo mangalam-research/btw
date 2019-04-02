@@ -203,11 +203,13 @@ export class HeadingDecorator {
 
       if (found.heading !== null) {
         const labelF = found.labelF;
+        // tslint:disable-next-line:no-parameter-reassignment
         headStr = labelF !== undefined ?
           `${found.heading} ${labelF(el)}` : found.heading;
       }
 
       if (found.suffix !== undefined) {
+        // tslint:disable-next-line:no-parameter-reassignment
         headStr += found.suffix;
       }
 

@@ -5,7 +5,7 @@ import ChosenFieldCollection
 from "btw/semantic_field_editor/collections/chosen_field";
 import Field from "btw/semantic_field_editor/models/field";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 describe("ChosenFieldCollection", () => {
   it("does not allow duplicate fields", () => {

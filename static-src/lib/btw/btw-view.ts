@@ -78,7 +78,7 @@ function makeExpandHandler(affix: HTMLElement, affixConstrainer: HTMLElement,
       const paddingLeft = parseInt(constrainerStyle.paddingLeft!, 10);
       $affix.animate({
         left: constrainerRect.left + paddingLeft,
-        width: $(affixConstrainer).innerWidth()! - paddingLeft,
+        width: $(affixConstrainer).innerWidth() - paddingLeft,
       }, 1000, () => {
         affix.style.left = "";
         affix.style.top = "";
@@ -130,7 +130,7 @@ function makeResizeHandler(affix: HTMLElement,
       // out of the flow and thus its "width" is no longer constrained by its
       // parent.
 
-      affix.style.width = `${$(affixConstrainer).innerWidth()! -
+      affix.style.width = `${$(affixConstrainer).innerWidth() -
 parseInt(constrainerStyle.paddingLeft!, 10)}px`;
     }
     const rect = affixOverflow.getBoundingClientRect();
@@ -733,7 +733,6 @@ export class Viewer extends DispatchMixin {
           break;
         default:
           heading = prefix;
-          break;
         }
         prevContainer = parent;
         break;

@@ -1,5 +1,7 @@
+
 function pathToModule(path) {
   "use strict";
+
   var module = path;
   if (/^\/base\/sitestatic\//.test(path)) {
     module = path.replace(/^\/base\/sitestatic\//, "../");
@@ -22,6 +24,7 @@ var allTestModules = [];
 var TEST_REGEXP = /_test$/i;
 Object.keys(window.__karma__.files).forEach(function filterTests(file) {
   "use strict";
+
   var moduleName = pathToModule(file);
   if (TEST_REGEXP.test(moduleName)) {
     // Normalize paths to RequireJS module names.
@@ -50,6 +53,7 @@ require.config({
 chaiAsPromised.transferPromiseness = function transferPromiseness(assertion,
                                                                   promise) {
   "use strict";
+
   assertion.then = promise.then.bind(promise);
   assertion.return = promise.return.bind(promise);
   assertion.catch = promise.catch.bind(promise);
@@ -59,14 +63,16 @@ chaiAsPromised.transferPromiseness = function transferPromiseness(assertion,
 // all of wed. However, this method will work whether we are building BTW with
 // optimized or non-optimized code, whereas using RequireJS' packages option
 // would have to be used only when using optimized code, etc.
+// eslint-disable-next-line import/no-dynamic-require
 require(["bluebird", "wed"], function init(bluebird) {
   "use strict";
+
   bluebird.Promise.config({
     warnings: true,
     longStackTraces: true,
   });
 
-  // eslint-disable-next-line global-require
+  // eslint-disable-next-line global-require, import/no-dynamic-require
   require(allTestModules, window.__karma__.start.bind(window.__karma__,
                                                       window.__karma__.config));
 });

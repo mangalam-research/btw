@@ -4,7 +4,7 @@
  * @author Louis-Dominique Dubeau
  */
 
-define(function factory(require, exports, _module) {
+define(function factory(require, _exports, _module) {
   "use strict";
 
   var $ = require("jquery");
@@ -50,8 +50,8 @@ define(function factory(require, exports, _module) {
         span.textContent = moment(date).format("MMMM D YYYY");
       }
 
-      var url = absolute(versionSpecificCheckbox.checked ? versionPermalink
-                         : permalink);
+      var url = absolute(versionSpecificCheckbox.checked ? versionPermalink :
+                         permalink);
       for (i = 0; i < urlSpans.length; ++i) {
         span = urlSpans[i];
         span.innerHTML = url;

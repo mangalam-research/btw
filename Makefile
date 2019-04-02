@@ -9,7 +9,7 @@
 export
 CONFIG_TARGETS:=$(sort $(foreach f,$(shell find config $(wildcard local_config) -type f -printf '%P\n'),$(patsubst %,build/config/%,$f)))
 CONFIG_DEPS:=$(CONFIG_TARGETS:=.d)
-PASS_THROUGH:= all test test-django test-django-menu test-django-btwredis test-karma selenium-test doc python-doc keep-latest venv dev-venv test-data shrinkwrap
+PASS_THROUGH:= all test test-django test-django-menu test-django-btwredis test-karma selenium-test doc python-doc keep-latest venv dev-venv test-data shrinkwrap lint
 
 .PHONY: $(PASS_THROUGH) clean
 

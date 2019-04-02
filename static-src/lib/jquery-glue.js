@@ -1,5 +1,6 @@
 define(function jqueryGlue(require) {
   "use strict";
+
   var $ = require("jquery");
 
   var originalAjax = $.ajax;
@@ -16,6 +17,7 @@ define(function jqueryGlue(require) {
   // time at initial loading whereby it would be possible to have to handle a
   // call with bluejaxOptions set, but with `ajax` not loaded yet. This does not
   // seem likely though.
+  // eslint-disable-next-line import/no-dynamic-require
   require(["ajax"], function ajaxLoaded(_ajax) {
     ajax = _ajax;
   });

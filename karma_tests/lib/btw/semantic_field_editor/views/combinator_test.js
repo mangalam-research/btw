@@ -6,16 +6,16 @@ import CombinatorView from "btw/semantic_field_editor/views/combinator";
 import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, waitForEventOn, doAndWaitForRadio }
 from "testutils/backbone";
-import TestServer from "testutils/fetcher_server";
+import { FetcherServer as TestServer } from "testutils/fetcher_server";
 import * as urls from "testutils/urls";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import Mn from "marionette";
 import sinon from "sinon";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 const fetcherUrl = "/en-us/semantic-fields/semanticfield/";
-const fetcherUrlRe = /^\/en-us\/semantic-fields\/semanticfield\/(.*)$/;
 
 describe("CombinatorView", () => {
   let view = null;
@@ -121,8 +121,8 @@ describe("CombinatorView", () => {
   }
 
   describe("#addSF", () => {
-    it("adds a semantic field to the two collections", () =>
-       addAndWait(firstField).then(
+    it("adds a semantic field to the two collections",
+       () => addAndWait(firstField).then(
          () => assert.equal(view.elementsCollection.length, 1)));
 
     it("can add more than one field to the elements collection", () => {
@@ -132,8 +132,8 @@ describe("CombinatorView", () => {
       return Promise.resolve();
     });
 
-    it("cannot add more than one field to the results collection", () =>
-       addAndWait(firstField).then(() => {
+    it("cannot add more than one field to the results collection",
+       () => addAndWait(firstField).then(() => {
          assert.equal(view.resultCollection.length, 1);
          return addAndWait(secondField)
            .then(() => assert.equal(view.resultCollection.length, 1));
@@ -194,10 +194,10 @@ describe("CombinatorView", () => {
     });
   });
 
-  it("should not show a delete button in the results", () =>
-    addFieldAssertResults(firstField, [firstField]).then(
-      () => assert.isUndefined(
-        view.resultView.el.getElementsByClassName("delete-button")[0])));
+  it("should not show a delete button in the results",
+     () => addFieldAssertResults(firstField, [firstField]).then(
+       () => assert.isUndefined(
+         view.resultView.el.getElementsByClassName("delete-button")[0])));
 
   describe("emits a sf:add event on the global channel", () => {
     it("with the view and model when the add button is clicked",

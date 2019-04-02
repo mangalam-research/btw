@@ -1,6 +1,7 @@
 /* global it describe beforeEach afterEach chai */
 define(function factory(require, _exports, _module) {
   "use strict";
+
   var _ = require("lodash");
   var sinon = require("sinon");
   var Fetcher = require("btw/semantic-field-fetcher").SFFetcher;
@@ -40,8 +41,8 @@ define(function factory(require, _exports, _module) {
         }];
         server.respondWith("GET",
                            fetchUrl + "?paths=01.01n&fields=changerecords",
-          [200, { "Content-Type": "application/json" },
-           JSON.stringify(response)]);
+                           [200, { "Content-Type": "application/json" },
+                            JSON.stringify(response)]);
         return assert.isFulfilled(fetcher.fetch(["01.01n"]));
       });
 

@@ -5,6 +5,7 @@
  */
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var Bb = require("backbone");
   var Field = require("../models/field");
 

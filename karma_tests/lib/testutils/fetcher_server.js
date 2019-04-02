@@ -1,11 +1,11 @@
-import Server from "./server";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 import URI from "urijs/URI";
+import { Server } from "./server";
 
 const fetcherUrlRe = /^\/en-us\/semantic-fields\/semanticfield\/(.*)$/;
 
-export default class FetcherServer extends Server {
-
+export class FetcherServer extends Server {
   constructor(options) {
     super(_.omit(options, ["fetcherUrlRe"]));
     this.fetcherUrlRe = options.fetcherUrlRe || fetcherUrlRe;
@@ -38,7 +38,6 @@ export default class FetcherServer extends Server {
         }));
       request.respond(200, { "Content-Type": "application/json" },
                       JSON.stringify(response));
-      return;
     }
   }
 }

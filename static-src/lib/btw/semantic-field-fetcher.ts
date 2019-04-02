@@ -161,11 +161,11 @@ export class SFFetcher {
         for (const lemma of Object.keys(newChangerecords).sort()) {
           const changerecords = newChangerecords[lemma];
           const nodes = changerecords
-            .map((entry) => ({
+            .map((entry): TreeViewNode => ({
               text: entry.datetime + (entry.published ? " published" : ""),
               href: entry.url,
               selectable: false,
-            } as TreeViewNode));
+            }));
           tree.push({
             text: lemma,
             href: changerecords[0].url,

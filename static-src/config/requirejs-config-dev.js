@@ -1,4 +1,4 @@
-/* global jQuery XRegExp */
+/* global XRegExp */
 require.config({
   baseUrl: "/static/lib/",
   paths: {
@@ -126,6 +126,7 @@ require.config({
       // XRegExp field on it.
       init: function init() {
         "use strict";
+
         return { XRegExp: XRegExp };
       },
     },
@@ -134,6 +135,7 @@ require.config({
       exports: "jQuery.fn.popover",
       init: function init($) {
         "use strict";
+
         return $;
       },
     },
@@ -145,6 +147,7 @@ require.config({
       exports: "rangy",
       init: function init() {
         "use strict";
+
         return this.rangy;
       },
     },

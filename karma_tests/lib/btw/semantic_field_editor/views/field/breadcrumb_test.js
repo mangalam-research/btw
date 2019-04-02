@@ -8,12 +8,15 @@ import { BoneBreaker, isInViewText, makeFakeApplication }
 from "testutils/backbone";
 import { waitFor } from "testutils/util";
 import * as urls from "testutils/urls";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Radio from "backbone.radio";
 import Mn from "marionette";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 describe("BreadcrumbView", () => {
   let view;
@@ -89,7 +92,7 @@ describe("BreadcrumbView", () => {
         assert.equal(text, parent.is_subcat ? "::" : ">");
       }
 
-      parent = parent.parent;
+      ({ parent } = parent);
       first = false;
     }
     return Promise.resolve();
@@ -186,7 +189,7 @@ describe("BreadcrumbView", () => {
 
     it("generates sf:selected when a link is clicked", () => {
       const link = view.el.querySelector(".sf-link");
-      const p = new Promise(resolve => {
+      const p = new Promise((resolve) => {
         view.once("sf:selected", () => resolve(1));
       });
       link.click();

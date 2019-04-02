@@ -1,6 +1,8 @@
 /* global chai */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import $ from "jquery";
-const assert = chai.assert;
+
+const { assert } = chai;
 
 export function wasAnimated(el) {
   return !!$.data(el, "velocity");

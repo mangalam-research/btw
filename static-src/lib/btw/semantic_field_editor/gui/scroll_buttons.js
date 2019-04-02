@@ -1,5 +1,6 @@
 define(function factory(require) {
   "use strict";
+
   var $ = require("jquery");
   var ResizeObserver = require("ResizeObserver");
 

@@ -532,6 +532,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     const guiEl = $.data(el, "wed_mirror_node") as Element;
 
     if (!(transformationType instanceof Array)) {
+      // tslint:disable-next-line:no-parameter-reassignment
       transformationType = [transformationType];
     }
 
@@ -540,7 +541,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     //
     // None of the non-inline elements should be able to be unwrapped.
     //
-    if (!(this.metadata.isInline(guiEl) as boolean)) {
+    if (!this.metadata.isInline(guiEl)) {
       const unwrap = transformationType.indexOf("unwrap");
       if (unwrap !== -1) {
         transformationType.splice(unwrap, 1);

@@ -474,6 +474,17 @@ downloads/$(BOOTSTRAP_BASE): | downloads
 downloads/$(BOOTSTRAP_TREEVIEW_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_TREEVIEW_URL)'
 
+.PHONY: eslint
+eslint:
+	./node_modules/.bin/eslint *.js '{karma_tests,bibliography,lexicography,semantic_fields,wed,core,static-src}/**/*.js'
+
+.PHONY: tslint
+tslint:
+	./node_modules/.bin/tslint -p static-src/lib/btw/tsconfig.json
+
+.PHONY: lint
+lint: tslint eslint
+
 .PHONY: venv
 venv:
 	[ -e .btw-venv ] || virtualenv .btw-venv

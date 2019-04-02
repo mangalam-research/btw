@@ -1,4 +1,4 @@
-/* global chai describe afterEach beforeEach before after it fixture */
+/* global chai describe afterEach beforeEach before after it */
 /* eslint-env module */
 import velocity from "velocity";
 import Promise from "bluebird";
@@ -8,13 +8,15 @@ import Field from "btw/semantic_field_editor/models/field";
 import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, isInViewText } from "testutils/backbone";
 import { waitFor } from "testutils/util";
-import Server from "testutils/server";
+import { Server } from "testutils/server";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import Mn from "marionette";
 import URI from "urijs/URI";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 const ChosenFieldCollection = Bb.Collection.extend({
   Model: Field,
@@ -24,7 +26,6 @@ const fetcherUrl = "/en-us/semantic-fields/semanticfield/";
 const fetcherUrlRe = /^\/en-us\/semantic-fields\/semanticfield\/(.*)$/;
 
 class TestServer extends Server {
-
   constructor(options) {
     super(_.omit(options, ["fetcherUrl"]));
     this.fetcherUrl = options.fetcherUrl;
@@ -55,7 +56,6 @@ class TestServer extends Server {
         }));
       request.respond(200, { "Content-Type": "application/json" },
                       JSON.stringify(response));
-      return;
     }
   }
 }

@@ -1,6 +1,6 @@
 import sinon from "sinon";
 
-export default class XHRGrabber {
+export class XHRGrabber {
   constructor() {
     this.requests = [];
     const xhr = this.xhr = sinon.useFakeXMLHttpRequest();
@@ -14,10 +14,10 @@ export default class XHRGrabber {
   }
 
   getSingleRequest() {
-    const requests = this.requests;
+    const { requests } = this;
     if (requests.length !== 1) {
-      throw new Error(`expected a single request; `
-                      `the number of requests is: ${requests.length}`);
+      throw new Error(`expected a single request; the number of requests is: \
+${requests.length}`);
     }
 
     return requests[0];

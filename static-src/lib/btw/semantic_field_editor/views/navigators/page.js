@@ -5,6 +5,7 @@
  */
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var BreadcrumbView = require("../field/breadcrumb");
 
   var PageView = BreadcrumbView.extend({

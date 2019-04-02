@@ -6,6 +6,7 @@
 define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
   require, _exports, _module) {
   "use strict";
+
   var Bb = require("backbone");
   var Mn = require("marionette");
   var Radio = require("backbone.radio");
@@ -46,6 +47,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       var ret = LayoutView.__super__.render.apply(this, arguments);
       var scrollers = this.el.querySelectorAll(".scroller");
       for (var i = 0; i < scrollers.length; ++i) {
+        // eslint-disable-next-line no-new
         new ScrollButtons(scrollers[i]);
       }
       return ret;

@@ -1,6 +1,7 @@
 /* global it describe beforeEach before fixture chai after */
 define(function factory(require, _exports, _module) {
   "use strict";
+
   var $ = require("jquery");
   var Viewer = require("btw/btw_view");
   var bluejax = require("bluejax");
@@ -165,7 +166,7 @@ define(function factory(require, _exports, _module) {
             var popover = $trigger.data("bs.popover");
             assert.isDefined(popover);
             // Wait until the popover is hidden.
-            return doThenHidden($trigger, function () {
+            return doThenHidden($trigger, function hidden() {
               popover.destroy();
             });
           });
@@ -296,7 +297,7 @@ define(function factory(require, _exports, _module) {
                var tree = popovers[0].getElementsByClassName("tree")[0];
                assert.isDefined(tree);
                assert.isFalse(tree.classList.contains("treeview"),
-                             "it should not be a treeview");
+                              "it should not be a treeview");
              })
              .finally(function finallyHandler() {
                var popover = $trigger.data("bs.popover");

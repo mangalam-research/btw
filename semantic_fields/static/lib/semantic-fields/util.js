@@ -13,21 +13,6 @@ define(/** @lends module:lib/semantic-fields/util */ function factory(require, e
     return path.replace(/\./g, "~");
   }
 
-  function comparePaths(a, b) {
-    var aNorm = normalize(a);
-    var bNorm = normalize(b);
-
-    if (aNorm < bNorm) {
-      return -1;
-    }
-
-    if (aNorm > bNorm) {
-      return 1;
-    }
-
-    return 0;
-  }
-
   /**
    * Sort semantic fields.
    *

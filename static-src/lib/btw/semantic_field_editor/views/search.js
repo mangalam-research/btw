@@ -1,5 +1,6 @@
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var _ = require("lodash");
   var $ = require("jquery");
   var Mn = require("marionette");

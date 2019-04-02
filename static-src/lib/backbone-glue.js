@@ -1,5 +1,6 @@
 define(function factory(require, _exports, module) {
   "use strict";
+
   var Bb = require("backbone");
 
   if (module.config().debug) {

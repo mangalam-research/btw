@@ -1,4 +1,4 @@
-define(function searchTableModule(require, exports, _module) {
+define(function searchTableModule(require, _exports, _module) {
   "use strict";
 
   var $ = require("jquery");
@@ -64,7 +64,7 @@ define(function searchTableModule(require, exports, _module) {
     function postPublishUnpublish(ev) {
       ajax({
         type: "POST",
-          url: this.attributes.href.value,
+        url: this.attributes.href.value,
       }).then(function done(data) {
         alert(ev.target, data, "alert-success");
           // eslint-disable-next-line no-use-before-define
@@ -111,13 +111,13 @@ define(function searchTableModule(require, exports, _module) {
     advanced.id = "advanced-search";
     advanced.innerHTML = advancedSearchTemplate;
     var icon = advanced.getElementsByClassName("fa")[0];
-    var cl = icon.classList;
+    var iconCl = icon.classList;
     $(advanced).on("show.bs.collapse", function showCollapse() {
-      cl.remove("fa-plus");
-      cl.add("fa-minus");
+      iconCl.remove("fa-plus");
+      iconCl.add("fa-minus");
     }).on("hide.bs.collapse", function hideCollapse() {
-      cl.remove("fa-minus");
-      cl.add("fa-plus");
+      iconCl.remove("fa-minus");
+      iconCl.add("fa-plus");
     });
 
     advancedRow.appendChild(advanced);
@@ -270,7 +270,7 @@ define(function searchTableModule(require, exports, _module) {
       preDrawCallback: preDrawCallback,
       createdRow: function createdRow(rowNode, data, _dataIndex) {
         var row = this.api().row(rowNode);
-        if (data[6] !== "" & !row.child()) {
+        if (data[6] !== "" && !row.child()) {
           row.child(data[6], "hits").show();
         }
       },

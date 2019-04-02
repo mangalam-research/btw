@@ -1,8 +1,9 @@
 /* global chai */
-import Bb from "backbone";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Radio from "backbone.radio";
 import Promise from "bluebird";
-const assert = chai.assert;
+
+const { assert } = chai;
 
 export class BoneBreaker {
   constructor(Bb, Mn, options) { // eslint-disable-line no-shadow
@@ -14,9 +15,9 @@ export class BoneBreaker {
     const origModelInit = this.origModelInit = Bb.Model.prototype.initialize;
 
     const capturedModels = this.capturedModels = [];
-    this.modelInit = Bb.Model.prototype.initialize = function capture() {
+    this.modelInit = Bb.Model.prototype.initialize = function capture(...args) {
       capturedModels.push(this);
-      return origModelInit.apply(this, arguments);
+      return origModelInit.apply(this, args);
     };
 
     const origCollectionInit = this.origCollectionInit =
@@ -24,16 +25,17 @@ export class BoneBreaker {
 
     const capturedCollections = this.capturedCollections = [];
     this.collectionInit = Bb.Collection.prototype.initialize =
-      function capture() {
+      function capture(...args) {
         capturedCollections.push(this);
-        return origCollectionInit.apply(this, arguments);
+        return origCollectionInit.apply(this, args);
       };
 
     if (options.traceViewDestroy) {
       const origViewDestroy = this.origViewDestroy = Mn.View.prototype.destroy;
-      this.viewDestroy = Mn.View.prototype.destroy = function destroy() {
+      this.viewDestroy = Mn.View.prototype.destroy = function destroy(...args) {
+        // eslint-disable-next-line no-console
         console.log("DESTROYING VIEW:", this);
-        return origViewDestroy.apply(this, arguments);
+        return origViewDestroy.apply(this, args);
       };
     }
   }
@@ -66,8 +68,7 @@ export class BoneBreaker {
 
   uninstall() {
     // eslint-disable-next-line no-shadow
-    const Bb = this.Bb;
-    const Mn = this.Mn;
+    const { Bb, Mn } = this;
 
     if (Bb.Collection.prototype.initialize !== this.collectionInit) {
       throw new Error("Backbone.Collection.prototype.initialize has been " +
@@ -91,7 +92,6 @@ export class BoneBreaker {
       Mn.View.prototype.destroy = this.origViewDestroy;
     }
   }
-
 }
 
 export function assertCollectionViewLength(view, length) {

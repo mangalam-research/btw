@@ -1,19 +1,19 @@
 /* global chai describe afterEach beforeEach before after it */
 /* eslint-env module */
-import $ from "jquery";
 import sinon from "sinon";
 import velocity from "velocity";
 import Promise from "bluebird";
 import { assertAnimated, clearAnimationInfo } from "testutils/velocity_util";
 import { BoneBreaker, assertCollectionViewLength } from "testutils/backbone";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import NavigatorCollectionView
 from "btw/semantic_field_editor/views/navigators/navigator_collection";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 function promiseFromBbEvent(item, event) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     item.once(event, (...args) => resolve(args.slice()));
   });
 }
@@ -80,19 +80,20 @@ describe("NavigatorCollectionView", () => {
   });
 
   describe("#closeAllNavigators", () => {
-    it("works when the collection is empty", () =>
-      view.closeAllNavigators().then(() => assertCollectionViewLength(view, 0)));
+    it("works when the collection is empty",
+       () => view.closeAllNavigators()
+       .then(() => assertCollectionViewLength(view, 0)));
 
-    it("empties the collection", () =>
-       Promise.each(["/one", "/two"], (x) => view.openUrl(x))
+    it("empties the collection",
+       () => Promise.each(["/one", "/two"], x => view.openUrl(x))
        .then(() => {
          assertCollectionViewLength(view, 2);
          return view.closeAllNavigators();
        })
        .then(() => assertCollectionViewLength(view, 0)));
 
-    it("can be called more than once", () =>
-       Promise.each(["/one", "/two"], (x) => view.openUrl(x))
+    it("can be called more than once",
+       () => Promise.each(["/one", "/two"], x => view.openUrl(x))
         .then(() => {
           assertCollectionViewLength(view, 2);
           return view.closeAllNavigators();
@@ -106,7 +107,7 @@ describe("NavigatorCollectionView", () => {
     it("should return a promise that resolves to the object " +
        "on which it was called",
        () => assert.eventually.equal(
-         Promise.each(["/one", "/two"], (x) => view.openUrl(x))
+         Promise.each(["/one", "/two"], x => view.openUrl(x))
            .then(() => view.closeAllNavigators()), view));
   });
 
@@ -142,7 +143,7 @@ describe("NavigatorCollectionView", () => {
     it("should scroll into view the Navigator that already displays the URL",
        () => {
          assertCollectionViewLength(view, 0);
-         return view.openUrl("/one").then(nav => {
+         return view.openUrl("/one").then((nav) => {
            assertCollectionViewLength(view, 1);
            const mocked = sinon.mock(nav.el);
            mocked.expects("scrollIntoView").once();
@@ -153,14 +154,14 @@ describe("NavigatorCollectionView", () => {
          });
        });
 
-    it("should animate the Navigator that already shows the URL", () =>
-      view.openUrl("/one").then(nav => {
-        clearAnimationInfo(nav.el);
-        return view.openUrl("/one");
-      }).then(nav => assertAnimated(nav.el, "the Navigator")));
+    it("should animate the Navigator that already shows the URL",
+       () => view.openUrl("/one").then((nav) => {
+         clearAnimationInfo(nav.el);
+         return view.openUrl("/one");
+       }).then(nav => assertAnimated(nav.el, "the Navigator")));
 
-    it("should create a Navigator whose url is the one passed", () =>
-       assert.eventually.equal(
+    it("should create a Navigator whose url is the one passed",
+       () => assert.eventually.equal(
          view.openUrl("/one").get("model").call("getCurrentUrl"),
          "/one",
          "the url of the Navigator should be the one passed"));
@@ -176,7 +177,7 @@ describe("NavigatorCollectionView", () => {
     let first;
 
     beforeEach(
-      () => view.openUrl("/one").then(nav => {
+      () => view.openUrl("/one").then((nav) => {
         first = nav;
       }));
 
@@ -204,37 +205,38 @@ describe("NavigatorCollectionView", () => {
   });
 
   describe("clicking the close navigator button should", () => {
-    it("remove the navigator", () =>
-      view.openUrl("/one").then(() => {
-        assertCollectionViewLength(view, 1);
-        const firstNavigatorView = view.children.findByIndex(0);
-        firstNavigatorView.ui.closeNavigator.click();
-        assertCollectionViewLength(view, 0);
-        // Ignore the promise that was created in the click handler.
-        return null;
-      }));
+    it("remove the navigator",
+       () => view.openUrl("/one").then(() => {
+         assertCollectionViewLength(view, 1);
+         const firstNavigatorView = view.children.findByIndex(0);
+         firstNavigatorView.ui.closeNavigator.click();
+         assertCollectionViewLength(view, 0);
+         // Ignore the promise that was created in the click handler.
+         return null;
+       }));
 
-    it("calls #closeNavigator with the closed navigator", () =>
-      view.openUrl("/one").then(() => {
-        assertCollectionViewLength(view, 1);
-        const firstNavigatorView = view.children.findByIndex(0);
-        const mocked = sinon.mock(view);
-        try {
-          mocked.expects("closeNavigator").once().withArgs(firstNavigatorView);
-          firstNavigatorView.ui.closeNavigator.click();
-          mocked.verify();
-        }
-        finally {
-          mocked.restore();
-        }
-        // Ignore the promise that was created in the click handler.
-        return null;
-      }));
+    it("calls #closeNavigator with the closed navigator",
+       () => view.openUrl("/one").then(() => {
+         assertCollectionViewLength(view, 1);
+         const firstNavigatorView = view.children.findByIndex(0);
+         const mocked = sinon.mock(view);
+         try {
+           mocked.expects("closeNavigator").once().withArgs(firstNavigatorView);
+           firstNavigatorView.ui.closeNavigator.click();
+           mocked.verify();
+         }
+         finally {
+           mocked.restore();
+         }
+         // Ignore the promise that was created in the click handler.
+         return null;
+       }));
   });
 
   describe("clicking the close all navigators button should", () => {
-    it("remove all navigator", () =>
-       Promise.each(["/one", "/two"], view.openUrl.bind(view)).then(() => {
+    it("remove all navigator",
+       () => Promise.each(["/one", "/two"], view.openUrl.bind(view))
+       .then(() => {
          assertCollectionViewLength(view, 2);
          const firstNavigatorView = view.children.findByIndex(0);
          firstNavigatorView.ui.closeAllNavigators.click();
@@ -243,8 +245,8 @@ describe("NavigatorCollectionView", () => {
          return null;
        }));
 
-    it("call #closeAllNavigators", () =>
-       Promise.each(["/one", "/two"], view.openUrl.bind(view)).then(() => {
+    it("call #closeAllNavigators",
+       () => Promise.each(["/one", "/two"], view.openUrl.bind(view)).then(() => {
          assertCollectionViewLength(view, 2);
          const firstNavigatorView = view.children.findByIndex(0);
          const mocked = sinon.mock(view);
@@ -260,5 +262,4 @@ describe("NavigatorCollectionView", () => {
          return null;
        }));
   });
-
 });

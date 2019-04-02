@@ -7,13 +7,15 @@ import Field from "btw/semantic_field_editor/models/field";
 import { SFFetcher } from "btw/semantic-field-fetcher";
 import { BoneBreaker, isInViewText } from "testutils/backbone";
 import { waitFor } from "testutils/util";
-import Server from "testutils/server";
+import { Server } from "testutils/server";
 import * as urls from "testutils/urls";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import Mn from "marionette";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 describe("InlineView", () => {
   let view;
@@ -87,20 +89,20 @@ describe("InlineView", () => {
     });
     beforeEach(() => makeAndRender(fakeField, false));
 
-    it("uses the heading for display", () =>
-       waitFor(() => isInViewText(view, fakeField.heading_for_display)));
+    it("uses the heading for display",
+       () => waitFor(() => isInViewText(view, fakeField.heading_for_display)));
   });
 
   describe("with canDelete false", () => {
     beforeEach(() => makeAndRender(firstField, false));
 
-    it("does not show a delete button", () =>
-       waitFor(() => isInViewText(view, firstField.path)).then(() => {
+    it("does not show a delete button",
+       () => waitFor(() => isInViewText(view, firstField.path)).then(() => {
          assert.isUndefined(view.ui.deleteButton[0]);
        }));
 
-    it("shows a popover button", () =>
-       waitFor(() => isInViewText(view, firstField.path)).then(() => {
+    it("shows a popover button",
+       () => waitFor(() => isInViewText(view, firstField.path)).then(() => {
          assert.isDefined(view.ui.popoverButton[0]);
        }));
   });
@@ -108,19 +110,19 @@ describe("InlineView", () => {
   describe("with canDelete true", () => {
     beforeEach(() => makeAndRender(firstField, true));
 
-    it("does shows a delete button", () =>
-       waitFor(() => isInViewText(view, firstField.path)).then(() => {
+    it("does shows a delete button",
+       () => waitFor(() => isInViewText(view, firstField.path)).then(() => {
          assert.isDefined(view.ui.deleteButton[0]);
        }));
 
-    it("shows a popover button", () =>
-       waitFor(() => isInViewText(view, firstField.path)).then(() => {
+    it("shows a popover button",
+       () => waitFor(() => isInViewText(view, firstField.path)).then(() => {
          assert.isDefined(view.ui.popoverButton[0]);
        }));
 
-    it("emits sf:delete with the model when the delete button is clicked", () =>
-       waitFor(() => isInViewText(view, firstField.path)).then(() => {
-         const p = new Promise(resolve => {
+    it("emits sf:delete with the model when the delete button is clicked",
+       () => waitFor(() => isInViewText(view, firstField.path)).then(() => {
+         const p = new Promise((resolve) => {
            view.once("sf:delete", (model) => {
              assert.equal(model, view.model);
              resolve(1);

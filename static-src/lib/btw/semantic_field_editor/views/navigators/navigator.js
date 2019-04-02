@@ -5,6 +5,7 @@
  */
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var Mn = require("marionette");
   var velocity = require("velocity");
   var PageView = require("./page");
@@ -28,19 +29,19 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
   }
 
   function slideRightIn(el) {
-    return velocity(el,
-                    { opacity: [1, 0],
-                      translateX: [0, "100%"],
-                      translateZ: 0 },
-                    { duration: 500 });
+    return velocity(el, {
+      opacity: [1, 0],
+      translateX: [0, "100%"],
+      translateZ: 0,
+    }, { duration: 500 });
   }
 
   function slideLeftIn(el) {
-    return velocity(el,
-                    { opacity: [1, 0],
-                      translateX: [0, "-100%"],
-                      translateZ: 0 },
-                    { duration: 500 });
+    return velocity(el, {
+      opacity: [1, 0],
+      translateX: [0, "-100%"],
+      translateZ: 0,
+    }, { duration: 500 });
   }
 
   var PageCollectionView = Mn.CollectionView.extend({

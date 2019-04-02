@@ -1,5 +1,6 @@
-define(function ajaxModule(require, exports, _module) {
+define(function ajaxModule(require, _exports, _module) {
   "use strict";
+
   var $ = require("jquery");
   var bluejax = require("bluejax");
   require("jquery.cookie");

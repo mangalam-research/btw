@@ -889,6 +889,7 @@ export class BTWDecorator extends Decorator {
     // ev is undefined if called from the context menu. In this case, wedEv
     // contains all that we want.
     if (ev === undefined) {
+      // tslint:disable-next-line:no-parameter-reassignment
       ev = wedEv;
     }
     // node is the node in the data tree which corresponds to the navigation

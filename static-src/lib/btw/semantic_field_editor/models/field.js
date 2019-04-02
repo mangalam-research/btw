@@ -5,6 +5,7 @@
  */
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var Bb = require("backbone");
   require("backbone-relational");
 

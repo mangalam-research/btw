@@ -5,6 +5,7 @@
  */
 define(/** @lends auto */ function factory(require, _exports, _module) {
   "use strict";
+
   var Bb = require("backbone");
   var Mn = require("marionette");
   var NavigatorView = require("./navigator");

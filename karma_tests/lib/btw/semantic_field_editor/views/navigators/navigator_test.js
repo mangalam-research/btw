@@ -5,13 +5,14 @@ import Promise from "bluebird";
 import NavigatorView from "btw/semantic_field_editor/views/navigators/navigator";
 import Navigator from "btw/semantic_field_editor/models/navigator";
 import { BoneBreaker, isInViewText } from "testutils/backbone";
-import Server from "testutils/server";
+import { Server } from "testutils/server";
 import * as urls from "testutils/urls";
 import { wasAnimated, clearAnimationInfo } from "testutils/velocity_util";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import Mn from "marionette";
 
-const assert = chai.assert;
+const { assert } = chai;
 
 function assertNumberOfPages(view, length) {
   assert.equal(view.model.get("pages").length, length);
@@ -135,7 +136,7 @@ describe("NavigatorView", () => {
     });
 
     it("animates the content", () => {
-      const el = view.el;
+      const { el } = view;
       const pagedContent = view.ui.pagedContent[0];
       // We wait for the initial animation to be done.
       return waitForView(view, () => wasAnimated(el)).then(() => {
@@ -164,16 +165,16 @@ describe("NavigatorView", () => {
             return null;
           });
       }
-      it("show the first page, when not already on it", () =>
-         moveToFirst().then(
+      it("show the first page, when not already on it",
+         () => moveToFirst().then(
            () => waitForView(view, () => isInViewText(view, firstField.path))));
 
-      it("animate the content, when it can move", () =>
-         moveToFirst().then(
+      it("animate the content, when it can move",
+         () => moveToFirst().then(
            () => waitForView(view, () => wasAnimated(view.ui.pagedContent[0]))));
 
-      it("be a noop when already on it", () =>
-         waitForView(view, () => isInViewText(view, firstField.path))
+      it("be a noop when already on it",
+         () => waitForView(view, () => isInViewText(view, firstField.path))
          .then(() => {
            view.ui.first.click();
            return waitForView(view, () => isInViewText(view, firstField.path));
@@ -198,16 +199,18 @@ describe("NavigatorView", () => {
           });
       }
 
-      it("show the previous page, when possible", () =>
-         moveToPrevious().then(
-           () => waitForView(view, () => isInViewText(view, secondField.path))));
+      it("show the previous page, when possible",
+         () => moveToPrevious()
+         .then(() => waitForView(view,
+                                 () => isInViewText(view, secondField.path))));
 
-      it("animate the content, when it can move", () =>
-         moveToPrevious().then(
-           () => waitForView(view, () => wasAnimated(view.ui.pagedContent[0]))));
+      it("animate the content, when it can move",
+         () => moveToPrevious()
+         .then(() => waitForView(view,
+                                 () => wasAnimated(view.ui.pagedContent[0]))));
 
-      it("be a noop if we are already on the first page", () =>
-         waitForView(view, () => isInViewText(view, firstField.path))
+      it("be a noop if we are already on the first page",
+         () => waitForView(view, () => isInViewText(view, firstField.path))
          .then(() => {
            view.ui.previous.click();
            return waitForView(view, () => isInViewText(view, firstField.path));
@@ -237,16 +240,19 @@ describe("NavigatorView", () => {
           });
       }
 
-      it("show the last page, when not already on it", () =>
-        moveToLast().then(
-          () => waitForView(view, () => isInViewText(view, thirdField.path))));
+      it("show the last page, when not already on it",
+         () => moveToLast()
+         .then(() => waitForView(view,
+                                 () => isInViewText(view, thirdField.path))));
 
-      it("animate the content, when it can move", () =>
-        moveToLast().then(
-          () => waitForView(view, () => wasAnimated(view.ui.pagedContent[0]))));
+      it("animate the content, when it can move",
+         () => moveToLast()
+         .then(() => waitForView(view,
+                                 () => wasAnimated(view.ui.pagedContent[0]))));
 
-      it("be a noop, when already on it", () =>
-         waitForView(view, () => isInViewText(view, firstField.path)).then(() => {
+      it("be a noop, when already on it",
+         () => waitForView(view, () => isInViewText(view, firstField.path))
+         .then(() => {
            view.ui.last.click();
            return waitForView(view, () => isInViewText(view, firstField.path));
          })
@@ -274,18 +280,18 @@ describe("NavigatorView", () => {
           });
       }
 
-      it("show the next page, when possible", () =>
-         moveToNext().then(
-           () => waitForView(view,
-                             () => isInViewText(view, secondField.path))));
+      it("show the next page, when possible",
+         () => moveToNext()
+         .then(() => waitForView(view,
+                                 () => isInViewText(view, secondField.path))));
 
-      it("animate the content, when it can move", () =>
-         moveToNext().then(
-           () => waitForView(view,
-                             () => wasAnimated(view.ui.pagedContent[0]))));
+      it("animate the content, when it can move",
+         () => moveToNext()
+         .then(() => waitForView(view,
+                                 () => wasAnimated(view.ui.pagedContent[0]))));
 
-      it("be a noop if there is no next page", () =>
-         waitForView(view, () => isInViewText(view, firstField.path))
+      it("be a noop if there is no next page",
+         () => waitForView(view, () => isInViewText(view, firstField.path))
          .then(() => {
            view.ui.next.click();
            return waitForView(view, () => isInViewText(view, firstField.path));
@@ -296,22 +302,25 @@ describe("NavigatorView", () => {
     });
   });
 
-  it("clicking to close the navigator should emit navigator:close", () =>
-     waitForView(view, () => isInViewText(view, firstField.path)).then(() => {
+  it("clicking to close the navigator should emit navigator:close",
+     () => waitForView(view, () => isInViewText(view, firstField.path))
+     .then(() => {
        const p = view.makeEventPromise("navigator:close");
        view.ui.closeNavigator.click();
        return p;
      }));
 
-  it("clicking to close all navigators should emit navigator:closeAll", () =>
-     waitForView(view, () => isInViewText(view, firstField.path)).then(() => {
+  it("clicking to close all navigators should emit navigator:closeAll",
+     () => waitForView(view, () => isInViewText(view, firstField.path))
+     .then(() => {
        const p = view.makeEventPromise("navigator:closeAll");
        view.ui.closeAllNavigators.click();
        return p;
      }));
 
-  it("clicking on a semantic field should show the field", () =>
-     waitForView(view, () => isInViewText(view, firstField.path)).then(() => {
+  it("clicking on a semantic field should show the field",
+     () => waitForView(view, () => isInViewText(view, firstField.path))
+     .then(() => {
        const button = view.el.querySelector(`[href='${secondField.url}']`);
        button.click();
        return waitForView(view, () => isInViewText(view, secondField.path));

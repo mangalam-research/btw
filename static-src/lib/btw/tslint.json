@@ -17,6 +17,10 @@
     "no-non-null-assertion": [false, "We use them too often."],
     "newline-before-return": [false, "Not for this project."],
     "no-import-side-effect": [true,
-                              { "ignore-pattern": "^(jquery|bootstrap)$" }]
+                              { "ignore-pattern": "^(jquery|bootstrap)$" }],
+    "no-implicit-dependencies": [true, ["jquery", "lodash", "bloodhound",
+                                        "bootstrap-treeview", "bootstrap",
+                                        "jquery.cookie"]],
+    "no-submodule-imports": [true, ["wed"]]
   }
 }

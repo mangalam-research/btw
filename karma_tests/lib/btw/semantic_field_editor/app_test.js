@@ -1,28 +1,23 @@
 /* global chai describe afterEach beforeEach before after it fixture */
 /* eslint-env module */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import $ from "jquery";
 import sinon from "sinon";
 import velocity from "velocity";
 import Promise from "bluebird";
-import { assertAnimated, clearAnimationInfo } from "testutils/velocity_util";
-import { BoneBreaker, assertCollectionViewLength, isInViewText }
-from "testutils/backbone";
-import TestServer from "testutils/fetcher_server";
+import { BoneBreaker, isInViewText } from "testutils/backbone";
+import { FetcherServer as TestServer } from "testutils/fetcher_server";
 import { waitFor } from "testutils/util";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import SFEditor from "btw/semantic_field_editor/app";
 import { SFFetcher } from "btw/semantic-field-fetcher";
-import SearchEngine from "testutils/search";
+import { SearchEngine } from "testutils/search";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 import URI from "urijs/URI";
 
-const assert = chai.assert;
-
-function promiseFromBbEvent(item, event) {
-  return new Promise(resolve => {
-    item.once(event, (...args) => resolve(args.slice()));
-  });
-}
+const { assert } = chai;
 
 const fetcherUrl = "/en-us/semantic-fields/semanticfield/";
 const fetcherUrlRe = /^\/en-us\/semantic-fields\/semanticfield\/(.*)$/;
@@ -72,7 +67,7 @@ describe("SFEditor", () => {
   let breaker;
   const searchEngine = new SearchEngine(25);
   const paths = ["02.02.18n", "02.02.19n", "01.04.04n"];
-  let verboseServer = false;
+  const verboseServer = false;
 
   before(() => {
     // Make all animations be instantaneous so that we don't spend
@@ -83,9 +78,6 @@ describe("SFEditor", () => {
 
     fixture.setBase(
       "karma_tests/lib/btw/semantic_field_editor/views/navigators");
-
-    const json = fixture.load("navigator_test_fixture.json");
-
   });
 
   after(() => {
@@ -106,7 +98,7 @@ describe("SFEditor", () => {
     });
     const fetcher = new SFFetcher(fetcherUrl, undefined);
     return fetcher.fetch(paths)
-      .then(resolved => {
+      .then((resolved) => {
         const fields = _.values(resolved);
         app = new SFEditor({
           container: renderDiv,
@@ -131,17 +123,16 @@ describe("SFEditor", () => {
     server.restore();
   });
 
-  it("shows the list of fields passed to it at startup", () =>
+  it("shows the list of fields passed to it at startup",
      // We just want to know that it has been displaying the fields. So
      // we do not check for each path.
-    Promise.try(() =>
-                assert.isTrue(isInViewText(
-                  app.layoutView.getChildView("fieldList"),
-                  paths[0]))));
+     () => Promise.try(() => assert.isTrue(isInViewText(
+       app.layoutView.getChildView("fieldList"),
+       paths[0]))));
 
   describe("#getChosenFields", () => {
     it("returns an array containing the fields passed at startup", () => {
-      assert.sameMembers(_.map(app.getChosenFields(), (x) => x.get("path")),
+      assert.sameMembers(_.map(app.getChosenFields(), x => x.get("path")),
                          paths);
       return Promise.resolve();
     });
@@ -150,21 +141,21 @@ describe("SFEditor", () => {
       const button = app.layoutView.el.querySelector(
         ".sf-field-list .delete-button");
       button.click();
-      assert.sameMembers(_.map(app.getChosenFields(), (x) => x.get("path")),
+      assert.sameMembers(_.map(app.getChosenFields(), x => x.get("path")),
                          paths.slice(1));
       return Promise.resolve();
     });
   });
 
   function searchSomething() {
-    const searchDiv = appUtil.searchDiv;
+    const { searchDiv } = appUtil;
     const input = appUtil.searchInput;
     input.value = "Foo";
     $(input).trigger("input");
     return waitFor(() => searchDiv.textContent.indexOf("No results") === -1);
   }
 
-  it("launches navigators", Promise.coroutine(function* display() {
+  it("launches navigators", Promise.coroutine(function *display() {
     yield searchSomething();
     assert.equal(app._chosenFieldCollection.length, 3);
     assert.equal(app.combinatorView.elementsCollection.length, 0);
@@ -180,7 +171,7 @@ describe("SFEditor", () => {
   it("allows searching", () => searchSomething());
 
   describe("from search results", () => {
-    it("can choose fields", Promise.coroutine(function* display() {
+    it("can choose fields", Promise.coroutine(function *display() {
       yield searchSomething();
 
       // We do not test sf:chosen:change separately. We test it together with
@@ -197,7 +188,7 @@ describe("SFEditor", () => {
       assert.isTrue(stub.calledOnce);
     }));
 
-    it("can combine fields", Promise.coroutine(function* display() {
+    it("can combine fields", Promise.coroutine(function *display() {
       yield searchSomething();
 
       assert.equal(app._chosenFieldCollection.length, 3);
@@ -211,7 +202,7 @@ describe("SFEditor", () => {
   });
 
   describe("from navigators", () => {
-    it("can choose fields", Promise.coroutine(function* display() {
+    it("can choose fields", Promise.coroutine(function *display() {
       yield searchSomething();
 
       const stub = sinon.stub();
@@ -225,15 +216,15 @@ describe("SFEditor", () => {
       assert.equal(navView.collection.length, 1);
 
       assert.equal(app._chosenFieldCollection.length, 3);
-      button = yield waitFor(() =>
-                             navView.el.getElementsByClassName("sf-add")[0]);
+      button =
+        yield waitFor(() => navView.el.getElementsByClassName("sf-add")[0]);
       button.click();
       assert.equal(app._chosenFieldCollection.length, 4);
 
       assert.isTrue(stub.calledOnce);
     }));
 
-    it("can combine fields", Promise.coroutine(function* display() {
+    it("can combine fields", Promise.coroutine(function *display() {
       yield searchSomething();
 
       const navView = app.navigatorsView;
@@ -244,15 +235,15 @@ describe("SFEditor", () => {
       assert.equal(navView.collection.length, 1);
 
       assert.equal(app.combinatorView.elementsCollection.length, 0);
-      button = yield waitFor(() =>
-                             navView.el.getElementsByClassName("sf-combine")[0]);
+      button =
+        yield waitFor(() => navView.el.getElementsByClassName("sf-combine")[0]);
       button.click();
       assert.equal(app.combinatorView.elementsCollection.length, 1);
     }));
   });
 
   describe("from combinator", () => {
-    it("can choose fields", Promise.coroutine(function* display() {
+    it("can choose fields", Promise.coroutine(function *display() {
       yield searchSomething();
 
       const stub = sinon.stub();
@@ -266,7 +257,7 @@ describe("SFEditor", () => {
       assert.equal(app._chosenFieldCollection.length, 3);
       assert.equal(app.combinatorView.elementsCollection.length, 1);
 
-      button = app.combinatorView.resultView.ui.addButton[0];
+      [button] = app.combinatorView.resultView.ui.addButton;
 
       assert.equal(app._chosenFieldCollection.length, 3);
 
