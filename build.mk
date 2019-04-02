@@ -65,11 +65,6 @@ BOOTSTRAP_BASE:=bootstrap-3.3.7.zip
 BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
 BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
 
-JQUERY_COOKIE_URL:=https://github.com/carhartl/jquery-cookie/archive/v1.3.1.zip
-# This creates a file name that a) identifies what it is an b) happens
-# to correspond to the top directory of the zip that github creates.
-JQUERY_COOKIE_BASE:=jquery-cookie-$(patsubst v%,%,$(notdir $(JQUERY_COOKIE_URL)))
-
 DATATABLES_URL:=http://datatables.net/releases/DataTables-1.10.10.zip
 # This creates a file name that a) identifies what it is an b) happens
 # to correspond to the top directory of the zip that github creates.
@@ -80,10 +75,6 @@ DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
 
 XEDITABLE_URL:=http://vitalets.github.io/x-editable/assets/zip/bootstrap3-editable-1.5.1.zip
 XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
-
-# We don't use this yet.
-#CITEPROC_URL=https://bitbucket.org/fbennett/citeproc-js/get/1.0.478.tar.bz2
-#CITEPROC_BASE=citeproc-$(notdir $(CITEPROC_URL))
 
 JQUERY_GROWL_URL:=https://github.com/ksylvest/jquery-growl/archive/v1.2.3.zip
 JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
@@ -142,7 +133,7 @@ and_map=$1 $1.map
 map=$1 $(patsubst %.js,%.map,$1)
 
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, jquery.cookie.js datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and-map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and-map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js)
 
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
@@ -327,10 +318,6 @@ $(EXPANDED_BOOTSTRAP)/%:: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
 	unzip -o -DD -d $(EXPANDED_DEST) $<
 	(cd $(EXPANDED_DEST); ln -sfn $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 
-$(EXTERNAL)/jquery.cookie.js: downloads/$(JQUERY_COOKIE_BASE)
-	unzip -j -o -d $(dir $@) $< $(patsubst %.zip,%,$(JQUERY_COOKIE_BASE))/$(notdir $@)
-	touch $@
-
 $(EXTERNAL)/datatables: downloads/$(DATATABLES_BASE)
 	rm -rf $@/*
 	mkdir -p $@/temp
@@ -352,6 +339,10 @@ $(EXTERNAL)/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
 	rm -rf $@
 	unzip -o -d $(dir $@) $< $(notdir $@)/*
 	touch $@
+
+$(EXTERNAL)/js.cookie.js: node_modules/js-cookie/src/js.cookie.js
+	-mkdir -p $(dir $@)
+	cp $< $@
 
 $(EXTERNAL)/bluebird%: node_modules/bluebird/js/browser/bluebird%
 	-mkdir -p $(dir $@)
@@ -454,12 +445,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 
 downloads build:
 	mkdir $@
-
-downloads/$(JQUERY_COOKIE_BASE): | downloads
-	$(WGET) -O $@ $(JQUERY_COOKIE_URL)
-
-#downloads/$(CITEPROC_BASE): downloads
-#	$(WGET) -O $@ $(CITEPROC_URL)
 
 downloads/$(DATATABLES_BASE): | downloads
 	$(WGET) -O $@ $(DATATABLES_URL)

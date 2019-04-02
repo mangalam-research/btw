@@ -3,10 +3,10 @@ define(function factory(require) {
 
   var $ = require("jquery");
   var _ = require("lodash");
-  require("jquery.cookie");
+  var cookies = require("js-cookie");
   require("datatables.bootstrap");
 
-  var csrftoken = $.cookie("csrftoken");
+  var csrftoken = cookies.get("csrftoken");
 
   var template = _.template;
 

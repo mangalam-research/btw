@@ -1,4 +1,4 @@
-define(["jquery", "jquery.cookie", "bootstrap-notify"], function r($) {
+define(["jquery", "js-cookie", "bootstrap-notify"], function r($, cookies) {
   "use strict";
 
   return function refresh(initiateUrl, checkUrl) {
@@ -6,7 +6,7 @@ define(["jquery", "jquery.cookie", "bootstrap-notify"], function r($) {
     var tableEl = document.getElementById("bibliography-table");
     var button = document.getElementById("btw-refresh");
     var icon = button.getElementsByTagName("i")[0];
-    var csrftoken = $.cookie("csrftoken");
+    var csrftoken = cookies.get("csrftoken");
 
     function working() {
       icon.classList.add("fa-spin");

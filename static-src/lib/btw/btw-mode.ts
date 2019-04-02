@@ -3,7 +3,6 @@
  * @author Louis-Dominique Dubeau
  */
 import * as $ from "jquery";
-import "jquery.cookie";
 
 import { Action, domtypeguards, EditorAPI, gui, transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";

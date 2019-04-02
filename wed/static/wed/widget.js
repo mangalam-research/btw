@@ -17,8 +17,8 @@
     // eslint-disable-next-line import/no-dynamic-require
     require(
       ["btw/btw-editor", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
-       "jquery.cookie"],
-      function loaded(btwEditor, $, lr, onerror, btwWedConfig) {
+       "js-cookie"],
+      function loaded(btwEditor, $, lr, onerror, btwWedConfig, cookies) {
         var onError = lr.install(window, { force: true });
         onError.register(onerror.handler);
 
@@ -34,7 +34,7 @@
 
           var options = btwWedConfig.config || {};
 
-          var csrftoken = $.cookie("csrftoken");
+          var csrftoken = cookies.get("csrftoken");
           var $parentform = $widget.parents("form").first();
 
           options.mode.options.semanticFieldFetchUrl =

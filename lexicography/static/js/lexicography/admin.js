@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-dynamic-require
-require(["jquery", "jquery.cookie", "jquery.growl"], function factory($) {
+require(["jquery", "js-cookie", "jquery.growl"], function factory($, cookies) {
   "use strict";
 
   $(function ready() {
-    var csrftoken = $.cookie("csrftoken");
+    var csrftoken = cookies.get("csrftoken");
     $(".lexicography-revert").click(function onClick() {
       $.ajax({
         type: "POST",

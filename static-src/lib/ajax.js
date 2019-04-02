@@ -3,7 +3,7 @@ define(function ajaxModule(require, _exports, _module) {
 
   var $ = require("jquery");
   var bluejax = require("bluejax");
-  require("jquery.cookie");
+  var cookies = require("js-cookie");
   require("bootstrap");
 
   /* eslint-disable no-multi-str */
@@ -58,7 +58,7 @@ aria-hidden='true'>&times;</button>\
     },
   }, "promise");
 
-  var csrftoken = $.cookie("csrftoken");
+  var csrftoken = cookies.get("csrftoken");
 
   function ajax$(settings) {
     if (arguments.length > 1) {

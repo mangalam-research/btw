@@ -3,7 +3,6 @@ define(function factory(require) {
 
   var $ = require("jquery");
   var Displayers = require("./displayers").Displayers;
-  require("jquery.cookie");
   require("datatables.bootstrap");
 
   // This number should be bumped whenever we must flush the old saved

@@ -19,8 +19,7 @@
     "no-import-side-effect": [true,
                               { "ignore-pattern": "^(jquery|bootstrap)$" }],
     "no-implicit-dependencies": [true, ["jquery", "lodash", "bloodhound",
-                                        "bootstrap-treeview", "bootstrap",
-                                        "jquery.cookie"]],
+                                        "bootstrap-treeview", "bootstrap"]],
     "no-submodule-imports": [true, ["wed"]]
   }
 }

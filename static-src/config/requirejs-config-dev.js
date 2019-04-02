@@ -9,7 +9,7 @@ require.config({
     log4javascript: "external/log4javascript",
     "jquery.bootstrap-growl": "external/jquery.bootstrap-growl",
     "font-awesome": "external/font-awesome",
-    "jquery.cookie": "external/jquery.cookie",
+    "js-cookie": "external/js.cookie",
     "datatables.net": "external/datatables/js/jquery.dataTables.min",
     "datatables.bootstrap": "external/datatables/js/dataTables.bootstrap",
     "bootstrap-editable": "external/bootstrap3-editable/js/bootstrap-editable",
@@ -158,10 +158,6 @@ require.config({
     "jquery.bootstrap-growl": {
       deps: ["jquery", "bootstrap"],
       exports: "jQuery.bootstrapGrowl",
-    },
-    "jquery.cookie": {
-      deps: ["jquery"],
-      exports: "jQuery.cookie",
     },
     "bootstrap-editable": {
       deps: ["bootstrap"],
