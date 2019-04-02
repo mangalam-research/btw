@@ -36,6 +36,12 @@ export class Server {
     if (request.method !== "GET") {
       return;
     }
+
+    if (request.url.startsWith("/ping")) {
+      request.respond(200, {}, "");
+      return;
+    }
+
     const response = this.responseMap[request.url];
     if (response) {
       request.respond(200, { "Content-Type": "application/json" },

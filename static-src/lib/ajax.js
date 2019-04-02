@@ -68,7 +68,9 @@ aria-hidden='true'>&times;</button>\
     }
 
     var headers = settings.headers = settings.headers || {};
-    headers["X-CSRFToken"] = csrftoken;
+    if (csrftoken !== null) {
+      headers["X-CSRFToken"] = csrftoken;
+    }
 
     var ret = bajax.call(this, settings);
     ret.promise = ret.promise.catch(

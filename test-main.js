@@ -18,7 +18,7 @@ function pathToModule(path) {
 
 var paths = {
   js: "../js",
-  sinon: "../../node_modules/sinon/lib/sinon",
+  sinon: "../../node_modules/sinon/pkg/sinon",
 };
 var allTestModules = [];
 var TEST_REGEXP = /_test$/i;

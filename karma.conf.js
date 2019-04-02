@@ -28,7 +28,7 @@ module.exports = function configure(config) {
       { pattern: "semantic_fields/karma_tests/**/*.js", included: false },
       { pattern: "lexicography/karma_tests/**/*.js", included: false },
       { pattern: "lexicography/templates/lexicography/viewer.html" },
-      { pattern: "node_modules/sinon/lib/**/*.js", included: false },
+      { pattern: "node_modules/sinon/pkg/**/*.js", included: false },
     ],
     exclude: [],
     preprocessors: {
