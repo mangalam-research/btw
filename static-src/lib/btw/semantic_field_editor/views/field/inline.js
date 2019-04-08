@@ -74,8 +74,16 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         // Otherwise: build a tree.
         $(treeDiv).treeview({
           data: field.tree,
-          enableLinks: true,
-          levels: 0,
+          levels: 1,
+          wrapNodeText: true,
+          onNodeRendered: function selected(_event, n) {
+            if (n.href) {
+              var nodeA = document.createElement("a");
+              nodeA.href = n.href;
+              nodeA.textContent = n.text;
+              n.$el.find("span.text").empty().append(nodeA);
+            }
+          },
         });
       }
 

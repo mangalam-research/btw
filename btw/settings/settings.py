@@ -576,6 +576,8 @@ s.BTW_BOOTSTRAP_CSS_PATH = \
     '/static/lib/external/bootstrap/css/bootstrap.min.css'
 s.BTW_FONTAWESOME_CSS_PATH = \
     '/static/lib/external/font-awesome/css/font-awesome.min.css'
+s.BTW_BOOTSTRAP_TREEVIEW_CSS_PATH = \
+    '/static/lib/external/bootstrap-treeview.min.css'
 #
 # Default:
 # s.BTW_DATATABLES_CSS_PATH = \

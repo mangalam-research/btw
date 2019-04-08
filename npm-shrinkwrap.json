@@ -5477,6 +5477,22 @@
       "resolved": "https://registry.npmjs.org/pathval/-/pathval-1.1.0.tgz",
       "integrity": "sha1-uULm1L3mUwBe9rcTYd74cn0GReA="
     },
+    "patternfly-bootstrap-treeview": {
+      "version": "2.1.8",
+      "resolved": "https://registry.npmjs.org/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.8.tgz",
+      "integrity": "sha512-Z3v+zJ0AEhMiySyj7qgUs4yGM8afJwjUUWgwSosWI9xpMsyJV+B+I+GzgRoGiukzh14EOl3EiX4qqMBC+nwqXQ==",
+      "requires": {
+        "bootstrap": "3.4.x",
+        "jquery": ">= 2.1.x"
+      },
+      "dependencies": {
+        "bootstrap": {
+          "version": "3.4.1",
+          "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.4.1.tgz",
+          "integrity": "sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA=="
+        }
+      }
+    },
     "pify": {
       "version": "2.3.0",
       "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",

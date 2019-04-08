@@ -56,9 +56,6 @@ WGET:=$(WGET) --no-use-server-timestamps
 
 BUILD_DIR:=build
 
-BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
-BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
-
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
 # wed 1.0.0 does not include the inc files in the packed hierarchy.
@@ -341,11 +338,9 @@ $(EXTERNAL)/jquery.growl/js/jquery.growl.js: node_modules/jquery.growl/javascrip
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-$(EXTERNAL)/bootstrap-treeview.%: UNZIPPED:=downloads/$(BOOTSTRAP_TREEVIEW_BASE:.zip=)
-$(EXTERNAL)/bootstrap-treeview.%: downloads/$(BOOTSTRAP_TREEVIEW_BASE)
-	unzip -o -d downloads $<
-	cp $(UNZIPPED)/dist/* $(EXTERNAL)
-	rm -rf $(UNZIPPED)
+$(EXTERNAL)/bootstrap-treeview.%: node_modules/patternfly-bootstrap-treeview/dist/bootstrap-treeview.%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
 
 $(EXTERNAL)/backbone%: node_modules/backbone/backbone%
 	-mkdir -p $(dir $@)
@@ -399,11 +394,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 
 downloads build:
 	mkdir $@
-
-# We do not install the npm due to the nonsensical decision that the dev
-# has made to include dev dependencies among the regular dependencies.
-downloads/$(BOOTSTRAP_TREEVIEW_BASE): | downloads
-	$(WGET) -O $@ '$(BOOTSTRAP_TREEVIEW_URL)'
 
 .PHONY: eslint
 eslint:
