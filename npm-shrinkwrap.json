@@ -1368,6 +1368,11 @@
         }
       }
     },
+    "bootstrap": {
+      "version": "3.3.7",
+      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.3.7.tgz",
+      "integrity": "sha1-WjiTlFSfIzMIdaOxUGVldPip63E="
+    },
     "bootstrap-datepicker": {
       "version": "1.8.0",
       "resolved": "https://registry.npmjs.org/bootstrap-datepicker/-/bootstrap-datepicker-1.8.0.tgz",

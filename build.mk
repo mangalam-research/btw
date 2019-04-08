@@ -56,12 +56,6 @@ WGET:=$(WGET) --no-use-server-timestamps
 
 BUILD_DIR:=build
 
-# This cannot be the same URL as in wed. We want to the *source*
-# version of Bootstrap, not the distribution version which does not
-# contain the less files.
-BOOTSTRAP_URL:=https://github.com/twbs/bootstrap/archive/v3.3.7.zip
-BOOTSTRAP_BASE:=bootstrap-3.3.7.zip
-
 BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
 BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
 
@@ -96,9 +90,6 @@ endif
 # "direct" is .ts files.
 DIRECT_SOURCES:=$(shell find static-src -type f ! -name "*.ts")
 BUILD_DEST:=$(BUILD_DIR)/static-build
-EXPANDED_DEST:=$(BUILD_DIR)/expanded
-EXPANDED_VERSIONED_BOOTSTRAP:=$(EXPANDED_DEST)/$(BOOTSTRAP_BASE:.zip=)
-EXPANDED_BOOTSTRAP:=$(EXPANDED_DEST)/bootstrap
 BUILD_CONFIG:=$(BUILD_DIR)/config
 LOCAL_SOURCES:=$(foreach f,$(DIRECT_SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 # Local sources that need to be process by specialized recipes.
@@ -135,10 +126,8 @@ TARGETS:= javascript typescript python-generation btw-schema-targets
 all: _all
 # Check we are using the same version of bootstrap in both places, we
 # check against the non-optimized version because the optimized
-# version is modified during optimization. We cannot include this
-# check in the $(EXPANDED_BOOTSTRAP)/% rule because the recipe for
-# that rule is executed only if we download a new bootstrap.
-	@diff $(EXPANDED_BOOTSTRAP)/dist/css/bootstrap.css \
+# version is modified during optimization.
+	@diff node_modules/bootstrap/dist/css/bootstrap.css \
 	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
 	  { echo "There appear to be a difference between the \
 	  bootstrap downloaded by BTW and the one in wed." && exit 1; }
@@ -201,7 +190,7 @@ else
 endif
 
 btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less $(WED_LESS_INC_PATH)/*.less
-btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less $(EXPANDED_BOOTSTRAP)/less/variables.less
+btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less node_modules/bootstrap/less/variables.less
 
 .SECONDEXPANSION:
 $(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)
@@ -295,13 +284,6 @@ $(BUILD_CONFIG)/%:
 
 $(BUILD_CONFIG)/nginx.conf:
 	sed -e's;@PWD@;$(PWD);'g $< > $@
-
-$(EXPANDED_DEST):
-	-mkdir $@
-
-$(EXPANDED_BOOTSTRAP)/%:: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
-	unzip -o -DD -d $(EXPANDED_DEST) $<
-	(cd $(EXPANDED_DEST); ln -sfn $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 
 $(EXTERNAL)/datatables: node_modules/datatables/media
 	rm -rf $@
@@ -417,9 +399,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 
 downloads build:
 	mkdir $@
-
-downloads/$(BOOTSTRAP_BASE): | downloads
-	$(WGET) -O $@ '$(BOOTSTRAP_URL)'
 
 # We do not install the npm due to the nonsensical decision that the dev
 # has made to include dev dependencies among the regular dependencies.
