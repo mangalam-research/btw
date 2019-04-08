@@ -2,6 +2,15 @@
 require(["jquery", "js-cookie", "jquery.growl"], function factory($, cookies) {
   "use strict";
 
+  //
+  // This library uses jquery.growl instead of bootstrap-notify (which is our
+  // go-to notification library elsewhere). The reason for this is that
+  // Bootstrap is not loaded in the administration views.
+  //
+  // It may be advantageous to load Bootstrap in admin views but it requires
+  // careful consideration.
+  //
+
   $(function ready() {
     var csrftoken = cookies.get("csrftoken");
     $(".lexicography-revert").click(function onClick() {
