@@ -73,9 +73,6 @@ DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
 DATATABLES_PLUGINS_URL:=https://github.com/DataTables/Plugins/archive/master.zip
 DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
 
-XEDITABLE_URL:=http://vitalets.github.io/x-editable/assets/zip/bootstrap3-editable-1.5.1.zip
-XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
-
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
 # wed 1.0.0 does not include the inc files in the packed hierarchy.
@@ -331,10 +328,9 @@ $(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(EXTERNAL)/d
 # mv $(COMMON_DIR)/Plugins-master/integration/bootstrap/images/* $(COMMON_DIR)/images
 	rm -rf $(COMMON_DIR)/Plugins-master
 
-$(EXTERNAL)/bootstrap3-editable: downloads/$(XEDITABLE_BASE)
-	rm -rf $@
-	unzip -o -d $(dir $@) $< $(notdir $@)/*
-	touch $@
+$(EXTERNAL)/bootstrap3-editable: node_modules/x-editable/dist/bootstrap3-editable
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
 
 $(EXTERNAL)/js.cookie.js: node_modules/js-cookie/src/js.cookie.js
 	-mkdir -p $(dir $@)
@@ -444,9 +440,6 @@ downloads/$(DATATABLES_BASE): | downloads
 
 downloads/$(DATATABLES_PLUGINS_BASE): | downloads
 	$(WGET) -O $@ $(DATATABLES_PLUGINS_URL)
-
-downloads/$(XEDITABLE_BASE): | downloads
-	$(WGET) -O $@ $(XEDITABLE_URL)
 
 downloads/$(BOOTSTRAP_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_URL)'
