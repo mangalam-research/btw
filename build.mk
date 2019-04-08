@@ -392,9 +392,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-downloads build:
-	mkdir $@
-
 .PHONY: eslint
 eslint:
 	./node_modules/.bin/eslint *.js '{karma_tests,bibliography,lexicography,semantic_fields,wed,core,static-src}/**/*.js'

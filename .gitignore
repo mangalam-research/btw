@@ -3,7 +3,6 @@
 /media
 /README.html
 /node_modules
-/downloads
 *.pyc
 *_flymake.*
 doc/_build
