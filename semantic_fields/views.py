@@ -9,7 +9,7 @@ from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, mixins, renderers, parsers, permissions, \
     generics, filters, pagination, serializers
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import NotAcceptable
 from tatsu.exceptions import FailedParse
 
@@ -368,7 +368,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         return ret
 
-    @detail_route(methods=['get'], url_path="edit-form")
+    @action(detail=True, methods=['get'], url_path="edit-form")
     def edit_form(self, request, *args, **kwargs):
         if not request.user.can_change_semantic_fields:
             raise PermissionDenied
@@ -389,7 +389,7 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         raise NotAcceptable
 
-    @list_route(methods=['get'], url_path="add-form")
+    @action(detail=False, methods=['get'], url_path="add-form")
     def add_form(self, request, pk=None, relation=None):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
@@ -418,11 +418,11 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         raise NotAcceptable
 
-    @detail_route(methods=['get'], url_path='add-child-form')
+    @action(detail=True, methods=['get'], url_path='add-child-form')
     def add_child_form(self, request, pk, *args, **kwargs):
         return self.add_form(request, relation=CHILD, *args, **kwargs)
 
-    @detail_route(methods=['post'], url_path='children')
+    @action(detail=True, methods=['post'], url_path='children')
     def add_child(self, request, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied
@@ -444,12 +444,12 @@ class SemanticFieldViewSet(mixins.RetrieveModelMixin,
 
         raise serializers.ValidationError(form.errors)
 
-    @detail_route(methods=['get'], url_path='add-related-by-pos-form')
+    @action(detail=True, methods=['get'], url_path='add-related-by-pos-form')
     def add_related_by_pos_form(self, request, pk, *args, **kwargs):
         return self.add_form(request, pk, relation=RELATED_BY_POS,
                              *args, **kwargs)
 
-    @detail_route(methods=['post'], url_path='related-by-pos')
+    @action(detail=True, methods=['post'], url_path='related-by-pos')
     def add_related_by_pos(self, request, *args, **kwargs):
         if not request.user.can_add_semantic_fields:
             raise PermissionDenied

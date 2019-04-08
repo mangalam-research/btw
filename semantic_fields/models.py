@@ -167,13 +167,13 @@ class SemanticField(models.Model):
 
     @property
     def add_child_url(self):
-        return reverse('semantic_fields_semanticfield-children',
+        return reverse('semantic_fields_semanticfield-add-child',
                        args=(self.pk, ))
 
     @property
     def add_related_by_pos_url(self):
         # Adding a related_by_pos to a non-custom field is illegal.
-        return reverse('semantic_fields_semanticfield-related-by-pos',
+        return reverse('semantic_fields_semanticfield-add-related-by-pos',
                        args=(self.pk, )) if self.is_custom else None
 
     @property
