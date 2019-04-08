@@ -602,7 +602,7 @@ s.BTW_WED_LOGGING_PATH = \
 s.BTW_QUNIT_CSS_PATH = None
 
 s.BTW_JQUERY_GROWL_CSS_PATH = \
-    '/static/lib/external/jquery-growl/css/jquery.growl.css'
+    '/static/lib/external/jquery.growl/css/jquery.growl.css'
 
 s.BTW_DEMO = False
 if not hasattr(s, "BTW_TESTING"):

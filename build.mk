@@ -76,9 +76,6 @@ DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
 XEDITABLE_URL:=http://vitalets.github.io/x-editable/assets/zip/bootstrap3-editable-1.5.1.zip
 XEDITABLE_BASE:=$(notdir $(XEDITABLE_URL))
 
-JQUERY_GROWL_URL:=https://github.com/ksylvest/jquery-growl/archive/v1.2.3.zip
-JQUERY_GROWL_BASE:=jquery-growl-$(notdir $(JQUERY_GROWL_URL))
-
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
 # wed 1.0.0 does not include the inc files in the packed hierarchy.
@@ -133,8 +130,7 @@ and_map=$1 $1.map
 map=$1 $(patsubst %.js,%.map,$1)
 
 DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery-growl/js/jquery.growl.js jquery-growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js)
-
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -376,16 +372,13 @@ $(EXTERNAL)/velocity/%: node_modules/velocity-animate/%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
-$(EXTERNAL)/jquery-growl/%: COMMON_DIR:=$(EXTERNAL)/jquery-growl
-$(EXTERNAL)/jquery-growl/%: downloads/$(JQUERY_GROWL_BASE)
-	rm -rf $(COMMON_DIR)
-	unzip -o -d $(COMMON_DIR) $<
-	mkdir $(COMMON_DIR)/js
-	mv $(COMMON_DIR)/jquery-growl-*/javascripts/jquery.growl.js $(COMMON_DIR)/js
-	mkdir $(COMMON_DIR)/css
-	mv $(COMMON_DIR)/jquery-growl-*/stylesheets/jquery.growl.css $(COMMON_DIR)/css
-	rm -rf $(COMMON_DIR)/jquery-growl-*
-	touch $(COMMON_DIR)/js/* $(COMMON_DIR)/css/*
+$(EXTERNAL)/jquery.growl/css/jquery.growl.css: node_modules/jquery.growl/stylesheets/jquery.growl.css
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/jquery.growl/js/jquery.growl.js: node_modules/jquery.growl/javascripts/jquery.growl.js
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
 
 $(EXTERNAL)/bootstrap-treeview.%: UNZIPPED:=downloads/$(BOOTSTRAP_TREEVIEW_BASE:.zip=)
 $(EXTERNAL)/bootstrap-treeview.%: downloads/$(BOOTSTRAP_TREEVIEW_BASE)
@@ -454,9 +447,6 @@ downloads/$(DATATABLES_PLUGINS_BASE): | downloads
 
 downloads/$(XEDITABLE_BASE): | downloads
 	$(WGET) -O $@ $(XEDITABLE_URL)
-
-downloads/$(JQUERY_GROWL_BASE): | downloads
-	$(WGET) -O $@ $(JQUERY_GROWL_URL)
 
 downloads/$(BOOTSTRAP_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_URL)'

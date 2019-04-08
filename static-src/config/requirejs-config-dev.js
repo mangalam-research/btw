@@ -17,7 +17,7 @@ require.config({
     "external/bootstrap-datepicker/js/bootstrap-datepicker",
     "pubsub-js": "external/pubsub",
     xregexp: "external/xregexp",
-    "jquery.growl": "external/jquery-growl/js/jquery.growl",
+    "jquery.growl": "external/jquery.growl/js/jquery.growl",
     typeahead: "external/typeahead.jquery.min",
     bloodhound: "external/bloodhound.min",
     modules: "/static/scripts/modules",
