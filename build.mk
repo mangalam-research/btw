@@ -65,11 +65,6 @@ BOOTSTRAP_BASE:=bootstrap-3.3.7.zip
 BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
 BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
 
-DATATABLES_URL:=http://datatables.net/releases/DataTables-1.10.10.zip
-# This creates a file name that a) identifies what it is an b) happens
-# to correspond to the top directory of the zip that github creates.
-DATATABLES_BASE:=$(notdir $(DATATABLES_URL))
-
 DATATABLES_PLUGINS_URL:=https://github.com/DataTables/Plugins/archive/master.zip
 DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
 
@@ -126,8 +121,8 @@ and_map=$1 $1.map
 # Function for automatically adding a map when the .js is replaced by .map.
 map=$1 $(patsubst %.js,%.map,$1)
 
-DATATABLES_PLUGIN_TARGETS:=datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css $(DATATABLES_PLUGIN_TARGETS) bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js)
+DATATABLES_PLUGIN_TARGETS:=$(call externalize, datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js) $(DATATABLES_PLUGIN_TARGETS)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -311,13 +306,9 @@ $(EXPANDED_BOOTSTRAP)/%:: downloads/$(BOOTSTRAP_BASE) | $(EXPANDED_DEST)
 	unzip -o -DD -d $(EXPANDED_DEST) $<
 	(cd $(EXPANDED_DEST); ln -sfn $(notdir $(EXPANDED_VERSIONED_BOOTSTRAP)) $(notdir $(EXPANDED_BOOTSTRAP)))
 
-$(EXTERNAL)/datatables: downloads/$(DATATABLES_BASE)
-	rm -rf $@/*
-	mkdir -p $@/temp
-	unzip -o -d $@/temp $<
-	mv $@/temp/DataTables*/media/* $@
-	(cd $@; rm -rf src unit_testing)
-	rm -rf $@/temp
+$(EXTERNAL)/datatables: node_modules/datatables/media
+	rm -rf $@
+	cp -rp node_modules/datatables/media $@
 
 $(DATATABLES_PLUGIN_TARGETS): COMMON_DIR:=$(EXTERNAL)/datatables
 $(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(EXTERNAL)/datatables
@@ -434,9 +425,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 
 downloads build:
 	mkdir $@
-
-downloads/$(DATATABLES_BASE): | downloads
-	$(WGET) -O $@ $(DATATABLES_URL)
 
 downloads/$(DATATABLES_PLUGINS_BASE): | downloads
 	$(WGET) -O $@ $(DATATABLES_PLUGINS_URL)
