@@ -3,7 +3,7 @@ import http.cookiejar as http_cookiejar
 import datetime
 
 from django_webtest import WebTest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.utils import override_settings
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model

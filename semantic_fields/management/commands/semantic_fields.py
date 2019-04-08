@@ -9,7 +9,7 @@ from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.utils import translation
 from django.test.client import RequestFactory
-from django.core.urlresolvers import resolve
+from django.urls import resolve
 from django.utils.six.moves import input
 
 from semantic_fields.views import SemanticFieldViewSet

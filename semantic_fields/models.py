@@ -1,5 +1,5 @@
 from django.db import models, IntegrityError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.html import mark_safe, escape
 
 from .util import parse_local_reference, parse_local_references, \

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils.html import escape, mark_safe
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib import admin
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required

@@ -14,7 +14,7 @@ import urllib.error
 import logging
 
 import semver
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect

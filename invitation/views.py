@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.core.mail import send_mail
 from django.conf import settings

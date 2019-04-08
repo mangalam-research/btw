@@ -1,7 +1,7 @@
 import datetime
 
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.http import require_GET
 from django.views.decorators.cache import never_cache

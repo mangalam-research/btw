@@ -4,7 +4,7 @@ import urllib.error
 import json
 from unittest import mock
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.utils import override_settings
 from django.test import RequestFactory
 from django.contrib.auth import get_user_model

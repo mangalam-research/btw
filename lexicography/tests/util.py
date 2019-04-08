@@ -7,7 +7,7 @@ import logging
 from io import StringIO
 
 from django.test.client import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import lxml.etree
 from lxml import html
 from pebble.concurrent import process

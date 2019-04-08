@@ -7,7 +7,7 @@ import urllib.error
 from django_webtest import WebTest
 from django.test import Client
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test.utils import override_settings

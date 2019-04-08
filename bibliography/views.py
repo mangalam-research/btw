@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET, require_POST,  \
 from django.contrib.auth.decorators import login_required, permission_required
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.db.models import Q
-from django.core.urlresolvers import resolve, reverse
+from django.urls import resolve, reverse
 from django.views.decorators.cache import never_cache
 from django.core.cache import caches
 from django.core.serializers.json import DjangoJSONEncoder

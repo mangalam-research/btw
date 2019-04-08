@@ -3,7 +3,7 @@ import datetime
 import logging
 
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.core.cache import caches
 from django.conf import settings

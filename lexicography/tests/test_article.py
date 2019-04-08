@@ -6,7 +6,7 @@ import unittest
 import lxml.etree
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from .. import article, xml
 from ..models import ChangeRecord, Entry

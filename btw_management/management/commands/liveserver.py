@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import execute_from_command_line, call_command
 from django.test import LiveServerTestCase
 from django.test.runner import DiscoverRunner
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
