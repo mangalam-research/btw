@@ -6,11 +6,11 @@ import urllib.parse
 import os
 import tempfile
 import subprocess
+from collections.abc import Callable
 
 from unittest import mock
 
 from django.conf import settings
-import collections
 
 dirname = os.path.dirname(__file__)
 
@@ -82,11 +82,11 @@ def record(entity):
     # as @record(proxy...) and @record.
     def _record(f):
         f.record = True
-        if entity is not None and not isinstance(entity, collections.Callable):
+        if entity is not None and not isinstance(entity, Callable):
             f.proxy = entity
         return f
 
-    if isinstance(entity, collections.Callable):
+    if isinstance(entity, Callable):
         return _record(entity)
 
     return _record
@@ -116,11 +116,11 @@ def replay(entity):
     # as @replay(proxy...) and @replay.
     def _replay(f):
         f.replay = True
-        if entity is not None and not isinstance(entity, collections.Callable):
+        if entity is not None and not isinstance(entity, Callable):
             f.proxy = entity
         return f
 
-    if isinstance(entity, collections.Callable):
+    if isinstance(entity, Callable):
         return _replay(entity)
 
     return _replay

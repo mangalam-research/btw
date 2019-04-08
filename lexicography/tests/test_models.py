@@ -1,5 +1,6 @@
 import os
 import datetime
+from collections.abc import Callable
 from unittest import mock
 
 from django.test import TransactionTestCase, TestCase
@@ -23,7 +24,6 @@ from lib.testutil import wipd
 from bibliography.tests import mock_zotero
 from bibliography.models import Item, PrimarySource
 from semantic_fields.models import SemanticField
-import collections
 
 cache = caches['article_display']
 
@@ -1223,7 +1223,7 @@ class ChunkTestCase(util.DisableMigrationsMixin, TestCase):
         db = ExistDB()
         c = Chunk(data="<div/>", is_normal=True)
         c.clean()
-        method = op if isinstance(op, collections.Callable) else getattr(c, op)
+        method = op if isinstance(op, Callable) else getattr(c, op)
         cache.delete(c.c_hash)
         db.removeCollection(self.chunk_collection_path, True)
         db.removeCollection(self.display_collection_path, True)

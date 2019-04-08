@@ -1,10 +1,11 @@
-import pyee
+from collections.abc import Callable
 from unittest import mock
+
+import pyee
 
 from django.db import transaction
 
 from . import util
-import collections
 
 class Cleaner(object):
     """
@@ -114,8 +115,7 @@ class Cleaner(object):
         """
         matching = (getattr(self, name) for name in dir(self)
                     if name.startswith("check_"))
-        return (method for method in matching if
-                isinstance(method, collections.Callable))
+        return (method for method in matching if isinstance(method, Callable))
 
     @transaction.atomic
     def run(self):
