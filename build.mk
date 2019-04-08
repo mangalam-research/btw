@@ -65,9 +65,6 @@ BOOTSTRAP_BASE:=bootstrap-3.3.7.zip
 BOOTSTRAP_TREEVIEW_URL:=https://github.com/jonmiles/bootstrap-treeview/archive/v1.2.0.zip
 BOOTSTRAP_TREEVIEW_BASE:=bootstrap-treeview-$(patsubst v%,%,$(notdir $(BOOTSTRAP_TREEVIEW_URL)))
 
-DATATABLES_PLUGINS_URL:=https://github.com/DataTables/Plugins/archive/master.zip
-DATATABLES_PLUGINS_BASE:=DataTables-plugins.zip
-
 WED_PATH:=$(PWD)/node_modules/wed
 WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
 # wed 1.0.0 does not include the inc files in the packed hierarchy.
@@ -310,14 +307,9 @@ $(EXTERNAL)/datatables: node_modules/datatables/media
 	rm -rf $@
 	cp -rp node_modules/datatables/media $@
 
-$(DATATABLES_PLUGIN_TARGETS): COMMON_DIR:=$(EXTERNAL)/datatables
-$(DATATABLES_PLUGIN_TARGETS): downloads/$(DATATABLES_PLUGINS_BASE) $(EXTERNAL)/datatables
-	rm -rf $(COMMON_DIR)/Plugins-master
-	unzip -o -d $(COMMON_DIR) $< Plugins-master/integration/bootstrap/*
-	cp $(COMMON_DIR)/Plugins-master/integration/bootstrap/3/*.js $(COMMON_DIR)/js
-	cp $(COMMON_DIR)/Plugins-master/integration/bootstrap/3/*.css $(COMMON_DIR)/css
-# mv $(COMMON_DIR)/Plugins-master/integration/bootstrap/images/* $(COMMON_DIR)/images
-	rm -rf $(COMMON_DIR)/Plugins-master
+$(DATATABLES_PLUGIN_TARGETS): $(EXTERNAL)/datatables/%: node_modules/datatables.net-bs/%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
 
 $(EXTERNAL)/bootstrap3-editable: node_modules/x-editable/dist/bootstrap3-editable
 	-mkdir -p $(dir $@)
@@ -425,9 +417,6 @@ $(EXTERNAL)/ResizeObserver%: node_modules/resize-observer-polyfill/dist/ResizeOb
 
 downloads build:
 	mkdir $@
-
-downloads/$(DATATABLES_PLUGINS_BASE): | downloads
-	$(WGET) -O $@ $(DATATABLES_PLUGINS_URL)
 
 downloads/$(BOOTSTRAP_BASE): | downloads
 	$(WGET) -O $@ '$(BOOTSTRAP_URL)'

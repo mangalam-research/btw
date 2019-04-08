@@ -1791,6 +1791,23 @@
         "jquery": ">=1.7"
       }
     },
+    "datatables.net": {
+      "version": "1.10.19",
+      "resolved": "https://registry.npmjs.org/datatables.net/-/datatables.net-1.10.19.tgz",
+      "integrity": "sha512-+ljXcI6Pj3PTGy5pesp3E5Dr3x3AV45EZe0o1r0gKENN2gafBKXodVnk2ypKwl2tTmivjxbkiqoWnipTefyBTA==",
+      "requires": {
+        "jquery": ">=1.7"
+      }
+    },
+    "datatables.net-bs": {
+      "version": "1.10.19",
+      "resolved": "https://registry.npmjs.org/datatables.net-bs/-/datatables.net-bs-1.10.19.tgz",
+      "integrity": "sha512-5gxoI2n+duZP06+4xVC2TtH6zcY369/TRKTZ1DdSgDcDUl4OYQsrXCuaLJmbVzna/5Y5lrMmK7CxgvYgIynICA==",
+      "requires": {
+        "datatables.net": "1.10.19",
+        "jquery": ">=1.7"
+      }
+    },
     "date-format": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/date-format/-/date-format-2.0.0.tgz",

@@ -18,6 +18,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": ">=5.2.0 <6",
     "datatables": "^1.10.18",
+    "datatables.net-bs": "^1.10.19",
     "dragula": "git+https://github.com/lddubeau/dragula.git",
     "eslint": "^5.16.0",
     "eslint-config-lddubeau-base": "^3.0.3",
