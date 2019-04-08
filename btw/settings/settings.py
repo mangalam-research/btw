@@ -212,7 +212,7 @@ $.ajaxPrefilter(function (s) {
 # Make this unique, and don't share it with anybody.
 # s.SECRET_KEY = ''
 
-s.MIDDLEWARE_CLASSES = (
+s.MIDDLEWARE = (
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
