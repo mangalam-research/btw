@@ -587,8 +587,6 @@ s.BTW_BOOTSTRAP_TREEVIEW_CSS_PATH = \
 s.BTW_DATATABLES_CSS_PATH = \
     '/static/lib/external/datatables/css/dataTables.bootstrap.css'
 
-s.BTW_BOOTSTRAP_EDITABLE__CSS_PATH = \
-    '/static/lib/external/bootstrap3-editable/css/bootstrap-editable.css'
 s.BTW_REQUIREJS_PATH = None
 # We don't load classList from the external directory because it is
 # needed only for IE 9 and we don't support it for BTW.

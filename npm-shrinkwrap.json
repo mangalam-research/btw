@@ -7012,11 +7012,6 @@
         "ultron": "~1.1.0"
       }
     },
-    "x-editable": {
-      "version": "1.5.1",
-      "resolved": "https://registry.npmjs.org/x-editable/-/x-editable-1.5.1.tgz",
-      "integrity": "sha1-Ltu4kR7yxdYfY/BrDPAgvg/MWEk="
-    },
     "xmlhttprequest-ssl": {
       "version": "1.5.5",
       "resolved": "https://registry.npmjs.org/xmlhttprequest-ssl/-/xmlhttprequest-ssl-1.5.5.tgz",

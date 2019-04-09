@@ -107,7 +107,7 @@ and_map=$1 $1.map
 map=$1 $(patsubst %.js,%.map,$1)
 
 DATATABLES_PLUGIN_TARGETS:=$(call externalize, datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css)
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables bootstrap3-editable jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js) $(DATATABLES_PLUGIN_TARGETS)
+FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js) $(DATATABLES_PLUGIN_TARGETS)
 
 DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
@@ -287,10 +287,6 @@ $(EXTERNAL)/datatables: node_modules/datatables/media
 	cp -rp node_modules/datatables/media $@
 
 $(DATATABLES_PLUGIN_TARGETS): $(EXTERNAL)/datatables/%: node_modules/datatables.net-bs/%
-	-mkdir -p $(dir $@)
-	cp -rp $< $@
-
-$(EXTERNAL)/bootstrap3-editable: node_modules/x-editable/dist/bootstrap3-editable
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 

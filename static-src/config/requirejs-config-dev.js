@@ -12,7 +12,6 @@ require.config({
     "js-cookie": "external/js.cookie",
     "datatables.net": "external/datatables/js/jquery.dataTables.min",
     "datatables.bootstrap": "external/datatables/js/dataTables.bootstrap",
-    "bootstrap-editable": "external/bootstrap3-editable/js/bootstrap-editable",
     "bootstrap-datepicker":
     "external/bootstrap-datepicker/js/bootstrap-datepicker",
     "pubsub-js": "external/pubsub",
@@ -158,10 +157,6 @@ require.config({
     "jquery.bootstrap-growl": {
       deps: ["jquery", "bootstrap"],
       exports: "jQuery.bootstrapGrowl",
-    },
-    "bootstrap-editable": {
-      deps: ["bootstrap"],
-      exports: "jQuery.fn.editable",
     },
     "bootstrap-datepicker": {
       deps: ["bootstrap"],

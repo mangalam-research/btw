@@ -56,7 +56,6 @@
     "typescript": "^3.4.1",
     "underscore": "^1.9.1",
     "velocity-animate": "^1.5.2",
-    "wed": "^1.0.0",
-    "x-editable": "^1.5.1"
+    "wed": "^1.0.0"
   }
 }
