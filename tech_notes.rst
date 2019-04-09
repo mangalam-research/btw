@@ -548,10 +548,16 @@ See below for specific upgrade cases.
 
 - ``apt-get install libpq-dev``
 
-- psycopg2 may need to be uninstalled and reinstalled.
+- This release upgrade BTW to Python 3 so:
 
-- The encoding of cache keys for the bibliography app has changed. So that cache
-  needs to be zapped and rebuilt.
+ * Remove old Python virtual env.
+
+ * Create new Python 3 virtual env.
+
+ * Activate it.
+
+- Perform the usual upgrade steps up to the point where Python packages are
+  installed.
 
 - The release also upgrades eXist-db to 4.6.1
 
@@ -594,6 +600,46 @@ See below for specific upgrade cases.
  * Run::
 
      $ manage.py btwexistdb loadutil
+
+- Continue the common installation steps.
+
+- The encoding of cache keys for the bibliography app has changed. So that cache
+  needs to be zapped and rebuilt.
+
+- The cmsplugin_filer stuff is deprecated and no longer maintained. It will bomb
+  when Python 3.8 becomes current. I've tried migrating the data to the new
+  suggested plugins but it did not work. So the solution for now is to remove
+  these plugins and fix the CMS pages manually. (A quick inspection suggests
+  that there's probably less fixing needed than I thought. I used the filer
+  facilities extensively when I first setup the CMS but the assistants who took
+  over all tossed that aside. I think there's only one remaining reference to
+  the filer stuff.)
+
+- Drop these tables:
+
+ cmsplugin_filer_file_filerfile
+ cmsplugin_filer_folder_filerfolder
+ cmsplugin_filer_image_filerimage
+ cmsplugin_filer_link_filerlinkplugin
+ cmsplugin_filer_teaser_filerteaser
+ cmsplugin_filer_video_filervideo
+
+- Run:
+
+  ./manage.py cms delete-orphaned-plugins
+
+- Fix the CMS pages:
+
+  - (Probably won't need fixing:) Front page: logo of Mangalam, NEH, HTE at
+    bottom of page. Put back the images, and link to the respective
+    organizations. Set correct alt text. (Note that the NEH and HTE logos are
+    already broken.)
+
+  - (Probably won't need fixing:) Front page: left video
+    https://youtu.be/N2ZeTtIJVR0
+
+  - Browserstack on the "Technologies" page.
+
 
 2.0.0 to 2.1.0
 ~~~~~~~~~~~~~~

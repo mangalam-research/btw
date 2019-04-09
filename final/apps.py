@@ -58,17 +58,3 @@ class DefaultAppConfig(AppConfig):
         from django.contrib.auth.admin import UserAdmin
         from django.contrib.auth import get_user_model
         site.register(get_user_model(), UserAdmin)
-
-        from filer.admin.clipboardadmin import ClipboardAdmin
-        from filer.admin.fileadmin import FileAdmin
-        from filer.admin.folderadmin import FolderAdmin
-        from filer.admin.imageadmin import ImageAdmin
-        from filer.admin.permissionadmin import PermissionAdmin
-        from filer.models import FolderPermission, Folder, File, \
-            Clipboard, Image
-
-        site.register(Folder, FolderAdmin)
-        site.register(File, FileAdmin)
-        site.register(Clipboard, ClipboardAdmin)
-        site.register(Image, ImageAdmin)
-        site.register(FolderPermission, PermissionAdmin)
