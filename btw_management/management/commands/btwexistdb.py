@@ -10,6 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from lib.existdb import ExistDB
 from lib.existdb import get_admin_db, get_collection_path, running
+from lib import xquery
 from lib.command import SubCommand, SubParser
 from lexicography.models import Chunk
 
@@ -65,7 +66,11 @@ class Start(SubCommand):
         started = False
         while not started and time.time() - start < maxwait:
             with open(log_path, 'r') as readlog:
-                if "Server has started on ports" in readlog.read():
+                log_text = readlog.read()
+                # The first case is eXist-db 2.2 and lower
+                # The 2nd case is eXist-db 4 and higher.
+                if "Server has started on ports" in log_text or \
+                   "Server has started, listening on" in log_text:
                     started = True
                     break
             time.sleep(0.2)
@@ -162,15 +167,10 @@ class Createdb(SubCommand):
     name = "createdb"
 
     def __call__(self, command, _options):
-        assert_running()
-
-        db = get_admin_db()
-        for collection in [settings.EXISTDB_ROOT_COLLECTION,
-                           get_collection_path("chunks"),
-                           get_collection_path("display")]:
-            db.createCollection(collection)
-            db.server.setPermissions(collection, command.server_user,
-                                     command.btw_group, 0o770)
+        command.create_collections([settings.EXISTDB_ROOT_COLLECTION,
+                                    get_collection_path("chunks"),
+                                    get_collection_path("display")])
+        Loadutil()(command, _options)
 
 class Dropdb(SubCommand):
     """
@@ -213,6 +213,27 @@ class Load(SubCommand):
         if db.hasCollection(display_path):
             db.removeCollection(display_path)
         Chunk.objects.prepare("xml", True)
+
+class Loadutil(SubCommand):
+    """
+    Load the utilities into the database. This is necessary for BTW to run.
+
+    (This is needed only for upgrades. The ``createdb`` command loads utilities
+    automatically.)
+    """
+
+    name = "loadutil"
+
+    def __call__(self, command, _options):
+        """
+        Load the utilities into the database. This is necessary for BTW to run.
+        """
+        util_path = get_collection_path("util")
+        db = get_admin_db()
+        if not db.hasCollection(util_path):
+            command.create_collections([util_path])
+        db.query(xquery.format(
+            "xmldb:store({db}, 'empty.xml', <doc/>)", db=util_path))
 
 class Loadindex(SubCommand):
     """
@@ -293,7 +314,8 @@ Manage the eXist server used by BTW.
 
         self.root_collection = root_collection
         self.subcommands = [Start, Stop, Createuser, Dropuser, Createdb,
-                            Dropdb, Load, Loadindex, Dropindex, Checkdb]
+                            Dropdb, Load, Loadutil, Loadindex, Dropindex,
+                            Checkdb]
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
@@ -306,3 +328,11 @@ Manage the eXist server used by BTW.
 
     def handle(self, *args, **options):
         options["subcommand"](self, options)
+
+    def create_collections(self, collections):
+        assert_running()
+        db = get_admin_db()
+        for collection in collections:
+            db.createCollection(collection)
+            db.server.setPermissions(collection, self.server_user,
+                                     self.btw_group, 0o770)

@@ -59,7 +59,7 @@ def get_admin_db():
                    password=settings.BTW_EXISTDB_SERVER_ADMIN_PASSWORD)
 
 def get_collection_path(what):
-    if what not in ("chunks", "display", None):
+    if what not in ("chunks", "display", "util", None):
         raise ValueError("unknown value for what: " + what)
 
     if what is None:
@@ -82,10 +82,18 @@ def is_lucene_query_clean(db, query):
     it does have syntax errors.
     """
     try:
-        # This appears to be as cost-effective as it gets. We run a
-        # query on a bogus document. Either nothing will be returned
-        # but without error, or a parsing error will occur.
-        db.query(xquery.format("ft:query(<doc/>, {search_text})",
+        #
+        # This appears to be as cost-effective as it gets. We run a query on a
+        # empty document. With eXist-db 2.x we were using ``ft:query(<doc/>,
+        # ...`` but in eXist-db 4.x something is not happy with the document
+        # being anonymous ("name is empty"). So for 4.x we require that the db
+        # be created with an empty document which we then use.
+        #
+        # Ultimately, either nothing will be returned but without error, or a
+        # parsing error will occur.
+        #
+        db.query(xquery.format("doc('/btw/util/empty.xml')/doc/ft:query(., "
+                               "{search_text})",
                                search_text=query))
     except ExistDBException as ex:
         # The query is faulty.

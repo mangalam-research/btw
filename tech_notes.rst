@@ -99,7 +99,7 @@ adapt the instructions so as to not use virtualenv.
     uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
     sub   1024g/BFABA9D0 2001-11-27
 
-6. Install eXist-db::
+6. Install eXist-db 4.6.1::
 
    $ mkdir /usr/local/eXist-db
    $ mkdir -p /var/eXist-db/btw/data
@@ -543,7 +543,7 @@ Generally:
 
 See below for specific upgrade cases.
 
-2.2.0 to next
+2.4.0 to next
 ~~~~~~~~~~~~~
 
 - ``apt-get install libpq-dev``
@@ -552,6 +552,48 @@ See below for specific upgrade cases.
 
 - The encoding of cache keys for the bibliography app has changed. So that cache
   needs to be zapped and rebuilt.
+
+- The release also upgrades eXist-db to 4.6.1
+
+ * Go to the home of the eXist-db installation. Backup the eXist-db database
+   with::
+
+     java -jar start.jar org.exist.backup.ExportMain -x -z
+
+   This will create a file in ``exports/`` called ``full<date>.zip``
+
+ * Move the old stuff out of the way::
+
+     $ mv /usr/local/eXist-db /usr/local/eXist-db-[version]
+     $ mv /var/eXist-db/btw/data /var/eXist-db/btw/data-[version]
+
+ * Install the new eXist-db installation. See the original installation
+   instructions for answers to the questions it asks.
+
+ * Go into ``/var/eXist-db/btw/data`` and ``rm *.dbx *.log *.lck``
+
+ * Cd to the home of the new eXist-db installation.
+
+ * The above deleted the whole database, so set the admin password again::
+
+     $ ./bin/client.sh -s
+     [Use the command: passwd admin]
+
+ * Restore::
+
+     $ ./bin/backup.sh -u admin -p PASSWORD -r [path to zipped backup]
+
+ * Upgrade the Dashboard::
+
+     $ ./bin/client.sh -s -u admin -p PASSWORD
+
+   Use the command::
+
+     find repo:install-and-deploy("http://exist-db.org/apps/dashboard", "http://demo.exist-db.org/exist/apps/public-repo/modules/find.xql")
+
+ * Run::
+
+     $ manage.py btwexistdb loadutil
 
 2.0.0 to 2.1.0
 ~~~~~~~~~~~~~~
