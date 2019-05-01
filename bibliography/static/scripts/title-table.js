@@ -16,16 +16,16 @@ define(function factory(require) {
   <div class='modal-dialog'>\
     <div class='modal-content'>\
       <div class='modal-header'>\
+        <h5>Create New Primary Source</h5>\
         <button type='button' class='close' data-dismiss='modal' \
          aria-hidden='true'>&times;</button>\
-        <h3>Create New Primary Source</h3>\
       </div>\
       <div class='modal-body'>\
         <p>No body.</p>\
       </div>\
       <div class='modal-footer'>\
         <a href='#' class='btn btn-primary'>Save</a>\
-        <a href='#' class='btn' data-dismiss='modal'>Cancel</a>\
+        <a href='#' class='btn btn-outline-dark' data-dismiss='modal'>Cancel</a>\
       </div>\
     </div>\
   </div>\
@@ -33,10 +33,10 @@ define(function factory(require) {
 
   var buttonsTemplate = template("\
 <% if (edit) { %>\
-<div class='btn btn-default btn-sm add-button'><i class='fa fa-plus'></i></div>\
+<div class='btn btn-outline-dark btn-sm add-button'><i class='fa fa-plus'></i></div>\
 <% } %>\
 <div style='position: relative' \
-     class='btn <% print(children ? 'btn-default ':'') %>btn-sm open-close-button'>\
+     class='btn <% print(children ? 'btn-outline-dark ':'') %>btn-sm open-close-button'>\
   <i class='fa fa-fw \
             <% print(children ? 'fa-caret-right': '') %>'></i>\
   <% print(children ? \
@@ -76,7 +76,7 @@ define(function factory(require) {
         aTargets: [0],
         bSortable: false,
         mRender: function render() {
-          return "<div class='btn btn-default btn-sm edit-button'>\
+          return "<div class='btn btn-outline-dark btn-sm edit-button'>\
 <i class='fa fa-edit'></i></div>";
         },
         fnCreatedCell: function created(cell, _data, row) {

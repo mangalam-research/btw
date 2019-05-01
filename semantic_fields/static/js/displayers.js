@@ -38,15 +38,12 @@ define(
     }
 
     var htmlTemplate = "\
-<div class='panel panel-default semantic-field-details-panel'\
-     style='display: none'>\
-  <div class='panel-heading'>\
-    <h4 class='panel-title'>\
-      Semantic Field Details <button class='btn btn-xs btn-default first' href='#'><i class='fa fa-fast-backward'></i></button> <button class='btn btn-xs btn-default previous' href='#'><i class='fa fa-backward'></i></button> <button class='btn btn-xs btn-default next' href='#'><i class='fa fa-forward'></i></button> <button class='btn btn-xs btn-default last' href='#'><i class='fa fa-fast-forward'></i></button><button class='btn btn-xs btn-default close-panel' href='#' title='Close'><i class='fa fa-times'></i></button> <button class='btn btn-xs btn-default close-all-panels' href='#' title='Close all'><i class='fa fa-times'></i><i class='fa fa-times'></i>\
+<div class='card semantic-field-details-card' style='display: none'>\
+  <h5 class='card-header'>\
+    Semantic Field Details <button class='btn btn-sm btn-outline-dark first' href='#'><i class='fa fa-fast-backward'></i></button> <button class='btn btn-sm btn-outline-dark previous' href='#'><i class='fa fa-backward'></i></button> <button class='btn btn-sm btn-outline-dark next' href='#'><i class='fa fa-forward'></i></button> <button class='btn btn-sm btn-outline-dark last' href='#'><i class='fa fa-fast-forward'></i></button><button class='btn btn-sm btn-outline-dark close-card' href='#' title='Close'><i class='fa fa-times'></i></button> <button class='btn btn-sm btn-outline-dark close-all-cards' href='#' title='Close all'><i class='fa fa-times'></i><i class='fa fa-times'></i>\
 </button>\
-    </h4>\
-  </div>\
-  <div class='panel-body'>\
+  </h5>\
+  <div class='card-body'>\
     <div class='paged-content'>\
     </div>\
   </div>\
@@ -159,9 +156,9 @@ define(
      * A ``Displayer`` displays a semantic field in an area of the
      * page. It is responsible for loading the HTML representation of the
      * semantic field, and providing navigation. The HTML representation
-     * of a field is loaded in a panel with buttons to navigate the field
+     * of a field is loaded in a card with buttons to navigate the field
      * hierarchy and buttons to go back and forth in the history of what
-     * has been show in the panel. (Like a browser.) This class is
+     * has been show in the card. (Like a browser.) This class is
      * responsible for setting up the GUI and setting up and managing the
      * history.
      *
@@ -179,9 +176,9 @@ define(
       this.previous_button = displayDiv.getElementsByClassName("previous")[0];
       this.next_button = displayDiv.getElementsByClassName("next")[0];
       this.last_button = displayDiv.getElementsByClassName("last")[0];
-      this.close_button = displayDiv.getElementsByClassName("close-panel")[0];
+      this.close_button = displayDiv.getElementsByClassName("close-card")[0];
       this.close_all_button = displayDiv.getElementsByClassName(
-        "close-all-panels")[0];
+        "close-all-cards")[0];
       this.history_ix = -1;
       this.history = [];
       this._closed = false;

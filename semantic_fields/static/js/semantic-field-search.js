@@ -29,18 +29,18 @@ define(function factory(require) {
 
     var template = "\
  <i class='fa fa-question-circle text-info search-help'></i> <label>in \
-<select class='form-control input-sm' name='aspect'>\
+<select class='form-control-sm' name='aspect'>\
 <option value='sf'>semantic field names</option>\
 <option value='lexemes'>lexemes</option>\
 </select></label>\
  <i class='fa fa-question-circle text-info aspect-help'></i> <label>among \
-<select class='form-control input-sm' name='scope'>\
+<select class='form-control-sm' name='scope'>\
 <option value='all'>all fields</option>\
 <option value='hte'>HTE fields</option>\
 <option value='btw'>custom BTW fields</option>\
 </select></label>\
  <i class='fa fa-question-circle text-info scope-help'></i> <label>under \
-<select class='form-control input-sm' name='root'>\
+<select class='form-control-sm' name='root'>\
 <option value='all'>all fields</option>\
 <option value='01'>The world (01)</option>\
 <option value='02'>The mind (02)</option>\
@@ -57,7 +57,7 @@ define(function factory(require) {
         placement: "auto",
         content: doc.querySelector(
           ".semantic-field-search-help ." + _class),
-        html: "true",
+        html: true,
       });
     }
 
@@ -100,9 +100,9 @@ define(function factory(require) {
     function drawCallback() {
       var searchAspect = guiElements.aspect;
       if (!searchAspect || !searchAspect.parentNode) {
-        var filter =
-              doc.getElementById("semantic-field-table_wrapper")
-              .getElementsByClassName("dataTables_filter")[0];
+        var filter = doc.getElementById("semantic-field-table_wrapper")
+            .getElementsByClassName("dataTables_filter")[0];
+        filter.classList.add("form-inline");
         var input = filter.getElementsByTagName("input")[0];
         input.parentNode.insertAdjacentHTML("afterend", template);
         var els = [];
@@ -143,9 +143,9 @@ define(function factory(require) {
     });
 
     var table = $table.dataTable({
-      dom: "<'row'<'col-sm-2'l><'col-sm-10'f>>" +
+      dom: "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-10'f>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       processing: true,
       serverSide: true,
       autoWidth: false,

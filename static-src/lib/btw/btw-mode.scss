@@ -1,4 +1,4 @@
-@import "wed-vars.less";
+@import "wed-vars.scss";
 
 .twitter-typeahead {
     font-size: 18px;
@@ -39,23 +39,27 @@
 }
 
 div.wed-widget {
-    @import "../../../bibliography/static/stylesheets/bibsearch.less";
+    @import "../../../bibliography/static/stylesheets/bibsearch.scss";
 }
 
-.sf-border {
-    border: 0px;
-    border-left: 2px;
-    border-right: 2px;
-    border-style: solid;
-    border-color: black;
-    padding: 0.25em;
+@mixin sf-border {
+    .sf-border {
+        border: 0px;
+        border-left: 2px;
+        border-right: 2px;
+        border-style: solid;
+        border-color: black;
+        padding: 0.25em;
+    }
 }
+
+@include sf-border;
 
 // sf-popover-buttons can happen everywhere.
 .sf-popover-button {
     white-space: pre;
     font-size: initial;
-    .sf-border;
+    @include sf-border;
 
     .field {
         white-space: normal;
@@ -80,11 +84,11 @@ div.wed-widget {
 }
 
 .sf-other-pos .sf-link {
-    .sf-border;
+    @include sf-border;
 }
 
 .sf-children .sf-link {
-    .sf-border;
+    @include sf-border;
 }
 
 .sf-editor-modal-body {
@@ -133,6 +137,10 @@ div.wed-frame {
                 margin-bottom: 0em;
                 text-indent: 1em;
             }
+        }
+
+        .btn {
+            text-indent: 0em;
         }
 
         div.btw\:entry>*, div.btw\:definition, div.p, div.btw\:sense, div.btw\:example, div.btw\:example-explained, div.btw\:etymology, {
@@ -190,9 +198,9 @@ div.wed-frame {
         }
 
 
-        @foreign-color: #DFCFAF;
+        $foreign-color: #DFCFAF;
         div.foreign {
-            background-color: @foreign-color;
+            background-color: $foreign-color;
             font-style: italic;
             &[data-wed-xml---lang|="zh"] {
                 font-style: normal;
@@ -202,11 +210,11 @@ div.wed-frame {
             }
 
             &._owns_caret {
-                .owns-caret-background(@foreign-color);
+                @include owns-caret-background($foreign-color);
             }
 
             *._owns_caret {
-                .owns-caret-background(@foreign-color);
+                @include owns-caret-background($foreign-color);
             }
         }
 

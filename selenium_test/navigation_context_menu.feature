@@ -13,7 +13,9 @@ Scenario: bringing up a context menu over a navigation element
 Scenario: clicking an option of the context menu makes it disappear.
   Given a new document
   And that a navigation context menu is open
-  When the user clicks the first context menu option
+  # We want the second option because the 1st is the documentation link
+  # which does not close the window.
+  When the user clicks the second context menu option
   Then a context menu is not visible
 
 Scenario: explanations for senses are not actionable

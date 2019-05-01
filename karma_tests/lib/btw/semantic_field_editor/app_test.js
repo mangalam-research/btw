@@ -15,7 +15,6 @@ import { SFFetcher } from "btw/semantic-field-fetcher";
 import { SearchEngine } from "testutils/search";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
-import URI from "urijs/URI";
 
 const { assert } = chai;
 
@@ -34,8 +33,8 @@ class AppServer extends TestServer {
       return;
     }
 
-    const uri = new URI(request.url);
-    if (uri.path() === fetcherUrl) {
+    const url = new URL(request.url, "http://fake");
+    if (url.pathname === fetcherUrl) {
       this.engine.respond(request);
     }
   }

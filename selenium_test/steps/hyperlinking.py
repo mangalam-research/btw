@@ -27,7 +27,7 @@ def step_impl(context):
 @then(r"the hyperlinkig modal dialog comes up\.?")
 def step_impl(context):
     header = context.util.find_element((By.CSS_SELECTOR,
-                                        ".modal.in .modal-header h3"))
+                                        ".modal.show .modal-header h5"))
     assert_equal(header.text, "Insert hyperlink to sense")
 
 
@@ -36,7 +36,7 @@ def step_impl(context):
     driver = context.driver
 
     choices = driver.execute_script("""
-    return jQuery(".modal.in .modal-body input").next("span").toArray();
+    return jQuery(".modal.show .modal-body input").next("span").toArray();
     """)
 
     assert_equal(len(choices), len(context.table.rows),
@@ -56,13 +56,13 @@ def step_impl(context, what):
     var choice = arguments[0];
 
     var re = new RegExp('\\b' + choice + '\\b');
-    return jQuery(".modal.in .modal-body input").filter(function () {
+    return jQuery(".modal.show .modal-body input").filter(function () {
         return re.test(jQuery(this).next('span').text());
     })[0];
     """, what)
 
     choice.click()
-    driver.find_element_by_css_selector(".modal.in .btn-primary").click()
+    driver.find_element_by_css_selector(".modal.show .btn-primary").click()
 
 
 @then(r'a new hyperlink with the label "(?P<what>.*?)" is inserted\.?')
@@ -332,7 +332,7 @@ def step_impl(context, label):
     var parent = link.parentNode;
     while (parent && parent.classList) {
       if (parent.classList.contains("collapse") &&
-          !parent.classList.contains("in"))
+          !parent.classList.contains("show"))
         parents.unshift(parent);
       parent = parent.parentNode;
     }

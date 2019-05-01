@@ -173,7 +173,7 @@ class SemanticFieldTestCase(TestCase):
         c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.link,
-                         ("<a class='btn btn-default btn-sm sf-link' "
+                         ("<a class='btn btn-outline-dark btn-sm sf-link' "
                           "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
@@ -184,7 +184,7 @@ class SemanticFieldTestCase(TestCase):
         c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link(),
-                         ("<a class='btn btn-default btn-sm sf-link' "
+                         ("<a class='btn btn-outline-dark btn-sm sf-link' "
                           "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 
@@ -195,7 +195,7 @@ class SemanticFieldTestCase(TestCase):
         c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link("bar"),
-                         ("<a class='btn btn-default btn-sm sf-link' "
+                         ("<a class='btn btn-outline-dark btn-sm sf-link' "
                           "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "bar</a>").format(c.id))
 
@@ -206,7 +206,7 @@ class SemanticFieldTestCase(TestCase):
         c = SemanticField(path="01.01n", heading="foo")
         c.save()
         self.assertEqual(c.make_link(css_class="bar"),
-                         ("<a class='btn btn-default btn-sm sf-link bar' "
+                         ("<a class='btn btn-outline-dark btn-sm sf-link bar' "
                           "href='/rest/semantic_fields/semanticfield/{0}/'>"
                           "foo</a>").format(c.id))
 

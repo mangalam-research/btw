@@ -13,9 +13,9 @@ define(function ajaxModule(require, _exports, _module) {
   <div class='modal-dialog'>\
     <div class='modal-content'>\
       <div class='modal-header'>\
+        <h5>Connectivity Problem</h5>\
         <button type='button' class='close' data-dismiss='modal'\
 aria-hidden='true'>&times;</button>\
-        <h3>Connectivity Problem</h3>\
       </div>\
       <div class='modal-body'>\
         <p>We have detected a connectivity problem: \

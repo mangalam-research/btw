@@ -178,8 +178,7 @@ def step_impl(context, what, which):
 
 def get_panes(driver):
     panes = driver.execute_script("""
-    var panes = document.querySelectorAll(
-      "div.semantic-field-details-panel");
+    var panes = document.querySelectorAll("div.semantic-field-details-card");
     return Array.prototype.filter.call(panes, function (x) {
       return x.style.display !== "none";
     });
@@ -217,13 +216,13 @@ def step_impl(context, count):
 @then(r'the first detail pane shows: (?P<what>.*)')
 def step_impl(context, what):
     util = context.util
-    panel = util.find_element((By.CSS_SELECTOR,
-                               "div.semantic-field-details-panel .panel-body"))
+    card = util.find_element((By.CSS_SELECTOR,
+                              "div.semantic-field-details-card .card-body"))
 
     stale = object()
 
     def check(*_):
-        crumbs = panel.find_elements_by_class_name("sf-breadcrumbs")
+        crumbs = card.find_elements_by_class_name("sf-breadcrumbs")
         # The check can be done so fast that we can a
         # StaleElementReferenceException. We'll just retry.
         try:
@@ -247,7 +246,7 @@ def step_impl(context, what):
     util = context.util
 
     button = util.find_element((By.CSS_SELECTOR,
-                                "div.semantic-field-details-panel .btn." +
+                                "div.semantic-field-details-card .btn." +
                                 what))
     button.click()
 
@@ -264,14 +263,14 @@ def step_impl(context, what):
         }
     else:
         selectors = {
-            "close the pane": "close-panel",
-            "close all panes": "close-all-panels"
+            "close the pane": "close-card",
+            "close all panes": "close-all-cards"
         }
 
     selector = selectors[what]
 
     button = util.find_element(
-        (By.CSS_SELECTOR, "div.semantic-field-details-panel .btn." + selector))
+        (By.CSS_SELECTOR, "div.semantic-field-details-card .btn." + selector))
     button.click()
 
 
@@ -287,7 +286,7 @@ def step_impl(context, which):
 
     button = util.wait(EC.visibility_of_element_located(
         (By.CSS_SELECTOR,
-         "div.semantic-field-details-panel .btn." + selector)))
+         "div.semantic-field-details-card .btn." + selector)))
     button.click()
 
 
@@ -303,7 +302,7 @@ def step_impl(context, which):
 
     util.wait_until_not(EC.visibility_of_element_located(
         (By.CSS_SELECTOR,
-         "div.semantic-field-details-panel .btn." + selector)))
+         "div.semantic-field-details-card .btn." + selector)))
 
 
 @when(r'the user clicks on the "Create Field" button under the table')
@@ -331,7 +330,7 @@ def step_impl(context, present, which):
     }[which]
 
     selector = (By.CSS_SELECTOR,
-                "div.semantic-field-details-panel form.{0}-form"
+                "div.semantic-field-details-card form.{0}-form"
                 .format(css_class))
 
     if present == "a":
@@ -352,7 +351,7 @@ def step_impl(context):
 def step_impl(context):
     util = context.util
     button = util.find_element(
-        (By.CSS_SELECTOR, "div.semantic-field-details-panel .btn.cancel"))
+        (By.CSS_SELECTOR, "div.semantic-field-details-card .btn.cancel"))
     button.click()
 
 
@@ -408,7 +407,7 @@ def step_impl(context):
     def check(driver):
         texts = driver.execute_script("""
         var children = document.querySelectorAll(
-          "div.semantic-field-details-panel .sf-children .sf-link");
+          "div.semantic-field-details-card .sf-children .sf-link");
         return Array.prototype.map.call(children, function (x) {
           return x.textContent;
         });
@@ -425,7 +424,7 @@ def step_impl(context):
     def check(driver):
         texts = driver.execute_script("""
         var children = document.querySelectorAll(
-          "div.semantic-field-details-panel .sf-other-pos .sf-link");
+          "div.semantic-field-details-card .sf-other-pos .sf-link");
         return Array.prototype.map.call(children, function (x) {
           return x.textContent;
         });

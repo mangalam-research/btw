@@ -161,11 +161,11 @@ def step_impl(context, kind):
     dt.setup_redraw_check()
     context.driver.execute_script("""
     var collapse = document.getElementById("advanced-search-collapse");
-    if (!collapse.classList.contains("in"))
+    if (!collapse.classList.contains("show"))
       document.querySelector("a[href='#advanced-search-collapse']").click();
     """)
     # We have to wait until the element is in ...
-    util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
+    util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.show"))
 
     select = Select(util.find_element((By.CLASS_NAME,
                                        "btw-publication-status")))
@@ -181,11 +181,11 @@ def step_impl(context):
     dt.setup_redraw_check()
     context.driver.execute_script("""
     var collapse = document.getElementById("advanced-search-collapse");
-    if (!collapse.classList.contains("in"))
+    if (!collapse.classList.contains("show"))
       document.querySelector("a[href='#advanced-search-collapse']").click();
     """)
     # We have to wait until the element is in ...
-    util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.in"))
+    util.find_elements((By.CSS_SELECTOR, "#advanced-search-collapse.show"))
 
     control = util.find_element((By.CLASS_NAME, "btw-search-all-history"))
     control.click()

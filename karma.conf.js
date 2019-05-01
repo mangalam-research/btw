@@ -6,7 +6,7 @@
 module.exports = function configure(config) {
   config.set({
     basePath: "",
-    frameworks: ["requirejs", "mocha", "chai-as-promised", "chai", "fixture"],
+    frameworks: ["mocha", "chai-as-promised", "chai", "fixture"],
     client: {
       mocha: {
         asyncOnly: true,
@@ -14,6 +14,8 @@ module.exports = function configure(config) {
       },
     },
     files: [
+      "node_modules/core-js/client/core.min.js",
+      "node_modules/requirejs/require.js",
       "sitestatic/config/requirejs-config-dev.js",
       "test-main.js",
       "node_modules/@babel/polyfill/dist/polyfill.js",

@@ -2,8 +2,10 @@
 {% load cms_tags %}
 
 {% block content %}
-  <div class="row">
-  {{ block.super }}
-  {% include "two_column_well.html" %}
+<div class="row">
+  <div class="col-lg-12">
+    {{ block.super }}
+    {% include "two_column_well.html" %}
   </div>
+</div>
 {% endblock %}

@@ -105,8 +105,8 @@ class SearchTable(BaseDatatableView):
                     return "Yes"
 
                 return "Yes " + mark_safe(
-                    ('<a class="btw-unpublish-btn btn btn-xs btn-default" '
-                     'href="%s">Unpublish</a> ') %
+                    ('<a class="btw-unpublish-btn btn btn-sm '
+                     'btn-outline-dark" href="%s">Unpublish</a> ') %
                     reverse("lexicography_changerecord_unpublish",
                             args=(row.id, )))
 
@@ -114,7 +114,7 @@ class SearchTable(BaseDatatableView):
                 return "No"
 
             return "No " + mark_safe(
-                ('<a class="btw-publish-btn btn btn-xs btn-default" '
+                ('<a class="btw-publish-btn btn btn-sm btn-outline-dark" '
                  'href="%s">Publish</a> ') %
                 reverse("lexicography_changerecord_publish",
                         args=(row.id, )))
@@ -137,7 +137,7 @@ class SearchTable(BaseDatatableView):
                and row.schema_version != \
                     list(get_supported_schema_versions().keys())[-1]:
                 warn = (
-                    ' <span class="label label-warning" title='
+                    ' <span class="badge badge-warning" title='
                     '"Editing this entry will automatically upgrade the '
                     'schema version and may require additional editing to '
                     'satisfy the new schema.">!</span>'
@@ -167,7 +167,8 @@ class SearchTable(BaseDatatableView):
            row.entry.latest == row:
             if row.entry.is_editable_by(self.request.user):
                 ret = mark_safe(
-                    ('<a class="btn btn-xs btn-default" href="%s">Edit</a> ') %
+                    ('<a class="btn btn-sm btn-outline-dark" href="%s">'
+                     'Edit</a> ') %
                     reverse("lexicography_entry_update",
                             args=(row.entry.id, ))) + \
                     ret

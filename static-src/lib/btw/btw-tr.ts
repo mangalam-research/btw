@@ -13,7 +13,7 @@ import Transformation = transformation.Transformation;
 import TransformationData = transformation.TransformationData;
 import Modal = gui.modal.Modal;
 
-import * as btwUtil from "./btw-util";
+import { BTW_MODE_ORIGIN, languageToLanguageCode } from "./btw-util";
 
 const closest = domutil.closest;
 const makeDLoc = DLoc.makeDLoc;
@@ -129,7 +129,7 @@ function setLanguageHandler(this: SetTextLanguageTr, editor: EditorAPI,
     throw new AbortTransformationException("selection is not well-formed");
   }
 
-  const langCode = btwUtil.languageToLanguageCode(data.language);
+  const langCode = languageToLanguageCode(data.language);
   const [start, end] = selection.asDataCarets()!;
   const container = start.node;
   const cl = closest(container, "foreign", editor.dataRoot);
@@ -158,8 +158,12 @@ extends Transformation<LanguageTransformationData> {
   nestingModal: Modal;
 
   constructor(editor: EditorAPI, private readonly language: string) {
-    super(editor, "transformation", `Set language to ${language}`, language,
-          undefined, true, setLanguageHandler);
+    super(BTW_MODE_ORIGIN, editor, "transformation",
+          `Set language to ${language}`,
+          setLanguageHandler, {
+            abbreviatedDesc: language,
+            needsInput: true,
+          });
     this.nestingModal = getNestingModal(editor);
   }
 
@@ -174,9 +178,9 @@ extends Transformation<LanguageTransformationData> {
 }
 
 export function makeReplaceNone(editor: EditorAPI,  replacedWith: string):
-Transformation<TransformationData> {
+Transformation {
   return new Transformation(
-    editor, "add", `Create new ${replacedWith}`,
+    BTW_MODE_ORIGIN, editor, "add", `Create new ${replacedWith}`,
     (trEditor, _data) => {
       const caret = trEditor.caretManager.getDataCaret()!;
       const parent = caret.node;

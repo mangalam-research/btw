@@ -1,23 +1,19 @@
 {{#if collapse}}
-<div class="panel-group" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="{{headingId}}">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" class="arrow-toggle" href="#{{collapseId}}" aria-expanded="true" aria-controls="{{collapseId}}">{{panelTitle}}</a>
-      </h4>
-    </div>
+<div role="tablist" aria-multiselectable="true">
+  <div class="card">
+    <h5 class="card-header" role="tab" id="{{headingId}}">
+      <a data-toggle="collapse" class="arrow-toggle" href="#{{collapseId}}" aria-expanded="true" aria-controls="{{collapseId}}">{{cardTitle}}</a>
+    </h5>
     <div id="{{collapseId}}"
-         class="panel-collapse collapse{{#unless startCollapsed}} in{{/unless}}"
+         class="collapse{{#unless startCollapsed}} show{{/unless}}"
          role="tabpanel" aria-labelledby="{{headingId}}" aria-expanded="true">
-      <div class="panel-body">{{panelBody}}</div>
+      <div class="card-body">{{cardBody}}</div>
     </div>
   </div>
 </div>
 {{else}}
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">{{panelTitle}}</h4>
-  </div>
-  <div class="panel-body">{{panelBody}}</div>
+<div class="card">
+  <h5 class="card-header">{{cardTitle}}</h5>
+  <div class="card-body">{{cardBody}}</div>
 </div>
 {{/if}}

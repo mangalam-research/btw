@@ -1,6 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
-import URI from "urijs/URI";
 import { Server } from "./server";
 
 const fetcherUrlRe = /^\/en-us\/semantic-fields\/semanticfield\/(.*)$/;
@@ -24,11 +23,12 @@ export class FetcherServer extends Server {
 
     // No match.
     if (request.method === "GET" && this.fetcherUrlRe.test(request.url)) {
-      const query = new URI(request.url).query(true);
-      if (!query.paths) {
+      const pathsString = new URL(request.url, "http://fake")
+            .searchParams.get("paths");
+      if (!pathsString) {
         return;
       }
-      const paths = query.paths.split(";");
+      const paths = pathsString.split(";");
       const response = paths.map(
         path => ({
           path,

@@ -461,7 +461,7 @@ class DetailsTestCaseHTML(ViewsTestCase):
         response = self.query(self.hte.detail_url, self.noperm)
         # Get only the text.
         lexemes = [x.text for x in
-                   response.lxml.cssselect("{0} .label".format(selector))]
+                   response.lxml.cssselect("{0} .badge".format(selector))]
         self.assertCountEqual(lexemes,
                               ["foo q", "bar q"],
                               "there should be two lexemes with the right "

@@ -1,73 +1,63 @@
-// This top-level function is purposely written so that it does not need jQuery
-// or similar libraries.
-(function startWed(require) {
+(function startWed() {
   "use strict";
 
-  if (require === undefined) {
-    // We assume that wed is ALREADY defined as a global symbol
-    // through other means. It is up to whatever caused this code
-    // to be used to set the environment so that wed exists and
-    // has the appropriate value.
-    require = function fakeRequire(dummy, f) {
-      return f(wed, $); // eslint-disable-line no-undef
-    };
-  }
-
   function init() {
-    // eslint-disable-next-line import/no-dynamic-require
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     require(
-      ["btw/btw-editor", "jquery", "last-resort", "wed/onerror", "btw/btw-wed-config",
-       "js-cookie"],
-      function loaded(btwEditor, $, lr, onerror, btwWedConfig, cookies) {
+      ["wed", "last-resort", "js-cookie"],
+      function loaded(btwEditor, lr, cookies) {
         var onError = lr.install(window, { force: true });
-        onError.register(onerror.handler);
+        onError.register(btwEditor.onerror.handler);
 
         var widgets = document.getElementsByClassName("wed-widget");
 
+        var csrftoken = cookies.get("csrftoken");
         for (var i = 0; i < widgets.length; i++) {
           var widget = widgets[i];
           var script = widget.nextElementSibling;
           if (script.tagName !== "SCRIPT") {
             throw new Error("script element for data not found!");
           }
-          var $widget = $(widget);
 
-          var options = btwWedConfig.config || {};
+          var parentform = widget.closest("form");
 
-          var csrftoken = cookies.get("csrftoken");
-          var $parentform = $widget.parents("form").first();
+          var options = {
+            schema: require.toUrl("btw/btw-storage.rng"),
+            mode: {
+              path: "btw/btw-mode",
+              options: {
+                bibl_url: "/rest/bibliography/all",
+                semanticFieldFetchUrl:
+                parentform.querySelector("#id_sf_fetch_url").value,
+              },
+            },
+          };
 
-          options.mode.options.semanticFieldFetchUrl =
-            $parentform.find("#id_sf_fetch_url").val();
           options.ajaxlog = {
-            url: $parentform.find("#id_logurl").val(),
+            url: parentform.querySelector("#id_logurl").value,
             headers: {
               "X-CSRFToken": csrftoken,
             },
           };
-          options.save = {
-            path: "wed/savers/ajax",
-            options: {
-              url: $parentform.find("#id_saveurl").val(),
-              headers: {
-                "X-CSRFToken": csrftoken,
-              },
-              initial_etag: $parentform.find("#id_initial_etag").val(),
+
+          var saverOptions = {
+            url: parentform.querySelector("#id_saveurl").value,
+            headers: {
+              "X-CSRFToken": csrftoken,
+              "X-Requested-With": "XMLHttpRequest",
             },
+            initial_etag: parentform.querySelector("#id_initial_etag").value,
           };
 
-          // eslint-disable-next-line camelcase
-          var wed_editor = btwEditor.makeEditor(widget, options);
-          // Yep, this means only one wed editor per window.
-          // eslint-disable-next-line camelcase
-          window.wed_editor = wed_editor;
+          btwEditor.load(widget, options, saverOptions, script.textContent)
           // eslint-disable-next-line no-loop-func
-          wed_editor.init(script.textContent).then(function initialized() {
-            $widget.prev().remove();
-
-            // Allow CSS to reflow
-            window.setTimeout(wed_editor.resize.bind(wed_editor), 0);
-          });
+            .then(function initialized(wed) {
+              // Yep, this means only one wed editor per window.
+              window.wed_editor = wed;
+              widget.previousElementSibling.remove();
+              // Allow CSS to reflow
+              window.setTimeout(wed.resize.bind(wed), 0);
+            });
         }
       });
   }
@@ -78,4 +68,4 @@
   else if (window.attachEvent) { // IE
     window.attachEvent("onload", init);
   }
-}((typeof require === "undefined") ? undefined : require));
+}());

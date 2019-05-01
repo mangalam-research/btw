@@ -6,6 +6,8 @@ import * as _ from "lodash";
 
 import { domutil } from "wed";
 
+export const BTW_MODE_ORIGIN = "https://github.com/mangalam-research/btw";
+
 export function termsForSense(sense: Element,
                               mappings: Record<string, string>):
 NodeListOf<Element> {
@@ -50,20 +52,18 @@ export function languageToLanguageCode(language: string): string {
 
 const collapsibleTemplate =
   "\
-<div class='_phantom_wrap panel-group<%= group_classes %>' role='tablist' \
+<div class='_phantom_wrap <%= group_classes %>' role='tablist' \
 aria-multiselectable='true'>\
-<div class='_phantom_wrap panel panel-<%= kind %><%= panel_classes %>'>\
-<div class='_phantom_wrap panel-heading' role='tab' id='<%= heading_id %>'>\
-<h4 class='_phantom_wrap panel-title'>\
+<div class='_phantom_wrap card<%= kind %><%= card_classes %>'>\
+<h4 class='_phantom_wrap card-header' role='tab' id='<%= heading_id %>'>\
 <a class='_phantom collapsed<%= toggle_classes %>' data-toggle='collapse' \
 href='#<%= collapse_id %>' aria-expanded='true' \
 aria-controls='<%= collapse_id %>'>\
 </a>\
 </h4>\
-</div>\
-<div id='<%= collapse_id %>' class='_phantom_wrap panel-collapse collapse' \
+<div id='<%= collapse_id %>' class='_phantom_wrap collapse' \
 role='tabpanel' aria-labelledby='<%= heading_id %>'>\
-<div class='_phantom_wrap panel-body'></div>\
+<div class='_phantom_wrap card-body'></div>\
 </div>\
 </div>\
 </div>";
@@ -71,7 +71,7 @@ role='tabpanel' aria-labelledby='<%= heading_id %>'>\
 export interface AdditionalClasses {
   group?: string;
 
-  panel?: string;
+  card?: string;
 
   toggle?: string;
 }
@@ -118,11 +118,11 @@ export function makeCollapsible(document: Document,
                                 additional: AdditionalClasses = {}):
 Collapsible {
   let additionalGroupClasses = additional.group;
-  let additionalPanelClasses = additional.panel;
+  let additionalCardClasses = additional.card;
   let additionalToggleClasses = additional.toggle;
 
-  additionalPanelClasses =
-    additionalPanelClasses !== undefined ? ` ${additionalPanelClasses}` : "";
+  additionalCardClasses =
+    additionalCardClasses !== undefined ? ` ${additionalCardClasses}` : "";
 
   additionalGroupClasses =
     additionalGroupClasses !== undefined ? ` ${additionalGroupClasses}` : "";
@@ -132,9 +132,9 @@ Collapsible {
 
   const el = domutil.htmlToElements(
     _.template(collapsibleTemplate)({
-      kind: kind,
+      kind: kind === "default" ? "" : ` card-${kind}`,
       group_classes: additionalGroupClasses,
-      panel_classes: additionalPanelClasses,
+      card_classes: additionalCardClasses,
       toggle_classes: additionalToggleClasses,
       heading_id: headingId,
       collapse_id: collapseId,
@@ -143,7 +143,7 @@ Collapsible {
   return {
     group: el,
     heading: el.getElementsByTagName("a")[0],
-    content: el.getElementsByClassName("panel-body")[0] as HTMLElement,
+    content: el.getElementsByClassName("card-body")[0] as HTMLElement,
   };
 }
 
@@ -160,13 +160,13 @@ Collapsible {
  */
 export function updateCollapsible(structure: Element, headingId: string,
                                   collapseId: string): void {
-  const heading = structure.getElementsByClassName("panel-heading")[0];
+  const heading = structure.getElementsByClassName("card-header")[0];
   heading.id = headingId;
   const a = heading.getElementsByTagName("a")[0];
   a.href = `#${collapseId}`;
   a.setAttribute("aria-controls", collapseId);
 
-  const collapse = structure.getElementsByClassName("panel-collapse")[0];
+  const collapse = structure.getElementsByClassName("collapse")[0];
   collapse.setAttribute("aria-labelledby", headingId);
   collapse.id = collapseId;
 }

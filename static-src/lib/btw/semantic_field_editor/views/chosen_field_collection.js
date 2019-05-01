@@ -123,11 +123,11 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
   var ChosenFieldCollectionView = Mn.View.extend({
     initialize: function initialize(options) {
       this.fetcher = this.fetcher || options.fetcher;
-      this.panelTitle = this.panelTitle || options.panelTitle;
+      this.cardTitle = this.cardTitle || options.cardTitle;
       this.canDelete = this.canDelete || options.canDelete;
       Mn.View.prototype.initialize.call(
         this,
-        _.omit(options, ["fetcher", "panelTitle", "canDelete"]));
+        _.omit(options, ["fetcher", "cardTitle", "canDelete"]));
     },
 
     tagName: "div",
@@ -136,13 +136,13 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
 
     templateContext: function templateContext() {
       return {
-        panelTitle: this.panelTitle,
-        panelBody: "",
+        cardTitle: this.cardTitle,
+        cardBody: "",
       };
     },
 
     regions: {
-      body: ".panel-body",
+      body: ".card-body",
     },
 
     childViewEvents: {

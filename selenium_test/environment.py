@@ -385,7 +385,7 @@ def before_all(context):
                                      5 if builder.remote else 2)
     # Without this, window sizes vary depending on the actual browser
     # used.
-    context.initial_window_size = {"width": 1020, "height": 580}
+    context.initial_window_size = {"width": 1280, "height": 1080}
     try:
         assert_true(driver.desired_capabilities["nativeEvents"],
                     "BTW's test suite require that native events be "

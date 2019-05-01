@@ -10,37 +10,31 @@
 {% endblock %}
 
 {% block branding %}
-<div id="btw-site-navigation" class="navbar navbar-default" role="navigation">
-  <div>
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse"
-              data-target="#btw-site-navigation-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">{{ globals.site_name }}</a>
-    </div>
+<div class="container">
+  <div id="btw-site-navigation" class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
+    <a class="navbar-brand" href="#">{{ globals.site_name }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#btw-site-navigation-collapse" aria-controls="btw-site-navigation-collapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse" id="btw-site-navigation-collapse">
-      <ul class="nav navbar-nav">
+      <ul class="navbar-nav mr-auto">
         {% show_menu 0 1 100 100 "menu/navbar.html" %}
       </ul>
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="navbar-nav ml-auto">
         {% show_menu 0 1 100 100 "menu/navbar_right.html" %}
       </ul>
     </div>
+    {% if btw_globals.demo %}
+    <div class="alert alert-danger" role="alert">
+      You are on the demo site. Do not save any work here.
+    </div>
+    {% endif %}
+    {% if request.COOKIES.btw_dev %}
+    <div class="alert alert-danger" role="alert">
+      You are accessing the site as a DEVELOPER. Make sure to clear out of developer mode and access the site as a normal user before telling users to access the site.
+    </div>
+    {% endif %}
   </div>
-  {% if btw_globals.demo %}
-  <div class="alert alert-danger" role="alert">
-    You are on the demo site. Do not save any work here.
-  </div>
-  {% endif %}
-  {% if request.COOKIES.btw_dev %}
-  <div class="alert alert-danger" role="alert">
-    You are accessing the site as a DEVELOPER. Make sure to clear out of developer mode and access the site as a normal user before telling users to access the site.
-  </div>
-  {% endif %}
 </div>
 {% endblock %}
 

@@ -22,6 +22,7 @@ import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";
 import { BTWDecorator } from "./btw-decorator";
 import * as btwTr from "./btw-tr";
+import { BTW_MODE_ORIGIN } from "./btw-util";
 import { Validator } from "./btw-validator";
 import { MappedUtil } from "./mapped-util";
 
@@ -90,7 +91,7 @@ interface TransformationFilter {
   substitute?: Substitution[];
 
   /** An array of transformations to add. */
-  add?: Transformation<TransformationData>[];
+  add?: Transformation[];
 }
 
 export type BibliographicalInfo = Record<string, BibliographicalItem>;
@@ -121,12 +122,12 @@ class BTWMode extends Mode<BTWModeOptions> {
   editSemanticFieldAction!: btwActions.EditSemanticFieldsAction;
   replaceBiblPtr!: btwActions.InsertBiblPtrAction;
   insertBiblPtr!: btwActions.InsertBiblPtrAction;
-  insertRefText!: Transformation<TransformationData>;
-  replaceNoneWithConceptualProximate!: Transformation<TransformationData>;
-  replaceNoneWithCognate!: Transformation<TransformationData>;
-  replaceNoneWithAntonym!: Transformation<TransformationData>;
-  swapWithNextTr!: Transformation<TransformationData>;
-  swapWithPrevTr!: Transformation<TransformationData>;
+  insertRefText!: Transformation;
+  replaceNoneWithConceptualProximate!: Transformation;
+  replaceNoneWithCognate!: Transformation;
+  replaceNoneWithAntonym!: Transformation;
+  swapWithNextTr!: Transformation;
+  swapWithPrevTr!: Transformation;
   replaceSelectionWithRefTr!: Transformation<btwTr.TargetedTransformationData>;
   insertRefTr!: Transformation<btwTr.TargetedTransformationData>;
   insertPtrTr!: Transformation<btwTr.TargetedTransformationData>;
@@ -175,37 +176,32 @@ class BTWMode extends Mode<BTWModeOptions> {
     this.hyperlinkModal.addButton("Insert", true);
     this.hyperlinkModal.addButton("Cancel");
 
-    this.insertSensePtrAction = new btwActions.SensePtrDialogAction(
-      editor, "Insert a new hyperlink to a sense",
-      undefined, "<i class='fa fa-plus fa-fw'></i>", true);
+    this.insertSensePtrAction = new btwActions.SensePtrDialogAction(editor);
 
-    this.insertExamplePtrAction = new btwActions.ExamplePtrDialogAction(
-      editor, "Insert a new hyperlink to an example",
-      undefined, "<i class='fa fa-plus fa-fw'></i>", true);
+    this.insertExamplePtrAction = new btwActions.ExamplePtrDialogAction(editor);
 
     this.insertPtrTr = new Transformation(
-      editor, "add", "Insert a pointer", btwTr.insertPtr);
+      BTW_MODE_ORIGIN, editor, "add", "Insert a pointer", btwTr.insertPtr);
 
     this.insertRefTr = new Transformation(
-      editor, "add", "Insert a reference", btwTr.insertRef);
+      BTW_MODE_ORIGIN, editor, "add", "Insert a reference", btwTr.insertRef);
 
     this.replaceSelectionWithRefTr = new Transformation(
-      editor, "wrap", "Replace the selection with a reference",
+      BTW_MODE_ORIGIN, editor, "wrap", "Replace the selection with a reference",
       btwTr.replaceSelectionWithRef);
 
     this.swapWithPrevTr = new Transformation(
-      editor, "swap-with-previous", "Swap with previous sibling", undefined,
-      "<i class='fa fa-long-arrow-up fa-fw'></i>",
+      BTW_MODE_ORIGIN, editor, "swap-with-previous",
+      "Swap with previous sibling",
       (trEditor, data) => {
         swapWithPreviousHomogeneousSibling(trEditor, data.node as Element);
-      });
+      }, { icon: "<i class='fa fa-long-arrow-up fa-fw'></i>" });
 
     this.swapWithNextTr = new Transformation(
-      editor, "swap-with-next", "Swap with next sibling", undefined,
-      "<i class='fa fa-long-arrow-down fa-fw'></i>",
+      BTW_MODE_ORIGIN, editor, "swap-with-next", "Swap with next sibling",
       (trEditor, data) => {
         swapWithNextHomogeneousSibling(trEditor, data.node as Element);
-      });
+      }, { icon: "<i class='fa fa-long-arrow-down fa-fw'></i>" });
 
     this.setLanguageToSanskritTr =
       new btwTr.SetTextLanguageTr(editor, "Sanskrit");
@@ -220,7 +216,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       btwTr.makeReplaceNone(editor, "btw:conceptual-proximate");
 
     this.insertRefText = new Transformation(
-      editor, "add", "Add custom text to reference",
+      BTW_MODE_ORIGIN, editor, "add", "Add custom text to reference",
       (trEditor) => {
         const caret = trEditor.caretManager.caret;
         if (caret === undefined) {
@@ -240,28 +236,15 @@ class BTWMode extends Mode<BTWModeOptions> {
         trEditor.caretManager.setCaret(ph, 0);
       });
 
-    this.insertBiblPtr = new btwActions.InsertBiblPtrAction(
-      editor,
-      "Insert a new bibliographical reference",
-      "",
-      "<i class='fa fa-book fa-fw'></i>",
-      true);
+    this.insertBiblPtr = new btwActions.InsertBiblPtrAction(editor);
 
-    // Yes, we inherit from InsertBiblPtrAction even though we are
-    // replacing.
-    this.replaceBiblPtr = new btwActions.InsertBiblPtrAction(
-      editor,
-      "Replace the selection with a bibliographical reference",
-      "",
-      "<i class='fa fa-book fa-fw'></i>",
-      true);
+    this.replaceBiblPtr = new btwActions.ReplaceBiblPtrAction(editor);
 
-    this.editSemanticFieldAction = new btwActions.EditSemanticFieldsAction(
-      editor, "Edit semantic fields",
-      undefined, "<i class='fa fa-plus fa-fw'></i>", true);
+    this.editSemanticFieldAction =
+      new btwActions.EditSemanticFieldsAction(editor);
 
     this.replaceSemanticFields = new Transformation(
-      editor, "transform", "Replace semantic fields",
+      BTW_MODE_ORIGIN, editor, "transform", "Replace semantic fields",
       btwTr.replaceSemanticFields);
 
     const passInCit: Pass = {

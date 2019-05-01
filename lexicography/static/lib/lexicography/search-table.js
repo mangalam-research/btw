@@ -86,7 +86,7 @@ define(function searchTableModule(require, _exports, _module) {
       });
 
       var obj = this;
-      $modal.on("click", ".btn.btn-default", function clickDefault() {
+      $modal.on("click", ".btn.btn-outline-dark", function clickDefault() {
         postPublishUnpublish.call(obj, ev);
         document.body.removeChild($modal[0]);
         return false;
@@ -99,14 +99,18 @@ define(function searchTableModule(require, _exports, _module) {
     var doc = $table[0].ownerDocument;
 
     var label = doc.createElement("label");
-    label.innerHTML = "Lemmata only: <input type='checkbox' " +
-      "class='form-control input-sm'></input>";
+    label.innerHTML = "\
+<div class='form-check'>\
+<input type='checkbox' class='form-check-input' id='search-lemma-checkbox'> \
+<label for='search-lemma-checkbox' class='form-check-label'>Lemmata only\
+</label>\
+</div>";
     var lemmaCheckbox = label.lastElementChild;
 
     var advancedRow = doc.createElement("div");
     advancedRow.className = "row";
     var advanced = doc.createElement("div");
-    advanced.className = "panel-group";
+    advanced.className = "col";
     advanced.style.marginBottom = "0px";
     advanced.id = "advanced-search";
     advanced.innerHTML = advancedSearchTemplate;
@@ -140,7 +144,8 @@ define(function searchTableModule(require, _exports, _module) {
       if (!label.parentNode) {
         var filter =
               doc.getElementById("search-table_wrapper")
-              .getElementsByClassName("dataTables_filter")[0];
+            .getElementsByClassName("dataTables_filter")[0];
+        filter.classList.add("form-inline");
         var filterRow = filter.parentNode.parentNode;
         filter.appendChild(doc.createTextNode(" "));
         filter.appendChild(label);
@@ -181,7 +186,7 @@ define(function searchTableModule(require, _exports, _module) {
       var cl = filter.classList;
       if (good) {
         cl.remove("has-error");
-        $(filter).tooltip("destroy");
+        $(filter).tooltip("dispose");
         filter.removeAttribute("aria-invalid");
       }
       else {
@@ -189,7 +194,7 @@ define(function searchTableModule(require, _exports, _module) {
         $(filter).tooltip({
           title: "The search expression is not syntactically valid.",
           container: "body",
-          placement: "auto bottom",
+          placement: "auto",
           trigger: "hover",
         });
         filter.setAttribute("aria-invalid", "true");

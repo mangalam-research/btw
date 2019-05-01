@@ -3,21 +3,21 @@ Feature: the user wants to be able to transform the document.
 Scenario: using the navigation context menu to insert a sense before another sense
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[SENSE A]"
-  And the user clicks the context menu option "Create new btw:sense before this one"
+  And the user clicks the context menu option "Create new btw:sense before this element"
   Then sense A becomes sense B
   And a new sense A is created
 
 Scenario: using the navigation context menu to insert a sense after another sense
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[SENSE A]"
-  And the user clicks the context menu option "Create new btw:sense after this one"
+  And the user clicks the context menu option "Create new btw:sense after this element"
   Then sense A remains the same
   And a new sense B is created
 
 Scenario: undoing a sense insertion
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[SENSE A]"
-  And the user clicks the context menu option "Create new btw:sense before this one"
+  And the user clicks the context menu option "Create new btw:sense before this element"
   And the user undoes
   Then the senses are the same as originally
 
@@ -31,27 +31,27 @@ Scenario: undoing a sense deletion
 Scenario: using the navigation context menu to insert an english rendition before another english rendition
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[English rendition]" under "[SENSE A]"
-  And the user clicks the context menu option "Create new btw:english-rendition before this one"
+  And the user clicks the context menu option "Create new btw:english-rendition before this element"
   Then the first english rendition becomes second
   And a new first english rendition is created
 
 Scenario: using the navigation context menu to insert an english rendition after another english rendition
   Given a document with a single sense
   When the user brings up a context menu on navigation item "[English rendition]" under "[SENSE A]"
-  And the user clicks the context menu option "Create new btw:english-rendition after this one"
+  And the user clicks the context menu option "Create new btw:english-rendition after this element"
   Then the first english rendition remains the same
   And a new english rendition is created after the first
 
 Scenario: using the navigation context menu to insert a subsense after a subsense
   Given a document with a single sense that has a subsense
   When the user brings up a context menu on navigation item "[brief explanation of sense a1]"
-  And the user clicks the context menu option "Create new btw:subsense after this one"
+  And the user clicks the context menu option "Create new btw:subsense after this element"
   Then the single sense contains an additional subsense after the one that was already there
 
 Scenario: using the navigation context menu to insert a subsense before a subsense
   Given a document with a single sense that has a subsense
   When the user brings up a context menu on navigation item "[brief explanation of sense a1]"
-  And the user clicks the context menu option "Create new btw:subsense before this one"
+  And the user clicks the context menu option "Create new btw:subsense before this element"
   Then the single sense contains an additional subsense before the one that was already there
 
 Scenario: inserting an antonym

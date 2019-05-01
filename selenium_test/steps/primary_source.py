@@ -158,7 +158,7 @@ def step_impl(context, title, genre):
         var genre = arguments[1];
         var $ = jQuery;
         var $form = $(".primary-source-form");
-        if (!$form.parents(".modal.in")[0])
+        if (!$form.parents(".modal.show")[0])
             return false;
         $form.find("textarea[name='reference_title']")[0].value
             = title;
@@ -183,7 +183,7 @@ def step_impl(context):
 
     def cond(driver):
         return driver.execute_script("""
-        return !jQuery(".primary-source-form").parents(".modal.in")[0];
+        return !jQuery(".primary-source-form").parents(".modal.show")[0];
         """)
 
     util.wait(cond)

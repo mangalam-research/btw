@@ -149,7 +149,8 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         response = self.app.get(reverse('pages-root'), user=self.scribe)
         candidates = response.lxml.xpath(
             "//div[@id='btw-site-navigation']"
-            "//ul[contains(@class, ' navbar-right')]/li/a")
+            "//ul[contains(@class, 'navbar-nav ')][last()]/li/a")
+        print("XXX", list(x.text.strip() for x in candidates))
         self.assertEqual(len(candidates), 1)
         self.assertEqual(candidates[0].text.strip(), "test")
 
@@ -160,7 +161,7 @@ class MenuTestCase(DisableMigrationsMixin, WebTest):
         response = self.app.get(reverse('pages-root'))
         candidates = response.lxml.xpath(
             "//div[@id='btw-site-navigation']"
-            "//ul[contains(@class, ' navbar-right')]/li/a")
+            "//ul[contains(@class, 'navbar-nav ')][last()]/li/a")
         self.assertEqual(len(candidates), 1)
         self.assertEqual(candidates[0].text.strip(), "Log in")
 

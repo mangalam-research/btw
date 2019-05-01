@@ -24,8 +24,8 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
     __classname__: "ResultView",
     initialize: function initialize(options) {
       options = _.extend({}, options);
-      options.panelTitle = new Handlebars.SafeString(
-        "Result of Combining <button class='btn btn-default sf-add'>" +
+      options.cardTitle = new Handlebars.SafeString(
+        "Result of Combining <button class='btn btn-outline-dark sf-add'>" +
           "<i class='fa fa-fw fa-thumbs-up'></i></button>");
       ResultView.__super__.initialize.call(this, options);
     },
@@ -83,8 +83,8 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         collapse: true,
         headingId: "sf-editor-collapse-heading-" + this.cid,
         collapseId: "sf-editor-collapse-" + this.cid,
-        panelTitle: "Field Combinator",
-        panelBody: new Handlebars.SafeString(
+        cardTitle: "Field Combinator",
+        cardBody: new Handlebars.SafeString(
         "<div class='combinator-results'>" +
           "</div><div class='combinator-elements'></div>"),
       };
@@ -130,7 +130,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       this.showChildView("results", this.resultView);
 
       this.elementsView = new CombinatorElementsView({
-        panelTitle: "Elements to Combine",
+        cardTitle: "Elements to Combine",
         collection: this.elementsCollection,
         fetcher: this.fetcher,
       });

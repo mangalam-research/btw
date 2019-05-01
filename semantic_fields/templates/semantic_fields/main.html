@@ -11,14 +11,14 @@
   "../js/semantic-field-edit"],
   function ($, displayers_mod, st, edit) {
     var $table = $(document.getElementById("semantic-field-table"));
-    var table_panel = $table[0].closest(".panel");
+    var table_card = $table[0].closest(".card");
     var $template = $(displayers_mod.html_template);
-    table_panel.parentNode.insertBefore($template[0], table_panel.nextSibling);
+    table_card.parentNode.insertBefore($template[0], table_card.nextSibling);
     var displayers = st($table,
         $template[0],
         { ajax_source_url: "{% url 'semantic_fields_table' %}" }).displayers;
-    var create_field_buttons = table_panel.querySelectorAll(".btn.create-field");
-    var create_field_div = table_panel.querySelector("div.create-field");
+    var create_field_buttons = table_card.querySelectorAll(".btn.create-field");
+    var create_field_div = table_card.querySelector("div.create-field");
     {% if request.user.can_add_semantic_fields %}
     edit(create_field_buttons, create_field_div, displayers);
     {% endif %}

@@ -10,7 +10,6 @@ import { waitFor } from "testutils/util";
 import Bb from "backbone";
 import SearchView from "btw/semantic_field_editor/views/search";
 import { SearchEngine } from "testutils/search";
-import URI from "urijs/URI";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 import Handlebars from "handlebars";
@@ -73,8 +72,8 @@ describe("SearchView", () => {
     yield waitFor(() => grabber.hasRequests());
 
     const request = grabber.getSingleRequest();
-    const uri = new URI(request.url);
-    assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+    const url = new URL(request.url, "http://fake");
+    assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
     grabber.clear();
     // We want to respond to the request so that we have more than one
     // page.
@@ -103,15 +102,15 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       let request = grabber.getSingleRequest();
-      let uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      let url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
       grabber.clear();
       $input.trigger(event);
       yield waitFor(() => grabber.hasRequests());
 
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
       grabber.clear();
     }
 
@@ -138,8 +137,8 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       const request = grabber.getSingleRequest();
-      const uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      const url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
       grabber.clear();
     }));
 
@@ -152,8 +151,8 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       const request = grabber.getSingleRequest();
-      const uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      const url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
       grabber.clear();
     }));
 
@@ -163,8 +162,8 @@ describe("SearchView", () => {
          view.collection.getLastPage();
          yield waitFor(() => grabber.hasRequests());
          let request = grabber.getSingleRequest();
-         let uri = new URI(request.url);
-         assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+         let url = new URL(request.url, "http://fake");
+         assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
 
          searchEngine.respond(request, {
            offset: 20,
@@ -179,8 +178,8 @@ describe("SearchView", () => {
          yield waitFor(() => grabber.hasRequests());
 
          request = grabber.getSingleRequest();
-         uri = new URI(request.url);
-         assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+         url = new URL(request.url, "http://fake");
+         assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
          grabber.clear();
        }));
 
@@ -189,8 +188,8 @@ describe("SearchView", () => {
       view.collection.getLastPage();
       yield waitFor(() => grabber.hasRequests());
       let request = grabber.getSingleRequest();
-      let uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      let url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
 
       searchEngine.respond(request, {
         offset: 20,
@@ -205,8 +204,8 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
+      url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
       grabber.clear();
     }));
   });
@@ -235,6 +234,15 @@ describe("SearchView", () => {
     });
   });
 
+  function asObj(params) {
+    const ret = Object.create(null);
+    for (const [key, value] of params.entries()) {
+      ret[key] = value;
+    }
+
+    return ret;
+  }
+
   describe("serializes the search parameters properly", () => {
     beforeEach(() => makeAndRender({
       searchUrl: fetcherUrl,
@@ -259,10 +267,10 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       let request = grabber.getSingleRequest();
-      let uri = new URI(request.url);
-      let query = uri.query(true);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
-      assert.deepEqual(query, _.extend({}, baseQuery, { search: "Foo" }));
+      let url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
+      assert.deepEqual(asObj(url.searchParams),
+                       _.extend({}, baseQuery, { search: "Foo" }));
 
       searchInput.value = "Bar";
       aspect.value = "lexemes";
@@ -273,10 +281,9 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      query = uri.query(true);
-      assert.equal(uri.path(), "/en-us/semantic-fields/semanticfield/");
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      url = new URL(request.url, "http://fake");
+      assert.equal(url.pathname, "/en-us/semantic-fields/semanticfield/");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         search: "Bar",
         aspect: "lexemes",
         scope: "btw",
@@ -300,9 +307,8 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       let request = grabber.getSingleRequest();
-      let uri = new URI(request.url);
-      let query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      let url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "10", // We got the first page: start at 10.
       }));
 
@@ -310,9 +316,8 @@ describe("SearchView", () => {
       view.collection.getNextPage();
       yield waitFor(() => grabber.hasRequests());
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "20", // Next page.
       }));
 
@@ -320,9 +325,8 @@ describe("SearchView", () => {
       view.collection.getPreviousPage();
       yield waitFor(() => grabber.hasRequests());
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "10", // Previous page.
       }));
 
@@ -330,9 +334,8 @@ describe("SearchView", () => {
       view.collection.getFirstPage();
       yield waitFor(() => grabber.hasRequests());
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "0", // First page.
       }));
     }));
@@ -407,9 +410,8 @@ describe("SearchView", () => {
       yield waitFor(() => grabber.hasRequests());
 
       let request = grabber.getSingleRequest();
-      let uri = new URI(request.url);
-      let query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      let url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "10", // We got the first page: start at 10.
       }));
 
@@ -430,9 +432,8 @@ describe("SearchView", () => {
       view.collection.getLastPage();
       yield waitFor(() => grabber.hasRequests());
       request = grabber.getSingleRequest();
-      uri = new URI(request.url);
-      query = uri.query(true);
-      assert.deepEqual(query, _.extend({}, baseQuery, {
+      url = new URL(request.url, "http://fake");
+      assert.deepEqual(asObj(url.searchParams), _.extend({}, baseQuery, {
         offset: "20", // Last page.
       }));
 
@@ -479,16 +480,16 @@ describe("SearchView", () => {
     it("shows 'No results' at startup",
        () => waitFor(() => isInViewText(view, "No results")));
 
-    function labelTest(label) {
+    function badgeTest(badge) {
       assert.isNull(view.el.querySelector(".popover"));
-      const el = view.el.querySelector(`i.${label}-help`);
+      const el = view.el.querySelector(`i.${badge}-help`);
       el.click();
       return waitFor(() => view.el.querySelector(".popover") !== null);
     }
 
-    for (const label of ["search", "aspect", "scope", "root"]) {
-      it(`clicking the ${label} help label brings a popover`,
-         () => labelTest(label));
+    for (const badge of ["search", "aspect", "scope", "root"]) {
+      it(`clicking the ${badge} help badge brings a popover`,
+         () => badgeTest(badge));
     }
   });
 

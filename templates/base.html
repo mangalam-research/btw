@@ -8,7 +8,7 @@
       <title>{% block page_title %}BTW{% endblock %}</title>
       {% render_block "js" %}
       <script src="{% static 'lib/external/core-js.min.js' %}"></script>
-      <script src="{% static 'lib/external/bluebird.js' %}"></script>
+      <script src="{% static 'lib/external/bluebird.min.js' %}"></script>
       <script src="{% static 'lib/external/last-resort.js' %}"></script>
       <script src="{% static 'lib/initial-error-handler.js' %}"></script>
       <script src="{% static 'lib/wed/polyfills/matches.js' %}"></script>
@@ -51,7 +51,7 @@
         </div>
         {% block content %}{% endblock %}
         <div class="row site-footer">
-          <div class="text-center navbar"
+          <div class="col-lg text-center"
                style="min-height: 1em; margin: 0px">
             <p>Copyright
                 <a href="http://www.mangalamresearch.org/">Mangalam

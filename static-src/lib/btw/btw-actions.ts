@@ -17,10 +17,17 @@ import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";
 import { BTWDecorator } from "./btw-decorator";
 import { BibliographicalInfo, Mode } from "./btw-mode";
-import * as btwUtil from "./btw-util";
+import { BTW_MODE_ORIGIN, termsForSense } from "./btw-util";
 import * as SFEditor from "./semantic_field_editor/app";
 
 export class SensePtrDialogAction extends Action<TransformationData> {
+  constructor(editor: EditorAPI) {
+    super(BTW_MODE_ORIGIN, editor, "Insert a new hyperlink to a sense", {
+      icon: "<i class='fa fa-plus fa-fw'></i>",
+      needsInput: true,
+    });
+  }
+
   execute(data: TransformationData): void {
     const editor = this.editor;
 
@@ -45,7 +52,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
     for (let i = 0; i < senses.length; ++i) {
       const sense = senses[i];
       let dataNode = $.data(sense, "wed_mirror_node");
-      const termNodes = btwUtil.termsForSense(sense, mappings);
+      const termNodes = termsForSense(sense, mappings);
       const terms: string[] = [];
       // tslint:disable-next-line:prefer-for-of
       for (let tix = 0; tix < termNodes.length; ++tix) {
@@ -124,6 +131,13 @@ export class SensePtrDialogAction extends Action<TransformationData> {
 }
 
 export class ExamplePtrDialogAction extends Action<TransformationData> {
+  constructor(editor: EditorAPI) {
+    super(BTW_MODE_ORIGIN, editor, "Insert a new hyperlink to an example", {
+      icon: "<i class='fa fa-plus fa-fw'></i>",
+      needsInput: true,
+    });
+  }
+
   execute(data: TransformationData): void {
     const editor = this.editor;
 
@@ -277,7 +291,7 @@ function makeEngine(options: {}): Bloodhound {
   return engine;
 }
 
-export class InsertBiblPtrAction extends Action<{}> {
+class BaseBiblPtrAction extends Action<{}> {
   execute(_data: {}): void {
     const editor = this.editor;
     const dataCaret = editor.caretManager.getDataCaret(true)!;
@@ -421,6 +435,25 @@ export class InsertBiblPtrAction extends Action<{}> {
   }
 }
 
+export class InsertBiblPtrAction extends BaseBiblPtrAction {
+  constructor(editor: EditorAPI) {
+    super(BTW_MODE_ORIGIN, editor, "Insert a new bibliographical reference", {
+      icon: "<i class='fa fa-book fa-fw'></i>",
+      needsInput: true,
+    });
+  }
+}
+
+export class ReplaceBiblPtrAction extends BaseBiblPtrAction {
+  constructor(editor: EditorAPI) {
+    super(BTW_MODE_ORIGIN, editor,
+          "Replace the selection with a bibliographical reference", {
+      icon: "<i class='fa fa-book fa-fw'></i>",
+      needsInput: true,
+    });
+  }
+}
+
 const EDIT_SF_MODAL_KEY = "btw-mode.btw-actions.edit_sf_modal";
 function getEditSemanticFieldModal(editor: EditorAPI): Modal {
   let modal = editor.getModeData(EDIT_SF_MODAL_KEY);
@@ -435,7 +468,10 @@ function getEditSemanticFieldModal(editor: EditorAPI): Modal {
   modal.setTitle("Edit Semantic Fields");
   modal.addButton("Commit", true);
   modal.addButton("Cancel");
-  const body = modal.getTopLevel()[0].getElementsByClassName("modal-body")[0];
+  const dialog =
+    modal.getTopLevel()[0].getElementsByClassName("modal-dialog")[0];
+  dialog.classList.add("modal-lg");
+  const body = dialog.getElementsByClassName("modal-body")[0];
   body.classList.add("sf-editor-modal-body");
   body.style.overflowY = "hidden";
   editor.setModeData(EDIT_SF_MODAL_KEY, modal);
@@ -444,6 +480,13 @@ function getEditSemanticFieldModal(editor: EditorAPI): Modal {
 }
 
 export class EditSemanticFieldsAction extends Action<{}> {
+  constructor(editor: EditorAPI) {
+    super(BTW_MODE_ORIGIN, editor, "Edit semantic fields", {
+      icon: "<i class='fa fa-plus fa-fw'></i>",
+      needsInput: true,
+    });
+  }
+
   execute(_data: {}): void {
     const editor = this.editor;
     const dataCaret = editor.caretManager.getDataCaret(true)!;

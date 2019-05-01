@@ -86,7 +86,7 @@ define(/** @lends module:lib/btw/semantic_field_editor/app */ function factory(
       });
 
       var chosenFieldCollectionView = new ChosenFieldCollectionView({
-        panelTitle: "Chosen Semantic Fields",
+        cardTitle: "Chosen Semantic Fields",
         collection: fieldCollection,
         fetcher: this.fetcher,
         canDelete: true,

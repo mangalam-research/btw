@@ -12,7 +12,6 @@ import { Server } from "testutils/server";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Bb from "backbone";
 import Mn from "marionette";
-import URI from "urijs/URI";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
@@ -44,8 +43,8 @@ class TestServer extends Server {
 
     // No match.
     if (request.method === "GET" && this.fetcherUrl.test(request.url)) {
-      const query = new URI(request.url).query(true);
-      const paths = query.paths.split(";");
+      const paths = new URL(request.url, "http://fake/").searchParams
+            .get("paths").split(";");
       const response = paths.map(
         path => ({
           path,

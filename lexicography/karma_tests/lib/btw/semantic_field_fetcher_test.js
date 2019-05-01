@@ -5,7 +5,6 @@ define(function factory(require, _exports, _module) {
   var _ = require("lodash");
   var sinon = require("sinon");
   var Fetcher = require("btw/semantic-field-fetcher").SFFetcher;
-  var URI = require("urijs/URI");
   var assert = chai.assert;
 
   describe("semantic-field-fetcher", function btwViewerBlock() {
@@ -87,8 +86,8 @@ define(function factory(require, _exports, _module) {
             assert.equal(server.requests.length, 2,
                          "the fetcher should have made only two requests");
             var lastRequest = server.requests[1];
-            var url = new URI(lastRequest.url);
-            assert.equal(url.query(true).paths, "01.03n",
+            var url = new URL(lastRequest.url);
+            assert.equal(url.searchParams.get("paths"), "01.03n",
                          "the last query should have queried only the " +
                          "semantic field we lack");
 

@@ -1,28 +1,28 @@
 {% load libsf %}
 <div>
   {% with lexemes=instance.lexemes.all children=instance.children.all hte_url=instance.hte_url %}
-  <p>{{ instance.linked_breadcrumbs }} {% if request.user.can_change_semantic_fields and instance.is_custom %}<button class="btn btn-default edit-field" data-form-url="{{ instance.edit_form_url}}" data-patch-url="{{ instance.edit_url }}"><i class="fa fa-edit"></i></button>{% endif %} {{ instance.path }}{% if hte_url %} <a href="{{ hte_url }}" title="Open on HTE site." target="_blank"><i class="fa fa-external-link"></i></a>{% endif %}</p>
+  <p>{{ instance.linked_breadcrumbs }} {% if request.user.can_change_semantic_fields and instance.is_custom %}<button class="btn btn-outline-dark edit-field" data-form-url="{{ instance.edit_form_url}}" data-patch-url="{{ instance.edit_url }}"><i class="fa fa-edit"></i></button>{% endif %} {{ instance.path }}{% if hte_url %} <a href="{{ hte_url }}" title="Open on HTE site." target="_blank"><i class="fa fa-external-link"></i></a>{% endif %}</p>
   <div class="edit-div"></div>
   <p>
   {% if instance.related_by_pos %}
   {% include "semantic_fields/other_pos.html" %}</p>
   {% endif %}
   {% if request.user.can_add_semantic_fields and instance.possible_new_poses %}
-  <button class="btn btn-default create-related-by-pos"
+  <button class="btn btn-outline-dark create-related-by-pos"
           data-form-url="{{ instance.add_related_by_pos_form_url }}"
           data-post-url="{{ instance.add_related_by_pos_url }}"><i class="fa fa-plus"></i> Create New POS</button>
   <div class="create-related-by-pos-div"></div>
   {% endif %}
   </p>
   {% if lexemes.exists %}
-  <p><label>Lexemes: <span class="sf-lexemes">{% for lexeme in lexemes %}<span class="label label-default">{{ lexeme.word }} {{ lexeme.fulldate }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</span></label></p>
+  <p><label>Lexemes: <span class="sf-lexemes">{% for lexeme in lexemes %}<span class="badge badge-dark">{{ lexeme.word }} {{ lexeme.fulldate }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</span></label></p>
   {% endif %}
   {% if children.exists %}
   <p><label>Children: <span class="sf-children">{% for child in children %}{{ child.link }}{% if not forloop.last %} {% endif %}{% endfor %}</span></label></p>
   {% endif %}
   {% endwith %}
   {% if request.user.can_add_semantic_fields %}
-  <button class="btn btn-default create-child"
+  <button class="btn btn-outline-dark create-child"
           data-form-url="{{ instance.add_child_form_url }}"
           data-post-url="{{ instance.add_child_url }}"><i class="fa fa-plus"></i> Create Child</button>
   <div class="create-child-div"></div>

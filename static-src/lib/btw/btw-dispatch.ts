@@ -59,7 +59,7 @@ export interface DispatchMode {
  * base class instead of as a mixin.
  */
 export abstract class DispatchMixin {
-  private readonly _inMode: boolean;
+  private _inMode!: boolean;
 
   /* Provided by the class onto which this is mixed: */
   protected readonly abstract editor: DispatchEditor;
@@ -78,7 +78,7 @@ export abstract class DispatchMixin {
   protected abstract elementDecorator(root: Element, el: Element): void;
   /* End... */
 
-  constructor() {
+  protected init(): void {
     this._inMode = this instanceof Decorator;
   }
 

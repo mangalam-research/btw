@@ -8,9 +8,9 @@ define(["jquery", "last-resort", "bootstrap"], function module($, lastResort) {
   <div class='modal-dialog'>\
     <div class='modal-content'>\
       <div class='modal-header'>\
+        <h5>Fatal Error</h5>\
         <button type='button' class='close' data-dismiss='modal'\
 aria-hidden='true'>&times;</button>\
-        <h3>Fatal Error</h3>\
       </div>\
       <div class='modal-body'>\
       </div>\

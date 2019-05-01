@@ -1,4 +1,3 @@
-import URI from "urijs/URI";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import _ from "lodash";
 
@@ -43,12 +42,18 @@ export class SearchEngine {
   }
 
   respond(request, query) {
-    const uri = new URI(request.url);
+    const url = new URL(request.url, "http://fake");
+    let offset;
+    let limit;
     if (query === undefined) {
-      query = uri.query(true);
+      const params = url.searchParams;
+      offset = params.get("offset");
+      limit = params.get("limit");
     }
-    const response = this._makeSearchResponse(uri.path(),
-                                              +query.offset, +query.limit);
+    else {
+      ({ offset, limit } = query);
+    }
+    const response = this._makeSearchResponse(url.pathname, +offset, +limit);
     request.respond(200, { "Content-Type": "application/json" },
                     JSON.stringify(response));
   }

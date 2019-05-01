@@ -36,8 +36,10 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
 <tr>\
 {{#if helpers.canBeAdded}}\
 <td class='control-column'>\
-<a href='#' class='btn btn-default sf-add'><i class='fa fa-fw fa-thumbs-up'></i></a><br/>\
-<a href='#' class='btn btn-default sf-combine'><i class='fa fa-fw fa-at'></i></a>\
+<a href='#' class='btn btn-outline-dark sf-add'>\
+<i class='fa fa-fw fa-thumbs-up'></i></a><br/>\
+<a href='#' class='btn btn-outline-dark sf-combine'><i class='fa fa-fw fa-at'>\
+</i></a>\
 </td>\
 {{/if}}\
 <td>\
@@ -51,7 +53,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
 <p><label>Lexemes: \
 <span class='sf-lexemes'>\
 {{#each lexemes}} \
-<span class='label label-default'>{{word}} {{fulldate}}</span>{{#unless @last}}, \
+<span class='badge badge-dark'>{{word}} {{fulldate}}</span>{{#unless @last}}, \
 {{/unless}}\
 {{/each}}\
 </span>\

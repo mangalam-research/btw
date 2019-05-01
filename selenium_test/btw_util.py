@@ -517,7 +517,7 @@ class NavigatorCollection(object):
 
         self._navigators = self.util.find_elements(
             (By.CSS_SELECTOR,
-             self.top_selector + " .semantic-field-details-panel"))
+             self.top_selector + " .semantic-field-details-card"))
         return self._navigators
 
     def count(self):

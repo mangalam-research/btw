@@ -3,15 +3,16 @@ require.config({
   baseUrl: "/static/lib/",
   paths: {
     text: "requirejs/text",
+    json: "requirejs/json",
     optional: "requirejs/optional",
     jquery: "external/jquery",
     bootstrap: "external/bootstrap/js/bootstrap",
+    popper: "external/popper.min",
     log4javascript: "external/log4javascript",
     "jquery.bootstrap-growl": "external/jquery.bootstrap-growl",
-    "font-awesome": "external/font-awesome",
     "js-cookie": "external/js.cookie",
     "datatables.net": "external/datatables/js/jquery.dataTables.min",
-    "datatables.bootstrap": "external/datatables/js/dataTables.bootstrap",
+    "datatables.bootstrap": "external/datatables/js/dataTables.bootstrap4",
     "bootstrap-datepicker":
     "external/bootstrap-datepicker/js/bootstrap-datepicker",
     "pubsub-js": "external/pubsub",
@@ -67,13 +68,13 @@ require.config({
       jquery: "jquery-glue",
       backbone: "backbone-glue",
       marionette: "marionette-glue",
-      bootstrap: "wed/patches/bootstrap",
       datatables: "datatables.net",
       "btw/btw-storage-metadata.json": "text!btw/btw-storage-metadata.json",
       "wed/modes/generic/metadata-schema.json": "json!wed/modes/generic/metadata-schema.json",
       "wed/wed-options-schema.json": "json!wed/wed-options-schema.json",
       "wed/options-schema.json": "json!wed/options-schema.json",
       rangy: "wed/glue/rangy-glue",
+      "popper.js": "popper",
     },
     "jquery-glue": {
       jquery: "jquery",
@@ -97,9 +98,6 @@ require.config({
       backbone: "backbone",
       marionette: "marionette",
     },
-    "wed/patches/bootstrap": {
-      bootstrap: "bootstrap",
-    },
     // bootbox is buggy. It only requires jquery but it needs bootstrap too.
     // Loading bootstrap works due to the init we have below which makes
     // bootstrap return $.
@@ -111,6 +109,12 @@ require.config({
     {
       name: "lodash",
       location: "external/lodash",
+      main: "lodash",
+    },
+    {
+      name: "inversify",
+      location: "external/inversify",
+      main: "inversify",
     },
   ],
   bundles: {
@@ -127,15 +131,6 @@ require.config({
         "use strict";
 
         return { XRegExp: XRegExp };
-      },
-    },
-    bootstrap: {
-      deps: ["jquery"],
-      exports: "jQuery.fn.popover",
-      init: function init($) {
-        "use strict";
-
-        return $;
       },
     },
     "bootstrap-treeview": {

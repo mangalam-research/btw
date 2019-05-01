@@ -35,19 +35,19 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
 
 
       var popover = $a.data("bs.popover");
-      var $tip = popover.tip();
-      var tip = $tip[0];
+      var tip = popover.getTipElement();
+      var doc = tip.ownerDocument;
 
-      var content = tip.getElementsByClassName("popover-content")[0];
       var keys = Object.keys(alreadyResolved).sort();
       var keyIx = 0;
 
       var resolved = keys.map(function map(key) {
         return alreadyResolved[key];
       });
-      content.innerHTML = popoverTemplateCompiled({ resolved: resolved });
+      var tmpDiv = doc.createElement("div");
+      tmpDiv.innerHTML = popoverTemplateCompiled({ resolved: resolved });
 
-      var treeDivs = tip.getElementsByClassName("tree");
+      var treeDivs = tmpDiv.getElementsByClassName("tree");
       for (var treeDivIx = 0; treeDivIx < treeDivs.length; ++treeDivIx) {
         var treeDiv = treeDivs[treeDivIx];
         var key = keys[keyIx++];
@@ -64,7 +64,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         // tree for this.
         if (field.tree.length === 1 && field.tree[0].nodes.length <= 1) {
           var node = field.tree[0];
-          var link = treeDiv.ownerDocument.createElement("a");
+          var link = doc.createElement("a");
           link.textContent = node.text;
           link.href = node.href;
           treeDiv.appendChild(link);
@@ -76,9 +76,17 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
           data: field.tree,
           levels: 1,
           wrapNodeText: true,
+          checkedIcon: "fa fa-check-square",
+          collapseIcon: "fa fa-minus",
+          emptyIcon: "fa",
+          expandIcon: "fa fa-plus",
+          loadingIcon: "fa fa-spinner fa-spin",
+          // nodeIcon:,
+          selectedIcon: "fa fa-stop",
+          uncheckedIcon: "fa fa-square",
           onNodeRendered: function selected(_event, n) {
             if (n.href) {
-              var nodeA = document.createElement("a");
+              var nodeA = doc.createElement("a");
               nodeA.href = n.href;
               nodeA.textContent = n.text;
               n.$el.find("span.text").empty().append(nodeA);
@@ -91,7 +99,12 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       // testing.
       $a.trigger("fully-rendered.btw-view.sf-popover");
 
-      return Array.prototype.slice.call(content.childNodes);
+      var frag = doc.createDocumentFragment();
+      while (tmpDiv.firstChild) {
+        frag.appendChild(tmpDiv.firstChild);
+      }
+
+      return frag;
     }
 
     $a.on("click", function click(ev) {
@@ -112,8 +125,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         return true;
       };
 
-      var $tip = popover.tip();
-      var tip = $tip[0];
+      var tip = popover.getTipElement();
       if (forEditing) {
         tip.setAttribute("contenteditable", false);
         tip.classList.add("_phantom", "_gui");
@@ -123,7 +135,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       // we add the event handlers below for every click that shows the
       // popover. If the popover is recreated, then ``tip`` will be new, and
       // destroying the popover removes the event handlers that were created.
-      var method = tip.classList.contains("in") ? "destroy" : "show";
+      var method = tip.classList.contains("show") ? "dispose" : "show";
       popover[method]();
 
       // If we're not showing the popover, then we are done.
@@ -138,7 +150,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         stopEv.stopPropagation();
       }
 
-      $tip.on("click mousedown contextmenu", stopPropagation);
+      $(tip).on("click mousedown contextmenu", stopPropagation);
     });
   }
 

@@ -6,7 +6,7 @@ import * as bluejax from "bluejax";
 import "bootstrap";
 import * as $ from "jquery";
 import * as _ from "lodash";
-import { NameResolver } from "salve";
+import { DefaultNameResolver } from "salve";
 
 import { convert, DLocRoot, domtypeguards, domutil, transformation,
          treeUpdater, util } from "wed";
@@ -173,7 +173,7 @@ export class Viewer extends DispatchMixin {
   protected readonly metadata: Metadata;
   protected readonly refmans: WholeDocumentManager;
   private readonly loadTimeout: number = 30000;
-  private readonly resolver: NameResolver = new NameResolver();
+  private readonly resolver: DefaultNameResolver = new DefaultNameResolver();
   protected readonly sfFetcher: SFFetcher;
   protected readonly editor: DispatchEditor;
   protected readonly mode: DispatchMode;
@@ -201,6 +201,7 @@ export class Viewer extends DispatchMixin {
               data: string, biblData: Record<string, BibliographicalItem>,
               private readonly languagePrefix: string) {
     super();
+    this.init();
     this.metadata =
       new MetadataMultiversionReader().read(JSON.parse(metadataJSON));
     this.mapped = new MappedUtil(this.metadata.getNamespaceMappings());
@@ -238,14 +239,14 @@ export class Viewer extends DispatchMixin {
     let buttons = "<span>";
     if (editUrl != null && editUrl !== "") {
       buttons += _.template(
-        "<a class='btw-edit-btn btn btn-default' title='Edit'\
+        "<a class='btw-edit-btn btn btn-outline-dark' title='Edit'\
       href='<%= editUrl %>'><i class='fa fa-fw fa-pencil-square-o'></i>\
   </a>")({ editUrl });
     }
     buttons += "\
-<a class='btw-expand-all-btn btn btn-default' title='Expand All' href='#'>\
+<a class='btw-expand-all-btn btn btn-outline-dark' title='Expand All' href='#'>\
  <i class='fa fa-fw fa-caret-down'></i></a>\
-<a class='btw-collapse-all-btn btn btn-default' title='Collapse All' \
+<a class='btw-collapse-all-btn btn btn-outline-dark' title='Collapse All' \
  href='#'><i class='fa fa-fw fa-caret-right'></i></a></span>";
 
     // tslint:disable-next-line:no-inner-html
@@ -262,7 +263,7 @@ export class Viewer extends DispatchMixin {
 
     const expandAll = content.getElementsByClassName("btw-expand-all-btn")[0];
     $(expandAll).on("click", (ev) => {
-      $(doc.querySelectorAll(".wed-document .collapse:not(.in)"))
+      $(doc.querySelectorAll(".wed-document .collapse:not(.show)"))
         .collapse("show");
       $(content.parentNode!).collapse("hide");
       ev.preventDefault();
@@ -271,7 +272,7 @@ export class Viewer extends DispatchMixin {
     const collapseAll =
       content.getElementsByClassName("btw-collapse-all-btn")[0];
     $(collapseAll).on("click", (ev) => {
-      $(doc.querySelectorAll(".wed-document .collapse.in")).collapse("hide");
+      $(doc.querySelectorAll(".wed-document .collapse.show")).collapse("hide");
       $(content.parentNode!).collapse("hide");
       ev.preventDefault();
     });
@@ -587,12 +588,12 @@ export class Viewer extends DispatchMixin {
           // We have to work around an issue in Bootstrap 3.3.7. If destroy is
           // called more than once on a popover or tooltip, it may cause an
           // error. We work around the issue by making sure we call it only if
-          // the tip is .in.
+          // the tip is .show.
           const popover = $.data(this, "bs.popover");
           if (popover) {
-            const $tip = popover.tip();
-            if ($tip && $tip[0].classList.contains("in")) {
-              popover.destroy();
+            const tip = popover.getTipElement();
+            if (tip && tip.classList.contains("show")) {
+              popover.dispose();
             }
           }
         });
@@ -640,12 +641,12 @@ export class Viewer extends DispatchMixin {
 
     const affix = doc.getElementById("btw-article-affix")!;
     this.populateAffix(affix);
-    $(affix).affix({
-      offset: {
-        top: 1,
-        bottom: 1,
-      },
-    });
+    // $(affix).affix({
+    //   offset: {
+    //     top: 1,
+    //     bottom: 1,
+    //   },
+    // });
 
     $(doc.body).scrollspy({ target: "#btw-article-affix" });
 
@@ -766,11 +767,11 @@ export class Viewer extends DispatchMixin {
     }
 
     const parents: Element[] = [];
-    let parent = closest(target, ".collapse:not(.in)");
+    let parent = closest(target, ".collapse:not(.show)");
     while (parent !== null) {
       parents.unshift(parent);
       parent = parent.parentNode as Element;
-      parent = parent !== null ? closest(parent, ".collapse:not(.in)") : null;
+      parent = parent !== null ? closest(parent, ".collapse:not(.show)") : null;
     }
 
     function next(level: Element): void {

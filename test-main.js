@@ -1,3 +1,6 @@
+// Cancel the autorun.
+// eslint-disable-next-line strict
+window.__karma__.loaded = function loaded() {};
 
 function pathToModule(path) {
   "use strict";

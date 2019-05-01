@@ -7,7 +7,6 @@ define(function factory(require, _exports, _module) {
   var bluejax = require("bluejax");
   var Promise = require("bluebird");
   var sinon = require("sinon");
-  var URI = require("urijs/URI");
   var assert = chai.assert;
 
   var semanticFieldURL = /^\/semantic-fields\/semanticfield\/(.*)$/;
@@ -21,8 +20,8 @@ define(function factory(require, _exports, _module) {
       "GET",
       semanticFieldURL,
       function respond(request) {
-        var query = new URI(request.url).query(true);
-        var paths = query.paths.split(";");
+        var query = new URL(request.url).searchParams;
+        var paths = query.get("paths").split(";");
         var response = [];
         for (var i = 0; i < paths.length; ++i) {
           var path = paths[i];

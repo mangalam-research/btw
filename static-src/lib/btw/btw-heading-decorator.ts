@@ -239,17 +239,17 @@ export class HeadingDecorator {
           this.collapseHeadingIdManager.generate(),
           this.collapseIdManager.generate(),
           {
-            panel: collapse.additionalClasses,
+            card: collapse.additionalClasses,
             toggle: "arrow-toggle",
           });
         const group = collapsible.group;
-        const panelBody = collapsible.content;
+        const cardBody = collapsible.content;
         collapsible.heading.textContent = headStr;
 
         const next = el.nextSibling;
         const parent = el.parentNode as Element;
         this.guiUpdater.removeNode(el);
-        panelBody.appendChild(el);
+        cardBody.appendChild(el);
         this.guiUpdater.insertBefore(parent, group, next);
       }
     }

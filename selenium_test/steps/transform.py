@@ -515,7 +515,7 @@ def step_impl(context, test):
 @then(r"the user gets a dialog saying that the selection is straddling")
 def step_impl(context):
     util = context.util
-    modal = util.find_element((By.CSS_SELECTOR, ".modal.in"))
+    modal = util.find_element((By.CSS_SELECTOR, ".modal.show"))
     assert_true(modal.text.find("The text selected straddles") > -1)
 
 __PARAGRAPH_COUNT_RE = r"the definition contains (?P<number>\d+) paragraphs?"

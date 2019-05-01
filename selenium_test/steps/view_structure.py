@@ -244,7 +244,7 @@ def step_impl(context, citation, not_op=None):
     var parent = cit.parentNode;
     while (parent && parent.classList) {
       if (parent.classList.contains("collapse") &&
-          !parent.classList.contains("in"))
+          !parent.classList.contains("show"))
         return [!not_op, "should not be in a collapsed section"];
       if (parent.classList.contains("collapsing"))
         return [false, "should not be in a section that is in the "+
@@ -269,7 +269,7 @@ def step_impl(context, state):
       return [false, "no element should be collapsing"];
     var collapse = btw_viewer.root.getElementsByClassName("collapse");
     var not_collapsed = Array.prototype.filter.call(collapse, function (x) {
-        return x.classList.contains("in");
+        return x.classList.contains("show");
     });
     return collapsed_desired ?
         [not_collapsed.length === 0, "all sections should be collapsed"] :
@@ -285,7 +285,7 @@ def step_impl(context, which):
         return driver.execute_script(r"""
         var collapse = document.getElementById("toolbar-collapse");
         // We want to wait until it is collapsed.
-        if (collapse.classList.contains("in") ||
+        if (collapse.classList.contains("show") ||
             collapse.classList.contains("collapsing"))
            return undefined;
         return document.getElementById("toolbar-heading");
@@ -297,13 +297,13 @@ def step_impl(context, which):
 
     which = which.replace(" ", "-")
 
-    # We use the .in class to make sure the toolbar is fully expanded
+    # We use the .show class to make sure the toolbar is fully expanded
     # before clicking. On FF, not doing this *will* result in Selenium
     # considering the element clickable *but* will fail on the click
     # operation itself complaining that the element cannot be scrolled
     # into view!
     button = util.wait(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, "#toolbar-collapse.in .btw-{0}-btn"
+        (By.CSS_SELECTOR, "#toolbar-collapse.show .btw-{0}-btn"
          .format(which))))
     button.click()
 
@@ -341,7 +341,7 @@ def step_impl(context, what, title=None):
     var what = arguments[0];
     var title = arguments[1];
 
-    var panel_title;
+    var card_title;
     switch(what) {
     case "cognate":
         var cognate = Array.prototype.slice.call(
@@ -352,12 +352,12 @@ def step_impl(context, what, title=None):
             return x.textContent.trim() === title;
         })[0];
         if (cognate)
-            panel_title = cognate.parentNode.nextElementSibling
-                .getElementsByClassName("panel-title")[0];
+            card_title = cognate.parentNode.nextElementSibling
+                .getElementsByClassName("card-header")[0];
         break;
     case "first collapsible section":
-        panel_title = Array.prototype.slice.call(
-          document.getElementsByClassName("panel-title"))
+        card_title = Array.prototype.slice.call(
+          document.getElementsByClassName("card-header"))
           .filter(function (x) {
             return x.textContent.trim() === title;
         })[0];
@@ -365,11 +365,11 @@ def step_impl(context, what, title=None):
     default:
         return [false, "invalid value for 'what'"];
     }
-    if (!panel_title)
+    if (!card_title)
         return [false, "there should be a collapsible section"];
 
-    var panel = panel_title.parentNode.parentNode;
-    var collapse = panel.getElementsByClassName("collapse")[0];
+    var card = card_title.closest(".card");
+    var collapse = card.getElementsByClassName("collapse")[0];
     var text = Array.prototype.reduce.call(
       collapse.getElementsByClassName("btw:sf"),
       function (prev, current) {

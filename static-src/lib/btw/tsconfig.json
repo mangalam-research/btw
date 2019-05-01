@@ -16,14 +16,13 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
-    "target": "es5",
+    "target": "es6",
     "lib": ["dom", "es2015"],
     "baseUrl": ".",
     "paths": {
-      "wed": ["../../../node_modules/wed/standalone/lib/wed"],
-      "wed/*": ["../../../node_modules/wed/standalone/lib/wed/*"],
-      "wed/modes/*": ["../../../node_modules/wed/standalone/lib/wed/modes/*"],
-      "bloodhound": ["../../../node_modules/wed/standalone/lib/external/bloodhound.min.js"],
+      "wed": ["../../../node_modules/@wedxml/core/dev/lib/wed"],
+      "wed/modes/*": ["../../../node_modules/@wedxml/core/dev/lib/wed/modes/*"],
+      "bloodhound": ["../../../node_modules/corejs-typeahead/dist/bloodhound.min.js"],
       "bluejax": ["../../../types/bluejax"]
     }
   }

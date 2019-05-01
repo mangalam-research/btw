@@ -4,6 +4,6 @@
   <fieldset>
     {% csrf_token %}
     {% bootstrap_form form %}
-    <p>{% buttons %}<a class="btn btn-default submit" href="#">{{ form.submit_text }}</a><a class="btn btn-default cancel" href="#">Cancel</a>{% endbuttons %}</p>
+    <p>{% buttons %}<a class="btn btn-outline-dark submit" href="#">{{ form.submit_text }}</a><a class="btn btn-outline-dark cancel" href="#">Cancel</a>{% endbuttons %}</p>
   </fieldset>
 </form>

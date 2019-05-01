@@ -71,12 +71,12 @@ def step_impl(context):
     assert_equal(selenic.util.locations_within(menu.location, target, 10), '')
 
 
-@when('the user clicks the first context menu option')
+@when('the user clicks the second context menu option')
 def step_impl(context):
     util = context.util
 
     link = util.wait(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, ".wed-context-menu li>a")))
+        (By.CSS_SELECTOR, ".wed-context-menu a.dropdown-item:nth-of-type(2)")))
     link.click()
 
 

@@ -137,13 +137,13 @@ describe("BreadcrumbView", () => {
     });
 
     it("displays all lexemes", () => {
-      const labels = [...view.el.querySelectorAll(".sf-lexemes .label")];
-      assert.isTrue(labels.length > 1);
+      const badges = [...view.el.querySelectorAll(".sf-lexemes .badge")];
+      assert.isTrue(badges.length > 1);
       for (const lexeme of firstField.lexemes) {
-        const label = labels.shift();
-        assert.equal(label.textContent, `${lexeme.word} ${lexeme.fulldate}`);
+        const badge = badges.shift();
+        assert.equal(badge.textContent, `${lexeme.word} ${lexeme.fulldate}`);
       }
-      assert.isTrue(labels.length === 0);
+      assert.isTrue(badges.length === 0);
       return Promise.resolve();
     });
   });
@@ -167,8 +167,8 @@ describe("BreadcrumbView", () => {
     });
 
     it("does not display lexemes", () => {
-      const labels = view.el.querySelector(".sf-lexemes");
-      assert.isNull(labels);
+      const badges = view.el.querySelector(".sf-lexemes");
+      assert.isNull(badges);
       return Promise.resolve();
     });
   });

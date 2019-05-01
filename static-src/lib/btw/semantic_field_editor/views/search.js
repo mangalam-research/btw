@@ -6,7 +6,7 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
   var Mn = require("marionette");
   var Bb = require("backbone");
   var Handlebars = require("handlebars");
-  var panelTemplate = require("text!./panel.hbs");
+  var cardTemplate = require("text!./panel.hbs");
   var queryFormTemplate = require("text!./query-form.html");
   var BreadcrumbView = require("./field/breadcrumb");
   var Field = require("../models/field");
@@ -211,11 +211,12 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
     },
   });
 
-  function makeHelpPopover(el, content) {
+  function makeHelpPopover(el, content, container) {
     $(el).popover({
       placement: "auto",
       content: content,
-      html: "true",
+      html: true,
+      container: container,
     });
   }
 
@@ -259,7 +260,8 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
       var names = ["searchHelp", "aspectHelp", "scopeHelp", "rootHelp"];
       for (var i = 0; i < names.length; ++i) {
         var name = names[i];
-        makeHelpPopover(this.ui[name + "Label"], this.ui[name][0].innerHTML);
+        makeHelpPopover(this.ui[name + "Label"], this.ui[name][0].innerHTML,
+                        this.el);
       }
     },
   });
@@ -291,15 +293,15 @@ define(/** @lends auto */ function factory(require, _exports, _module) {
         _.omit(options, ["searchUrl", "canAddResults", "debounceTimeout"]));
     },
 
-    template: Handlebars.compile(panelTemplate),
+    template: Handlebars.compile(cardTemplate),
 
     templateContext: function templateContext() {
       return {
         collapse: true,
         headingId: "sf-editor-collapse-heading-" + this.cid,
         collapseId: "sf-editor-collapse-" + this.cid,
-        panelTitle: "Semantic Field Search",
-        panelBody: new Handlebars.SafeString(
+        cardTitle: "Semantic Field Search",
+        cardBody: new Handlebars.SafeString(
           "<div class='search-form'></div><hr />" +
             "<div class='results'></div>"),
       };

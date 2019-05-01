@@ -36,13 +36,6 @@ TEI?=/usr/share/xml/tei/stylesheet
 # depend on TEI being present.
 SCHEMATRON_TO_XSL?=/usr/share/xml/tei/odd/Utilities/iso_svrl_for_xslt2.xsl
 
-
-#
-# Whether or not to include in the final build the optimized version
-# of wed.
-#
-WED_OPTIMIZED?=1
-
 PYTHON_PARAMS?=
 PYTHON?=python
 
@@ -56,14 +49,9 @@ WGET:=$(WGET) --no-use-server-timestamps
 
 BUILD_DIR:=build
 
-WED_PATH:=$(PWD)/node_modules/wed
-WED_BUILD:=$(WED_PATH)/$(if $(WED_OPTIMIZED),packed,standalone)
-# wed 1.0.0 does not include the inc files in the packed hierarchy.
-WED_LESS_INC_PATH:=$(WED_PATH)/standalone/lib/wed/less-inc/
-
-ifeq ($(wildcard $(WED_BUILD)),)
-$(error Cannot find the wed build at $(WED_BUILD))
-endif
+WED_PATH:=node_modules/@wedxml/core
+WED_BUILD:=build/wed-prod
+WED_SASS_INC_PATH:=$(WED_BUILD)/lib/wed/sass-inc/
 
 # Whether we are running in a builder like Jenkins or Buildbot.
 # Normalized to the value 1 when true or empty string when false.
@@ -72,15 +60,6 @@ endif
 BUILD_ENV:=$(and $(or $(JENKINS_HOME),$(BUILDBOT)),1)
 BEHAVE_SAVE?=$(if $(BUILD_ENV),,1)
 
-# When we do builds through an automated system like Buildbot, the
-# builds must always happen with an optimized wed. We could override
-# WED_OPTIMIZED when we detect that we are in such environment but we
-# probably want to be reminded that we have been operating with an
-# unoptimized wed all this time.
-ifneq ($(and $(BUILD_ENV),$(if $(WED_OPTIMIZED),,1)),)
-$(error You must set WED_OPTIMIZED to build with an optimized wed.)
-endif
-
 # "direct" sources are those source that are directly built
 # one-by-one. For instance, .js files that are copied, or .less files
 # that are converted to .css. An example of source that is not
@@ -88,7 +67,7 @@ endif
 DIRECT_SOURCES:=$(shell find static-src -type f ! -name "*.ts")
 BUILD_DEST:=$(BUILD_DIR)/static-build
 BUILD_CONFIG:=$(BUILD_DIR)/config
-LOCAL_SOURCES:=$(foreach f,$(DIRECT_SOURCES),$(patsubst %.less,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
+LOCAL_SOURCES:=$(foreach f,$(DIRECT_SOURCES),$(patsubst %.scss,%.css,$(patsubst static-src/%,$(BUILD_DEST)/%,$f)))
 # Local sources that need to be process by specialized recipes.
 GENERATED_LOCAL_SOURCES:=$(filter %.css,$(LOCAL_SOURCES)) $(BUILD_DEST)/config/requirejs-config-dev.js
 # Local sources that are merely copied.
@@ -106,13 +85,56 @@ and_map=$1 $1.map
 # Function for automatically adding a map when the .js is replaced by .map.
 map=$1 $(patsubst %.js,%.map,$1)
 
-DATATABLES_PLUGIN_TARGETS:=$(call externalize, datatables/js/dataTables.bootstrap.js datatables/css/dataTables.bootstrap.css)
-FINAL_SOURCES:=$(LOCAL_SOURCES) $(call externalize, datatables jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css bluebird.min.js bootstrap-datepicker moment.js velocity/velocity.min.js velocity/velocity.js velocity/velocity.ui.min.js velocity/velocity.ui.js $(call and_map,last-resort.js) bluejax.js bluejax.try.js lucene-query-parser.js bootstrap-treeview.min.js bootstrap-treeview.min.css $(call map,backbone-min.js) backbone.js $(call and_map,backbone.marionette.min.js) backbone.marionette.js backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css $(call and_map,underscore-min.js) backbone.paginator.js handlebars.js handlebars.min.js backbone-relational.js backbone.radio.js $(call and_map,backbone.radio.min.js) jquery.twbsPagination.js dragula.min.js dragula.min.css ResizeObserver.js js.cookie.js) $(DATATABLES_PLUGIN_TARGETS)
+DATATABLES_PLUGIN_TARGETS:=$(call externalize, datatables/js/dataTables.bootstrap4.js datatables/css/dataTables.bootstrap4.css)
+FINAL_SOURCES:=$(LOCAL_SOURCES) \
+  $(BUILD_DEST)/lib/requirejs/require.js\
+  $(BUILD_DEST)/lib/requirejs/text.js\
+  $(BUILD_DEST)/lib/requirejs/json.js\
+  $(call externalize, \
+	datatables\
+	jquery.growl/js/jquery.growl.js jquery.growl/css/jquery.growl.css\
+	bluebird.min.js\
+	bootstrap-datepicker\
+	moment.js\
+	velocity/velocity.min.js velocity/velocity.js\
+	velocity/velocity.ui.min.js velocity/velocity.ui.js\
+	last-resort.js\
+	bluejax.js bluejax.try.js\
+	lucene-query-parser.js\
+	bootstrap-treeview.min.js bootstrap-treeview.min.css\
+	$(call map,backbone-min.js) backbone.js\
+	$(call and_map,backbone.marionette.min.js) backbone.marionette.js\
+	backbone-forms/backbone-forms.js backbone-forms/bootstrap3.js backbone-forms/bootstrap3.css\
+	$(call and_map,underscore-min.js)\
+	backbone.paginator.js\
+	handlebars.js handlebars.min.js\
+	backbone-relational.js\
+	backbone.radio.js $(call and_map,backbone.radio.min.js)\
+	jquery.twbsPagination.js\
+	dragula.min.js dragula.min.css\
+	ResizeObserver.js\
+	js.cookie.js\
+	jquery.js\
+	bootstrap/js/bootstrap.js bootstrap/css/bootstrap.min.css\
+	popper.min.js\
+	lodash\
+	font-awesome/css/font-awesome.min.css\
+	font-awesome/fonts\
+	bootstrap-notify.js\
+	$(call and_map,salve.min.js)\
+	inversify\
+	$(call and_map,interact.min.js)\
+	bloodhound.min.js\
+	typeahead.jquery.min.js\
+	typeaheadjs.css\
+	log4javascript.js\
+	$(call and_map,ajv.min.js)\
+	merge-options.js\
+	is-plain-obj.js\
+	core-js.min.js)\
+	$(DATATABLES_PLUGIN_TARGETS)
 
-DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.js $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
-
-WED_FILES:=$(shell find $(WED_BUILD) -type f)
-FINAL_WED_FILES:=$(foreach f,$(WED_FILES),$(patsubst $(WED_BUILD)/%,$(BUILD_DEST)/%,$f))
+DERIVED_SOURCES:=$(BUILD_DEST)/lib/btw/btw-storage.rng $(BUILD_DEST)/lib/btw/btw-storage-metadata.json $(BUILD_DEST)/lib/btw/btw-storage-doc
 
 TEST_DATA_FILES:=$(foreach f,prepared_published_prasada.xml,build/test-data/$f)
 
@@ -121,13 +143,6 @@ TEST_DATA_FILES:=$(foreach f,prepared_published_prasada.xml,build/test-data/$f)
 TARGETS:= javascript typescript python-generation btw-schema-targets
 .PHONY: all
 all: _all
-# Check we are using the same version of bootstrap in both places, we
-# check against the non-optimized version because the optimized
-# version is modified during optimization.
-	@diff node_modules/bootstrap/dist/css/bootstrap.css \
-	  $(WED_PATH)/standalone/lib/external/bootstrap/css/bootstrap.css || \
-	  { echo "There appear to be a difference between the \
-	  bootstrap downloaded by BTW and the one in wed." && exit 1; }
 # We use --clear for two reasons: a) we want old crap to be removed
 # and b) there are situations where the timestamps of files installed
 # with NPM can trip us. Trying to fix it as part of the Makefile is
@@ -150,17 +165,22 @@ build/python/semantic_fields/field.py: semantic_fields/field.ebnf
 	tatsu $< -o $@
 
 .PHONY: javascript
-javascript: $(FINAL_WED_FILES) $(FINAL_SOURCES) $(DERIVED_SOURCES)
+javascript: $(WED_BUILD) $(FINAL_SOURCES) $(DERIVED_SOURCES)
 
 .PHONY: typescript
 typescript:
 	./node_modules/.bin/tsc -p static-src/lib/btw/tsconfig.json --outDir $(BUILD_DEST)/lib/btw/
 
-$(FINAL_WED_FILES): $(BUILD_DEST)/%: $(WED_BUILD)/%
-	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
-	cp $< $@
+$(BUILD_DIR)/wed-dev/entry.js: wed/entry.ts
+	./node_modules/.bin/tsc -p wed/tsconfig.json --outDir $(dir $@)
 
-$(BUILD_DEST)/lib/btw/btw-storage.js: utils/schemas/out/btw-storage-latest.js
+$(WED_BUILD): $(BUILD_DIR)/wed-dev/entry.js
+	./node_modules/.bin/wed-build wed/wed.config.js
+	rm -rf $(BUILD_DEST)/lib/wed*
+	cp -rp $(WED_BUILD)/lib/wed* $(BUILD_DEST)/lib
+
+
+$(BUILD_DEST)/lib/btw/btw-storage.rng: utils/schemas/out/btw-storage-latest.rng
 	cp $< $@
 
 $(BUILD_DEST)/lib/btw/btw-storage-metadata.json: utils/schemas/out/btw-storage-metadata-latest.json
@@ -175,23 +195,16 @@ $(COPIED_LOCAL_SOURCES): $(BUILD_DEST)/%: static-src/%
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
 	cp $< $@
 
-$(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/make-optimized-config static-src/config/requirejs-config-dev.js
+$(BUILD_DEST)/config/requirejs-config-dev.js: static-src/config/requirejs-config-dev.js
 	-@[ -e $(dir $@) ] || mkdir -p $(dir $@)
-ifneq ($(WED_OPTIMIZED),)
-# This is an ad hoc way of modifying the configuration for the sake of
-# an optimized build. This basically exports all the modules that are
-# going to be needed from outside the bundle that contains wed.
-	$< $(word 2,$^) > $@
-else
-	cp $(word 2,$^) $@
-endif
+	cp $< $@
 
-btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.less $(WED_LESS_INC_PATH)/*.less
-btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.less node_modules/bootstrap/less/variables.less
+btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.scss $(WED_SASS_INC_PATH)/*.scss
+btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.scss node_modules/bootstrap/scss/_variables.scss
 
 .SECONDEXPANSION:
-$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.less $$($$(notdir $$@)_CSS_DEPS)
-	node_modules/.bin/lessc --include-path=$(WED_LESS_INC_PATH) $< $@
+$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.scss $$($$(notdir $$@)_CSS_DEPS)
+	node_modules/.bin/node-sass --include-path=$(WED_SASS_INC_PATH) $< $@
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
 
@@ -283,10 +296,79 @@ $(BUILD_CONFIG)/nginx.conf:
 	sed -e's;@PWD@;$(PWD);'g $< > $@
 
 $(EXTERNAL)/datatables: node_modules/datatables/media
+	-mkdir -p $(dir $@)
 	rm -rf $@
 	cp -rp node_modules/datatables/media $@
 
-$(DATATABLES_PLUGIN_TARGETS): $(EXTERNAL)/datatables/%: node_modules/datatables.net-bs/%
+$(DATATABLES_PLUGIN_TARGETS): $(EXTERNAL)/datatables/%: node_modules/datatables.net-bs4/%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/core-js.min.js: node_modules/core-js/client/core.min.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(BUILD_DEST)/lib/requirejs/require.js: node_modules/requirejs/require.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(BUILD_DEST)/lib/requirejs/text.js: node_modules/requirejs-text/text.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(BUILD_DEST)/lib/requirejs/json.js: node_modules/requirejs-plugins/src/json.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/font-awesome/%: node_modules/font-awesome/%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/bootstrap-notify.js: node_modules/bootstrap-notify/bootstrap-notify.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/salve%: node_modules/salve/salve%
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/interact%: node_modules/interactjs/dist/interact%
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/merge-options.js: node_modules/merge-options/index.js
+	-mkdir -p $(dir $@)
+	echo "define(function (require, exports, module) {" > $@
+	cat $< >> $@
+	echo "});" >> $@
+
+$(EXTERNAL)/is-plain-obj.js: node_modules/is-plain-obj/index.js
+	-mkdir -p $(dir $@)
+	echo "define(function (require, exports, module) {" > $@
+	cat $< >> $@
+	echo "});" >> $@
+
+$(EXTERNAL)/bloodhound.min.js: node_modules/corejs-typeahead/dist/bloodhound.min.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/typeahead.jquery.min.js: node_modules/corejs-typeahead/dist/typeahead.jquery.min.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/typeaheadjs.css: node_modules/typeahead.js-bootstrap4-css/typeaheadjs.css
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/log4javascript.js: node_modules/log4javascript/log4javascript.js
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/ajv.%: node_modules/ajv/dist/ajv.%
+	-mkdir -p $(dir $@)
+	cp $< $@
+
+$(EXTERNAL)/inversify: node_modules/inversify/amd
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
@@ -306,7 +388,7 @@ $(EXTERNAL)/bluejax.try.js: node_modules/bluejax.try/index.js
 	-mkdir -p $(dir $@)
 	cp $< $@
 
-$(EXTERNAL)/last-resort.js%: node_modules/last-resort/dist/last-resort.min.js%
+$(EXTERNAL)/last-resort.js: node_modules/last-resort/last-resort.js
 	-mkdir -p $(dir $@)
 	cp $< $@
 
@@ -334,11 +416,31 @@ $(EXTERNAL)/jquery.growl/js/jquery.growl.js: node_modules/jquery.growl/javascrip
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
+$(EXTERNAL)/jquery.js: node_modules/jquery/dist/jquery.js
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/bootstrap/js/bootstrap.js: node_modules/bootstrap/dist/js/bootstrap.js
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/popper.min.js: node_modules/popper.js/dist/umd/popper.min.js
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/bootstrap/css/bootstrap.min.css: node_modules/bootstrap/dist/css/bootstrap.min.css
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
 $(EXTERNAL)/bootstrap-treeview.%: node_modules/patternfly-bootstrap-treeview/dist/bootstrap-treeview.%
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 
 $(EXTERNAL)/backbone%: node_modules/backbone/backbone%
+	-mkdir -p $(dir $@)
+	cp -rp $< $@
+
+$(EXTERNAL)/lodash: node_modules/lodash
 	-mkdir -p $(dir $@)
 	cp -rp $< $@
 

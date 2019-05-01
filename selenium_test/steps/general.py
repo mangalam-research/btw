@@ -502,7 +502,7 @@ def step_impl(context, how=None):
       'another user')
 def step_impl(context):
     header = context.util.find_element((By.CSS_SELECTOR,
-                                        ".modal.in .modal-header h3"))
+                                        ".modal.show .modal-header h5"))
     assert_equal(header.text, "Edited by another!")
 
 
@@ -535,7 +535,7 @@ def step_impl(context, name):
 
     modal = util.wait(
         EC.visibility_of_element_located((By.CSS_SELECTOR,
-                                          ".modal.in")))
+                                          ".modal.show")))
 
     assert_equal(modal.find_element_by_class_name("modal-title").text,
                  name)
@@ -560,11 +560,11 @@ def step_impl(context, what):
 
     # Searching by class in XPath sucks, and searching by text with a
     # CSS selector sucks too. So here we are.
-    modal = util.find_element((By.CSS_SELECTOR, ".modal.in .modal-footer"))
+    modal = util.find_element((By.CSS_SELECTOR, ".modal.show .modal-footer"))
     button = modal.find_element_by_link_text(what)
     button.click()
     util.wait(lambda driver:
-              len(driver.find_elements(By.CSS_SELECTOR, ".modal.in")) == 0)
+              len(driver.find_elements(By.CSS_SELECTOR, ".modal.show")) == 0)
 
 @when(r'the user dismisses the modal by using the close button in the '
       r'modal header')
@@ -572,5 +572,5 @@ def step_impl(context):
     util = context.util
 
     button = util.find_element((By.CSS_SELECTOR,
-                                ".modal.in .modal-header .close"))
+                                ".modal.show .modal-header .close"))
     button.click()

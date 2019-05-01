@@ -301,8 +301,9 @@ class SemanticField(models.Model):
             css_class = " " + css_class
 
         return mark_safe(
-            "<a class='btn btn-default btn-sm sf-link{0}' href='{1}'>{2}</a>"
-            .format(css_class, self.detail_url, escape(text)))
+            ("<a class='btn btn-outline-dark btn-sm sf-link{0}' "
+             "href='{1}'>{2}</a>").format(css_class, self.detail_url,
+                                          escape(text)))
 
     @property
     def link(self):
@@ -311,7 +312,7 @@ class SemanticField(models.Model):
         URL for obtaining the details of this instance. The link is
         generated to meet the needs of the BTW project. The link has
         for text the heading of this instance. The class on the ``a``
-        element is ``btn btn-default btn-sm sf-link``.
+        element is ``btn btn-outline-dark btn-sm sf-link``.
         """
         return self.make_link()
 

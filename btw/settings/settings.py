@@ -201,9 +201,9 @@ $.ajaxPrefilter(function (s) {
   }
 });""",
     "COMPILERS": (
-        'pipeline.compilers.less.LessCompiler',
+        'pipeline.compilers.sass.SASSCompiler',
     ),
-    "LESS_BINARY": os.path.join(s.TOPDIR, "./node_modules/.bin/lessc"),
+    "SASS_BINARY": os.path.join(s.TOPDIR, "./node_modules/.bin/node-sass"),
 }
 
 #
@@ -575,7 +575,7 @@ s.BTW_BOOTSTRAP_TREEVIEW_CSS_PATH = \
 #
 # For styling with bootstrap:
 s.BTW_DATATABLES_CSS_PATH = \
-    '/static/lib/external/datatables/css/dataTables.bootstrap.css'
+    '/static/lib/external/datatables/css/dataTables.bootstrap4.css'
 
 s.BTW_REQUIREJS_PATH = None
 # We don't load classList from the external directory because it is
