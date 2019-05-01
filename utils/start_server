@@ -43,6 +43,9 @@ tmpconf = None
 clean_databases = False
 keep_tmpdir = False
 
+def banner(msg):
+    print("\n\n*** {} ***\n\n".format(msg))
+
 def cleanup_databases():
     for name, _ in name_users:
         try:
@@ -68,7 +71,11 @@ def cleanup_databases():
             subprocess.check_call(['dropdb', name])
 
 def cleanup(*_whatever):
-    # Make sure that cleanup happens!
+    banner("CLEANUP")
+    atexit.unregister(cleanup)
+
+    # Make sure that cleanup happens even if these signals occur during
+    # cleanup
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
@@ -86,22 +93,26 @@ def cleanup(*_whatever):
     # cascading error which will cause Redis to fill up. (Basically, a
     # task could be restarted over and over again, causing events to
     # be stored in Redis until memory is exhausted.)
+    banner("STOPPING WORKERS")
     try:
         subprocess.check_call(['./manage.py', 'btwworker', 'stop', '--all'])
     except:
         sys.stderr.write("Cannot stop workers.\n")
 
+    banner("DROPPING EXISTDB DATABASE")
     try:
         subprocess.check_call(['./manage.py', 'btwexistdb', 'dropdb'])
     except:
         sys.stderr.write("Cannot drop eXist database.")
 
+    banner("STOPPING REDIS")
     try:
         subprocess.check_call(['./manage.py', 'btwredis', 'stop'])
     except:
         sys.stderr.write("Cannot stop redis.\n")
 
     if clean_databases:
+        banner("CLEANING UP DATABASES")
         cleanup_databases()
         clean_databases = False
 
@@ -138,11 +149,13 @@ read_from = local_conf_path if os.path.exists(local_conf_path) \
 # kill. We swallow exceptions here because an exception means either:
 # a) there is no redis to kill or b) something terrible happened but
 # there's really nothing we can do to fix it here.
+banner("CLEANING OLD REDIS")
 try:
     subprocess.check_call(['./manage.py', 'btwredis', 'stop'])
 except:
     pass
 
+banner("STARTING REDIS")
 subprocess.check_call(['./manage.py', 'btwredis', 'start'])
 
 # Again, if the build system summarily killed a build, then there may
@@ -170,6 +183,7 @@ subprocess.check_call(['./manage.py', 'btwcheck'])
 
 pid_to_name = {}
 server_port = str(outil.get_unused_port())
+banner("STARTING SERVER")
 server = subprocess.Popen(["./manage.py", "liveserver",
                            "localhost:" + server_port, fifo_to_server,
                            fifo_from_server])
