@@ -6,7 +6,7 @@ webtest>=2.0.33
 django-allauth>=0.39.1,<=0.40
 django-datatables-view==1.17.0
 psycopg2>=2.7,<2.8 --no-binary psycopg2
-django-bootstrap3>=8.2.1,<9
+django-bootstrap4>=0.0.8
 requests>=2.21.0,<3
 pyvirtualdisplay>=0.2.1,<2
 selenium==2.49.0

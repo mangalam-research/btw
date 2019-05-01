@@ -664,7 +664,7 @@ class _CreateMixin(_AjaxMixin):
         self.assertEqual(response.content_type, expected_content_type)
         error = "This field is required."
         if expected_content_type == "text/html":
-            el = response.lxml.cssselect(".help-block")[0]
+            el = response.lxml.cssselect(".invalid-feedback")[0]
             self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
             self.assertEqual(response.json, {"heading": [error]})
@@ -703,7 +703,7 @@ class _CreateMixin(_AjaxMixin):
             "Select a valid choice. xxxxxx is not one of the " \
             "available choices."
         if expected_content_type == "text/html":
-            el = response.lxml.cssselect(".help-block")[0]
+            el = response.lxml.cssselect(".invalid-feedback")[0]
             self.assertEqual("".join(el.itertext()).strip(), error)
         elif expected_content_type == "application/json":
             self.assertEqual(response.json, {"pos": [error]})

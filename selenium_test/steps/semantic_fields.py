@@ -393,10 +393,8 @@ def step_impl(context):
 
     def cond(driver):
         return driver.execute_script("""
-        var $ = jQuery;
-        var $msg = $("form *[name='heading']")
-            .next(".help-block");
-        return $msg.text() !== "";
+        return jQuery("form *[name='heading']").next(".invalid-feedback")
+          .text() !== "";
         """)
 
     util.wait(cond)

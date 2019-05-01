@@ -196,11 +196,8 @@ def step_impl(context, error):
 
     def cond(driver):
         return driver.execute_script("""
-        var error = arguments[0];
-        var $ = jQuery;
-        var $msg = $(".primary-source-form *[name='reference_title']")
-            .next(".help-block");
-        return $msg.text() === error;
+        return jQuery(".primary-source-form *[name='reference_title']")
+          .next(".invalid-feedback").text() === arguments[0];
         """, error)
 
     util.wait(cond)
