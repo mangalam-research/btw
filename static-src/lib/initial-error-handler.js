@@ -52,8 +52,7 @@
     // eslint-disable-next-line no-console
     console.log(msg);
 
-    // eslint-disable-next-line no-alert
+    // eslint-disable-next-line no-restricted-globals, no-alert
     alert(msg);
-    window.location.reload();
   });
 }());
