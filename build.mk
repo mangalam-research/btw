@@ -267,7 +267,7 @@ build/test-data/prepared_published_prasada.xml: utils/schemas/prasada.xml
 
 .PHONY: test-karma
 test-karma: all test-data
-	xvfb-run ./node_modules/.bin/karma start --single-run
+	./node_modules/.bin/karma start --single-run
 
 .PHONY: keep-latest
 keep-latest:
