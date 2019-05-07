@@ -174,68 +174,70 @@ export class BTWDecorator extends Decorator {
     const mapped = this.mapped;
     dl.addHandler("added-element",
                   mapped.classFromOriginalName("btw:entry"),
-                  (_root, _parent, _prev, _next, el) =>  {
-                    this.addedEntryHandler(el);
+                  ({ element }) =>  {
+                    this.addedEntryHandler(element);
                   });
 
     dl.addHandler("included-element",
                   mapped.classFromOriginalName("btw:sense"),
-                  (root, _tree, _parent, _prev, _next, el) => {
-                    this.includedSenseHandler(root as Element, el);
+                  ({ root, element }) => {
+                    this.includedSenseHandler(root as Element, element);
                   });
 
     gdl.addHandler("excluding-element",
                    mapped.classFromOriginalName("btw:sense"),
-                   (_root, _tree, _parent, _prev, _next, el) => {
-                     this.excludingSenseHandler(el);
+                   ({ element }) => {
+                     this.excludingSenseHandler(element);
                    });
 
     dl.addHandler("included-element",
                   mapped.classFromOriginalName("btw:subsense"),
-                  (root, _tree, _parent, _prev, _next, el) => {
-                    this.includedSubsenseHandler(root as Element, el);
+                  ({ root, element }) => {
+                    this.includedSubsenseHandler(root as Element, element);
                   });
 
     gdl.addHandler("excluding-element",
                    mapped.classFromOriginalName("btw:subsense"),
-                   (root, _tree, _parent, _prev, _next, el) => {
-                     this.excludingSubsenseHandler(root as Element, el);
+                   ({ root, element }) => {
+                     this.excludingSubsenseHandler(root as Element, element);
                    });
 
     gdl.addHandler("excluded-element",
                    mapped.toGUISelector("btw:example, btw:example-explained"),
-                   (_root, _tree, _parent, _prev, _next, el) => {
-                     this.excludedExampleHandler(el);
+                   ({ element }) => {
+                     this.excludedExampleHandler(element);
                    });
 
-    gdl.addHandler("children-changing",
+    gdl.addHandler("removing-child",
                    mapped.toGUISelector("ref, ref *"),
-                   (root, _added, _removed, _prev, _next, el) => {
+                   ({ root, child }) => {
                      this._refChangedInGUI(root as Element,
-                                           closestByClass(el, "ref",
+                                           closestByClass(child.parentNode,
+                                                          "ref",
                                                           root as Element)!);
                    });
 
     gdl.addHandler("text-changed",
                    mapped.toGUISelector("ref, ref *"),
-                   (root, el) => {
+                   ({ root, node }) => {
                      this._refChangedInGUI(root as Element,
-                                           closestByClass(el, "ref",
+                                           closestByClass(node, "ref",
                                                           root as Element)!);
                    });
 
     dl.addHandler("included-element",
                   mapped.classFromOriginalName("*"),
-                  (root, _tree, _parent, _prev, _next, el) => {
-                    this.refreshElement(root as Element, el);
+                  ({ root, element }) => {
+                    this.refreshElement(root as Element, element);
                   });
 
     // This is needed to handle cases when an btw:cit acquires or loses Pāli
     // text.
     dl.addHandler("excluding-element",
                   mapped.toGUISelector("btw:cit foreign"),
-                  (root, _tree, _parent, _prev, _next, el) => {
-                    const cit = closestByClass(el, "btw:cit", root as Element)!;
+                  ({ root, element }) => {
+                    const cit = closestByClass(element, "btw:cit",
+                                               root as Element)!;
                     // Refresh after the element is removed.
                     setTimeout(() => {
                       this.refreshElement(root as Element, cit);
@@ -247,65 +249,57 @@ export class BTWDecorator extends Decorator {
 
     dl.addHandler("included-element",
                   mapped.toGUISelector("btw:cit foreign"),
-                  (root, _tree, _parent, _prev, _next, el) => {
-                    const cit = closestByClass(el, "btw:cit", root as Element)!;
+                  ({ root, element }) => {
+                    const cit = closestByClass(element, "btw:cit",
+                                               root as Element)!;
                     this.refreshElement(root as Element, cit);
                     this.refreshElement(root as Element, domutil.siblingByClass(
                       cit, "btw:explanation")!);
                   });
 
-    dl.addHandler("children-changed",
+    dl.addHandler("added-child",
                   mapped.classFromOriginalName("*"),
-                  (root, added, removed, _prev, _next, el) => {
-                    let removedFlag = false;
-                    for (const r of removed) {
-                      removedFlag = isText(r) ||
-                        (isElement(r) &&
-                         (r.classList.contains("_real") ||
-                          r.classList.contains("_phantom_wrap")));
-                      if (removedFlag) {
-                        break;
-                      }
+                  ({ root, child }) => {
+                    if (isText(child) ||
+                        (isElement(child) &&
+                         (child.classList.contains("_real") ||
+                          child.classList.contains("_phantom_wrap")))) {
+                      this.refreshElement(root as Element,
+                                          child.parentNode as Element);
                     }
+                  });
 
-                    if (!removedFlag) {
-                      let addedFlag = false;
-                      for (const r of added) {
-                        addedFlag = isText(r) ||
-                          (isElement(r) &&
-                           (r.classList.contains("_real") ||
-                            r.classList.contains("_phantom_wrap")));
-                        if (addedFlag) {
-                          break;
-                        }
-                      }
-
-                      if (addedFlag) {
-                        this.refreshElement(root as Element, el);
-                      }
-                    }
-                    else {
+    dl.addHandler("removed-child",
+                  mapped.classFromOriginalName("*"),
+                  ({ root, parent, child }) => {
+                    if (isText(child) ||
+                        (isElement(child) &&
+                         (child.classList.contains("_real") ||
+                          child.classList.contains("_phantom_wrap")))) {
                       // Refresh the element **after** the data is removed.
                       setTimeout(() => {
-                        this.refreshElement(root as Element, el);
+                        this.refreshElement(root as Element, parent);
                       }, 0);
                     }
                   });
 
     dl.addHandler("trigger",
                   "included-sense",
-                  this.includedSenseTriggerHandler.bind(this) as
-                  (root: Node) => void);
+                  ({ root }) => {
+                    this.includedSenseTriggerHandler(root as Element);
+                  });
 
     dl.addHandler("trigger",
                   "refresh-subsenses",
-                  this.refreshSubsensesTriggerHandler.bind(this) as
-                  (root: Node) => void);
+                  ({ root }) => {
+                    this.refreshSubsensesTriggerHandler(root as Element);
+                  });
 
     dl.addHandler("trigger",
                   "refresh-sense-ptrs",
-                  this.refreshSensePtrsHandler.bind(this) as
-                  (root: Node) => void);
+                  ({ root }) => {
+                    this.refreshSensePtrsHandler(root as Element);
+                  });
 
     gdl.addHandler("included-element",
                    ".head",
