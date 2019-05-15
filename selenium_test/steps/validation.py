@@ -41,7 +41,7 @@ def step_impl(context, label):
         var ev = error.ev;
         if (ev.error.toString() === "sense without semantic fields") {
             var node = ev.node.childNodes[ev.index];
-            var gui_node = jQuery.data(node, "wed_mirror_node");
+            var gui_node = wed_editor.fromDataNode(node);
             var head = gui_node.getElementsByClassName("head")[0]
                 .textContent.trim();
             if (head === label)
@@ -84,7 +84,7 @@ def check_error(context, expected_error_text, expected_tag=None, child=True,
             }
 
             var node = child ? ev.node.childNodes[ev.index]: ev.node;
-            var gui_node = jQuery.data(node, "wed_mirror_node");
+            var gui_node = wed_editor.fromDataNode(node);
             if (gui_node.classList.contains(expected_tag)) {
                 return true;
             }

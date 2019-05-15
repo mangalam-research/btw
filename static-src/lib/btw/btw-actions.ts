@@ -51,12 +51,11 @@ export class SensePtrDialogAction extends Action<TransformationData> {
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < senses.length; ++i) {
       const sense = senses[i];
-      let dataNode = $.data(sense, "wed_mirror_node");
       const termNodes = termsForSense(sense, mappings);
       const terms: string[] = [];
       // tslint:disable-next-line:prefer-for-of
       for (let tix = 0; tix < termNodes.length; ++tix) {
-        terms.push($.data(termNodes[tix], "wed_mirror_node").textContent);
+        terms.push(domutil.mustGetMirror(termNodes[tix]).textContent!);
       }
       const senseLabel = decorator.refmans.getSenseLabel(sense);
 
@@ -77,7 +76,7 @@ export class SensePtrDialogAction extends Action<TransformationData> {
 
       const subsenses = domutil.childrenByClass(sense, "btw:subsense");
       for (const subsense of subsenses) {
-        dataNode = $.data(subsense, "wed_mirror_node");
+        const dataNode = domutil.mustGetMirror(subsense) as Element;
         const subsenseLabel = decorator.refmans.getSubsenseLabel(subsense);
         let child = dataNode.firstElementChild;
         let explanation: Element | undefined;
@@ -157,7 +156,7 @@ export class ExamplePtrDialogAction extends Action<TransformationData> {
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < examples.length; ++i) {
       const example = examples[i];
-      const dataNode = $.data(example, "wed_mirror_node");
+      const dataNode = domutil.mustGetMirror(example) as Element;
       let child = dataNode.firstElementChild;
       let cit: Element | undefined;
       while (child) {

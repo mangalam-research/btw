@@ -627,7 +627,7 @@ def step_impl(context):
     driver.execute_script("""
     var sec =
         document.getElementsByClassName("btw:contrastive-section")[0];
-    var sec_data = jQuery.data(sec, "wed_mirror_node");
+    var sec_data = wed_editor.toDataNode(sec);
     wed_editor.caretManager.setCaret(sec_data, 0);
     """)
 

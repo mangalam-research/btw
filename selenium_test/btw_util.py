@@ -16,7 +16,8 @@ from selenic.util import Condition, Result
 
 GET_CITATION_TEXT = r"""
 function getCitationText(cit) {
-  var data_cit = jQuery.data(cit, "wed_mirror_node");
+  var data_cit =
+    typeof wed_editor !== "undefined" ? wed_editor.toDataNode(cit) : cit;
   var clone = data_cit.cloneNode(true);
   var child = clone.firstElementChild;
   while (child) {

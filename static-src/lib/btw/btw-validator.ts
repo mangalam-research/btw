@@ -49,11 +49,11 @@ export class Validator implements ModeValidator {
       }
 
       if (!found) {
-        const dataSense = $.data(sense, "wed_mirror_node");
+        const dataSense = domutil.mustGetMirror(sense);
         ret.push({
           error: new ValidationError("sense without semantic fields"),
           node: dataSense.parentNode,
-          index: _indexOf.call(dataSense.parentNode.childNodes, dataSense),
+          index: _indexOf.call(dataSense.parentNode!.childNodes, dataSense),
         });
       }
     }
@@ -66,11 +66,11 @@ export class Validator implements ModeValidator {
       const sfs = cognate.querySelectorAll(
         this.mapped.toGUISelector("btw:example btw:sf"));
       if (sfs.length === 0) {
-        const dataCognate = $.data(cognate, "wed_mirror_node");
+        const dataCognate = domutil.mustGetMirror(cognate);
         ret.push({
           error: new ValidationError("cognate without semantic fields"),
           node: dataCognate.parentNode,
-          index: _indexOf.call(dataCognate.parentNode.childNodes, dataCognate),
+          index: _indexOf.call(dataCognate.parentNode!.childNodes, dataCognate),
         });
       }
     }
@@ -80,9 +80,8 @@ export class Validator implements ModeValidator {
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < allSfs.length; ++i) {
       const sf = allSfs[i];
-      const dataSf = $.data(sf, "wed_mirror_node");
-      const text = dataSf.textContent;
-      const parts = text.split("@");
+      const dataSf = domutil.mustGetMirror(sf);
+      const parts = dataSf.textContent!.split("@");
 
       for (const part of parts) {
         // tslint:disable-next-line:max-line-length
@@ -91,7 +90,7 @@ export class Validator implements ModeValidator {
             error: new ValidationError(
               "semantic field is not in a recognized format"),
             node: dataSf.parentNode,
-            index: _indexOf.call(dataSf.parentNode.childNodes, dataSf),
+            index: _indexOf.call(dataSf.parentNode!.childNodes, dataSf),
           });
         }
       }
@@ -102,8 +101,8 @@ export class Validator implements ModeValidator {
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < surnames.length; ++i) {
       const surname = surnames[i];
-      const dataSurname = $.data(surname, "wed_mirror_node");
-      if (dataSurname.textContent.length === 0) {
+      const dataSurname = domutil.mustGetMirror(surname);
+      if (dataSurname.textContent!.length === 0) {
         ret.push({
           error: new ValidationError("surname cannot be empty"),
           node: dataSurname,
@@ -116,7 +115,7 @@ export class Validator implements ModeValidator {
     // btw:credits can be missing on files that should be upgraded to the latest
     // version of the schema.
     if (btwCredits !== undefined) {
-      const dataBtwCredits = $.data(btwCredits, "wed_mirror_node");
+      const dataBtwCredits = domutil.mustGetMirror(btwCredits);
       // Verify that there is an editor
       if (btwCredits.getElementsByClassName("editor").length === 0) {
         ret.push({

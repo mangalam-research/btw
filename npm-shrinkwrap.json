@@ -1240,28 +1240,28 @@
       }
     },
     "@wedxml/ajax-saver": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/ajax-saver/-/ajax-saver-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-1L/7ihTKXjnJWJiz3Oou49K9gbsPhoeSTxT/qygQM0Vi9wn8ng2v96D4mGhShzxX0VvDYNVTg+doa/pCiz5k1Q==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/ajax-saver/-/ajax-saver-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-pNLCmxVYfeR2hjDp2NXBgIPo2NxVFV6cNTc5cpcQqlCXX9UwcCEM3XoIjrF2UwBKSB6ZEZoXfzO4PUbWj3tdCQ==",
       "requires": {
-        "@wedxml/base-saver": "5.0.0-alpha.28",
-        "@wedxml/client-api": "5.0.0-alpha.28",
-        "@wedxml/common": "5.0.0-alpha.28"
+        "@wedxml/base-saver": "5.0.0-alpha.29",
+        "@wedxml/client-api": "5.0.0-alpha.29",
+        "@wedxml/common": "5.0.0-alpha.29"
       }
     },
     "@wedxml/base-saver": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/base-saver/-/base-saver-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-wYx5Fkmsr9e3a3pD42D591rC31rCSgenYJMr636yVqA3qHdg/iSiZjBgfn2rsPAx/BbBiNrH7cOtFaUUWW2Zaw==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/base-saver/-/base-saver-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-XfpsijYenG/evKwh6EfAxgWRp4yWkpMRrWzxlmiPCFHUukMqVJjQ54cejc3ygaCD1Q8HPUmWaP/OAf3eMCFXlg==",
       "requires": {
-        "@wedxml/client-api": "5.0.0-alpha.28",
-        "@wedxml/common": "5.0.0-alpha.28"
+        "@wedxml/client-api": "5.0.0-alpha.29",
+        "@wedxml/common": "5.0.0-alpha.29"
       }
     },
     "@wedxml/build": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/build/-/build-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-0JwfWnaFqbUzfyPgFQqSiFF6UlaUwUc3FY4hPYUp4iU317EKA8fTA9eQWLRiJejQM95ce03/La2Xgqx6MFwgUw==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/build/-/build-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-+dtNfTNFs84y4oafGuYv5C9Cyk7Zrmv1eOcJ1bpxvFReKur36QUfBepJiOwCtUCmHmy5SZmKNF+ImenqV1D/3Q==",
       "requires": {
         "argparse": "^1.0.3",
         "copy-webpack-plugin": "^5.0.2",
@@ -1270,22 +1270,22 @@
       }
     },
     "@wedxml/client-api": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/client-api/-/client-api-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-yjcGa8u0YCznm9dP6leOvCmMNyzTqgMpRv4HsBmbj27+7yKBaOxFSg8N51Ula0veRvY/607KrTFaNE4EzlDLZQ=="
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/client-api/-/client-api-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-BMrCQc06RB4Ook3DoOdtD2z1AHCWtM3fHOm0YPiQf13gfH9EOY86zIec4wegg7dwmhcl9Ob3SkNEk40rf3Yy0w=="
     },
     "@wedxml/common": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/common/-/common-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-ApwVn8CeaUs5A8ClNUW7240qHoIptwLbUoo6h+1op8iRRIhiHaotXx+BlgIrRAdpiZpLY0lQDOlfJngOfPmp5w==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/common/-/common-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-hsSE7be5An6MDkIoUSzqXb6yRH5V4HxxP5jwYXSwB2sasBdJCPz+JmvnZFqRgKGi96quQvRPZnjA83byFNWr2g==",
       "requires": {
-        "@wedxml/client-api": "5.0.0-alpha.28"
+        "@wedxml/client-api": "5.0.0-alpha.29"
       }
     },
     "@wedxml/core": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/core/-/core-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-Qhf66/mKRpQnI747fkCGNxU6zFYBkkE7szf6rJB9RKigsYa16rqbxZOFq54ord7QYLm5mVwtM371AfzKFRCW1Q==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/core/-/core-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-Ta7/ntbIAriRKwvcWgIvG6FgiChwrYy4YARxC9PmtLsD5JW/HaFuPkZryukr8zZRCRnALtY9iCWa1ON9mx6Jpg==",
       "requires": {
         "ajv": "^6.10.0",
         "amd-loader": "0.0.8",
@@ -1315,21 +1315,21 @@
       }
     },
     "@wedxml/default-runtime": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/default-runtime/-/default-runtime-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-TkkQuVbsIiaBjjw/epjtUylE61lN/Xu+/2/fmb/jAjrKcSUUZ5lDkGz2aJ07Cha/ePs3IMvun3RTfOzmJ1UfiQ==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/default-runtime/-/default-runtime-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-mt9UWi0odAM5a4ohK5TX23l6ZzE/GSZts9OcoDxzOX4WkPS2Cn6Kt8OEy9pOPs5cqxPZpN3MEDUaA6Y2/IHMIg==",
       "requires": {
-        "@wedxml/client-api": "5.0.0-alpha.28",
-        "@wedxml/common": "5.0.0-alpha.28"
+        "@wedxml/client-api": "5.0.0-alpha.29",
+        "@wedxml/common": "5.0.0-alpha.29"
       }
     },
     "@wedxml/trivial-grammar-loader": {
-      "version": "5.0.0-alpha.28",
-      "resolved": "https://registry.npmjs.org/@wedxml/trivial-grammar-loader/-/trivial-grammar-loader-5.0.0-alpha.28.tgz",
-      "integrity": "sha512-sU6cPGdu6pC1Ba3Xw0r2zvCzQ7cRJ4+9Nkx0wWEzRysmZfC8d5W1B27goV0dwnVH5LekCheuJ+73K2+WbqrCQg==",
+      "version": "5.0.0-alpha.29",
+      "resolved": "https://registry.npmjs.org/@wedxml/trivial-grammar-loader/-/trivial-grammar-loader-5.0.0-alpha.29.tgz",
+      "integrity": "sha512-ov187kw6e7P+Mc+bWUqc7UQOYzIKcTINvxjJujPPsX6t92wUQBkf//RakxwJMiB76QBhPyHDZOzu+C7ei0PBbg==",
       "requires": {
-        "@wedxml/client-api": "5.0.0-alpha.28",
-        "@wedxml/common": "5.0.0-alpha.28"
+        "@wedxml/client-api": "5.0.0-alpha.29",
+        "@wedxml/common": "5.0.0-alpha.29"
       }
     },
     "@xtuc/ieee754": {
@@ -1569,10 +1569,11 @@
       }
     },
     "assert": {
-      "version": "1.4.1",
-      "resolved": "https://registry.npmjs.org/assert/-/assert-1.4.1.tgz",
-      "integrity": "sha1-mZEtWRg2tab1s0XA8H7vwI/GXZE=",
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/assert/-/assert-1.5.0.tgz",
+      "integrity": "sha512-EDsgawzwoun2CZkCgtxJbv392v4nbk9XDD06zI+kQYoBM/3RBWLlEyJARDOmhAAosBjWACEkKL6S+lIZtcAubA==",
       "requires": {
+        "object-assign": "^4.1.1",
         "util": "0.10.3"
       },
       "dependencies": {
@@ -9334,9 +9335,9 @@
       }
     },
     "webpack": {
-      "version": "4.30.0",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.30.0.tgz",
-      "integrity": "sha512-4hgvO2YbAFUhyTdlR4FNyt2+YaYBYHavyzjCMbZzgglo02rlKi/pcsEzwCuCpsn1ryzIl1cq/u8ArIKu8JBYMg==",
+      "version": "4.31.0",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.31.0.tgz",
+      "integrity": "sha512-n6RVO3X0LbbipoE62akME9K/JI7qYrwwufs20VvgNNpqUoH4860KkaxJTbGq5bgkVZF9FqyyTG/0WPLH3PVNJA==",
       "requires": {
         "@webassemblyjs/ast": "1.8.5",
         "@webassemblyjs/helper-module-context": "1.8.5",

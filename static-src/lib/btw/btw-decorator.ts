@@ -330,7 +330,7 @@ export class BTWDecorator extends Decorator {
     //
     // Perform general checks before we start decorating anything.
     //
-    const dataEl = $.data(el, "wed_mirror_node");
+    const dataEl = domutil.mustGetMirror(el) as Element;
     const sensesSubsenses = this.mapped.dataFindAll(dataEl,
                                                     "btw:sense, btw:subsense");
     for (const s of sensesSubsenses) {
@@ -814,7 +814,7 @@ export class BTWDecorator extends Decorator {
       // satisfies the selectors above.
       const myDepth = parents.length;
 
-      parent = el.parentNode;
+      parent = el.parentNode!;
       let origName = util.getOriginalName(parent as Element);
 
       const li = doc.createElement("li");
@@ -824,12 +824,12 @@ export class BTWDecorator extends Decorator {
         `<a class='navbar-link' href='#${el.id}'>${el.textContent}</a>`;
 
       // getContextualActions needs to operate on the data tree.
-      let dataParent = $.data(parent as Element, "wed_mirror_node");
+      let dataParent = domutil.mustGetMirror(parent) as Element;
 
       // btw:explanation is the element that gets the heading that marks the
       // start of a sense. So we need to adjust.
       if (origName === "btw:explanation") {
-        const parentSubsense = dataParent.parentNode;
+        const parentSubsense = dataParent.parentNode as Element;
         if (parentSubsense.tagName === "btw:subsense") {
           origName = "btw:subsense";
           dataParent = parentSubsense;

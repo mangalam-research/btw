@@ -126,7 +126,7 @@ export class ExampleReferenceManager {
   }
 
   getPositionalLabel(ptr: Element, target: Element): string {
-    const guiTarget = $.data(target, "wed_mirror_node") as HTMLElement;
+    const guiTarget = domutil.mustGetMirror(target) as HTMLElement;
     const ref = guiTarget
       .querySelector(this.mapped.toGUISelector("btw:cit ref"))!
       .cloneNode(true) as HTMLElement;
@@ -180,25 +180,21 @@ export class ExampleReferenceManager {
       // located, not the term under which the example (the target of the
       // pointer) is located.
       //
-      let guiTerm: Element | null = null;
-      parent = $.data(ptr, "wed_mirror_node").parentNode;
+      parent = domutil.mustGetMirror(ptr).parentNode;
       while (parent !== null) {
-        guiTerm = parent.querySelector(".btw\\:term");
+        const guiTerm = parent.querySelector(".btw\\:term");
         if (guiTerm !== null) {
+          const term = domutil.mustGetMirror(guiTerm);
+
+          // Drop the period, since we're adding a comma.
+          if (ret[ret.length - 1] === ".") {
+            ret = ret.slice(0, -1);
+          }
+          ret += `, ${term.textContent}`;
           break;
         }
 
         parent = parent.parentNode;
-      }
-
-      if (guiTerm !== null) {
-        const term = $.data(guiTerm, "wed_mirror_node");
-
-        // Drop the period, since we're adding a comma.
-        if (ret[ret.length - 1] === ".") {
-          ret = ret.slice(0, -1);
-        }
-        ret += `, ${term.textContent}`;
       }
     }
 

@@ -4,7 +4,8 @@
  */
 import * as $ from "jquery";
 
-import { Action, domtypeguards, EditorAPI, gui, transformation } from "wed";
+import { Action, domtypeguards, domutil, EditorAPI, gui,
+         transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 
 import isElement = domtypeguards.isElement;
@@ -14,7 +15,6 @@ import swapWithNextHomogeneousSibling =
 import swapWithPreviousHomogeneousSibling =
   transformation.swapWithPreviousHomogeneousSibling;
 import Transformation = transformation.Transformation;
-import TransformationData = transformation.TransformationData;
 import Button = gui.button.Button;
 import Modal = gui.modal.Modal;
 
@@ -511,7 +511,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     const el = ((container.nodeType === Node.TEXT_NODE) ?
       // tslint:disable-next-line:no-non-null-assertion
       container.parentNode! : container) as Element;
-    const guiEl = $.data(el, "wed_mirror_node") as Element;
+    const guiEl = domutil.mustGetMirror(el) as Element;
 
     if (!(transformationType instanceof Array)) {
       // tslint:disable-next-line:no-parameter-reassignment

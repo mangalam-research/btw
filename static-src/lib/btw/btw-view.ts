@@ -516,7 +516,7 @@ export class Viewer extends DispatchMixin {
     //
     domutil.linkTrees(root, root);
     this.guiUpdater.events.subscribe((ev) => {
-      if (ev.name !== "InsertNodeAt" || !isElement(ev.node)) {
+      if (ev.name !== "InsertNodeAt") {
         return;
       }
 
@@ -668,7 +668,7 @@ export class Viewer extends DispatchMixin {
     win.addEventListener("scroll", resizeHandler);
     resizeHandler();
 
-    $(doc.body).on("activate.bs.scrollspy", (_ev) => {
+    $(doc.body).on("activate.bs.scrollspy", () => {
       // Scroll the affix if needed.
       const affixRect = affixOverflow.getBoundingClientRect();
       const actives = affix.querySelectorAll(".active>a");

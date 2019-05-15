@@ -35,7 +35,7 @@ export function insertPtr(editor: EditorAPI,
   const target = editor.guiRoot.ownerDocument!.getElementById(data.target)!;
   const dataId = data.target.slice(4);
   target.setAttribute(util.encodeAttrName("xml:id"), dataId);
-  $.data(target, "wed_mirror_node").setAttributeNS(
+  (domutil.mustGetMirror(target) as Element).setAttributeNS(
     // tslint:disable-next-line:no-http-string
     "http://www.w3.org/XML/1998/namespace", "xml:id", dataId);
 
@@ -158,11 +158,12 @@ extends Transformation<LanguageTransformationData> {
   nestingModal: Modal;
 
   constructor(editor: EditorAPI, private readonly language: string) {
-    super(BTW_MODE_ORIGIN, editor, "transformation",
+    super(BTW_MODE_ORIGIN, editor, "transform",
           `Set language to ${language}`,
           setLanguageHandler, {
             abbreviatedDesc: language,
             needsInput: true,
+            icon: "",
           });
     this.nestingModal = getNestingModal(editor);
   }

@@ -38,7 +38,7 @@ function hasTrsAt(data_node, offset) {
 }
 var $ = jQuery;
 return arguments[0].map(function (loc) {
-    return hasTrsAt($.data(loc[0], "wed_mirror_node"), loc[1]);
+    return hasTrsAt(wed_editor.toDataNode(loc[0]), loc[1]);
 });
 """
 
