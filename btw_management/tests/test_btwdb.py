@@ -43,7 +43,7 @@ class CollapseChangeRecordsTestCase(BTWDBTestCase):
     def test_noop_is_passed(self):
         c = Caller()
         c.call_command("btwdb", "collapse_change_records",
-                       noop=True, verbosity=2)
+                       "--noop", verbosity=2)
         self.assertEqual(c.stdout, "Would have cleaned 0 of 0 record(s).\n")
 
 class CleanOldVersionsTestCase(BTWDBTestCase):
@@ -60,6 +60,5 @@ class CleanOldVersionsTestCase(BTWDBTestCase):
 
     def test_noop_is_passed(self):
         c = Caller()
-        c.call_command("btwdb", "clean_old_versions",
-                       noop=True, verbosity=2)
+        c.call_command("btwdb", "clean_old_versions", "--noop", verbosity=2)
         self.assertEqual(c.stdout, "Would have cleaned 0 of 0 record(s).\n")
