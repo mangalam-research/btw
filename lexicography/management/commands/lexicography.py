@@ -1,12 +1,10 @@
-import argparse
 import json
 
-from django.core.management.base import BaseCommand, CommandError, \
-    CommandParser
+from django.core.management.base import BaseCommand
 
 from ...article import prepare_article_data, get_bibliographical_data
 from lib import util, testutil
-from lib.command import SubCommand, SubParser
+from lib.command import SubCommand
 
 class PrepareArticle(SubCommand):
     """
@@ -62,7 +60,6 @@ Management commands for the lexicography app.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           parser_class=SubParser(self),
                                            required=True)
 
         for cmd in self.subcommands:

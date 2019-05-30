@@ -1,5 +1,4 @@
 import argparse
-from django.core.management.base import CommandParser
 
 class SubCommand(object):
     """
@@ -37,22 +36,3 @@ class SubCommand(object):
             formatter_class=argparse.RawTextHelpFormatter)
         sp.set_defaults(subcommand=self)
         return sp
-
-def SubParser(top):  # pylint: disable=invalid-name
-    """
-    Create a class that is suitable to be used as a subcommand parser
-    (subparser) for Django commands.
-
-    The ``CommandParser`` that Django uses requires a reference to the
-    object at the top level of the hierarchy of parsers, but by
-    default the argparse code does not provide this. The clases
-    created here rectify the issue.
-
-    :param top: The top command parser.
-    """
-    class _SubParser(CommandParser):
-
-        def __init__(self, **kwargs):
-            super(_SubParser, self).__init__(top, **kwargs)
-
-    return _SubParser

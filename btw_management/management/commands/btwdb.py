@@ -10,7 +10,7 @@ from lexicography.perms import create_perms as lex_create_perms
 from lexicography.models import Chunk, ChangeRecord
 from lexicography.cleaning import ChangeRecordCollapser, OldVersionCleaner
 from core.perms import create_perms as core_create_perms
-from lib.command import SubCommand, SubParser
+from lib.command import SubCommand
 from lib import util
 
 def create_perms():
@@ -153,7 +153,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           parser_class=SubParser(self),
                                            required=True)
 
         for cmd in self.subcommands:
