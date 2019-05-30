@@ -5,7 +5,7 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,73
+Linux,CH,74
 
 #
 # Perform these next because IE compatibility is a major
@@ -17,12 +17,12 @@ Windows 10,Edge,15,Remote
 # Perform these next because OS X compatibility is an issue. Again, we
 # want to find problems early.
 #
-OS X 10.12,CH,73,Remote
+OS X 10.12,CH,74,Remote
 
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,73,Remote
+Windows 8.1,CH,74,Remote
 
 #
 # FAILING COMBINATIONS
