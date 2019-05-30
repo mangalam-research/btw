@@ -417,7 +417,6 @@ class DisableMigrationsMixin(object):
                     try:
                         call_command('loaddata', *fixtures, **{
                             'verbosity': 0,
-                            'commit': False,
                             'database': db_name,
                         })
                     except Exception:
