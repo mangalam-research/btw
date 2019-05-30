@@ -243,6 +243,9 @@ class EntryAdmin(admin.ModelAdmin):
             self.has_change_permission(request, entry) if entry else False,
             'has_delete_permission':
             self.has_delete_permission(request, entry) if entry else False,
+            'has_view_permission':
+            self.has_view_permission(request, entry) if entry else False,
+            'has_editable_inline_admin_formsets': False,
             'add': False,
             'show_save_and_add_another': False,
             'show_save_and_continue': False,
