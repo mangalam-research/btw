@@ -26,7 +26,7 @@ class WedWidget(forms.Widget):
     def media(self):
         return self._media
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         attrs = attrs or self.attrs
 
         parent_attrs = {
