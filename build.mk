@@ -204,7 +204,7 @@ btw-mode.css_CSS_DEPS=bibliography/static/stylesheets/bibsearch.scss $(WED_SASS_
 btw-view.css_CSS_DEPS=static-src/lib/btw/btw-mode.scss node_modules/bootstrap/scss/_variables.scss
 
 .SECONDEXPANSION:
-$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.scss $$($$(notdir $$@)_CSS_DEPS)
+$(filter %.css,$(LOCAL_SOURCES)): $(BUILD_DEST)/%.css: static-src/%.scss $$(wildcard $$($$(notdir $$@)_CSS_DEPS))
 	node_modules/.bin/node-sass --include-path=$(WED_SASS_INC_PATH) $< $@
 
 APIDOC_EXCLUDE:=$(shell find $$PWD -name 'migrations' -type d)
