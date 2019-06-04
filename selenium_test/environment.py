@@ -326,7 +326,8 @@ def before_all(context):
     browser_to_tag_value = {
         "INTERNETEXPLORER": "ie",
         "CHROME": "ch",
-        "FIREFOX": "ff"
+        "FIREFOX": "ff",
+        "EDGE": "edge"
     }
 
     values = {
