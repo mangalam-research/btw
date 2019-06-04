@@ -177,6 +177,7 @@ $(BUILD_DIR)/wed-dev/entry.js: wed/entry.ts
 $(WED_BUILD): $(BUILD_DIR)/wed-dev/entry.js
 	./node_modules/.bin/wed-build wed/wed.config.js
 	rm -rf $(BUILD_DEST)/lib/wed*
+	-mkdir -p $(BUILD_DEST)/lib
 	cp -rp $(WED_BUILD)/lib/wed* $(BUILD_DEST)/lib
 
 
