@@ -387,24 +387,6 @@ def before_all(context):
     # Without this, window sizes vary depending on the actual browser
     # used.
     context.initial_window_size = {"width": 1280, "height": 1080}
-    try:
-        assert_true(driver.desired_capabilities["nativeEvents"],
-                    "BTW's test suite require that native events be "
-                    "available; you may have to use a different version of "
-                    "your browser, one for which Selenium supports native "
-                    "events.")
-    except AssertionError:
-        # Make sure to mark the test as failed.
-        try:
-            builder.set_test_status(False)
-        except http.client.HTTPException:
-            # Ignore cases where we can't set the status.
-            pass
-
-        # We don't want to check SELENIUM_QUIT here.
-        driver.quit()
-
-        raise
 
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
