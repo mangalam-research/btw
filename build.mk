@@ -504,7 +504,7 @@ lint: tslint eslint
 
 .PHONY: venv
 venv:
-	[ -e .btw-venv ] || virtualenv .btw-venv
+	[ -e .btw-venv ] || python3 -m venv .btw-venv
 
 .PHONY: dev-venv
 dev-venv: venv
