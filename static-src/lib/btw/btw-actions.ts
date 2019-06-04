@@ -316,8 +316,8 @@ class BaseBiblPtrAction extends Action<{}> {
         // If it is well-formed, then pointedAnchor and pointedFocus are
         // necessarily siblings.
         // tslint:disable-next-line:prefer-const
-        let { start, end } : { start: Node | null | undefined;
-                               end: Node | undefined; } =
+        let { start, end }: { start: Node | null | undefined;
+                              end: Node | undefined; } =
           sel.anchor.compare(sel.focus) < 0 ?
           { start: pointedAnchor, end: pointedFocus } :
           { start: pointedFocus, end: pointedAnchor };
@@ -513,7 +513,7 @@ export class EditSemanticFieldsAction extends Action<{}> {
     const sfs = domutil.dataFindAll(sfsContainer, "btw:sf",
                                     mode.getAbsoluteNamespaceMappings());
 
-    const paths = sfs.map((sf) => sf.textContent!);
+    const paths = sfs.map(sf => sf.textContent!);
 
     const modal = getEditSemanticFieldModal(editor);
 
@@ -557,21 +557,21 @@ footer.getBoundingClientRect().height}px`;
       }
     });
 
-    fetcher.fetch(paths).then((resolved) => {
+    fetcher.fetch(paths).then(resolved => {
       const fields = _.values(resolved);
 
       // We grab the list of paths from the resolved fields because initially we
       // may have unknown fields, and the list of resolve fields may be shorter
       // than ``paths``.
       // Reminder: fields are plain old JS objects.
-      const initialPaths = fields.map((x) => x.path);
+      const initialPaths = fields.map(x => x.path);
 
       // Clear it before the editor is started.
       modal.setBody("");
       sfEditor = new SFEditor({
         container: body,
-        fields: fields,
-        fetcher: fetcher,
+        fields,
+        fetcher,
         searchUrl: mode.semanticFieldFetchUrl,
       });
       sfEditor.start();

@@ -46,7 +46,7 @@ interface VisibleAbsenceSpec {
 // tslint:disable-next-line:no-any
 function menuClickHandler(editor: EditorAPI, guiLoc: DLoc, items:
                           UnspecifiedActionInvocation[],
-                          ev: JQueryMouseEventObject): boolean {
+                          ev: JQuery.MouseEventBase): boolean {
   if (editor.caretManager.caret === undefined) {
     editor.caretManager.setCaret(guiLoc);
   }
@@ -139,7 +139,7 @@ export class BTWDecorator extends Decorator {
       "btw:other-citations",
       "btw:term",
       "btw:none",
-    ].forEach((x) => {
+    ].forEach(x => {
       this.labelLevels[x] = 2;
     });
 
@@ -394,7 +394,7 @@ export class BTWDecorator extends Decorator {
                            editingMenuManager.boundEndLabelContextMenuHandler);
   }
 
-  noneDecorator(el: Element):  void {
+  noneDecorator(el: Element): void {
     this.guiUpdater.removeNodes(Array.from(el.childNodes));
     const text = el.ownerDocument!.createElement("div");
     text.className = "_text _phantom";
@@ -405,7 +405,7 @@ export class BTWDecorator extends Decorator {
   private singleClickHandler(dataLoc: DLoc,
                              tr: Action<{}>,
                              root: Element,
-                             el: Element, ev: JQueryMouseEventObject): void {
+                             el: Element, ev: JQuery.MouseEventBase): void {
     if (this.editor.caretManager.getDataCaret() === undefined) {
       this.editor.caretManager.setCaret(dataLoc);
     }
@@ -701,7 +701,7 @@ export class BTWDecorator extends Decorator {
     // Grab the list before we try to do anything.
     const senses = this.sensesForRefreshSubsenses;
     this.sensesForRefreshSubsenses = [];
-    senses.forEach((sense) => {
+    senses.forEach(sense => {
       this._refreshSubsensesForSense(root, sense);
     });
   }
@@ -771,7 +771,8 @@ export class BTWDecorator extends Decorator {
         throw new Error(`unknown language: ${lang}`);
       }
       label = label.split("; ")[0];
-      tooltip($(el), { title: label, container: "body", trigger: "hover" });
+      tooltip($(el as HTMLElement),
+              { title: label, container: "body", trigger: "hover" });
     }
   }
 
@@ -876,8 +877,8 @@ export class BTWDecorator extends Decorator {
   }
 
   // tslint:disable-next-line:max-func-body-length
-  _navigationContextMenuHandler(wedEv: JQueryEventObject,
-                                ev?: JQueryEventObject): boolean {
+  _navigationContextMenuHandler(wedEv: JQuery.TriggeredEvent,
+                                ev?: JQuery.TriggeredEvent): boolean {
     const { mode, editor } = this;
     // ev is undefined if called from the context menu. In this case, wedEv
     // contains all that we want.
@@ -970,8 +971,9 @@ export class BTWDecorator extends Decorator {
       items.push(new ActionInvocation(action, data));
     }
 
-    editor.editingMenuManager.setupContextMenu(ActionContextMenu, items, false,
-                                               ev);
+    editor.editingMenuManager.setupContextMenu(
+      ActionContextMenu, items, false,
+      ev as (JQuery.KeyboardEventBase | JQuery.MouseEventBase));
 
     return false;
   }

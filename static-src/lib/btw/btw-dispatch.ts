@@ -38,7 +38,7 @@ function setTitle($el: JQuery, data: Item): void {
     title += `, ${date}`;
   }
 
-  tooltip($el, { title: title, container: "body", trigger: "hover" });
+  tooltip($el, { title, container: "body", trigger: "hover" });
 }
 
 const ENCODED_REF_ATTR_NAME = util.encodeAttrName("ref");
@@ -472,8 +472,7 @@ export abstract class DispatchMixin {
   }
 
   fillBiblData(el: Element, abbr: Element, data: BibliographicalItem): void {
-    const $el = $(el);
-    setTitle($el, isPrimarySource(data) ? data.item : data);
+    setTitle($(el as HTMLElement), isPrimarySource(data) ? data.item : data);
     this.guiUpdater.insertText(abbr, 0, biblDataToReferenceText(data));
   }
 
@@ -532,7 +531,7 @@ export abstract class DispatchMixin {
     if (inMode) {
       // When we are editing we want to fill the semantic field with its name
       // and path.
-      this.sfFetcher.fetch([ref]).then((resolved) => {
+      this.sfFetcher.fetch([ref]).then(resolved => {
         const resolvedRef = resolved[ref!];
         el.textContent = (resolvedRef !== undefined) ?
           `${resolvedRef.heading_for_display} (${ref})` :

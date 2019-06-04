@@ -133,14 +133,14 @@ export class HeadingDecorator {
     }, {
       selector: "btw:other-citations",
       heading: "other citations",
-    }].map((x) => ({
+    }].map(x => ({
       ...x,
       dataSelector: this.mapped.toGUISelector(x.selector),
     }));
   }
 
   addSpec(spec: InitialSpec): void {
-    this.specs = this.specs.filter((x) => x.selector !== spec.selector);
+    this.specs = this.specs.filter(x => x.selector !== spec.selector);
     const fullSpec = {
       ...spec,
       dataSelector: this.mapped.toGUISelector(spec.selector),

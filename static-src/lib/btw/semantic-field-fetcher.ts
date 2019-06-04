@@ -169,7 +169,7 @@ export class SFFetcher {
           tree.push({
             text: lemma,
             href: changerecords[0].url,
-            nodes: nodes,
+            nodes,
             selectable: false,
           });
         }

@@ -8,9 +8,8 @@ import * as $ from "jquery";
 import * as _ from "lodash";
 import { DefaultNameResolver } from "salve";
 
-import { convert, DLocRoot, domtypeguards, domutil, transformation,
-         treeUpdater, util } from "wed";
-import isElement = domtypeguards.isElement;
+import { convert, DLocRoot, domutil, transformation, treeUpdater,
+         util } from "wed";
 import TreeUpdater = treeUpdater.TreeUpdater;
 
 import { Metadata } from "wed/modes/generic/metadata";
@@ -77,7 +76,7 @@ function makeExpandHandler(affix: HTMLElement, affixConstrainer: HTMLElement,
       const paddingLeft = parseInt(constrainerStyle.paddingLeft!, 10);
       $affix.animate({
         left: constrainerRect.left + paddingLeft,
-        width: $(affixConstrainer).innerWidth() - paddingLeft,
+        width: $(affixConstrainer).innerWidth()! - paddingLeft,
       }, 1000, () => {
         affix.style.left = "";
         affix.style.top = "";
@@ -129,7 +128,7 @@ function makeResizeHandler(affix: HTMLElement,
       // out of the flow and thus its "width" is no longer constrained by its
       // parent.
 
-      affix.style.width = `${$(affixConstrainer).innerWidth() -
+      affix.style.width = `${$(affixConstrainer).innerWidth()! -
 parseInt(constrainerStyle.paddingLeft!, 10)}px`;
     }
     const rect = affixOverflow.getBoundingClientRect();
@@ -262,7 +261,7 @@ export class Viewer extends DispatchMixin {
     frame.insertBefore(group, frame.firstChild);
 
     const expandAll = content.getElementsByClassName("btw-expand-all-btn")[0];
-    $(expandAll).on("click", (ev) => {
+    $(expandAll).on("click", ev => {
       $(doc.querySelectorAll(".wed-document .collapse:not(.show)"))
         .collapse("show");
       $(content.parentNode!).collapse("hide");
@@ -271,7 +270,7 @@ export class Viewer extends DispatchMixin {
 
     const collapseAll =
       content.getElementsByClassName("btw-collapse-all-btn")[0];
-    $(collapseAll).on("click", (ev) => {
+    $(collapseAll).on("click", ev => {
       $(doc.querySelectorAll(".wed-document .collapse.show")).collapse("hide");
       $(content.parentNode!).collapse("hide");
       ev.preventDefault();
@@ -313,10 +312,10 @@ export class Viewer extends DispatchMixin {
           Accept: "application/json",
         },
       })
-        .then((ajaxData) => {
+        .then(ajaxData => {
           this.processData(ajaxData.xml, ajaxData.bibl_data);
         })
-        .catch(bluejax.HttpError, (err) => {
+        .catch(bluejax.HttpError, err => {
           const jqXHR = err.jqXHR;
           if (jqXHR.status === 404) {
             if (Date.now() - start > this.loadTimeout) {
@@ -332,7 +331,7 @@ export class Viewer extends DispatchMixin {
             throw err;
           }
         })
-          .catch((err) => {
+          .catch(err => {
             this.doneReject(err);
             throw err;
           });
@@ -515,7 +514,7 @@ export class Viewer extends DispatchMixin {
     // depends on it. We just link our single tree with itself.
     //
     domutil.linkTrees(root, root);
-    this.guiUpdater.events.subscribe((ev) => {
+    this.guiUpdater.events.subscribe(ev => {
       if (ev.name !== "InsertNodeAt") {
         return;
       }
@@ -579,12 +578,12 @@ export class Viewer extends DispatchMixin {
     }
 
     this.createAffix();
-    $(doc.body).on("click", (ev) => {
+    $(doc.body).on("click", ev => {
       // We are not using $.Event because setting bubbles to `false` does not
       // seem possible with `$.Event`.
       const $for = $(ev.target).closest("[data-toggle='popover']");
       $("[aria-describedby][data-toggle='popover']").not($for).each(
-        function destroy(this: Element) : void {
+        function destroy(this: Element): void {
           // We have to work around an issue in Bootstrap 3.3.7. If destroy is
           // called more than once on a popover or tooltip, it may cause an
           // error. We work around the issue by making sure we call it only if

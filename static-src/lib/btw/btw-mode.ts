@@ -217,13 +217,13 @@ class BTWMode extends Mode<BTWModeOptions> {
 
     this.insertRefText = new Transformation(
       BTW_MODE_ORIGIN, editor, "add", "Add custom text to reference",
-      (trEditor) => {
+      trEditor => {
         const caret = trEditor.caretManager.caret;
         if (caret === undefined) {
           throw new Error("no caret");
         }
         const ref = $(caret.node).closest(
-          mapped.classFromOriginalName("ref"))[0];
+          mapped.classFromOriginalName("ref"))[0] as Element;
         const ph = trEditor.insertTransientPlaceholderAt(caret.make(
           ref, ref.childNodes.length));
 
@@ -252,9 +252,9 @@ class BTWMode extends Mode<BTWModeOptions> {
       "btw:antonym-instance": true,
       "btw:cognate-instance": true,
       "btw:conceptual-proximate-instance": true,
-      p: true,
-      lg: true,
-      ref: ["insert", "wrap"],
+      "p": true,
+      "lg": true,
+      "ref": ["insert", "wrap"],
     };
 
     const passInTr = $.extend({}, passInCit);
@@ -286,7 +286,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       selector: mapped.toGUISelector("btw:definition>p"),
       pass: {
         "btw:sense-emphasis": true,
-        ptr: true,
+        "ptr": true,
       },
       substitute: [{ tag: "ptr",
                      trType: "insert",
@@ -425,7 +425,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     }
 
     const updater = this.editor.dataUpdater;
-    updater.events.subscribe((ev) => {
+    updater.events.subscribe(ev => {
       if (ev.name !== "DeleteNode") {
         return;
       }
@@ -447,7 +447,7 @@ class BTWMode extends Mode<BTWModeOptions> {
       }
     });
 
-    updater.events.subscribe((ev) => {
+    updater.events.subscribe(ev => {
       if (ev.name !== "InsertNodeAt") {
         return;
       }
@@ -569,7 +569,7 @@ class BTWMode extends Mode<BTWModeOptions> {
 
     // Here we transform the returned array in ways that cannot be captured by
     // transformationFilters.
-    return ret.filter((x) => {
+    return ret.filter(x => {
       // We want insertRefText to be included only if the current container does
       // not have children.
       if (x !== this.insertRefText) {
