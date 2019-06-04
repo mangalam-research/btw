@@ -13,4 +13,4 @@ topdir=$(dirname $curdir)
 psycopg=$(grep -E '^psycopg.* +--no-binary +psycopg2' \
 $topdir/requirements.txt) || fail "psycopg2 is not using --no-binary anymore"
 
-$topdir/.btw-venv/bin/pip freeze | sed -e'/^psycopg2.*/ s/$/ --no-binary psycopg2/' > /tmp/q
+$topdir/.btw-venv/bin/pip freeze | sed -e'/^psycopg2.*/ s/$/ --no-binary psycopg2/' > frozen-requirements.txt
