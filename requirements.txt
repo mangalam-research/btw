@@ -11,7 +11,7 @@ requests>=2.22.0,<3
 pyvirtualdisplay>=0.2.1,<2
 selenium==2.49.0
 behave>=1.2.6,<2
-selenic>=0.13.0,<1
+selenic>=0.13.1,<1
 pebble>=4.3.10,<5
 django-redis>=4.10.0,<5
 django-cache-management>=3,<4
