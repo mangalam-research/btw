@@ -16,7 +16,7 @@ pebble>=4.3.10,<5
 django-redis>=4.10.0,<5
 django-cache-management>=3,<4
 celery[redis]>=4.3.0,<5
-wedutil==0.21.3
+wedutil==0.22.1
 djangorestframework>=3.9.2,<4
 python-slugify>=3,<4
 django-cms>=3.6.0,<3.7
