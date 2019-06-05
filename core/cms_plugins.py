@@ -1,25 +1,14 @@
 import os
 import datetime
 
-from cms.plugin_pool import plugin_pool
-from cmsplugin_iframe.cms_plugins import IframePlugin
 from django.utils.translation import ugettext as _
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.conf import settings
+from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 from cms.models.pluginmodel import CMSPlugin
-from django.conf import settings
 
 import lib.util as util
-
-
-class MyIframePlugin(IframePlugin):
-    text_enabled = True
-
-    def icon_src(self, instance):
-        return static("filer/icons/video_32x32.png")
-
-plugin_pool.unregister_plugin(IframePlugin)
-plugin_pool.register_plugin(MyIframePlugin)
 
 def format_names(names, reverse_first=False, maximum=None):
     ret = ""

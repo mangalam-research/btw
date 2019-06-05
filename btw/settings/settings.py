@@ -239,7 +239,10 @@ s.MIDDLEWARE = (
     'django.middleware.locale.LocaleMiddleware',
     'cms.middleware.user.CurrentUserMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
+    # We have to use a custom middleware.
+    # See https://github.com/divio/django-cms/issues/6523
+    # 'cms.middleware.toolbar.ToolbarMiddleware',
+    'lib.middleware.toolbar.CMSToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
     'cms.middleware.utils.ApphookReloadMiddleware',
 )
@@ -279,6 +282,9 @@ s.CMS_PERMISSION = True
 # In some versions of the 3.1.x series, setting it to ``True`` would
 # cause errors.
 s.CMS_TOOLBAR_HIDE = True
+
+s.TEXT_ADDITIONAL_TAGS = ('iframe',)
+s.TEXT_ADDITIONAL_ATTRIBUTES = ('scrolling', 'allowfullscreen', 'frameborder')
 
 s.LANGUAGES = [
     ('en-us', 'English'),
@@ -374,7 +380,6 @@ s.INSTALLED_APPS = (
     'sekizai',
     "mptt",
     "djangocms_text_ckeditor",
-    'cmsplugin_iframe',
     'pyexistdb',
     'semantic_fields',
     # End of apps required by Django CMS.

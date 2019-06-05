@@ -23,7 +23,6 @@ django-cms>=3.6.0,<3.7
 # Optional, recommended packages for django-cms
 Pillow>=5.4.1
 djangocms-text-ckeditor>=3.7.0
-cmsplugin-iframe>=0.1.5
 lxml>=4,<5
 cssselect>=1.0.3,<2
 tatsu>=4.3.0,<5
