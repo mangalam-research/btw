@@ -73,7 +73,7 @@ class BTWTestCase(SimpleTestCase):
         c = Caller()
         with self.assertRaisesRegex(CommandError,
                                     r"Error: the following arguments are "
-                                    rf"required: {expected}"):
+                                    r"required: {}".format(expected)):
             c.call_command("btw", cmd)
 
         self.assertNoOutput(c)

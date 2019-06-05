@@ -251,7 +251,7 @@ class FormRenderer(renderers.TemplateHTMLRenderer):
 
         # We override the work that the default DRF Response object does.
         renderer_context["response"]["Content-Type"] = \
-            f"text/html; charset={self.charset}"
+            "text/html; charset={}".format(self.charset)
         return super(FormRenderer, self).render(data, media_type,
                                                 renderer_context)
 
