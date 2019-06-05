@@ -20,13 +20,14 @@ class Migration(migrations.Migration):
             name='parent',
             field=models.ForeignKey(to='semantic_fields.SemanticField',
                                     related_name="children",
-                                    null=True, blank=True),
+                                    null=True, blank=True, on_delete=models.CASCADE),
             preserve_default=True
         ),
         migrations.AlterField(
             model_name='lexeme',
             name='category',
-            field=models.ForeignKey(to='semantic_fields.SemanticField'),
+            field=models.ForeignKey(
+                to='semantic_fields.SemanticField', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.RenameField(

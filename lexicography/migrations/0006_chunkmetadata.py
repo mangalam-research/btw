@@ -15,10 +15,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ChunkMetadata',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('xml_hash', models.CharField(help_text=b'This is the hash of the last XML we processed for this chunk.', max_length=40)),
-                ('chunk', models.OneToOneField(to='lexicography.Chunk')),
-                ('semantic_fields', models.ManyToManyField(to='semantic_fields.SemanticField')),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
+                ('xml_hash', models.CharField(
+                    help_text=b'This is the hash of the last XML we processed for this chunk.', max_length=40)),
+                ('chunk', models.OneToOneField(
+                    to='lexicography.Chunk', on_delete=models.CASCADE)),
+                ('semantic_fields', models.ManyToManyField(
+                    to='semantic_fields.SemanticField')),
             ],
         ),
     ]
