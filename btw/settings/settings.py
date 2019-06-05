@@ -641,8 +641,8 @@ s.EXISTDB_SERVER_PASSWORD = None
 def _server_url(s):
     host = "http://127.0.0.1"
     return {
-        "standalone": host + ":8088/",
-        "full": host + ":8080/exist/"
+        "standalone": host + ":5000/",
+        "full": host + ":5000/exist/"
     }[s.BTW_EXISTDB_SERVER_TYPE]
 
 s.EXISTDB_SERVER_URL = _server_url
