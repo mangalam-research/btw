@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 from ...article import prepare_article_data, get_bibliographical_data
 from lib import util, testutil
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 
 class PrepareArticle(SubCommand):
     """
@@ -60,7 +60,7 @@ Management commands for the lexicography app.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

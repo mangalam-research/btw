@@ -6,7 +6,7 @@ import time
 
 from django.core.management.base import BaseCommand, CommandError
 from lib.redis import Config
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 from .btwworker import get_running_workers
 
 def makedirs(path):
@@ -198,7 +198,7 @@ Manage the redis server used by BTW.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()

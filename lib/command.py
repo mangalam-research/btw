@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 class SubCommand(object):
     """
@@ -36,3 +37,5 @@ class SubCommand(object):
             formatter_class=argparse.RawTextHelpFormatter)
         sp.set_defaults(subcommand=self)
         return sp
+
+required = {"required": True} if sys.version_info >= (3, 7, 0) else {}

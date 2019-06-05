@@ -14,7 +14,7 @@ from django.utils.six.moves import input
 
 from semantic_fields.views import SemanticFieldViewSet
 
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 def serialize_from_query(url):
     parsed = urlparse(url)
 
@@ -129,7 +129,7 @@ Management commands for the semantic_fields app.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
         for cmd in self.subcommands:
             cmd_instance = cmd()
             cmd_instance.add_to_parser(subparsers)

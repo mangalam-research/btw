@@ -18,7 +18,7 @@ from django.conf import settings
 from semantic_fields.models import SemanticField, Lexeme, SearchWord
 from semantic_fields.util import ParsedExpression, _make_from_hte, \
     parse_local_reference, POS_CHOICES
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 
 def get_csv_reader(csv_file, expected_headers):
     reader = csv.reader(csv_file,
@@ -860,7 +860,7 @@ Performs HTE commands on the database.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
         for cmd in self.subcommands:
             cmd_instance = cmd()
             cmd_instance.add_to_parser(subparsers)

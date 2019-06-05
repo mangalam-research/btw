@@ -11,7 +11,7 @@ from django.core.exceptions import ImproperlyConfigured
 from lib.existdb import ExistDB
 from lib.existdb import get_admin_db, get_collection_path, running
 from lib import xquery
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 from lexicography.models import Chunk
 
 def assert_running():
@@ -320,7 +320,7 @@ Manage the eXist server used by BTW.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
 
         for cmd in self.subcommands:
             cmd().add_to_parser(subparsers)

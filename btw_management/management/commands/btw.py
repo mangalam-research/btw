@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from .btwworker import get_defined_workers
 from lib.redis import Config
-from lib.command import SubCommand
+from lib.command import SubCommand, required
 
 def subdir(a, b):
     """Returns whether a is a subdir of b."""
@@ -334,7 +334,7 @@ BTW-specific commands.
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
                                            dest="subcommand",
-                                           required=True)
+                                           **required)
 
         for cmd in self.subcommands:
             cmd_instance = cmd()
