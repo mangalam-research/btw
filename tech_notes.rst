@@ -115,18 +115,29 @@ adapt the instructions so as to not use virtualenv.
     * Select target path: ``/usr/local/eXist-db``
     * Data path: ``/var/eXist-db/btw/data``
     * Enter password: [create a new password for admin]
-    * Maximum memory in mb: 2024
+    * Maximum memory in mb: 2048
     * Cache memory in mb: 600
 
-7. Make sure to install the jetty.xml file from the config tree. It
-   restricts connections to eXist-db to those from localhost.
+7. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
 
-8. You can try connecting to the server on port 80 to see that nginx
-   is running. Then stop nginx and::
+8. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
+   to them.
 
-    $ rm /etc/nginx/sites-enabled/default
+9. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
+   and the ``port`` parameter in ``jetty-http.xml`` is set to ``5000``
+   and in ``jetty-ssl.xml`` is set to ``5443``.
 
-9. Create a top directory for the site::
+   THIS RESTRICT CONNECTIONS TO ``jetty`` TO THOSE FROM ``localhost``.
+
+10. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
+    uses the ``5000`` port we've set above.
+
+11. You can try connecting to the server on port 80 to see that nginx
+    is running. Then stop nginx and::
+
+     $ rm /etc/nginx/sites-enabled/default
+
+12. Create a top directory for the site::
 
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
@@ -136,7 +147,7 @@ adapt the instructions so as to not use virtualenv.
   install a server and check the section named "FS Structure" to use
   the proper structure.
 
-10. Create the virtual environment for BTW::
+13. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ pip install virtualenv
@@ -511,7 +522,7 @@ Generally:
     # Also check for services in /etc/systemd/system that may
     # be obsolete.
 
-    $ ./manate.py btwredis start
+    $ ./manage.py btwredis start
     $ ./manage.py migrate
 
     # This is the perfect time to clean old records.
@@ -543,8 +554,8 @@ Generally:
 
 See below for specific upgrade cases.
 
-2.4.0 to next
-~~~~~~~~~~~~~
+2.4.0 to 2.5.0
+~~~~~~~~~~~~~~
 
 - ``apt-get install libpq-dev``
 
