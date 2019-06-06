@@ -14,6 +14,10 @@ JSDOC3?=jsdoc
 # wget command.
 WGET?=wget
 
+# Which saxon command to use. This must be a Saxon HE version that supports
+# XSLT 3.
+SAXON?=./utils/saxon
+
 BEHAVE?=./selenium_test/btw-behave.py
 
 # Parameters to pass to behave

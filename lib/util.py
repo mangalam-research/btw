@@ -50,9 +50,10 @@ class WithTmpFiles(object):
 
 
 def run_saxon(xsl_path, input_data):
+    saxon = os.path.join(settings.TOPDIR, "utils", "saxon")
     with WithTmpFiles(input_data) as (_, tmpinput_path,
                                       tmpoutput_file, tmpoutput_path):
-        subprocess.check_call(["saxon", "-s:" + tmpinput_path, "-xsl:" +
+        subprocess.check_call([saxon, "-s:" + tmpinput_path, "-xsl:" +
                                xsl_path, "-o:" + tmpoutput_path])
         out = os.fdopen(tmpoutput_file, 'r')
         ret = out.read()

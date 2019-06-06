@@ -10,7 +10,6 @@ $(ME)_outdir:=$($(ME)_include_mk_DIR)/out
 # Top of tei hierarchy
 $(ME)_TEI?=$(TEI)
 $(ME)_ODD2HTML?=$($(ME)_TEI)/odds/odd2html.xsl
-$(ME)_SAXON?=saxon
 $(ME)_TEITOODD?=teitoodd
 $(ME)_TEITORNC?=teitornc
 $(ME)_TRANG?=trang
@@ -53,7 +52,7 @@ $($(ME)_RNG_TARGETS): $($(ME)_outdir)/%/btw-storage.rng: $($(ME)_include_mk_DIR)
 	$($(ME)_TRANG) $(@:.rng=.rnc) $@
 
 $($(ME)_XSL_TARGETS): $($(ME)_outdir)/%.xsl: $($(ME)_include_mk_DIR)/%.sch
-	saxon -s:$< -o:$@ -xsl:$(SCHEMATRON_TO_XSL) allow-foreign=true generate-fired-rule=false
+	$(SAXON) -s:$< -o:$@ -xsl:$(SCHEMATRON_TO_XSL) allow-foreign=true generate-fired-rule=false
 
 .SECONDEXPANSION:
 $(ME)_MAKE_COMPILED_NAME=$($(ME)_outdir)/$(1)/btw-storage.compiled
@@ -65,7 +64,7 @@ endef # MAKE_COMPILED_RULE
 $(foreach t,$($(ME)_VERSIONS),$(eval $(call $(ME)_MAKE_COMPILED_RULE,$(t:$($(ME)_include_mk_DIR)/%.xml=%))))
 
 $($(ME)_LATEST_RNG_TARGET:.rng=.json): $($(ME)_outdir)/%/btw-storage.json: $$(call $(ME)_MAKE_COMPILED_NAME,%)
-	$($(ME)_SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$< -o:$@ callback=''
+	$(SAXON) -xsl:/usr/share/xml/tei/stylesheet/odds/odd2json.xsl -s:$< -o:$@ callback=''
 
 $($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $($(ME)_outdir)/%/btw-storage.json $($(ME)_include_mk_DIR)/btw-storage-metadata-fragment.yml $($(ME)_outdir)/%/btw-storage-doc
 	$(WED_PATH)/bin/wed-metadata --tei --merge $(word 2,$^) $< $@
@@ -73,12 +72,12 @@ $($(ME)_LATEST_METADATA_TARGET): $($(ME)_outdir)/%/btw-storage-metadata.json: $(
 $($(ME)_outdir)/%/btw-storage-doc: $$(call $(ME)_MAKE_COMPILED_NAME,%)
 	-rm -rf $@
 	-mkdir $@
-	$($(ME)_SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 cssFile="./tei.css" cssPrintFile="./tei-print.css" outputDir=$@
+	$(SAXON) -s:$< -xsl:$($(ME)_ODD2HTML) STDOUT=false splitLevel=0 cssFile="./tei.css" cssPrintFile="./tei-print.css" outputDir=$@
 	cp -rp $($(ME)_TEI)/tei-print.css $($(ME)_TEI)/tei.css $@/
 
 $($(ME)_FLAT_MODS): $($(ME)_include_mk_DIR)/flatten.xsl $($(ME)_include_mk_DIR)/mods-3-5.xsd
 	# Saxon will create the directory.
-	saxon -xsl:$< -s:$(word 2,$^) -o:$@
+	$(SAXON) -xsl:$< -s:$(word 2,$^) -o:$@
 
 clean::
 	rm -rf $($(ME)_outdir)

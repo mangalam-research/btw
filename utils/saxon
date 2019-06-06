@@ -1,0 +1,10 @@
+#!/bin/sh
+java -jar /usr/share/java/Saxon-HE.jar ${1+"$@"}
+
+#
+# Once upon a time the TEI repo was distributing a "saxon" executable. Then they
+# stopped. Debian produces a libsaxonhe-java package that can be installed which
+# contains saxon HE but there is no executable for it.
+#
+# So we provide this utility to allow us to run "saxon" and not have to use
+# `java -jar....` everywhere.
