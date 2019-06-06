@@ -65,6 +65,16 @@ to not use virtualenv.
 
     $ apt-get install tei-xsl tei-p5-source
 
+4. Install packages from Buster::
+
+     libdom4j-java_2.1.1-2_all.deb
+     libsaxonhe-java_9.9.0.2+dfsg-1_all.deb
+
+   You need to grab them manually, and install them with ``dpkg -i`` and then
+   run ``apt-get install -f`` to fix the issues.
+
+   This is needed so as to get XSLT 3.0 support in Saxon HE. TEI requires it.
+
 4. Install eXist-db 4.6.1::
 
    $ mkdir /usr/local/eXist-db
@@ -526,6 +536,16 @@ See below for specific upgrade cases.
 - ``apt-get install libpq-dev``
 
 - ``apt-get install tei-xsl``
+
+- Install packages from Buster::
+
+    libdom4j-java_2.1.1-2_all.deb
+    libsaxonhe-java_9.9.0.2+dfsg-1_all.deb
+
+  You need to grab them manually, and install them with ``dpkg -i`` and then
+  run ``apt-get install -f`` to fix the issues.
+
+  This is needed so as to get XSLT 3.0 support in Saxon HE. TEI requires it.
 
 - This release upgrade BTW to Python 3 so:
 
