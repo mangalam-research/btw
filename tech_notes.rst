@@ -36,14 +36,14 @@
 Server Setup
 ============
 
-This documentation is based on installing BTW on Debian Wheezy. Later
-versions of Debian or other distributions need these instructions
-adapted to their specific case.
+This documentation is based on installing BTW on Debian Stretch. Later versions
+of Debian or other distributions need these instructions adapted to their
+specific case.
 
-This documentation uses a virtual environment to allow for different
-projects running different versions of libraries. This is not,
-strictly speaking, necessary. If you do not want it, then you have to
-adapt the instructions so as to not use virtualenv.
+This documentation uses a virtual environment to allow for different projects
+running different versions of libraries. This is not, strictly speaking,
+necessary. If you do not want it, then you have to adapt the instructions so as
+to not use virtualenv.
 
 1. Install necessary packages::
 
@@ -57,20 +57,15 @@ adapt the instructions so as to not use virtualenv.
 2. Install ``/etc/apt/sources.list.d/tei.list`` from the config
    tree. Or add the following source to your apt sources::
 
-    deb http://tei.oucs.ox.ac.uk/teideb/binary ./
+     # The official server is down for a while. Their home page mentions the de site below:
+     # deb https://packages.tei-c.org/deb/binary ./
+     deb https://packages.tei-c.de/deb/binary ./
 
 3. Install::
 
     $ apt-get install tei-xsl tei-p5-source
 
-4. Add this key to the list of keys recognized by ``apt`` so that you
-   don't get security issues with installing tei::
-
-    pub   1024D/86A9A497 2001-11-27
-    uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
-    sub   1024g/BFABA9D0 2001-11-27
-
-5. Install eXist-db 4.6.1::
+4. Install eXist-db 4.6.1::
 
    $ mkdir /usr/local/eXist-db
    $ mkdir -p /var/eXist-db/btw/data
@@ -89,26 +84,26 @@ adapt the instructions so as to not use virtualenv.
     * Maximum memory in mb: 2048
     * Cache memory in mb: 600
 
-6. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
+5. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
 
-7. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
+6. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
    to them.
 
-8. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
+7. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
    and the ``port`` parameter in ``jetty-http.xml`` is set to ``5000``
    and in ``jetty-ssl.xml`` is set to ``5443``.
 
    THIS RESTRICT CONNECTIONS TO ``jetty`` TO THOSE FROM ``localhost``.
 
-9. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
+8. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
    uses the ``5000`` port we've set above.
 
-10. You can try connecting to the server on port 80 to see that nginx
-    is running. Then stop nginx and::
+9. You can try connecting to the server on port 80 to see that nginx
+   is running. Then stop nginx and::
 
      $ rm /etc/nginx/sites-enabled/default
 
-11. Create a top directory for the site::
+10. Create a top directory for the site::
 
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
@@ -118,7 +113,7 @@ adapt the instructions so as to not use virtualenv.
   install a server and check the section named "FS Structure" to use
   the proper structure.
 
-12. Create the virtual environment for BTW::
+11. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ pip install virtualenv
