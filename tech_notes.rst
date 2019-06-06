@@ -54,12 +54,6 @@ adapt the instructions so as to not use virtualenv.
    server. This will be needed when ``pip`` installs the Python
    packages.
 
-   On Wheezy, we need the following packages from backports::
-
-    $ apt-get -t wheezy-backports install nginx
-
-   On Jessie, the latest nginx is fine.
-
 2. Install ``/etc/apt/sources.list.d/tei.list`` from the config
    tree. Or add the following source to your apt sources::
 
@@ -67,39 +61,16 @@ adapt the instructions so as to not use virtualenv.
 
 3. Install::
 
-    $ apt-get install tei-roma tei-p5-source
+    $ apt-get install tei-xsl tei-p5-source
 
-4. On Jessie, the version of uwsgi that ships with the distribution is fine.
-
-   On Wheezy, install uwsgi with pip::
-
-    $ sudo pip install uwsgi
-
-   This is needed because Debian Wheezy ships an outdated version of
-   uwsgi. We are **also** installing the version shipped with Debian
-   so that we get the whole service infrastructure, etc. However, we
-   do this so that the infrastructure provided by the Debian package
-   actually runs the version provided by pip::
-
-    $ cd /usr/bin
-    $ rm uwsgi
-    $ ln -s ../local/bin/uwsgi .
-
-   And we do this to prevent our links getting overwritten::
-
-    $ apt-mark hold uwsgi
-
-   It is **strongly** sugested to have apticron installed so that you
-   get a warning once a new version of uwsgi is available.
-
-5. Add this key to the list of keys recognized by ``apt`` so that you
+4. Add this key to the list of keys recognized by ``apt`` so that you
    don't get security issues with installing tei::
 
     pub   1024D/86A9A497 2001-11-27
     uid                  Sebastian Rahtz <sebastian.rahtz@oucs.ox.ac.uk>
     sub   1024g/BFABA9D0 2001-11-27
 
-6. Install eXist-db 4.6.1::
+5. Install eXist-db 4.6.1::
 
    $ mkdir /usr/local/eXist-db
    $ mkdir -p /var/eXist-db/btw/data
@@ -118,26 +89,26 @@ adapt the instructions so as to not use virtualenv.
     * Maximum memory in mb: 2048
     * Cache memory in mb: 600
 
-7. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
+6. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
 
-8. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
+7. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
    to them.
 
-9. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
+8. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
    and the ``port`` parameter in ``jetty-http.xml`` is set to ``5000``
    and in ``jetty-ssl.xml`` is set to ``5443``.
 
    THIS RESTRICT CONNECTIONS TO ``jetty`` TO THOSE FROM ``localhost``.
 
-10. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
-    uses the ``5000`` port we've set above.
+9. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
+   uses the ``5000`` port we've set above.
 
-11. You can try connecting to the server on port 80 to see that nginx
+10. You can try connecting to the server on port 80 to see that nginx
     is running. Then stop nginx and::
 
      $ rm /etc/nginx/sites-enabled/default
 
-12. Create a top directory for the site::
+11. Create a top directory for the site::
 
     $ mkdir /srv/www/<site>
     $ cd /srv/www/<site>
@@ -147,7 +118,7 @@ adapt the instructions so as to not use virtualenv.
   install a server and check the section named "FS Structure" to use
   the proper structure.
 
-13. Create the virtual environment for BTW::
+12. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ pip install virtualenv
@@ -558,6 +529,8 @@ See below for specific upgrade cases.
 ~~~~~~~~~~~~~~
 
 - ``apt-get install libpq-dev``
+
+- ``apt-get install tei-xsl``
 
 - This release upgrade BTW to Python 3 so:
 
