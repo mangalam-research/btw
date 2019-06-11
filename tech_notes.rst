@@ -75,7 +75,7 @@ to not use virtualenv.
 
    This is needed so as to get XSLT 3.0 support in Saxon HE. TEI requires it.
 
-4. Install eXist-db 4.6.1::
+4. Install eXist-db 4.7.0::
 
    $ mkdir /usr/local/eXist-db
    $ mkdir -p /var/eXist-db/btw/data
@@ -590,10 +590,11 @@ See below for specific upgrade cases.
 
  * Upgrade the Dashboard::
 
-     $ ./bin/client.sh -s -u admin -p PASSWORD
+     $ ./bin/client.sh -s -u admin -P PASSWORD
 
    Use the command::
 
+     find repo:install-and-deploy("http://exist-db.org/apps/shared", "http://demo.exist-db.org/exist/apps/public-repo/modules/find.xql")
      find repo:install-and-deploy("http://exist-db.org/apps/dashboard", "http://demo.exist-db.org/exist/apps/public-repo/modules/find.xql")
 
  * Run::
@@ -622,10 +623,13 @@ See below for specific upgrade cases.
  cmsplugin_filer_link_filerlinkplugin
  cmsplugin_filer_teaser_filerteaser
  cmsplugin_filer_video_filervideo
+ cmsplugin_iframe_iframeplugin
 
 - Run:
 
   ./manage.py cms delete-orphaned-plugins
+
+- Run ``./manage.py cms fix-tree``
 
 - Fix the CMS pages:
 
