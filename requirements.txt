@@ -34,3 +34,6 @@ pyee>=5,<6
 nose-progressive>=1.5.2
 glerbl==0.1.1
 mitmproxy
+# We need this on the server so that we run a local copy of uwsgi which uses
+# the same Python version as the one running BTW.
+uwsgi==2.0.18
