@@ -123,11 +123,25 @@ to not use virtualenv.
   install a server and check the section named "FS Structure" to use
   the proper structure.
 
-11. Create the virtual environment for BTW::
+11. You need to install Python 3.7.3. Follow the instructions at
+    https://superuser.com/questions/1412975/how-to-build-and-install-python-3-7-x-from-source-on-debian-9-8
+
+    Install all optional packages. Use this command for cloning::
+
+     git clone https://github.com/python/cpython.git
+     git checkout v3.7.3
+
+    Use this prefix::
+
+     ./configure --prefix=/usr/local/python3.7.3
+
+12. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
-    $ pip install virtualenv
-    $ virtualenv btw_env
+    $ /usr/local/python3.7.3/bin/python3.7 -m venv btw_env
+
+    [Currently, Python 3.7.3 is installed in /usr/local/python3.7.2 due to a
+    typo. Since virturalenvs are not movable, etc. we have to live with it.]
 
 The Django Project
 ==================
