@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ImproperlyConfigured
 from .btwworker import get_defined_workers
 from lib.redis import Config
 from lib.command import SubCommand, required
@@ -250,9 +251,10 @@ class GenerateScripts(SubCommand):
         start_uwsgi_path = os.path.join(directory, "start-uwsgi")
         notify_path = os.path.join(directory, "notify")
         env_path = settings.ENVPATH
-        python_path = os.path.join(env_path, "bin", "python") \
-            if env_path is not None else "python"
-
+        if env_path is None:
+            raise ImproperlyConfigured("ENVPATH must be set")
+        python_path = os.path.join(env_path, "bin", "python")
+        uwsgi_path = os.path.join(env_path, "bin", "uwsgi")
         home = "/home/btw"
 
         with open(manage_path, 'w') as script:
@@ -273,9 +275,9 @@ chown btw:btw $run_dir
 # /etc/uwsgi/default.ini can happen.
 export UWSGI_DEB_CONFNAMESPACE=app
 export UWSGI_DEB_CONFNAME={site}
-/usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
+{uwsgi_path} --ini /etc/uwsgi/default.ini --ini \
 /etc/uwsgi/apps-enabled/{site}.ini --daemonize /var/log/uwsgi/app/{site}.log
-""".format(site=settings.BTW_SLUGIFIED_SITE_NAME))
+""".format(site=settings.BTW_SLUGIFIED_SITE_NAME, uwsgi_path=uwsgi_path))
 
         with open(notify_path, 'w') as script:
             script.write("""\

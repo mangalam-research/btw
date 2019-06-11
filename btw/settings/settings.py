@@ -26,7 +26,7 @@ s.PARENTDIR = os.path.dirname(s.CURDIR)
 s.TOPDIR = os.path.dirname(s.PARENTDIR)
 
 # The Python virtualenv that this instance is run with.
-s.ENVPATH = None
+s.ENVPATH = os.path.join(s.TOPDIR, ".btw-venv")
 
 # Basic path where to put the logs.
 s.BTW_LOGGING_PATH = None

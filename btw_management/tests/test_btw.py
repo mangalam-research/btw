@@ -4,6 +4,7 @@ import shutil
 from unittest import mock
 
 from django.core.management.base import CommandError
+from django.core.exceptions import ImproperlyConfigured
 from django.test.utils import override_settings
 from django.test import SimpleTestCase
 
@@ -277,46 +278,9 @@ RequiredBy=testing.service
         Test that ``btw generate-scripts`` generates correct
         scripts when there is no ENVPATH set.
         """
-        stdout, stderr = call_command("btw", "generate-scripts",
-                                      script_tmpdir)
-        self.assertMultiLineEqual(open(os.path.join(script_tmpdir,
-                                                    "manage")).read(),
-                                  """\
-#!/bin/sh
-export HOME="/home/btw"
-cd "foo"
-"python" ./manage.py "$@"
-""")
-
-        self.assertMultiLineEqual(
-            open(os.path.join(script_tmpdir, "start-uwsgi")).read(),
-            """\
-#!/bin/sh
-run_dir=/run/uwsgi/app/testing
-mkdir -p $run_dir
-chown btw:btw $run_dir
-# We need to export these so that the variable expansion performed in
-# /etc/uwsgi/default.ini can happen.
-export UWSGI_DEB_CONFNAMESPACE=app
-export UWSGI_DEB_CONFNAME=testing
-/usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
-/etc/uwsgi/apps-enabled/testing.ini --daemonize /var/log/uwsgi/app/testing.log
-""")
-
-        self.assertMultiLineEqual(
-            open(os.path.join(script_tmpdir, "notify")).read(),
-            """\
-#!/bin/sh
-
-/usr/sbin/sendmail -bm $1<<TXT
-Subject: [BTW SERVICE FAILURE] $2 failed
-
-$(systemctl status --full "$2")
-TXT
-""")
-
-        self.assertEqual(stdout, "")
-        self.assertEqual(stderr, "")
+        with self.assertRaisesRegex(ImproperlyConfigured,
+                                    r"ENVPATH must be set"):
+            call_command("btw", "generate-scripts", script_tmpdir)
 
     def test_generate_scripts_with_envpath(self):
         """
@@ -346,7 +310,7 @@ chown btw:btw $run_dir
 # /etc/uwsgi/default.ini can happen.
 export UWSGI_DEB_CONFNAMESPACE=app
 export UWSGI_DEB_CONFNAME=testing
-/usr/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
+blah/bin/uwsgi --ini /etc/uwsgi/default.ini --ini \
 /etc/uwsgi/apps-enabled/testing.ini --daemonize /var/log/uwsgi/app/testing.log
 """)
 
