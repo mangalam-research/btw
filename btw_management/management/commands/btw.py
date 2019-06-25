@@ -137,6 +137,8 @@ WantedBy=multi-user.target
                                              in components),
                               **common))
 
+        # The stock systemd configuration that comes with Redis uses
+        # Type=forking so that's what we use here.
         with open(os.path.join(service_dir, redis_service), "w") \
                 as out:
             out.write("""\

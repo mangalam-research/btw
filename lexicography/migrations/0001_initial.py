@@ -33,9 +33,9 @@ class Migration(migrations.Migration):
                 ('datetime', models.DateTimeField()),
                 ('session', models.CharField(max_length=100, null=True)),
                 ('ctype', models.CharField(max_length=1, choices=[
-                 (b'C', b'Create'), (b'U', b'Update'), (b'R', b'Revert')])),
+                 ('C', 'Create'), ('U', 'Update'), ('R', 'Revert')])),
                 ('csubtype', models.CharField(max_length=1, choices=[
-                 (b'A', b'Automatic'), (b'M', b'Manual'), (b'R', b'Recovery')])),
+                 ('A', 'Automatic'), ('M', 'Manual'), ('R', 'Recovery')])),
                 ('published', models.BooleanField(default=False)),
             ],
             options={
@@ -45,13 +45,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Chunk',
             fields=[
-                ('c_hash', models.CharField(help_text=b'This is the primary key for chunks. It is a hash of the <code>data</code> field.',
+                ('c_hash', models.CharField(help_text='This is the primary key for chunks. It is a hash of the <code>data</code> field.',
                                             max_length=40, serialize=False, primary_key=True)),
                 ('is_normal', models.BooleanField(default=True,
-                                                  help_text=b"A 'normal' chunk is one that is well-formed XML")),
+                                                  help_text="A 'normal' chunk is one that is well-formed XML")),
                 ('schema_version', models.CharField(
-                    help_text=b'This is the version of the btw-storage schema that ought to be used to validate this chunk.', max_length=10)),
-                ('_valid', models.NullBooleanField(help_text=b'Whether this chunk is valid when validated against the schema version specified in the <code>schema_version</code> field. You do not normally access this field through <code>valid</code>.', db_column=b'valid')),
+                    help_text='This is the version of the btw-storage schema that ought to be used to validate this chunk.', max_length=10)),
+                ('_valid', models.NullBooleanField(help_text='Whether this chunk is valid when validated against the schema version specified in the <code>schema_version</code> field. You do not normally access this field through <code>valid</code>.', db_column='valid')),
                 ('data', models.TextField()),
             ],
             options={
@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('ctype', models.CharField(max_length=1, choices=[
-                 (b'D', b'Delete'), (b'U', b'Undelete')])),
+                 ('D', 'Delete'), ('U', 'Undelete')])),
                 ('datetime', models.DateTimeField()),
             ],
             options={
@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('ctype', models.CharField(max_length=1, choices=[
-                 (b'P', b'Publish'), (b'U', b'Unpublish')])),
+                 ('P', 'Publish'), ('U', 'Unpublish')])),
                 ('datetime', models.DateTimeField()),
                 ('changerecord', models.ForeignKey(
                     to='lexicography.ChangeRecord', on_delete=models.CASCADE)),

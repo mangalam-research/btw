@@ -36,9 +36,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('reference_title', models.TextField(default=None, unique=True, validators=[
-                 django.core.validators.RegexValidator(b'[^\\s]', b'This field cannot contain only spaces.')])),
-                ('genre', models.CharField(default=None, max_length=2, choices=[(b'SU', b'S\xc5\xabtra'), (
-                    b'SH', b'\xc5\x9a\xc4\x81stra'), (b'AV', b'Avad\xc4\x81na'), (b'LI', b'Literary Text'), (b'PA', b'P\xc4\x81li')])),
+                 django.core.validators.RegexValidator('[^\\s]', 'This field cannot contain only spaces.')])),
+                ('genre', models.CharField(default=None, max_length=2, choices=[('SU', 'Sūtra'), (
+                    'SH', 'Śāstra'), ('AV', 'Avadāna'), ('LI', 'Literary Text'), ('PA', 'Pāli')])),
                 ('item', models.ForeignKey(related_name='primary_sources',
                                            to='bibliography.Item', on_delete=models.CASCADE)),
             ],

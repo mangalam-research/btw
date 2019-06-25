@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
             model_name='changerecord',
             name='ctype',
             field=models.CharField(max_length=1, choices=[
-                (b'C', b'Create'),
-                (b'U', b'Update'), (b'R', b'Revert'),
-                (b'V', b'Version update')]),
+                ('C', 'Create'),
+                ('U', 'Update'), ('R', 'Revert'),
+                ('V', 'Version update')]),
             preserve_default=True,
         ),
     ]

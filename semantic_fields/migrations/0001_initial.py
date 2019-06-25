@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('catid', models.IntegerField(max_length=7, unique=True, null=True)),
-                ('path', models.TextField(unique=True, db_column=b'path')),
+                ('path', models.TextField(unique=True, db_column='path')),
                 ('heading', models.TextField()),
                 ('parent', models.ForeignKey(related_name='children', blank=True,
                                              to='semantic_fields.Category', null=True, on_delete=models.CASCADE)),
