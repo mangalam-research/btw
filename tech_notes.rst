@@ -61,11 +61,21 @@ to not use virtualenv.
      # deb https://packages.tei-c.org/deb/binary ./
      deb https://packages.tei-c.de/deb/binary ./
 
+
 3. Install::
 
     $ apt-get install tei-xsl tei-p5-source
 
-4. Install packages from Buster::
+4. Create ``/etc/apt/sources.list.d/nodesource.list``::
+
+     deb https://deb.nodesource.com/node_12.x stretch main
+     deb-src https://deb.nodesource.com/node_12.x stretch main
+
+5. Install::
+
+    $ apt-get install nodejs
+
+6. Install packages from Buster::
 
      libdom4j-java_2.1.1-2_all.deb
      libsaxonhe-java_9.9.0.2+dfsg-1_all.deb
@@ -75,7 +85,7 @@ to not use virtualenv.
 
    This is needed so as to get XSLT 3.0 support in Saxon HE. TEI requires it.
 
-4. Install eXist-db 4.7.0::
+7. Install eXist-db 4.7.0::
 
    $ mkdir /usr/local/eXist-db
    $ mkdir -p /var/eXist-db/btw/data
@@ -84,6 +94,7 @@ to not use virtualenv.
    # You should save the installer somewhere else than the path above.
    $ wget [path to eXist-db installer.jar]
    $ cd !:$
+   $ [Log in as the user "btw"]
    $ java -jar eXist-setup-[version]-revXXXXX.jar -console
 
   Responses:
@@ -94,48 +105,53 @@ to not use virtualenv.
     * Maximum memory in mb: 2048
     * Cache memory in mb: 600
 
-5. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
+8. Go into ``/usr/local/eXist-db/tools/jetty/etc``.
 
-6. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
+9. Copy ``jetty-http.xml`` and ``jetty-ssl.xml`` to file with ``.orig`` appended
    to them.
 
-7. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
-   and the ``port`` parameter in ``jetty-http.xml`` is set to ``5000``
-   and in ``jetty-ssl.xml`` is set to ``5443``.
+10. Edit both files so that the ``host`` parameter is set to 127.0.0.1,
+    and the ``port`` parameter in ``jetty-http.xml`` is set to ``5000``
+    and in ``jetty-ssl.xml`` is set to ``5443``.
 
-   THIS RESTRICT CONNECTIONS TO ``jetty`` TO THOSE FROM ``localhost``.
+    THIS RESTRICT CONNECTIONS TO ``jetty`` TO THOSE FROM ``localhost``.
 
-8. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
-   uses the ``5000`` port we've set above.
+11. Edit ``client.properties`` and ``backup.properties`` so that the uri setting
+    uses the ``5000`` port we've set above.
 
-9. You can try connecting to the server on port 80 to see that nginx
-   is running. Then stop nginx and::
+12. You can try connecting to the server on port 80 to see that nginx
+    is running. Then stop nginx and::
 
-     $ rm /etc/nginx/sites-enabled/default
+      $ rm /etc/nginx/sites-enabled/default
 
-10. Create a top directory for the site::
+13. Create a top directory for the site::
 
-    $ mkdir /srv/www/<site>
-    $ cd /srv/www/<site>
+     $ mkdir /srv/www/<site>
+     $ chown btw.btw /srv/www/<site>
 
-  The above directory is just a suggestion. If you are doing this for
-  Mangalam, then you **must** consult the documentation on how to
-  install a server and check the section named "FS Structure" to use
-  the proper structure.
+    The above directory is just a suggestion. If you are doing this for
+    Mangalam, then you **must** consult the documentation on how to
+    install a server and check the section named "FS Structure" to use
+    the proper structure.
 
-11. You need to install Python 3.7.3. Follow the instructions at
+14. You need to install Python 3.7.3. Follow the instructions at
     https://superuser.com/questions/1412975/how-to-build-and-install-python-3-7-x-from-source-on-debian-9-8
 
-    Install all optional packages. Use this command for cloning::
+    Install packages required for the build, including optional ones::
+
+     apt install zlib1g-dev libffi-dev libssl-dev libbz2-dev libncursesw5-dev libgdbm-dev liblzma-dev libsqlite3-dev tk-dev uuid-dev libreadline-dev
+
+    Use this command for cloning::
 
      git clone https://github.com/python/cpython.git
+     cd cpython
      git checkout v3.7.3
 
     Use this prefix::
 
      ./configure --prefix=/usr/local/python3.7.3
 
-12. Create the virtual environment for BTW::
+15. Create the virtual environment for BTW::
 
     $ cd /srv/www/<site>
     $ /usr/local/python3.7.3/bin/python3.7 -m venv btw_env
@@ -227,9 +243,14 @@ BTW needs to have its own database.
 
     $ sudo -u postgres createuser -P btw
 
-Answer all questions negatively. Create a database::
+   Answer all questions negatively. Create a database::
 
     $ sudo -u postgres createdb -O btw btw
+
+   Give the new user the right to create databases::
+
+    $ sudo -u postgres psql
+    ALTER USER btw CREATEDB;
 
 2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.8/ref/databases/#optimizing-postgresql-s-configuration). As of PostgreSQL 9.4 as installed on Debian Jessie, the default values are those that Django wants so there is nothing to do here.
 
@@ -277,6 +298,11 @@ Answer all questions negatively. Create a database::
 
    This sets the name of site 1 in the database to match the
    BTW_SITE_NAME setting.
+
+7. Run::
+
+     sudo mkdir -p /var/log/btw/wed_logs
+     sudo chown -R btw.btw /var/log/btw
 
 Settings
 --------
