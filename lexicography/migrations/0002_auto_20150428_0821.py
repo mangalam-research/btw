@@ -5,7 +5,14 @@ from django.db import migrations
 from ..perms import create_perms
 
 def permissions(apps, schema_editor):
-    from django.contrib.contenttypes.management import update_contenttypes
+    try:
+        # Django <= 1.10
+        from django.contrib.contenttypes.management import update_contenttypes
+    except ImportError:
+        # Django 1.11 and over
+        from django.contrib.contenttypes.management import \
+            create_contenttypes as update_contenttypes
+
     from django.apps import apps as configured_apps
     for app in configured_apps.get_app_configs():
         update_contenttypes(app, interactive=True, verbosity=0)
