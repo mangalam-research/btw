@@ -34,11 +34,6 @@
       <link href="{{ btw_globals.btw_fontawesome_css_path }}" type="text/css" media="screen" rel="stylesheet" />
       <link href="{% static 'lib/external/dragula.min.css' %} " type="text/css" media="screen" rel="stylesheet" />
       <link href="{% static 'css/site.css' %}" type="text/css" media="screen" rel="stylesheet" />
-      <script type="text/javascript">
-	{% autoescape off %}
-	{{ btw_globals.wed_config }}
-	{% endautoescape %}
-      </script>
       {% block extrahead %}{% endblock %}
       {% render_block "css" %}
     </head>

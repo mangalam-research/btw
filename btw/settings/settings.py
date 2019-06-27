@@ -629,22 +629,12 @@ s.BTW_WED_PATH = lambda s: None if s.BTW_WED_USE_REQUIREJS else (
     "/static/lib/wed/wed.js",)
 s.BTW_WED_CSS = ("/static/lib/wed/wed.css", "/static/wed/wed-widget.css")
 
-# DEPRECATED: this setting should just be removed
-s.BTW_WED_CONFIG = ""  # Included in requirejs-config-dev.js
-
 s.BTW_MODE_CSS = "/static/lib/btw/btw-mode.css"
 s.BTW_WED_LOGGING_PATH = \
     lambda s: os.path.join(s.BTW_LOGGING_PATH_FOR_BTW, "wed")
-s.BTW_QUNIT_CSS_PATH = None
 
 s.BTW_JQUERY_GROWL_CSS_PATH = \
     '/static/lib/external/jquery.growl/css/jquery.growl.css'
-
-# DEPRECATED: these QUnit settings are no longer used and should just be
-# removed.
-s.QUNIT_VERSION = "1.12.0"
-s.BTW_QUNIT_CSS_PATH = "/static/lib/external/qunit-" + s.QUNIT_VERSION + ".css"
-
 
 s.BTW_DEMO = False
 if not hasattr(s, "BTW_TESTING"):
