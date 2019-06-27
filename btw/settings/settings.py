@@ -477,16 +477,6 @@ s.LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'bibliography': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'zotero': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
         'django_datatables_view': {
             'handlers': ['console'],
             'level': 'ERROR',
@@ -546,9 +536,9 @@ if getattr(s, "BTW_TESTING", False):
     s.BTW_GLOBAL_KEY_PREFIX = os.environ.get('BUILDER') \
         if s.BTW_BUILD_ENV else "testing"
     s.BTW_CELERY_WORKER_PREFIX = \
-        slugify(s.BTW_GLOBAL_KEY_PREFIX.lower(), separator="_") \
+        lambda s: slugify(s.BTW_GLOBAL_KEY_PREFIX.lower(), separator="_") \
         .replace(".", "_")
-    s.BTW_REDIS_SITE_PREFIX = s.BTW_CELERY_WORKER_PREFIX
+    s.BTW_REDIS_SITE_PREFIX = lambda s: s.BTW_CELERY_WORKER_PREFIX
 
 # Unfortunately, due to ``UNIX_MAX_PATH`` (see ``man unix``), we have
 # to be careful not to go over 108 characters (on Linux) for the
@@ -573,11 +563,10 @@ s.CACHES = lambda s: {
         'OPTIONS': {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
-        'TIMEOUT': 3153600000 if name in ("article_display",
-                                          "bibliography") else None,
+        'TIMEOUT': 3153600000 if name == "article_display" else None,
     }
-    for name in ('bibliography', 'default', 'session', 'page',
-                 'article_display')}
+    for name in ('default', 'session', 'page', 'article_display')
+}
 
 s.BTW_REDIS_DATABASE_FOR_CELERY = 2
 s.CELERY_BROKER_URL = \
