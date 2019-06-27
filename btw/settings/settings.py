@@ -60,25 +60,7 @@ s.LOGIN_REDIRECT_URL = 'lexicography_main'
 #     }
 # }
 
-s.CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'default'
-    },
-    'session': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'session'
-    },
-    'page': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'session'
-    },
-    'article_display': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'article_display'
-    }
-}
-
+s.SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 s.SESSION_CACHE_ALIAS = 'session'
 
 # Local time zone for this installation. Choices can be found here:
@@ -495,6 +477,11 @@ s.LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'bibliography': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'zotero': {
             'handlers': ['console'],
             'level': 'DEBUG',
@@ -547,6 +534,22 @@ s.CELERY_TASK_ROUTES = lambda s: {
 # redis for development and another that runs for testing.
 s.BTW_REDIS_SITE_PREFIX = lambda s: s.BTW_SLUGIFIED_SITE_NAME
 
+s.BTW_GLOBAL_KEY_PREFIX = ''
+
+s.BTW_REDIS_DATABASE_FOR_CACHES = 0
+
+if getattr(s, "BTW_TESTING", False):
+    # Shove all testing on database 1.
+    s.BTW_REDIS_DATABASE_FOR_CACHES = 1
+    # Bring in a prefix to avoid clashes between different tests that
+    # could be running in parallel.
+    s.BTW_GLOBAL_KEY_PREFIX = os.environ.get('BUILDER') \
+        if s.BTW_BUILD_ENV else "testing"
+    s.BTW_CELERY_WORKER_PREFIX = \
+        slugify(s.BTW_GLOBAL_KEY_PREFIX.lower(), separator="_") \
+        .replace(".", "_")
+    s.BTW_REDIS_SITE_PREFIX = s.BTW_CELERY_WORKER_PREFIX
+
 # Unfortunately, due to ``UNIX_MAX_PATH`` (see ``man unix``), we have
 # to be careful not to go over 108 characters (on Linux) for the
 # socket created by Redis, which means we cannot just put the socket
@@ -556,6 +559,37 @@ s.BTW_REDIS_SOCKET = lambda s: \
     os.path.join(s.BTW_REDIS_SOCKET_DIR_PATH,
                  join_prefix(s.BTW_REDIS_SITE_PREFIX, "redis.sock"))
 
+s.BTW_REDIS_LOCATION = lambda s: 'unix://:{0}@{1}'.format(
+    s.BTW_REDIS_PASSWORD, s.BTW_REDIS_SOCKET)
+
+s.BTW_REDIS_CACHING_LOCATION = lambda s: s.BTW_REDIS_LOCATION + "?db=" + \
+    str(s.BTW_REDIS_DATABASE_FOR_CACHES)
+
+s.CACHES = lambda s: {
+    name: {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': s.BTW_REDIS_CACHING_LOCATION,
+        'KEY_PREFIX': s.BTW_GLOBAL_KEY_PREFIX + '!' + name,
+        'OPTIONS': {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        'TIMEOUT': 3153600000 if name in ("article_display",
+                                          "bibliography") else None,
+    }
+    for name in ('bibliography', 'default', 'session', 'page',
+                 'article_display')}
+
+s.BTW_REDIS_DATABASE_FOR_CELERY = 2
+s.CELERY_BROKER_URL = \
+    lambda s: 'redis+socket://:{0}@{1}?virtual_host={2}'.format(
+        s.BTW_REDIS_PASSWORD, s.BTW_REDIS_SOCKET,
+        s.BTW_REDIS_DATABASE_FOR_CELERY)
+s.CELERY_BROKER_PASSWORD = lambda s: s.BTW_REDIS_PASSWORD
+s.CELERY_RESULT_BACKEND = lambda s: s.CELERY_BROKER_URL
+s.CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'fanout_prefix': True,
+    'fanout_patterns': True,
+}
 
 s.REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -581,22 +615,36 @@ s.BTW_BOOTSTRAP_TREEVIEW_CSS_PATH = \
 s.BTW_DATATABLES_CSS_PATH = \
     '/static/lib/external/datatables/css/dataTables.bootstrap4.css'
 
-s.BTW_REQUIREJS_PATH = None
+s.BTW_REQUIREJS_PATH = "/static/lib/requirejs/require.js"
+s.BTW_REQUIREJS_CONFIG_PATH = "/static/config/requirejs-config-dev.js"
+
 # We don't load classList from the external directory because it is
 # needed only for IE 9 and we don't support it for BTW.
 s.BTW_WED_POLYFILLS = tuple('/static/lib/wed/polyfills/{0}.js'.format(x)
                             for x in ('contains', 'matches', 'closest',
                                       'innerHTML_for_XML',
                                       'firstElementChild_etc', 'normalize'))
-s.BTW_WED_USE_REQUIREJS = None
-s.BTW_WED_PATH = None
-s.BTW_WED_CSS = None
+s.BTW_WED_USE_REQUIREJS = True
+s.BTW_WED_PATH = lambda s: None if s.BTW_WED_USE_REQUIREJS else (
+    "/static/lib/wed/wed.js",)
+s.BTW_WED_CSS = ("/static/lib/wed/wed.css", "/static/wed/wed-widget.css")
+
+# DEPRECATED: this setting should just be removed
+s.BTW_WED_CONFIG = ""  # Included in requirejs-config-dev.js
+
+s.BTW_MODE_CSS = "/static/lib/btw/btw-mode.css"
 s.BTW_WED_LOGGING_PATH = \
     lambda s: os.path.join(s.BTW_LOGGING_PATH_FOR_BTW, "wed")
 s.BTW_QUNIT_CSS_PATH = None
 
 s.BTW_JQUERY_GROWL_CSS_PATH = \
     '/static/lib/external/jquery.growl/css/jquery.growl.css'
+
+# DEPRECATED: these QUnit settings are no longer used and should just be
+# removed.
+s.QUNIT_VERSION = "1.12.0"
+s.BTW_QUNIT_CSS_PATH = "/static/lib/external/qunit-" + s.QUNIT_VERSION + ".css"
+
 
 s.BTW_DEMO = False
 if not hasattr(s, "BTW_TESTING"):
