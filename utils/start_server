@@ -10,8 +10,7 @@ import signal
 import argparse
 from selenic import outil
 
-os.environ['BTW_ENV'] = 'selenium'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'btw.test_settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'btw.selenium_test_settings'
 # Necessary to find the settings...
 sys.path.append(".")
 

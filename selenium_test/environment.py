@@ -37,8 +37,7 @@ def sig(num, _frame):
     # has registered it with atexit.
     sys.exit("behave process received %d\n\n" % num)
 
-os.environ['BTW_ENV'] = 'selenium'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'btw.test_settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'btw.selenium_test_settings'
 
 # We need to trap these signals because behave does not do it
 # itself. If we do not trap them, then if Buildbot sends a SIGTERM

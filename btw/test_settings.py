@@ -3,6 +3,8 @@
 import os
 from lib.settings import s
 
+from slugify import slugify
+
 #
 # These settings must be set before anything else is loaded because
 # other settings may be computed on the base of these.
@@ -50,48 +52,47 @@ if not __SILENT:
     del s.LOGGING['handlers']['console']['filters']
 
 if s.BTW_SELENIUM_TESTS:
-    for name in s.DATABASES.keys():
-        db = s.DATABASES[name]
-        db['NAME'] = 'test_' + db['NAME']
 
-        if 'TEST_MIRROR' in db:
-            raise ValueError("TEST_MIRROR already set for " + name)
+    def _make_databases(s):
+        databases = s.DATABASES
+        for (name, db) in databases.items():
+            db['NAME'] = 'test_' + db['NAME']
 
-        TEST = db.get('TEST')
-        if TEST is not None and 'MIRROR' in TEST:
-            raise ValueError("TEST['TEST_MIRROR'] already set for " + name)
+            TEST = db.setdefault('TEST', {})
+            if 'MIRROR' in TEST:
+                raise ValueError("TEST['MIRROR'] already set for " + name)
 
-        if TEST is None:
-            TEST = db['TEST'] = {}
+            TEST['MIRROR'] = name
+        return databases
 
-        TEST['MIRROR'] = name
+    s.DATABASES = _make_databases
 
 # As a base we change the root collection to /test_...
 s.EXISTDB_ROOT_COLLECTION = "/test_btw"
 
 if s.BTW_BUILD_ENV:
     builder = os.environ['BUILDER']
-    for db in s.DATABASES.values():
-        name = db['NAME']
-        test_name = name + '_' + builder
-        if not test_name.startswith("test_"):
-            test_name = "test_" + test_name
-        # If we are using TEST_MIRROR then TEST_NAME is not used and thus
-        # NAME itself must be altered.
-        if not (('TEST_MIRROR' in db) or ('MIRROR' in db.get('TEST', {}))):
-            if 'TEST_NAME' in db:
-                raise ValueError("TEST_NAME already set for " + name)
 
-            TEST = db.get('TEST')
-            if TEST is not None and 'NAME' in TEST:
-                raise ValueError("TEST['NAME'] already set for " + name)
+    def _make_build_databases(s):
+        databases = s.DATABASES
+        for db in databases.values():
+            name = db['NAME']
+            test_name = name + '_' + builder
+            if not test_name.startswith("test_"):
+                test_name = "test_" + test_name
+            # If we are using TEST['MIRROR'] then TEST['NAME'] is not used
+            # and thus 'NAME' itself must be altered.
+            TEST = db.setdefault('TEST', {})
+            if 'MIRROR' not in TEST:
+                if 'NAME' in TEST:
+                    raise ValueError("TEST['NAME'] already set for " + name)
 
-            if TEST is None:
-                TEST = db['TEST'] = {}
+                TEST['NAME'] = test_name
+            else:
+                db['NAME'] = test_name
+        return databases
 
-            TEST['NAME'] = test_name
-        else:
-            db['NAME'] = test_name
+    s.DATABASES = _make_build_databases
 
     # When we are in a builder we want to use the builder name as part
     # of the root name.
@@ -105,5 +106,16 @@ if s.BTW_BUILD_ENV:
     # We also want extra verbosity so that we can see the sequence of
     # tests.
     s.NOSE_ARGS.append("--verbosity=3")
+
+# Shove all testing on database 1.
+s.BTW_REDIS_DATABASE_FOR_CACHES = 1
+# Bring in a prefix to avoid clashes between different tests that
+# could be running in parallel.
+s.BTW_GLOBAL_KEY_PREFIX = os.environ.get('BUILDER') \
+    if s.BTW_BUILD_ENV else "testing"
+s.BTW_CELERY_WORKER_PREFIX = \
+    lambda s: slugify(s.BTW_GLOBAL_KEY_PREFIX.lower(), separator="_") \
+    .replace(".", "_")
+s.BTW_REDIS_SITE_PREFIX = lambda s: s.BTW_CELERY_WORKER_PREFIX
 
 globals().update(s.as_dict())

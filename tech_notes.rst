@@ -1174,9 +1174,6 @@ happened during the development of BTW.
           compress contents, understands caching on the basis of
           modification times, etc.
 
-The configuration environment used for the selenium tests is named
-``selenium``. See `Environment and Settings`_.
-
 Nginx
 -----
 
