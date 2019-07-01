@@ -30,14 +30,15 @@ if not os.environ.get("BTW_ENV_SUPPRESS_MESSAGE"):
 
 def find_config(name):
     for path in (HOME_CONFIG, ETC_CONFIG):
-        conf_path = os.path.join(path, name + "_" + env + ".py")
+        conf_path = os.path.join(path, env, name + ".py")
         if os.path.exists(conf_path):
             return open(conf_path).read()
     # We return either an open file (see above) or an empty
     # string because exec accepts both.
     return ""
 
-
+# This function is not used by BTW itself but it can be used in settings file
+# to load another settings file, using a literal name.
 def find_literal_file(name):
     for path in (HOME_CONFIG, ETC_CONFIG):
         conf_path = os.path.join(path, name)

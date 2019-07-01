@@ -570,6 +570,12 @@ Generally:
 
 See below for specific upgrade cases.
 
+2.5.3 to 2.6.0
+~~~~~~~~~~~~~~
+
+- Modify the env for depolyment to use the new file structure. (e.g. istead of
+  ``btw_linode.py`` you have ``linode/btw.py``.
+
 2.4.0 to 2.5.0
 ~~~~~~~~~~~~~~
 
@@ -1387,9 +1393,9 @@ name from the following sources:
 This environment value is then used by ``_env.find_config(name)`` to find
 configuration files:
 
-* ``~/.config/btw/<name>_<env>.py``
+* ``~/.config/btw/<env>/<name>.py``
 
-* ``/etc/btw/<name>_<env>.py``
+* ``/etc/btw/<env>/<name>.py``
 
 The **first** file found among the ones in the previous list is the
 one used. By convention ``_env.find_config`` should be used by the files
@@ -1402,11 +1408,11 @@ convention the caller to find_config should exec the value returned by
 The order of execution of the various files is::
 
     settings/__init__.py
-    <conf>/btw_<env>.py
+    <conf>/<env>/btw.py
     settings/<app1>.py
-    <conf>/<app1>_<env>.py
+    <conf>/<env>/<app1>.py
     settings/<app2>.py
-    <conf>/<app2>_<env>.py
+    <conf>/<env>/<app2>.py
 
 where ``<env>`` is the value of the environment set as described
 earlier, and ``<conf>`` is whatever path happens to contain the
