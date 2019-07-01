@@ -53,12 +53,15 @@ s.MANAGERS = s.ADMINS
 s.LOGIN_URL = '/login/'
 s.LOGIN_REDIRECT_URL = 'lexicography_main'
 
-# s.DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(s.TOPDIR, 'btw.sqlite3'),
-#     }
-# }
+s.DATABASES = lambda s: {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': s.DEFAULT_DATABASE_NAME,
+        'USER': s.DATABASE_USER_NAME,
+        'PASSWORD': s.DATABASE_PASSWORD,
+        'HOST': '127.0.0.1'
+    }
+}
 
 s.SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 s.SESSION_CACHE_ALIAS = 'session'
