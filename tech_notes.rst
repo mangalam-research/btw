@@ -252,7 +252,10 @@ BTW needs to have its own database.
     $ sudo -u postgres psql
     ALTER USER btw CREATEDB;
 
-2. Optionally optimize the [connection](https://docs.djangoproject.com/en/1.8/ref/databases/#optimizing-postgresql-s-configuration). As of PostgreSQL 9.4 as installed on Debian Jessie, the default values are those that Django wants so there is nothing to do here.
+2. Optionally optimize the
+   [connection](https://docs.djangoproject.com/en/2.2/ref/databases/#optimizing-postgresql-s-configuration). As
+   of PostgreSQL 9.6 as installed on Debian Stretch, the default values are those
+   that Django wants so there is nothing to do here.
 
 .. note:: With the default configuration of postgres, you must connect either:
 
