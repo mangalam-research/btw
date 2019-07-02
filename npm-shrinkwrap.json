@@ -3092,8 +3092,8 @@
       "integrity": "sha512-jnjyiM6eRyZl2H+W8Q/zLMA481hzi0eszAaBUzIVnmYVDBbnLxVNnfu1HgEBvCbL+71FrxMl3E6lpKH7Ge3OXA=="
     },
     "dragula": {
-      "version": "git+https://github.com/lddubeau/dragula.git#bc5bf167dd87703cdb1ac860cdca2bafb62eac64",
-      "from": "git+https://github.com/lddubeau/dragula.git",
+      "version": "github:lddubeau/dragula#bc5bf167dd87703cdb1ac860cdca2bafb62eac64",
+      "from": "github:lddubeau/dragula",
       "requires": {
         "contra": "1.9.4",
         "crossvent": "1.5.4"
