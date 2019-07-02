@@ -15,7 +15,7 @@
     "@wedxml/trivial-grammar-loader": "^5.0.0-alpha.29",
     "backbone-forms": "^0.14.1",
     "backbone-relational": "0.10.0",
-    "backbone.marionette": "^3.0.0",
+    "backbone.marionette": "3.0.0",
     "backbone.paginator": "^2.0.8",
     "bluebird": "^3.5.5",
     "bluejax": "^1.1.0",
