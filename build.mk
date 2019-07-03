@@ -153,7 +153,7 @@ all: _all
 # onerous.
 	$(DJANGO_MANAGE) collectstatic --noinput --clear
 
-include $(shell find . -name "include.mk")
+include utils/schemas/include.mk
 
 .PHONY: _all
 _all: $(TARGETS) build-config build-scripts build-var
