@@ -164,7 +164,7 @@ _all: $(TARGETS) build-config build-scripts build-var
 .PHONY: build-var
 build-var:
 	mkdir -p var/run/btw
-	mkdir -p var/log/btw
+	mkdir -p var/log/btw/wed
 	mkdir -p var/lib
 
 .PHONY: python-generation
