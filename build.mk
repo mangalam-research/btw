@@ -153,9 +153,6 @@ all: _all
 # onerous.
 	$(DJANGO_MANAGE) collectstatic --noinput --clear
 
-
-
-
 include $(shell find . -name "include.mk")
 
 .PHONY: _all
