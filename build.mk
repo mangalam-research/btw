@@ -253,13 +253,13 @@ test: test-django test-karma
 .PHONY: test-django
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
-test-django: test-django-menu test-django-btwredis $(TARGETS)
+test-django: test-django-menu test-django-btwredis $(if $(BTW_SKIP_BUILD),,$(TARGETS))
 	$(DJANGO_MANAGE) test --ignore-files=test_btwredis.py --ignore-files=test_menus.py
 
 .PHONY: test-django-menu
 # The dependency on $(TARGETS) is needed because the tests depend on a
 # complete application to run properly.
-test-django-menu: $(TARGETS)
+test-django-menu: $(if $(BTW_SKIP_BUILD),,$(TARGETS))
 	$(DJANGO_MANAGE) test ./core/tests/test_menus.py
 
 .PHONY: test-django-btwredis
