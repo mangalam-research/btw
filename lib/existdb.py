@@ -81,6 +81,7 @@ def is_lucene_query_clean(db, query):
     :returns: ``True`` if the query has no syntax error, ``False`` if
     it does have syntax errors.
     """
+    empty_path = get_collection_path("util") + "/empty.xml"
     try:
         #
         # This appears to be as cost-effective as it gets. We run a query on a
@@ -92,8 +93,9 @@ def is_lucene_query_clean(db, query):
         # Ultimately, either nothing will be returned but without error, or a
         # parsing error will occur.
         #
-        db.query(xquery.format("doc('/btw/util/empty.xml')/doc/ft:query(., "
+        db.query(xquery.format("doc({empty_path})/doc/ft:query(., "
                                "{search_text})",
+                               empty_path=empty_path,
                                search_text=query))
     except ExistDBException as ex:
         # The query is faulty.
