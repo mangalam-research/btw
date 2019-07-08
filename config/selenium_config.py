@@ -66,7 +66,22 @@ if suffix:
     name += ": " + suffix
 
 # Grab the current build number.
-describe = subprocess.check_output(["git", "describe"]).decode("utf8").strip()
+
+# When we create a docker image, there is no git information available.
+# The scripts that create the docker image instead store the version
+# information into a file that we can read. If the file is there, read it
+# and use that information.
+
+describe = None
+try:
+    describe = open("./DEPLOYED", 'r').read().strip()
+except FileNotFoundError:
+    pass
+
+if describe is None:
+    # The file was absent: use git.
+    describe = \
+        subprocess.check_output(["git", "describe"]).decode("utf8").strip()
 
 caps = {
     "name": name,

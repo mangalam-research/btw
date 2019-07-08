@@ -227,7 +227,6 @@ def nice_name(user):
 
 _cached_version = None
 
-
 def version():
     """
     Returns the version of BTW. This value is computed once and then
@@ -237,24 +236,34 @@ def version():
     if _cached_version is not None:
         return _cached_version
 
-    # We have to be running from a git tree.
-    unclean = subprocess.check_output(["git", "status", "--porcelain"])
+    # When we create a docker image, there is no git information available.
+    # The scripts that create the docker image instead store the version
+    # information into a file that we can read. If the file is there, read it
+    # and use that information.
+    try:
+        _cached_version = open("./DEPLOYED", 'r').read().strip()
+    except FileNotFoundError:
+        pass
 
-    if not (settings.DEBUG or settings.BTW_TESTING) and unclean:
-        raise Exception("running with unclean tree while DEBUG is false")
+    if _cached_version is None:
+        # There is no file to read, so are running from a git tree: use git.
+        unclean = subprocess.check_output(["git", "status", "--porcelain"])
 
-    describe = subprocess.check_output(["git", "describe", "--match",
-                                        "v*"]).decode("utf-8").strip()
+        if not (settings.DEBUG or settings.BTW_TESTING) and unclean:
+            raise Exception("running with unclean tree while DEBUG is false")
 
-    if unclean:
-        describe += "-unclean"
+        describe = subprocess.check_output(["git", "describe", "--match",
+                                            "v*"]).decode("utf-8").strip()
 
-    sep = describe.find("-")
-    semver.parse(describe[1:len(describe) if sep == -1 else sep])
+        if unclean:
+            describe += "-unclean"
 
-    _cached_version = describe
+        sep = describe.find("-")
+        semver.parse(describe[1:len(describe) if sep == -1 else sep])
 
-    return describe
+        _cached_version = describe
+
+    return _cached_version
 
 class DirectCons(object):
 
