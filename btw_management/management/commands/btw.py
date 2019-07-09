@@ -324,6 +324,22 @@ class DumpUrls(SubCommand):
         from lib.util import dump_urls
         dump_urls()
 
+class PrintSetting(SubCommand):
+    """
+    Print a setting.
+    """
+
+    name = "print-setting"
+
+    def add_to_parser(self, subparsers):
+        sp = super(PrintSetting, self).add_to_parser(subparsers)
+        sp.add_argument("setting", help="The setting to print.")
+        return sp
+
+    def __call__(self, command, options):
+        value = getattr(settings, options["setting"])
+        print(value)
+
 class Command(BaseCommand):
     help = """\
 BTW-specific commands.
@@ -333,7 +349,7 @@ BTW-specific commands.
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
         self.subcommands = [GenerateScripts, GenerateSystemdServices,
-                            ListLocalAppPaths, DumpUrls]
+                            ListLocalAppPaths, DumpUrls, PrintSetting]
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(title="subcommands",
