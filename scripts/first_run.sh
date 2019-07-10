@@ -8,12 +8,10 @@ TAG=./var/log/FIRST_RUN
 
 [ -f $TAG ] && exit 0
 
-DEFAULT_DATABASE_NAME=`su btw -c"./manage.py btw print-setting DEFAULT_DATABASE_NAME"`
-DATABASE_USER_NAME=`su btw -c"./manage.py btw print-setting DATABASE_USER_NAME"`
-DATABASE_PASSWORD=`su btw -c"./manage.py btw print-setting DATABASE_PASSWORD"`
-DATABASE_PASSWORD=`su btw -c"./manage.py btw print-setting DATABASE_PASSWORD"`
-BTW_EXISTDB_SERVER_ADMIN_USER=`su btw -c"./manage.py btw print-setting BTW_EXISTDB_SERVER_ADMIN_USER"`
-BTW_EXISTDB_SERVER_ADMIN_PASSWORD=`su btw -c"./manage.py btw print-setting BTW_EXISTDB_SERVER_ADMIN_PASSWORD"`
+# We source the secrets.
+. /home/btw/.config/btw/secrets/${BTW_ENV}
+
+# Not a secret.
 EXISTDB_HOME_PATH=`su btw -c"./manage.py btw print-setting EXISTDB_HOME_PATH"`
 
 su postgres -c"set -ex &&

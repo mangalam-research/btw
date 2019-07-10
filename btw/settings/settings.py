@@ -53,6 +53,10 @@ s.MANAGERS = s.ADMINS
 s.LOGIN_URL = '/login/'
 s.LOGIN_REDIRECT_URL = 'lexicography_main'
 
+s.declare_secret("DEFAULT_DATABASE_NAME")
+s.declare_secret("DATABASE_USER_NAME")
+s.declare_secret("DATABASE_PASSWORD")
+
 s.DATABASES = lambda s: {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -195,7 +199,7 @@ $.ajaxPrefilter(function (s) {
 # This must be set in the installation-specific files.
 #
 # Make this unique, and don't share it with anybody.
-# s.SECRET_KEY = ''
+s.declare_secret("SECRET_KEY")
 
 s.MIDDLEWARE = (
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -540,6 +544,8 @@ s.BTW_REDIS_SOCKET = lambda s: \
     os.path.join(s.BTW_REDIS_SOCKET_DIR_PATH,
                  join_prefix(s.BTW_REDIS_SITE_PREFIX, "redis.sock"))
 
+s.declare_secret("BTW_REDIS_PASSWORD")
+
 s.BTW_REDIS_LOCATION = lambda s: 'unix://:{0}@{1}'.format(
     s.BTW_REDIS_PASSWORD, s.BTW_REDIS_SOCKET)
 
@@ -654,12 +660,12 @@ s.INTERNAL_IPS = ('127.0.0.1', '::1')
 # Either "full" or "standalone". Full provides the web server used to provide
 # eXide, etc.
 s.BTW_EXISTDB_SERVER_TYPE = "full"
-s.BTW_EXISTDB_SERVER_ADMIN_USER = None
-s.BTW_EXISTDB_SERVER_ADMIN_PASSWORD = None
+s.declare_secret("BTW_EXISTDB_SERVER_ADMIN_USER")
+s.declare_secret("BTW_EXISTDB_SERVER_ADMIN_PASSWORD")
 
 # These are pyexistdb settings
-s.EXISTDB_SERVER_USER = None
-s.EXISTDB_SERVER_PASSWORD = None
+s.declare_secret("EXISTDB_SERVER_USER")
+s.declare_secret("EXISTDB_SERVER_PASSWORD")
 # This is the default location, port and URL when using eXist as
 # a standalone server.
 def _server_url(s):
@@ -699,6 +705,8 @@ s.DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+
+_env.read_secret(s)
 
 exec(_env.find_config("btw"))  # pylint: disable=exec-used
 

@@ -1,6 +1,13 @@
 from collections.abc import Callable
+import re
 
 NONEXISTENT = object()
+
+name_re = re.compile("^[A-Z_]+$")
+bad_char_re = re.compile(r"['\"\\]")
+
+class Secret(object):
+    pass
 
 class Settings(object):
 
@@ -40,8 +47,36 @@ class Settings(object):
 
         attrs[name] = store
 
+    def declare_secret(self, name):
+        if getattr(self, name, NONEXISTENT) is NONEXISTENT:
+            setattr(self, name, Secret())
+
+    def read_secret_file(self, file_path):
+        with open(file_path, 'r') as secret:
+            for line in secret:
+                line = line.strip()
+                [name, value] = line.split("=", 1)
+                if not name_re.match(name):
+                    raise Exception("invalid name syntax")
+                value = value.strip()
+                if (value[0] == "'" and value[-1] != "'") or \
+                   (value[0] == '"' and value[-1] != '"'):
+                    raise Exception("badly quoted value")
+                if value[0] in ('"', "'"):
+                    value = value[1:-1]
+                if bad_char_re.match(value):
+                    raise Exception("invalid character in value")
+
+                setattr(self, name.strip(), value.strip())
+
     def as_dict(self):
-        return {key: getattr(self, key) for key in self.attrs}
+        def get(key):
+            value = getattr(self, key)
+            if isinstance(value, Secret):
+                raise Exception("secret unspecified: " + key)
+            return value
+
+        return {key: get(key) for key in self.attrs}
 
 s = Settings()
 

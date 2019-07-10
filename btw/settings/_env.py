@@ -1,8 +1,11 @@
 import os
 import sys
 
-HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw")
-ETC_CONFIG = "/etc/btw"
+HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw/settings")
+ETC_CONFIG = "/etc/btw/settings"
+
+HOME_SECRET = os.path.join(os.environ["HOME"], ".config/btw/secrets")
+ETC_SECRET = "/etc/btw/secrets"
 
 CURDIR = os.path.dirname(os.path.abspath(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(CURDIR))
@@ -36,6 +39,12 @@ def find_config(name):
     # We return either an open file (see above) or an empty
     # string because exec accepts both.
     return ""
+
+def read_secret(s):
+    for path in (HOME_SECRET, ETC_SECRET):
+        conf_path = os.path.join(path, env)
+        if os.path.exists(conf_path):
+            s.read_secret_file(conf_path)
 
 # This function is not used by BTW itself but it can be used in settings file
 # to load another settings file, using a literal name.

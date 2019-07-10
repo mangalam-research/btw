@@ -3,6 +3,9 @@ from lib.settings import s
 # All sensitive so init with empty dir.
 s.ZOTERO_SETTINGS = {}
 
+s.declare_secret("ZOTERO_UID")
+s.declare_secret("ZOTERO_API_KEY")
+
 s.CACHES = lambda s: {**{
     "bibliography": {
         'BACKEND': 'django_redis.cache.RedisCache',

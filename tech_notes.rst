@@ -1386,16 +1386,16 @@ name from the following sources:
 
 * An ``env`` file at the top of the Django project hierarchy.
 
-* ``~/.config/btw/env``
+* ``~/.config/btw/settings/env``
 
 * ``/etc/btw/env``
 
 This environment value is then used by ``_env.find_config(name)`` to find
 configuration files:
 
-* ``~/.config/btw/<env>/<name>.py``
+* ``~/.config/btw/settings/<env>/<name>.py``
 
-* ``/etc/btw/<env>/<name>.py``
+* ``/etc/btw/settings/<env>/<name>.py``
 
 The **first** file found among the ones in the previous list is the
 one used. By convention ``_env.find_config`` should be used by the files
@@ -1417,6 +1417,27 @@ The order of execution of the various files is::
 where ``<env>`` is the value of the environment set as described
 earlier, and ``<conf>`` is whatever path happens to contain the
 configuration file.
+
+Secrets
+=======
+
+It is advantageous for interoperability to have some settings use a simplified
+syntax which allows them to be used outside Python. These settings are deemed to
+be "secrets" (because most of them are in fact sensitive information). BTW
+searches for secrets here:
+
+* ``~/.config/btw/secrets/<env>``
+
+* ``/etc/btw/secrets/<env>``
+
+Either path needs to resolve to a file with lines of the form::
+
+  VAR=value
+
+``VAR`` is a variable name. Only capitals A to Z and underscore are allowed in
+the variable name. ``value`` is the value associated with the variable. It may
+be single quoted or double quoted. However, BTW **does not perform backslash or
+quote interpretation inside the value**.
 
 =======
  Roles
