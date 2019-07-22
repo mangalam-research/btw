@@ -2,7 +2,7 @@
 <div class="cite-form">
   <form action="{% url 'core_mods' %}">
     <div class="form-group">
-      <label for="access-date">Desired access date:</label><input name="access-date" id="access-date" type="text" type="text" class="form-control" />
+      <label for="access-date">Desired access date:</label><input name="access-date" id="access-date" type="text" class="form-control" />
       <p class="help-block">
         Bibliographical references to web sites normally include an
         access date. You may change it if needed (the format is
@@ -19,17 +19,15 @@
   <hr />
   <p>Otherwise you may cut and paste the following preformatted text,
   according to the style you prefer.</p>
-  <p>Chicago:
-    <blockquote>
-      <span id="chicago_authors">{{ chicago_authors }}</span>, <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, Berkeley:
-Mangalam Research Center for Buddhist Languages, {{ year }}, accessed <span class="accessed"></span> <a href="{{ home }}">{{ globals.site_url }}</a>.
-    </blockquote>
-  </p>
-  <p>MLA:
-    <blockquote>
-      <span id="mla_authors">{{ mla_authors }}</span>. <i>The Buddhist Translators Workbench</i>. Version {{ bibliographical_data.version }}. Berkeley: Mangalam Research Center for Buddhist Languages, {{ year }}. Web. <span class="accessed"></span>. <a href="{{ home }}">{{ globals.site_url }}</a>.
-    </blockquote>
-  </p>
+  <p>Chicago:</p>
+  <blockquote>
+    <span id="chicago_authors">{{ chicago_authors }}</span>, <i>The Buddhist Translators Workbench</i>, version {{ bibliographical_data.version }}, Berkeley:
+    Mangalam Research Center for Buddhist Languages, {{ year }}, accessed <span class="accessed"></span> <a href="{{ home }}">{{ globals.site_url }}</a>.
+  </blockquote>
+  <p>MLA:</p>
+  <blockquote>
+    <span id="mla_authors">{{ mla_authors }}</span>. <i>The Buddhist Translators Workbench</i>. Version {{ bibliographical_data.version }}. Berkeley: Mangalam Research Center for Buddhist Languages, {{ year }}. Web. <span class="accessed"></span>. <a href="{{ home }}">{{ globals.site_url }}</a>.
+  </blockquote>
 </div>
 {% addtoblock "js_late" %}
 <script>
