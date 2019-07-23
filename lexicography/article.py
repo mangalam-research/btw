@@ -281,9 +281,6 @@ def key_from_path(x):
     # sorting issue.
     return key_re.sub(r"0\1", x.replace(".", "~"))
 
-def key_from_sf(x):
-    return key_from_path(x.path)
-
 def combine_semantic_fields(texts, depth=None):
     return sorted(set(texts if depth is None else (truncate_to(text, depth)
                                                    for text in texts)),
@@ -298,18 +295,19 @@ def add_semantic_fields_to_english_renditions(xml):
              for x in renditions]
     modified = False
     rendition_to_fields = \
-        {term: (SearchWord.objects.filter(searchword=term)
-                .values_list("htid__semantic_field__path", flat=True)
-                if term else []) for term in set(terms)}
+        {term: (sorted(SearchWord.objects.filter(searchword=term)
+                       .values_list("htid__semantic_field__path", flat=True),
+                       key=key_from_path) if term else [])
+         for term in set(terms)}
     for rendition in renditions:
         term = terms.pop(0)
         fields = rendition_to_fields[term]
-        if len(fields) > 0:
+        if len(fields):
             sfs = lxml.etree.Element(
                 "{{{0}}}semantic-fields".format(
                     default_namespace_mapping["btw"]),
                 nsmap=default_namespace_mapping)
-            for field in sorted(fields, key=key_from_path):
+            for field in fields:
                 sf = lxml.etree.Element(
                     "{{{0}}}sf".format(default_namespace_mapping["btw"]),
                     nsmap=default_namespace_mapping)
@@ -329,6 +327,7 @@ def name_semantic_fields(xml):
     # over and over for the same reference.
     #
     to_fetch = set()
+    sf_to_refs = {}
     for sf in set(elements_as_text(sfs)):
         try:
             refs = parse_local_references(sf)
@@ -336,6 +335,8 @@ def name_semantic_fields(xml):
             # We let unparseable cases slide. This allows early display of
             # articles.
             continue
+
+        sf_to_refs[sf] = refs
 
         for ref in refs:
             while True:
@@ -372,28 +373,25 @@ def name_semantic_fields(xml):
 
     for sf in sfs:
         text = element_as_text(sf)
+
+        # If text is not in sf_to_refs or str(ref) is not in path_to_record
+        # we just continue to the next sf. This allows showing articles
+        # that are a work-in-progress.
         try:
-            refs = parse_local_references(text)
-        except (ValueError, FailedParse):
-            # We let unparseable cases slide. This allows early display of
-            # articles.
+            records = [path_to_record[str(ref)] for ref in sf_to_refs[text]]
+        except KeyError:
             continue
 
-        records = [path_to_record.get(str(ref), None) for ref in refs]
-        success = all(records)  # Whether we have a record for all references.
-
         records_len = len(records)
-        if success and records_len > 0:
+        if records_len:
             del sf[:]
-            sf.text = ''
-            ref = str(text.strip())
-            sf.attrib["ref"] = ref
+            sf.attrib["ref"] = text
 
             record = records[0] if records_len == 1 else \
                 make_specified_sf(records)
 
             heading = record.heading_for_display
 
-            sf.text += ref if heading is None else heading + " (" + ref + ")"
+            sf.text = text if heading is None else heading + " (" + text + ")"
 
     return True, sf_records
