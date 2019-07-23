@@ -477,7 +477,7 @@ class ChunkManager(models.Manager):
         # probably get a clean list. (Or it can retry if it fails
         # again.)
         while True:
-            chunks = Chunk.objects.filter(changerecord__isnull=True)
+            chunks = self.filter(changerecord__isnull=True)
             try:
                 chunks.delete()
                 break
