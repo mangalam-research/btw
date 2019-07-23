@@ -293,33 +293,27 @@ def combine_semantic_fields(texts, depth=None):
 def add_semantic_fields_to_english_renditions(xml):
     renditions = xml.tree.findall(".//btw:english-rendition",
                                   namespaces=default_namespace_mapping)
-    terms = [x.find("btw:english-term", namespaces=default_namespace_mapping)
+    terms = [element_as_text(x.find("btw:english-term",
+                                    namespaces=default_namespace_mapping))
              for x in renditions]
     modified = False
-    rendition_to_fields = {}
-    for term in set(elements_as_text(terms)):
-        fields = [x.htid.semantic_field for x in SearchWord.objects.filter(
-            searchword=term).select_related()]
-        rendition_to_fields[term] = fields
-
+    rendition_to_fields = \
+        {term: (SearchWord.objects.filter(searchword=term)
+                .values_list("htid__semantic_field__path", flat=True)
+                if term else []) for term in set(terms)}
     for rendition in renditions:
         term = terms.pop(0)
-        text = element_as_text(term)
-
-        # It can be empty when the article is being composed.
-        if not len(text):
-            continue
-        fields = rendition_to_fields[text]
+        fields = rendition_to_fields[term]
         if len(fields) > 0:
             sfs = lxml.etree.Element(
                 "{{{0}}}semantic-fields".format(
                     default_namespace_mapping["btw"]),
                 nsmap=default_namespace_mapping)
-            for field in sorted(fields, key=key_from_sf):
+            for field in sorted(fields, key=key_from_path):
                 sf = lxml.etree.Element(
                     "{{{0}}}sf".format(default_namespace_mapping["btw"]),
                     nsmap=default_namespace_mapping)
-                sf.text = field.path
+                sf.text = field
                 sfs.append(sf)
             rendition.append(sfs)
             modified = True
