@@ -163,14 +163,15 @@ def combine_all_semantic_fields(xml):
     """
     sfs = sfs_in_semantic_fields_xpath(xml.tree)
     if sfs:
-        all_sfs = lxml.etree.Element(
-            "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
-            nsmap=default_namespace_mapping)
-        combine_semantic_fields_into(sfs, all_sfs, 3)
         overview = xml.tree.find("btw:overview",
                                  namespaces=default_namespace_mapping)
         if overview is not None:
-            overview.append(all_sfs)
+            all_sfs = lxml.etree.SubElement(
+                overview,
+                "{{{0}}}semantic-fields".format(
+                    default_namespace_mapping["btw"]),
+                nsmap=default_namespace_mapping)
+            combine_semantic_fields_into(sfs, all_sfs, 3)
             return True
 
     return False
@@ -188,8 +189,8 @@ def combine_sense_semantic_fields(xml):
     before the contrastive section of the sense, or at the end of the
     sense if there is no contrastive section.
     """
-    senses = xml.tree.findall(
-        ".//btw:sense", namespaces=default_namespace_mapping)
+    senses = xml.tree.findall(".//btw:sense",
+                              namespaces=default_namespace_mapping)
     modified = False
     contrastive_section_en = "{{{0}}}contrastive-section".format(
         default_namespace_mapping["btw"])
@@ -244,10 +245,9 @@ def combine_semantic_fields_into(sfs, into, depth=None):
 
     combined = combine_semantic_fields(texts, depth)
     for text in combined:
-        sf = lxml.etree.Element("{{{0}}}sf".format(
+        sf = lxml.etree.SubElement(into, "{{{0}}}sf".format(
             default_namespace_mapping["btw"]), nsmap=default_namespace_mapping)
         sf.text = text
-        into.append(sf)
 
 
 # This is the regular expression we use to remove everything after
@@ -308,11 +308,11 @@ def add_semantic_fields_to_english_renditions(xml):
                     default_namespace_mapping["btw"]),
                 nsmap=default_namespace_mapping)
             for field in fields:
-                sf = lxml.etree.Element(
+                sf = lxml.etree.SubElement(
+                    sfs,
                     "{{{0}}}sf".format(default_namespace_mapping["btw"]),
                     nsmap=default_namespace_mapping)
                 sf.text = field
-                sfs.append(sf)
             rendition.append(sfs)
             modified = True
 
@@ -392,6 +392,6 @@ def name_semantic_fields(xml):
 
             heading = record.heading_for_display
 
-            sf.text = text if heading is None else heading + " (" + text + ")"
+            sf.text = text if heading is None else f"{heading} ({text})"
 
     return True, sf_records
