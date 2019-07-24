@@ -1,5 +1,6 @@
 import re
 from copy import deepcopy
+from collections import defaultdict
 
 from tatsu.exceptions import FailedParse
 import lxml.etree
@@ -293,28 +294,31 @@ def add_semantic_fields_to_english_renditions(xml):
     terms = [element_as_text(x.find("btw:english-term",
                                     namespaces=default_namespace_mapping))
              for x in renditions]
+    rendition_to_fields = defaultdict(list)
+    for word, path in SearchWord.objects.filter(searchword__in=set(terms))\
+            .values_list("searchword", "htid__semantic_field__path"):
+        rendition_to_fields[word].append(path)
+    # We regenerate the dictionary so that the values are sorted.
+    rendition_to_fields = {key: sorted(value, key=key_from_path)
+                           for key, value in rendition_to_fields.items()}
     modified = False
-    rendition_to_fields = \
-        {term: (sorted(SearchWord.objects.filter(searchword=term)
-                       .values_list("htid__semantic_field__path", flat=True),
-                       key=key_from_path) if term else [])
-         for term in set(terms)}
     for rendition in renditions:
         term = terms.pop(0)
-        fields = rendition_to_fields[term]
-        if len(fields):
-            sfs = lxml.etree.Element(
-                "{{{0}}}semantic-fields".format(
-                    default_namespace_mapping["btw"]),
+        try:
+            fields = rendition_to_fields[term]
+        except KeyError:
+            continue
+        sfs = lxml.etree.Element(
+            "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
+            nsmap=default_namespace_mapping)
+        for field in fields:
+            sf = lxml.etree.SubElement(
+                sfs,
+                "{{{0}}}sf".format(default_namespace_mapping["btw"]),
                 nsmap=default_namespace_mapping)
-            for field in fields:
-                sf = lxml.etree.SubElement(
-                    sfs,
-                    "{{{0}}}sf".format(default_namespace_mapping["btw"]),
-                    nsmap=default_namespace_mapping)
-                sf.text = field
-            rendition.append(sfs)
-            modified = True
+            sf.text = field
+        rendition.append(sfs)
+        modified = True
 
     return modified
 
