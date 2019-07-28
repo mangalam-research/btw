@@ -250,14 +250,12 @@ def combine_semantic_fields_into(sfs, into, depth=None):
 truncate_re = re.compile(r"\|.*|[a-z]+.*$")
 
 def truncate_to(text, depth):
-    parts = truncate_re.sub("", text).split(".")
+    parts = truncate_re.sub("", text).split(".", depth)
 
     # Only perform this transformation if we need to truncate.
-    if len(parts) > depth or (len(parts) == depth and ("|" in text)):
-        # We always add "n" as the pos when we truncate.
-        return ".".join(truncate_re.sub("", text).split(".")[0:depth]) + "n"
-
-    return text
+    return ".".join(parts[0:depth]) + "n" \
+        if len(parts) > depth or (len(parts) == depth and ("|" in text)) \
+           else text
 
 
 key_re = re.compile(r"(?<!\d)(\d{2})(?!\d)")
