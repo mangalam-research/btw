@@ -13,6 +13,8 @@ from semantic_fields.models import SemanticField, SearchWord, make_specified_sf
 from semantic_fields.util import parse_local_references
 from lib.sqlutil import select_for_share
 
+btw_mapping = default_namespace_mapping["btw"]
+
 def prepare_article_data(data):
     """
     Modifies the file produced by the authors of the article so that
@@ -169,9 +171,7 @@ def combine_all_semantic_fields(xml):
         if overview is not None:
             all_sfs = lxml.etree.SubElement(
                 overview,
-                "{{{0}}}semantic-fields".format(
-                    default_namespace_mapping["btw"]),
-                nsmap=default_namespace_mapping)
+                f"{{{btw_mapping}}}semantic-fields")
             combine_semantic_fields_into(sfs, all_sfs, 3)
             return True
 
@@ -193,21 +193,18 @@ def combine_sense_semantic_fields(xml):
     senses = xml.tree.findall(".//btw:sense",
                               namespaces=default_namespace_mapping)
     modified = False
-    contrastive_section_en = "{{{0}}}contrastive-section".format(
-        default_namespace_mapping["btw"])
     for sense in senses:
-        contrastives = [x for x in sense if x.tag == contrastive_section_en]
-        contrastive = contrastives[0] if contrastives else None
+        # We are looking only for the first child
+        contrastive = sense.find("btw:contrastive-section",
+                                 namespaces=default_namespace_mapping)
 
         # We get all btw:sf elements that are outside the
         # contrastive section.
         sfs = semantic_fields_outside_cs_xpath(sense)
         if sfs:
             modified = True
-            sense_sfss = lxml.etree.Element(
-                "{{{0}}}semantic-fields".format(
-                    default_namespace_mapping["btw"]),
-                nsmap=default_namespace_mapping)
+            sense_sfss = \
+                lxml.etree.Element(f"{{{btw_mapping}}}semantic-fields")
             combine_semantic_fields_into(sfs, sense_sfss)
             if contrastive is not None:
                 contrastive.addprevious(sense_sfss)
@@ -224,17 +221,15 @@ def combine_cognate_semantic_fields(xml):
     semantic fields in the cognate. The new element is added at the
     very start of the ``btw:cognate`` element.
     """
-    cognates = xml.tree.findall(
-        ".//btw:cognate", namespaces=default_namespace_mapping)
+    cognates = xml.tree.findall(".//btw:cognate",
+                                namespaces=default_namespace_mapping)
     modified = False
     for cognate in cognates:
         modified = True
         sfs = cognate.findall(".//btw:sf",
                               namespaces=default_namespace_mapping)
 
-        sfss = lxml.etree.Element(
-            "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
-            nsmap=default_namespace_mapping)
+        sfss = lxml.etree.Element(f"{{{btw_mapping}}}semantic-fields")
         combine_semantic_fields_into(sfs, sfss)
         cognate[0].addprevious(sfss)
 
@@ -246,8 +241,7 @@ def combine_semantic_fields_into(sfs, into, depth=None):
 
     combined = combine_semantic_fields(texts, depth)
     for text in combined:
-        sf = lxml.etree.SubElement(into, "{{{0}}}sf".format(
-            default_namespace_mapping["btw"]), nsmap=default_namespace_mapping)
+        sf = lxml.etree.SubElement(into, f"{{{btw_mapping}}}sf")
         sf.text = text
 
 
@@ -308,14 +302,9 @@ def add_semantic_fields_to_english_renditions(xml):
             fields = rendition_to_fields[term]
         except KeyError:
             continue
-        sfs = lxml.etree.Element(
-            "{{{0}}}semantic-fields".format(default_namespace_mapping["btw"]),
-            nsmap=default_namespace_mapping)
+        sfs = lxml.etree.Element(f"{{{btw_mapping}}}semantic-fields")
         for field in fields:
-            sf = lxml.etree.SubElement(
-                sfs,
-                "{{{0}}}sf".format(default_namespace_mapping["btw"]),
-                nsmap=default_namespace_mapping)
+            sf = lxml.etree.SubElement(sfs, f"{{{btw_mapping}}}sf")
             sf.text = field
         rendition.append(sfs)
         modified = True
