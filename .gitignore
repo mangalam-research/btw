@@ -17,3 +17,5 @@ local.mk
 /dev-backups
 /.btw-venv*
 env
+# Ignore .venv too. We use it as a symlink to .btw-venv
+/.venv
