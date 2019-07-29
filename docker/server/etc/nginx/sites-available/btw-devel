@@ -1,0 +1,66 @@
+server {
+    listen 3333 ssl;
+    listen [::]:3333 ssl;
+    ssl on;
+    keepalive_timeout 70;
+
+    # server_name btw.mangalamresearch.org;
+    ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+
+    gzip on;
+    gzip_types *;
+    gzip_vary on;
+    gzip_proxied any;
+
+    access_log /var/log/nginx/btw-devel/access.log;
+    error_log /var/log/nginx/btw-devel/error.log;
+
+    root /srv/www/btw.mangalamresearch.org/static;
+
+    # This helps prevent clickjacking attacks.
+    add_header X-Frame-Options SAMEORIGIN;
+
+    # Prevents ignoring the Content-Type field by sniffing the data
+    # returned.
+    add_header X-Content-Type-Options nosniff;
+
+    # XSS protection
+    add_header X-XSS-Protection "1; mode=block";
+
+    # This prevents MITM attacks that would try downgrading the SSL.
+    # It should be progressively increased to allow preload once we are satisfied
+    # it works.
+    add_header Strict-Transport-Security "max-age=3600; includeSubdomains";
+
+    # We can't use a `server` block for connections on port 443
+    # because the determination of the host cannot be done until the
+    # SSL handshake is done. And the certificate for
+    # btw.mangalamresearch.org won't match random server names.
+
+    # if ($host !~* ^btw\.mangalamresearch\.org$ ) {
+    #    return 444;
+    # }
+
+    # If the developer cookie is set, bypass the maintenance
+    # check.
+    if ($cookie_btw_dev = "FhWRo5cstLV4NgS") {
+        break;
+    }
+
+    # Create a file named MAINTENANCE to put the server in maintenance
+    # mode.
+    if (-f $document_root/../MAINTENANCE) {
+        return 503;
+    }
+
+    error_page 503 @maintenance;
+    location @maintenance {
+        rewrite ^(.*)$ /maintenance.html break;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_pass http://172.28.0.2/;
+    }
+}

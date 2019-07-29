@@ -1,0 +1,72 @@
+server {
+    listen 80;
+    keepalive_timeout 70;
+
+    gzip on;
+    gzip_types *;
+    gzip_vary on;
+    gzip_proxied any;
+
+    access_log /var/log/nginx/btw/access.log;
+    error_log /var/log/nginx/btw/error.log;
+
+    root /srv/www/btw/static;
+
+    # This helps prevent clickjacking attacks.
+    add_header X-Frame-Options SAMEORIGIN;
+
+    # Prevents ignoring the Content-Type field by sniffing the data
+    # returned.
+    add_header X-Content-Type-Options nosniff;
+
+    # XSS protection
+    add_header X-XSS-Protection "1; mode=block";
+
+    # This prevents MITM attacks that would try downgrading the SSL.
+    # It should be increased to max-age=31536000 once we are satisfied
+    # it works.
+    add_header Strict-Transport-Security "max-age=3600";
+
+    # If the developer cookie is set, bypass the maintenance
+    # check.
+    if ($cookie_btw_dev = "FhWRo5cstLV4NgS") {
+        break;
+    }
+
+    # Create a file named MAINTENANCE to put the server in maintenance
+    # mode.
+    if (-f $document_root/../MAINTENANCE) {
+        return 503;
+    }
+
+    error_page 503 @maintenance;
+    location @maintenance {
+        rewrite ^(.*)$ /maintenance.html break;
+    }
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/run/uwsgi/app/btw/socket;
+        uwsgi_param UWSGI_SCRIPT btw.wsgi:application;
+        # We don't want this when running uwsgi behind an nginx contained
+        # in a docker container.
+        # uwsgi_param UWSGI_SCHEME https;
+    }
+
+    # BTW's code uses this to check connectivity. We respond here
+    # rather than have the Django app have to handle the request.
+    location /ping {
+        add_header Content-Type text/plain;
+        return 200 'pong';
+    }
+
+    location /static/ {
+        autoindex on;
+        alias /srv/www/btw/static/;
+    }
+
+    location /media/ {
+        autoindex on;
+        alias /srv/www/btw/media/;
+    }
+}

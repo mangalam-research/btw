@@ -1,0 +1,12 @@
+version: "3.6"
+services:
+  # This is a setup for running btw "locally" on a development machine.
+  # It does not map volumes for btw-backup, as we don't run it in development.
+  btw:
+    image: btw-local
+    environment:
+      BTW_ENV: docker_run_local
+    volumes:
+      - type: bind
+        source: ../
+        target: /srv/www/btw/btw

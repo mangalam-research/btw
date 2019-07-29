@@ -1,0 +1,3 @@
+# The official server is down for a while. Their home page mentions the de site below:
+# deb https://packages.tei-c.org/deb/binary ./
+deb https://packages.tei-c.de/deb/binary ./
