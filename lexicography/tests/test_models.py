@@ -579,7 +579,7 @@ class ChunkManagerTestCase(util.DisableMigrationsMixin, TestCase):
         sf = SemanticField(path="01.05n",
                            heading="foo")
         sf.save()
-        Chunk.objects.prepare("xml", True)
+        Chunk.objects.prepare("xml", include_unpublished=True)
 
     def setUp(self):
         self.manager = Chunk.objects

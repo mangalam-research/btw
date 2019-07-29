@@ -388,7 +388,7 @@ class FetchXMLTestCase(TaskTestCase):
                     for x in ("users.json", "views.json")) + [hte_fixture]
 
     def setUp(self):
-        Chunk.objects.prepare("xml", True)
+        Chunk.objects.prepare("xml", include_unpublished=True)
         super(FetchXMLTestCase, self).setUp()
 
     def test_no_data_nowhere(self):

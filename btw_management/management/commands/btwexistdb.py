@@ -212,7 +212,7 @@ class Load(SubCommand):
         display_path = get_collection_path("display")
         if db.hasCollection(display_path):
             db.removeCollection(display_path)
-        Chunk.objects.prepare("xml", True)
+        Chunk.objects.prepare("xml", include_unpublished=False)
 
 class Loadutil(SubCommand):
     """

@@ -136,7 +136,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
 
             # We must populate the eXist database.
             Chunk.objects.sync_with_exist()
-            Chunk.objects.prepare("xml", True)
+            Chunk.objects.prepare("xml", include_unpublished=True)
 
             # Id 1
             item = Item(item_key="3")

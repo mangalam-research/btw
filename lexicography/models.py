@@ -486,17 +486,21 @@ class ChunkManager(models.Manager):
 
         return chunks
 
+    def all_syncable_chunks(self):
+        return self.filter(is_normal=True,
+                           changerecord__hidden=False).distinct()
+
     def sync_with_exist(self):
         self.collect()
         db = ExistDB()
         present = set()
-        for chunk in self.filter(is_normal=True):
+        for chunk in self.all_syncable_chunks():
             chunk.sync_with_exist(db)
             present.add(chunk.c_hash)
 
         self._remove_absent(db, present, get_collection_path("chunks"))
 
-    def prepare(self, kind, synchronous):
+    def prepare(self, kind, include_unpublished):
         if kind != "xml":
             raise ValueError("the manager only supports preparing XML data; "
                              "future versions may support other kinds")
@@ -504,8 +508,11 @@ class ChunkManager(models.Manager):
         self.collect()
         db = ExistDB()
         present = set()
-        for chunk in self.filter(is_normal=True):
-            chunk.prepare("xml", synchronous)
+        chunks = self.all_syncable_chunks()
+        if not include_unpublished:
+            chunks = chunks.filter(changerecord__published=True)
+        for chunk in chunks:
+            chunk.prepare("xml", True)
             present.add(chunk.c_hash)
 
         self._remove_absent(db, present, get_collection_path("display"))

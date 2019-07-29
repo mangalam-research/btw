@@ -1852,6 +1852,27 @@ On 2016/07/06 loading the data dumped from BTW with ``btwexistdb
 load`` takes about 6 minutes. The size of the chunk data is about
 50mb. That's 1030 chunks.
 
+On 2019/07/23 running ``load_backup.sh`` takes 21 minutes. (NOTE THIS IS NOT THE
+SAME TEST AS ABOVE: ``load_backup.sh`` also starts postgresql, drops the old
+database, etc.) There are 1139 chunks and 27mb of chunk data. (The 27mb of chunk
+date is what Postgres reports about the lexicography_chunk table. It is unclear
+why it is smaller than what reported on 2016/07/06 though we have more chunks. A
+database can fragment over time. The documentation for VACUUM mentions that
+space can be returned to the OS only if the freed space is at the end of the
+database. So if the database is created from a backup, it will be smaller than a
+database that has been long running because it is "defragmented" when restored.)
+
+* I managed to reduce the time to about 11 minutes after performing
+  optimizations to the code which prepares articles in ``article.py``
+
+* I've further reduced the time to about 6 minutes by excluding the chunks which
+  are hidden (i.e. which do not have a ChangeRecord which is not hidden pointing
+  to them).
+
+* I've further reduced the time to a little over 1 minute by only calling
+  ``prepare`` on the chunks that are published. BTW scribes can access
+  unpublished chunks for viewing but these will just be prepared "on demand".
+
 Cleaning
 ========
 
