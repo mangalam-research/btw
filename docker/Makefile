@@ -5,15 +5,14 @@ DOWNLOAD_CACHE:=download-cache/
 CONTEXT_DOWNLOAD_CACHE:=context/install/download-cache
 CACHED_DOWNLOADS:=$(DOWNLOADS:%=$(CONTEXT_DOWNLOAD_CACHE)/%)
 
-DOCKER_CMD=DOCKER_BUILDKIT=1 sudo --preserve-env=DOCKER_BUILDKIT -n docker
+DOCKER_CMD=sudo DOCKER_BUILDKIT=1 -n docker
 
 DOCKER_BUILD=$(DOCKER_CMD) build -f Dockerfile context \
 --secret id=btw,src=$(HOME)/.config/btw/secrets/docker_build
 
 DOCKER_RUN=$(DOCKER_CMD) run
 
-DOCKER_COMPOSE=DOCKER_BUILDKIT=1 sudo --preserve-env=DOCKER_BUILDKIT -n \
-docker-compose
+DOCKER_COMPOSE=sudo DOCKER_BUILDKIT=1 -n docker-compose
 
 DESCRIBE_CMD=git describe --match 'v*'
 
@@ -73,21 +72,32 @@ test: base-dev
 local-deploy: $(DEV_CONTEXT)
 	$(DOCKER_BUILD) --target=deploy -t btw-local
 
+LOCAL_COMPOSE:=$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml
+LIVE_COMPOSE:=$(LOCAL_COMPOSE) -f docker-compose.live.yml
+
 .PHONY: run-local
 run-local: local-deploy
-	$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml up
+	$(LOCAL_COMPOSE) up
 
 .PHONY: run-live
 run-live: local-deploy
-	$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml -f docker-compose.live.yml up
+	$(LIVE_COMPOSE) up
 
 .PHONY: stop-local
 stop-local:
-	$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml stop --timeout=60
+	$(LOCAL_COMPOSE) stop --timeout=60
 
 .PHONY: stop-live
 stop-live:
-	$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml -f docker-compose.live.yml stop --timeout=60
+	$(LIVE_COMPOSE) stop --timeout=60
+
+.PHONY: cat-local
+cat-local:
+	@echo "$(LOCAL_COMPOSE)"
+
+.PHONY: cat-live
+cat-live:
+	@echo "$(LIVE_COMPOSE)"
 
 $(DOWNLOAD_CACHE)/libsaxonhe-java_9.9.0.2+dfsg-1_all.deb:
 	mkdir -p $(DOWNLOAD_CACHE)

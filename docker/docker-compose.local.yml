@@ -1,1 +1,36 @@
 version: "3.6"
+services:
+  # This is a setup for running btw "locally" on a development machine.
+  # It does not map volumes for btw-backup, as we don't run it in development.
+  btw:
+    image: btw-local
+    environment:
+      BTW_ENV: docker_run_local
+    volumes:
+      - type: volume
+        source: postgres
+        target: /var/lib/postgresql/9.6/main
+      - type: volume
+        source: exist-db
+        target: /var/eXist-db/btw
+      - type: volume
+        source: system-logs
+        target: /var/log/
+        # We don't need to worry about uid/gid for the following volumes
+        # because they are already set correctly, and the mount does not change
+        # them.
+      - type: volume
+        source: btw-logs
+        target: /srv/www/btw/btw/var/log
+      - type: volume
+        source: redis
+        target: /srv/www/btw/btw/var/lib/redis/
+      - type: bind
+        source: /home/ldd/.config/btw/secrets/docker_run_local
+        target: /home/btw/.config/btw/secrets/docker_run_local
+      - type: bind
+        source: /home/ldd/.config/btw/settings/docker_run_local
+        target: /home/btw/.config/btw/settings/docker_run_local
+    networks:
+      btw:
+        ipv4_address: 172.28.0.2
