@@ -15,6 +15,7 @@ cleanup () {
 ./manage.py btwexistdb stop; \
 ./manage.py btwredis stop"
     /etc/init.d/postgresql stop
+    /etc/init.d/nullmailer stop
 
     # Send TERM to all remaining children of this process.
     pkill -P $$
@@ -25,6 +26,7 @@ cleanup () {
 
 trap cleanup TERM INT EXIT
 
+/etc/init.d/nullmailer start
 /etc/init.d/postgresql start
 # Wait until we can connect. Django is not as nice.
 until su postgres -c'psql < /dev/null'; do sleep 0.5; done

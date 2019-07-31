@@ -171,6 +171,7 @@ RUN \
   && mkdir -p /root/backups/btw_log_backups
 
 COPY scripts /root/scripts
+COPY nullmailer/remotes /etc/nullmailer/remotes
 
 # Unset it so that we *can* run interactive in the final images.
 ENV DEBIAN_FRONTEND=
