@@ -70,9 +70,9 @@ test: base-dev
 
 .PHONY: local-deploy
 local-deploy: $(DEV_CONTEXT)
-	$(DOCKER_BUILD) --target=deploy -t btw-local
+	$(DOCKER_BUILD) --target=deploy -t btw-deploy
 
-LOCAL_COMPOSE:=$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.local.yml
+LOCAL_COMPOSE:=$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.dev.yml
 LIVE_COMPOSE:=$(LOCAL_COMPOSE) -f docker-compose.live.yml
 
 .PHONY: run-local

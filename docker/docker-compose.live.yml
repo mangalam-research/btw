@@ -1,12 +1,11 @@
+# This is an override for the base+local combination. It is meant to be used to
+# run the UNCOMMITTED CODE under development.
 version: "3.6"
 services:
-  # This is a setup for running btw "locally" on a development machine.
   # It does not map volumes for btw-backup, as we don't run it in development.
   btw:
-    image: btw-local
-    environment:
-      BTW_ENV: docker_run_local
     volumes:
+      # Bind the uncommitted code to where we copy the code.
       - type: bind
         source: ../
         target: /srv/www/btw/btw
