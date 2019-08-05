@@ -2,6 +2,8 @@
 
 FROM python:3.7.3-slim-stretch AS base
 
+LABEL org.label-schema.schema-version="1.0"
+
 RUN set -ex \
   && apt-get update && apt-get install -y --no-install-recommends \
     apt-transport-https \

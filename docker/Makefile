@@ -1,4 +1,8 @@
 
+CLEAN_CHECK:=$(if $(SKIP_CLEAN_CHECK),,[ -z "$$(git status --porcelain)" ] || \
+{ echo 'Repository is not clean!'; exit 1; })
+UNCLEAN_FLAG:=$(if $(shell [ -z "$$(git status --porcelain)" ] || echo $$?),unclean,clean)
+
 DOWNLOADS:=libsaxonhe-java_9.9.0.2+dfsg-1_all.deb libdom4j-java_2.1.1-2_all.deb eXist-db-setup-4.7.0.jar
 
 DOWNLOAD_CACHE:=download-cache/
@@ -7,7 +11,24 @@ CACHED_DOWNLOADS:=$(DOWNLOADS:%=$(CONTEXT_DOWNLOAD_CACHE)/%)
 
 DOCKER_CMD=sudo DOCKER_BUILDKIT=1 -n docker
 
+#
+# In theory the label-schema spec is deprecated in favor of OCI manifest
+# annotations. In practice, the tools for manipulating annotations are
+# still experimental, so...
+#
+# We do not store a build-date in the image, because:
+#
+# 1. It is redundant. `docker inspect` already provides information as to
+# when the image was created.
+#
+# 2. Because the value changes with each invocation of `docker build`,
+# it causes the creation of multiple images.
+#
+# --label org.label-schema.build-date="$$(date -u --rfc-3339=seconds)"
+#
 DOCKER_BUILD=$(DOCKER_CMD) build -f Dockerfile context \
+--label org.label-schema.vcs-ref="$$(cat context/btw/DEPLOYED)" \
+--label org.mangalamresearch.btw.clean=$(UNCLEAN_FLAG) \
 --secret id=btw,src=$(HOME)/.config/btw/secrets/docker_build
 
 DOCKER_RUN=$(DOCKER_CMD) run
@@ -15,9 +36,6 @@ DOCKER_RUN=$(DOCKER_CMD) run
 DOCKER_COMPOSE=sudo DOCKER_BUILDKIT=1 -n docker-compose
 
 DESCRIBE_CMD=git describe --match 'v*'
-
-CLEAN_CHECK:=$(if $(SKIP_CLEAN_CHECK),,[ -z "$$(git status --porcelain)" ] || \
-{ echo 'Repository is not clean!'; exit 1; })
 
 .PHONY: context
 context:
