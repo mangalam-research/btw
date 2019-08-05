@@ -234,8 +234,6 @@ README.html: README.rst
 selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
-# This should be removed when we upgrade wed and wedutil (wedutil>=0.22.1)
-selenium_test/*.feature selenium_test: export WEDUTIL_SKIP_OSX_CHECK := 1
 selenium_test/*.feature selenium_test: build-config $(TARGETS)
 	$(BEHAVE) $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
 	$(MAKE) -f build.mk all
