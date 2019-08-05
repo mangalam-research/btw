@@ -234,9 +234,9 @@ README.html: README.rst
 selenium-test: selenium_test
 
 .PHONY: selenium_test/%.feature selenium_test
-selenium_test/*.feature selenium_test: build-config $(TARGETS)
+selenium_test/*.feature selenium_test: $(if $(BTW_SKIP_BUILD),,build-config $(TARGETS))
 	$(BEHAVE) $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
-	$(MAKE) -f build.mk all
+	$(if $(BTW_SKIP_BUILD),,$(MAKE) -f build.mk all)
 ifneq ($(strip $(BEHAVE_SAVE)),)
 	(STAMP=$$(date -Iseconds); \
 	$(BEHAVE) $(BEHAVE_PARAMS) -f plain -o test_logs/$$STAMP.log -f pretty $@ ;\
