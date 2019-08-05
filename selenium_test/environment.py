@@ -26,8 +26,8 @@ assert_equal.__self__.maxDiff = None
 
 _dirname = os.path.dirname(__file__)
 
-conf_path = os.path.join(os.path.dirname(_dirname),
-                         "build", "config", "selenium_config.py")
+conf_path = os.path.join(os.path.dirname(_dirname), "config",
+                         "selenium_config.py")
 # Turn on long messages. This will apply to all assertions unless turned off
 # somewhere else.
 assert_equal.__self__.longMessage = True

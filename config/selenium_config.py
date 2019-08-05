@@ -20,6 +20,8 @@ if 'builder_args' not in globals():
 if 'REMOTE_SERVICE' not in globals():
     REMOTE_SERVICE = builder_args.get("service")
 
+SERVICE_LOG_PATH = "/tmp/log"
+
 #
 # LOGS determines whether Selenium tests will capture logs. Turning it
 # on makes the tests much slower.
@@ -177,6 +179,10 @@ profile = FirefoxProfile()
 #                         "/tmp/firefox.log")
 FIREFOX_PROFILE = profile
 
+CHROMEDRIVER_PATH = "chromedriver"
+SC_TUNNEL_PATH = "sc"
+BSLOCAL_PATH = "BrowserStackLocal"
+
 if CONFIG.remote and not REMOTE_SERVICE:
     raise ValueError("you must pass a service argument to behave")
 
@@ -185,3 +191,9 @@ if CONFIG.remote and not REMOTE_SERVICE:
 
 # Location of the BTW server.
 SERVER = "http://localhost"
+
+LOGS = False
+
+config_path = "./local_config/selenium_config.py"
+with open(config_path) as config:
+    exec(compile(config.read(), config_path, "exec"))

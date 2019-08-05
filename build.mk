@@ -284,21 +284,12 @@ build-scripts:
 	$(DJANGO_MANAGE) btw generate-scripts $(BUILD_SCRIPTS)
 	$(DJANGO_MANAGE) btw generate-systemd-services $(BUILD_SCRIPTS) $(BUILD_SERVICES)
 
-build-config: $(CONFIG_TARGETS) | $(BUILD_CONFIG)
+build-config: $(BUILD_CONFIG)/nginx.conf | $(BUILD_CONFIG)
 
 $(BUILD_CONFIG):
 	mkdir $@
 
-# See Makefile for the flip side of this. We need to not fail
-# if the file is missing so that ``make clean`` works on a new
-# checkout of the code.
--include $(CONFIG_DEPS)
-
-# Here are the actual targets that build the actual config files.
-$(BUILD_CONFIG)/%:
-	cp $< $@
-
-$(BUILD_CONFIG)/nginx.conf:
+$(BUILD_CONFIG)/nginx.conf: config/nginx.conf | $(BUILD_CONFIG)
 	sed -e's;@PWD@;$(PWD);'g $< > $@
 
 $(EXTERNAL)/datatables: node_modules/datatables/media

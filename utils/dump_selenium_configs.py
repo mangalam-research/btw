@@ -8,8 +8,8 @@ parser.add_argument('--jenkins', action="store_true",
                     help='output values for Jenkins')
 options = parser.parse_args()
 
-local_conf_path = os.path.join(os.path.dirname(_dirname),
-                               "build", "config", "selenium_config.py")
+local_conf_path = os.path.join(os.path.dirname(_dirname), "config",
+                               "selenium_config.py")
 
 exec(compile(open(local_conf_path).read(), local_conf_path, 'exec'))
 
