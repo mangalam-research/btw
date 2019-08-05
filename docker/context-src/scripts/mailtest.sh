@@ -23,9 +23,14 @@ trap cleanup TERM INT EXIT
 
 /etc/init.d/nullmailer start
 
+export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install bsd-mailx
+apt-get install -y --no-install-recommends bsd-mailx
 
 mail root@btw.mangalamresearch.org <<EOF
 Test from BTW's docker mail test.
 EOF
+
+while [ "$(mailq)" ]; do
+    echo "Waiting for nullmailer to send the mail."
+done
