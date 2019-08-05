@@ -1,10 +1,13 @@
 from lib.settings import s
 
-# All sensitive so init with empty dir.
-s.ZOTERO_SETTINGS = {}
-
 s.declare_secret("ZOTERO_UID")
 s.declare_secret("ZOTERO_API_KEY")
+
+# All sensitive so init with empty dir.
+s.ZOTERO_SETTINGS = lambda s: {
+    "uid": s.ZOTERO_UID,
+    "api_key": s.ZOTERO_API_KEY,
+}
 
 s.CACHES = lambda s: {**{
     "bibliography": {
@@ -17,6 +20,7 @@ s.CACHES = lambda s: {**{
         'TIMEOUT': 3153600000,
     }
 }, **s.CACHES}
+
 
 def set_bibliography_logging(s):
     old = s.LOGGING
@@ -31,5 +35,6 @@ def set_bibliography_logging(s):
         'propagate': True,
     }
     return old
+
 
 s.LOGGING = set_bibliography_logging
