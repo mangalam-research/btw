@@ -194,6 +194,7 @@ with open(read_from) as cfg, open(tmpconf, 'w') as tmpcfg:
                  .replace('@PORT@', nginx_port)
                  .replace('@SERVER_PORT@', server_port))
 
+banner("STARTING NGINX ON PORT " + nginx_port)
 # nginx spawns a master and immediately returns
 subprocess.check_call(["nginx", "-c", tmpconf])
 
