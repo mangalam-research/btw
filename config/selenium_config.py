@@ -87,8 +87,6 @@ if describe is None:
 
 caps = {
     "name": name,
-    # We have to turn this on...
-    "nativeEvents": True,
     "maxDuration": 2400,
     "build": describe
 }
