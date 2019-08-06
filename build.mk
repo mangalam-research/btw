@@ -20,8 +20,14 @@ SAXON?=./utils/saxon
 
 BEHAVE?=./selenium_test/btw-behave.py
 
+# Which browser to use for selenium tests.
+BROWSER?=
+
+# Which service to use for selenium tests.
+SERVICE?=browserstack
+
 # Parameters to pass to behave
-BEHAVE_PARAMS?=
+BEHAVE_PARAMS?=-D browser='$(BROWSER)' -D service=$(SERVICE)
 
 # Whether to save the test results produced by behave.
 #
