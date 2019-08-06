@@ -94,13 +94,6 @@ caps = {
 }
 
 if REMOTE_SERVICE == "saucelabs":
-    selenium_version = "2.49.0"
-
-    caps.update({
-        "selenium-version": selenium_version,
-        "chromedriver-version": "2.32",
-    })
-
     if not LOGS:
         caps.update({
             "record-screenshots": "false",
@@ -109,11 +102,8 @@ if REMOTE_SERVICE == "saucelabs":
             "sauce-advisor": "false"
         })
 elif REMOTE_SERVICE == "browserstack":
-    selenium_version = "3.5.2"
-
     caps.update({
         'project': 'BTW',
-        'browserstack.selenium_version': selenium_version,
     })
 
     if LOGS:
