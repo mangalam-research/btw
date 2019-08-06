@@ -41,7 +41,9 @@ djangocms-text-ckeditor==3.7.0
 djangocms-video==2.1.1
 djangorestframework==3.9.2
 EasyProcess==0.2.5
+entrypoints==0.3
 eulxml==1.1.3
+flake8==3.7.8
 glerbl==0.1.1
 h11==0.7.0
 h2==3.1.0
@@ -53,6 +55,7 @@ kaitaistruct==0.8
 kombu==4.4.0
 ldap3==2.5.2
 lxml==4.3.2
+mccabe==0.6.1
 mitmproxy==4.0.4
 nose==1.3.7
 nose-progressive==1.5.2
@@ -66,9 +69,11 @@ Pillow==5.4.1
 ply==3.11
 psycopg2==2.7.7 --no-binary psycopg2
 pyasn1==0.4.5
+pycodestyle==2.5.0
 pycparser==2.19
 pyee==5.0.0
 pyexistdb==1.0.1
+pyflakes==2.1.1
 pyOpenSSL==18.0.0
 pyparsing==2.2.2
 pyperclip==1.6.5
@@ -80,7 +85,7 @@ redis==3.2.1
 requests==2.22.0
 requests-oauthlib==1.2.0
 ruamel.yaml==0.15.89
-selenic==0.13.1
+selenic==0.14.0
 selenium==3.141.0
 semver==2.8.1
 six==1.12.0
