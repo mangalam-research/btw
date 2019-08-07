@@ -37,7 +37,8 @@ def user_load_lexicography(context):
 @then("the user gets the top page of the lexicography app")
 def step_impl(context):
     util = context.util
-    util.wait(lambda driver: driver.title == "BTW dev | Lexicography")
+    util.wait(lambda driver: re.fullmatch(r"^[A-za-z ]+\| Lexicography$",
+                                          driver.title))
 
 
 @given("that the user has loaded the top page of the lexicography app")
