@@ -131,11 +131,12 @@ with open(os.path.join(dirname, "./browsers.txt")) as browsers:
 
 
 # The 'browser' argument determines what browser we load.
-browser_env = builder_args.get(
-    'browser',
+browser_env = builder_args.get('browser')
+
+if not browser_env:
     # Yep, we now have a default! But not when we are running in a builder.
     # In a builder we have to explicitly tell what browser we want.
-    'Linux,CH,' if not in_builder else None)
+    browser_env = 'Linux,CH,' if not in_builder else None
 
 if browser_env is None:
     raise ValueError("you must specify a browser to run")
