@@ -385,7 +385,7 @@ def before_all(context):
                                      5 if builder.remote else 2)
     # Without this, window sizes vary depending on the actual browser
     # used.
-    context.initial_window_size = {"width": 1280, "height": 1080}
+    context.initial_window_size = {"width": 1366, "height": 768}
 
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
