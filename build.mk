@@ -150,6 +150,11 @@ TEST_DATA_FILES:=$(foreach f,prepared_published_prasada.xml,build/test-data/$f)
 
 .DELETE_ON_ERROR:
 
+# We use this because make ignores patterns appearing as dependencies of a
+# .PHONY target.
+.PHONY: phony
+phony:
+
 TARGETS:= javascript typescript python-generation btw-schema-targets
 .PHONY: all
 all: _all
@@ -239,8 +244,7 @@ README.html: README.rst
 .PHONY: selenium-test
 selenium-test: selenium_test
 
-.PHONY: selenium_test/%.feature selenium_test
-selenium_test/*.feature selenium_test: $(if $(BTW_SKIP_BUILD),,build-config $(TARGETS))
+selenium_test/*.feature selenium_test: phony $(if $(BTW_SKIP_BUILD),,build-config $(TARGETS))
 	$(BEHAVE) $(BEHAVE_PARAMS) -D check_selenium_config=1 $@
 	$(if $(BTW_SKIP_BUILD),,$(MAKE) -f build.mk all)
 ifneq ($(strip $(BEHAVE_SAVE)),)

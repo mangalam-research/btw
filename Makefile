@@ -14,7 +14,12 @@ PASS_THROUGH:= all test test-django test-django-menu test-django-btwredis test-k
 $(PASS_THROUGH):
 	$(MAKE) -f build.mk $@
 
-selenium_test/%:
+# We use this because make ignores patterns appearing as dependencies of a
+# .PHONY target.
+.PHONY: phony
+phony:
+
+selenium_test/*.feature: phony
 	$(MAKE) -f build.mk $@
 
 clean:
