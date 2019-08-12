@@ -102,6 +102,7 @@ if REMOTE_SERVICE == "saucelabs":
 elif REMOTE_SERVICE == "browserstack":
     caps.update({
         'project': 'BTW',
+        'resolution': '1920x1080',
     })
 
     if LOGS:
