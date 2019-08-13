@@ -347,10 +347,17 @@ def before_all(context):
 
     context.active_tag_matcher = ActiveTagMatcher(values)
 
+    # Without this, window sizes vary depending on the actual browser
+    # used.
+    initial_window_size = context.initial_window_size = \
+        {"width": 1366, "height": 768}
+
     if not builder.remote:
         visible = context.visible or \
             context.selenium_quit in ("never", "on-success", "on-enter")
-        context.display = Display(visible=visible, size=(1024, 600))
+        context.display = Display(visible=visible,
+                                  size=(initial_window_size["width"],
+                                        initial_window_size["height"]))
         context.display.start()
         print("Display started")
         builder.update_ff_binary_env('DISPLAY')
@@ -383,9 +390,6 @@ def before_all(context):
     context.util = selenic.util.Util(driver,
                                      # Give more time if we are remote.
                                      5 if builder.remote else 2)
-    # Without this, window sizes vary depending on the actual browser
-    # used.
-    context.initial_window_size = {"width": 1366, "height": 768}
 
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
