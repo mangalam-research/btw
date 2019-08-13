@@ -1,0 +1,2 @@
+# Ignore the content of the docker directory. It is redundant.
+btw/docker

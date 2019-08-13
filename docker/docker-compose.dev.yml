@@ -7,7 +7,7 @@ services:
     volumes:
       - type: volume
         source: btw-dev-postgres
-        target: /var/lib/postgresql/9.6/main
+        target: /var/lib/postgresql
       - type: volume
         source: btw-dev-exist-db
         target: /var/eXist-db/btw
@@ -24,10 +24,10 @@ services:
         source: btw-dev-redis
         target: /srv/www/btw/btw/var/lib/redis/
       - type: bind
-        source: /home/btw/.config/btw/secrets/docker_run_dev
+        source: /home/ldd/.config/btw/secrets/docker_run_dev
         target: /home/btw/.config/btw/secrets/docker_run_dev
       - type: bind
-        source: /home/btw/.config/btw/settings/docker_run_dev
+        source: /home/ldd/.config/btw/settings/docker_run_dev
         target: /home/btw/.config/btw/settings/docker_run_dev
 
 volumes:

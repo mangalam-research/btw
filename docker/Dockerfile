@@ -8,7 +8,15 @@ RUN set -ex \
   && apt-get update && apt-get install -y --no-install-recommends \
     apt-transport-https \
     gnupg \
-  && rm -rf /var/lib/apt/lists/*
+    locales \
+  && rm -rf /var/lib/apt/lists/* \
+# These lines, up to dpkg-reconfigure set the default locale in this image.
+# This is necessary so that the clusters created by PostgreSQL commands
+# use en_US.UTF-8.
+  && echo locales locales/locales_to_be_generated multiselect en_US.UTF-8 UTF-8 | debconf-set-selections \
+  && echo locales locales/default_environment_locale select en_US.UTF-8 | debconf-set-selections \
+  && rm /etc/locale.gen \
+  && dpkg-reconfigure --frontend noninteractive locales
 
 COPY *.list /etc/apt/sources.list.d/
 
@@ -180,6 +188,13 @@ ENV DEBIAN_FRONTEND=
 
 #
 # =====
+#
+
+FROM base AS selenium-test
+COPY selenium-bins /selenium-bins
+
+#
+# ====
 #
 
 FROM base AS deploy
