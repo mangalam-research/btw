@@ -14,7 +14,7 @@ cleanup () {
     trap - EXIT TERM INT
     /etc/init.d/nullmailer stop
     # Send TERM to all children of this process.
-    pkill -P $$
+    pkill -P $$ || true
     wait
     exit $status
 }

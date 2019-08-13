@@ -12,7 +12,7 @@ cleanup () {
 ./manage.py btwredis stop"
     /etc/init.d/postgresql stop
     # Send TERM to all children of this process.
-    pkill -P $$
+    pkill -P $$ || true
     wait
     exit $status
 }
@@ -24,6 +24,13 @@ trap cleanup TERM INT EXIT
 # Wait until we can connect.
 until su postgres -c'psql < /dev/null'; do sleep 0.5; done
 
+#
+# Running first_run does more than what we strictly need. It may be advantageous
+# eventually to run a slimmed down version of it just for testing.
+#
+# For now, we use it so that it runs during formal testing and issues with it
+# can be found early.
+#
 ./scripts/first_run.sh
 
 mkdir /root/.btw-backup

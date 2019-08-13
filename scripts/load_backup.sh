@@ -12,7 +12,7 @@ cleanup () {
 ./manage.py btwexistdb stop;
 ./manage.py btwredis stop;"
     # Send TERM to all children of this process.
-    pkill -P $$
+    pkill -P $$ || true
     wait
     exit $status
 }
