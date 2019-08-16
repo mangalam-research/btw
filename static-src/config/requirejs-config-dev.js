@@ -166,6 +166,6 @@ require.config({
       exports: "jQuery.fn.twbsPagination",
     },
   },
-  waitSeconds: 12,
+  waitSeconds: 15,
   enforceDefine: true,
 });
