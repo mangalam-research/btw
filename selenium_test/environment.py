@@ -387,9 +387,7 @@ def before_all(context):
     driver = builder.get_driver()
     context.driver = driver
     print("Obtained driver")
-    context.util = selenic.util.Util(driver,
-                                     # Give more time if we are remote.
-                                     5 if builder.remote else 2)
+    context.util = selenic.util.Util(driver, 5)
 
     behave_wait = os.environ.get("BEHAVE_WAIT_BETWEEN_STEPS")
     context.behave_wait = behave_wait and float(behave_wait)
