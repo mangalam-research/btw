@@ -36,6 +36,11 @@ class Minimal(Cleaner):
         return 10
 
 class CleanerTestCase(SimpleTestCase):
+    # These tests are designed to not actually modify the database. Django 2.2
+    # and over by default does not want any database access through a
+    # SimpleTestCase to avoid database modifications. Since we don't modify we
+    # set this to shut Django up.
+    databases = ["default"]
 
     def setUp(self):
         self.fakes = [FakeModel(val=1), FakeModel(val=2)]
