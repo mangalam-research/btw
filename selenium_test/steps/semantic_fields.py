@@ -1,5 +1,6 @@
 from nose.tools import assert_equal, assert_true
 
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
@@ -46,7 +47,10 @@ def step_impl(context):
     return toggle
     """)
 
-    toggle.click()
+    ActionChains(driver) \
+        .move_to_element_with_offset(toggle, 1, 1) \
+        .click() \
+        .perform()
 
 
 @when(r"the user clicks on the help for the (?P<what>search field|"
