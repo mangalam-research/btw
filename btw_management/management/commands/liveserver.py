@@ -17,7 +17,7 @@ from django.contrib.auth import get_user_model
 from django.test.client import Client
 from django.http import Http404, HttpResponse
 from django.utils import translation
-from django.db import transaction
+from django.db import transaction, connections
 from cms.test_utils.testcases import BaseCMSTestCase
 from allauth.account.models import EmailAddress
 
@@ -141,6 +141,7 @@ class SeleniumTest(BaseCMSTestCase, LiveServerTestCase):
             # Id 1
             item = Item(item_key="3")
             item.uid = Item.objects.zotero.full_uid
+            item.pk = 1
             item.save()
             ps = PrimarySource(item=item, reference_title="Foo", genre="SU")
             ps.save()
@@ -442,6 +443,13 @@ class Runner(DiscoverRunner):
     def setup_databases(self, *args, **kwargs):
         unmonkeypatch_databases()
         return super(Runner, self).setup_databases(*args, **kwargs)
+
+    def _get_databases(self, suite):
+        # The default method on DiscoverRunner wants to iterate over all tests.
+        # However, we have an infinite list of tests sooo that just hangs.
+        # Just return all databases.
+        return set(connections)
+
 
 class Command(BaseCommand):
     help = 'Starts a live server for testing.'
