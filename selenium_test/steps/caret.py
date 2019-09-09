@@ -4,6 +4,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 import wedutil
 
+import btw_util
+
 step_matcher('re')
 
 
@@ -13,6 +15,7 @@ def step_impl(context, parent):
 
     parent = "." + parent.replace(":", r"\:")
     element = util.find_element((By.CSS_SELECTOR, parent + r">.btw\:none"))
+    btw_util.scroll_into_view(context.driver, element)
 
     # Rendering can screw up our click... so check that it is where we
     # want it.

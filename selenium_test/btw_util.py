@@ -555,3 +555,27 @@ def register_sf_modal_on_context(context):
         "chosen semantic fields": ChosenSemanticFields(util),
         "combinator elements": CombinatorElements(util),
     }
+
+def scroll_into_view(driver, el):
+    # Should be removable when Chrome 77 becomes the standard version to test.
+    driver.execute_script("arguments[0].scrollIntoView()", el)
+
+def wait_for_editor(context):
+    util = context.util
+    driver = context.driver
+    wedutil.wait_for_editor(util, 60)
+
+    # Turning off tooltips makes the tests much easier to handle.
+    context.origin_object = driver.execute_script("""
+    // Turn off tooltips
+    wed_editor.preferences.set("tooltips", false);
+
+    // Delete all tooltips.
+    jQuery(".tooltip").remove();
+
+    // This is bullshit to work around a Selenium limitation.
+    document.body.insertAdjacentHTML('beforeend',
+        '<div id="origin-object" style=' +
+        '"position: fixed; top: 0px; left: 0px; width:1px; height:1px;"/>');
+    return document.body.lastElementChild;
+    """)

@@ -265,6 +265,7 @@ def step_impl(context, choice):
     # "miss" the target element if decorations were added while it was
     # trying to click, and the click would end up in the wrong place.
     while True:
+        btw_util.scroll_into_view(driver, el[index])
         ActionChains(driver) \
             .click(el[index]) \
             .perform()

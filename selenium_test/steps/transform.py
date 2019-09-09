@@ -374,9 +374,10 @@ def step_impl(context, lang):
     wed_editor.caretManager.setCaret(text_node, offset);
     """)
 
-    ActionChains(driver) \
-        .send_keys([Keys.SHIFT] + [Keys.ARROW_RIGHT] * len("prasāda") +
-                   [Keys.SHIFT]) \
+    ActionChains(driver)\
+        .key_down(Keys.SHIFT)\
+        .send_keys([Keys.ARROW_RIGHT] * len("prasāda"))\
+        .key_up(Keys.SHIFT)\
         .perform()
 
     context.execute_steps("""
@@ -405,9 +406,10 @@ def step_impl(context, text, wrapper, where):
     wed_editor.caretManager.setCaret(text_node, offset);
     """, text, selector)
 
-    ActionChains(driver) \
-        .send_keys([Keys.SHIFT] + [Keys.ARROW_RIGHT] * len(text) +
-                   [Keys.SHIFT]) \
+    ActionChains(driver)\
+        .key_down(Keys.SHIFT)\
+        .send_keys([Keys.ARROW_RIGHT] * len(text))\
+        .key_up(Keys.SHIFT)\
         .perform()
 
     context.execute_steps("""
@@ -606,6 +608,7 @@ def step_impl(context, what):
         (By.CSS_SELECTOR, r".__start_label" + label_class))
 
     while len(antonym_lbls):
+        btw_util.scroll_into_view(driver, antonym_lbls[0])
         wedutil.click_until_caret_in(util, antonym_lbls[0])
         context.execute_steps("""
         When the user brings up the context menu

@@ -49,22 +49,6 @@ def step_impl(context):
     """)
 
 
-def setup_editor(context):
-    util = context.util
-    driver = context.driver
-
-    wedutil.wait_for_editor(util, 60)
-
-    # Turning off tooltips makes the tests much easier to handle.
-    driver.execute_script("""
-    // Turn off tooltips
-    wed_editor.preferences.set("tooltips", false);
-
-    // Delete all tooltips.
-    jQuery(".tooltip").remove();
-    """)
-
-
 @given("a new document")
 def step_impl(context):
     util = context.util
@@ -74,7 +58,7 @@ def step_impl(context):
     Given the user has logged in
     """)
     driver.get(context.builder.SERVER + "/lexicography/entry/new")
-    setup_editor(context)
+    btw_util.wait_for_editor(context)
 
     btw_util.record_document_features(context)
 
@@ -365,7 +349,7 @@ def step_impl(context, what):
 
     if edit:
         driver.get(context.builder.SERVER + hits[title]["edit_url"])
-        setup_editor(context)
+        btw_util.wait_for_editor(context)
         btw_util.record_document_features(context)
     else:
         driver.get(context.builder.SERVER + hits[title]["hits"][0]["view_url"])
@@ -444,7 +428,7 @@ def step_impl(context):
         window.onbeforeunload = function () {};
     """)
     driver.get(driver.current_url)
-    setup_editor(context)
+    btw_util.wait_for_editor(context)
 
 
 @When("the user reloads the page")

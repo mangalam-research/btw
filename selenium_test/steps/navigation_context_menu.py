@@ -5,6 +5,8 @@ import selenium.webdriver.support.expected_conditions as EC
 from nose.tools import assert_equal  # pylint: disable=E0611
 from behave import then, when, given, step_matcher  # pylint: disable=E0611
 
+from selenium_test import btw_util
+
 import selenic
 import wedutil
 
@@ -28,32 +30,32 @@ def step_impl(context, item, under):
 
     def cond(*_):
         ret = driver.execute_script("""
-        var item = arguments[0];
-        var under = arguments[1];
+        const [item, under] = arguments;
+        const $ = jQuery;
 
-        var $ = jQuery;
+        const $search_point = under ?
+          $(`a:contains(${under})`).parent() : $(".wed-sidebar");
 
-        var $search_point = under ?
-            $("a:contains(" + under + ")").parent() : $(".wed-sidebar");
-
-        var $ret = $search_point.find("a:contains(" + item + ")");
-        var ret = $ret[0];
-        if (ret)
+        const ret = $search_point.find(`a:contains(${item})`)[0];
+        let rect = {};
+        if (ret) {
           ret.scrollIntoView(true);
-        var offset = $ret.offset();
-        return [ret, {'x': offset.left, 'y': offset.top}];
+          rect = ret.getBoundingClientRect();
+        }
+        console.log("XXX", rect);
+        return [ret, {
+          x: rect.left + 10,
+          y: rect.top + 10,
+        }];
         """, item, under)
         return ret if ret[0] else None
 
     link, location = util.wait(cond)
 
-    target = location
-    target["x"] += 10
-    target["y"] += 10
-    context.context_menu_location = target
-
+    context.context_menu_location = location
     ActionChains(driver) \
-        .move_to_element_with_offset(link, 10, 10) \
+        .move_to_element_with_offset(context.origin_object, location["x"],
+                                     location["y"]) \
         .context_click() \
         .perform()
 
@@ -68,7 +70,11 @@ def step_impl(context):
     menu = util.find_element((By.CLASS_NAME, "wed-context-menu"))
     # The click was in the middle of the trigger.
     target = context.context_menu_location
-    assert_equal(selenic.util.locations_within(menu.location, target, 10), '')
+    rect = context.driver.execute_script("""
+    const rect = arguments[0].getBoundingClientRect();
+    return { x: rect.left, y: rect.top };
+    """, menu)
+    assert_equal(selenic.util.locations_within(rect, target, 15), '')
 
 
 @when('the user clicks the second context menu option')
@@ -84,7 +90,9 @@ def step_impl(context):
 def step_impl(context, item):
     util = context.util
 
-    link = util.wait(EC.element_to_be_clickable((By.LINK_TEXT, item)))
+    link = util.find_element((By.LINK_TEXT, item))
+    btw_util.scroll_into_view(context.driver, link)
+    util.wait(EC.visibility_of(link))
     #
     # The following code prevents a problem in IE 10. Without this
     # code, the scenarios "adding custom text to a reference" and

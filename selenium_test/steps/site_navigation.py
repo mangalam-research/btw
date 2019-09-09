@@ -4,6 +4,8 @@ import wedutil
 
 from selenic.util import Condition, Result
 
+from selenium_test import btw_util
+
 step_matcher('re')
 
 OPTION_TO_ID = {
@@ -48,7 +50,7 @@ def step_impl(context, page):
 
     # We need this, otherwise the page will be reloaded too fast.
     if page == "Lexicography/New Article":
-        wedutil.wait_for_editor(context.util)
+        btw_util.wait_for_editor(context.util)
 
 @then(r'the user does not have the "(?P<option>.*?)" navigation option')
 def step_impl(context, option):
