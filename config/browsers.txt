@@ -5,33 +5,15 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,75
-
-#
-# Perform these next because IE compatibility is a major
-# issue. Finding problems early pays.
-#
-Windows 10,Edge,15,Remote
+Linux,CH,76
 
 #
 # Perform these next because OS X compatibility is an issue. Again, we
 # want to find problems early.
 #
-OS X 10.12,CH,75,Remote
+OS X 10.12,CH,76,Remote
 
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,75,Remote
-
-#
-# FAILING COMBINATIONS
-#
-# Fails due to a resizing bug in Selenium:
-#
-# Windows 8.1,FF,26,Remote
-
-#
-# FF does not support native events in OS X.
-#
-# OS X 10.6,FF,..,Remote
+Windows 8.1,CH,76,Remote
