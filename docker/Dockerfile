@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:experimental
 
-FROM python:3.7.3-slim-stretch AS base
+FROM python:3.7.4-slim-stretch AS base
 
 LABEL org.label-schema.schema-version="1.0"
 
