@@ -942,8 +942,8 @@ def entry_testing_mark_valid(request, lemma):
         xmltree = XMLTree(data.encode("utf-8"))
         xmltree.alter_lemma(lemma)
         data = xmltree.serialize()
-        entry.try_updating(request, original.latest.c_hash, xmltree,
-                           ChangeRecord.CREATE,
+        chunk = Chunk(data=data, schema_version=xmltree.extract_version())
+        entry.try_updating(request, chunk, xmltree, ChangeRecord.CREATE,
                            ChangeRecord.MANUAL)
         release_entry_lock(entry, request.user)
 
