@@ -80,27 +80,18 @@ RUN \
   && mkdir -p /var/eXist-db/btw \
   && chown btw.btw /usr/local/eXist-db \
   && chown -R btw.btw /var/eXist-db/btw \
-  && su btw -c "java -jar download-cache/eXist-db-setup-4.7.0.jar -options exist.properties" \
-# The installer is buggy and did not install our data in the right place. Move
-# it.
-  && mv /usr/local/eXist-db/webapp/WEB-INF/data /var/eXist-db/btw \
-# The installer also fails to edit the conf.xml file. So we have to fix it.
-  && sed -i \
-     -e's;files="webapp/WEB-INF/data";files="/var/eXist-db/btw/data";' \
-     -e's;journal-dir="webapp/WEB-INF/data";journal-dir="/var/eXist-db/btw/data";' \
-     -e's/cacheSize="256M"/cacheSize="600M"/' \
-     /usr/local/eXist-db/conf.xml \
+  && su btw -c "java -jar download-cache/exist-installer-5.0.0.jar -options exist.properties" \
 # Restrict connections to localhost, and change the default ports to
 # avoid clashes with other services.
   && sed -i \
      -e's;<Property name="jetty.http.host" deprecated="jetty.host" />;127.0.0.1;g' \
      -e's;<SystemProperty name="jetty.port" default="8080"/>;<SystemProperty name="jetty.port" default="5000"/>;g' \
      -e's;<SystemProperty name="jetty.ssl.port" deprecated="ssl.port" default="8443"/>;<SystemProperty name="jetty.ssl.port" deprecated="ssl.port" default="5443"/>;g' \
-     /usr/local/eXist-db/tools/jetty/etc/jetty-http.xml \
-     /usr/local/eXist-db/tools/jetty/etc/jetty-ssl.xml \
+     /usr/local/eXist-db/etc/jetty/jetty-http.xml \
+     /usr/local/eXist-db/etc/jetty/jetty-ssl.xml \
   && sed -i -e's/localhost:8080/localhost:5000/g' \
-     /usr/local/eXist-db/backup.properties \
-     /usr/local/eXist-db/client.properties \
+     /usr/local/eXist-db/etc/backup.properties \
+     /usr/local/eXist-db/etc/client.properties \
   && mkdir -p /srv/www/btw \
   && chown -R btw.btw /srv/www \
   && mkdir -p /var/log/btw/wed_logs \

@@ -20,7 +20,7 @@ psql -c 'ALTER USER $DATABASE_USER_NAME CREATEDB;' &&
 createdb -O $DATABASE_USER_NAME $DEFAULT_DATABASE_NAME"
 
 su btw -c"set -ex &&
-$EXISTDB_HOME_PATH/bin/client.sh -s -l -u admin -P '\$adminPasswd' --xpath 'let \$_ := sm:passwd(\"$BTW_EXISTDB_SERVER_ADMIN_USER\", \"$BTW_EXISTDB_SERVER_ADMIN_PASSWORD\") return \"Ok\"'
+$EXISTDB_HOME_PATH/bin/client.sh -s -l -u admin -P 'existdbpassword' --xpath 'let \$_ := sm:passwd(\"$BTW_EXISTDB_SERVER_ADMIN_USER\", \"$BTW_EXISTDB_SERVER_ADMIN_PASSWORD\") return \"Ok\"'
 ./manage.py btwredis start &&
 ./manage.py migrate &&
 ./manage.py btwdb set_site_name &&

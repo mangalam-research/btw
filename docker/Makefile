@@ -35,15 +35,17 @@ CLEAN_CHECK:=$(if $(SKIP_CLEAN_CHECK),,[ -z "$$(git status --porcelain)" ] || \
 # whether the source is clean.
 UNCLEAN_FLAG:=$(if $(shell [ -z "$$(git status --porcelain)" ] || echo $$?),unclean,clean)
 
+EXIST_DB_JAR:=exist-installer-5.0.0.jar
+
 # The list of packages we must download in order to build the Docker context.
 DOWNLOADS:=\
  libsaxonhe-java_9.9.0.2+dfsg-1_all.deb \
  libdom4j-java_2.1.1-2_all.deb \
- eXist-db-setup-4.7.0.jar
+ $(EXIST_DB_JAR)
 
 # The location of the download cache. The download cache is where we store
 # the packages listed in DOWNLOADS.
-DOWNLOAD_CACHE:=download-cache/
+DOWNLOAD_CACHE:=download-cache
 
 # The final location of the download cache.
 CONTEXT_DOWNLOAD_CACHE:=context/install/download-cache
@@ -248,9 +250,9 @@ $(DOWNLOAD_CACHE)/libdom4j-java_2.1.1-2_all.deb:
 	mkdir -p $(DOWNLOAD_CACHE)
 	cd $(DOWNLOAD_CACHE) && wget http://ftp.us.debian.org/debian/pool/main/d/dom4j/libdom4j-java_2.1.1-2_all.deb
 
-$(DOWNLOAD_CACHE)/eXist-db-setup-4.7.0.jar:
+$(DOWNLOAD_CACHE)/$(EXIST_DB_JAR):
 	mkdir -p $(DOWNLOAD_CACHE)
-	cd $(DOWNLOAD_CACHE) && wget https://bintray.com/existdb/releases/download_file?file_path=eXist-db-setup-4.7.0.jar -O $(notdir $@)
+	cd $(DOWNLOAD_CACHE) && wget https://bintray.com/existdb/releases/download_file?file_path=$(EXIST_DB_JAR) -O $(notdir $@)
 
 $(CONTEXT_DOWNLOAD_CACHE)/%: $(DOWNLOAD_CACHE)/%
 	-mkdir $(dir $@)

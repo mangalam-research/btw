@@ -52,7 +52,7 @@ mkdir -p var/run/btw var/lib var/log/btw/wed
 chown btw:btw -R var
 
 su btw -c"set -ex \
-&& $EXISTDB_HOME_PATH/bin/client.sh -s -l -u admin -P '\$adminPasswd' --xpath 'let \$_ := sm:passwd(\"$BTW_EXISTDB_SERVER_ADMIN_USER\", \"$BTW_EXISTDB_SERVER_ADMIN_PASSWORD\") return \"Ok\"' \
+&& $EXISTDB_HOME_PATH/bin/client.sh -s -l -u admin -P 'existdbpassword' --xpath 'let \$_ := sm:passwd(\"$BTW_EXISTDB_SERVER_ADMIN_USER\", \"$BTW_EXISTDB_SERVER_ADMIN_PASSWORD\") return \"Ok\"' \
 && PATH=$PATH:/selenium-bins \
 && ./manage.py btwexistdb start \
 && ./manage.py btwexistdb createuser \
