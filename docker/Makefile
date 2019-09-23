@@ -165,24 +165,35 @@ DOCKER_BUILD_MOUNTS=\
 --mount=type=bind,target=/home/btw/.config/btw/settings/docker_build,$\
 src=$$(pwd)/context/settings/docker_build \
 --mount=type=bind,target=/home/btw/.config/btw/secrets/docker_build,$\
-src=$$HOME/.config/btw/secrets/docker_build
+src=$$HOME/.config/btw/secrets/docker_build \
+--mount=type=bind,target=/tmp/btw-build-dump,src=/tmp/btw-build-dump
+
+LIVE_MOUNTS=\
+--mount=type=bind,target=/srv/www/btw/btw,src=$$(pwd)/.. \
+--mount=type=tmpfs,target=/srv/www/btw/btw/var
 
 .PHONY: test
-test: DOCKER_MOUNTS=$(DOCKER_BUILD_MOUNTS) \
---mount=type=bind,target=/tmp/btw-build-dump,src=/tmp/btw-build-dump
+test: DOCKER_MOUNTS=$(DOCKER_BUILD_MOUNTS)
 test: base-dev-image
 ## Run the basic tests.
 	mkdir -p /tmp/btw-build-dump
 	$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
+
+.PHONY: live-test
+live-test: DOCKER_MOUNTS=$(DOCKER_BUILD_MOUNTS) $(LIVE_MOUNTS)
+live-test: base-dev-image
+## Run the tests but use the working tree.
+	mkdir -p /tmp/btw-build-dump
+	$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
+
+SELENIUM_DOCKER_RUN=$(DOCKER_RUN) --rm -it btw-selenium-test \
+/root/scripts/selenium-test.sh "$(BROWSER)" "$(SERVICE)" "$(SELENIUM_TEST)"
 
 SELENIUM_TEST_MOUNTS=$(DOCKER_BUILD_MOUNTS) \
 --mount=type=bind,target=/srv/www/btw/btw/test_logs,$\
 src=$$(pwd)/test-logs/ \
 --mount=type=bind,target=/srv/www/btw/btw/local_config,$\
 src=$$(pwd)/../local_config
-
-SELENIUM_DOCKER_RUN=$(DOCKER_RUN) --rm -it btw-selenium-test \
-/root/scripts/selenium-test.sh "$(BROWSER)" "$(SERVICE)" "$(SELENIUM_TEST)"
 
 .PHONY: selenium-test
 selenium-test: DOCKER_MOUNTS=$(SELENIUM_TEST_MOUNTS)
@@ -192,9 +203,7 @@ selenium-test: selenium-test-image
 	$(SELENIUM_DOCKER_RUN)
 
 .PHONY: live-selenium-test
-live-selenium-test: DOCKER_MOUNTS=$(SELENIUM_TEST_MOUNTS)\
---mount=type=bind,target=/srv/www/btw/btw,src=$$(pwd)/.. \
---mount=type=tmpfs,target=/srv/www/btw/btw/var
+live-selenium-test: DOCKER_MOUNTS=$(SELENIUM_TEST_MOUNTS) $(LIVE_MOUNTS)
 live-selenium-test: selenium-test-image
 ## Run the selenium tests but use the working tree.
 	mkdir -p "./test-logs/"

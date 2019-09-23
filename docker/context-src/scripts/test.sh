@@ -24,6 +24,10 @@ trap cleanup TERM INT EXIT
 # Wait until we can connect.
 until su postgres -c'psql < /dev/null'; do sleep 0.5; done
 
+# This is needed for "live" runs because we map var to a tmpfs which is empty.
+mkdir -p var/run/btw var/lib var/log/btw/wed
+chown btw:btw -R var
+
 #
 # Running first_run does more than what we strictly need. It may be advantageous
 # eventually to run a slimmed down version of it just for testing.
