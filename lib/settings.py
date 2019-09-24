@@ -59,10 +59,9 @@ class Settings(object):
                 if not name_re.match(name):
                     raise Exception("invalid name syntax")
                 value = value.strip()
-                if (value[0] == "'" and value[-1] != "'") or \
-                   (value[0] == '"' and value[-1] != '"'):
-                    raise Exception("badly quoted value")
                 if value[0] in ('"', "'"):
+                    if value[0] != value[-1]:
+                        raise Exception("badly quoted value")
                     value = value[1:-1]
                 if bad_char_re.match(value):
                     raise Exception("invalid character in value")
