@@ -55,6 +55,11 @@ class Settings(object):
         with open(file_path, 'r') as secret:
             for line in secret:
                 line = line.strip()
+
+                # Skip comment lines.
+                if line[0] == "#":
+                    continue
+
                 [name, value] = line.split("=", 1)
                 if not name_re.match(name):
                     raise Exception("invalid name syntax")
