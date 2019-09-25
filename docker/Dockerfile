@@ -40,6 +40,8 @@ RUN \
   && apt-get install -y --no-install-recommends \
 # Required by btw_backup.
     bzip2 \
+# Required to rotate the logs.
+    cron \
 # Required by `npm ci` later.
     git \
 # Required by the dpkg -i install below.
@@ -47,6 +49,8 @@ RUN \
 # Required by the dpkg -i install below.
     libintellij-annotations-java \
     libpq-dev \
+# Required to rotate the logs.
+    logrotate \
 # Required to make BTW.
     make \
     nginx-full \
@@ -99,8 +103,9 @@ RUN \
   && mkdir -p /run/uwsgi/app/btw \
   && chown btw:btw /run/uwsgi/app/btw
 
-COPY nginx/btw /etc/nginx/sites-enabled/
+COPY nginx/btw.in /etc/nginx/templates/
 COPY uwsgi/btw.ini /etc/uwsgi/apps-enabled/
+COPY logrotate.d/btw /etc/logrotate.d/
 COPY btw-backup /root/btw-backup
 
 WORKDIR /srv/www/btw/btw/

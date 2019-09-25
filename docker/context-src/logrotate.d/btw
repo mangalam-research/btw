@@ -1,0 +1,18 @@
+/srv/www/btw.mangalamresearch.org/btw/btw/var/log/btw/*.log {
+  rotate 14
+  daily
+  compress
+  delaycompress
+  missingok
+  notifempty
+}
+
+# This was taken from the default config for redis-server
+/srv/www/btw.mangalamresearch.org/btw/btw/var/log/redis/*.log {
+  weekly
+  missingok
+  copytruncate
+  rotate 12
+  compress
+  notifempty
+}

@@ -26,6 +26,7 @@ cleanup () {
 
 trap cleanup TERM INT EXIT
 
+/etc/init.d/cron start
 /etc/init.d/nullmailer start
 /etc/init.d/postgresql start
 # Wait until we can connect. Django is not as nice.
@@ -41,6 +42,11 @@ su btw -c"set -ex \
 && ./manage.py btwexistdb start \
 && ./manage.py btwworker start --all \
 && ./manage.py btwcheck"
+
+# We source the nginx secrets.
+. /home/btw/.config/btw/nginx-secrets/${BTW_ENV}
+
+sed s/'${COOKIE_BTW_DEV}'/${COOKIE_BTW_DEV}/g /etc/nginx/templates/btw.in > /etc/nginx/sites-enabled/btw
 /etc/init.d/nginx start
 
 uwsgi --ini /etc/uwsgi/apps-enabled/btw.ini --hook-master-start "unix_signal:15 gracefully_kill_them_all" &

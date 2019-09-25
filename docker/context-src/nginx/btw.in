@@ -23,13 +23,13 @@ server {
     add_header X-XSS-Protection "1; mode=block";
 
     # This prevents MITM attacks that would try downgrading the SSL.
-    # It should be increased to max-age=31536000 once we are satisfied
+    # It should be progressively increased to allow preload once we are satisfied
     # it works.
-    add_header Strict-Transport-Security "max-age=3600";
+    add_header Strict-Transport-Security "max-age=604800; includeSubdomains" always;
 
     # If the developer cookie is set, bypass the maintenance
     # check.
-    if ($cookie_btw_dev = "FhWRo5cstLV4NgS") {
+    if ($cookie_btw_dev = "${COOKIE_BTW_DEV}") {
         break;
     }
 
