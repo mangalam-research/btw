@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw/settings")
 ETC_CONFIG = "/etc/btw/settings"
@@ -10,19 +11,20 @@ ETC_SECRET = "/etc/btw/secrets"
 CURDIR = os.path.dirname(os.path.abspath(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(CURDIR))
 
+env_re = re.compile("^[-a-zA-Z0-9_]+$")
+
 # Determine the name of our environment.
 env = os.environ.get("BTW_ENV", None)
 if env is None:
     for path in (TOPDIR, HOME_CONFIG, ETC_CONFIG):
         env_path = os.path.join(path, "env")
-        env = open(env_path, 'r').read().strip() \
-            if os.path.exists(env_path) else None
+        try:
+            env = open(env_path, 'r').read().strip()
+        except OSError:
+            pass
 
-        if env == "":
-            raise ValueError("env cannot be an empty string")
-
-        if env is not None:
-            break
+    if env is not None and not env_re.fullmatch(env):
+        raise ValueError(f"env must match {env_re}; got: {env}")
 
 if env is None:
     raise ValueError("can't get running environment value!")

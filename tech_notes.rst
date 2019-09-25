@@ -1430,14 +1430,10 @@ searches for secrets here:
 
 * ``/etc/btw/secrets/<env>``
 
-Either path needs to resolve to a file with lines of the form::
-
-  VAR=value
-
-``VAR`` is a variable name. Only capitals A to Z and underscore are allowed in
-the variable name. ``value`` is the value associated with the variable. It may
-be single quoted or double quoted. However, BTW **does not perform backslash or
-quote interpretation inside the value**.
+This file is sourced by the shell **SOMETIMES AS ROOT** as part of the Docker
+build process or startup scripts. It is also sourced by the Python code of
+Django. In either case the shell does the processing of the file so it accepts
+shell syntax (quoting, etc.)
 
 =======
  Roles

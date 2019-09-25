@@ -1,5 +1,8 @@
 from collections.abc import Callable
 import re
+import subprocess
+import json
+import sys
 
 NONEXISTENT = object()
 
@@ -8,6 +11,12 @@ bad_char_re = re.compile(r"['\"\\]")
 
 class Secret(object):
     pass
+
+# PWD is automatically set by sh and compatible shells (bash, dash, ...)
+# _ and SHLVL are automatically set by bash
+# LC_CTYPE is set by python 3 when it starts.
+RESTRICTED_SECRET_NAMES = ("PWD", "_", "SHLVL", "LC_CTYPE")
+
 
 class Settings(object):
 
@@ -48,30 +57,26 @@ class Settings(object):
         attrs[name] = store
 
     def declare_secret(self, name):
+        if name in RESTRICTED_SECRET_NAMES:
+            raise ValueError(f"cannot use {name} as a secret name")
+
         if getattr(self, name, NONEXISTENT) is NONEXISTENT:
             setattr(self, name, Secret())
 
     def read_secret_file(self, file_path):
-        with open(file_path, 'r') as secret:
-            for line in secret:
-                line = line.strip()
+        # Adapted from https://stackoverflow.com/a/7198338/
+        env = json.loads(subprocess.check_output(
+            f'set -a && . {file_path} && {sys.executable} -c '
+            '"import os, json; print(json.dumps(dict(os.environ)))"',
+            shell=True, env={}))
+        for name, value in env.items():
+            if name in RESTRICTED_SECRET_NAMES:
+                continue
 
-                # Skip comment lines.
-                if line[0] == "#":
-                    continue
-
-                [name, value] = line.split("=", 1)
-                if not name_re.match(name):
-                    raise Exception("invalid name syntax")
-                value = value.strip()
-                if value[0] in ('"', "'"):
-                    if value[0] != value[-1]:
-                        raise Exception("badly quoted value")
-                    value = value[1:-1]
-                if bad_char_re.match(value):
-                    raise Exception("invalid character in value")
-
-                setattr(self, name.strip(), value.strip())
+            if not isinstance(getattr(self, name), Secret):
+                raise Exception(f"trying to set secret {name}, "
+                                "which is not a secret")
+            setattr(self, name, value)
 
     def as_dict(self):
         def get(key):

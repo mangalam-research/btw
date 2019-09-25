@@ -706,8 +706,6 @@ s.DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
-_env.read_secret(s)
-
 exec(_env.find_config("btw"))  # pylint: disable=exec-used
 
 # Execute per-app overrides.
@@ -717,6 +715,8 @@ for app in s.INSTALLED_APPS:
             # pylint: disable=exec-used
             exec(open(os.path.join(s.CURDIR, app + ".py")).read())
         exec(_env.find_config(app))  # pylint: disable=exec-used
+
+_env.read_secret(s)
 
 #
 # Export everything to the global space. This is where we convert
