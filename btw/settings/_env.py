@@ -2,11 +2,8 @@ import os
 import sys
 import re
 
-HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw/settings")
-ETC_CONFIG = "/etc/btw/settings"
-
-HOME_SECRET = os.path.join(os.environ["HOME"], ".config/btw/secrets")
-ETC_SECRET = "/etc/btw/secrets"
+HOME_CONFIG = os.path.join(os.environ["HOME"], ".config/btw")
+ETC_CONFIG = "/etc/btw"
 
 CURDIR = os.path.dirname(os.path.abspath(__file__))
 TOPDIR = os.path.dirname(os.path.dirname(CURDIR))
@@ -35,7 +32,7 @@ if not os.environ.get("BTW_ENV_SUPPRESS_MESSAGE"):
 
 def find_config(name):
     for path in (HOME_CONFIG, ETC_CONFIG):
-        conf_path = os.path.join(path, env, name + ".py")
+        conf_path = os.path.join(path, env, "settings", name + ".py")
         if os.path.exists(conf_path):
             return open(conf_path).read()
     # We return either an open file (see above) or an empty
@@ -43,8 +40,8 @@ def find_config(name):
     return ""
 
 def read_secret(s):
-    for path in (HOME_SECRET, ETC_SECRET):
-        conf_path = os.path.join(path, env)
+    for path in (HOME_CONFIG, ETC_CONFIG):
+        conf_path = os.path.join(path, env, "secrets", "btw")
         if os.path.exists(conf_path):
             s.read_secret_file(conf_path)
 

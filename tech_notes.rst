@@ -1386,16 +1386,16 @@ name from the following sources:
 
 * An ``env`` file at the top of the Django project hierarchy.
 
-* ``~/.config/btw/settings/env``
+* ``~/.config/btw/env``
 
 * ``/etc/btw/env``
 
 This environment value is then used by ``_env.find_config(name)`` to find
 configuration files:
 
-* ``~/.config/btw/settings/<env>/<name>.py``
+* ``~/.config/btw/<env>/settings/<name>.py``
 
-* ``/etc/btw/settings/<env>/<name>.py``
+* ``/etc/btw/<env>/settings/<name>.py``
 
 The **first** file found among the ones in the previous list is the
 one used. By convention ``_env.find_config`` should be used by the files
@@ -1408,11 +1408,11 @@ convention the caller to find_config should exec the value returned by
 The order of execution of the various files is::
 
     settings/__init__.py
-    <conf>/<env>/btw.py
+    <conf>/<env>/settings/btw.py
     settings/<app1>.py
-    <conf>/<env>/<app1>.py
+    <conf>/<env>/settings/<app1>.py
     settings/<app2>.py
-    <conf>/<env>/<app2>.py
+    <conf>/<env>/settings/<app2>.py
 
 where ``<env>`` is the value of the environment set as described
 earlier, and ``<conf>`` is whatever path happens to contain the
@@ -1426,14 +1426,17 @@ syntax which allows them to be used outside Python. These settings are deemed to
 be "secrets" (because most of them are in fact sensitive information). BTW
 searches for secrets here:
 
-* ``~/.config/btw/secrets/<env>``
+* ``~/.config/btw/<env>/secrets/btw``
 
-* ``/etc/btw/secrets/<env>``
+* ``/etc/btw/<env>/secrets/btw``
 
 This file is sourced by the shell **SOMETIMES AS ROOT** as part of the Docker
 build process or startup scripts. It is also sourced by the Python code of
 Django. In either case the shell does the processing of the file so it accepts
 shell syntax (quoting, etc.)
+
+The secrets subdirectories are allowed to contain other secrets files for tools
+related to BTW.
 
 =======
  Roles
