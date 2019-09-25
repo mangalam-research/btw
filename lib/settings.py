@@ -66,9 +66,10 @@ class Settings(object):
     def read_secret_file(self, file_path):
         # Adapted from https://stackoverflow.com/a/7198338/
         env = json.loads(subprocess.check_output(
-            f'set -a && . {file_path} && {sys.executable} -c '
-            '"import os, json; print(json.dumps(dict(os.environ)))"',
-            shell=True, env={}))
+            ["/bin/bash", "-c",
+             f'set -a && . {file_path} && {sys.executable} -c '
+             '"import os, json; print(json.dumps(dict(os.environ)))"'],
+            env={}))
         for name, value in env.items():
             if name in RESTRICTED_SECRET_NAMES:
                 continue
