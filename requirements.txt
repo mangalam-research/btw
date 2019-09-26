@@ -19,7 +19,7 @@ celery[redis]>=4.3.0,<5
 wedutil==0.22.1
 djangorestframework>=3.9.2,<4
 python-slugify>=3,<4
-django-cms==3.7.0rc2
+django-cms>=3.7.0,<3.8
 # Optional, recommended packages for django-cms
 Pillow>=5.4.1
 djangocms-text-ckeditor>=3.8.0

@@ -21,7 +21,7 @@ django-appconf==1.0.3
 django-bootstrap4==0.0.8
 django-cache-management==3.0.0
 django-classy-tags==0.8.0
-django-cms==3.7.0rc2
+django-cms==3.7.0
 django-datatables-view==1.17.0
 django-debug-toolbar==1.4
 django-formtools==2.1
@@ -83,7 +83,7 @@ redis==3.2.1
 requests==2.22.0
 requests-oauthlib==1.2.0
 ruamel.yaml==0.15.89
-selenic==0.14.0
+-e git+https://github.com/mangalam-research/selenic@61aef51a603afc2c8b67cbb5bed0fbc4c61282ab#egg=selenic
 selenium==3.141.0
 semver==2.8.1
 six==1.12.0
