@@ -44,7 +44,7 @@ while true; do
 done
 
 # We source the secrets.
-. /home/btw/.config/btw/secrets/${BTW_ENV}
+. /home/btw/.config/btw/${BTW_ENV}/secrets/btw
 
 dump_path=/restore.dump
 restore_list=/tmp/pg_restore.list

@@ -1,4 +1,4 @@
-# This is an override for the base+local combination. It is meant to be used to
+# This is an override for the base + dev combination. It is meant to be used to
 # run the UNCOMMITTED CODE under development.
 version: "3.6"
 services:

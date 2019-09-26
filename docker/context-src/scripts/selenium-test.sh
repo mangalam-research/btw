@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -ex
 
@@ -32,7 +32,7 @@ test=${3:-selenium-test}
 chown btw:btw -R /selenium-bins
 
 # We source the secrets.
-. /home/btw/.config/btw/secrets/${BTW_ENV}
+. /home/btw/.config/btw/${BTW_ENV}/secrets/btw
 
 # Not a secret.
 EXISTDB_HOME_PATH=`su btw -c"./manage.py btw print-setting EXISTDB_HOME_PATH"`

@@ -147,8 +147,8 @@ COPY --chown=btw:btw btw /srv/www/btw/btw
 ENV BTW_ENV docker_build
 
 RUN \
-  --mount=type=secret,id=btw,target=/home/btw/.config/btw/secrets/docker_build,uid=1000,gid=1000 \
-  --mount=type=bind,target=/home/btw/.config/btw/settings,source=./settings \
+  --mount=type=secret,id=btw,target=/home/btw/.config/btw/docker_build/secrets/btw,uid=1000,gid=1000 \
+  --mount=type=bind,target=/home/btw/.config/btw/docker_build/settings,source=./settings/docker_build/settings \
 # We cannot use this until support for uid/gid is released.
 # Drop the rm -rf ~/.npm once we can use this mount.
 #  --mount=type=cache,target=/home/btw/.npm/_cacache,uid=1000,gid=1000 \

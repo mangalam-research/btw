@@ -1,19 +1,18 @@
 version: "3.6"
 services:
-  # This is a setup for running btw "locally" on a development machine.
-  # It does not map volumes for btw-backup, as we don't run it in development.
+  # This is a setup for running BTW deployed on an actual server.
   btw:
     environment:
       BTW_ENV: linode
     volumes:
       - type: volume
-        source: postgres
+        source: btw-postgres
         target: /var/lib/postgresql/9.6/main
       - type: volume
-        source: exist-db
+        source: btw-exist-db
         target: /var/eXist-db/btw
       - type: volume
-        source: system-logs
+        source: btw-system-logs
         target: /var/log/
         # We don't need to worry about uid/gid for the following volumes
         # because they are already set correctly, and the mount does not change
@@ -22,14 +21,11 @@ services:
         source: btw-logs
         target: /srv/www/btw/btw/var/log
       - type: volume
-        source: redis
+        source: btw-redis
         target: /srv/www/btw/btw/var/lib/redis/
       - type: bind
-        source: /home/btw/.config/btw/secrets/linode
-        target: /home/btw/.config/btw/secrets/linode
-      - type: bind
-        source: /home/btw/.config/btw/settings/linode
-        target: /home/btw/.config/btw/settings/linode
+        source: /home/btw/.config/btw/linode
+        target: /home/btw/.config/btw/linode
       - type: bind
         source: /root/.btw-backup
         target: /root/.btw-backup

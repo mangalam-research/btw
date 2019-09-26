@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -ex
 
@@ -44,7 +44,7 @@ su btw -c"set -ex \
 && ./manage.py btwcheck"
 
 # We source the nginx secrets.
-. /home/btw/.config/btw/nginx-secrets/${BTW_ENV}
+. /home/btw/.config/btw/${BTW_ENV}/secrets/nginx
 
 sed s/'${COOKIE_BTW_DEV}'/${COOKIE_BTW_DEV}/g /etc/nginx/templates/btw.in > /etc/nginx/sites-enabled/btw
 /etc/init.d/nginx start

@@ -24,11 +24,8 @@ services:
         source: btw-dev-redis
         target: /srv/www/btw/btw/var/lib/redis/
       - type: bind
-        source: /home/ldd/.config/btw/secrets/docker_run_dev
-        target: /home/btw/.config/btw/secrets/docker_run_dev
-      - type: bind
-        source: /home/ldd/.config/btw/settings/docker_run_dev
-        target: /home/btw/.config/btw/settings/docker_run_dev
+        source: /home/ldd/.config/btw/docker_run_dev
+        target: /home/btw/.config/btw/docker_run_dev
 
 volumes:
   btw-dev-postgres:

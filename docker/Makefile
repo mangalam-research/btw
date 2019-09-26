@@ -76,7 +76,7 @@ DOCKER_CMD=sudo DOCKER_BUILDKIT=1 -n docker
 DOCKER_BUILD=$(DOCKER_CMD) build -f Dockerfile context \
 --label org.label-schema.vcs-ref="$$(cat context/btw/DEPLOYED)" \
 --label org.mangalamresearch.btw.clean=$(UNCLEAN_FLAG) \
---secret id=btw,src=$(HOME)/.config/btw/secrets/docker_build
+--secret=id=btw,src=$$(pwd)/context/settings/docker_build/secrets/btw
 
 # The volumes to mount when running docker run. Different targets override
 # it with different values.
@@ -103,6 +103,7 @@ static-context:
 ## context is located in ./context-src.
 	rm -rf context
 	cp -rp context-src context
+	cp -rp secrets-src/* context/settings/
 
 .PHONY: btw-backup
 btw-backup:
@@ -161,26 +162,24 @@ deploy-image: $(DEV_CONTEXT)
 	$(DOCKER_BUILD) --target=deploy -t btw-deploy
 
 # The mounts that provide the "docker_build" environment.
-DOCKER_BUILD_MOUNTS=\
---mount=type=bind,target=/home/btw/.config/btw/settings/docker_build,$\
-src=$$(pwd)/context/settings/docker_build \
---mount=type=bind,target=/home/btw/.config/btw/secrets/docker_build,$\
-src=$$HOME/.config/btw/secrets/docker_build \
+TEST_MOUNTS=\
+--mount=type=bind,target=/home/btw/.config/btw/,$\
+src=$$(pwd)/context/settings/ \
 --mount=type=bind,target=/tmp/btw-build-dump,src=/tmp/btw-build-dump
 
 LIVE_MOUNTS=\
---mount=type=bind,target=/srv/www/btw/btw,src=$$(pwd)/.. \
+--mount=type=bind,target=/srv/www/btw/btw,src=$$(pwd)/.. $\
 --mount=type=tmpfs,target=/srv/www/btw/btw/var
 
 .PHONY: test
-test: DOCKER_MOUNTS=$(DOCKER_BUILD_MOUNTS)
+test: DOCKER_MOUNTS=$(TEST_MOUNTS)
 test: base-dev-image
 ## Run the basic tests.
 	mkdir -p /tmp/btw-build-dump
 	$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
 
 .PHONY: live-test
-live-test: DOCKER_MOUNTS=$(DOCKER_BUILD_MOUNTS) $(LIVE_MOUNTS)
+live-test: DOCKER_MOUNTS=$(TEST_MOUNTS) $(LIVE_MOUNTS)
 live-test: base-dev-image
 ## Run the tests but use the working tree.
 	mkdir -p /tmp/btw-build-dump
@@ -189,7 +188,7 @@ live-test: base-dev-image
 SELENIUM_DOCKER_RUN=$(DOCKER_RUN) --rm -it btw-selenium-test \
 /root/scripts/selenium-test.sh "$(BROWSER)" "$(SERVICE)" "$(SELENIUM_TEST)"
 
-SELENIUM_TEST_MOUNTS=$(DOCKER_BUILD_MOUNTS) \
+SELENIUM_TEST_MOUNTS=$(TEST_MOUNTS) \
 --mount=type=bind,target=/srv/www/btw/btw/test_logs,$\
 src=$$(pwd)/test-logs/ \
 --mount=type=bind,target=/srv/www/btw/btw/local_config,$\
