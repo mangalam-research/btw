@@ -37,3 +37,4 @@ mitmproxy
 # We need this on the server so that we run a local copy of uwsgi which uses
 # the same Python version as the one running BTW.
 uwsgi==2.0.18
+django-email-integration-test

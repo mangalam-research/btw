@@ -373,6 +373,7 @@ s.INSTALLED_APPS = (
     'semantic_fields',
     # End of apps required by Django CMS.
     'pipeline',
+    'django_email_integration_test',
     'final',
 )
 
@@ -705,6 +706,28 @@ s.DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+
+# This should never be turned off
+s.EMAIL_USE_SSL = True
+s.EMAIL_PORT = 465
+
+s.declare_secret("EMAIL_HOST_USER")
+s.declare_secret("EMAIL_HOST_PASSWORD")
+s.declare_secret("EMAIL_INTEGRATION_TEST_USER")
+s.declare_secret("EMAIL_INTEGRATION_TEST_PASSWORD")
+
+s.EMAIL_INTEGRATION_TEST = lambda s: {
+    "IDENTIFIER": s.BTW_SITE_NAME,
+    # We send the emails to the user whose IMAP mailbox we read.
+    "DESTINATIONS": [s.EMAIL_INTEGRATION_TEST_USER],
+    "MAILBOX": {
+        "TYPE": "IMAP4_SSL",
+        "HOST": s.EMAIL_INTEGRATION_TEST_HOST,
+        "PORT": 993,
+        "USER": s.EMAIL_INTEGRATION_TEST_USER,
+        "PASSWORD": s.EMAIL_INTEGRATION_TEST_PASSWORD,
+    },
+}
 
 exec(_env.find_config("btw"))  # pylint: disable=exec-used
 

@@ -29,3 +29,8 @@ s.BTW_EDITORS = [{
 
 s.EXISTDB_ROOT_COLLECTION = "/docker-build"
 s.EXISTDB_HOME_PATH = "/usr/local/eXist-db/"
+
+s.SERVER_EMAIL = "emailtest@btw.mangalamresearch.org"
+s.DEFAULT_FROM_EMAIL = lambda s: s.SERVER_EMAIL
+s.EMAIL_HOST = "mail.mangalamresearch.org"
+s.EMAIL_INTEGRATION_TEST_HOST = "imap.dreamhost.com"
