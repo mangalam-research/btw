@@ -40,6 +40,10 @@ s.BTW_RUN_PATH_FOR_BTW = lambda s: os.path.join(s.BTW_RUN_PATH, "btw")
 
 s.DEBUG = False
 
+# Custom variable which when true indicates that the current instance of BTW is
+# a development instance.
+s.DEVELOPMENT = False
+
 s.ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

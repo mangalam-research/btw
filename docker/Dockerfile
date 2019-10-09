@@ -38,6 +38,8 @@ RUN \
   && apt-key add nodesource.key \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
+# Required to be able to run `mail` at the command line.
+    bsd-mailx \
 # Required by btw_backup.
     bzip2 \
 # Required to rotate the logs.
@@ -177,7 +179,6 @@ RUN \
   && mkdir -p /root/backups/btw_log_backups
 
 COPY scripts /root/scripts
-COPY nullmailer/remotes /etc/nullmailer/remotes
 
 # Unset it so that we *can* run interactive in the final images.
 ENV DEBIAN_FRONTEND=

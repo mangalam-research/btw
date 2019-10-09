@@ -5,6 +5,7 @@ from slugify import slugify
 s.BTW_SITE_NAME = "BTW docker_build"
 
 s.DEBUG = True
+s.DEVELOPMENT = True
 
 s.ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 

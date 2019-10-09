@@ -26,6 +26,12 @@ cleanup () {
 
 trap cleanup TERM INT EXIT
 
+#
+# CONFIGURE NULLMAILER
+#
+. /home/btw/.config/btw/${BTW_ENV}/secrets/nullmailer
+echo "${NULLMAILER_HOST} smtp --user=${NULLMAILER_USER} --pass=${NULLMAILER_PASSWORD} --ssl" > /etc/nullmailer/remotes
+
 /etc/init.d/cron start
 /etc/init.d/nullmailer start
 /etc/init.d/postgresql start
@@ -43,7 +49,9 @@ su btw -c"set -ex \
 && ./manage.py btwworker start --all \
 && ./manage.py btwcheck"
 
-# We source the nginx secrets.
+#
+# CONFIGURE NGINX
+#
 . /home/btw/.config/btw/${BTW_ENV}/secrets/nginx
 
 sed s/'${COOKIE_BTW_DEV}'/${COOKIE_BTW_DEV}/g /etc/nginx/templates/btw.in > /etc/nginx/sites-enabled/btw
@@ -52,5 +60,14 @@ sed s/'${COOKIE_BTW_DEV}'/${COOKIE_BTW_DEV}/g /etc/nginx/templates/btw.in > /etc
 uwsgi --ini /etc/uwsgi/apps-enabled/btw.ini --hook-master-start "unix_signal:15 gracefully_kill_them_all" &
 
 uwsgi_pid=$!
+
+DEVELOPMENT=`su btw -c"./manage.py btw print-setting DEVELOPMENT"`
+BTW_SITE_NAME=`su btw -c"./manage.py btw print-setting BTW_SITE_NAME"`
+
+if [ ${DEVELOPMENT} != True ]; then
+    mail -r root@btw.mangalamresearch.org -s "BTW container started for site ${BTW_SITE_NAME}" root@btw.mangalamresearch.org <<EOF
+BTW container started for site ${BTW_SITE_NAME}
+EOF
+fi
 
 wait

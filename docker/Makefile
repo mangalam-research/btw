@@ -171,19 +171,21 @@ LIVE_MOUNTS=\
 --mount=type=bind,target=/srv/www/btw/btw,src=$$(pwd)/.. $\
 --mount=type=tmpfs,target=/srv/www/btw/btw/var
 
+TEST_DOCKER_RUN=$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
+
 .PHONY: test
 test: DOCKER_MOUNTS=$(TEST_MOUNTS)
 test: base-dev-image
 ## Run the basic tests.
 	mkdir -p /tmp/btw-build-dump
-	$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
+	$(TEST_DOCKER_RUN)
 
 .PHONY: live-test
 live-test: DOCKER_MOUNTS=$(TEST_MOUNTS) $(LIVE_MOUNTS)
 live-test: base-dev-image
 ## Run the tests but use the working tree.
 	mkdir -p /tmp/btw-build-dump
-	$(DOCKER_RUN) --rm -it btw-base-dev /root/scripts/test.sh
+	$(TEST_DOCKER_RUN)
 
 SELENIUM_DOCKER_RUN=$(DOCKER_RUN) --rm -it btw-selenium-test \
 /root/scripts/selenium-test.sh "$(BROWSER)" "$(SERVICE)" "$(SELENIUM_TEST)"
