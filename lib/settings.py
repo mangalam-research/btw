@@ -64,10 +64,16 @@ class Settings(object):
             setattr(self, name, Secret())
 
     def read_secret_file(self, file_path):
+        #
         # Adapted from https://stackoverflow.com/a/7198338/
+        #
+        # A previous version used sys.executable instead of hardcoding
+        # ``python``. However, when running in uwsgi, sys.executable is
+        # ``uwsgi``, which does not work.
+        #
         env = json.loads(subprocess.check_output(
             ["/bin/bash", "-c",
-             f'set -a && . {file_path} && {sys.executable} -c '
+             f'set -a && . {file_path} && python -c '
              '"import os, json; print(json.dumps(dict(os.environ)))"'],
             env={}))
         for name, value in env.items():
