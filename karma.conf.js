@@ -1,5 +1,4 @@
 /* eslint-env node, commonjs */
-/* global module */
 
 "use strict";
 
