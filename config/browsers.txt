@@ -5,15 +5,15 @@
 #
 # Perform these first because they are extremely cheap to perform.
 #
-Linux,CH,76
+Linux,CH,78
 
 #
 # Perform these next because OS X compatibility is an issue. Again, we
 # want to find problems early.
 #
-OS X 10.12,CH,76,Remote
+OS X 10.12,CH,78,Remote
 
 #
 # The rest is unlikely to fail if the previous tests passed.
 #
-Windows 8.1,CH,76,Remote
+Windows 8.1,CH,78,Remote
