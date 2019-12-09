@@ -15,13 +15,13 @@ click==6.7
 cryptography==2.3.1
 cssselect==1.0.3
 defusedxml==0.5.0
-Django==2.2.6
+Django==2.2.8
 django-allauth==0.39.1
 django-appconf==1.0.3
 django-bootstrap4==0.0.8
 django-cache-management==3.0.0
 django-classy-tags==0.8.0
-django-cms==3.7.0
+django-cms==3.7.1
 django-datatables-view==1.17.0
 django-debug-toolbar==1.4
 django-email-integration-test==0.1.0
