@@ -52,16 +52,6 @@ require.config({
   },
 });
 
-/* global chaiAsPromised */
-chaiAsPromised.transferPromiseness = function transferPromiseness(assertion,
-                                                                  promise) {
-  "use strict";
-
-  assertion.then = promise.then.bind(promise);
-  assertion.return = promise.return.bind(promise);
-  assertion.catch = promise.catch.bind(promise);
-};
-
 // This makes things a bit more expensive than we'd like because we are loading
 // all of wed. However, this method will work whether we are building BTW with
 // optimized or non-optimized code, whereas using RequireJS' packages option

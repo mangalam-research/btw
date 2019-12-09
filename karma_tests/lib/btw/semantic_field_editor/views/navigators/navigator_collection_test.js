@@ -104,11 +104,13 @@ describe("NavigatorCollectionView", () => {
         })
         .then(() => assertCollectionViewLength(view, 0)));
 
-    it("should return a promise that resolves to the object " +
-       "on which it was called",
-       () => assert.eventually.equal(
-         Promise.each(["/one", "/two"], x => view.openUrl(x))
-           .then(() => view.closeAllNavigators()), view));
+    it("should return a promise that resolves to the object on which it was " +
+       "called",
+       async () => {
+         await view.openUrl("/one");
+         await view.openUrl("/two");
+         assert.equal(await view.closeAllNavigators(), view);
+       });
   });
 
   describe("#openUrl", () => {
@@ -160,11 +162,11 @@ describe("NavigatorCollectionView", () => {
          return view.openUrl("/one");
        }).then(nav => assertAnimated(nav.el, "the Navigator")));
 
-    it("should create a Navigator whose url is the one passed",
-       () => assert.eventually.equal(
-         view.openUrl("/one").get("model").call("getCurrentUrl"),
-         "/one",
-         "the url of the Navigator should be the one passed"));
+    it("should create a Navigator whose url is the one passed", async () => {
+      assert.equal(
+        await view.openUrl("/one").get("model").call("getCurrentUrl"), "/one",
+        "the url of the Navigator should be the one passed");
+    });
 
     it("should display the URL's content", () => {
       assert.isTrue(view.el.textContent.indexOf("one") === -1);
@@ -182,19 +184,22 @@ describe("NavigatorCollectionView", () => {
       }));
 
     it("should return a promise that resolves to the closed Navigator",
-       () => assert.eventually.equal(
-         view.closeNavigator(first), first,
-         "the resolved value should be the Navigator being closed"));
+       async () => {
+         assert.equal(
+           await view.closeNavigator(first), first,
+           "the resolved value should be the Navigator being closed");
+       });
 
-    it("should be callable multiple times",
-       () => assert.eventually.equal(
-         view.closeNavigator(first).then(() => view.closeNavigator(first)),
-         first, "the resolved value should be the Navigator being closed"));
+    it("should be callable multiple times", async () => {
+      await view.closeNavigator(first);
+      assert.equal(await view.closeNavigator(first), first,
+                   "the resolved value should be the Navigator being closed");
+    });
 
-    it("should remove the Navigator from the DOM", () => {
+    it("should remove the Navigator from the DOM", async () => {
       assert.isNotNull(first.el.parentNode, "the view should be in the DOM");
-      return assert.eventually.isNull(
-        view.closeNavigator(first).get("el").get("parentNode"),
+      assert.isNull(
+        await view.closeNavigator(first).get("el").get("parentNode"),
         "the view should no longer be in the DOM");
     });
 

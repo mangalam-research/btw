@@ -5,7 +5,7 @@
 module.exports = function configure(config) {
   config.set({
     basePath: "",
-    frameworks: ["mocha", "chai-as-promised", "chai", "fixture"],
+    frameworks: ["mocha", "chai", "fixture"],
     client: {
       mocha: {
         asyncOnly: true,
