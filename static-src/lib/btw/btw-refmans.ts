@@ -1,7 +1,6 @@
-import * as $ from "jquery";
-
-import { domutil, labelman, util } from "wed";
+import { convert, domutil, labelman } from "wed";
 import LabelManager = labelman.LabelManager;
+import mustGetMirror = domutil.mustGetMirror;
 
 import { MappedUtil } from "./mapped-util";
 
@@ -126,7 +125,7 @@ export class ExampleReferenceManager {
   }
 
   getPositionalLabel(ptr: Element, target: Element): string {
-    const guiTarget = domutil.mustGetMirror(target) as HTMLElement;
+    const guiTarget = mustGetMirror(target) as HTMLElement;
     const ref = guiTarget
       .querySelector(this.mapped.toGUISelector("btw:cit ref"))!
       .cloneNode(true) as HTMLElement;
@@ -180,11 +179,11 @@ export class ExampleReferenceManager {
       // located, not the term under which the example (the target of the
       // pointer) is located.
       //
-      parent = domutil.mustGetMirror(ptr).parentNode;
+      parent = mustGetMirror(ptr).parentNode;
       while (parent !== null) {
         const guiTerm = parent.querySelector(".btw\\:term");
         if (guiTerm !== null) {
-          const term = domutil.mustGetMirror(guiTerm);
+          const term = mustGetMirror(guiTerm);
 
           // Drop the period, since we're adding a comma.
           if (ret[ret.length - 1] === ".") {
@@ -303,12 +302,11 @@ export class WholeDocumentManager {
 
   getRefmanForElement(el: Element):
   LabelManager | ExampleReferenceManager | null {
-    const name = util.getOriginalName(el);
-    switch (name) {
+    switch ((mustGetMirror(el) as Element).tagName) {
     case "ptr":
     case "ref":
       // Find the target and return its value
-      const targetAttr = el.getAttribute(util.encodeAttrName("target"));
+      const targetAttr = el.getAttribute(convert.encodeAttrName("target"));
       if (targetAttr === null) {
         return null;
       }

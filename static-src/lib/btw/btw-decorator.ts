@@ -4,12 +4,12 @@
  */
 import * as $ from "jquery";
 
-import { Action, ActionInvocation, Decorator, DLoc, DOMListener, domtypeguards,
-         domutil, EditorAPI, gui, inputTriggerFactory, keyConstants, labelman,
-         LocalizedActionInvocation, transformation,
-         UnspecifiedActionInvocation, util } from "wed";
+import { action, convert, Decorator, DLoc, DOMListener, domtypeguards, domutil,
+         EditorAPI, gui, inputTriggerFactory, keyConstants, labelman,
+         LocalizedActionInvocation, transformation } from "wed";
 import closest = domutil.closest;
 import closestByClass = domutil.closestByClass;
+import mustGetMirror = domutil.mustGetMirror;
 import LabelManager = labelman.LabelManager;
 import makeElement = transformation.makeElement;
 import TransformationData = transformation.TransformationData;
@@ -17,6 +17,9 @@ import ActionContextMenu = gui.actionContextMenu.ActionContextMenu;
 import tooltip = gui.tooltip.tooltip;
 import isElement = domtypeguards.isElement;
 import isText = domtypeguards.isText;
+import Action = action.Action;
+import ActionInvocation = action.ActionInvocation;
+import UnspecifiedActionInvocation = action.UnspecifiedActionInvocation;
 
 import { GenericModeOptions } from "wed/modes/generic/generic";
 import { Metadata } from "wed/modes/generic/metadata";
@@ -330,7 +333,7 @@ export class BTWDecorator extends Decorator {
     //
     // Perform general checks before we start decorating anything.
     //
-    const dataEl = domutil.mustGetMirror(el) as Element;
+    const dataEl = mustGetMirror(el) as Element;
     const sensesSubsenses = this.mapped.dataFindAll(dataEl,
                                                     "btw:sense, btw:subsense");
     for (const s of sensesSubsenses) {
@@ -381,17 +384,18 @@ export class BTWDecorator extends Decorator {
     }
 
     if (error) {
-      this.editor.validator.restartAt($.data(el, "wed-mirror-node"));
+      this.editor.validator.restartAt(mustGetMirror(el));
     }
   }
 
   elementDecorator(root: Element, el: Element): void {
-    const origName = util.getOriginalName(el);
+    const origName = (mustGetMirror(el) as Element).tagName;
     const level = this.labelLevels[origName];
     const { editor: { editingMenuManager } } = this;
-    super.elementDecorator(root, el, level !== undefined ? level : 1,
-                           editingMenuManager.boundStartLabelContextMenuHandler,
-                           editingMenuManager.boundEndLabelContextMenuHandler);
+    super.elementDecorator(
+      root, el, level !== undefined ? level : 1,
+      editingMenuManager.boundElementStartLabelContextMenuHandler,
+      editingMenuManager.boundElementEndLabelContextMenuHandler);
   }
 
   noneDecorator(el: Element): void {
@@ -530,7 +534,9 @@ export class BTWDecorator extends Decorator {
             // should be a string. However, passing a JQuery object works.
             // tslint:disable-next-line:no-any
             container: $control as any,
-            delay: { show: 1000 },
+            // We cheat because of a bug in the Bootstrap definitions.
+            // tslint:disable-next-line:no-any
+            delay: { show: 1000 } as any,
             placement: "auto",
             trigger: "hover",
           });
@@ -541,8 +547,8 @@ export class BTWDecorator extends Decorator {
           control.innerHTML = ` + ${spec}`;
 
           const items: UnspecifiedActionInvocation[] = [];
-          for (const action of actions) {
-            items.push(new ActionInvocation(action, data));
+          for (const act of actions) {
+            items.push(new ActionInvocation(act, data));
           }
 
           $control.click(menuClickHandler.bind(undefined, this.editor,
@@ -591,7 +597,7 @@ export class BTWDecorator extends Decorator {
     // updated. These updates happen asynchronously.
     if (isPtr && !final_) {
       const doc = el.ownerDocument!;
-      let origTarget = el.getAttribute(util.encodeAttrName("target"));
+      let origTarget = el.getAttribute(convert.encodeAttrName("target"));
       if (origTarget === null) {
         origTarget = "";
       }
@@ -652,7 +658,7 @@ export class BTWDecorator extends Decorator {
   }
 
   _deleteLinksPointingTo(el: Element): void {
-    const id = el.getAttribute(util.encodeAttrName("xml:id"));
+    const id = el.getAttribute(convert.encodeAttrName("xml:id"));
 
     // Whereas using querySelectorAll does not **generally** work,
     // using this selector, which selects only on attribute values,
@@ -738,7 +744,7 @@ export class BTWDecorator extends Decorator {
       return;
     }
 
-    const id = example.getAttribute(util.encodeAttrName("xml:id"));
+    const id = example.getAttribute(convert.encodeAttrName("xml:id"));
     if (id === null) {
       return;
     }
@@ -746,7 +752,7 @@ export class BTWDecorator extends Decorator {
     // Find the referred element.
     const ptrs = root.querySelectorAll(
       `${this.mapped.classFromOriginalName("ptr")}\
-[${util.encodeAttrName("target")}='#${id}']`);
+[${convert.encodeAttrName("target")}='#${id}']`);
 
     // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, limit = ptrs.length; i < limit; ++i) {
@@ -755,7 +761,7 @@ export class BTWDecorator extends Decorator {
   }
 
   languageDecorator(el: Element): void {
-    const lang = el.getAttribute(util.encodeAttrName("xml:lang"))!;
+    const lang = el.getAttribute(convert.encodeAttrName("xml:lang"))!;
     const prefix = lang.slice(0, 2);
     if (prefix !== "en") {
       el.classList.add("_btw_foreign");
@@ -816,16 +822,14 @@ export class BTWDecorator extends Decorator {
       const myDepth = parents.length;
 
       parent = el.parentNode!;
-      let origName = util.getOriginalName(parent as Element);
+      let dataParent = mustGetMirror(parent) as Element;
+      let origName = dataParent.tagName;
 
       const li = doc.createElement("li");
       li.className = "btw-navbar-item";
       // tslint:disable-next-line:no-inner-html
       li.innerHTML =
         `<a class='navbar-link' href='#${el.id}'>${el.textContent}</a>`;
-
-      // getContextualActions needs to operate on the data tree.
-      let dataParent = domutil.mustGetMirror(parent) as Element;
 
       // btw:explanation is the element that gets the heading that marks the
       // start of a sense. So we need to adjust.
@@ -910,9 +914,9 @@ export class BTWDecorator extends Decorator {
       moveCaretTo: makeDLoc(editor.dataRoot, container, offset),
     };
 
-    for (const action of mode.getContextualActions("insert", origName,
-                                                   container, offset)) {
-      items.push(new LocalizedActionInvocation(action, data, true));
+    for (const act of mode.getContextualActions("insert", origName, container,
+                                                offset)) {
+      items.push(new LocalizedActionInvocation(act, data, true));
     }
 
     //
@@ -921,9 +925,9 @@ export class BTWDecorator extends Decorator {
     //
     data = { name: origName,
              moveCaretTo: makeDLoc(editor.dataRoot, container, offset + 1) };
-    for (const action of mode.getContextualActions("insert", origName,
-                                                   container, offset + 1)) {
-      items.push(new LocalizedActionInvocation(action, data, false));
+    for (const act of mode.getContextualActions("insert", origName, container,
+                                                offset + 1)) {
+      items.push(new LocalizedActionInvocation(act, data, false));
     }
 
     const target = ev.target;
@@ -966,9 +970,9 @@ export class BTWDecorator extends Decorator {
     // Delete the node
     data = { node, name: origName,
              moveCaretTo: makeDLoc(editor.dataRoot, node, 0) };
-    for (const action of mode.getContextualActions("delete-element", origName,
-                                                   node, 0)) {
-      items.push(new ActionInvocation(action, data));
+    for (const act of mode.getContextualActions("delete-element", origName,
+                                                node, 0)) {
+      items.push(new ActionInvocation(act, data));
     }
 
     editor.editingMenuManager.setupContextMenu(

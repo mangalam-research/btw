@@ -2,11 +2,12 @@
  * Module for decorating headings
  * @author Louis-Dominique Dubeau
  */
-import { treeUpdater, util } from "wed";
+import { domutil, treeUpdater } from "wed";
 import TreeUpdater = treeUpdater.TreeUpdater;
+import mustGetMirror = domutil.mustGetMirror;
 
 import { WholeDocumentManager } from "./btw-refmans";
-import * as btwUtil from "./btw-util";
+import { makeCollapsible } from "./btw-util";
 import { IDManager } from "./id-manager";
 import { MappedUtil } from "./mapped-util";
 
@@ -159,7 +160,7 @@ export class HeadingDecorator {
       child = next;
     }
 
-    const name = util.getOriginalName(el);
+    const name = (mustGetMirror(el) as Element).tagName;
     const headStr = this.headingMap[name];
     if (headStr === undefined) {
       throw new Error(
@@ -187,7 +188,7 @@ export class HeadingDecorator {
 
     let collapse: Collapse | undefined;
     if (headStr === undefined) {
-      const name = util.getOriginalName(el);
+      const name = (mustGetMirror(el) as Element).tagName;
       let found: Spec | undefined;
       for (const spec of this.specs) {
         if (el.matches(spec.dataSelector)) {
@@ -233,7 +234,7 @@ export class HeadingDecorator {
             kind: collapse,
           };
         }
-        const collapsible = btwUtil.makeCollapsible(
+        const collapsible = makeCollapsible(
           el.ownerDocument!,
           collapse.kind,
           this.collapseHeadingIdManager.generate(),

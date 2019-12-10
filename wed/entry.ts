@@ -4,8 +4,10 @@
 import { Container } from "inversify";
 
 // tslint:disable-next-line:no-submodule-imports
-import { Action, bindEditor, EditorAPI,
+import { action, bindEditor, EditorAPI,
          Options } from "@wedxml/core/dev/lib/wed";
+
+import Action = action.Action;
 
 // tslint:disable-next-line:no-submodule-imports no-implicit-dependencies
 import { SAVER_OPTIONS } from "@wedxml/base-saver/tokens";

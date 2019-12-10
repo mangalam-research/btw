@@ -8,6 +8,8 @@ import { domutil } from "wed";
 
 export const BTW_MODE_ORIGIN = "https://github.com/mangalam-research/btw";
 
+export const BTW_NS = "http://mangalamresearch.org/ns/btw-storage";
+
 export function termsForSense(sense: Element,
                               mappings: Record<string, string>):
 NodeListOf<Element> {
@@ -169,4 +171,9 @@ export function updateCollapsible(structure: Element, headingId: string,
   const collapse = structure.getElementsByClassName("collapse")[0];
   collapse.setAttribute("aria-labelledby", headingId);
   collapse.id = collapseId;
+}
+
+export function getOriginalNameIfPossible(el: Element): string {
+  const mirror = domutil.getMirror(el) as Element;
+  return mirror === undefined ? "" : mirror.tagName;
 }

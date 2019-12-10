@@ -5,10 +5,14 @@
 import "bootstrap-treeview";
 import * as $ from "jquery";
 
-import { Decorator, domutil, gui, labelman, treeUpdater, util } from "wed";
+import { convert, Decorator, domtypeguards, domutil, gui, labelman,
+         treeUpdater } from "wed";
 import LabelManager = labelman.LabelManager;
 import TreeUpdater = treeUpdater.TreeUpdater;
 import tooltip = gui.tooltip.tooltip;
+import isElement = domtypeguards.isElement;
+import getMirror = domutil.getMirror;
+import mustGetMirror = domutil.mustGetMirror;
 
 import { Metadata } from "wed/modes/generic/metadata";
 
@@ -17,6 +21,7 @@ import { biblDataToReferenceText, BibliographicalItem, isPrimarySource,
 import { HeadingDecorator } from "./btw-heading-decorator";
 import { BibliographicalInfo } from "./btw-mode";
 import { ExampleReferenceManager, WholeDocumentManager } from "./btw-refmans";
+import { getOriginalNameIfPossible } from "./btw-util";
 import { IDManager } from "./id-manager";
 import { MappedUtil } from "./mapped-util";
 import { SFFetcher } from "./semantic-field-fetcher";
@@ -41,7 +46,7 @@ function setTitle($el: JQuery, data: Item): void {
   tooltip($el, { title, container: "body", trigger: "hover" });
 }
 
-const ENCODED_REF_ATTR_NAME = util.encodeAttrName("ref");
+const ENCODED_REF_ATTR_NAME = convert.encodeAttrName("ref");
 
 export interface DispatchEditor {
   toDataNode(node: Node): Node;
@@ -88,60 +93,59 @@ export abstract class DispatchMixin {
       el.className += ` ${klass}`;
     }
 
-    const name = util.getOriginalName(el);
     let skipDefault = false;
-    switch (name) {
-    case "btw:overview":
-    case "btw:sense-discrimination":
-    case "btw:historico-semantical-data":
-    case "btw:credits":
-      this.headingDecorator.unitHeadingDecorator(el);
-      break;
-    case "btw:definition":
-    case "btw:english-renditions":
-    case "btw:english-rendition":
-    case "btw:etymology":
-    case "btw:contrastive-section":
-    case "btw:antonyms":
-    case "btw:cognates":
-    case "btw:conceptual-proximates":
-    case "btw:other-citations":
-    case "btw:citations":
-      this.headingDecorator.sectionHeadingDecorator(el);
-      break;
-    case "btw:semantic-fields":
-      this.headingDecorator.sectionHeadingDecorator(el);
-      break;
-    case "btw:sf":
-      this.sfDecorator(root, el);
-      skipDefault = true;
-      break;
-    case "ptr":
-      this.ptrDecorator(root, el);
-      break;
-    case "foreign":
-      this.languageDecorator(el);
-      break;
-    case "ref":
-      this.refDecorator(root, el);
-      break;
-    case "btw:example":
-      this.idDecorator(root, el);
-      break;
-    case "btw:cit":
-      this.citDecorator(root, el);
-      skipDefault = true; // citDecorator calls elementDecorator
-      break;
-    case "btw:explanation":
-      this.explanationDecorator(root, el);
-      skipDefault = true; // explanationDecorator calls elementDecorator
-      break;
-    case "btw:none":
-      this.noneDecorator(el);
-      // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
-      skipDefault = true;
-      break;
-    default:
+    switch (getOriginalNameIfPossible(el)) {
+      case "btw:overview":
+      case "btw:sense-discrimination":
+      case "btw:historico-semantical-data":
+      case "btw:credits":
+        this.headingDecorator.unitHeadingDecorator(el);
+        break;
+      case "btw:definition":
+      case "btw:english-renditions":
+      case "btw:english-rendition":
+      case "btw:etymology":
+      case "btw:contrastive-section":
+      case "btw:antonyms":
+      case "btw:cognates":
+      case "btw:conceptual-proximates":
+      case "btw:other-citations":
+      case "btw:citations":
+        this.headingDecorator.sectionHeadingDecorator(el);
+        break;
+      case "btw:semantic-fields":
+        this.headingDecorator.sectionHeadingDecorator(el);
+        break;
+      case "btw:sf":
+        this.sfDecorator(root, el);
+        skipDefault = true;
+        break;
+      case "ptr":
+        this.ptrDecorator(root, el);
+        break;
+      case "foreign":
+        this.languageDecorator(el);
+        break;
+      case "ref":
+        this.refDecorator(root, el);
+        break;
+      case "btw:example":
+        this.idDecorator(root, el);
+        break;
+      case "btw:cit":
+        this.citDecorator(root, el);
+        skipDefault = true; // citDecorator calls elementDecorator
+        break;
+      case "btw:explanation":
+        this.explanationDecorator(root, el);
+        skipDefault = true; // explanationDecorator calls elementDecorator
+        break;
+      case "btw:none":
+        this.noneDecorator(el);
+        // THIS ELEMENT DOES NOT GET THE REGULAR DECORATION.
+        skipDefault = true;
+        break;
+      default:
     }
 
     if (!skipDefault) {
@@ -167,7 +171,7 @@ export abstract class DispatchMixin {
     if (refman !== null) {
       let wedId = el.id;
       if (wedId === "") {
-        const id = el.getAttribute(util.encodeAttrName("xml:id"));
+        const id = el.getAttribute(convert.encodeAttrName("xml:id"));
         const idMan = this._getIDManagerForRefman(refman);
         wedId = `BTW-${id !== null ? id : idMan.generate()}`;
         el.id = wedId;
@@ -199,7 +203,7 @@ export abstract class DispatchMixin {
       // If the next btw:cit element contains Pāli text.
       if (cit !== null &&
           cit.querySelector(
-            `*[${util.encodeAttrName("xml:lang")}='pi-Latn']`) !== null) {
+            `*[${convert.encodeAttrName("xml:lang")}='pi-Latn']`) !== null) {
         const div = el.ownerDocument!.createElement("div");
         div.className = "_phantom _decoration_text _explanation_bullet";
         div.style.position = "absolute";
@@ -268,8 +272,8 @@ export abstract class DispatchMixin {
       el.insertBefore(space, ref.nextSibling);
     }
 
-    if (el.querySelector(`*[${util.encodeAttrName("xml:lang")}='pi-Latn']`) !==
-       null) {
+    if (el.querySelector(
+      `*[${convert.encodeAttrName("xml:lang")}='pi-Latn']`) !== null) {
       const div = el.ownerDocument!.createElement("div");
       div.className = "_phantom _text _cit_bullet";
       div.style.position = "absolute";
@@ -290,7 +294,7 @@ export abstract class DispatchMixin {
 
   // tslint:disable-next-line:cyclomatic-complexity max-func-body-length
   linkingDecorator(root: Element, el: Element, isPtr: boolean): void {
-    let origTarget = el.getAttribute(util.encodeAttrName("target"));
+    let origTarget = el.getAttribute(convert.encodeAttrName("target"));
     // XXX This should become an error one day. The only reason we need this now
     // is that some of the early test files had <ref> elements without targets.
     if (origTarget === null) {
@@ -344,8 +348,8 @@ export abstract class DispatchMixin {
             // An empty target can happen when first decorating the document.
             if (target !== null) {
               label = refman.getPositionalLabel(
-                this.editor.toDataNode(el) as Element,
-                this.editor.toDataNode(target) as Element);
+                mustGetMirror(el) as Element,
+                mustGetMirror(target) as Element);
             }
           }
         }
@@ -361,7 +365,7 @@ export abstract class DispatchMixin {
         this.guiUpdater.insertBefore(el, text, pair[1]);
 
         if (target !== null) {
-          const targetName = util.getOriginalName(target);
+          const targetName = (mustGetMirror(target) as Element).tagName;
 
           // Reduce the target to something sensible for tooltip text.
           if (targetName === "btw:sense") {
@@ -550,6 +554,14 @@ export abstract class DispatchMixin {
    * attribute in an HTML tree.
    */
   getAdditionalClasses(node: Element): string {
-    return this.metadata.isInline(node) ? "_inline" : "";
+    const dataNode = getMirror(node);
+    if (dataNode === undefined) {
+      return "";
+    }
+
+    if (!isElement(dataNode)) {
+      throw new Error("the GUI node passed does not correspond to an element");
+    }
+    return this.metadata.isInline(dataNode) ? "_inline" : "";
   }
 }

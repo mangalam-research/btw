@@ -4,7 +4,9 @@
  */
 import * as $ from "jquery";
 
-import { Action, domtypeguards, domutil, EditorAPI, gui,
+import { Button } from "@wedxml/client-api";
+
+import { action, domtypeguards, domutil, EditorAPI, gui,
          transformation } from "wed";
 import { GenericModeOptions, Mode } from "wed/modes/generic/generic";
 
@@ -15,8 +17,8 @@ import swapWithNextHomogeneousSibling =
 import swapWithPreviousHomogeneousSibling =
   transformation.swapWithPreviousHomogeneousSibling;
 import Transformation = transformation.Transformation;
-import Button = gui.button.Button;
 import Modal = gui.modal.Modal;
+import Action = action.Action;
 
 import { BibliographicalItem } from "./bibliography";
 import * as btwActions from "./btw-actions";
@@ -523,7 +525,7 @@ class BTWMode extends Mode<BTWModeOptions> {
     //
     // None of the non-inline elements should be able to be unwrapped.
     //
-    if (!this.metadata.isInline(guiEl)) {
+    if (!this.metadata.isInline(el)) {
       const unwrap = transformationType.indexOf("unwrap");
       if (unwrap !== -1) {
         transformationType.splice(unwrap, 1);

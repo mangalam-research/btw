@@ -6,12 +6,13 @@ import * as Bloodhound from "bloodhound";
 import * as $ from "jquery";
 import * as _ from "lodash";
 
-import { Action, domtypeguards, domutil, EditorAPI, gui, transformation,
-         util } from "wed";
+import { action, convert, domtypeguards, domutil, EditorAPI, gui,
+         transformation, util } from "wed";
 import isText = domtypeguards.isText;
 import TransformationData = transformation.TransformationData;
 import Modal = gui.modal.Modal;
 import TypeaheadPopup = gui.typeaheadPopup.TypeaheadPopup;
+import Action = action.Action;
 
 import { biblDataToReferenceText, BibliographicalItem, biblSuggestionSorter,
          isPrimarySource, Item, PrimarySource } from "./bibliography";
@@ -367,7 +368,7 @@ class BaseBiblPtrAction extends Action<{}> {
       // tslint:disable-next-line:prefer-for-of
       for (let refIx = 0; refIx < refs.length; ++refIx) {
         const ref = refs[refIx];
-        const origTarget = ref.getAttribute(util.encodeAttrName("target"))!;
+        const origTarget = ref.getAttribute(convert.encodeAttrName("target"))!;
         if (origTarget.lastIndexOf("/bibliography/", 0) !== 0) {
           continue;
         }

@@ -4,8 +4,8 @@
  */
 import * as $ from "jquery";
 
-import { DLoc, domutil, EditorAPI, exceptions, gui, transformation,
-         util } from "wed";
+import { convert, DLoc, domutil, EditorAPI, exceptions, gui, transformation,
+       } from "wed";
 
 import AbortTransformationException = exceptions.AbortTransformationException;
 import makeElement = transformation.makeElement;
@@ -34,7 +34,7 @@ export function insertPtr(editor: EditorAPI,
   // element and add a data ID.
   const target = editor.guiRoot.ownerDocument!.getElementById(data.target)!;
   const dataId = data.target.slice(4);
-  target.setAttribute(util.encodeAttrName("xml:id"), dataId);
+  target.setAttribute(convert.encodeAttrName("xml:id"), dataId);
   (domutil.mustGetMirror(target) as Element).setAttributeNS(
     // tslint:disable-next-line:no-http-string
     "http://www.w3.org/XML/1998/namespace", "xml:id", dataId);

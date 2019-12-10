@@ -8,9 +8,11 @@ import * as $ from "jquery";
 import * as _ from "lodash";
 import { DefaultNameResolver } from "salve";
 
-import { convert, DLocRoot, domutil, transformation, treeUpdater,
-         util } from "wed";
+import { convert, DLocRoot, domtypeguards, domutil, transformation,
+         treeUpdater } from "wed";
 import TreeUpdater = treeUpdater.TreeUpdater;
+import isElement = domtypeguards.isElement;
+import getMirror = domutil.getMirror;
 
 import { Metadata } from "wed/modes/generic/metadata";
 import { MetadataMultiversionReader,
@@ -23,12 +25,11 @@ import { HeadingDecorator } from "./btw-heading-decorator";
 import { BibliographicalInfo } from "./btw-mode";
 import { WholeDocumentManager } from "./btw-refmans";
 import * as metadataJSON from "./btw-storage-metadata.json";
-import * as btwUtil from "./btw-util";
+import { BTW_NS, getOriginalNameIfPossible, makeCollapsible } from "./btw-util";
 import { IDManager } from "./id-manager";
 import { MappedUtil } from "./mapped-util";
 import { SFFetcher } from "./semantic-field-fetcher";
 
-const _slice = Array.prototype.slice;
 const closest = domutil.closest;
 
 const FAKE_EDITOR = {
@@ -225,11 +226,11 @@ export class Viewer extends DispatchMixin {
     this.editor = FAKE_EDITOR;
     this.mode = FAKE_MODE;
 
-    const { heading, group, content } =
-      btwUtil.makeCollapsible(doc, "default", "toolbar-heading",
-                              "toolbar-collapse", {
-                                group: "horizontal",
-                              });
+    const { heading, group, content } = makeCollapsible(doc, "default",
+                                                        "toolbar-heading",
+                                                        "toolbar-collapse", {
+                                                          group: "horizontal",
+                                                        });
     const frame = doc.getElementsByClassName("wed-frame")[0];
     // tslint:disable-next-line:no-inner-html
     heading.innerHTML =
@@ -305,37 +306,44 @@ export class Viewer extends DispatchMixin {
       document.querySelector(".wed-document>.loading") as HTMLElement;
     loading.style.display = "";
     const start = Date.now();
-    const fetch = () => {
-      ajax({
-        url: fetchUrl,
-        headers: {
-          Accept: "application/json",
-        },
-      })
-        .then(ajaxData => {
+    const fetch = async () => {
+      try {
+        try {
+          const ajaxData = await ajax({
+            url: fetchUrl,
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
           this.processData(ajaxData.xml, ajaxData.bibl_data);
-        })
-        .catch(bluejax.HttpError, err => {
+        }
+        catch (err) {
+          if (!(err instanceof bluejax.HttpError)) {
+            throw err;
+          }
+
           const jqXHR = err.jqXHR;
-          if (jqXHR.status === 404) {
-            if (Date.now() - start > this.loadTimeout) {
-              this.failedLoading(loading,
-                                 "The server has not sent the required " +
-                                 "data within a reasonable time frame.");
-            }
-            else {
-              window.setTimeout(fetch, 200);
-            }
+          if (jqXHR.status !== 404) {
+            throw err;
+          }
+
+          if (Date.now() - start > this.loadTimeout) {
+            this.failedLoading(loading,
+                               "The server has not sent the required " +
+                               "data within a reasonable time frame.");
           }
           else {
-            throw err;
+            window.setTimeout(fetch, 200);
           }
-        })
-          .catch(err => {
-            this.doneReject(err);
-            throw err;
-          });
+        }
+      }
+      catch (err) {
+        this.doneReject(err);
+        throw err;
+      }
     };
+
     fetch();
   }
 
@@ -469,33 +477,6 @@ export class Viewer extends DispatchMixin {
     const parser = new (doc.defaultView as any).DOMParser() as DOMParser;
     const dataDoc = this.dataDoc = parser.parseFromString(data, "text/xml");
 
-    root.appendChild(convert.toHTMLTree(doc, dataDoc.firstChild!));
-
-    this.seeIds();
-
-    //
-    // Some processing needs to be done before _process is called. In btw_mode,
-    // these would be handled by triggers.
-    //
-    const senses = root.getElementsByClassName("btw:sense");
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < senses.length; ++i) {
-      const sense = senses[i];
-      this.idDecorator(root, sense);
-      this.headingDecorator.sectionHeadingDecorator(sense);
-    }
-
-    const subsenses = root.getElementsByClassName("btw:subsense");
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < subsenses.length; ++i) {
-      const subsense = subsenses[i];
-      this.idDecorator(root, subsense);
-      const explanation = domutil.childByClass(subsense, "btw:explanantion");
-      if (explanation !== null) {
-        this.explanationDecorator(root, explanation);
-      }
-    }
-
     //
     // We also need to perform the changes that are purely due to the fact that
     // the editing structure is different from the viewing structure.
@@ -503,33 +484,47 @@ export class Viewer extends DispatchMixin {
     this.transformEnglishRenditions();
 
     //
-    // Transform btw:antonyms to the proper viewing format.
+    // Transform contrastive items to the proper viewing format.
     //
     this.transformContrastiveItems("antonym");
     this.transformContrastiveItems("cognate");
     this.transformContrastiveItems("conceptual-proximate");
 
-    //
-    // We need to link the trees because some logic shared with btw_decorator
-    // depends on it. We just link our single tree with itself.
-    //
-    domutil.linkTrees(root, root);
-    this.guiUpdater.events.subscribe(ev => {
-      if (ev.name !== "InsertNodeAt") {
-        return;
-      }
+    root.appendChild(convert.toHTMLTree(doc, dataDoc.firstChild!));
+    domutil.linkTrees(root, this.dataDoc);
 
-      domutil.linkTrees(ev.node, ev.node);
-    });
+    this.seeIds();
+
+    //
+    // Some processing needs to be done before _process is called. In btw_mode,
+    // these would be handled by triggers.
+    //
+    for (const sense of Array.from(root.getElementsByClassName("btw:sense"))) {
+      this.idDecorator(root, sense);
+      this.headingDecorator.sectionHeadingDecorator(sense);
+    }
+
+    for (const sfs of Array.from(
+      root.getElementsByClassName("btw:semantic-fields-collection"))) {
+      this.headingDecorator.sectionHeadingDecorator(sfs);
+    }
+
+    // tslint:disable-next-line:prefer-for-of
+    for (const subsense of
+         Array.from(root.getElementsByClassName("btw:subsense"))) {
+      this.idDecorator(root, subsense);
+      const explanation = domutil.childByClass(subsense, "btw:explanantion");
+      if (explanation !== null) {
+        this.explanationDecorator(root, explanation);
+      }
+    }
 
     // In btw_decorator, there are triggers that refresh hyperlinks as elements
     // are added or processed. Such triggers do not exist here so id decorations
     // need to be performed before anything else is done so that when hyperlinks
     // are decorated, everthing is available for them to be decorated.
-    const withIds = root.querySelectorAll(`[${util.encodeAttrName("xml:id")}]`);
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < withIds.length; ++i) {
-      const withId = withIds[i];
+    for (const withId of Array.from(
+      root.querySelectorAll(`[${convert.encodeAttrName("xml:id")}]`))) {
       this.idDecorator(root, withId);
     }
 
@@ -539,41 +534,28 @@ export class Viewer extends DispatchMixin {
     // getElementsByClassName.
     while (resps.length !== 0) {
       const resp = resps[0];
-      const respParent = resp.parentNode!;
-      let child = resp.firstChild;
-      while (child !== null) {
-        respParent.insertBefore(child, resp);
-        child = resp.firstChild;
-      }
-      respParent.removeChild(resp);
+      resp.replaceWith(...Array.from(resp.childNodes));
     }
 
     // We want to process all ref elements earlier so that hyperlinks to
     // examples are created properly.
-    const refs = root.getElementsByClassName("ref");
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < refs.length; ++i) {
-      this.process(root, refs[i]);
+    for (const ref of Array.from(root.getElementsByClassName("ref"))) {
+      this.process(root, ref);
     }
 
     this.process(root, root.firstElementChild!);
 
     // Work around a bug in Bootstrap. Bootstrap's scrollspy (at least up to
-    // 3.3.1) can't handle a period in a URL's hash. It passes the has to jQuery
-    // as a CSS selector and jQuery silently fails to find the object.
-    const targets = root.querySelectorAll("[id]");
-    // tslint:disable-next-line:prefer-for-of
-    for (let targetIx = 0; targetIx < targets.length; ++targetIx) {
-      const target = targets[targetIx];
+    // 4.4.1) can't handle a period in a URL's hash. It passes the hash to
+    // jQuery as a CSS selector and jQuery silently fails to find the object.
+    for (const target of Array.from(root.querySelectorAll("[id]"))) {
       target.id = target.id.replace(/\./g, "_");
     }
 
-    const links = root.getElementsByTagName("a");
-    // tslint:disable-next-line:prefer-for-of
-    for (let linkIx = 0; linkIx < links.length; ++linkIx) {
-      const href = links[linkIx].getAttribute("href");
-      if (href !== null && href.lastIndexOf("#", 0) === 0) {
-        links[linkIx].setAttribute("href", href.replace(/\./g, "_"));
+    for (const link of Array.from(root.getElementsByTagName("a"))) {
+      const href = link.getAttribute("href");
+      if (href !== null && href.startsWith("#")) {
+        link.setAttribute("href", href.replace(/\./g, "_"));
       }
     }
 
@@ -616,7 +598,7 @@ export class Viewer extends DispatchMixin {
     // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, limit = sensesSubsenses.length; i < limit; ++i) {
       const s = sensesSubsenses[i];
-      const id = s.getAttribute(util.encodeAttrName("xml:id"));
+      const id = s.getAttribute(convert.encodeAttrName("xml:id"));
       if (id !== null) {
         this.senseSubsenseIdManager.seen(id, true);
       }
@@ -627,7 +609,7 @@ export class Viewer extends DispatchMixin {
     // tslint:disable-next-line:one-variable-per-declaration
     for (let i = 0, limit = examples.length; i < limit; ++i) {
       const ex = examples[i];
-      const id = ex.getAttribute(util.encodeAttrName("xml:id"));
+      const id = ex.getAttribute(convert.encodeAttrName("xml:id"));
       if (id !== null) {
         this.exampleIdManager.seen(id, true);
       }
@@ -670,10 +652,7 @@ export class Viewer extends DispatchMixin {
     $(doc.body).on("activate.bs.scrollspy", () => {
       // Scroll the affix if needed.
       const affixRect = affixOverflow.getBoundingClientRect();
-      const actives = affix.querySelectorAll(".active>a");
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < actives.length; ++i) {
-        const active = actives[i];
+      for (const active of Array.from(affix.querySelectorAll(".active>a"))) {
         if (active.getElementsByClassName("active").length !== 0) {
           continue;
         }
@@ -687,19 +666,18 @@ export class Viewer extends DispatchMixin {
     const { doc, root } = this;
 
     const topUl = affix.getElementsByTagName("ul")[0];
-    const anchors =
-      root.querySelectorAll(this.mapped.toGUISelector("btw:subsense, .head"));
     let ulStack: Element[] = [topUl];
     const containerStack: Element[] = [];
     let prevContainer: Element | null = null;
     // tslint:disable-next-line:prefer-for-of
-    for (let anchorIx = 0; anchorIx < anchors.length; ++anchorIx) {
-      const anchor = anchors[anchorIx];
+    for (const anchor of
+         Array.from(root.querySelectorAll(
+           this.mapped.toGUISelector("btw:subsense, .head")))) {
       if (prevContainer !== null && prevContainer.contains(anchor)) {
         containerStack.unshift(prevContainer);
         const ul = doc.createElement("ul");
         ul.className = "nav";
-        ulStack[0].lastElementChild!.appendChild(ul);
+        ulStack[0].lastElementChild!.append(ul);
         ulStack.unshift(ul);
       }
       else {
@@ -714,13 +692,12 @@ export class Viewer extends DispatchMixin {
       }
 
       let heading: string | undefined;
-      const orig = util.getOriginalName(anchor);
-      switch (orig) {
-      case "head":
+      if (anchor.classList.contains("head")) {
+        // We're processing a head that was created for the GUI tree.
         const prefix = anchor.textContent!.replace("•", "").trim();
         // Special cases
         const parent = anchor.parentNode as Element;
-        switch (util.getOriginalName(parent)) {
+        switch (getOriginalNameIfPossible(parent)) {
         case "btw:sense":
           const terms = parent.querySelector(
             this.mapped.toGUISelector("btw:english-term-list"));
@@ -734,21 +711,18 @@ export class Viewer extends DispatchMixin {
           heading = prefix;
         }
         prevContainer = parent;
-        break;
-      case "btw:subsense":
+      }
+      else {
+        // We're processing a btw:subsense element.
         heading = anchor.getElementsByClassName("btw:explanation")[0]
           .textContent!;
         prevContainer = anchor;
-        break;
-      default:
-        throw new Error(`unknown element type: ${orig}`);
       }
 
       if (heading !== undefined && heading !== "") {
-        const li = domutil.htmlToElements(
+        ulStack[0].append(domutil.htmlToElements(
           _.template("<li><a href='#<%= target %>'><%= heading %></a></li>")(
-            { target: anchor.id, heading }), doc)[0];
-        ulStack[0].appendChild(li);
+            { target: anchor.id, heading }), doc)[0]);
       }
     }
   }
@@ -835,20 +809,32 @@ export class Viewer extends DispatchMixin {
   noneDecorator(): void {}
 
   elementDecorator(root: Element, el: Element): void {
-    const name = util.getOriginalName(el);
-
-    switch (name) {
-    case "persName":
-      this.persNameDecorator(root, el);
-      break;
-    case "editor":
-      this.editorDecorator(root, el);
-      break;
-    case "btw:sf":
-      this.sfDecorator(root, el);
-      break;
-    default:
+    switch (getOriginalNameIfPossible(el)) {
+      case "persName":
+        this.persNameDecorator(root, el);
+        break;
+      case "editor":
+        this.editorDecorator(root, el);
+        break;
+      case "btw:sf":
+        this.sfDecorator(root, el);
+        break;
+        // The following listed elements are only existing in article viewing
+        // mode. They do not exist in editing mode.
+      case "btw:antonym-term-list":
+      case "btw:cognate-term-list":
+      case "btw:conceptual-proximate-term-list":
+        this.termListDecorator(root, el);
+        break;
+      default:
     }
+  }
+
+  termListDecorator(_root: Element, el: Element): void {
+    const head = el.ownerDocument!.createElement("div");
+    head.className = "head _phantom";
+    head.textContent = "Terms in this section:";
+    el.prepend(head);
   }
 
   editorDecorator(_root: Element, el: Element): void {
@@ -910,148 +896,107 @@ export class Viewer extends DispatchMixin {
   }
 
   private transformEnglishRenditions(): void {
-    const { doc, root } = this;
+    const { dataDoc } = this;
 
     // Transform English renditions to the viewing format.
-    const englishRenditions =
-      root.getElementsByClassName("btw:english-renditions");
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < englishRenditions.length; ++i) {
-      // English renditions element
-      const englishRenditionsEl = englishRenditions[i];
-      const firstEnglishRendition =
-        domutil.childByClass(englishRenditionsEl, "btw:english-rendition");
+    for (const englishRenditionsEl of
+         Array.from(dataDoc.getElementsByTagNameNS(BTW_NS,
+                                                   "english-renditions"))) {
+      const renditions =
+        Array.from(
+          englishRenditionsEl.getElementsByTagNameNS(BTW_NS,
+                                                     "english-rendition"));
       //
       // Make a list of btw:english-terms that will appear at the start of the
       // btw:english-renditions.
       //
-
-      // Slicing it prevents this list from growing as we add the clones.
-      const terms: HTMLElement[] = _slice.call(
-        englishRenditionsEl.getElementsByClassName("btw:english-term"));
-      const div = this.makeElement("btw:english-term-list");
-      for (let tIx = 0; tIx < terms.length; ++tIx) {
-        const term = terms[tIx];
-        const clone = term.cloneNode(true) as HTMLElement;
-        clone.classList.add("_inline");
-        div.appendChild(clone);
-        if (tIx < terms.length - 1) {
-          div.appendChild(doc.createTextNode(", "));
+      const terms = Array.from(
+        englishRenditionsEl.getElementsByTagNameNS(BTW_NS, "english-term"));
+      const lastTerm = terms[terms.length - 1];
+      const div = dataDoc.createElementNS(BTW_NS, "btw:english-term-list");
+      for (const term of terms) {
+        div.appendChild(term.cloneNode(true));
+        if (term !== lastTerm) {
+          div.appendChild(dataDoc.createTextNode(", "));
         }
       }
-      englishRenditionsEl.insertBefore(div, firstEnglishRendition);
+      englishRenditionsEl.insertBefore(div, renditions[0]);
 
       //
       // Combine the contents of all btw:english-rendition into one
-      // btw:semantic-fields element
+      // btw:semantic-fields-collection element.
       //
-      // Slicing to prevent changes to the list as we remove elements.
-      const ers = _slice.call(
-        englishRenditionsEl.getElementsByClassName("btw:english-rendition"));
-      let html: string = "";
-      for (const er of ers) {
-        html += er.innerHTML;
-        er.parentNode.removeChild(er);
+      const sfs = dataDoc.createElementNS(BTW_NS,
+                                          "btw:semantic-fields-collection");
+      for (const er of renditions) {
+        sfs.append(...Array.from(er.childNodes));
+        er.remove();
       }
-      const sfs = this.makeElement("btw:semantic-fields-collection");
-      // tslint:disable-next-line:no-inner-html
-      sfs.innerHTML = html;
       englishRenditionsEl.appendChild(sfs);
-      this.headingDecorator.sectionHeadingDecorator(sfs);
     }
   }
 
   private transformContrastiveItems(name: string): void {
-    const root = this.root;
+    const { dataDoc } = this;
     // A "group" here is an element that combines a bunch of elements of the
     // same kind: btw:antonyms is a group of btw:antonym, btw:cognates is a
     // group of btw:cognates, etc. The elements of the same kind are called
     // "items" later in this code.
 
-    const groupClass = `btw:${name}s`;
-    const doc = root.ownerDocument!;
     // groups are those elements that act as containers (btw:cognates,
     // btw:antonyms, etc.)
-    const groups = _slice.call(root.getElementsByClassName(groupClass));
-    for (const group of groups) {
-      if (group.getElementsByClassName("btw:none").length) {
+    for (const group of
+         Array.from(dataDoc.getElementsByTagNameNS(BTW_NS, `${name}s`))) {
+      if (group.getElementsByTagNameNS(BTW_NS, "none").length !== 0) {
         // The group is empty. Remove the group and move on.
-        group.parentNode.removeChild(group);
+        group.remove();
         continue;
       }
 
       // This div will contain the list of all terms in the group.
-      const div = this.makeElement(`btw:${name}-term-list`);
-
-      const head = doc.createElement("div");
-      head.className = "head _phantom";
-      head.textContent = "Terms in this section:";
-      div.appendChild(head);
-
-      // Slicing it prevents this list from growing as we add the clones.
-      const terms = _slice.call(group.getElementsByClassName("btw:term"));
+      const div = dataDoc.createElementNS(BTW_NS, `btw:${name}-term-list`);
 
       // A wrapper is the element that wraps around the term. This loop: 1) adds
       // each wrapper to the .btw:...-term-list. and b) replaces each term with
       // a clone of the wrapper.
       const wrappers: Element[] = [];
-      for (let tIx = 0; tIx < terms.length; ++tIx) {
-        const term = terms[tIx];
-        const clone = term.cloneNode(true);
-        clone.classList.add("_inline");
-        const termWrapper = this.makeElement(`btw:${name}-term-item`);
-        termWrapper.textContent = `${name.replace("-", " ")} ${tIx + 1}: `;
-        termWrapper.appendChild(clone);
-        div.appendChild(termWrapper);
+      let num = 1;
+      for (const term of
+           Array.from(group.getElementsByTagNameNS(BTW_NS, "term"))) {
+        const termWrapper = dataDoc.createElementNS(BTW_NS,
+                                                    `btw:${name}-term-item`);
+        termWrapper.append(`${name.replace("-", " ")} ${num++}: `,
+                           term.cloneNode(true));
+        div.append(termWrapper);
 
-        const parent = term.parentNode;
-
-        // This effectively replaces the term element in btw:antonym,
-        // btw:cognate, etc. with an element that contains the "name i: "
-        // prefix.
-        parent.insertBefore(termWrapper.cloneNode(true), term);
-        parent.removeChild(term);
+        // This replaces the term element in btw:antonym, btw:cognate, etc. with
+        // an element that contains the "name i: " prefix.
+        term.replaceWith(termWrapper.cloneNode(true));
         wrappers.push(termWrapper);
       }
 
-      const firstTerm = group.querySelector(`.btw\\:${name}`);
-      group.insertBefore(div, firstTerm);
-      const hr = document.createElement("hr");
-      hr.className = "hr _phantom";
-      group.insertBefore(hr, firstTerm);
+      const items = Array.from(group.children);
 
       //
-      // Combine the contents of all of the items into one btw:citations
-      // element.
+      // Combine the contents of all of the items into one collection.
       //
-      // Slicing to prevent changes to the list as we remove elements.
-      const items = _slice.call(group.getElementsByClassName(`btw:${name}`));
-      let html: string = "";
-      for (const item of items) {
-        // What we are doing here is pushing on html the contents of a
-        // btw:antonym, btw:cognate, etc. element. At this point, that's only
-        // btw:citations elements plus btw:...-term-item elements.
-        html += item.outerHTML;
-        item.parentNode.removeChild(item);
-      }
-      const coll = this.makeElement("btw:citations-collection");
-      // tslint:disable-next-line:no-inner-html
-      coll.innerHTML = html;
-      group.appendChild(coll);
+      const coll = dataDoc.createElementNS(BTW_NS, "btw:citations-collection");
+      // What we are doing here is pushing on the btw:antonym, btw:cognate,
+      // etc. element. At this point, that's only btw:citations elements plus
+      // btw:...-term-item elements.
+      coll.append(...items);
+      group.append(div, coll);
 
       //
       // If there are btw:sematic-fields elements, move them to the list of
       // terms.
       //
       if (name === "cognate") {
-        const cognates = coll.getElementsByClassName("btw:cognate");
-        for (let cognateIx = 0; cognateIx < cognates.length; ++cognateIx) {
-          const cognate = cognates[cognateIx];
-          // We get only the first one, which is the one that contains the
-          // combined semantic fields for the whole cognate.
-          const sfss = cognate.getElementsByClassName("btw:semantic-fields")[0];
-          const wrapper = wrappers[cognateIx];
-          wrapper.parentNode!.insertBefore(sfss, wrapper.nextSibling);
+        for (let ix = 0; ix < items.length; ++ix) {
+          wrappers[ix].after(
+            // We get only the first one, which is the one that contains the
+            // combined semantic fields for the whole cognate.
+            items[ix].getElementsByTagNameNS(BTW_NS, "semantic-fields")[0]);
         }
       }
     }
@@ -1067,7 +1012,7 @@ export class Viewer extends DispatchMixin {
   }
 
   refDecorator(root: Element, el: Element): void {
-    let origTarget = el.getAttribute(util.encodeAttrName("target"));
+    let origTarget = el.getAttribute(convert.encodeAttrName("target"));
     if (origTarget === null) {
       origTarget = "";
     }
@@ -1148,4 +1093,42 @@ export class Viewer extends DispatchMixin {
     const e = transformation.makeElement(this.dataDoc, ename.ns, name, attrs);
     return convert.toHTMLTree(this.doc, e) as Element;
   }
+
+  /**
+   * Returns additional classes that should apply to a node.
+   *
+   * @param node The node to check.
+   *
+   * @returns A string that contains all the class names separated by spaces. In
+   * other words, a string that could be put as the value of the ``class``
+   * attribute in an HTML tree.
+   */
+  getAdditionalClasses(node: Element): string {
+    const dataNode = getMirror(node);
+    if (dataNode === undefined) {
+      return "";
+    }
+
+    if (!isElement(dataNode)) {
+      throw new Error("the GUI node passed does not correspond to an element");
+    }
+
+    return (this.metadata.isInline(dataNode) ||
+            dataNode.tagName === "btw:english-term") ?
+      "_inline" : "";
+  }
 }
+
+//
+// This is useful to track down bugs due to nodes lacking a mirror.
+//
+// function reportMissing(tree: string, node: Node, data: boolean): void {
+//   const mirror = domutil.getMirror(node);
+//   if (mirror === undefined) {
+//     console.log("in", tree,
+//                 data ? (node as any).tagName : (node as any).className);
+//   }
+//   for (let i = 0; i < node.childNodes.length; ++i) {
+//     reportMissing(tree, node.childNodes[i], data);
+//   }
+// }
