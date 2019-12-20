@@ -56,6 +56,13 @@ CACHED_DOWNLOADS:=$(DOWNLOADS:%=$(CONTEXT_DOWNLOAD_CACHE)/%)
 # The basic command to use to invoke docker.
 DOCKER_CMD=sudo DOCKER_BUILDKIT=1 -n docker
 
+# The tag for the deployed image
+DEPLOY_TAG=btw-deploy
+
+DEV_REGISTRY=localhost:4000
+DEPLOYMENT_REGISTRY=localhost:4000
+S3_REGISTRY=localhost:4001
+
 #
 # In theory the label-schema spec is deprecated in favor of OCI manifest
 # annotations. In practice, the tools for manipulating annotations are
@@ -159,7 +166,7 @@ selenium-test-image: $(DEV_CONTEXT)
 .PHONY: deploy-image
 deploy-image: $(DEV_CONTEXT)
 ## Build the deployment image and tag it btw-deploy.
-	$(DOCKER_BUILD) --target=deploy -t btw-deploy
+	$(DOCKER_BUILD) --target=deploy -t $(DEPLOY_TAG)
 
 # The mounts that provide the "docker_build" environment.
 TEST_MOUNTS=\
@@ -210,44 +217,67 @@ live-selenium-test: selenium-test-image
 	mkdir -p "./test-logs/"
 	$(SELENIUM_DOCKER_RUN)
 
-# The list of compose files for running the btw-deploy image in a develpment
+# The list of compose files for running the $(DEPLOY_TAG) image in a develpment
 # environment.
 COMPOSE:=$(DOCKER_COMPOSE) -f docker-compose.base.yml -f docker-compose.dev.yml
 
-# The list of compose files for running the btw-deploy image "live".
+# The list of compose files for running the $(DEPLOY_TAG) image "live".
 LIVE_COMPOSE:=$(COMPOSE) -f docker-compose.live.yml
 
 .PHONY: run
 run: deploy-image
-## Bring up the btw-deploy image locally through docker-compose.
+## Bring up the $(DEPLOY_TAG) image locally through docker-compose.
 	$(COMPOSE) up
 
 .PHONY: stop
 stop-local:
-## Stop the btw-deploy image locally.
+## Stop the $(DEPLOY_TAG) image locally.
 	$(COMPOSE) stop --timeout=60
+
+.PHONY: restore
+restore:
+	$(COMPOSE) run -v $(LOAD_BACKUP_IMAGE):/restore.dump --entrypoint '/srv/www/btw/btw/scripts/load_backup.sh $(LOAD_BACKUP_ARGS)' btw
 
 .PHONY: cat
 cat:
-## Show the command that start btw-deploy locally through docker-compose.
+## Show the compose command to control $(DEPLOY_TAG) locally through
+## docker-compose.
 	@echo "$(COMPOSE)"
 
 .PHONY: run-live
 run-live: deploy-image
-## Bring up the btw-deploy image locally through docker-compose, and map
+## Bring up the $(DEPLOY_TAG) image locally through docker-compose, and map
 ## the source code of BTW to the development directory.
 	$(LIVE_COMPOSE) up
 
 .PHONY: stop-live
 stop-live:
-## Stop the btw-deploy image locally (live variant).
+## Stop the $(DEPLOY_TAG) image locally (live variant).
 	$(LIVE_COMPOSE) stop --timeout=60
 
 .PHONY: cat-live
 cat-live:
-## Show the command that start btw-deploy locally through docker-compose, live
-## variant.
+## Show the compose command to control $(DEPLOY_TAG) locally through
+## docker-compose, live variant.
 	@echo "$(LIVE_COMPOSE)"
+
+.PHONY: push
+push: deploy-image
+## Push the $(DEPLOY_TAG) image to the server and upload to s3 bucket.
+	ssh -f -o ExitOnForwardFailure=yes -L 4000:$(DEPLOYMENT_REGISTRY) btw sleep 10
+	sudo docker tag $(DEPLOY_TAG) $(DEV_REGISTRY)/$(DEPLOY_TAG)
+	sudo docker push $(DEV_REGISTRY)/$(DEPLOY_TAG)
+
+
+.PHONY: pull
+pull:
+## SERVER target: use after having done a push to the server.
+	sudo docker pull $(DEPLOYMENT_REGISTRY)/$(DEPLOY_TAG)
+# The next two commands essentially backup the Docker image to S3.
+	sudo docker tag $(DEPLOYMENT_REGISTRY)/$(DEPLOY_TAG) $(S3_REGISTRY)/$(DEPLOY_TAG)
+	sudo docker push $(S3_REGISTRY)/$(DEPLOY_TAG)
+	sudo docker tag $(DEPLOYMENT_REGISTRY)/$(DEPLOY_TAG) $(DEPLOY_TAG)
+
 
 #
 # Rules for downloading the external packages.
