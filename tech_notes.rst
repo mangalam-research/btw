@@ -139,7 +139,9 @@ to not use virtualenv.
 
     Install packages required for the build, including optional ones::
 
-     apt install zlib1g-dev libffi-dev libssl-dev libbz2-dev libncursesw5-dev libgdbm-dev liblzma-dev libsqlite3-dev tk-dev uuid-dev libreadline-dev
+     apt-get install zlib1g-dev libffi-dev libssl-dev libbz2-dev libncursesw5-dev libgdbm-dev liblzma-dev libsqlite3-dev tk-dev uuid-dev libreadline-dev
+
+    [On Debian 10, you also need ``libgdbm-compat-dev``.]
 
     Use this command for cloning::
 
