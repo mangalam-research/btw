@@ -38,7 +38,7 @@ django-webtest==1.9.4
 djangocms-admin-style==1.4.0
 djangocms-attributes-field==1.0.0
 djangocms-text-ckeditor==3.8.0
-djangorestframework==3.9.2
+djangorestframework==3.11.2
 EasyProcess==0.2.5
 entrypoints==0.3
 eulxml==1.1.3
