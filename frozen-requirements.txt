@@ -23,7 +23,7 @@ django-cache-management==3.0.0
 django-classy-tags==0.8.0
 django-cms==3.7.1
 django-datatables-view==1.17.0
-django-debug-toolbar==1.4
+django-debug-toolbar==1.11.1
 django-email-integration-test==0.1.0
 django-formtools==2.1
 django-js-asset==1.2.2
