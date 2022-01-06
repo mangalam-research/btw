@@ -7,7 +7,7 @@ billiard==3.6.0.0
 blessings==1.7
 blinker==1.4
 brotlipy==0.7.0
-celery==4.3.0
+celery==5.2.2
 certifi==2019.3.9
 cffi==1.12.2
 chardet==3.0.4
