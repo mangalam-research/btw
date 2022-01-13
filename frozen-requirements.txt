@@ -21,7 +21,7 @@ django-appconf==1.0.3
 django-bootstrap4==0.0.8
 django-cache-management==3.0.0
 django-classy-tags==0.8.0
-django-cms==3.7.1
+django-cms==3.7.4
 django-datatables-view==1.17.0
 django-debug-toolbar==1.4
 django-email-integration-test==0.1.0
