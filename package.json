@@ -45,7 +45,7 @@
     "lucene-query-parser": "^1.2.0",
     "mocha": "^6.2.2",
     "moment": "^2.24.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "patternfly-bootstrap-treeview": "^2.1.10",
     "requirejs": "^2.3.6",
     "requirejs-plugins": "^1.0.2",
